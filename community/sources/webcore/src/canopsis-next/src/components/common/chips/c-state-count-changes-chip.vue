@@ -1,7 +1,7 @@
 <template>
   <span
-    class="c-state-count-changes-chip"
     :style="style"
+    class="c-state-count-changes-chip"
   >
     <slot />
   </span>

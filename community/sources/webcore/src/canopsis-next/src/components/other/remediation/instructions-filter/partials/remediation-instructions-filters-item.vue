@@ -1,12 +1,12 @@
 <template>
   <div class="instruction-filter">
     <v-chip
-      class="white--text"
-      v-on="chipListeners"
       :color="chipColor"
       :close-icon="chipCloseIcon"
       :close="closable"
+      class="white--text"
       label
+      v-on="chipListeners"
     >
       <span class="instruction-filter__text">
         <v-icon
@@ -16,8 +16,8 @@
           assignment
         </v-icon>
         <v-icon
-          class="pl-1"
           v-if="filter.locked"
+          class="pl-1"
           color="white"
           small
         >
@@ -25,14 +25,14 @@
         </v-icon>
         <strong class="pl-2 text-uppercase">{{ conditionTypeMessage }}</strong>
         <span
-          class="pl-1"
           v-if="!isAll"
+          class="pl-1"
         >
           {{ typesAndInstructionsMessage }}
         </span>
         <strong
-          class="pl-1 text-uppercase"
           v-if="hasRunning"
+          class="pl-1 text-uppercase"
         >
           {{ $t('remediation.instructionsFilter.inProgress') }}
         </strong>

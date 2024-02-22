@@ -8,9 +8,10 @@ import (
 	context "context"
 	reflect "reflect"
 
-	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -37,81 +38,149 @@ func (m *MockManager) EXPECT() *MockManagerMockRecorder {
 	return m.recorder
 }
 
-// CheckServices mocks base method.
-func (m *MockManager) CheckServices(arg0 context.Context, arg1 []types.Entity) ([]types.Entity, error) {
+// AssignServices mocks base method.
+func (m *MockManager) AssignServices(arg0 *types.Entity, arg1 mongo.CommandsRegister) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckServices", arg0, arg1)
-	ret0, _ := ret[0].([]types.Entity)
+	m.ctrl.Call(m, "AssignServices", arg0, arg1)
+}
+
+// AssignServices indicates an expected call of AssignServices.
+func (mr *MockManagerMockRecorder) AssignServices(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignServices", reflect.TypeOf((*MockManager)(nil).AssignServices), arg0, arg1)
+}
+
+// AssignStateSetting mocks base method.
+func (m *MockManager) AssignStateSetting(arg0 context.Context, arg1 *types.Entity, arg2 mongo.CommandsRegister) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AssignStateSetting", arg0, arg1, arg2)
+	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CheckServices indicates an expected call of CheckServices.
-func (mr *MockManagerMockRecorder) CheckServices(arg0, arg1 interface{}) *gomock.Call {
+// AssignStateSetting indicates an expected call of AssignStateSetting.
+func (mr *MockManagerMockRecorder) AssignStateSetting(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckServices", reflect.TypeOf((*MockManager)(nil).CheckServices), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignStateSetting", reflect.TypeOf((*MockManager)(nil).AssignStateSetting), arg0, arg1, arg2)
 }
 
-// FillResourcesWithInfos mocks base method.
-func (m *MockManager) FillResourcesWithInfos(arg0 context.Context, arg1 types.Entity) ([]types.Entity, error) {
+// HandleComponent mocks base method.
+func (m *MockManager) HandleComponent(arg0 context.Context, arg1 *types.Event, arg2 mongo.CommandsRegister) (contextgraph.Report, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FillResourcesWithInfos", arg0, arg1)
-	ret0, _ := ret[0].([]types.Entity)
+	ret := m.ctrl.Call(m, "HandleComponent", arg0, arg1, arg2)
+	ret0, _ := ret[0].(contextgraph.Report)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FillResourcesWithInfos indicates an expected call of FillResourcesWithInfos.
-func (mr *MockManagerMockRecorder) FillResourcesWithInfos(arg0, arg1 interface{}) *gomock.Call {
+// HandleComponent indicates an expected call of HandleComponent.
+func (mr *MockManagerMockRecorder) HandleComponent(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FillResourcesWithInfos", reflect.TypeOf((*MockManager)(nil).FillResourcesWithInfos), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleComponent", reflect.TypeOf((*MockManager)(nil).HandleComponent), arg0, arg1, arg2)
 }
 
-// HandleEvent mocks base method.
-func (m *MockManager) HandleEvent(arg0 context.Context, arg1 types.Event) (types.Entity, []types.Entity, error) {
+// HandleConnector mocks base method.
+func (m *MockManager) HandleConnector(arg0 context.Context, arg1 *types.Event, arg2 mongo.CommandsRegister) (contextgraph.Report, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleEvent", arg0, arg1)
-	ret0, _ := ret[0].(types.Entity)
-	ret1, _ := ret[1].([]types.Entity)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret := m.ctrl.Call(m, "HandleConnector", arg0, arg1, arg2)
+	ret0, _ := ret[0].(contextgraph.Report)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// HandleEvent indicates an expected call of HandleEvent.
-func (mr *MockManagerMockRecorder) HandleEvent(arg0, arg1 interface{}) *gomock.Call {
+// HandleConnector indicates an expected call of HandleConnector.
+func (mr *MockManagerMockRecorder) HandleConnector(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleEvent", reflect.TypeOf((*MockManager)(nil).HandleEvent), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleConnector", reflect.TypeOf((*MockManager)(nil).HandleConnector), arg0, arg1, arg2)
+}
+
+// HandleResource mocks base method.
+func (m *MockManager) HandleResource(arg0 context.Context, arg1 *types.Event, arg2 mongo.CommandsRegister) (contextgraph.Report, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HandleResource", arg0, arg1, arg2)
+	ret0, _ := ret[0].(contextgraph.Report)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HandleResource indicates an expected call of HandleResource.
+func (mr *MockManagerMockRecorder) HandleResource(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleResource", reflect.TypeOf((*MockManager)(nil).HandleResource), arg0, arg1, arg2)
+}
+
+// HandleService mocks base method.
+func (m *MockManager) HandleService(arg0 context.Context, arg1 *types.Event, arg2 mongo.CommandsRegister) (contextgraph.Report, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HandleService", arg0, arg1, arg2)
+	ret0, _ := ret[0].(contextgraph.Report)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HandleService indicates an expected call of HandleService.
+func (mr *MockManagerMockRecorder) HandleService(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleService", reflect.TypeOf((*MockManager)(nil).HandleService), arg0, arg1, arg2)
+}
+
+// InheritComponentFields mocks base method.
+func (m *MockManager) InheritComponentFields(arg0, arg1 *types.Entity, arg2 mongo.CommandsRegister) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InheritComponentFields", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InheritComponentFields indicates an expected call of InheritComponentFields.
+func (mr *MockManagerMockRecorder) InheritComponentFields(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InheritComponentFields", reflect.TypeOf((*MockManager)(nil).InheritComponentFields), arg0, arg1, arg2)
+}
+
+// LoadServices mocks base method.
+func (m *MockManager) LoadServices(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoadServices", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LoadServices indicates an expected call of LoadServices.
+func (mr *MockManagerMockRecorder) LoadServices(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadServices", reflect.TypeOf((*MockManager)(nil).LoadServices), arg0)
+}
+
+// ProcessComponentDependencies mocks base method.
+func (m *MockManager) ProcessComponentDependencies(arg0 context.Context, arg1 *types.Entity, arg2 mongo.CommandsRegister) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ProcessComponentDependencies", arg0, arg1, arg2)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ProcessComponentDependencies indicates an expected call of ProcessComponentDependencies.
+func (mr *MockManagerMockRecorder) ProcessComponentDependencies(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessComponentDependencies", reflect.TypeOf((*MockManager)(nil).ProcessComponentDependencies), arg0, arg1, arg2)
 }
 
 // RecomputeService mocks base method.
-func (m *MockManager) RecomputeService(arg0 context.Context, arg1 string) (types.Entity, []types.Entity, error) {
+func (m *MockManager) RecomputeService(arg0 context.Context, arg1 string, arg2 mongo.CommandsRegister) (types.Entity, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RecomputeService", arg0, arg1)
-	ret0, _ := ret[0].(types.Entity)
-	ret1, _ := ret[1].([]types.Entity)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-// RecomputeService indicates an expected call of RecomputeService.
-func (mr *MockManagerMockRecorder) RecomputeService(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeService", reflect.TypeOf((*MockManager)(nil).RecomputeService), arg0, arg1)
-}
-
-// UpdateEntities mocks base method.
-func (m *MockManager) UpdateEntities(arg0 context.Context, arg1 string, arg2 []types.Entity, arg3 bool) (types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateEntities", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "RecomputeService", arg0, arg1, arg2)
 	ret0, _ := ret[0].(types.Entity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateEntities indicates an expected call of UpdateEntities.
-func (mr *MockManagerMockRecorder) UpdateEntities(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+// RecomputeService indicates an expected call of RecomputeService.
+func (mr *MockManagerMockRecorder) RecomputeService(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntities", reflect.TypeOf((*MockManager)(nil).UpdateEntities), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeService", reflect.TypeOf((*MockManager)(nil).RecomputeService), arg0, arg1, arg2)
 }
 
 // UpdateImpactedServicesFromDependencies mocks base method.
@@ -129,17 +198,17 @@ func (mr *MockManagerMockRecorder) UpdateImpactedServicesFromDependencies(arg0 i
 }
 
 // UpdateLastEventDate mocks base method.
-func (m *MockManager) UpdateLastEventDate(arg0 context.Context, arg1, arg2 string, arg3 datetime.CpsTime) error {
+func (m *MockManager) UpdateLastEventDate(arg0 context.Context, arg1 *types.Event, arg2 bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateLastEventDate indicates an expected call of UpdateLastEventDate.
-func (mr *MockManagerMockRecorder) UpdateLastEventDate(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockManagerMockRecorder) UpdateLastEventDate(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLastEventDate", reflect.TypeOf((*MockManager)(nil).UpdateLastEventDate), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLastEventDate", reflect.TypeOf((*MockManager)(nil).UpdateLastEventDate), arg0, arg1, arg2)
 }
 
 // MockEntityServiceStorage is a mock of EntityServiceStorage interface.

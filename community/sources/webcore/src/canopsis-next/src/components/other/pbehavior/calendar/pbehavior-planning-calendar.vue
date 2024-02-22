@@ -8,7 +8,7 @@
       @change:event="handleUpdateEvent"
       @move:event="handleUpdateEvent"
       @resize:event="handleUpdateEvent"
-      @change:pagination="fetchEvents"
+      @change:pagination="debouncedFetchEvents"
     >
       <template #form-event="{ event, close }">
         <pbehavior-create-event
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { get, omit, uniqBy } from 'lodash';
+import { debounce, get, omit, uniqBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
@@ -122,8 +122,11 @@ export default {
       },
     },
   },
+  created() {
+    this.debouncedFetchEvents = debounce(this.fetchEvents, 300);
+  },
   mounted() {
-    this.fetchEvents();
+    this.debouncedFetchEvents();
     this.fetchDefaultTypes();
   },
   methods: {

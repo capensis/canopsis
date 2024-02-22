@@ -1,16 +1,16 @@
 <template>
   <c-draggable-list-field
-    class="groups-panel secondary"
     v-field="groups"
     :class="{ empty: isGroupsEmpty }"
     :component-data="{ props: { expand: true, dark: true, focusable: true } }"
     :group="draggableGroup"
+    class="groups-panel secondary"
     component="v-expansion-panel"
   >
     <group-panel
       v-for="(group, groupIndex) in groups"
-      :group="group"
       :key="group._id"
+      :group="group"
     >
       <draggable-group-views
         :views="group.views"

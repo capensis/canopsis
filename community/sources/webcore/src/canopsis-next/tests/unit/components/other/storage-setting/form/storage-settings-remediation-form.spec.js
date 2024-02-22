@@ -1,7 +1,9 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 import { randomDurationValue } from '@unit/utils/duration';
+
+import { TIME_UNITS } from '@/constants';
+
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsRemediationForm from '@/components/other/storage-setting/form/storage-settings-remediation-form.vue';
@@ -49,9 +51,9 @@ describe('storage-settings-remediation-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectRemediationDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectRemediationDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Remediation delete stats after changed after trigger enabled duration field', () => {
@@ -63,9 +65,9 @@ describe('storage-settings-remediation-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectRemediationDeleteStatsAfterField(wrapper).vm.$emit('input', newValue);
+    selectRemediationDeleteStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_stats_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_stats_after: newValue });
   });
 
   test('Remediation delete mod stats after changed after trigger enabled duration field', () => {
@@ -77,9 +79,9 @@ describe('storage-settings-remediation-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectRemediationDeleteModStatsAfterField(wrapper).vm.$emit('input', newValue);
+    selectRemediationDeleteModStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_mod_stats_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_mod_stats_after: newValue });
   });
 
   test('Renders `storage-settings-remediation-form` with default form', () => {

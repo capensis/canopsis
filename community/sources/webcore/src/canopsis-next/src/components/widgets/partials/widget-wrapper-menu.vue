@@ -2,9 +2,9 @@
   <v-menu offset-y>
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         icon
         small
+        v-on="on"
       >
         <v-icon small>
           more_horiz

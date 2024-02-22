@@ -1,9 +1,9 @@
 <template>
   <v-radio-group
-    class="mt-0"
     v-field="value"
     :label="$t('remediation.instruction.type')"
     :disabled="disabled"
+    class="mt-0"
     hide-details
     mandatory
   >

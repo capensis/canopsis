@@ -64,10 +64,11 @@ type AxeParameters struct {
 	// Idle events
 	IdleRuleApply string `json:"idle_rule_apply,omitempty"`
 	// Meta alarm create
-	MetaAlarmRuleID    string   `json:"meta_alarm_rule_id,omitempty"`
-	MetaAlarmValuePath string   `json:"meta_alarm_value_path,omitempty"`
-	DisplayName        string   `json:"display_name,omitempty"`
-	MetaAlarmChildren  []string `json:"meta_alarm_children,omitempty"`
+	MetaAlarmRuleID     string   `json:"meta_alarm_rule_id,omitempty"`
+	MetaAlarmValuePath  string   `json:"meta_alarm_value_path,omitempty"`
+	DisplayName         string   `json:"display_name,omitempty"`
+	MetaAlarmChildren   []string `json:"meta_alarm_children,omitempty"`
+	StateSettingUpdated bool     `json:"state_setting_updated,omitempty"`
 }
 
 type AxeResultEvent struct {

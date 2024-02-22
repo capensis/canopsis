@@ -1,6 +1,7 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
+
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { getImpactStateColor } from '@/helpers/entities/entity/color';
 

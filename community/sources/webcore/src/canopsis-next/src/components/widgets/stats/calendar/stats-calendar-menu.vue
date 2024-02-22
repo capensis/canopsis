@@ -19,8 +19,8 @@
         >
           <v-flex xs12>
             <div
-              class="stats-calendar-menu__item"
               :style="{ backgroundColor: getStyleColor(event) }"
+              class="stats-calendar-menu__item"
               @click="$emit('click:event', event)"
             >
               <strong>{{ event.name }}</strong>

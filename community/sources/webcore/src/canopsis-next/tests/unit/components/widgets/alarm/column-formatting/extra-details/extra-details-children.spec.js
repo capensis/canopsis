@@ -1,6 +1,5 @@
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import flushPromises from 'flush-promises';
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
 const selectExtraDetailsIcon = wrapper => wrapper.find('.c-extra-details__badge');

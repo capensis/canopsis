@@ -1,6 +1,5 @@
 <template>
   <v-combobox
-    class="time-picker__select"
     ref="combobox"
     :value="value"
     :items="items"
@@ -10,6 +9,7 @@
     :label="label"
     :disabled="disabled"
     :error="error"
+    class="time-picker__select"
     placeholder="−−:−−"
     append-icon=""
     hide-details

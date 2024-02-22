@@ -2,13 +2,13 @@
   <v-layout column>
     <template v-if="hasMessages">
       <test-suite-message-panel
-        class="mb-2"
         v-if="testSuite.system_err"
         :value="testSuite.system_err"
         :title="$t('testSuite.systemError')"
         :label="$t('testSuite.systemErrorMessage')"
         :file-name="systemErrorFileName"
         :color="$config.COLORS.testSuiteStatuses.failed"
+        class="mb-2"
       />
       <test-suite-message-panel
         v-if="testSuite.system_out"

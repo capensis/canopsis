@@ -25,7 +25,7 @@ describe('c-alarm-action-chip', () => {
 
     closeIcon.trigger('click');
 
-    expect(wrapper).toEmit('close');
+    expect(wrapper).toHaveBeenEmit('close');
   });
 
   test('Renders `c-alarm-tag-chip` with default props', () => {

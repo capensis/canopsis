@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
+
 import { SAMPLINGS } from '@/constants';
 
 import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/sampling.vue';
@@ -25,9 +26,9 @@ describe('sampling', () => {
 
     const newValue = randomArrayItem(Object.values(SAMPLINGS));
 
-    selectSamplingFieldField(wrapper).vm.$emit('input', newValue);
+    selectSamplingFieldField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `sampling` with default props', () => {

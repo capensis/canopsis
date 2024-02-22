@@ -1,7 +1,5 @@
 <template>
-  <v-layout
-    class="secondary lighten-2 py-3"
-  >
+  <v-layout class="secondary lighten-2 py-3">
     <v-flex
       xs12
       sm8
@@ -42,9 +40,9 @@
               />
             </v-flex>
             <v-flex
-              class="mt-2"
               v-for="(action, index) in scenario.actions"
               :key="index"
+              class="mt-2"
               xs12
             >
               <scenario-action-card

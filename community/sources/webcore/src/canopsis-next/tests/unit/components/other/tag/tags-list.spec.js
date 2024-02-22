@@ -1,8 +1,6 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { TAG_TYPES } from '@/constants';
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -11,8 +9,10 @@ import {
   selectRowDuplicateButtonByIndex,
   selectRowExpandButtonByIndex,
 } from '@unit/utils/table';
-import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
+import { TAG_TYPES } from '@/constants';
+
+import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import TagsList from '@/components/other/tag/tags-list.vue';
 
 const stubs = {
@@ -63,7 +63,7 @@ describe('tags-list', () => {
 
     await selectRowCheckboxByIndex(wrapper, 1).trigger('click', true);
     await selectRowCheckboxByIndex(wrapper, 2).trigger('click', true);
-    await selectMassRemoveButton(wrapper).vm.$emit('click');
+    await selectMassRemoveButton(wrapper).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('remove-selected', [tags[1], tags[2]]);
   });
@@ -83,7 +83,7 @@ describe('tags-list', () => {
 
     const removeRowIndex = 2;
 
-    await selectRowRemoveButtonByIndex(wrapper, removeRowIndex).vm.$emit('click');
+    await selectRowRemoveButtonByIndex(wrapper, removeRowIndex).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('remove', tags[removeRowIndex]._id);
   });
@@ -103,7 +103,7 @@ describe('tags-list', () => {
 
     const editRowIndex = 5;
 
-    await selectRowEditButtonByIndex(wrapper, editRowIndex).vm.$emit('click');
+    await selectRowEditButtonByIndex(wrapper, editRowIndex).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('edit', tags[editRowIndex]);
   });
@@ -123,7 +123,7 @@ describe('tags-list', () => {
 
     const duplicateRowIndex = 5;
 
-    await selectRowDuplicateButtonByIndex(wrapper, duplicateRowIndex).vm.$emit('click');
+    await selectRowDuplicateButtonByIndex(wrapper, duplicateRowIndex).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('duplicate', tags[duplicateRowIndex]);
   });

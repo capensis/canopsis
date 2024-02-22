@@ -9,12 +9,12 @@
     top
   >
     <point-popup
-      v-on="$listeners"
       v-click-outside="clickOutsideDirective"
       :point="point"
       :template="popupTemplate"
       :color-indicator="colorIndicator"
       :actions="popupActions"
+      v-on="$listeners"
     />
   </v-menu>
 </template>

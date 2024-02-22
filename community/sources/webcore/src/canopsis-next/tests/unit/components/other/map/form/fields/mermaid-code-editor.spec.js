@@ -33,7 +33,7 @@ describe('mermaid-code-editor', () => {
 
     codeEditorNode.$emit('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Error added after update value', async () => {

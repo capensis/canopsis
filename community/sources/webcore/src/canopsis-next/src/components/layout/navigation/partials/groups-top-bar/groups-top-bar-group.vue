@@ -11,9 +11,9 @@
     <template #activator="{ on }">
       <v-btn
         class="group-item__dropdown-btn"
-        v-on="on"
         text
         dark
+        v-on="on"
       >
         <span>{{ group.title }}</span>
         <v-icon

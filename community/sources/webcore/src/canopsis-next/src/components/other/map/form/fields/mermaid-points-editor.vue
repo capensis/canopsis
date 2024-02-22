@@ -1,14 +1,13 @@
 <template>
   <div
-    class="mermaid-points"
     ref="container"
     :class="{ 'mermaid-points--addable': addOnClick && !moving && !isFormOpened }"
+    class="mermaid-points"
     @contextmenu.stop.prevent="openContextmenu"
     @click="openAddPointFormByClick"
     @dblclick="openAddPointFormByDoubleClick"
   >
     <mermaid-point-marker
-      class="mermaid-points__point"
       v-for="(point, index) in pointsData"
       :key="point._id"
       :x="point.x"
@@ -16,6 +15,7 @@
       :entity="point.entity"
       :size="markerSize"
       :class="{ 'mermaid-points__point--no-events': moving }"
+      class="mermaid-points__point"
       @click.stop=""
       @contextmenu.stop.prevent="openEditContextmenu(point)"
       @dblclick.stop="openEditPointFormByDoubleClick(point)"

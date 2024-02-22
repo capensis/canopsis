@@ -12,7 +12,6 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
       style="height: auto;"
     >
       <div
-        aria-labelledby="input-23"
         class="v-input--radio-group__input"
         role="radiogroup"
       >
@@ -103,7 +102,6 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
       style="height: auto;"
     >
       <div
-        aria-labelledby="input-13"
         class="v-input--radio-group__input"
         role="radiogroup"
       >

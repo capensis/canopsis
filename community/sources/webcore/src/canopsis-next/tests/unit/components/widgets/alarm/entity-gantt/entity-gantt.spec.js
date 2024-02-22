@@ -1,8 +1,7 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import flushPromises from 'flush-promises';
 import { mockPopups } from '@unit/utils/mock-hooks';
+
 import EntityGantt from '@/components/widgets/alarm/entity-gantt/entity-gantt.vue';
 
 const stubs = {
@@ -60,7 +59,7 @@ describe('entity-gantt', () => {
       page: 2,
     };
 
-    junitGanttChart.vm.$emit('update:query', newQuery);
+    junitGanttChart.triggerCustomEvent('update:query', newQuery);
 
     await flushPromises();
 
@@ -105,6 +104,8 @@ describe('entity-gantt', () => {
   });
 
   it('Error popup showed after fetch gantt intervals with error message', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
     const error = {
       message: 'Error message',
     };
@@ -122,9 +123,12 @@ describe('entity-gantt', () => {
     await flushPromises();
 
     expect($popups.error).toBeCalledWith({ text: error.message });
+    consoleErrorSpy.mockClear();
   });
 
   it('Error popup showed after fetch gantt intervals with error description', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
     const error = {
       description: 'Error description',
     };
@@ -142,9 +146,12 @@ describe('entity-gantt', () => {
     await flushPromises();
 
     expect($popups.error).toBeCalledWith({ text: error.description });
+    consoleErrorSpy.mockClear();
   });
 
   it('Error popup showed after fetch gantt intervals with error', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
     fetchItemGanttIntervalsWithoutStore.mockRejectedValueOnce({});
     factory({
       store,
@@ -159,6 +166,7 @@ describe('entity-gantt', () => {
     await flushPromises();
 
     expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
+    consoleErrorSpy.mockClear();
   });
 
   it('Renders `entity-gantt` with required props', async () => {

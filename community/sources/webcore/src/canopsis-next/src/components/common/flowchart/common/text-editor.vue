@@ -5,17 +5,17 @@
     style="overflow: visible;"
   >
     <div
-      class="text-shape-editor"
       :class="editorClasses"
       :style="editorStyle"
+      class="text-shape-editor"
     >
       <div class="text-shape-editor__wrapper">
         <div
-          class="text-shape-editor__field"
-          ref="textEditor"
           v-html="value"
+          ref="textEditor"
           :contenteditable="editable"
           :style="fieldStyle"
+          class="text-shape-editor__field"
           @mousedown.stop=""
           @mouseup.stop=""
           @keydown.stop=""

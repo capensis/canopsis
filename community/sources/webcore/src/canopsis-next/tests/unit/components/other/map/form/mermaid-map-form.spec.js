@@ -31,9 +31,9 @@ describe('mermaid-map-form', () => {
 
     const nameField = selectNameField(wrapper);
 
-    nameField.vm.$emit('input', newName);
+    nameField.triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       name: newName,
     });
@@ -56,9 +56,9 @@ describe('mermaid-map-form', () => {
 
     const mermaidEditor = selectMermaidEditor(wrapper);
 
-    mermaidEditor.vm.$emit('input', newParameters);
+    mermaidEditor.triggerCustomEvent('input', newParameters);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       parameters: newParameters,
     });

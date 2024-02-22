@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 
@@ -104,9 +103,9 @@ describe('c-filter-field', () => {
 
     const valueElement = selectAutocomplete(wrapper);
 
-    valueElement.vm.$emit('input', newValue);
+    valueElement.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `c-filter-field` with default props', () => {

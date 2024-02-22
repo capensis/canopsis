@@ -1,11 +1,9 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
 import KpiRating from '@/components/other/kpi/charts/kpi-rating';
@@ -84,7 +82,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedDefaultParams.criteria,
       },
@@ -140,7 +138,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedDefaultParams.criteria,
       },
@@ -192,7 +190,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedParamsAfterUpdate.criteria,
       },
@@ -243,7 +241,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedParamsAfterUpdate.criteria,
       },

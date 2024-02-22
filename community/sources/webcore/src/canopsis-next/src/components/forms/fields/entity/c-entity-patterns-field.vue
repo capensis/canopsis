@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { keyBy, merge, isArray } from 'lodash';
+import { keyBy, mergeWith, isArray } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -39,6 +39,7 @@ import {
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+import { getMapEntityText } from '@/helpers/entities/map/list';
 
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 
@@ -133,6 +134,7 @@ export default {
         props: {
           required: true,
           entityTypes: this.entityTypes,
+          itemText: getMapEntityText,
         },
       };
     },
@@ -323,10 +325,11 @@ export default {
     },
 
     availableEntityAttributes() {
-      const mergedAttributes = merge(
+      const mergedAttributes = mergeWith(
         {},
         this.availableAttributesByValue,
         this.externalAttributesByValue,
+        (a, b) => (isArray(b) ? b : undefined),
       );
 
       return Object.values(mergedAttributes);

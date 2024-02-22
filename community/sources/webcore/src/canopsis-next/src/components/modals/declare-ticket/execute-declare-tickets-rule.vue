@@ -7,11 +7,11 @@
       <v-layout align-center>
         <span>{{ title }}</span>
         <declare-ticket-rule-execution-status
-          class="ml-2 declare-ticket-rule-execute-status"
           v-if="modal.minimized"
           :running="isAllExecutionsRunning"
           :success="isAllExecutionsSucceeded"
           :fail-reason="failReason"
+          class="ml-2 declare-ticket-rule-execute-status"
           color="white"
         />
       </v-layout>

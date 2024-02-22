@@ -3,15 +3,20 @@ package entity
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,25 +29,29 @@ type Store interface {
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
+	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error)
+	GetStateSetting(ctx context.Context, id string) (StateSettingResponse, error)
 }
 
 type store struct {
-	db                     mongo.DbClient
-	dbExport               mongo.DbClient
-	mainCollection         mongo.DbCollection
-	archivedCollection     mongo.DbCollection
-	timezoneConfigProvider config.TimezoneConfigProvider
-	decoder                encoding.Decoder
+	db                      mongo.DbClient
+	dbExport                mongo.DbClient
+	mainCollection          mongo.DbCollection
+	archivedCollection      mongo.DbCollection
+	stateSettingsCollection mongo.DbCollection
+	timezoneConfigProvider  config.TimezoneConfigProvider
+	decoder                 encoding.Decoder
 }
 
 func NewStore(db, dbExport mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, decoder encoding.Decoder) Store {
 	return &store{
-		db:                     db,
-		dbExport:               dbExport,
-		mainCollection:         db.Collection(mongo.EntityMongoCollection),
-		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
-		timezoneConfigProvider: timezoneConfigProvider,
-		decoder:                decoder,
+		db:                      db,
+		dbExport:                dbExport,
+		mainCollection:          db.Collection(mongo.EntityMongoCollection),
+		archivedCollection:      db.Collection(mongo.ArchivedEntitiesMongoCollection),
+		stateSettingsCollection: db.Collection(mongo.StateSettingsMongoCollection),
+		timezoneConfigProvider:  timezoneConfigProvider,
+		decoder:                 decoder,
 	}
 }
 
@@ -387,6 +396,166 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
 }
 
+func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error) {
+	response := StateSettingResponse{}
+	cursor, err := s.stateSettingsCollection.Find(
+		ctx,
+		bson.M{
+			"enabled": true,
+			"method": bson.M{
+				"$in": []string{statesetting.MethodInherited, statesetting.MethodDependencies},
+			},
+		},
+		options.Find().SetSort(bson.M{"priority": 1}).SetProjection(bson.M{
+			"title": 1, "method": 1, "entity_pattern": 1,
+			"inherited_entity_pattern": 1, "state_thresholds": 1,
+		}),
+	)
+	if err != nil {
+		return response, err
+	}
+
+	defer cursor.Close(ctx)
+
+	ent := types.Entity{
+		ID:          r.ID,
+		Name:        r.Name,
+		Connector:   r.Connector,
+		Type:        r.Type,
+		Infos:       TransformInfosRequest(r.Infos),
+		Category:    r.Category,
+		ImpactLevel: r.ImpactLevel,
+	}
+
+	for cursor.Next(ctx) {
+		var stateSetting statesetting.StateSetting
+		err = cursor.Decode(&stateSetting)
+		if err != nil {
+			return response, err
+		}
+
+		matched, err := match.MatchEntityPattern(*stateSetting.EntityPattern, &ent)
+		if err != nil {
+			return response, err
+		}
+
+		if matched {
+			return getStateSettingResponse(stateSetting), nil
+		}
+	}
+
+	if r.Type == types.EntityTypeService {
+		return s.getDefaultStateSettingForService(ctx)
+	}
+
+	return response, nil
+}
+
+func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingResponse, error) {
+	var response StateSettingResponse
+	cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$lookup": bson.M{
+			"from":         mongo.StateSettingsMongoCollection,
+			"localField":   "state_info._id",
+			"foreignField": "_id",
+			"as":           "state_setting",
+		}},
+		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityCountersCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "counters",
+		}},
+		{"$unwind": bson.M{"path": "$counters", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"as":           "alarm",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"v.resolved": nil}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+		{"$project": bson.M{
+			"type":           1,
+			"state_setting":  1,
+			"state_counters": "$counters.state",
+			"state":          "$alarm.v.state.val",
+		}},
+	})
+	if err != nil {
+		return response, err
+	}
+
+	if !cursor.Next(ctx) {
+		return response, ErrNoFound
+	}
+
+	defer cursor.Close(ctx)
+	res := struct {
+		Type          string                       `bson:"type"`
+		StateSetting  statesetting.StateSetting    `bson:"state_setting"`
+		StateCounters entitycounters.StateCounters `bson:"state_counters"`
+		State         int                          `bson:"state"`
+	}{}
+	err = cursor.Decode(&res)
+	if err != nil {
+		return response, err
+	}
+
+	response = getStateSettingResponse(res.StateSetting)
+	if response.ID == "" && res.Type == types.EntityTypeService {
+		return s.getDefaultStateSettingForService(ctx)
+	}
+
+	if res.StateSetting.Method == statesetting.MethodDependencies && res.StateSetting.StateThresholds != nil {
+		var stateThreshold statesetting.StateThreshold
+		switch res.State {
+		case types.AlarmStateCritical:
+			if res.StateSetting.StateThresholds.Critical != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.Critical
+			}
+		case types.AlarmStateMajor:
+			if res.StateSetting.StateThresholds.Major != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.Major
+			}
+		case types.AlarmStateMinor:
+			if res.StateSetting.StateThresholds.Minor != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.Minor
+			}
+		case types.AlarmStateOK:
+			if res.StateSetting.StateThresholds.OK != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.OK
+			}
+		default:
+			return response, fmt.Errorf("unknown state %d of entity %q", res.State, id)
+		}
+
+		var thresholdStateDependsCount int
+		switch stateThreshold.State {
+		case types.AlarmStateTitleCritical:
+			thresholdStateDependsCount = res.StateCounters.Critical
+		case types.AlarmStateTitleMajor:
+			thresholdStateDependsCount = res.StateCounters.Major
+		case types.AlarmStateTitleMinor:
+			thresholdStateDependsCount = res.StateCounters.Minor
+		case types.AlarmStateTitleOK:
+			thresholdStateDependsCount = res.StateCounters.Ok
+		}
+
+		if thresholdStateDependsCount > 0 {
+			response.DependsCount = res.StateCounters.Critical + res.StateCounters.Major + res.StateCounters.Minor + res.StateCounters.Ok
+			response.ThresholdState = stateThreshold.State
+			response.ThresholdStateDependsCount = thresholdStateDependsCount
+		}
+	}
+
+	return response, nil
+}
+
 func (s *store) fillConnectorType(result *AggregationResult) {
 	if result == nil {
 		return
@@ -408,5 +577,49 @@ func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
 	perfDataRe := perfdata.Parse(perfData)
 	for i, entity := range result.Data {
 		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
+	}
+}
+
+func (s *store) getDefaultStateSettingForService(ctx context.Context) (StateSettingResponse, error) {
+	var response StateSettingResponse
+	var stateSetting statesetting.StateSetting
+	err := s.stateSettingsCollection.FindOne(ctx, bson.M{"_id": statesetting.ServiceID}).Decode(&stateSetting)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return response, nil
+		}
+
+		return response, err
+	}
+
+	return getStateSettingResponse(stateSetting), nil
+}
+
+func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettingResponse {
+	response := StateSettingResponse{}
+	response.ID = stateSetting.ID
+	response.Title = stateSetting.Title
+	response.Method = stateSetting.Method
+	response.InheritedEntityPattern = stateSetting.InheritedEntityPattern
+	if stateSetting.StateThresholds != nil {
+		response.StateThresholds = &statesettings.StateThresholds{}
+		response.StateThresholds.Critical = convertStateThreshold(stateSetting.StateThresholds.Critical)
+		response.StateThresholds.Major = convertStateThreshold(stateSetting.StateThresholds.Major)
+		response.StateThresholds.Minor = convertStateThreshold(stateSetting.StateThresholds.Minor)
+		response.StateThresholds.OK = convertStateThreshold(stateSetting.StateThresholds.OK)
+	}
+
+	return response
+}
+
+func convertStateThreshold(src *statesetting.StateThreshold) *statesettings.StateThreshold {
+	if src == nil {
+		return nil
+	}
+	return &statesettings.StateThreshold{
+		Method: src.Method,
+		State:  src.State,
+		Cond:   src.Cond,
+		Value:  src.Value,
 	}
 }

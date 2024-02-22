@@ -38,7 +38,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
     >
       <!---->
       <button
-        class="mr-2 mx-0 v-btn v-btn--icon v-btn--round theme--light v-size--large primary--text"
+        class="mr-2 mx-0 v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small primary"
         type="button"
       >
         <span
@@ -74,7 +74,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
     >
       <!---->
       <button
-        class="mr-2 mx-0 v-btn v-btn--icon v-btn--round theme--light v-size--large primary--text"
+        class="mr-2 mx-0 v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small primary"
         type="button"
       >
         <span

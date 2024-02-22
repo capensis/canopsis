@@ -9,11 +9,11 @@
   >
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         color="secondary"
         icon
         fab
         small
+        v-on="on"
       >
         <v-icon>calendar_today</v-icon>
       </v-btn>

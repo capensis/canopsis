@@ -140,12 +140,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
         >
           <i
             aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-          >
-            edit
-          </i>
-          <i
-            aria-hidden="true"
             class="v-icon notranslate material-icons theme--light primary--text"
           >
             check

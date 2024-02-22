@@ -167,7 +167,7 @@ export const PATTERN_NULL_OPERATORS = [
   PATTERN_OPERATORS.notEqual,
 ];
 
-export const PATTERN_INFOS_NAME_OPERATORS = [
+export const PATTERN_EXISTS_OPERATORS = [
   PATTERN_OPERATORS.exist,
   PATTERN_OPERATORS.notExist,
 ];

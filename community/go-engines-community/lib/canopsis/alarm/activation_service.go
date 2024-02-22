@@ -15,7 +15,7 @@ import (
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
-	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime, isMetaAlarmUpdated bool) (bool, error)
+	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime, entityType string, isMetaAlarmUpdated bool) (bool, error)
 }
 
 type baseActivationService struct {
@@ -40,10 +40,11 @@ func (s *baseActivationService) Process(
 	ctx context.Context,
 	alarm types.Alarm,
 	eventRealTimestamp datetime.MicroTime,
+	entityType string,
 	isMetaAlarmUpdated bool,
 ) (bool, error) {
 	if alarm.CanActivate() {
-		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp, isMetaAlarmUpdated)
+		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp, entityType, isMetaAlarmUpdated)
 		if err != nil {
 			return false, err
 		}
@@ -58,6 +59,7 @@ func (s *baseActivationService) sendActivationEvent(
 	ctx context.Context,
 	alarm types.Alarm,
 	eventReceivedTimestamp datetime.MicroTime,
+	entityType string,
 	isMetaAlarmUpdated bool,
 ) error {
 	event := types.Event{
@@ -67,11 +69,12 @@ func (s *baseActivationService) sendActivationEvent(
 		Resource:           alarm.Value.Resource,
 		Timestamp:          datetime.NewCpsTime(),
 		ReceivedTimestamp:  eventReceivedTimestamp,
+		SourceType:         entityType,
 		IsMetaAlarmUpdated: isMetaAlarmUpdated,
 		EventType:          types.EventTypeActivate,
 		Initiator:          types.InitiatorSystem,
 	}
-	event.SourceType = event.DetectSourceType()
+
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("fail encode activation event: %w", err)

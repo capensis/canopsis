@@ -10,10 +10,10 @@
           :start="config.start"
         />
         <pbehavior-recurrence-rule-exceptions-field
-          class="mt-2"
           v-model="form.exdates"
           :exceptions.sync="form.exceptions"
           :with-exdate-type="config.withExdateType"
+          class="mt-2"
         />
       </template>
       <template #actions="">
@@ -25,9 +25,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.saveChanges') }}

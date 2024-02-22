@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';

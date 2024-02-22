@@ -7,9 +7,7 @@
   >
     <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
     <v-tab-item>
-      <v-layout
-        class="pa-3"
-      >
+      <v-layout class="pa-3">
         <v-flex xs12>
           <v-card>
             <v-card-text>
@@ -31,9 +29,7 @@
     </template>
     <v-tab>{{ $t('common.infos') }}</v-tab>
     <v-tab-item>
-      <v-layout
-        class="pa-3"
-      >
+      <v-layout class="pa-3">
         <v-flex xs12>
           <v-card>
             <v-card-text>
@@ -49,9 +45,7 @@
     <template v-if="hasWidgetCharts">
       <v-tab>{{ $t('context.charts') }}</v-tab>
       <v-tab-item>
-        <v-layout
-          class="pa-3"
-        >
+        <v-layout class="pa-3">
           <v-flex xs12>
             <v-card>
               <v-card-text>
@@ -69,15 +63,14 @@
     <template v-if="item.type === $constants.ENTITY_TYPES.service">
       <v-tab>{{ $t('context.treeOfDependencies') }}</v-tab>
       <v-tab-item>
-        <v-layout
-          class="pa-3"
-        >
+        <v-layout class="pa-3">
           <v-flex xs12>
             <v-card>
               <v-card-text>
                 <tree-of-dependencies-tab
                   :item="item"
                   :columns="serviceDependenciesColumns"
+                  :type="treeOfDependenciesShowType"
                 />
               </v-card-text>
             </v-card>
@@ -87,9 +80,7 @@
     </template>
     <v-tab>{{ $t('context.impactChain') }}</v-tab>
     <v-tab-item>
-      <v-layout
-        class="pa-3"
-      >
+      <v-layout class="pa-3">
         <v-flex xs12>
           <v-card>
             <v-card-text class="pa-0">
@@ -104,9 +95,7 @@
     </v-tab-item>
     <v-tab>{{ $t('context.activeAlarm') }}</v-tab>
     <v-tab-item>
-      <v-layout
-        class="pa-3"
-      >
+      <v-layout class="pa-3">
         <v-flex xs12>
           <v-card>
             <v-card-text>
@@ -121,9 +110,7 @@
     </v-tab-item>
     <v-tab>{{ $t('context.resolvedAlarms') }}</v-tab>
     <v-tab-item>
-      <v-layout
-        class="pa-3"
-      >
+      <v-layout class="pa-3">
         <v-flex xs12>
           <v-card>
             <v-card-text>
@@ -141,6 +128,8 @@
 </template>
 
 <script>
+import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -187,6 +176,10 @@ export default {
     charts: {
       type: Array,
       default: () => [],
+    },
+    treeOfDependenciesShowType: {
+      type: Number,
+      default: TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
     },
   },
   computed: {

@@ -1,11 +1,10 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { BASIC_ENTITY_TYPES } from '@/constants';
 
+import { BASIC_ENTITY_TYPES } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
+
 import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
 import CLazySearchField from '@/components/forms/fields/c-lazy-search-field';
@@ -120,12 +119,7 @@ describe('c-entity-field', () => {
 
     autocompleteElement.setValue(items[0].value);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(items[0].value);
+    expect(wrapper).toEmitInput(items[0].value);
   });
 
   it('Renders `c-entity-field` with default props', async () => {

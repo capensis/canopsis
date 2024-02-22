@@ -9,12 +9,12 @@
       <v-tooltip top>
         <template #activator="{ on: tooltipOn }">
           <v-btn
-            v-on="{ ...fileSelectorOn, ...tooltipOn }"
             :loading="pending"
             color="indigo"
             small
             dark
             fab
+            v-on="{ ...fileSelectorOn, ...tooltipOn }"
           >
             <v-icon small>
               cloud_upload

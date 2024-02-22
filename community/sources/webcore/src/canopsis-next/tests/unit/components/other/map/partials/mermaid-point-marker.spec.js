@@ -1,7 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
+import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
 
 const stubs = {
   'point-icon': true,

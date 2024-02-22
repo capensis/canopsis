@@ -1,5 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
@@ -23,14 +24,9 @@ describe('c-input-type-field', () => {
 
     const textField = selectTextField(wrapper);
 
-    textField.vm.$emit('input', PATTERN_FIELD_TYPES.number);
+    textField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.number);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(PATTERN_FIELD_TYPES.number);
+    expect(wrapper).toEmitInput(PATTERN_FIELD_TYPES.number);
   });
 
   it('Renders `c-input-type-field` with default props', () => {

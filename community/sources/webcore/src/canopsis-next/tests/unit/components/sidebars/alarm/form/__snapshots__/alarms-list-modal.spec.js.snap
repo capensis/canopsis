@@ -10,11 +10,6 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     columnslabel="Column name"
     value="[object Object]"
   />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
-  />
   <field-columns-stub
     columns=""
     label="Column names"
@@ -24,27 +19,12 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     withhtml="true"
     withtemplate="true"
   />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
-  />
   <field-default-elements-per-page-stub
     value="10"
-  />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
   />
   <field-info-popup-stub
     columns=""
     popups=""
-  />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
   />
   <field-text-editor-with-template-stub
     defaultvalue=""
@@ -52,11 +32,6 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     title="\\"More Infos\\" Popup"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-  />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
   />
   <field-text-editor-with-template-stub
     addable="true"
@@ -269,6 +244,9 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     title="Export PDF template"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  />
+  <field-root-cause-settings-stub
+    parameters="[object Object]"
   />
 </widget-settings-group-stub>
 `;
@@ -282,11 +260,6 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     columnslabel="Column name"
     value="[object Object]"
   />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
-  />
   <field-columns-stub
     columns=""
     label="Column names"
@@ -296,27 +269,12 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     withhtml="true"
     withtemplate="true"
   />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
-  />
   <field-default-elements-per-page-stub
     value="10"
-  />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
   />
   <field-info-popup-stub
     columns=""
     popups=""
-  />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
   />
   <field-text-editor-with-template-stub
     defaultvalue=""
@@ -324,11 +282,6 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     title="\\"More Infos\\" Popup"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-  />
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
   />
   <field-text-editor-with-template-stub
     addable="true"
@@ -541,6 +494,9 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     title="Export PDF template"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  />
+  <field-root-cause-settings-stub
+    parameters="[object Object]"
   />
 </widget-settings-group-stub>
 `;

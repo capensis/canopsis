@@ -102,7 +102,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, event.IsMetaAlarmUpdated)
+					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, result.EntityType, event.IsMetaAlarmUpdated)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
@@ -181,7 +181,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		var activated bool
 		var err error
 		if event.AlarmChange.Type != types.AlarmChangeTypeNone {
-			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, event.IsMetaAlarmUpdated)
+			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, event.Entity.Type, event.IsMetaAlarmUpdated)
 			if err != nil {
 				return err
 			}

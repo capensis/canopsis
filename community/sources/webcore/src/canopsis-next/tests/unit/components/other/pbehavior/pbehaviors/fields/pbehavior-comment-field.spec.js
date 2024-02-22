@@ -34,9 +34,9 @@ describe('pbehavior-comment-field', () => {
 
     const newMessage = Faker.datatype.string();
 
-    selectMessageField(wrapper).vm.$emit('input', newMessage);
+    selectMessageField(wrapper).triggerCustomEvent('input', newMessage);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...comment,
       message: newMessage,
     });
@@ -49,9 +49,9 @@ describe('pbehavior-comment-field', () => {
 
     const newMessage = Faker.datatype.string();
 
-    selectRemoveButton(wrapper).vm.$emit('click', newMessage);
+    selectRemoveButton(wrapper).triggerCustomEvent('click', newMessage);
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   test('Renders `pbehavior-comment-field` with default props', () => {
