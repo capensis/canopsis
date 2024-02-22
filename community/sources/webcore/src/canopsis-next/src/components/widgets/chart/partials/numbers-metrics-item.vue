@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    class="numbers-metrics-item"
     :style="itemStyle"
+    class="numbers-metrics-item"
     column
     align-center
   >

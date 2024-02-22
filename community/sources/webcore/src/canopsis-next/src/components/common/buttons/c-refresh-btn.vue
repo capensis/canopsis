@@ -2,9 +2,9 @@
   <v-tooltip left>
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         color="secondary"
         fab
+        v-on="on"
         @click.stop="$emit('click', $event)"
       >
         <v-icon>refresh</v-icon>

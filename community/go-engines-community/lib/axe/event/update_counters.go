@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -14,21 +15,24 @@ import (
 
 func NewUpdateCountersProcessor(
 	dbClient mongo.DbClient,
-	stateCountersService statecounters.StateCountersService,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	eventsSender entitycounters.EventsSender,
 ) Processor {
 	return &updateCountersProcessor{
-		dbClient:             dbClient,
-		alarmCollection:      dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:     dbClient.Collection(mongo.EntityMongoCollection),
-		stateCountersService: stateCountersService,
+		dbClient:                        dbClient,
+		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
+		entityServiceCountersCalculator: entityServiceCountersCalculator,
+		eventsSender:                    eventsSender,
 	}
 }
 
 type updateCountersProcessor struct {
-	dbClient             mongo.DbClient
-	alarmCollection      mongo.DbCollection
-	entityCollection     mongo.DbCollection
-	stateCountersService statecounters.StateCountersService
+	dbClient                        mongo.DbClient
+	alarmCollection                 mongo.DbCollection
+	entityCollection                mongo.DbCollection
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
+	eventsSender                    entitycounters.EventsSender
 }
 
 func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -38,7 +42,7 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 	}
 
 	entity := *event.Entity
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil
@@ -50,9 +54,9 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 		}
 
 		if alarm.ID == "" {
-			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
+			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
 		} else {
-			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &alarm, result.AlarmChange)
+			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &alarm, result.AlarmChange)
 		}
 
 		return err
@@ -62,7 +66,7 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 	}
 
 	for servID, servInfo := range updatedServiceStates {
-		err := p.stateCountersService.UpdateServiceState(ctx, servID, servInfo)
+		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
 		if err != nil {
 			return result, fmt.Errorf("failed to update service state: %w", err)
 		}

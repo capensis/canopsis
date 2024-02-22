@@ -18,8 +18,8 @@
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
-          class="mr-3"
           :category="query.category"
+          class="mr-3"
           @input="updateCategory"
         />
       </v-flex>
@@ -52,9 +52,9 @@
       </v-flex>
       <v-flex>
         <v-checkbox
-          class="pt-2"
           :input-value="query.no_events"
           :label="$t('context.noEventsFilter')"
+          class="pt-2"
           color="primary"
           @change="updateNoEvents"
         />

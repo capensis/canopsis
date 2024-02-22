@@ -37,7 +37,7 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
     role="separator"
   />
   <div
-    class="v-card__actions justify-end px-2 py-3"
+    class="v-card__actions justify-end align-center px-2 py-3"
   >
     <div>
       Actions

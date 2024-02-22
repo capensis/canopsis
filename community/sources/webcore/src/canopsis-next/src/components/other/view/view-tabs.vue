@@ -1,30 +1,29 @@
 <template>
   <v-tabs
-    class="view-tabs"
     ref="tabs"
     :key="vTabsKey"
     :value="$route.fullPath"
     :class="{ hidden: tabs.length &lt; 2 && !editing, 'tabs-editing': editing }"
     :hide-slider="changed"
+    class="view-tabs"
     background-color="secondary lighten-2"
     slider-color="primary"
-    dark
   >
     <c-draggable-list-field
-      class="d-flex"
       v-if="tabs.length"
       :value="tabs"
       :disabled="!editing"
+      class="d-flex"
       drag-class="draggable-item--dragging"
       chosen-class="draggable-item--chosen"
       @end="onDragEnd"
       @input="$emit('update:tabs', $event)"
     >
       <v-tab
-        class="draggable-item"
         v-for="{ to, tab, title, key } in preparedTabs"
         :key="key"
         :to="to"
+        class="draggable-item"
         exact
         ripple
       >

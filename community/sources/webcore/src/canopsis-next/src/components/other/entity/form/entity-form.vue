@@ -29,16 +29,6 @@
                   required
                 />
               </v-flex>
-              <v-flex
-                class="pr-3"
-                xs3
-              >
-                <c-entity-state-field
-                  v-field="form.sli_avail_state"
-                  :label="$t('entity.availabilityState')"
-                  required
-                />
-              </v-flex>
               <v-flex xs6>
                 <c-entity-type-field
                   v-field="form.type"
@@ -53,6 +43,11 @@
           v-field="form.coordinates"
           row
         />
+        <entity-state-setting
+          v-if="hasStateSetting"
+          :form="form"
+          :preparer="formToEntity"
+        />
       </v-layout>
     </v-tab-item>
     <v-tab>{{ $t('entity.manageInfos') }}</v-tab>
@@ -63,12 +58,18 @@
 </template>
 
 <script>
+import { ENTITY_TYPES } from '@/constants';
+
+import { formToEntity } from '@/helpers/entities/entity/form';
+
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
+import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     ManageInfos,
+    EntityStateSetting,
   },
   model: {
     prop: 'form',
@@ -78,6 +79,15 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    hasStateSetting() {
+      return this.form.type === ENTITY_TYPES.component;
+    },
+
+    formToEntity() {
+      return formToEntity;
     },
   },
 };

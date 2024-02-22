@@ -23,8 +23,8 @@
       <c-action-btn :tooltip="$t('common.play')">
         <template #button="">
           <v-btn
-            class="mx-1 ma-0"
             :to="getPlaylistRouteById(item._id, true)"
+            class="mx-1 ma-0"
             icon
           >
             <v-icon>play_arrow</v-icon>

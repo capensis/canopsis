@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createButtonStub } from '@unit/stubs/button';
 
 import ButtonField from '@/components/sidebars/form/fields/button-field.vue';
@@ -24,16 +23,9 @@ describe('button-field', () => {
       },
     });
 
-    const createButton = selectCreateButton(wrapper);
+    selectCreateButton(wrapper).trigger('click');
 
-    createButton.trigger('click');
-
-    const createEvents = wrapper.emitted('create');
-
-    expect(createEvents).toHaveLength(1);
-
-    const [eventData] = createEvents[0];
-    expect(eventData).toEqual(expect.any(Event));
+    expect(wrapper).toEmit('create', expect.any(Event));
   });
 
   it('Edit event emitted after click on the button', () => {
@@ -44,16 +36,9 @@ describe('button-field', () => {
       },
     });
 
-    const editButton = selectEditButton(wrapper);
+    selectEditButton(wrapper).trigger('click');
 
-    editButton.trigger('click');
-
-    const editEvents = wrapper.emitted('edit');
-
-    expect(editEvents).toHaveLength(1);
-
-    const [eventData] = editEvents[0];
-    expect(eventData).toEqual(expect.any(Event));
+    expect(wrapper).toEmit('edit', expect.any(Event));
   });
 
   it('Delete event emitted after click on the button', async () => {
@@ -67,23 +52,22 @@ describe('button-field', () => {
 
     await selectDeleteButton(wrapper).trigger('click');
 
-    const deleteEvents = wrapper.emitted('delete');
-
-    expect(deleteEvents).toHaveLength(1);
-
-    const [eventData] = deleteEvents[0];
-    expect(eventData).toEqual(expect.any(Event));
+    expect(wrapper).toEmit('delete', expect.any(Event));
   });
 
   it('Renders `button-field` with default props', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        title: 'Custom title',
+      },
+    });
 
     expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `button-field` with custom props', () => {
     const wrapper = snapshotFactory({
-      title: {
+      propsData: {
         title: 'Title',
         isEmpty: true,
         addable: true,

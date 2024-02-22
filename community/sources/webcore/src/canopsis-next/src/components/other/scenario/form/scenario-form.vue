@@ -19,8 +19,8 @@
     <c-disable-during-periods-field v-field="form.disable_during_periods" />
     <c-priority-field v-field="form.priority" />
     <scenario-actions-form
-      class="mt-2"
       v-field="form.actions"
+      class="mt-2"
       name="actions"
     />
   </v-layout>

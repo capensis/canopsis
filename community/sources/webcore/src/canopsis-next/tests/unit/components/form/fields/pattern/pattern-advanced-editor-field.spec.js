@@ -52,7 +52,7 @@ describe('pattern-advanced-editor-field', () => {
       },
     }]]);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
 
     jest.runAllTimers();
 
@@ -98,7 +98,7 @@ describe('pattern-advanced-editor-field', () => {
       },
     }]]);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
 
     jest.runAllTimers();
 
@@ -144,7 +144,7 @@ describe('pattern-advanced-editor-field', () => {
       },
     }]]);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
 
     jest.runAllTimers();
 
@@ -185,7 +185,7 @@ describe('pattern-advanced-editor-field', () => {
       },
     }]]);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
 
     jest.runAllTimers();
 
@@ -308,7 +308,7 @@ describe('pattern-advanced-editor-field', () => {
 
     jsonFieldNode.$emit('input', patterns);
 
-    expect(wrapper).toEmit('input', patterns);
+    expect(wrapper).toEmitInput(patterns);
   });
 
   test('Renders `pattern-advanced-editor-field` with default props', () => {

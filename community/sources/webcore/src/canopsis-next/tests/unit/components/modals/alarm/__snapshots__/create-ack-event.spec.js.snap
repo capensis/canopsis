@@ -46,7 +46,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
               style="height: auto;"
             >
               <div
-                aria-labelledby="input-116"
                 class="v-input--radio-group__input"
                 role="radiogroup"
               >
@@ -195,7 +194,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
               style="height: auto;"
             >
               <div
-                aria-labelledby="input-101"
                 class="v-input--radio-group__input"
                 role="radiogroup"
               >

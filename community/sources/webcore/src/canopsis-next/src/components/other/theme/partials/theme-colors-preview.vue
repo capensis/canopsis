@@ -18,9 +18,9 @@
       </v-card-text>
     </v-card>
     <v-messages
-      class="mt-2"
       v-if="!isTableColorReadable"
       :value="[$t('theme.errors.notReadable')]"
+      class="mt-2"
       color="error"
     />
   </v-layout>

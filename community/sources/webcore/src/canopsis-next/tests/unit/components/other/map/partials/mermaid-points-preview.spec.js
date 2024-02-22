@@ -1,8 +1,10 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import { mermaidPointToForm } from '@/helpers/entities/map/form';
+
+import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 
 const stubs = {
   'mermaid-point-marker': true,
@@ -19,7 +21,7 @@ const triggerPointClick = async (wrapper, index, rect = { left: 0, top: 0, width
   const getBoundingClientRect = jest.spyOn(pointMarker.element, 'getBoundingClientRect')
     .mockReturnValue(rect);
 
-  await pointMarker.vm.$emit('click', {
+  await pointMarker.triggerCustomEvent('click', {
     target: pointMarker.element,
   });
 
@@ -44,7 +46,7 @@ describe('mermaid-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:alarms');
+    pointPopupDialog.triggerCustomEvent('show:alarms');
 
     expect(wrapper).toEmit('show:alarms', point);
   });
@@ -61,7 +63,7 @@ describe('mermaid-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:map');
+    pointPopupDialog.triggerCustomEvent('show:map');
 
     expect(wrapper).toEmit('show:map', point.map);
   });
@@ -78,7 +80,7 @@ describe('mermaid-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    await pointPopupDialog.vm.$emit('close');
+    await pointPopupDialog.triggerCustomEvent('close');
 
     expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
   });

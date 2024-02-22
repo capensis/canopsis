@@ -3,12 +3,13 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
-
 import { createButtonStub } from '@unit/stubs/button';
+
+import { MODALS, WIDGET_TYPES } from '@/constants';
+
 import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 
 import ChartsForm from '@/components/sidebars/chart/form/charts-form.vue';
-import { MODALS, WIDGET_TYPES } from '@/constants';
 
 const stubs = {
   'widget-settings-group': true,

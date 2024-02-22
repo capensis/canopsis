@@ -6,21 +6,18 @@
       :min="min"
       :max="max"
     />
-    <v-divider />
     <field-slider
       v-field="form.right"
       :title="$t('settings.margin.right')"
       :min="min"
       :max="max"
     />
-    <v-divider />
     <field-slider
       v-field="form.bottom"
       :title="$t('settings.margin.bottom')"
       :min="min"
       :max="max"
     />
-    <v-divider />
     <field-slider
       v-field="form.left"
       :title="$t('settings.margin.left')"

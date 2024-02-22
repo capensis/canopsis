@@ -8,19 +8,19 @@
       {{ title }}
     </h4>
     <pie-chart
-      class="pie-chart-metrics__chart kpi-widget__chart"
       :chart-id="chartId"
       :datasets="datasets"
       :labels="labels"
       :options="chartOptions"
       :width="700"
       :height="400"
+      class="pie-chart-metrics__chart kpi-widget__chart"
     >
       <template #actions="{ chart }">
         <kpi-chart-export-actions
-          class="mt-4"
           :downloading="downloading"
           :chart="chart"
+          class="mt-4"
           v-on="$listeners"
         />
       </template>

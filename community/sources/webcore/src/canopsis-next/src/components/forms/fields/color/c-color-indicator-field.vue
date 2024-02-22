@@ -2,6 +2,7 @@
   <v-radio-group
     v-field="value"
     :name="name"
+    v-bind="$attrs"
     :disabled="disabled"
   >
     <v-radio
@@ -21,6 +22,7 @@
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 export default {
+  inheritAttrs: false,
   props: {
     value: {
       type: String,
@@ -29,6 +31,10 @@ export default {
     name: {
       type: String,
       default: 'colorIndicator',
+    },
+    label: {
+      type: String,
+      required: false,
     },
     disabled: {
       type: Boolean,

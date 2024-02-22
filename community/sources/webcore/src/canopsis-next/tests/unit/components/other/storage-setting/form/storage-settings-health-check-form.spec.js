@@ -1,9 +1,11 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 import { randomDurationValue } from '@unit/utils/duration';
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
+import { TIME_UNITS } from '@/constants';
+
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
+
+import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsHealthCheckForm from '@/components/other/storage-setting/form/storage-settings-health-check-form.vue';
 
 const stubs = {
@@ -36,9 +38,9 @@ describe('storage-settings-health-check-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectHealthCheckDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectHealthCheckDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-health-check-form` with default form', () => {

@@ -6,8 +6,8 @@
       :row="line"
     />
     <div
-      class="request-content__body"
       v-if="request.body"
+      class="request-content__body"
     >
       <json-treeview
         v-if="request.isJsonBody"

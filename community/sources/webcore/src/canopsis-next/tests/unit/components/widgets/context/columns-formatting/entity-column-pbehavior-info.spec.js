@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import EntityColumnPbehaviorInfo from '@/components/widgets/context/columns-formatting/entity-column-pbehavior-info.vue';

@@ -6,13 +6,13 @@
   >
     <v-layout wrap>
       <v-flex
-        xs4
         v-for="image in images"
         :key="image.src"
+        xs4
       >
         <v-img
-          class="cursor-pointer"
           :src="image.src"
+          class="cursor-pointer"
           aspect-ratio="1"
           @click="showImagesModal(image.src)"
         />

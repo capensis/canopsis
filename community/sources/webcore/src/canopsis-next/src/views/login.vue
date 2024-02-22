@@ -1,11 +1,11 @@
 <template>
   <div
-    class="login"
     :class="{ 'login--maintenance': maintenance }"
+    class="login"
   >
     <div
-      class="login__image"
       v-if="maintenance"
+      class="login__image"
     >
       <v-icon
         size="120"
@@ -20,14 +20,14 @@
     <div class="login__container">
       <base-login />
       <cas-login
-        class="mt-2"
         v-if="isCASAuthEnabled"
         key="cas"
+        class="mt-2"
       />
       <saml-login
-        class="mt-2"
         v-if="isSAMLAuthEnabled"
         key="saml"
+        class="mt-2"
       />
     </div>
     <login-footer />

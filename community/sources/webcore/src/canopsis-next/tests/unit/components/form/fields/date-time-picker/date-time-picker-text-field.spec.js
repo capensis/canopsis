@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { createInputStub } from '@unit/stubs/input';
 
@@ -45,14 +43,9 @@ describe('date-time-picker-text-field', () => {
 
     const newValue = 'now-1d';
 
-    textField.vm.$emit('input', newValue);
+    textField.triggerCustomEvent('input', newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Date object not updated if text field is focused', async () => {
@@ -66,7 +59,7 @@ describe('date-time-picker-text-field', () => {
     const textField = selectTextField(wrapper);
     const dateTimePickerButton = selectDateTimePickerButton(wrapper);
 
-    textField.vm.$emit('focus');
+    textField.triggerCustomEvent('focus');
 
     await wrapper.setProps({
       value: '11/12/2022 21:00',
@@ -86,13 +79,13 @@ describe('date-time-picker-text-field', () => {
     const textField = selectTextField(wrapper);
     const dateTimePickerButton = selectDateTimePickerButton(wrapper);
 
-    textField.vm.$emit('focus');
+    textField.triggerCustomEvent('focus');
 
     await wrapper.setProps({
       value: '11/12/2022 21:00',
     });
 
-    textField.vm.$emit('blur');
+    textField.triggerCustomEvent('blur');
 
     await flushPromises();
 
@@ -151,14 +144,9 @@ describe('date-time-picker-text-field', () => {
 
     const dateTimePickerButton = selectDateTimePickerButton(wrapper);
 
-    dateTimePickerButton.vm.$emit('input', nowTimestamp);
+    dateTimePickerButton.triggerCustomEvent('input', nowTimestamp);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe('07/12/2013 18:00');
+    expect(wrapper).toEmitInput('07/12/2013 18:00');
   });
 
   test('Renders `date-time-picker-text-field` with default props', () => {

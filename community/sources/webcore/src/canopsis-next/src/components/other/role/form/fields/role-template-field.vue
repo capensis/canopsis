@@ -1,6 +1,5 @@
 <template>
   <v-select
-    class="role-template-field"
     v-validate
     :value="value"
     :label="label || $t('role.selectTemplate')"
@@ -9,6 +8,7 @@
     :error-messages="errors.collect(name)"
     :name="name"
     :disabled="disabled"
+    class="role-template-field"
     item-text="name"
     item-value="permissions"
     return-object

@@ -55,10 +55,13 @@ export default {
     editObjectRuleField: 'Edit object rule field',
     removeRuleField: 'Remove rule field',
   },
+  validation: {
+    incorrectRegexOnSetTagsValue: 'Invalid value: the value for the set_tags action must contain regex to extract groups <name> and <value>',
+  },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
       text: 'Copy a value from a field of event to another',
-      message: 'This action is used used to copy the value of a control in an event.',
+      message: 'This action is used used to copy the value or a pair key+value of a control in an event.',
       description: 'The parameters of the action are:\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- description (optional): the description.\n- name: the name of the event field into which the value must be copied.',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
@@ -85,6 +88,16 @@ export default {
       text: 'Set a string field of an event using a template',
       message: 'This action allows you to modify an event field from a template.',
       description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
+      text: 'Set tags from a field using regexp match',
+      message: 'This action can be used for setting tags from other filtered events using regexp match.',
+      description: 'Tags of the format ”Name: Value” can be defined using this action.\nEvent filter with one field filtered by Regexp match with name and value variables shall be applied first.\nRegular expressions examples:\n<ul><li><code>(?P&lt;value&gt;[a-zA-Z]+)\\\\s+(?P&lt;name&gt;[a-zA-Z]+);</code> - for strings that contains arrays of <code>value name;</code> divided by <code>;</code></li><li><code>(?P&lt;name&gt;[a-zA-Z]+)\\\\s+(?P&lt;value&gt;[a-zA-Z]+);</code> - for strings that contains arrays of <code>name value;</code> divided by <code>;</code></li><li><code>(?P&lt;name&gt;[a-zA-Z]+):\\s+(?P&lt;value&gt;[a-zA-Z]+);</code> - for strings that contains arrays of <code>name: value;</code> divided by <code>;</code></li></ul>The parameters of the action are:\n- description (optional): the description.\n- value: the event filter field from which the name and value are retrieved.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
+      text: 'Set tags from a field using a template',
+      message: 'This action can be used for setting tags from other event fields using a template.',
+      description: 'Tags of the format ”Name: Value” can be defined using this action.\nThe parameters of the action are:\n- description (optional): the description.\n- name: the name of the tag group\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
     },
   },
 };

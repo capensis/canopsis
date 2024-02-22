@@ -16,9 +16,9 @@
         />
       </v-flex>
       <v-btn
-        class="white--text"
         :disabled="hasErrors || !alarm"
         :loading="pending || isExecutionRunning"
+        class="white--text"
         color="orange"
         @click="runTestExecution"
       >

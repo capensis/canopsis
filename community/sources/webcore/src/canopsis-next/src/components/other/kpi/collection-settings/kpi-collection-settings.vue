@@ -10,13 +10,13 @@
           v-model="form"
         />
         <v-layout
-          class="my-2"
           v-else
+          class="my-2"
           justify-center
         >
           <v-progress-circular
-            indeterminate
             color="primary"
+            indeterminate
           />
         </v-layout>
       </v-flex>
@@ -27,9 +27,9 @@
       justify-end
     >
       <v-btn
-        class="primary mr-0"
         :disabled="isDisabled || isFormNotChanged"
         :loading="submitting"
+        class="primary mr-0"
         type="submit"
       >
         {{ $t('common.submit') }}

@@ -2,12 +2,12 @@
   <g @dblclick.stop="enableEditingMode">
     <rect
       v-bind="shape.properties"
-      v-on="$listeners"
       :x="shape.x"
       :y="shape.y"
       :width="shape.width"
       :height="shape.height"
       :cursor="readonly ? '' : 'move'"
+      v-on="$listeners"
     />
     <text-editor
       ref="editor"

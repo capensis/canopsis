@@ -49,7 +49,7 @@ describe('date-time-splitted-range-picker-field', () => {
 
     const newStart = new Date(1998, 10, 3, 15);
 
-    selectStartDateTimeSplittedPickerFields(wrapper).vm.$emit('input', newStart);
+    selectStartDateTimeSplittedPickerFields(wrapper).triggerCustomEvent('input', newStart);
 
     expect(wrapper).toEmit('update:start', newStart);
   });
@@ -67,7 +67,7 @@ describe('date-time-splitted-range-picker-field', () => {
 
     const newEnd = new Date(1998, 10, 3, 15);
 
-    selectEndDateTimeSplittedPickerFields(wrapper).vm.$emit('input', newEnd);
+    selectEndDateTimeSplittedPickerFields(wrapper).triggerCustomEvent('input', newEnd);
 
     expect(wrapper).toEmit('update:end', newEnd);
   });

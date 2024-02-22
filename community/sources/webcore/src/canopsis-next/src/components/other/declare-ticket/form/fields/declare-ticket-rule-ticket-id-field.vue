@@ -1,12 +1,12 @@
 <template>
   <v-text-field
-    class="declare-ticket-rule-ticket-id-field"
     v-field="value"
     v-validate="rules"
     :label="$t('declareTicket.ticketID')"
     :error-messages="errors.collect(name)"
     :name="name"
     :disabled="disabled"
+    class="declare-ticket-rule-ticket-id-field"
   >
     <template #append="">
       <c-help-icon

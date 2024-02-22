@@ -2,10 +2,10 @@
   <v-tooltip bottom>
     <template #activator="{ on }">
       <v-btn
-        class="mx-2 my-1"
-        v-on="on"
         :icon="$vuetify.breakpoint.smAndDown"
+        class="mx-2 my-1"
         depressed
+        v-on="on"
         @click="$emit('click')"
       >
         <span v-if="$vuetify.breakpoint.mdAndUp">{{ $t('calendar.today') }}</span>

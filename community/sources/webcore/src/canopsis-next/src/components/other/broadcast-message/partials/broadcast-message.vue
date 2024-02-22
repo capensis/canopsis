@@ -1,12 +1,12 @@
 <template>
   <div
-    class="broadcast-message pa-2"
     :style="{ backgroundColor: color }"
     :title="message"
+    class="broadcast-message pa-2"
   >
     <c-compiled-template
-      class="broadcast-message__text"
       :template="message"
+      class="broadcast-message__text"
       parent-element="span"
     />
     <div

@@ -1,7 +1,5 @@
 <template>
-  <v-layout
-    :column="column"
-  >
+  <v-layout :column="column">
     <v-flex
       :xs12="column"
       xs6

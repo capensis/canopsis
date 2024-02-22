@@ -14,10 +14,10 @@
       xs12
     >
       <c-enabled-field
-        class="mt-0 mb-1"
         v-if="withStartOnTrigger"
         :value="form.start_on_trigger"
         :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
+        class="mt-0 mb-1"
         hide-details
         @input="updateStartOnTrigger"
       />
@@ -30,9 +30,9 @@
         <v-layout align-center>
           <v-flex xs3>
             <v-checkbox
-              class="mt-0"
               v-model="fullDay"
               :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+              class="mt-0"
               color="primary"
               hide-details
             />
@@ -42,9 +42,9 @@
             xs3
           >
             <v-checkbox
-              class="mt-0"
               v-model="noEnding"
               :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
+              class="mt-0"
               color="primary"
               hide-details
             />
@@ -70,22 +70,50 @@
       <v-layout>
         <v-flex xs6>
           <c-pbehavior-reason-field
-            class="mr-2"
             v-field="form.reason"
+            class="mr-2"
             required
             return-object
           />
         </v-flex>
         <v-flex xs6>
           <c-pbehavior-type-field
-            class="ml-2"
             v-field="form.type"
+            class="ml-2"
             required
             return-object
           />
         </v-flex>
       </v-layout>
     </v-flex>
+    <c-enabled-color-picker-field
+      v-field="form.color"
+      :label="$t('modals.createPbehavior.steps.color.label')"
+      row
+    />
+    <c-collapse-panel
+      :title="$t('recurrenceRule.title')"
+      class="mb-2"
+    >
+      <recurrence-rule-form
+        v-field="form.rrule"
+        :start="form.tstart"
+      />
+      <pbehavior-recurrence-rule-exceptions-field
+        v-field="form.exdates"
+        :exceptions="form.exceptions"
+        class="mt-2"
+        with-exdate-type
+        @update:exceptions="updateExceptions"
+      />
+    </c-collapse-panel>
+    <c-collapse-panel
+      v-if="!noComments"
+      :title="$tc('common.comment', 2)"
+      class="mt-2"
+    >
+      <pbehavior-comments-field v-field="form.comments" />
+    </c-collapse-panel>
   </v-layout>
 </template>
 
@@ -113,10 +141,17 @@ import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reason
 import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
+import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
+import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
+
+import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    RecurrenceRuleForm,
+    PbehaviorRecurrenceRuleExceptionsField,
+    PbehaviorCommentsField,
     DateTimeSplittedRangePickerField,
   },
   mixins: [
@@ -135,6 +170,10 @@ export default {
       required: true,
     },
     noEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    noComments: {
       type: Boolean,
       default: false,
     },
@@ -252,6 +291,10 @@ export default {
           start_on_trigger: false,
         });
       }
+    },
+
+    updateExceptions(exceptions) {
+      this.updateField('exceptions', exceptions);
     },
   },
 };

@@ -1,9 +1,9 @@
 <template>
   <div>
     <component
-      v-field="value"
       v-bind="props"
       :is="props.is"
+      v-field="value"
     />
   </div>
 </template>

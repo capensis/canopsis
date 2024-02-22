@@ -16,17 +16,17 @@
       >
         <group-panel
           v-for="group in groups"
-          :group="group"
           :key="group._id"
+          :group="group"
           hide-actions
         >
           <template #title="">
             <v-layout align-center>
               <v-checkbox
-                class="group-checkbox mt-0 pt-0"
                 :input-value="selectedGroupsIds"
                 :value="group._id"
                 :disabled="isDisabledGroup(group)"
+                class="group-checkbox mt-0 pt-0"
                 color="primary"
                 @change="selectGroupHandler(group, $event)"
               >
@@ -45,9 +45,9 @@
             dark
           >
             <v-expansion-panel
-              class="tabs-panel"
               v-for="view in group.views"
               :key="view._id"
+              class="tabs-panel"
             >
               <v-expansion-panel-header
                 class="pa-0"
@@ -56,10 +56,10 @@
                 <group-view-panel :view="view">
                   <template #title="">
                     <v-checkbox
-                      class="group-checkbox mt-0 pt-0"
                       :input-value="selectedViewsIds"
                       :value="view._id"
                       :disabled="isDisabledView(view)"
+                      class="group-checkbox mt-0 pt-0"
                       color="primary"
                       @change="selectViewHandler(view, $event)"
                     >
@@ -67,8 +67,8 @@
                         <span class="text-truncate fill-width">
                           {{ view.title }}
                           <span
-                            class="ml-1"
                             v-show="view.description"
+                            class="ml-1"
                           >
                             ({{ view.description }})
                           </span>
@@ -98,10 +98,10 @@
                       <tab-panel-content :tab="tab">
                         <template #title="">
                           <v-checkbox
-                            class="ml-10"
                             :input-value="selectedTabsIds"
                             :value="tab._id"
                             :label="tab.title"
+                            class="ml-10"
                             color="primary"
                             @change="selectTabHandler(tab, $event)"
                           >

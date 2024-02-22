@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ALARM_METRIC_PARAMETERS, KPI_RATING_SETTINGS_TYPES } from '@/constants';
 
 import KpiRatingMetricField from '@/components/other/kpi/charts/form/fields/kpi-rating-metric-field.vue';
@@ -32,12 +32,7 @@ describe('kpi-rating-metric-field', () => {
 
     valueElement.setValue(ALARM_METRIC_PARAMETERS.instructionAlarms);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(ALARM_METRIC_PARAMETERS.instructionAlarms);
+    expect(wrapper).toEmitInput(ALARM_METRIC_PARAMETERS.instructionAlarms);
   });
 
   it('Renders `kpi-rating-metric-field` without props', () => {

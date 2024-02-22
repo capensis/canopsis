@@ -2,11 +2,11 @@
   <g @dblclick.stop="enableEditingMode">
     <circle-figure
       v-bind="shape.properties"
-      v-on="$listeners"
       :x="shape.x"
       :y="shape.y"
       :diameter="shape.diameter"
       :cursor="readonly ? '' : 'move'"
+      v-on="$listeners"
     />
     <text-editor
       ref="editor"

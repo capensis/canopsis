@@ -47,6 +47,33 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
       </div>
     </div>
   </div>
+  <c-enabled-color-picker-field-stub
+    label="Use special color for this event?"
+    row=""
+    value="#123123"
+  />
+  <c-collapse-panel-stub
+    class="mb-2"
+    title="Recurrence rule"
+  >
+    <recurrence-rule-form-stub
+      rrule=""
+    />
+    <pbehavior-recurrence-rule-exceptions-field-stub
+      class="mt-2"
+      exceptions=""
+      exdates=""
+      withexdatetype="true"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    class="mt-2"
+    title="Comments"
+  >
+    <pbehavior-comments-field-stub
+      comments=""
+    />
+  </c-collapse-panel-stub>
 </div>
 `;
 
@@ -151,5 +178,33 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
       </div>
     </div>
   </div>
+  <c-enabled-color-picker-field-stub
+    label="Use special color for this event?"
+    row=""
+    value="#123123"
+  />
+  <c-collapse-panel-stub
+    class="mb-2"
+    title="Recurrence rule"
+  >
+    <recurrence-rule-form-stub
+      rrule=""
+      start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
+    />
+    <pbehavior-recurrence-rule-exceptions-field-stub
+      class="mt-2"
+      exceptions=""
+      exdates=""
+      withexdatetype="true"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    class="mt-2"
+    title="Comments"
+  >
+    <pbehavior-comments-field-stub
+      comments=""
+    />
+  </c-collapse-panel-stub>
 </div>
 `;

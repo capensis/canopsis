@@ -60,8 +60,8 @@ export default {
       });
     },
 
-    async fetchList() {
-      this.fetchWidgetTemplatesList({ params: this.getQuery() });
+    fetchList() {
+      return this.fetchWidgetTemplatesList({ params: this.getQuery() });
     },
   },
 };

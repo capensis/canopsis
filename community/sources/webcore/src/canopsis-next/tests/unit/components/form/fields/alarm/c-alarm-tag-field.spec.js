@@ -72,11 +72,9 @@ describe('c-alarm-tag-field', () => {
       store,
     });
 
-    const selectField = selectSelectField(wrapper);
+    selectSelectField(wrapper).triggerCustomEvent('input');
 
-    selectField.vm.$emit('input');
-
-    expect(wrapper).toEmit('input');
+    expect(wrapper).toHaveBeenEmit('input');
   });
 
   test('Renders `c-alarm-tag-field` with default props', async () => {

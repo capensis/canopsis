@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    class="my-2"
     v-if="!form"
+    class="my-2"
     justify-center
   >
     <v-progress-circular
@@ -35,9 +35,9 @@
             {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
-            class="primary"
             :disabled="isDisabled"
             :loading="submitting"
+            class="primary"
             type="submit"
           >
             {{ $t('common.submit') }}
