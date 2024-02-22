@@ -1,14 +1,14 @@
-<template lang="pug">
-  c-alarm-actions-chips(
-    v-on="$listeners",
-    :items="tags",
-    :active-item="selectedTag",
-    :small="small",
-    :inline-count="inlineCount",
-    item-text="text",
-    item-value="text",
+<template>
+  <c-alarm-actions-chips
+    :items="tags"
+    :active-item="selectedTag"
+    :small="small"
+    :inline-count="inlineCount"
+    item-text="text"
+    item-value="text"
     row
-  )
+    v-on="$listeners"
+  />
 </template>
 
 <script>

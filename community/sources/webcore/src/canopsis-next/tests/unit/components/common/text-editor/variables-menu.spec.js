@@ -25,9 +25,9 @@ describe('variables-menu', () => {
 
     const value = Faker.datatype.string();
 
-    variablesList.vm.$emit('input', value);
+    variablesList.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Close event emitted after trigger menu', () => {
@@ -37,13 +37,13 @@ describe('variables-menu', () => {
 
     menuNode.$emit('input');
 
-    expect(wrapper).toEmit('close');
+    expect(wrapper).toHaveBeenEmit('close');
   });
 
   test('Renders `variables-menu` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -63,7 +63,7 @@ describe('variables-menu', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

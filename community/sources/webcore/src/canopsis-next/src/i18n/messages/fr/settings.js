@@ -41,6 +41,7 @@ export default {
   groupColumnNames: 'Nom des colonnes des méta-alarmes',
   trackColumnNames: 'Colonnes pour le suivi de cause racine',
   treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
+  treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
@@ -71,6 +72,9 @@ export default {
   isPriorityEnabled: 'Afficher la priorité',
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
+  showRootCauseByStateClick: 'Afficher le diagramme de cause première appelé à partir de la colonne Criticité',
+  rootCauseSettings: 'Paramètres du diagramme des causes profondes',
+  entitiesColorIndicator: 'Indicateur de couleur des entités',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
   activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',
@@ -294,4 +298,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Diviser les données par chemin de valeur',
   },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
 };

@@ -26,9 +26,9 @@ describe('field-grid-size', () => {
 
     const newSize = Faker.datatype.number({ min: 1, max: 12 });
 
-    columnSizeField.vm.$emit('input', newSize);
+    columnSizeField.triggerCustomEvent('input', newSize);
 
-    expect(wrapper).toEmit('input', newSize);
+    expect(wrapper).toEmitInput(newSize);
   });
 
   it('Renders `field-grid-size` with default props', () => {
@@ -38,7 +38,7 @@ describe('field-grid-size', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `field-grid-size` with custom props', () => {
@@ -51,6 +51,6 @@ describe('field-grid-size', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

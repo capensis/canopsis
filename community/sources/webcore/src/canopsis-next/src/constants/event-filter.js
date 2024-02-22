@@ -18,6 +18,8 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   copy: 'copy',
   setEntityInfo: 'set_entity_info',
   copyToEntityInfo: 'copy_to_entity_info',
+  setTags: 'set_tags',
+  setTagsFromTemplate: 'set_tags_from_template',
 };
 
 export const EVENT_FILTER_PATTERN_FIELDS = {
@@ -31,6 +33,8 @@ export const EVENT_FILTER_PATTERN_FIELDS = {
   extraInfos: 'extra',
   state: 'state',
   longOutput: 'long_output',
+  author: 'author',
+  initiator: 'initiator',
 };
 
 export const EVENT_FILTER_SOURCE_TYPES = {
@@ -47,3 +51,15 @@ export const EVENT_FILTER_FAILURE_TYPES = {
   externalDataApi: 3,
   other: 4,
 };
+
+export const EVENT_FILTER_SET_TAGS_FIELDS = [
+  EVENT_FILTER_PATTERN_FIELDS.output,
+  EVENT_FILTER_PATTERN_FIELDS.extraInfos,
+];
+
+export const EVENT_FILTER_SET_TAGS_VALUE_PREFIXES = {
+  [EVENT_FILTER_PATTERN_FIELDS.output]: 'Event.Output',
+  [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Event.ExtraInfo.',
+};
+
+export const EVENT_FILTER_SET_TAGS_REGEX = /<value>.*<name>|<name>.*<value>/;

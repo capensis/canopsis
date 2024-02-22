@@ -1,51 +1,76 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name", :disabled="onlyColor")
-    v-text-field(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('modals.createPbehaviorType.fields.description')",
-      :error-messages="errors.collect('description')",
-      :disabled="onlyColor",
+<template>
+  <v-layout column>
+    <c-name-field
+      v-field="form.name"
+      :disabled="onlyColor"
+    />
+    <v-text-field
+      v-field="form.description"
+      v-validate="'required'"
+      :label="$t('modals.createPbehaviorType.fields.description')"
+      :error-messages="errors.collect('description')"
+      :disabled="onlyColor"
       name="description"
-    )
-    v-layout(row, justify-space-between)
-      v-flex(xs6)
-        pbehavior-type-default-type-field.mr-2(
-          :value="form.type",
-          :disabled="onlyColor",
-          @input="updateDefaultType",
+    />
+    <v-layout justify-space-between>
+      <v-flex xs6>
+        <pbehavior-type-default-type-field
+          :value="form.type"
+          :disabled="onlyColor"
+          class="mr-2"
+          @input="updateDefaultType"
           @update:color="updateColor"
-        )
-      v-flex.ml-2(xs6)
-        c-priority-field(
-          v-field="form.priority",
-          :disabled="onlyColor",
-          :loading="pendingPriority",
+        />
+      </v-flex>
+      <v-flex
+        class="ml-2"
+        xs6
+      >
+        <c-priority-field
+          v-field="form.priority"
+          :disabled="onlyColor"
+          :loading="pendingPriority"
           required
-        )
-    c-icon-field(
-      v-field="form.icon_name",
-      :label="$t('modals.createPbehaviorType.fields.iconName')",
-      :hint="$t('modals.createPbehaviorType.iconNameHint')",
-      :disabled="onlyColor",
+        />
+      </v-flex>
+    </v-layout>
+    <c-icon-field
+      v-field="form.icon_name"
+      :label="$t('modals.createPbehaviorType.fields.iconName')"
+      :hint="$t('modals.createPbehaviorType.iconNameHint')"
+      :disabled="onlyColor"
       required
-    )
-      template(#no-data="")
-        v-list-tile
-          v-list-tile-content
-            v-list-tile-title(v-html="$t('modals.createPbehaviorType.errors.iconName')")
-    v-flex.mt-2(xs12)
-      v-alert(:value="onlyColor", color="info") {{ $t('pbehavior.types.defaultType') }}
-    c-enabled-field(
-      v-field="form.hidden",
+    >
+      <template #no-data="">
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title v-html="$t('modals.createPbehaviorType.errors.iconName')" />
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+    </c-icon-field>
+    <v-flex
+      class="mt-2"
+      xs12
+    >
+      <v-alert
+        :value="onlyColor"
+        color="info"
+      >
+        {{ $t('pbehavior.types.defaultType') }}
+      </v-alert>
+    </v-flex>
+    <c-enabled-field
+      v-field="form.hidden"
       :label="$t('pbehavior.types.hidden')"
-    )
-    c-color-picker-field.mt-2(
-      v-field="form.color",
-      required,
+    />
+    <c-color-picker-field
+      v-field="form.color"
+      class="mt-2"
+      required
       @input="setColorWasChanged"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

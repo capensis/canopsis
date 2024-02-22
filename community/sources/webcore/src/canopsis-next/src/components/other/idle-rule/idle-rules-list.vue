@@ -1,48 +1,61 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="idleRules",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    expand,
-    search,
-    advanced-pagination,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="idleRules"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    expand
+    search
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#type="{ item }") {{ $t(`idleRules.types.${item.type}`) }}
-    template(#operation.type="{ item }") {{ item | get('operation.type', '-') }}
-    template(#duration="{ item }")
-      span {{ item.duration | duration }}
-    template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#enabled="{ item }")
-      c-enabled(:value="item.enabled")
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+      />
+    </template>
+    <template #type="{ item }">
+      {{ $t(`idleRules.types.${item.type}`) }}
+    </template>
+    <template #operation.type="{ item }">
+      {{ item | get('operation.type', '-') }}
+    </template>
+    <template #duration="{ item }">
+      <span>{{ item.duration | duration }}</span>
+    </template>
+    <template #priority="{ item }">
+      {{ item.priority || '-' }}
+    </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      idle-rules-list-expand-item(:idle-rule="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <idle-rules-list-expand-item :idle-rule="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -63,7 +76,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

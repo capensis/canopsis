@@ -1,7 +1,14 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name", required)
-    kpi-filter-patterns-form.mt-2(v-field="form.patterns")
+<template>
+  <v-layout column>
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <kpi-filter-patterns-form
+      v-field="form.patterns"
+      class="mt-2"
+    />
+  </v-layout>
 </template>
 
 <script>

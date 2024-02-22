@@ -14,6 +14,7 @@ import {
   ENTITY_FIELDS_TO_LABELS_KEYS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SORT_ORDERS,
+  TREE_OF_DEPENDENCIES_SHOW_TYPES,
 } from '@/constants';
 import { DEFAULT_WEATHER_LIMIT, PAGINATION_LIMIT } from '@/config';
 
@@ -70,6 +71,8 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {boolean} isHideGrayEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
+ * @property {boolean} entitiesActionsInQueue
+ * @property {number} treeOfDependenciesShowType
  */
 
 /**
@@ -132,6 +135,8 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
   isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
+  entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
+  treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
 });
 
 /**

@@ -1,28 +1,35 @@
-<template lang="pug">
-  div
-    c-alert(
-      :value="!pending && !filters.length",
+<template>
+  <div>
+    <c-alert
+      :value="!pending && !filters.length"
       :type="errors.has(name) ? 'error' : 'info'"
-    ) {{ $t('modals.createFilter.emptyFilters') }}
-    c-draggable-list-field(
-      v-field="filters",
-      :disabled="!editable",
+    >
+      {{ $t('modals.createFilter.emptyFilters') }}
+    </c-alert>
+    <c-draggable-list-field
+      v-field="filters"
+      :disabled="!editable"
       handle=".action-drag-handler"
-    )
-      filter-tile(
-        v-for="(filter, index) in filters",
-        :filter="filter",
-        :key="filter._id",
-        :editable="editable",
-        @edit="$emit('edit', filter, index)",
+    >
+      <filter-tile
+        v-for="(filter, index) in filters"
+        :key="filter._id"
+        :filter="filter"
+        :editable="editable"
+        @edit="$emit('edit', filter, index)"
         @delete="$emit('delete', filter, index)"
-      )
-    v-btn.ml-0(
-      v-if="addable",
-      color="primary",
-      outline,
+      />
+    </c-draggable-list-field>
+    <v-btn
+      v-if="addable"
+      class="v-btn-legacy-m--y"
+      color="primary"
+      outlined
       @click.prevent="$emit('add', $event)"
-    ) {{ $t('common.addFilter') }}
+    >
+      {{ $t('common.addFilter') }}
+    </v-btn>
+  </div>
 </template>
 
 <script>

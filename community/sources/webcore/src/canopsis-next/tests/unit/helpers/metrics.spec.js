@@ -1,5 +1,6 @@
-import { getDateLabelBySampling, convertDataSizeValueToTickString } from '@/helpers/entities/metric/list';
 import { SAMPLINGS } from '@/constants';
+
+import { getDateLabelBySampling, convertDataSizeValueToTickString } from '@/helpers/entities/metric/list';
 
 describe('getDateLabelBySampling', () => {
   const timestamp = 1636523087405;

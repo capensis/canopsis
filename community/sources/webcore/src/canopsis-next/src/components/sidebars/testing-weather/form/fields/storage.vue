@@ -1,11 +1,16 @@
-<template lang="pug">
-  widget-settings-item(:title="title")
-    c-storage-field(
-      v-field="storage",
-      v-on="$listeners",
-      :required="required",
+<template>
+  <widget-settings-item
+    :title="title"
+    :disabled="disabled"
+    hide-on-disabled
+  >
+    <c-storage-field
+      v-field="storage"
+      :required="required"
       :disabled="disabled"
-    )
+      v-on="$listeners"
+    />
+  </widget-settings-item>
 </template>
 
 <script>

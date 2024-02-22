@@ -1,7 +1,8 @@
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import flushPromises from 'flush-promises';
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
+
+const selectExtraDetailsIcon = wrapper => wrapper.find('.c-extra-details__badge');
 
 describe('extra-details-children', () => {
   const total = 3;
@@ -12,12 +13,13 @@ describe('extra-details-children', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsChildren, {
-
     attachTo: document.body,
   });
 
   it('Renders `extra-details-children` with full children and rule', async () => {
-    snapshotFactory({
+    jest.useFakeTimers();
+
+    const wrapper = snapshotFactory({
       propsData: {
         total,
         opened,
@@ -28,6 +30,12 @@ describe('extra-details-children', () => {
 
     await flushPromises();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    selectExtraDetailsIcon(wrapper).trigger('mouseenter');
+
+    jest.runAllTimers();
+
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

@@ -19,7 +19,7 @@ describe('add-location-btn', () => {
 
     btnToggleNode.$emit('change');
 
-    expect(wrapper).toEmit('input', false);
+    expect(wrapper).toEmitInput(false);
   });
 
   test('Renders `add-location-btn` with custom props', () => {
@@ -29,6 +29,6 @@ describe('add-location-btn', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

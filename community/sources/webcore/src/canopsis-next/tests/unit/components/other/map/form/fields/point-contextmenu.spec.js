@@ -2,7 +2,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import PointContextmenu from '@/components/other/map/form/fields/point-contextmenu.vue';
 
-const selectListTiles = wrapper => wrapper.findAll('v-list-tile-stub');
+const selectListTiles = wrapper => wrapper.findAll('v-list-item-stub');
 const selectListTileByIndex = (wrapper, index) => selectListTiles(wrapper).at(index);
 
 describe('mermaid-contextmenu', () => {
@@ -19,9 +19,9 @@ describe('mermaid-contextmenu', () => {
 
     const addPointTile = selectListTileByIndex(wrapper, 0);
 
-    addPointTile.vm.$emit('click');
+    addPointTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('add:point');
+    expect(wrapper).toHaveBeenEmit('add:point');
   });
 
   test('Edit point event emitted after trigger click on edit point', () => {
@@ -35,9 +35,9 @@ describe('mermaid-contextmenu', () => {
 
     const editPointTile = selectListTileByIndex(wrapper, 0);
 
-    editPointTile.vm.$emit('click');
+    editPointTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('edit:point');
+    expect(wrapper).toHaveBeenEmit('edit:point');
   });
 
   test('Remove point event emitted after trigger click on remove point', () => {
@@ -51,9 +51,9 @@ describe('mermaid-contextmenu', () => {
 
     const removePointTile = selectListTileByIndex(wrapper, 1);
 
-    removePointTile.vm.$emit('click');
+    removePointTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('remove:point');
+    expect(wrapper).toHaveBeenEmit('remove:point');
   });
 
   test('Renders `mermaid-contextmenu` with required props', () => {
@@ -64,7 +64,7 @@ describe('mermaid-contextmenu', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-contextmenu` with custom props', () => {
@@ -76,6 +76,6 @@ describe('mermaid-contextmenu', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

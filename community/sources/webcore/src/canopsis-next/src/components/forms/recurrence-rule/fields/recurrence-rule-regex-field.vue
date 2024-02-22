@@ -1,14 +1,22 @@
-<template lang="pug">
-  v-text-field(
-    v-field="value",
-    v-validate="{ regex: advancedFieldRegex }",
-    v-bind="$attrs",
-    :error-messages="errors.collect(name)",
-    :name="name",
+<template>
+  <v-text-field
+    v-field="value"
+    v-validate="{ regex: advancedFieldRegex }"
+    v-bind="$attrs"
+    :error-messages="errors.collect(name)"
+    :name="name"
     persistent-hint
-  )
-    template(#append="")
-      c-help-icon(v-if="helpText", icon="help", :text="helpText", left, max-width="250")
+  >
+    <template #append="">
+      <c-help-icon
+        v-if="helpText"
+        :text="helpText"
+        icon="help"
+        max-width="250"
+        left
+      />
+    </template>
+  </v-text-field>
 </template>
 
 <script>

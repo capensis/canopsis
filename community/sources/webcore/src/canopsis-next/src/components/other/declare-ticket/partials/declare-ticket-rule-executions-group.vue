@@ -1,14 +1,31 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mb-4(v-if="showStatus", row, align-center)
-      v-chip.mr-2(v-if="showRuleName", color="primary", text-color="white", small) {{ ruleName }}
-      span.subheading.mr-5 {{ $t('declareTicket.webhookStatus') }}:
-      declare-ticket-rule-execution-status(
-        :running="isExecutionsRunning",
-        :success="isExecutionsSucceeded",
+<template>
+  <v-layout column>
+    <v-layout
+      v-if="showStatus"
+      class="mb-4"
+      align-center
+    >
+      <v-chip
+        v-if="showRuleName"
+        class="mr-2"
+        color="primary"
+        text-color="white"
+        small
+      >
+        {{ ruleName }}
+      </v-chip>
+      <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
+      <declare-ticket-rule-execution-status
+        :running="isExecutionsRunning"
+        :success="isExecutionsSucceeded"
         :fail-reason="failReason"
-      )
-    declare-ticket-rule-execution-alarms(:alarm-executions="executions", :is-one-execution="isOneExecution")
+      />
+    </v-layout>
+    <declare-ticket-rule-execution-alarms
+      :alarm-executions="executions"
+      :is-one-execution="isOneExecution"
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,45 +1,115 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.variablesHelp.variables') }}
-    template(#text="")
-      v-layout(v-if="config.exportEntity", justify-end)
-        v-btn(color="primary", small, @click="exportOriginal")
-          v-icon(left) file_download
-          span {{ $t('common.exportToJson') }}
-      v-treeview(:items="config.variables", item-key="name")
-        template(#prepend="{ item }")
-          div.caption.font-italic(v-if="item.isArray") {{`(${$t('common.variableTypes.array')})`}}
-
-        template(#label="{ item, leaf }")
-          div {{ item.name }}
-            span.pl-1(v-if="leaf") :
-              c-ellipsis.pl-1.d-inline-block.text--secondary.body-1.pre-wrap(:text="String(item.value)")
-            span.pl-1(v-else-if="!leaf && !(item.children && item.children.length)") :
-              div.pl-1.d-inline-block.text--secondary.body-1.font-italic {{ $t('common.emptyObject') }}
-
-        template(#append="{ leaf, item }")
-          v-menu(bottom, left, offset-y)
-            template(#activator="{ on }")
-              v-tooltip(left)
-                template(#activator="{ on: tooltipOn }")
-                  v-btn(v-on="{ ...tooltipOn, ...on }", icon)
-                    v-icon {{ leaf ? 'content_copy' : 'save_alt' }}
-                span {{ getTooltipContent(leaf, item) }}
-
-            v-list(dense)
-              v-list-tile(v-if="leaf", @click="copyPathToClipboard(item.path)")
-                v-list-tile-avatar
-                  v-icon content_copy
-                v-list-tile-title {{ $t('common.copyPathToClipboard') }}
-              v-list-tile(v-else, @click="exportAsJson(item)")
-                v-list-tile-avatar
-                  v-icon(size="24") $vuetify.icons.json
-                v-list-tile-title {{ $t('common.exportToJson') }}
-              v-list-tile(v-if="item.original", @click="exportAsPdf(item.original, config.exportPdfTemplate)")
-                v-list-tile-avatar
-                  v-icon(size="24") $vuetify.icons.pdf
-                v-list-tile-title {{ $t('common.exportToPdf') }}
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.variablesHelp.variables') }}</span>
+    </template>
+    <template #text="">
+      <v-layout
+        v-if="config.exportEntity"
+        justify-end
+      >
+        <v-btn
+          color="primary"
+          small
+          @click="exportOriginal"
+        >
+          <v-icon left>
+            file_download
+          </v-icon>
+          <span>{{ $t('common.exportToJson') }}</span>
+        </v-btn>
+      </v-layout>
+      <v-treeview
+        :items="config.variables"
+        item-key="name"
+      >
+        <template #prepend="{ item }">
+          <div
+            v-if="item.isArray"
+            class="text-caption font-italic"
+          >
+            {{ `(${$t('common.variableTypes.array')})` }}
+          </div>
+        </template>
+        <template #label="{ item, leaf }">
+          <div>
+            {{ item.name }}
+            <span
+              v-if="leaf"
+              class="pl-1"
+            >:
+              <c-ellipsis
+                :text="String(item.value)"
+                class="pl-1 d-inline-block text--secondary text-body-1 pre-wrap"
+              />
+            </span>
+            <span
+              v-else-if="!leaf && !(item.children && item.children.length)"
+              class="pl-1"
+            >:
+              <div class="pl-1 d-inline-block text--secondary text-body-1 font-italic">
+                {{ $t('common.emptyObject') }}
+              </div>
+            </span>
+          </div>
+        </template>
+        <template #append="{ leaf, item }">
+          <v-menu
+            bottom
+            left
+            offset-y
+          >
+            <template #activator="{ on }">
+              <v-tooltip left>
+                <template #activator="{ on: tooltipOn }">
+                  <v-btn
+                    icon
+                    v-on="{ ...tooltipOn, ...on }"
+                  >
+                    <v-icon>{{ leaf ? 'content_copy' : 'save_alt' }}</v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ getTooltipContent(leaf, item) }}</span>
+              </v-tooltip>
+            </template>
+            <v-list dense>
+              <v-list-item
+                v-if="leaf"
+                @click="copyPathToClipboard(item.path)"
+              >
+                <v-list-item-avatar>
+                  <v-icon>content_copy</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-title>{{ $t('common.copyPathToClipboard') }}</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                v-else
+                @click="exportAsJson(item)"
+              >
+                <v-list-item-avatar>
+                  <v-icon size="24">
+                    $vuetify.icons.json
+                  </v-icon>
+                </v-list-item-avatar>
+                <v-list-item-title>{{ $t('common.exportToJson') }}</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                v-if="item.original"
+                @click="exportAsPdf(item.original, config.exportPdfTemplate)"
+              >
+                <v-list-item-avatar>
+                  <v-icon size="24">
+                    $vuetify.icons.pdf
+                  </v-icon>
+                </v-list-item-avatar>
+                <v-list-item-title>{{ $t('common.exportToPdf') }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-treeview>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

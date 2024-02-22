@@ -1,16 +1,35 @@
-<template lang="pug">
-  v-flex
-    v-btn.ml-0(
-      color="primary",
+<template>
+  <v-flex>
+    <v-btn
+      class="ml-0"
+      color="primary"
       @click="showCreateRecurrenceRuleModal"
-    )  {{ hasRecurrenceRule ? $t('pbehavior.buttons.editRrule') : $t('pbehavior.buttons.addRRule') }}
-    template(v-if="hasRecurrenceRule")
-      v-tooltip(fixed, top)
-        template(#activator="{ on }")
-          v-btn(v-on="on", icon)
-            v-icon(color="grey darken-1") info
-        span {{ form.rrule }}
-      c-action-btn(type="delete", @click="showConfirmRemoveRecurrenceRuleModal")
+    >
+      {{ hasRecurrenceRule ? $t('pbehavior.buttons.editRrule') : $t('pbehavior.buttons.addRRule') }}
+    </v-btn>
+    <template v-if="hasRecurrenceRule">
+      <v-tooltip
+        fixed
+        top
+      >
+        <template #activator="{ on }">
+          <v-btn
+            icon
+            v-on="on"
+          >
+            <v-icon color="grey darken-1">
+              info
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ form.rrule }}</span>
+      </v-tooltip>
+      <c-action-btn
+        type="delete"
+        @click="showConfirmRemoveRecurrenceRuleModal"
+      />
+    </template>
+  </v-flex>
 </template>
 
 <script>

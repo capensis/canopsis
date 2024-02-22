@@ -36,9 +36,9 @@ describe('service-pause-event-form', () => {
 
     const pbehaviorReasonField = selectPbehaviorReasonField(wrapper);
 
-    pbehaviorReasonField.vm.$emit('input', reason);
+    pbehaviorReasonField.triggerCustomEvent('input', reason);
 
-    expect(wrapper).toEmit('input', { ...form, reason });
+    expect(wrapper).toEmitInput({ ...form, reason });
   });
 
   test('Comment changed after trigger textarea', () => {
@@ -56,15 +56,15 @@ describe('service-pause-event-form', () => {
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', comment);
+    descriptionField.triggerCustomEvent('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Renders `service-pause-event-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-pause-event-form` with custom props', () => {
@@ -77,6 +77,6 @@ describe('service-pause-event-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

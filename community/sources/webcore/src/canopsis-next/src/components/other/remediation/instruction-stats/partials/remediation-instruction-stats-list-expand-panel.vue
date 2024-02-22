@@ -1,35 +1,67 @@
-<template lang="pug">
-  div
-    v-tabs(v-model="activeTab", color="secondary lighten-1", slider-color="primary", dark, centered)
-      v-tab {{ $t('common.summary') }}
-      v-tab {{ $t('common.statistics') }}
-      v-tab(v-if="remediationInstructionStatsItem.has_executions")
-        | {{ $t('remediation.instructionStat.alarmsTimeline') }}
-      v-tab {{ $tc('common.rating') }}
-    v-layout.pa-3.secondary.lighten-2
-      v-flex(xs12)
-        v-card.pa-3
-          v-tabs-items.pt-2(v-model="activeTab")
-            v-tab-item(lazy)
-              v-flex(offset-xs2, xs8)
-                remediation-instruction-stats-summary-tab(:remediation-instruction="remediationInstruction")
-            v-tab-item(lazy)
-              v-flex(offset-xs2, xs8)
-                remediation-instruction-stats-statistics-tab(
-                  :remediation-instruction="remediationInstruction",
+<template>
+  <div>
+    <v-tabs
+      v-model="activeTab"
+      background-color="secondary lighten-1"
+      slider-color="primary"
+      dark
+      centered
+    >
+      <v-tab>{{ $t('common.summary') }}</v-tab>
+      <v-tab>{{ $t('common.statistics') }}</v-tab>
+      <v-tab v-if="remediationInstructionStatsItem.has_executions">
+        {{ $t('remediation.instructionStat.alarmsTimeline') }}
+      </v-tab>
+      <v-tab>{{ $tc('common.rating') }}</v-tab>
+    </v-tabs>
+    <v-layout class="pa-3 secondary lighten-2">
+      <v-flex xs12>
+        <v-card class="pa-3">
+          <v-tabs-items
+            v-model="activeTab"
+            class="pt-2"
+          >
+            <v-tab-item>
+              <v-flex
+                offset-xs2
+                xs8
+              >
+                <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction" />
+              </v-flex>
+            </v-tab-item>
+            <v-tab-item>
+              <v-flex
+                offset-xs2
+                xs8
+              >
+                <remediation-instruction-stats-statistics-tab
+                  :remediation-instruction="remediationInstruction"
                   :interval="interval"
-                )
-            v-tab-item(v-if="remediationInstructionStatsItem.has_executions", lazy)
-              remediation-instruction-stats-alarms-timeline-tab(
-                :remediation-instruction="remediationInstruction",
+                />
+              </v-flex>
+            </v-tab-item>
+            <v-tab-item v-if="remediationInstructionStatsItem.has_executions">
+              <remediation-instruction-stats-alarms-timeline-tab
+                :remediation-instruction="remediationInstruction"
                 :interval="interval"
-              )
-            v-tab-item(lazy)
-              v-flex(offset-xs2, xs8)
-                remediation-instruction-stats-rating-tab(
-                  :remediation-instruction="remediationInstruction",
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <v-flex
+                offset-xs2
+                xs8
+              >
+                <remediation-instruction-stats-rating-tab
+                  :remediation-instruction="remediationInstruction"
                   :interval="interval"
-                )
+                />
+              </v-flex>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>

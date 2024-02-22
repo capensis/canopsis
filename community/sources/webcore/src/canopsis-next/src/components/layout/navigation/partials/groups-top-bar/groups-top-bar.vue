@@ -1,18 +1,25 @@
-<template lang="pug">
-  v-layout.secondary.groups-wrapper
-    v-tabs(ref="tabs", color="secondary", show-arrows, dark)
-      groups-top-bar-group(
-        v-for="group in availableGroups",
-        :key="group._id",
+<template>
+  <v-layout class="secondary groups-wrapper">
+    <v-tabs
+      ref="tabs"
+      background-color="secondary"
+      show-arrows
+      dark
+    >
+      <groups-top-bar-group
+        v-for="group in availableGroups"
+        :key="group._id"
         :group="group"
-      )
-      groups-top-bar-playlists
-    groups-settings-button(
-      tooltipLeft,
-      :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
-      :buttonProps="{ fab: true, dark: true, small: true }",
+      />
+      <groups-top-bar-playlists />
+    </v-tabs>
+    <groups-settings-button
+      :wrapper-props="{ direction: 'bottom', absolute: true, right: true, bottom: true }"
+      :button-props="{ fab: true, dark: true, small: true }"
+      tooltip-left
       @toggleEditingMode="toggleEditingMode"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -52,37 +59,37 @@ export default {
 </script>
 
 <style lang="scss">
-  .groups-wrapper {
-    height: 48px;
+.groups-wrapper {
+  height: 48px;
 
-    .v-speed-dial--absolute {
-      &.v-speed-dial--bottom {
-        bottom: -10px;
-      }
+  .v-speed-dial--absolute {
+    &.v-speed-dial--bottom {
+      bottom: -10px;
+    }
 
-      &.v-speed-dial--right {
-        right: 25px;
-      }
+    &.v-speed-dial--right {
+      right: 25px;
     }
   }
+}
 
-  .group-v-menu-content {
-    .v-list {
-      background-color: inherit;
+.group-v-menu-content {
+  .v-list {
+    background-color: inherit;
 
-      .v-list__tile__title {
+      .v-list-item__title {
         height: 28px;
         line-height: 28px;
       }
 
-      .edit-view-button, .duplicate-view-button {
-        vertical-align: top;
-        margin: 0 0 0 8px;
-      }
+    .edit-view-button, .duplicate-view-button {
+      vertical-align: top;
+      margin: 0 0 0 8px;
     }
   }
+}
 
-  .group-item .v-menu__activator .v-btn {
-    text-transform: none;
-  }
+.group-item .v-menu__activator .v-btn {
+  text-transform: none;
+}
 </style>

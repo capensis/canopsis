@@ -22,6 +22,6 @@ describe('pbehavior-recurrence-rule', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
