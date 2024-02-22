@@ -1,13 +1,13 @@
 <template>
   <v-treeview
-    class="json-treeview"
     :items="items"
     :class="{ 'json-treeview--array': isArray }"
+    class="json-treeview"
   >
     <template #prepend="{ item }">
       <i
-        class="text-caption mr-1"
         v-if="item.children"
+        class="text-caption mr-1"
       >({{ $t(`common.variableTypes.${item.isArray ? 'array' : 'object'}`) }})</i>
     </template>
     <template #label="{ item }">

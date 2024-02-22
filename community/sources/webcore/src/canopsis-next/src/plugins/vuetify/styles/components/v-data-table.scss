@@ -72,8 +72,16 @@
         }
 
         .service-dependencies {
-          thead tr:not(.v-data-table__expanded), thead th, td {
-            height: $dense-treeview-cell-height;
+          .v-data-table__wrapper {
+            padding-top: 0;
+          }
+
+          thead, tbody {
+            tr:not(.v-data-table__progress, .v-data-table__expanded) {
+              td, th {
+                height: $dense-treeview-cell-height !important;
+              }
+            }
           }
 
           .treeview-data-table--tree {
@@ -83,6 +91,12 @@
           .v-treeview-node__root {
             min-height: $dense-treeview-cell-height;
             height: $dense-treeview-cell-height;
+          }
+
+          .v-treeview-node__label {
+            .v-chip.v-size--default {
+              height: unset;
+            }
           }
 
           .v-btn {

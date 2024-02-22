@@ -11,8 +11,8 @@
     />
   </v-fade-transition>
   <v-layout
-    class="pa-4"
     v-else
+    class="pa-4"
     justify-center
   >
     <v-progress-circular

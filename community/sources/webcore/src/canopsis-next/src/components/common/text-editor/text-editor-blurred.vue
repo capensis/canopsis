@@ -1,7 +1,7 @@
 <template>
   <div
-    class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active"
     :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }, themeClasses]"
+    class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active"
   >
     <div
       class="v-input__control"
@@ -10,8 +10,8 @@
       <div class="v-input__slot">
         <div class="v-text-field__slot">
           <label
-            class="v-label"
             :class="[{ 'v-label--active': value }, themeClasses]"
+            class="v-label"
           >{{ label }}</label>
           <c-compiled-template
             ref="content"
@@ -21,8 +21,8 @@
         </div>
       </div>
       <div
-        class="v-text-field__details"
         v-if="!hideDetails"
+        class="v-text-field__details"
       >
         <v-messages
           :value="errorMessages"

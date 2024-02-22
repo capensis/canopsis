@@ -37,13 +37,13 @@
     </template>
     <template #timeline="{ item }">
       <span
-        class="text--secondary"
         v-if="!item.alarm"
+        class="text--secondary"
       >{{ $t('remediation.instructionStat.instructionChanged') }}</span>
       <alarm-horizontal-time-line
-        class="my-2"
         v-else
         :alarm="item.alarm"
+        class="my-2"
       />
     </template>
   </c-advanced-data-table>

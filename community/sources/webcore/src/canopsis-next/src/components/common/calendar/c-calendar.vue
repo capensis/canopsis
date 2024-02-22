@@ -5,20 +5,18 @@
     column
   >
     <v-layout
-      justify-space-around
       class="c-calendar__toolbar py-3"
+      justify-space-around
     >
       <calendar-today-btn
         class="c-calendar__today-btn"
         @click="setToday"
       />
-      <v-layout
-        justify-center
-      >
+      <v-layout justify-center>
         <calendar-pagination
-          class="c-calendar__pagination"
           :focus.sync="focus"
           :type="internalType"
+          class="c-calendar__pagination"
           @prev="prev"
           @next="next"
         />
@@ -33,7 +31,6 @@
       <v-calendar
         ref="calendar"
         v-bind="$attrs"
-        v-on="calendarListeners"
         :class="calendarClasses"
         :value="focus"
         :events="availableEvents"
@@ -43,12 +40,13 @@
         :weekday-format="formatWeekday"
         :interval-format="formatInterval"
         :event-margin-bottom="3"
+        v-on="calendarListeners"
       >
         <template #day-body="">
           <div
             v-if="isCurrentTimeLineVisible"
-            class="c-calendar__current-time"
             :style="{ top: currentTimeYPixels }"
+            class="c-calendar__current-time"
           />
         </template>
 
@@ -84,10 +82,10 @@
 
         <template #event="{ event, start, end }">
           <slot
-            name="event"
             :event="event"
             :start="start"
             :end="end"
+            name="event"
           >
             <v-layout
               :class="['pl-1', getMenuClassByCalendarEvent(event.id)]"
@@ -131,14 +129,15 @@
       :close-on-click="false"
       :position-x="positionX"
       :position-y="positionY"
+      attach=".modals-wrapper"
       content-class="c-calendar__popover-wrapper"
     >
       <v-card v-if="popoverOpen">
         <v-card-text>
           <slot
-            name="form-event"
             :close="clearPlaceholder"
             :event="newEvent || editEvent || popoverEvent"
+            name="form-event"
           />
         </v-card-text>
       </v-card>
@@ -397,13 +396,19 @@ export default {
     updateRange({ start, end }) {
       const parsedStart = getStartOfWeek(start, this.weekdays);
       const parsedEnd = getEndOfWeek(end, this.weekdays);
-
-      this.filled = {
+      const newFilled = {
         start: convertDateToStartOfDayDateObject(parsedStart.date),
         end: convertDateToEndOfDayDateObject(parsedEnd.date),
       };
 
-      this.$emit('change:pagination');
+      if (
+        this.filled.start?.getTime() !== newFilled.start.getTime()
+        || this.filled.end?.getTime() !== newFilled.end.getTime()
+      ) {
+        this.filled = newFilled;
+
+        this.$emit('change:pagination');
+      }
     },
 
     setFocusDate(date) {

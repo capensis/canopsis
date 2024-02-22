@@ -6,15 +6,13 @@
   >
     <template #activator="">
       <v-list-item-content class="widget-settings-item-title">
-        <v-list-item-title
-          :class="validationHeaderClass"
-        >
+        <v-list-item-title :class="validationHeaderClass">
           <slot name="title">
             {{ title }}
           </slot>
           <span
-            class="font-italic text-caption ml-1"
             v-if="optional || subTitle"
+            class="font-italic text-caption ml-1"
           >
             <span v-if="optional">({{ $t('common.optional') }})</span>
             <span v-if="subTitle">{{ subTitle }}</span>

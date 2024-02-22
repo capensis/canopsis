@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 import CPieShowModeField from '@/components/sidebars/chart/form/fields/pie-show-mode.vue';
@@ -29,7 +30,7 @@ describe('pie-show-mode', () => {
 
     selectRadioGroup(wrapper).setValue(KPI_PIE_CHART_SHOW_MODS.percent);
 
-    expect(wrapper).toEmit('input', KPI_PIE_CHART_SHOW_MODS.percent);
+    expect(wrapper).toEmitInput(KPI_PIE_CHART_SHOW_MODS.percent);
   });
 
   test('Renders `pie-show-mode` with required props', () => {

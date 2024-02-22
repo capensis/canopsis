@@ -1,22 +1,20 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    divider
     @submit="submit"
   >
     <field-title v-model="form.title" />
-    <v-divider />
     <field-periodic-refresh
       v-model="form.parameters"
       with-live-watching
     />
-    <v-divider />
     <widget-settings-group :title="$t('settings.advancedSettings')">
       <field-default-sort-column
         v-model="form.parameters.sort"
         :columns="sortablePreparedWidgetColumns"
         :columns-label="$t('settings.columnName')"
       />
-      <v-divider />
       <field-columns
         v-model="form.parameters.widgetColumns"
         :template="form.parameters.widgetColumnsTemplate"
@@ -29,9 +27,7 @@
         with-color-indicator
         @update:template="updateWidgetColumnsTemplate"
       />
-      <v-divider />
       <field-resize-column-behavior v-model="form.parameters.columns" />
-      <v-divider />
       <field-columns
         v-model="form.parameters.widgetGroupColumns"
         :template="form.parameters.widgetGroupColumnsTemplate"
@@ -43,7 +39,6 @@
         with-color-indicator
         @update:template="updateWidgetGroupColumnsTemplate"
       />
-      <v-divider />
       <field-columns
         v-model="form.parameters.serviceDependenciesColumns"
         :template="form.parameters.serviceDependenciesColumnsTemplate"
@@ -54,13 +49,9 @@
         with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
-      <v-divider />
       <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
-      <v-divider />
       <field-density v-model="form.parameters.dense" />
-      <v-divider />
       <field-opened-resolved-filter v-model="form.parameters.opened" />
-      <v-divider />
       <template v-if="hasAccessToListFilters">
         <field-filters
           v-model="form.parameters.mainFilter"
@@ -72,7 +63,6 @@
           with-entity
           with-pbehavior
         />
-        <v-divider />
       </template>
       <template v-if="hasAccessToListRemediationInstructionsFilters">
         <field-remediation-instructions-filters
@@ -80,20 +70,17 @@
           :addable="hasAccessToAddRemediationInstructionsFilter"
           :editable="hasAccessToEditRemediationInstructionsFilter"
         />
-        <v-divider />
       </template>
       <field-switcher
         v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
       />
-      <v-divider />
+      <field-root-cause-settings v-model="form.parameters" />
       <field-live-reporting v-model="form.parameters.liveReporting" />
-      <v-divider />
       <field-info-popup
         v-model="form.parameters.infoPopups"
         :columns="preparedWidgetColumns"
       />
-      <v-divider />
       <field-text-editor-with-template
         :value="form.parameters.moreInfoTemplate"
         :template="form.parameters.moreInfoTemplateTemplate"
@@ -104,7 +91,6 @@
         removable
         @input="updateMoreInfo"
       />
-      <v-divider />
       <field-text-editor-with-template
         :value="form.parameters.exportPdfTemplate"
         :template="form.parameters.exportPdfTemplateTemplate"
@@ -117,61 +103,50 @@
         removable
         @input="updateExportPdf"
       />
-      <v-divider />
       <field-grid-range-size
         v-model="form.parameters.expandGridRangeSize"
         :title="$t('settings.expandGridRangeSize')"
       />
-      <v-divider />
       <field-switcher
         v-model="form.parameters.isHtmlEnabledOnTimeLine"
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
       />
-      <v-divider />
       <widget-settings-group :title="$t('common.ack')">
         <field-switcher
           v-model="form.parameters.isAckNoteRequired"
           :title="$t('settings.isAckNoteRequired')"
         />
-        <v-divider />
         <field-switcher
           v-model="form.parameters.isMultiAckEnabled"
           :title="$t('settings.isMultiAckEnabled')"
         />
-        <v-divider />
         <field-fast-action-output
           v-model="form.parameters.fastAckOutput"
           :label="$t('settings.fastAckOutput')"
         />
       </widget-settings-group>
-      <v-divider />
       <widget-settings-group :title="$t('common.cancel')">
         <field-fast-action-output
           v-model="form.parameters.fastCancelOutput"
           :label="$t('settings.fastCancelOutput')"
         />
       </widget-settings-group>
-      <v-divider />
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
         :title="$t('settings.isSnoozeNoteRequired')"
       />
-      <v-divider />
       <field-switcher
         v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired"
         :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
       />
-      <v-divider />
       <field-switcher
         v-model="form.parameters.isUncancelAlarmsCommentRequired"
         :title="$t('settings.isUncancelAlarmsCommentRequired')"
       />
-      <v-divider />
       <field-switcher
         v-model="form.parameters.isMultiDeclareTicketEnabled"
         :title="$t('settings.isMultiDeclareTicketEnabled')"
       />
-      <v-divider />
       <export-csv-form
         v-model="form.parameters"
         :type="$constants.ENTITIES_TYPES.alarm"
@@ -183,37 +158,30 @@
         with-simple-template
         optional-infos-attributes
       />
-      <v-divider />
       <field-switcher
         v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
       />
-      <v-divider />
       <widget-settings-group :title="$t('settings.kioskMode')">
         <field-switcher
           v-model="form.parameters.kiosk.hideActions"
           :title="$t('settings.kiosk.hideActions')"
         />
-        <v-divider />
         <field-switcher
           v-model="form.parameters.kiosk.hideMassSelection"
           :title="$t('settings.kiosk.hideMassSelection')"
         />
-        <v-divider />
         <field-switcher
           v-model="form.parameters.kiosk.hideToolbar"
           :title="$t('settings.kiosk.hideToolbar')"
         />
       </widget-settings-group>
-      <v-divider />
       <field-switcher
         v-model="form.parameters.isActionsAllowWithOkState"
         :title="$t('settings.isActionsAllowWithOkState')"
       />
     </widget-settings-group>
-    <v-divider />
     <charts-form v-model="form.parameters.charts" />
-    <v-divider />
   </widget-settings>
 </template>
 
@@ -247,6 +215,7 @@ import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-templat
 import FieldSwitcher from '../form/fields/switcher.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
 import FieldGridRangeSize from './form/fields/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
@@ -263,6 +232,7 @@ import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue'
 export default {
   name: SIDE_BARS.alarmSettings,
   components: {
+    FieldRootCauseSettings,
     WidgetSettingsGroup,
     WidgetSettings,
     FieldTitle,

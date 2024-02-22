@@ -22,8 +22,8 @@
         <div>{{ $t('common.by') }} : {{ canceled.a }}</div>
         <div>{{ $t('common.date') }} : {{ date }}</div>
         <div
-          class="c-extra-details__message"
           v-if="canceled.m"
+          class="c-extra-details__message"
         >
           {{ $tc('common.comment') }} : {{ canceled.m }}
         </div>

@@ -5,23 +5,23 @@
       wrap
     >
       <c-quick-date-interval-field
-        class="mr-4"
         v-field="query.interval"
         :min="minFromTimestamp"
         :quick-ranges="quickRanges"
+        class="mr-4"
       />
       <c-sampling-field
-        class="mr-4 kpi-alarms-toolbar__sampling"
         :value="query.sampling"
+        class="mr-4 kpi-alarms-toolbar__sampling"
         @input="updateSampling"
       />
       <c-filter-field
-        class="mr-4 kpi-alarms-toolbar__filters"
         v-field="query.filter"
+        class="mr-4 kpi-alarms-toolbar__filters"
       />
       <c-alarm-metric-parameters-field
-        class="kpi-alarms-toolbar__parameters"
         v-field="query.parameters"
+        class="kpi-alarms-toolbar__parameters"
         hide-details
       />
     </v-layout>

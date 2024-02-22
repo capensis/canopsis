@@ -257,7 +257,7 @@ func (a *Alarm) IsSnoozed() bool {
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)
 func (a *Alarm) IsStateLocked() bool {
-	return a.Value.State != nil && a.Value.State.Type == AlarmStepChangeState
+	return a.Value.ChangeState != nil
 }
 
 // IsMalfunctioning...
@@ -504,6 +504,11 @@ func (a *Alarm) GetRefField(f string) (interface{}, bool) {
 			return nil, true
 		}
 		return a.Value.ActivationDate, true
+	case "v.change_state":
+		if a.Value.ChangeState == nil {
+			return nil, true
+		}
+		return a.Value.ChangeState, true
 	default:
 		return nil, false
 	}

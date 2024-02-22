@@ -1,8 +1,8 @@
 <template>
   <v-text-field
-    v-bind="$attrs"
     v-field.number="value"
     v-validate="rules"
+    v-bind="$attrs"
     :label="label"
     :error-messages="errors.collect(name)"
     :disabled="disabled"

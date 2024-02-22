@@ -1,12 +1,12 @@
 import Faker from 'faker';
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MAP_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
+
 import Maps from '@/views/admin/maps.vue';
 
 const stubs = {
@@ -105,7 +105,7 @@ describe('maps', () => {
 
     const fabButton = selectFabButton(wrapper);
 
-    fabButton.vm.$emit('refresh');
+    fabButton.triggerCustomEvent('refresh');
 
     expect(fetchMapsList).toBeCalledWith(
       expect.any(Object),
@@ -132,7 +132,7 @@ describe('maps', () => {
 
     const fabButton = selectFabButton(wrapper);
 
-    fabButton.vm.$emit('create');
+    fabButton.triggerCustomEvent('create');
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -182,7 +182,7 @@ describe('maps', () => {
 
     const mapsList = selectMapsList(wrapper);
 
-    await mapsList.vm.$emit('edit', { _id: map._id });
+    await mapsList.triggerCustomEvent('edit', { _id: map._id });
 
     expect(fetchMapWithoutStore).toBeCalledWith(
       expect.any(Object),
@@ -255,7 +255,7 @@ describe('maps', () => {
 
     const mapsList = selectMapsList(wrapper);
 
-    await mapsList.vm.$emit('duplicate', { _id: map._id });
+    await mapsList.triggerCustomEvent('duplicate', { _id: map._id });
 
     expect(fetchMapWithoutStore).toBeCalledWith(
       expect.any(Object),
@@ -323,7 +323,7 @@ describe('maps', () => {
 
     const mapsList = selectMapsList(wrapper);
 
-    await mapsList.vm.$emit('remove', map._id);
+    await mapsList.triggerCustomEvent('remove', map._id);
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -364,7 +364,7 @@ describe('maps', () => {
 
     const mapsList = selectMapsList(wrapper);
 
-    await mapsList.vm.$emit('remove-selected', [map]);
+    await mapsList.triggerCustomEvent('remove-selected', [map]);
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(

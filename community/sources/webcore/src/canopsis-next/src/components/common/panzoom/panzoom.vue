@@ -13,8 +13,8 @@
       column
     >
       <v-btn
-        class="secondary ma-0 mb-1"
         :disabled="scale === maxZoom"
+        class="secondary ma-0 mb-1"
         icon
         dark
         @click="handleScaleIn"
@@ -22,8 +22,8 @@
         <v-icon>add</v-icon>
       </v-btn>
       <v-btn
-        class="secondary ma-0"
         :disabled="scale === minZoom"
+        class="secondary ma-0"
         dark
         icon
         @click="handleScaleOut"
@@ -32,24 +32,24 @@
       </v-btn>
     </v-layout>
     <v-layout
-      class="panzoom__bottom-right-actions"
       v-if="helpText"
+      class="panzoom__bottom-right-actions"
       column
     >
       <v-tooltip top>
         <template #activator="{ on }">
           <v-icon
             class="panzoom__help-icon"
-            v-on="on"
             color="secondary"
             size="32"
+            v-on="on"
           >
             help
           </v-icon>
         </template>
         <div
-          class="pre-wrap"
           v-html="helpText"
+          class="pre-wrap"
         />
       </v-tooltip>
     </v-layout>

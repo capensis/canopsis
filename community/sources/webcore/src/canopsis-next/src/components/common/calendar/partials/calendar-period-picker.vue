@@ -1,35 +1,35 @@
 <template>
   <span class="calendar-period-picker">
     <v-select
-      class="calendar-period-picker__week pt-0 mt-0"
       v-if="isWeekType"
       v-model="week"
       :items="weeks"
       :menu-props="menuProps"
+      class="calendar-period-picker__week pt-0 mt-0"
       hide-details
     />
     <template v-else>
       <v-select
-        class="calendar-period-picker__day pt-0 mt-0"
         v-if="!isMonthType"
         v-model="day"
         :items="days"
         :menu-props="menuProps"
+        class="calendar-period-picker__day pt-0 mt-0"
         hide-details
       />
       <v-select
-        class="calendar-period-picker__month pt-0 mt-0"
         v-model="month"
         :items="months"
         :menu-props="menuProps"
+        class="calendar-period-picker__month pt-0 mt-0"
         hide-details
       />
     </template>
     <v-select
-      class="calendar-period-picker__year pt-0 mt-0"
       v-model="year"
       :items="years"
       :menu-props="menuProps"
+      class="calendar-period-picker__year pt-0 mt-0"
       hide-details
     />
   </span>

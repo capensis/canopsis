@@ -300,6 +300,51 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -398,222 +443,159 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+              <tr>
+                <td>
                   internet.userName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName73
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName73
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName73
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email73
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName74
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName74
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName74
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email74
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName740
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName740
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName740
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email740
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName741
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName741
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName741
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email741
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName742
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName742
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName742
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email742
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName75
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName75
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName75
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email75
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -729,6 +711,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -867,78 +864,57 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+              <tr>
+                <td>
                   internet.userName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -1054,6 +1030,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -1152,78 +1143,57 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+              <tr>
+                <td>
                   internet.userName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -1339,6 +1309,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -1415,63 +1400,48 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+              <tr>
+                <td>
                   internet.userName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -1587,6 +1557,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -1685,363 +1670,57 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName6
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName6
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.lastName6
-                </td>
-                <td
-                  class="text-start"
-                >
-                  internet.email6
-                </td>
-              </tr>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName7
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName7
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.lastName7
-                </td>
-                <td
-                  class="text-start"
-                >
-                  internet.email7
-                </td>
-              </tr>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName8
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName8
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.lastName8
-                </td>
-                <td
-                  class="text-start"
-                >
-                  internet.email8
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props 2`] = `
-<div
-  class="treeview-data-table v-sheet theme--light"
->
-  <div
-    class="layout"
-  >
-    <div
-      class="treeview-data-table--tree mr-4"
-    >
-      <div
-        class="v-treeview theme--light"
-      >
-        <div
-          aria-expanded="false"
-          class="v-treeview-node v-treeview-node--leaf"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <div
-              class="v-treeview-node__level"
-            />
-            <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; min-width: 32px; width: 32px;"
-                >
-              0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-expanded="false"
-          class="v-treeview-node"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <button
-              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
-              type="button"
-            >
-              arrow_drop_down
-            </button>
-            <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; min-width: 32px; width: 32px;"
-                >
-              3
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-expanded="false"
-          class="v-treeview-node v-treeview-node--leaf"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <div
-              class="v-treeview-node__level"
-            />
-            <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; min-width: 32px; width: 32px;"
-                >
-              0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="flex"
-    >
-      <div
-        class="v-data-table theme--light"
-        header-text="text"
-      >
-        <div
-          class="v-data-table__wrapper"
-        >
-          <table>
-            <colgroup>
-              <col
-                class=""
-              />
-              <col
-                class=""
-              />
-              <col
-                class=""
-              />
-              <col
-                class=""
-              />
-            </colgroup>
-            <thead
-              class="v-data-table-header"
-            >
               <tr>
-                <th
-                  aria-label="Username: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="text-start sortable"
-                  data-value="username"
-                  role="columnheader"
-                  scope="col"
-                >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-                <th
-                  aria-label="Firstname: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="text-start sortable"
-                  data-value="firstname"
-                  role="columnheader"
-                  scope="col"
-                >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-                <th
-                  aria-label="Lastname: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="text-start sortable"
-                  data-value="lastname"
-                  role="columnheader"
-                  scope="col"
-                >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-                <th
-                  aria-label="Email: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="text-start sortable"
-                  data-value="email"
-                  role="columnheader"
-                  scope="col"
-                >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.userName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -2351,6 +2030,51 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -2449,222 +2173,159 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+              <tr>
+                <td>
                   internet.userName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName73
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName73
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName73
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email73
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName74
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName74
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName74
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email74
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName740
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName740
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName740
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email740
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName741
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName741
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName741
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email741
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName742
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName742
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName742
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email742
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName75
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName75
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName75
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email75
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
                   internet.userName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.firstName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -2780,6 +2441,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -2879,77 +2555,23 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
             </thead>
             <tbody>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName6
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName6
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.lastName6
-                </td>
-                <td
-                  class="text-start"
-                >
-                  internet.email6
-                </td>
-              </tr>
+                class="items-slot"
+              />
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName7
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName7
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.lastName7
-                </td>
-                <td
-                  class="text-start"
-                >
-                  internet.email7
-                </td>
-              </tr>
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName8
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName8
-                </td>
-                <td
-                  class="text-start"
-                >
-                  name.lastName8
-                </td>
-                <td
-                  class="text-start"
-                >
-                  internet.email8
-                </td>
-              </tr>
+                class="items-slot"
+              />
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr
+                class="items-slot"
+              />
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -3065,6 +2687,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
         <div
           class="v-data-table__wrapper"
         >
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
           <table>
             <colgroup>
               <col
@@ -3163,78 +2800,69 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               </tr>
             </thead>
             <tbody>
-              <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName6
+              <tr>
+                <td>
+                  <span
+                    class="username-slot"
+                  />
                 </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName6
+                <td>
+                  <span
+                    class="firstname-slot"
+                  />
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName6
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email6
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName7
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
+                  <span
+                    class="username-slot"
+                  />
                 </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName7
+                <td>
+                  <span
+                    class="firstname-slot"
+                  />
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName7
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email7
                 </td>
               </tr>
               <tr
-                class=""
-              >
-                <td
-                  class="text-start"
-                >
-                  internet.userName8
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr>
+                <td>
+                  <span
+                    class="username-slot"
+                  />
                 </td>
-                <td
-                  class="text-start"
-                >
-                  name.firstName8
+                <td>
+                  <span
+                    class="firstname-slot"
+                  />
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   name.lastName8
                 </td>
-                <td
-                  class="text-start"
-                >
+                <td>
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>

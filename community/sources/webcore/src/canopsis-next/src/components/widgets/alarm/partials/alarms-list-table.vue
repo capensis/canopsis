@@ -1,19 +1,19 @@
 <template>
   <v-flex
-    v-on="wrapperListeners"
     v-resize="changeHeaderPositionOnResize"
+    v-on="wrapperListeners"
   >
     <c-empty-data-table-columns v-if="!columns.length" />
     <div v-else>
       <v-layout
-        class="alarms-list-table__top-pagination px-4 position-relative"
         v-if="shownTopPagination"
         ref="actions"
+        class="alarms-list-table__top-pagination px-4 position-relative"
         align-center
       >
         <v-flex
-          class="alarms-list-table__top-pagination--left"
           v-if="densable || !hideActions"
+          class="alarms-list-table__top-pagination--left"
           xs6
         >
           <v-layout
@@ -27,8 +27,8 @@
             />
             <v-fade-transition v-if="!hideActions">
               <v-flex
-                class="px-1"
                 v-show="unresolvedSelected.length"
+                class="px-1"
               >
                 <mass-actions-panel
                   :items="unresolvedSelected"
@@ -41,8 +41,8 @@
           </v-layout>
         </v-flex>
         <v-flex
-          class="alarms-list-table__top-pagination--center-absolute"
           v-if="!hidePagination"
+          class="alarms-list-table__top-pagination--center-absolute"
           xs4
         >
           <c-pagination
@@ -54,8 +54,8 @@
           />
         </v-flex>
         <v-flex
-          class="alarms-list-table__top-pagination--right-absolute"
           v-if="resizableColumn || draggableColumn"
+          class="alarms-list-table__top-pagination--right-absolute"
         >
           <c-action-btn
             v-if="isColumnsChanging"
@@ -71,9 +71,8 @@
         </v-flex>
       </v-layout>
       <v-data-table
-        class="alarms-list-table"
-        ref="dataTable"
         v-model="selected"
+        ref="dataTable"
         :class="vDataTableClass"
         :style="vDataTableStyle"
         :items="alarms"
@@ -84,6 +83,7 @@
         :loading="loading || columnsFiltersPending"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
+        class="alarms-list-table"
         item-key="_id"
         loader-height="2"
         hide-default-footer
@@ -112,15 +112,15 @@
           />
           <template>
             <span
+              v-if="draggingMode"
               :key="`header.${item.value}.drag`"
               class="alarms-list-table__dragging-handler"
-              v-if="draggingMode"
               @click.stop=""
             />
             <span
+              v-if="resizingMode"
               :key="`header.cell.${item.value}.resize`"
               class="alarms-list-table__resize-handler"
-              v-if="resizingMode"
               @mousedown.stop.prevent="startColumnResize(header.value)"
               @click.stop=""
             />
@@ -128,7 +128,6 @@
         </template>
         <template #item="{ isSelected, isExpanded, item, select, expand }">
           <alarms-list-row
-            v-on="rowListeners"
             :ref="`row${item._id}`"
             :key="item._id"
             :selected="isSelected"
@@ -148,8 +147,10 @@
             :search="search"
             :wrap-actions="resizableColumn"
             :show-instruction-icon="hasInstructionsAlarms"
+            v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
+            @click:state="openRootCauseDiagram"
             @expand="expand"
             @input="select"
           />
@@ -176,8 +177,8 @@
     />
     <component
       v-bind="additionalComponent.props"
-      v-on="additionalComponent.on"
       :is="additionalComponent.is"
+      v-on="additionalComponent.on"
     />
   </v-flex>
 </template>
@@ -185,7 +186,7 @@
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS, MODALS } from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -570,6 +571,16 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
+    },
+
+    openRootCauseDiagram(entity) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
+        },
+      });
     },
   },
 };

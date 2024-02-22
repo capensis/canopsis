@@ -480,7 +480,7 @@ func (m *MockActivationService) EXPECT() *MockActivationServiceMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActivationService) Process(arg0 context.Context, arg1 types.Alarm, arg2 datetime.MicroTime, arg3 bool) (bool, error) {
+func (m *MockActivationService) Process(arg0 context.Context, arg1 types.Alarm, arg2 datetime.MicroTime, arg3 string, arg4 bool) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(bool)

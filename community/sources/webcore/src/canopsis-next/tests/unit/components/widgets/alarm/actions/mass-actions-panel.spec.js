@@ -1,8 +1,7 @@
 import Faker from 'faker';
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAuthModule,
@@ -10,6 +9,7 @@ import {
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
@@ -192,7 +192,7 @@ describe('mass-actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Ack modal showed after trigger ack action', async () => {
@@ -237,7 +237,7 @@ describe('mass-actions-panel', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
@@ -279,9 +279,7 @@ describe('mass-actions-panel', () => {
       undefined,
     );
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
-
-    expect(clearItemsEvent).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
@@ -317,9 +315,7 @@ describe('mass-actions-panel', () => {
       undefined,
     );
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
-
-    expect(clearItemsEvent).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
@@ -369,7 +365,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Cancel modal showed after trigger cancel action', async () => {
@@ -422,7 +418,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Fast cancel event sent after trigger fast cancel action', async () => {
@@ -462,7 +458,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Fast cancel event sent after trigger fast cancel action without parameters', async () => {
@@ -496,7 +492,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Associate ticket modal showed after trigger associate ticket action', async () => {
@@ -551,7 +547,7 @@ describe('mass-actions-panel', () => {
       undefined,
     );
 
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
@@ -610,7 +606,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Manual meta alarm group modal showed after trigger manual meta alarm group action', async () => {
@@ -665,7 +661,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
 
     addAlarmsIntoManualMetaAlarm.mockClear();
     refreshAlarmsList.mockClear();
@@ -687,7 +683,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Comment modal showed after trigger comment action', async () => {
@@ -737,7 +733,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
-    expect(wrapper).toEmit('clear:items');
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   it('Renders `mass-actions-panel` with non empty items', () => {
