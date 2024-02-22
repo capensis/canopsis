@@ -1,14 +1,17 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      entity-dependencies-list-component(
-        :widget="widget",
-        :columns="widget.parameters.widgetColumns",
-        :entity-id="config.entityId",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <entity-dependencies-list-component
+        :widget="widget"
+        :columns="widget.parameters.widgetColumns"
+        :entity-id="entity._id"
         :impact="config.impact"
-      )
+      />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -30,8 +33,14 @@ export default {
   },
   mixins: [modalInnerMixin],
   computed: {
+    entity() {
+      return this.config.entity ?? {};
+    },
+
     title() {
-      return this.config.title ?? this.$t('modals.entityDependenciesList.title');
+      return this.config.title ?? this.$t('modals.entityDependenciesList.title', {
+        name: this.entity.name,
+      });
     },
 
     widget() {

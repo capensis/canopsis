@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import NumbersMetricsItem from '@/components/widgets/chart/partials/numbers-metrics-item.vue';
@@ -27,7 +28,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with avg aggregated function', async () => {
@@ -41,7 +42,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with sum aggregated function', async () => {
@@ -55,7 +56,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with min aggregated function', async () => {
@@ -69,7 +70,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with max aggregated function', async () => {
@@ -83,7 +84,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with trend up', async () => {
@@ -103,7 +104,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with trend down', async () => {
@@ -123,6 +124,6 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

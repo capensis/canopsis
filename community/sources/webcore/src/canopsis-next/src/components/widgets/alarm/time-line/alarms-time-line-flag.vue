@@ -1,8 +1,23 @@
-<template lang="pug">
-  v-badge.time-line-flag(:value="isActiveBadge", color="transparent", overlap)
-    template(#badge="")
-      v-icon.time-line-flag__badge-icon(color="error", size="14") error
-    v-icon(:style="{ color: style.color, caretColor: style.color }") {{ style.icon }}
+<template>
+  <v-badge
+    :value="isActiveBadge"
+    class="time-line-flag"
+    color="transparent"
+    overlap
+  >
+    <template #badge="">
+      <v-icon
+        class="time-line-flag__badge-icon"
+        color="error"
+        size="14"
+      >
+        error
+      </v-icon>
+    </template>
+    <v-icon :style="{ color: style.color, caretColor: style.color }">
+      {{ style.icon }}
+    </v-icon>
+  </v-badge>
 </template>
 
 <script>

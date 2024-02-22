@@ -1,33 +1,43 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="shareTokens",
-    :headers="headers",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    advanced-pagination,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        :tooltip="$t('shareToken.revokeSelectedTokens')",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :items="shareTokens"
+    :headers="headers"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    advanced-pagination
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        :tooltip="$t('shareToken.revokeSelectedTokens')"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#created="{ item }") {{ item.created | date }}
-    template(#expired="{ item }") {{ item.expired | date('long', $t('common.notAvailable')) }}
-    template(#accessed="{ item }") {{ item.accessed | date('long', $t('common.notAvailable')) }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="removable",
-          :tooltip="$t('shareToken.revokeToken')",
-          type="delete",
+      />
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #expired="{ item }">
+      {{ item.expired | date('long', $t('common.notAvailable')) }}
+    </template>
+    <template #accessed="{ item }">
+      {{ item.accessed | date('long', $t('common.notAvailable')) }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="removable"
+          :tooltip="$t('shareToken.revokeToken')"
+          type="delete"
           @click="$emit('remove', item)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -45,7 +55,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

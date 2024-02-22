@@ -1,8 +1,20 @@
-<template lang="pug">
-  v-tooltip(top, lazy)
-    template(#activator="{ on }")
-      v-icon.instruction-icon(v-on="on", :class="iconClass", size="22") {{ iconName }}
-    span.pre-wrap(v-html="iconTooltip")
+<template>
+  <v-tooltip top>
+    <template #activator="{ on }">
+      <v-icon
+        :class="iconClass"
+        class="instruction-icon"
+        size="22"
+        v-on="on"
+      >
+        {{ iconName }}
+      </v-icon>
+    </template>
+    <span
+      v-html="iconTooltip"
+      class="pre-wrap"
+    />
+  </v-tooltip>
 </template>
 
 <script>

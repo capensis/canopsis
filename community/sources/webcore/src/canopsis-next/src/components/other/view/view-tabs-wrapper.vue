@@ -1,23 +1,45 @@
-<template lang="pug">
-  div
-    view-tabs.tabs-absolute(
-      v-if="view && isTabsChanged",
-      :tabs.sync="tabs",
-      :changed="isTabsChanged",
+<template>
+  <div>
+    <view-tabs
+      v-if="view && isTabsChanged"
+      :tabs.sync="tabs"
+      :changed="isTabsChanged"
       :updatable="updatable"
-    )
-    v-fade-transition
-      div.v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-        v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
-        v-btn(@click="cancel") {{ $t('common.cancel') }}
-    view-tabs(
-      :tabs.sync="tabs",
-      :changed="isTabsChanged",
-      :editing="editing",
+      class="view-tabs--absolute"
+    />
+    <v-fade-transition>
+      <v-overlay
+        :value="view && isTabsChanged"
+        class="view-tabs__overlay"
+        z-index="10"
+      >
+        <v-btn
+          class="ma-2"
+          color="primary"
+          @click="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn
+          class="ma-2"
+          light
+          @click="cancel"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+      </v-overlay>
+    </v-fade-transition>
+    <view-tabs
+      :tabs.sync="tabs"
+      :changed="isTabsChanged"
+      :editing="editing"
       :updatable="updatable"
-    )
-      template(#default="props")
-        view-tab-widgets(v-bind="props")
+    >
+      <template #default="props">
+        <view-tab-widgets v-bind="props" />
+      </template>
+    </view-tabs>
+  </div>
 </template>
 
 <script>
@@ -87,9 +109,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .tabs-absolute {
+.view-tabs {
+  &--absolute {
     position: absolute;
-    z-index: 9;
+    z-index: 11;
     width: 100%;
   }
+
+  &__overlay {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}
 </style>

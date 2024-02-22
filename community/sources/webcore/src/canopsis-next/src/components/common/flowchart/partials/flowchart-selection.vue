@@ -1,11 +1,11 @@
-<template lang="pug">
-  path(
-    :d="path",
-    :fill="color",
-    fill-opacity="0.1",
-    :stroke="color",
+<template>
+  <path
+    :d="path"
+    :fill="color"
+    :stroke="color"
+    fill-opacity="0.1"
     stroke-width="1"
-  )
+  />
 </template>
 
 <script>

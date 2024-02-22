@@ -1,16 +1,28 @@
-<template lang="pug">
-  v-menu(offset-y)
-    template(#activator="{ on }")
-      v-btn.mr-0(
-        v-on="on",
-        :loading="pending",
-        :disabled="!availableExceptions.length",
+<template>
+  <v-menu offset-y>
+    <template #activator="{ on }">
+      <v-btn
+        :loading="pending"
+        :disabled="!availableExceptions.length"
+        class="mr-0"
         color="primary"
-      ) {{ $t('pbehavior.exceptions.choose') }}
-    v-list(dense)
-      v-list-tile(v-for="exception in availableExceptions", :key="exception._id", @click="addItemIntoArray(exception)")
-        v-list-tile-content
-          v-list-tile-title {{ exception.name }}
+        v-on="on"
+      >
+        {{ $t('pbehavior.exceptions.choose') }}
+      </v-btn>
+    </template>
+    <v-list dense>
+      <v-list-item
+        v-for="exception in availableExceptions"
+        :key="exception._id"
+        @click="addItemIntoArray(exception)"
+      >
+        <v-list-item-content>
+          <v-list-item-title>{{ exception.name }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

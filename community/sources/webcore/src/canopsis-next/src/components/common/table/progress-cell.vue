@@ -1,7 +1,15 @@
-<template lang="pug">
-  td
-    slot(v-if="!pending")
-    v-progress-circular.ml-2(v-else, indeterminate, color="primary", width="3", size="25")
+<template>
+  <td>
+    <slot v-if="!pending" />
+    <v-progress-circular
+      v-else
+      class="ml-2"
+      color="primary"
+      width="3"
+      size="25"
+      indeterminate
+    />
+  </td>
 </template>
 
 <script>

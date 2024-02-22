@@ -1,15 +1,27 @@
-<template lang="pug">
-  c-draggable-list-field.c-card-iterator-field(
-    v-field="data",
-    handle=".item-drag-handler",
-    ghost-class="grey",
-    :disabled="disabled",
+<template>
+  <c-draggable-list-field
+    v-field="data"
+    :disabled="disabled"
     :group="draggableGroup"
-  )
-    template(v-for="(item, index) in data")
-      v-card.lighten-2(:key="item[itemKey]")
-        v-card-text
-          slot(name="item", :item="item", :index="index")
+    class="c-card-iterator-field"
+    handle=".item-drag-handler"
+    ghost-class="grey"
+  >
+    <template v-for="(item, index) in data">
+      <v-card
+        :key="item[itemKey]"
+        class="lighten-2"
+      >
+        <v-card-text>
+          <slot
+            :item="item"
+            :index="index"
+            name="item"
+          />
+        </v-card-text>
+      </v-card>
+    </template>
+  </c-draggable-list-field>
 </template>
 
 <script>

@@ -6,14 +6,14 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
 >
   <div>
     <div
-      class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+      class="layout alarms-list-table__top-pagination px-4 position-relative align-center"
       style="transform: translateY(0px); opacity: 1;"
     >
       <div
         class="flex alarms-list-table__top-pagination--left xs6"
       >
         <div
-          class="layout row align-center justify-start"
+          class="layout align-center justify-start"
         >
           <c-density-btn-toggle-stub
             value="1"
@@ -25,59 +25,148 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
       <!---->
     </div>
     <div
-      class="alarms-list-table columns-sm"
+      class="v-data-table alarms-list-table v-data-table--dense theme--light v-data-table--selectable columns-sm"
     >
       <div
-        class="v-table__overflow"
+        class="v-data-table__wrapper"
       >
-        <table
-          class="v-datatable v-table v-datatable--expand v-datatable--select-all v-datatable--dense theme--light"
-        >
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
           <thead
+            class="v-data-table-header"
             style="transform: translateY(0px); opacity: 1;"
           >
             <tr>
-              <th>
+              <th
+                aria-label=""
+                class="text-start"
+                data-value="data-table-select"
+                role="columnheader"
+                scope="col"
+                style="width: 1px; min-width: 1px;"
+              >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-data-table__checkbox v-simple-checkbox"
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          role="checkbox"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple"
-                        />
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </th>
               <th
-                aria-label=""
+                aria-label="Not sorted. Activate to sort ascending."
                 aria-sort="none"
-                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
                 role="columnheader"
                 scope="col"
-                tabindex="0"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -87,15 +176,17 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 <!---->
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
                 >
                   arrow_upward
                 </i>
               </th>
             </tr>
+          </thead>
+          <thead>
             <tr
-              class="v-datatable__progress"
+              class="v-data-table__progress"
             >
               <th
                 class="column"
@@ -107,151 +198,52 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   <div
                     aria-valuemax="100"
                     aria-valuemin="0"
-                    class="v-progress-linear"
+                    class="v-progress-linear v-progress-linear--visible theme--light"
                     role="progressbar"
                     style="height: 2px;"
                   >
                     <div
                       class="v-progress-linear__background primary"
-                      style="height: 2px; opacity: 0.3; width: 100%;"
+                      style="opacity: 0.3; left: 0%; width: 100%;"
                     />
                     <div
-                      class="v-progress-linear__bar"
+                      class="v-progress-linear__buffer"
+                    />
+                    <transition-stub
+                      name="fade-transition"
                     >
-                      <transition-stub
-                        name="fade-transition"
+                      <div
+                        class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                       >
                         <div
-                          class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                        >
-                          <div
-                            class="v-progress-linear__bar__indeterminate long primary"
-                          />
-                          <div
-                            class="v-progress-linear__bar__indeterminate short primary"
-                          />
-                        </div>
-                      </transition-stub>
-                      <transition-stub
-                        name="slide-x-transition"
-                      />
-                    </div>
+                          class="v-progress-linear__indeterminate long primary"
+                        />
+                        <div
+                          class="v-progress-linear__indeterminate short primary"
+                        />
+                      </div>
+                    </transition-stub>
                   </div>
                 </transition-stub>
               </th>
             </tr>
           </thead>
           <tbody>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
+            <tr
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
-            <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
           </tbody>
         </table>
       </div>
@@ -281,24 +273,31 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="alarms-list-table columns-sm"
+      class="v-data-table alarms-list-table theme--light columns-sm"
     >
       <div
-        class="v-table__overflow"
+        class="v-data-table__wrapper"
       >
-        <table
-          class="v-datatable v-table theme--light"
-        >
-          <thead>
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
+          <thead
+            class="v-data-table-header"
+          >
             <tr>
               <th
-                aria-label=""
+                aria-label="Not sorted. Activate to sort ascending."
                 aria-sort="none"
-                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
                 role="columnheader"
                 scope="col"
-                tabindex="0"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -308,16 +307,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
                 >
                   arrow_upward
                 </i>
               </th>
               <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left alarms-list-table__draggable-column"
+                aria-label="Actions"
+                class="text-start alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -330,19 +328,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
               </th>
             </tr>
-            <tr
-              class="v-datatable__progress"
-            >
-              <th
-                class="column"
-                colspan="2"
-              />
-            </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr
+              class="v-data-table__empty-wrapper"
+            >
               <td
-                class="text-xs-center"
                 colspan="2"
               >
                 No data available
@@ -365,25 +356,32 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="alarms-list-table columns-sm"
+      class="v-data-table alarms-list-table theme--light columns-sm"
     >
       <div
-        class="v-table__overflow"
+        class="v-data-table__wrapper"
       >
-        <table
-          class="v-datatable v-table theme--light"
-        >
-          <thead>
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
+          <thead
+            class="v-data-table-header"
+          >
             <tr>
               <th
-                aria-label=""
+                aria-label="Not sorted. Activate to sort ascending."
                 aria-sort="none"
-                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                class="text-start alarms-list-table__draggable-column sortable"
                 data-value="links"
                 role="columnheader"
                 scope="col"
-                tabindex="0"
-                width="40px"
+                style="width: 40px; min-width: 40px;"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -393,16 +391,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
                 >
                   arrow_upward
                 </i>
               </th>
               <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left alarms-list-table__draggable-column"
+                aria-label="Actions"
+                class="text-start alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -415,19 +412,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
               </th>
             </tr>
-            <tr
-              class="v-datatable__progress"
-            >
-              <th
-                class="column"
-                colspan="2"
-              />
-            </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr
+              class="v-data-table__empty-wrapper"
+            >
               <td
-                class="text-xs-center"
                 colspan="2"
               >
                 No data available
@@ -450,58 +440,57 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="alarms-list-table columns-sm alarms-list-table__selecting"
+      class="v-data-table alarms-list-table theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
     >
       <div
-        class="v-table__overflow"
+        class="v-data-table__wrapper"
       >
-        <table
-          class="v-datatable v-table v-datatable--select-all theme--light"
-        >
-          <thead>
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
+          <thead
+            class="v-data-table-header"
+          >
             <tr>
-              <th>
+              <th
+                aria-label=""
+                class="text-start"
+                data-value="data-table-select"
+                role="columnheader"
+                scope="col"
+                style="width: 1px; min-width: 1px;"
+              >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+                  class="v-data-table__checkbox v-simple-checkbox v-simple-checkbox--disabled"
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-icon--disabled material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          disabled="disabled"
-                          role="checkbox"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple"
-                        />
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                    </div>
+                      check_box_outline_blank
+                    </i>
                   </div>
                 </div>
               </th>
               <th
-                aria-label=""
+                aria-label="Not sorted. Activate to sort ascending."
                 aria-sort="none"
-                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
                 role="columnheader"
                 scope="col"
-                tabindex="0"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -511,16 +500,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
                 >
                   arrow_upward
                 </i>
               </th>
               <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left alarms-list-table__draggable-column"
+                aria-label="Actions"
+                class="text-start alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -533,19 +521,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
               </th>
             </tr>
-            <tr
-              class="v-datatable__progress"
-            >
-              <th
-                class="column"
-                colspan="3"
-              />
-            </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr
+              class="v-data-table__empty-wrapper"
+            >
               <td
-                class="text-xs-center"
                 colspan="3"
               >
                 No data available
@@ -570,58 +551,57 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="alarms-list-table columns-sm alarms-list-table__selecting"
+      class="v-data-table alarms-list-table theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
     >
       <div
-        class="v-table__overflow"
+        class="v-data-table__wrapper"
       >
-        <table
-          class="v-datatable v-table v-datatable--select-all theme--light"
-        >
-          <thead>
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
+          <thead
+            class="v-data-table-header"
+          >
             <tr>
-              <th>
+              <th
+                aria-label=""
+                class="text-start"
+                data-value="data-table-select"
+                role="columnheader"
+                scope="col"
+                style="width: 1px; min-width: 1px;"
+              >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+                  class="v-data-table__checkbox v-simple-checkbox v-simple-checkbox--disabled"
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-icon--disabled material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          disabled="disabled"
-                          role="checkbox"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple"
-                        />
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                    </div>
+                      check_box_outline_blank
+                    </i>
                   </div>
                 </div>
               </th>
               <th
-                aria-label=""
+                aria-label="Not sorted. Activate to sort ascending."
                 aria-sort="none"
-                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
                 role="columnheader"
                 scope="col"
-                tabindex="0"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -631,16 +611,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
                 >
                   arrow_upward
                 </i>
               </th>
               <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left alarms-list-table__draggable-column"
+                aria-label="Actions"
+                class="text-start alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -653,19 +632,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <!---->
               </th>
             </tr>
-            <tr
-              class="v-datatable__progress"
-            >
-              <th
-                class="column"
-                colspan="3"
-              />
-            </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr
+              class="v-data-table__empty-wrapper"
+            >
               <td
-                class="text-xs-center"
                 colspan="3"
               >
                 No data available
@@ -689,13 +661,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
 >
   <div>
     <div
-      class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+      class="layout alarms-list-table__top-pagination px-4 position-relative align-center"
     >
       <div
         class="flex alarms-list-table__top-pagination--left xs6"
       >
         <div
-          class="layout row align-center justify-start"
+          class="layout align-center justify-start"
         >
           <!---->
           <transition-stub
@@ -725,24 +697,108 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
       <!---->
     </div>
     <div
-      class="alarms-list-table columns-sm"
+      class="v-data-table alarms-list-table theme--light columns-sm"
     >
       <div
-        class="v-table__overflow"
+        class="v-data-table__wrapper"
       >
-        <table
-          class="v-datatable v-table v-datatable--expand theme--light"
-        >
-          <thead>
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          alarm="[object Object]"
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
+          <thead
+            class="v-data-table-header"
+          >
             <tr>
               <th
-                aria-label=": Not sorted."
-                aria-sort="none"
-                class="column text-xs-left"
-                data-value=""
+                aria-label=""
+                class="text-start"
                 role="columnheader"
                 scope="col"
-                width="100"
+                style="width: 100px; min-width: 100px;"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -752,13 +808,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 <!---->
               </th>
               <th
-                aria-label=""
+                aria-label="Not sorted. Activate to sort ascending."
                 aria-sort="none"
-                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
                 role="columnheader"
                 scope="col"
-                tabindex="0"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -768,16 +823,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 <!---->
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
                 >
                   arrow_upward
                 </i>
               </th>
               <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left alarms-list-table__draggable-column"
+                aria-label="Actions"
+                class="text-start alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -790,111 +844,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 <!---->
               </th>
             </tr>
-            <tr
-              class="v-datatable__progress"
-            >
-              <th
-                class="column"
-                colspan="3"
-              />
-            </tr>
           </thead>
           <tbody>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
+            <tr
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              alarm="[object Object]"
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
-            <tr
-              class="v-datatable__expand-row"
-            >
-              <transition-group-stub
-                class="v-datatable__expand-col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
           </tbody>
         </table>
       </div>

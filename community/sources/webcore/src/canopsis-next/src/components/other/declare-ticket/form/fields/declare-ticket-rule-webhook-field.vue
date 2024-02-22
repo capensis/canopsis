@@ -1,35 +1,40 @@
-<template lang="pug">
-  c-card-iterator-item(:item-number="webhookNumber", @remove="removeWebhook")
-    template(#header="")
-      request-url-field(
-        v-field="value.request",
-        :help-text="$t('common.request.urlHelp')",
-        :name="requestFormName",
-        :disabled="disabled",
+<template>
+  <c-card-iterator-item
+    :item-number="webhookNumber"
+    @remove="removeWebhook"
+  >
+    <template #header="">
+      <request-url-field
+        v-field="value.request"
+        :help-text="$t('common.request.urlHelp')"
+        :name="requestFormName"
+        :disabled="disabled"
         :url-variables="payloadVariables"
-      )
-
-    request-form(
-      v-field="value.request",
-      :name="requestFormName",
-      :headers-variables="payloadVariables",
-      :payload-variables="payloadVariables",
+      />
+    </template>
+    <request-form
+      v-field="value.request"
+      :name="requestFormName"
+      :headers-variables="payloadVariables"
+      :payload-variables="payloadVariables"
       hide-url
-    )
-    declare-ticket-rule-ticket-mapping-field.mb-2(
-      v-field="value.declare_ticket",
-      :name="`${name}.declare_ticket`",
-      :is-declare-ticket-exist="isDeclareTicketExist",
-      hide-empty-response,
-      ticket-id-required,
+    />
+    <declare-ticket-rule-ticket-mapping-field
+      v-field="value.declare_ticket"
+      :name="`${name}.declare_ticket`"
+      :is-declare-ticket-exist="isDeclareTicketExist"
+      class="mb-2"
+      hide-empty-response
+      ticket-id-required
       only-one-ticket-id
-    )
-    c-workflow-field(
-      v-field="value.stop_on_fail",
-      :disabled="disabled",
-      :label="$t('declareTicket.workflowIfStepFails')",
+    />
+    <c-workflow-field
+      v-field="value.stop_on_fail"
+      :disabled="disabled"
+      :label="$t('declareTicket.workflowIfStepFails')"
       :continue-label="$t('declareTicket.continueWithNextStep')"
-    )
+    />
+  </c-card-iterator-item>
 </template>
 
 <script>

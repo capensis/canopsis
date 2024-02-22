@@ -1,21 +1,28 @@
-<template lang="pug">
-  v-radio-group.c-column-size-field(
-    v-field="value",
-    :class="{ 'c-column-size-field--mobile': mobile }",
-    :name="name",
-    color="primary",
-    hide-details,
-    mandatory,
+<template>
+  <v-radio-group
+    v-field="value"
+    :class="{ 'c-column-size-field--mobile': mobile }"
+    :name="name"
+    class="c-column-size-field"
+    color="primary"
+    hide-details
+    mandatory
     row
-  )
-    v-radio.ma-0(
-      v-for="item in availableItems",
-      :key="item.src",
-      :value="item.value",
+  >
+    <v-radio
+      v-for="item in availableItems"
+      :key="item.src"
+      :value="item.value"
       color="primary"
-    )
-      template(#label="")
-        v-img.my-2(:src="item.src")
+    >
+      <template #label="">
+        <v-img
+          :src="item.src"
+          class="my-2"
+        />
+      </template>
+    </v-radio>
+  </v-radio-group>
 </template>
 
 <script>
@@ -103,6 +110,7 @@ export default {
   .v-radio {
     flex-direction: column;
     width: 50%;
+    margin-right: unset !important;
   }
 
   .v-label {

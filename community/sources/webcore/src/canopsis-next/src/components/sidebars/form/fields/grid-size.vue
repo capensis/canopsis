@@ -1,10 +1,19 @@
-<template lang="pug">
-  widget-settings-item
-    template(#title="")
-      v-layout(align-center)
-        span {{ title }}
-        v-icon.ml-2 {{ sizeIcon }}
-    c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
+<template>
+  <widget-settings-item>
+    <template #title="">
+      <v-layout align-center>
+        <span>{{ title }}</span>
+        <v-icon class="ml-2">
+          {{ sizeIcon }}
+        </v-icon>
+      </v-layout>
+    </template>
+    <c-column-size-field
+      v-field="value"
+      :mobile="mobile"
+      :tablet="tablet"
+    />
+  </widget-settings-item>
 </template>
 
 <script>

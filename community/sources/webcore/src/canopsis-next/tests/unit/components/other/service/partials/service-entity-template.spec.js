@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { USERS_PERMISSIONS } from '@/constants';
@@ -20,8 +18,12 @@ describe('service-entity-template', () => {
   const store = createMockedStoreModules([authModule]);
 
   const snapshotFactory = generateRenderer(ServiceEntityTemplate, {
-
     stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Renders `service-entity-template` with default props', async () => {
@@ -34,7 +36,7 @@ describe('service-entity-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-template` with custom props', async () => {
@@ -55,7 +57,7 @@ describe('service-entity-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-template` with custom props without right', async () => {
@@ -72,6 +74,6 @@ describe('service-entity-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

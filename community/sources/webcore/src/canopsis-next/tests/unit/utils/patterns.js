@@ -22,15 +22,15 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
         entity_pattern: {},
       };
 
-      patternsField.vm.$emit('input', newPatterns);
+      patternsField.triggerCustomEvent('input', newPatterns);
 
-      expect(wrapper).toEmit('input', newPatterns);
+      expect(wrapper).toEmitInput(newPatterns);
     });
 
     test(`Renders \`${name}\` with default props`, () => {
       const wrapper = snapshotFactory();
 
-      expect(wrapper.element).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot();
     });
 
     test(`Renders \`${name}\` with custom props`, () => {
@@ -44,7 +44,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
         },
       });
 
-      expect(wrapper.element).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot();
     });
   });
 };

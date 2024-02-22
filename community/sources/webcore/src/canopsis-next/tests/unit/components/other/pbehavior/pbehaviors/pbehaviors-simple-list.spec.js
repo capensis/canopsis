@@ -1,11 +1,12 @@
 import { range } from 'lodash';
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
+
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -114,7 +115,7 @@ describe('pbehaviors-simple-list', () => {
     await flushPromises();
     fetchPbehaviorsByEntityIdWithoutStore.mockClear();
 
-    selectAddButton(wrapper).vm.$emit('click');
+    selectAddButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -150,7 +151,7 @@ describe('pbehaviors-simple-list', () => {
       },
     });
 
-    selectCalendarButton(wrapper).vm.$emit('click');
+    selectCalendarButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -173,7 +174,7 @@ describe('pbehaviors-simple-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-simple-list` with pbehaviors', async () => {
@@ -191,6 +192,6 @@ describe('pbehaviors-simple-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
