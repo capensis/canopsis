@@ -8,7 +8,15 @@
 //
 // Read: https://www.mongodb.com/community/forums/t/why-replica-set-is-mandatory-for-transactions-in-mongodb/9533/2
 
-rs.initiate({ _id : "rs0", members: [{ _id: 0, host: "mongodb:27017" }]});
+try {
+    rs.initiate({ _id : "rs0", members: [{ _id: 0, host: "mongodb:27017" }]});
+} catch (err) {
+    if (err.code == 23) {  // 23: AlreadyInitialized
+        print('Replicaset was already configured: OK');
+    } else {
+        throw err;
+    }
+}
 
 let primaryWaitRetries = 0;
 let isMaster = db.adminCommand({isMaster: 1}).ismaster;
