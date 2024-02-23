@@ -18,9 +18,7 @@
         :label="form.auth_config.intervals_enabled ? $t('common.enabled') : $t('common.disabled')"
       />
       <v-expand-transition>
-        <v-layout
-          v-if="form.auth_config.intervals_enabled"
-        >
+        <v-layout v-if="form.auth_config.intervals_enabled">
           <c-information-block
             :title="$t('role.inactivityInterval')"
             :help-text="$t('role.inactivityIntervalHelpText')"
@@ -31,9 +29,9 @@
             />
           </c-information-block>
           <c-information-block
-            class="ml-3"
             :title="$t('role.expirationInterval')"
             :help-text="$t('role.expirationIntervalHelpText')"
+            class="ml-3"
           >
             <c-duration-field
               v-field="form.auth_config.expiration_interval"

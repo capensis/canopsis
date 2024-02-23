@@ -5,17 +5,17 @@
     align-center
   >
     <v-checkbox
-      class="mt-0"
       v-if="!hideCheckbox"
       :input-value="isFilled"
       :label="label || $t('flowchart.color')"
+      class="mt-0"
       color="primary"
       hide-details
       @change="updateIsFilled"
     />
     <span
-      class="v-label"
       v-else
+      class="v-label"
     >
       {{ label }}
     </span>
@@ -24,8 +24,8 @@
       xs3
     >
       <v-btn
-        class="flowchart-color-field__button ma-0 pa-0"
         :style="style"
+        class="flowchart-color-field__button ma-0 pa-0"
         small
         block
         @click="showColorPickerModal"

@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SORT_ORDERS } from '@/constants';
 
 import DefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
@@ -43,16 +43,9 @@ describe('default-sort-column', () => {
       },
     });
 
-    const columnField = selectColumnSelectField(wrapper);
+    selectColumnSelectField(wrapper).setValue(secondColumn.value);
 
-    columnField.setValue(secondColumn.value);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({ column: secondColumn.value, order: SORT_ORDERS.desc });
+    expect(wrapper).toEmitInput({ column: secondColumn.value, order: SORT_ORDERS.desc });
   });
 
   it('Order changed after trigger select field with orders', () => {
@@ -67,16 +60,9 @@ describe('default-sort-column', () => {
       },
     });
 
-    const orderField = selectOrderSelectField(wrapper);
+    selectOrderSelectField(wrapper).setValue(SORT_ORDERS.asc);
 
-    orderField.setValue(SORT_ORDERS.asc);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({ column: firstColumn.value, order: SORT_ORDERS.asc });
+    expect(wrapper).toEmitInput({ column: firstColumn.value, order: SORT_ORDERS.asc });
   });
 
   it('Renders `default-sort-column` with default props', () => {

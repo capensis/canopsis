@@ -1,10 +1,11 @@
 import Faker from 'faker';
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
+import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
 import { createMockedStoreGetters } from '@unit/utils/store';
 import { createTextareaInputStub, createNumberInputStub } from '@unit/stubs/input';
-import flushPromises from 'flush-promises';
+
 import { ENTITIES_STATES } from '@/constants';
+
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
 
 const stubs = {
@@ -39,17 +40,9 @@ describe('c-change-state-field', () => {
       },
     });
 
-    const stateCriticityElement = wrapper.find('input.state-criticity-field');
+    wrapper.find('input.state-criticity-field').setValue(ENTITIES_STATES.critical);
 
-    stateCriticityElement.setValue(ENTITIES_STATES.critical);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.state).toEqual(ENTITIES_STATES.critical);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialValue,
       state: ENTITIES_STATES.critical,
     });
@@ -67,17 +60,11 @@ describe('c-change-state-field', () => {
       },
     });
 
-    const outputElement = wrapper.find('.v-textarea textarea');
     const newOutput = Faker.datatype.string();
-    outputElement.setValue(newOutput);
 
-    const inputEvents = wrapper.emitted('input');
+    wrapper.find('.v-textarea textarea').setValue(newOutput);
 
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.output).toEqual(newOutput);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialValue,
       output: newOutput,
     });

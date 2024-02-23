@@ -86,6 +86,9 @@ type ScenarioResult struct {
 	Err              error
 	ActionExecutions []Execution
 	FifoAckEvent     types.Event
+
+	// EntityType is needed to send activation event with right source type.
+	EntityType string
 }
 
 type ExecuteScenariosTask struct {

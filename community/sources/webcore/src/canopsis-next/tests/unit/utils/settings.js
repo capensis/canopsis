@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
+import { flushPromises } from '@unit/utils/vue';
 import {
   createActiveViewModule,
   createAuthModule,

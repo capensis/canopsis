@@ -8,19 +8,19 @@
       {{ title }}
     </h4>
     <line-chart
-      class="kpi-widget__chart"
       :chart-id="chartId"
       :options="chartOptions"
       :datasets="datasets"
       :width="width"
       :height="height"
       :dark="$system.dark"
+      class="kpi-widget__chart"
     >
       <template #actions="{ chart }">
         <kpi-chart-export-actions
-          class="mt-4"
           :downloading="downloading"
           :chart="chart"
+          class="mt-4"
           v-on="$listeners"
         />
       </template>

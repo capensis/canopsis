@@ -1,8 +1,8 @@
 <template>
   <div
-    class="mermaid-code-preview"
-    :class="{ 'mermaid-preview--error': !parsed }"
     v-html="svg"
+    :class="{ 'mermaid-preview--error': !parsed }"
+    class="mermaid-code-preview"
   />
 </template>
 

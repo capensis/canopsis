@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
@@ -50,9 +49,9 @@ describe('pbehavior-exception-field', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:start', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       begin: newTimeStart,
     });
@@ -70,13 +69,13 @@ describe('pbehavior-exception-field', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectToggleEditButton(wrapper).vm.$emit('click');
+    selectToggleEditButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:start', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       begin: newTimeStart,
     });
@@ -94,13 +93,13 @@ describe('pbehavior-exception-field', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectToggleEditButton(wrapper).vm.$emit('click');
+    selectToggleEditButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:end', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:end', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       end: newTimeStart,
     });
@@ -123,13 +122,13 @@ describe('pbehavior-exception-field', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectToggleEditButton(wrapper).vm.$emit('click');
+    selectToggleEditButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
-    selectTypeField(wrapper).vm.$emit('input', newType);
+    selectTypeField(wrapper).triggerCustomEvent('input', newType);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       type: newType,
     });
@@ -143,9 +142,9 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectRemoveButton(wrapper).vm.$emit('click');
+    selectRemoveButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('delete');
+    expect(wrapper).toHaveBeenEmit('delete');
   });
 
   test('Full day enabled after trigger checkbox', async () => {
@@ -160,10 +159,10 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
 
       begin: new Date(1610319600000),
@@ -183,10 +182,10 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', false);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Renders `pbehavior-exception-field` with default props', () => {

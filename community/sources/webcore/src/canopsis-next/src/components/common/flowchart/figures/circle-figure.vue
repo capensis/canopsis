@@ -1,9 +1,9 @@
 <template>
   <circle
-    v-on="$listeners"
     :cx="centerX"
     :cy="centerY"
     :r="radius"
+    v-on="$listeners"
   />
 </template>
 

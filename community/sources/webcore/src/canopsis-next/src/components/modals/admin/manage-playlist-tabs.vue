@@ -19,9 +19,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.saveChanges') }}

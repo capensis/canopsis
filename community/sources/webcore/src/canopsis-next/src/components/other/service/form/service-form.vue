@@ -10,8 +10,8 @@
         xs6
       >
         <c-entity-category-field
-          class="mt-1"
           v-field="form.category"
+          class="mt-1"
           addable
           required
         />
@@ -46,6 +46,10 @@
       name="output_template"
     />
     <c-enabled-field v-field="form.enabled" />
+    <entity-state-setting
+      :form="form"
+      :preparer="formToService"
+    />
     <v-tabs
       slider-color="primary"
       centered
@@ -55,16 +59,16 @@
       </v-tab>
       <v-tab-item>
         <c-patterns-field
-          class="mt-2"
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
+          class="mt-2"
           with-entity
           entity-counters-type
         />
       </v-tab-item>
       <v-tab
-        class="validation-header"
         :disabled="advancedJsonWasChanged"
+        class="validation-header"
       >
         {{ $t('entity.manageInfos') }}
       </v-tab>
@@ -80,18 +84,23 @@ import { get } from 'lodash';
 
 import {
   ENTITY_PATTERN_FIELDS,
+  ENTITY_TYPES,
   SERVICE_WEATHER_STATE_COUNTERS,
   SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
 } from '@/constants';
 
+import { formToService } from '@/helpers/entities/service/form';
+
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     TextEditorField,
     ManageInfos,
+    EntityStateSetting,
   },
   model: {
     prop: 'form',
@@ -132,6 +141,14 @@ export default {
           options: { disabled: true },
         },
       ];
+    },
+  },
+  methods: {
+    formToService(service) {
+      return {
+        ...formToService(service),
+        type: ENTITY_TYPES.service,
+      };
     },
   },
 };

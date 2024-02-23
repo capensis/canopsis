@@ -1,13 +1,13 @@
 <template>
   <div class="flowchart fill-height">
     <flowchart-sidebar
-      class="flowchart__sidebar"
       v-if="!readonly"
       v-field="shapes"
       :view-box="viewBox"
       :selected.sync="selected"
       :background-color="backgroundColor"
       :readonly="readonly"
+      class="flowchart__sidebar"
       @update:backgroundColor="$emit('update:backgroundColor', $event)"
     >
       <template #prepend="">
@@ -15,8 +15,8 @@
       </template>
     </flowchart-sidebar>
     <c-zoom-overlay
-      class="flowchart__editor"
       :class="{ 'flowchart__editor--readonly': readonly }"
+      class="flowchart__editor"
       skip-alt
       skip-shift
     >
@@ -30,15 +30,15 @@
       >
         <template #layers="{ data }">
           <slot
-            name="layers"
             :data="data"
+            name="layers"
           />
         </template>
       </flowchart-editor>
     </c-zoom-overlay>
     <div
-      class="flowchart__properties"
       v-if="selected.length"
+      class="flowchart__properties"
     >
       <flowchart-properties
         v-if="!readonly"

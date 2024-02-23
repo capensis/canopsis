@@ -1,9 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout
-        class="approval-alert-text"
-      >
+      <v-layout class="approval-alert-text">
         <div class="approval-alert-text__icon">
           <v-icon color="error">
             notification_important

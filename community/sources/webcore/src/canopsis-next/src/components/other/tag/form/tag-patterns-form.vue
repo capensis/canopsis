@@ -1,10 +1,10 @@
 <template>
   <c-patterns-field
-    class="mt-2"
     v-field="form"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
+    class="mt-2"
     with-alarm
     with-entity
     some-required

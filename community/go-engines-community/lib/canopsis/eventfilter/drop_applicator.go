@@ -12,6 +12,6 @@ func NewDropApplicator() RuleApplicator {
 	return &dropApplicator{}
 }
 
-func (a *dropApplicator) Apply(_ context.Context, _ ParsedRule, event types.Event, _ RegexMatch) (string, types.Event, error) {
-	return OutcomeDrop, event, nil
+func (a *dropApplicator) Apply(_ context.Context, _ ParsedRule, _ *types.Event, _ RegexMatch) (string, bool, error) {
+	return OutcomeDrop, false, nil
 }

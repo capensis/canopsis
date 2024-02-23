@@ -6,11 +6,11 @@
       </template>
       <template #text="">
         <remediation-instruction-approval-alert
-          class="mb-3"
           v-if="hasApproval && isChangesByCurrentUser"
           :user-name="alertUserName"
           :comment="alertComment"
           :dismissed="isChangesDismissed"
+          class="mb-3"
         />
         <remediation-instruction-form
           v-model="form"
@@ -28,9 +28,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}

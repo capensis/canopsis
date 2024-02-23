@@ -40,9 +40,9 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderTop(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderTop(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, top: newValue });
+    expect(wrapper).toEmitInput({ ...form, top: newValue });
   });
 
   test('Right margin changed after trigger slider field', () => {
@@ -52,9 +52,9 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderRight(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderRight(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, right: newValue });
+    expect(wrapper).toEmitInput({ ...form, right: newValue });
   });
 
   test('Bottom margin changed after trigger slider field', () => {
@@ -64,9 +64,9 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderBottom(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderBottom(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, bottom: newValue });
+    expect(wrapper).toEmitInput({ ...form, bottom: newValue });
   });
 
   test('Left margin changed after trigger slider field', () => {
@@ -76,9 +76,9 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderLeft(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderLeft(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, left: newValue });
+    expect(wrapper).toEmitInput({ ...form, left: newValue });
   });
 
   test('Renders `margins` with default props', () => {

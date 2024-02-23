@@ -12,11 +12,11 @@
         <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
-              class="ma-0 mr-1"
-              v-on="on"
               :color="autoHeight ? 'grey lighten-1' : 'transparent'"
+              class="ma-0 mr-1"
               icon
               small
+              v-on="on"
               @click="$emit('toggle')"
             >
               <v-icon

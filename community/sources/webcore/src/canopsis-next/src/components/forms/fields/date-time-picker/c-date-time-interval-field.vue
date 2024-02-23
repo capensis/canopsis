@@ -9,13 +9,13 @@
       :hide-details="hideDetails"
     />
     <date-time-picker-field
-      class="pl-3"
       v-validate="rules"
       v-field="value.to"
       :label="$t('common.to')"
       :disabled="disabled"
       :name="toFieldName"
       :hide-details="hideDetails"
+      class="pl-3"
     />
   </div>
 </template>

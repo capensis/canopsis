@@ -1,7 +1,8 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import CLinksList from '@/components/common/links/c-links-list.vue';
 import { LINK_RULE_ACTIONS } from '@/constants';
+
+import CLinksList from '@/components/common/links/c-links-list.vue';
 
 const snapshotStubs = {
   'c-copy-wrapper': true,

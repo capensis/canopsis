@@ -4,10 +4,10 @@
       <template #activator="{ on }">
         <v-btn
           class="column-field__remove-btn"
-          v-on="on"
           small
           text
           icon
+          v-on="on"
           @click="$emit('remove')"
         >
           <v-icon
@@ -24,16 +24,16 @@
       <v-layout align-center>
         <span class="handler mr-1">
           <v-icon
-            class="draggable"
             :class="dragHandleClass"
+            class="draggable"
           >
             drag_indicator
           </v-icon>
         </span>
         <c-expand-btn
-          class="mr-1"
           v-model="expanded"
           :color="hasChildrenError ? 'error' : ''"
+          class="mr-1"
         />
         <c-name-field
           v-if="isCustom"
@@ -57,10 +57,10 @@
           <template #activator="{ on }">
             <v-btn
               :class="`mr-0 ${isCustom ? 'text--primary' : 'text--disabled'}`"
-              v-on="on"
               small
               text
               icon
+              v-on="on"
               @click="convertToCustom"
             >
               <v-icon small>
@@ -73,7 +73,6 @@
       </v-layout>
       <v-expand-transition mode="out-in">
         <column-field-expand-panel
-          class="pl-1"
           v-show="expanded"
           v-field="column"
           :name="name"
@@ -87,6 +86,7 @@
           :optional-infos-attributes="optionalInfosAttributes"
           :without-infos-attributes="withoutInfosAttributes"
           :variables="variables"
+          class="pl-1"
         />
       </v-expand-transition>
     </v-card-text>

@@ -7,12 +7,12 @@
       {{ $t('linkRule.linksEmpty') }}
     </c-alert>
     <link-rule-link-form
-      class="mb-3"
-      v-for="(link, index) in links"
       v-field="links[index]"
+      v-for="(link, index) in links"
       :key="link.key"
       :name="link.key"
       :type="type"
+      class="mb-3"
       @remove="removeItemFromArray(index)"
     />
     <v-flex>

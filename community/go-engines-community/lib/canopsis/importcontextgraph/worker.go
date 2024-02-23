@@ -31,18 +31,25 @@ const (
 type parseResult struct {
 	writeModels []mongo.WriteModel
 
-	updatedIds        []string
-	removedIds        []string
-	serviceEvents     []types.Event
-	basicEntityEvents []types.Event
+	updatedIds []string
+	removedIds []string
+
+	serviceEvents          []types.Event
+	resourceEvents         []types.Event
+	updatedComponentEvents []types.Event
+	existedComponentEvents []types.Event
 }
 
 type parseEntityResult struct {
-	writeModels       []mongo.WriteModel
-	updatedIds        []string
-	removedIds        []string
-	serviceEvents     []types.Event
-	basicEntityEvents []types.Event
+	writeModels []mongo.WriteModel
+
+	updatedIds []string
+	removedIds []string
+
+	serviceEvents          []types.Event
+	resourceEvents         []types.Event
+	updatedComponentEvents []types.Event
+	existedComponentEvents []types.Event
 }
 
 type worker struct {
@@ -141,20 +148,35 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 	}
 
 	if serviceCount == 0 {
-		for _, event := range res.serviceEvents {
-			err := w.publisher.SendEvent(ctx, event)
+		for _, event := range res.updatedComponentEvents {
+			err = w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
 			}
 		}
-	} else if len(res.serviceEvents)+len(res.basicEntityEvents) <= int(serviceCount) {
-		for _, event := range res.serviceEvents {
-			err := w.publisher.SendEvent(ctx, event)
+
+		for _, event := range res.existedComponentEvents {
+			err = w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
 			}
 		}
-		for _, event := range res.basicEntityEvents {
+	} else if len(res.serviceEvents)+len(res.resourceEvents) <= int(serviceCount) {
+		for _, event := range res.serviceEvents {
+			err = w.publisher.SendEvent(ctx, event)
+			if err != nil {
+				return stats, err
+			}
+		}
+
+		for _, event := range res.resourceEvents {
+			err = w.publisher.SendEvent(ctx, event)
+			if err != nil {
+				return stats, err
+			}
+		}
+
+		for _, event := range res.updatedComponentEvents {
 			err = w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
@@ -164,6 +186,20 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 		err = w.sendUpdateServiceEvents(ctx)
 		if err != nil {
 			return stats, err
+		}
+
+		for _, event := range res.updatedComponentEvents {
+			err = w.publisher.SendEvent(ctx, event)
+			if err != nil {
+				return stats, err
+			}
+		}
+
+		for _, event := range res.existedComponentEvents {
+			err = w.publisher.SendEvent(ctx, event)
+			if err != nil {
+				return stats, err
+			}
 		}
 	}
 
@@ -219,7 +255,9 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 	res.updatedIds = entityParseRes.updatedIds
 	res.removedIds = entityParseRes.removedIds
 	res.serviceEvents = entityParseRes.serviceEvents
-	res.basicEntityEvents = entityParseRes.basicEntityEvents
+	res.resourceEvents = entityParseRes.resourceEvents
+	res.updatedComponentEvents = entityParseRes.updatedComponentEvents
+	res.existedComponentEvents = entityParseRes.existedComponentEvents
 
 	return res, nil
 }
@@ -247,7 +285,9 @@ func (w *worker) parseEntities(
 	disabledResources := make(map[string]bool)
 
 	serviceEvents := make([]types.Event, 0)
-	basicEntityEvents := make([]types.Event, 0)
+	resourceEvents := make([]types.Event, 0)
+	existedComponentEvents := make([]types.Event, 0)
+	updatedComponentEvents := make([]types.Event, 0)
 
 	for decoder.More() {
 		var ci EntityConfiguration
@@ -469,11 +509,10 @@ func (w *worker) parseEntities(
 			switch ci.Type {
 			case types.EntityTypeService:
 				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
-			default:
-				event := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
-				if event.EventType != "" {
-					basicEntityEvents = append(basicEntityEvents, event)
-				}
+			case types.EntityTypeResource:
+				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.ID, ci.Component, now))
+			case types.EntityTypeComponent:
+				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(eventType, ci.ID, now))
 			}
 		}
 	}
@@ -508,13 +547,17 @@ func (w *worker) parseEntities(
 				}
 
 				writeModels = append(writeModels, w.createEntity(ci))
+				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
 			} else {
 				if !oldEntity.Enabled {
 					return res, fmt.Errorf("can't create resource for disabled component")
 				}
 
 				componentInfos[componentName] = oldEntity.Infos
+				existedComponentEvents = append(existedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
 			}
+		} else {
+			existedComponentEvents = append(existedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
 		}
 
 		if len(componentInfos[componentName]) > 0 {
@@ -526,7 +569,9 @@ func (w *worker) parseEntities(
 	res.removedIds = removedIds
 	res.writeModels = writeModels
 	res.serviceEvents = serviceEvents
-	res.basicEntityEvents = basicEntityEvents
+	res.resourceEvents = resourceEvents
+	res.updatedComponentEvents = updatedComponentEvents
+	res.existedComponentEvents = existedComponentEvents
 
 	return res, nil
 }
@@ -750,25 +795,29 @@ func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, no
 	}
 }
 
-func (w *worker) createBasicEntityEvent(eventType string, t, name, component string, now datetime.CpsTime) types.Event {
-	event := types.Event{
+func (w *worker) createResourceEvent(eventType, name, component string, now datetime.CpsTime) types.Event {
+	return types.Event{
 		Connector:     defaultConnector,
 		ConnectorName: defaultConnectorName,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
+		Resource:      name,
+		Component:     component,
+		SourceType:    types.SourceTypeResource,
 	}
+}
 
-	switch t {
-	case types.EntityTypeComponent:
-		event.Component = name
-		event.SourceType = types.SourceTypeComponent
-	case types.EntityTypeResource:
-		event.Resource = name
-		event.Component = component
-		event.SourceType = types.SourceTypeResource
+func (w *worker) createComponentEvent(eventType, name string, now datetime.CpsTime) types.Event {
+	return types.Event{
+		Connector:     defaultConnector,
+		ConnectorName: defaultConnectorName,
+		EventType:     eventType,
+		Timestamp:     now,
+		Author:        canopsis.DefaultEventAuthor,
+		Initiator:     types.InitiatorSystem,
+		Component:     name,
+		SourceType:    types.SourceTypeComponent,
 	}
-
-	return event
 }

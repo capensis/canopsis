@@ -1,7 +1,7 @@
 <template>
   <v-menu
-    ref="menu"
     v-model="opened"
+    ref="menu"
     :close-on-content-click="false"
     :disabled="disabled"
     content-class="date-time-picker"

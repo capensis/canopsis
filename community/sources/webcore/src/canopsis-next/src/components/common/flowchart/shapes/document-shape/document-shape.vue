@@ -2,13 +2,13 @@
   <g @dblclick.stop="enableEditingMode">
     <document-figure
       v-bind="shape.properties"
-      v-on="$listeners"
       :width="shape.width"
       :height="shape.height"
       :x="shape.x"
       :y="shape.y"
       :offset="shape.offset"
       :cursor="readonly ? '' : 'move'"
+      v-on="$listeners"
     />
     <text-editor
       ref="editor"

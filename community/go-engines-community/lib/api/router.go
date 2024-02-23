@@ -73,6 +73,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
@@ -122,6 +123,7 @@ func RegisterRoutes(
 	authorProvider author.Provider,
 	healthcheckStore healthcheck.Store,
 	tplExecutor libtemplate.Executor,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	enableSameServiceNames bool,
 	logger zerolog.Logger,
 ) {
@@ -578,6 +580,18 @@ func RegisterRoutes(
 				"/context-graph",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
 				entityAPI.GetContextGraph,
+			)
+
+			entityRouter.POST(
+				"/check-state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.CheckStateSetting,
+			)
+
+			entityRouter.GET(
+				"/state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.GetStateSetting,
 			)
 
 			entityRouter.GET(
@@ -1428,16 +1442,31 @@ func RegisterRoutes(
 
 		stateSettingsRouter := protected.Group("/state-settings")
 		{
-			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient), actionLogger)
-			stateSettingsRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
-				stateSettingsApi.Update,
+			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient, stateSettingsUpdatesChan), actionLogger)
+			stateSettingsRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionCreate, enforcer),
+				stateSettingsApi.Create,
 			)
 			stateSettingsRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
 				stateSettingsApi.List,
+			)
+			stateSettingsRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				stateSettingsApi.Get,
+			)
+			stateSettingsRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionUpdate, enforcer),
+				stateSettingsApi.Update,
+			)
+			stateSettingsRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionDelete, enforcer),
+				stateSettingsApi.Delete,
 			)
 		}
 

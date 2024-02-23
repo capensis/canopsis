@@ -1,8 +1,8 @@
 <template>
   <v-autocomplete
-    v-bind="$attrs"
     v-field="value"
     v-validate="rules"
+    v-bind="$attrs"
     :items="items"
     :label="label"
     :loading="pending"

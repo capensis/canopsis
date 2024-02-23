@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';

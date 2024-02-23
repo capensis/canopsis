@@ -30,8 +30,8 @@
     </v-layout>
     <v-flex>
       <v-btn
-        class="ma-0 mb-4"
         :disabled="hasChildrenError"
+        class="ma-0 mb-4"
         color="primary"
         @click="$emit('archive')"
       >

@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    class="text-fields"
     :class="{ 'text-fields__disabled': disabled }"
+    class="text-fields"
     wrap
   >
     <v-flex
@@ -16,9 +16,9 @@
         name="no-data"
       />
       <v-layout
-        class="text-field"
         v-for="(item, index) in items"
         :key="item[itemKey]"
+        class="text-field"
         justify-space-between
         align-center
       >

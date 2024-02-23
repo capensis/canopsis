@@ -39,6 +39,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -293,6 +294,8 @@ func Default(
 		linkGenerator = wrapper.NewGenerator(linkGenerators...)
 	}
 
+	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.CacheControl())
 
@@ -341,6 +344,7 @@ func Default(
 			author.NewProvider(dbClient, p.ApiConfigProvider),
 			healthcheckStore,
 			tplExecutor,
+			stateSettingsUpdatesChan,
 			flags.EnableSameServiceNames,
 			logger,
 		)
@@ -387,6 +391,11 @@ func Default(
 		enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
+
+	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, json.NewEncoder(), logger)
+	api.AddWorker("state_settings_listener", func(ctx context.Context) {
+		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
+	})
 	api.AddWorker("entity_event_publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
 	})

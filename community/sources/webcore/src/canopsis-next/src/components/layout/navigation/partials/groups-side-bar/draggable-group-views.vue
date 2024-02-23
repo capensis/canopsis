@@ -1,9 +1,9 @@
 <template>
   <c-draggable-list-field
-    class="views-panel secondary lighten-1"
     v-field="views"
     :class="{ empty: isViewsEmpty }"
     :group="draggableGroup"
+    class="views-panel secondary lighten-1"
   >
     <group-view-panel
       v-for="view in views"
