@@ -148,6 +148,7 @@ export default {
       return {
         ...formToService(service),
         type: ENTITY_TYPES.service,
+        _id: service._id,
       };
     },
   },
