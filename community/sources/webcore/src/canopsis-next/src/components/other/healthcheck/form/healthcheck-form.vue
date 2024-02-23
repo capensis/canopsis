@@ -27,10 +27,10 @@
         {{ $t('healthcheck.notifyUsersNumberOfInstances') }}
       </template>
       <healthcheck-engine-instance-field
-        v-for="engineName in engineNames"
         v-field="form[engineName]"
-        :name="engineName"
+        v-for="engineName in engineNames"
         :key="engineName"
+        :name="engineName"
         :label="$t(`healthcheck.nodes.${engineName}.name`)"
       />
     </c-information-block>

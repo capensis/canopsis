@@ -1,6 +1,5 @@
 <template>
   <alarms-list-table-with-pagination
-    v-on="$listeners"
     :parent-alarm="alarm"
     :widget="widget"
     :alarms="alarms"
@@ -10,6 +9,7 @@
     :loading="pending"
     :refresh-alarms-list="refreshAlarmsList"
     expandable
+    v-on="$listeners"
   />
 </template>
 

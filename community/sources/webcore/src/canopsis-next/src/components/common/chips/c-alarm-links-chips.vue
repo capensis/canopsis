@@ -1,10 +1,10 @@
 <template>
   <c-alarm-actions-chips
-    class="c-alarm-links-chips"
     v-if="hasAccessToLinks"
     :items="links"
     :small="small"
     :inline-count="inlineCount"
+    class="c-alarm-links-chips"
     item-text="text"
     item-value="url"
     item-class="c-alarm-links-chips__chip"
@@ -19,9 +19,9 @@
       >
         <template #activator="{ on }">
           <v-icon
-            v-on="on"
             color="white"
             small
+            v-on="on"
           >
             {{ item.icon }}
           </v-icon>

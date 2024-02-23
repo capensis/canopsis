@@ -6,51 +6,51 @@
     >
       <v-window v-model="activeImageIndex">
         <v-window-item
-          class="images-viewer__img-wrapper"
           v-for="image in images"
           :key="image[itemKey]"
           :reverse-transition="transition"
           :transition="transition"
+          class="images-viewer__img-wrapper"
         >
           <div
-            class="images-viewer__img-title white--text ml-1"
             v-if="image.name"
+            class="images-viewer__img-title white--text ml-1"
           >
             {{ image.name }}
           </div>
           <img
-            class="images-viewer__img"
             :src="image.src"
             :alt="image.name"
+            class="images-viewer__img"
           >
         </v-window-item>
       </v-window>
       <v-layout
-        class="images-viewer__actions"
         v-if="images.length"
+        class="images-viewer__actions"
         justify-space-between
         reverse
       >
         <v-btn
+          color="white"
           icon
           text
-          color="white"
           @click="nextImage"
         >
           <v-icon :size="32">chevron_right</v-icon>
         </v-btn>
         <v-btn
+          color="white"
           icon
           text
-          color="white"
           @click="prevImage"
         >
           <v-icon :size="32">chevron_left</v-icon>
         </v-btn>
       </v-layout>
       <v-layout
-        class="images-viewer__image-count"
         v-if="images.length"
+        class="images-viewer__image-count"
         justify-space-between
       >
         <span class="white--text pl-1">

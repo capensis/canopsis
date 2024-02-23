@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import TagsListExpandPanel from '@/components/other/tag/partials/tags-list-expand-panel.vue';
 
 const stubs = {

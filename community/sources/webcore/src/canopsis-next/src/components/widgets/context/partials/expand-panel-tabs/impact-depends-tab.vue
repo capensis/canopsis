@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-progress-linear
-      class="ma-0"
       :active="pending"
+      class="ma-0"
       height="2"
       indeterminate
     />

@@ -4,7 +4,6 @@
     column
   >
     <kpi-widget-filters
-      class="px-3"
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
@@ -18,6 +17,7 @@
       :filter-disabled="!hasAccessToListFilters"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
+      class="px-3"
       @update:filters="updateSelectedFilter"
       @update:sampling="updateSampling"
       @update:interval="updateInterval"

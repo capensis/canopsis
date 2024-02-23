@@ -2,8 +2,9 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createTextareaInputStub } from '@unit/stubs/input';
 import { createButtonStub } from '@unit/stubs/button';
 
-import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import { stringifyJson } from '@/helpers/json';
+
+import CJsonField from '@/components/forms/fields/c-json-field.vue';
 
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
@@ -75,12 +76,7 @@ describe('c-json-field', () => {
     await textarea.setValue(newValue);
     await textarea.trigger('blur');
 
-    const inputEvents = wrapper.emitted('input');
-
-    const [eventData] = inputEvents[0];
-
-    expect(inputEvents).toHaveLength(1);
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Payload json value as prop with variables', () => {
@@ -97,6 +93,8 @@ describe('c-json-field', () => {
   });
 
   it('Payload json value as prop without variables', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
     const popupErrorFn = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -113,6 +111,8 @@ describe('c-json-field', () => {
 
     expect(textarea.element.value).toBe(defaultValue);
     expect(popupErrorFn).toBeCalledWith({ text: 'Something went wrong...' });
+
+    consoleErrorSpy.mockClear();
   });
 
   it('v-validate works correctly on valid json', async () => {

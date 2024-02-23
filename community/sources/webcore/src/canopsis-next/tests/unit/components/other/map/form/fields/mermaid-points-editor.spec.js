@@ -1,12 +1,13 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
-import MermaidPoints from '@/components/other/map/form/fields/mermaid-points-editor.vue';
-import { mermaidPointToForm } from '@/helpers/entities/map/form';
+
 import { MODALS } from '@/constants';
+
+import { mermaidPointToForm } from '@/helpers/entities/map/form';
+
+import MermaidPoints from '@/components/other/map/form/fields/mermaid-points-editor.vue';
 
 const stubs = {
   'mermaid-point-marker': true,
@@ -45,7 +46,7 @@ const fillPointDialog = (
 ) => {
   const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-  pointFormDialog.vm.$emit('submit', point);
+  pointFormDialog.triggerCustomEvent('submit', point);
 
   return point;
 };
@@ -60,13 +61,13 @@ const checkMenuIsClosed = async (wrapper) => {
 const triggerContextMenuEvent = (wrapper, event) => {
   const contextMenu = selectPointContextmenu(wrapper);
 
-  return contextMenu.vm.$emit(event);
+  return contextMenu.triggerCustomEvent(event);
 };
 
 const triggerPointEvent = (wrapper, index, event) => {
   const pointMarker = selectPointMarkerByIndex(wrapper, index);
 
-  return pointMarker.vm.$emit(event, new Event(event));
+  return pointMarker.triggerCustomEvent(event, new Event(event));
 };
 
 const getEvent = () => ({
@@ -166,7 +167,7 @@ describe('mermaid-points-editor', () => {
 
     const newPoint = fillPointDialog(wrapper);
 
-    expect(wrapper).toEmit('input', [newPoint]);
+    expect(wrapper).toEmitInput([newPoint]);
 
     jest.runAllTimers();
 
@@ -219,7 +220,7 @@ describe('mermaid-points-editor', () => {
 
     const newPoint = fillPointDialog(wrapper);
 
-    expect(wrapper).toEmit('input', [newPoint]);
+    expect(wrapper).toEmitInput([newPoint]);
 
     jest.runAllTimers();
     await checkMenuIsClosed(wrapper);
@@ -240,7 +241,7 @@ describe('mermaid-points-editor', () => {
     await triggerContextMenuEvent(wrapper, 'edit:point');
     const newPoint = fillPointDialog(wrapper, { ...point, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', [newPoint]);
+    expect(wrapper).toEmitInput([newPoint]);
 
     jest.runAllTimers();
     await checkMenuIsClosed(wrapper);
@@ -261,7 +262,7 @@ describe('mermaid-points-editor', () => {
     await triggerPointEvent(wrapper, 1, 'dblclick');
     const newPoint = fillPointDialog(wrapper, { ...secondPoint, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', [point, newPoint]);
+    expect(wrapper).toEmitInput([point, newPoint]);
 
     jest.runAllTimers();
     await checkMenuIsClosed(wrapper);
@@ -296,7 +297,7 @@ describe('mermaid-points-editor', () => {
 
     modalArguments.config.action();
 
-    expect(wrapper).toEmit('input', []);
+    expect(wrapper).toEmitInput([]);
   });
 
   test('Point moved after trigger mouse events', async () => {
@@ -322,7 +323,7 @@ describe('mermaid-points-editor', () => {
 
     await selectRoot(wrapper).trigger('mouseup');
 
-    expect(wrapper).toEmit('input', [{ ...point, x: 100, y: 120 }]);
+    expect(wrapper).toEmitInput([{ ...point, x: 100, y: 120 }]);
 
     jest.runAllTimers();
 

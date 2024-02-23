@@ -2,10 +2,10 @@
   <widget-settings-item :title="$t('settings.contextTypeOfEntities.title')">
     <v-checkbox
       v-for="entityType in entitiesTypes"
+      :key="entityType.value"
       :input-value="value"
       :label="entityType.label"
       :value="entityType.value"
-      :key="entityType.value"
       color="primary"
       hide-details
       @change="$listeners.input"

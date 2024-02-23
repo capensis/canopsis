@@ -1,11 +1,12 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
+import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ALARM_DENSE_TYPES, ALARM_FIELDS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -23,12 +24,13 @@ const stubs = {
   'c-density-btn-toggle': true,
 };
 
-const selectTable = wrapper => wrapper.find('v-data-table-stub');
+const selectTable = wrapper => wrapper.findComponent({ name: 'VDataTable' });
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
 
 describe('alarms-list-table', () => {
+  const $modals = mockModals();
   const timestamp = 1386435600;
   const totalItems = 5;
   const alarms = range(totalItems).map(value => ({
@@ -108,10 +110,6 @@ describe('alarms-list-table', () => {
     value: 'label',
   }];
 
-  const factory = generateShallowRenderer(AlarmsListTable, {
-    stubs,
-    attachTo: document.body,
-  });
   const snapshotFactory = generateRenderer(AlarmsListTable, {
     stubs,
     attachTo: document.body,
@@ -123,7 +121,7 @@ describe('alarms-list-table', () => {
 
   it('Alarms selected after trigger table', () => {
     const selectedAlarms = alarms.slice(0, -1);
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       store,
       propsData: {
         options: {},
@@ -133,13 +131,13 @@ describe('alarms-list-table', () => {
       },
     });
 
-    selectTable(wrapper).vm.$emit('input', selectedAlarms);
+    selectTable(wrapper).triggerCustomEvent('input', selectedAlarms);
 
     expect(wrapper.vm.selected).toEqual(selectedAlarms);
   });
 
-  it('Pagination update event emitted after trigger update pagination', () => {
-    const wrapper = factory({
+  it('Pagination update event emitted after trigger update pagination', async () => {
+    const wrapper = snapshotFactory({
       store,
       propsData: {
         options: {},
@@ -157,14 +155,9 @@ describe('alarms-list-table', () => {
       totalItems: Faker.datatype.number(),
     };
 
-    const table = selectTable(wrapper);
-    table.vm.$emit('update:options', options);
+    selectTable(wrapper).triggerCustomEvent('update:options', options);
 
-    const updateOptionsEvents = wrapper.emitted('update:options');
-    expect(updateOptionsEvents).toHaveLength(1);
-
-    const [eventData] = updateOptionsEvents[0];
-    expect(eventData).toEqual(options);
+    expect(wrapper).toEmit('update:options', expect.any(Object), options);
   });
 
   it('Resize listener added after mount and removed after destroy', async () => {
@@ -494,7 +487,7 @@ describe('alarms-list-table', () => {
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
-    alarmsListRow.vm.$emit('expand', true);
+    alarmsListRow.triggerCustomEvent('expand', true);
 
     const [firstAlarm] = alarms;
 
@@ -502,9 +495,31 @@ describe('alarms-list-table', () => {
       [firstAlarm._id]: true,
     });
 
-    alarmsListRow.vm.$emit('expand', false);
+    alarmsListRow.triggerCustomEvent('expand', false);
 
     expect(wrapper.vm.expanded).toEqual({});
+  });
+
+  it('Root cause diagram opened after trigger click state event', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+        stickyHeader: true,
+      },
+      mocks: { $modals },
+    });
+
+    expect(wrapper.vm.expanded).toEqual({});
+
+    selectAlarmsListRow(wrapper).at(0).triggerCustomEvent('click:state', true);
+
+    /**
+     * TODO: Should be tested show modal
+     */
   });
 
   it('Renders `alarms-list-table` with default and required props', () => {

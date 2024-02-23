@@ -27,13 +27,11 @@ describe('c-description-field', () => {
       },
     });
 
-    const textareaNode = selectTextareaNode(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textareaNode.$emit('input', newValue);
+    selectTextareaNode(wrapper).$emit('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `c-description-field` with default props', async () => {

@@ -12,10 +12,10 @@
         />
       </v-flex>
       <time-picker-text
-        class="date-time-splitted-field__time"
         v-if="!fullDay"
         :value="value | date('timePicker', null)"
         :label="reverse ? label : ''"
+        class="date-time-splitted-field__time"
         hide-details
       />
     </v-layout>

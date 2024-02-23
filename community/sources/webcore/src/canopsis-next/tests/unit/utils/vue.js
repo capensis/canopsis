@@ -7,18 +7,22 @@ import {
   createLocalVue,
   Wrapper,
 } from '@vue/test-utils';
+// eslint-disable-next-line no-restricted-imports
 import flushPromises from 'flush-promises';
 
 import { MqLayout } from '@unit/stubs/mq';
-import UpdateFieldPlugin from '@/plugins/update-field';
-import ValidatorPlugin from '@/plugins/validator';
-import { createVuetify } from '@/plugins/vuetify';
 
 import * as constants from '@/constants';
 import * as config from '@/config';
-import i18n from '@/i18n';
-import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
+
+import UpdateFieldPlugin from '@/plugins/update-field';
+import ValidatorPlugin from '@/plugins/validator';
+import { createVuetify } from '@/plugins/vuetify';
 import SetSeveralPlugin from '@/plugins/set-several';
+
+import i18n from '@/i18n';
+
+import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import { stringifyJsonFilter } from '@/helpers/json';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
@@ -175,6 +179,12 @@ Wrapper.prototype.clickOutside = function clickOutside() {
   jest.runAllTimers();
   jest.useRealTimers();
 };
+Wrapper.prototype.triggerCustomEvent = function triggerCustomEvent(name, ...data) {
+  // eslint-disable-next-line no-restricted-syntax
+  this.vm?.$emit?.(name, ...data);
+
+  return this?.vm?.$nextTick?.();
+};
 
 /**
  * Generate render function
@@ -255,3 +265,5 @@ export const generateShallowRenderer = (
     },
   );
 };
+
+export { flushPromises };

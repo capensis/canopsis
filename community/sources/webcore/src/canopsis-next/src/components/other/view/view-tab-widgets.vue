@@ -1,7 +1,7 @@
 <template>
   <div
-    class="view"
     :id="`view-tab-${tab._id}`"
+    class="view"
   >
     <portal
       v-if="editing"
@@ -24,10 +24,10 @@
       <template #item="{ on, item }">
         <widget-edit-drag-handler
           v-if="editing"
-          v-on="on"
           :widget="item.widget"
           :auto-height="item.autoHeight"
           :tab="tab"
+          v-on="on"
         />
         <widget-wrapper
           :widget="item.widget"

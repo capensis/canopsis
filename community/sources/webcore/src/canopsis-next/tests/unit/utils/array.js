@@ -3,4 +3,4 @@
  *
  * @param {Array} items
  */
-export const randomArrayItem = items => items[Math.round(Math.random() * items.length)];
+export const randomArrayItem = items => items[Math.round(Math.random() * (items.length - 1))];

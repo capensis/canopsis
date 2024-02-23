@@ -25,8 +25,8 @@
       >
         <template #prepend="{ item }">
           <div
-            class="text-caption font-italic"
             v-if="item.isArray"
+            class="text-caption font-italic"
           >
             {{ `(${$t('common.variableTypes.array')})` }}
           </div>
@@ -35,17 +35,17 @@
           <div>
             {{ item.name }}
             <span
-              class="pl-1"
               v-if="leaf"
+              class="pl-1"
             >:
               <c-ellipsis
-                class="pl-1 d-inline-block text--secondary text-body-1 pre-wrap"
                 :text="String(item.value)"
+                class="pl-1 d-inline-block text--secondary text-body-1 pre-wrap"
               />
             </span>
             <span
-              class="pl-1"
               v-else-if="!leaf && !(item.children && item.children.length)"
+              class="pl-1"
             >:
               <div class="pl-1 d-inline-block text--secondary text-body-1 font-italic">
                 {{ $t('common.emptyObject') }}
@@ -63,8 +63,8 @@
               <v-tooltip left>
                 <template #activator="{ on: tooltipOn }">
                   <v-btn
-                    v-on="{ ...tooltipOn, ...on }"
                     icon
+                    v-on="{ ...tooltipOn, ...on }"
                   >
                     <v-icon>{{ leaf ? 'content_copy' : 'save_alt' }}</v-icon>
                   </v-btn>

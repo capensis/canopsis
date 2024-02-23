@@ -8,11 +8,11 @@
     absolute
   >
     <point-form-dialog
-      v-on="$listeners"
       v-if="value && point"
       :point="point"
       :editing="editing"
       :exists-entities="existsEntities"
+      v-on="$listeners"
     />
   </v-menu>
 </template>

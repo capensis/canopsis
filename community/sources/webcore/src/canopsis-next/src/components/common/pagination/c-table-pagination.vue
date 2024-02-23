@@ -14,9 +14,9 @@
     <v-spacer />
     <v-flex xs2>
       <c-items-per-page-field
-        class="pa-0"
         :value="itemsPerPage"
         :items="items"
+        class="pa-0"
         hide-details
         @input="$emit('update:items-per-page', $event)"
       />

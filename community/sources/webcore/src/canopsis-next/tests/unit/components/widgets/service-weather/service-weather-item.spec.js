@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES, DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -60,9 +59,9 @@ describe('service-weather-item', () => {
       },
     });
 
-    selectCard(wrapper).vm.$emit('show:alarms', new MouseEvent('click'));
+    selectCard(wrapper).triggerCustomEvent('show:alarms', new MouseEvent('click'));
 
-    expect(wrapper).toEmit('show:alarms');
+    expect(wrapper).toHaveBeenEmit('show:alarms');
   });
 
   test('Main information modal showed after click on card', async () => {
@@ -78,7 +77,7 @@ describe('service-weather-item', () => {
 
     await wrapper.find('.custom-template').trigger('click');
 
-    expect(wrapper).toEmit('show:service');
+    expect(wrapper).toHaveBeenEmit('show:service');
   });
 
   test('Modal doesn\'t show after click on link', async () => {
@@ -93,7 +92,7 @@ describe('service-weather-item', () => {
 
     await wrapper.find('.custom-template-link').trigger('click');
 
-    expect(wrapper).not.toEmit('show:service');
+    expect(wrapper).not.toHaveBeenEmit('show:service');
   });
 
   test('Renders `service-weather-item` with custom props', async () => {

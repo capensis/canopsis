@@ -1,18 +1,18 @@
 <template>
   <svg
     ref="svg"
-    v-on="svgHandlers"
     :viewBox="viewBoxString"
     :style="svgStyles"
     width="100%"
     height="100%"
     xmlns="http://www.w3.org/2000/svg"
+    v-on="svgHandlers"
   >
     <component
+      :is="`${shape.type}-shape`"
       v-for="shape in data"
       :key="`${shape._id}-shape`"
       :shape="shape"
-      :is="`${shape.type}-shape`"
       :readonly="readonly"
       @click.stop=""
       @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)"
@@ -22,9 +22,9 @@
     />
     <template v-if="!readonly">
       <component
+        :is="selection.is"
         v-for="selection in selectionComponents"
         :key="selection.key"
-        :is="selection.is"
         :shape="selection.shape"
         :selected="isSelected(selection.shape._id)"
         :connecting="editing"
@@ -44,8 +44,8 @@
       />
     </template>
     <slot
-      name="layers"
       :data="data"
+      name="layers"
     />
   </svg>
 </template>

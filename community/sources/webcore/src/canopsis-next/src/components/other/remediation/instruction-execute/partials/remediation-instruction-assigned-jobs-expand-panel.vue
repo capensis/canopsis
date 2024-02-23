@@ -6,15 +6,15 @@
     <div v-if="isFailedJob">
       {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
       <span
-        class="pre-wrap"
         v-html="job.fail_reason"
+        class="pre-wrap"
       />
     </div>
     <div>
       {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
       <span
-        class="pre-wrap"
         v-html="output"
+        class="pre-wrap"
       />
     </div>
   </v-sheet>

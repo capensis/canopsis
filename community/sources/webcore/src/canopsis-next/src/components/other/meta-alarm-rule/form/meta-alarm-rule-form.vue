@@ -36,9 +36,9 @@
       v-field="form.config"
     />
     <meta-alarm-rule-value-paths-form
-      class="mb-2"
       v-if="isValuePathsFormShown"
       v-field="form.config"
+      class="mb-2"
     />
     <meta-alarm-rule-patterns-form
       v-field="form.patterns"

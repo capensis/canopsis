@@ -14,13 +14,13 @@
           </template>
         </v-expansion-panel-header>
         <v-expansion-panel-content
-          class="grey darken-2 white--text"
           :class="{ error: errors.length }"
+          class="grey darken-2 white--text"
         >
           <v-card class="pt-1">
             <v-alert
-              class="pa-2 mx-2"
               :value="!!errors.length"
+              class="pa-2 mx-2"
               type="error"
             >
               {{ errors.join(' ') }}

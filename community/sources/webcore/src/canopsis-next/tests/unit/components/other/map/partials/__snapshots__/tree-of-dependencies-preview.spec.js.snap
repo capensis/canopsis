@@ -1,0 +1,251 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tree-of-dependencies-preview Renders \`tree-of-dependencies-preview\` with required props 1`] = `
+<div
+  class="tree-of-dependencies__preview"
+>
+  <c-zoom-overlay-stub>
+    <div
+      class="network-graph fill-height black--text"
+    >
+      <div
+        class="network-graph__canvas-wrapper __________cytoscape_container"
+      >
+        <div
+          style="position: relative; z-index: 0; overflow: hidden; width: 1000px; height: 1000px;"
+        >
+          <canvas
+            data-id="layer0-selectbox"
+            height="1000"
+            style="user-select: none; outline-style: none; position: absolute; z-index: 3; width: 1000px; height: 1000px;"
+            width="1000"
+          />
+          <canvas
+            data-id="layer1-drag"
+            height="1000"
+            style="user-select: none; outline-style: none; position: absolute; z-index: 2; width: 1000px; height: 1000px;"
+            width="1000"
+          />
+          <canvas
+            data-id="layer2-node"
+            height="1000"
+            style="user-select: none; outline-style: none; position: absolute; z-index: 1; width: 1000px; height: 1000px;"
+            width="1000"
+          />
+          <div
+            style="position: absolute; z-index: 10; width: 500px; margin: 0px; padding: 0px; border: 0px; outline: 0px; webkit-transform: translate(-308.2402145565011px,-213.52170805214018px) scale(1.076377160354188); transform: translate(-308.2402145565011px,-213.52170805214018px) scale(1.076377160354188); webkit-transform-origin: top left; transform-origin: top left;"
+          >
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(837.72px,880.13px) ; transform: translate(-50%,-50%) translate(837.72px,880.13px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  [object Object]
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  root-entity-name
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(1011.42px,751.31px) ; transform: translate(-50%,-50%) translate(1011.42px,751.31px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-0
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(621.86px,867.17px) ; transform: translate(-50%,-50%) translate(621.86px,867.17px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-1
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(464.83px,718.48px) ; transform: translate(-50%,-50%) translate(464.83px,718.48px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-2
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(440.11px,503.65px) ; transform: translate(-50%,-50%) translate(440.11px,503.65px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-3
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(559.27px,323.18px) ; transform: translate(-50%,-50%) translate(559.27px,323.18px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-4
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(766.55px,261.53px) ; transform: translate(-50%,-50%) translate(766.55px,261.53px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-5
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(964.96px,347.54px) ; transform: translate(-50%,-50%) translate(964.96px,347.54px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-6
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(1061.67px,540.97px) ; transform: translate(-50%,-50%) translate(1061.67px,540.97px) ;"
+            >
+              <div
+                class="v-btn__content position-relative border-radius-rounded"
+                style="width: 50px; height: 50px; justify-content: center; background: rgb(43, 62, 79);"
+              >
+                <i
+                  class="v-icon material-icons theme--light white--text tree-of-dependencies__node-icon"
+                >
+                  person
+                </i>
+                <div
+                  class="position-absolute"
+                  style="top: 50px;"
+                >
+                  pinned-entity-id-7
+                </div>
+              </div>
+            </div>
+            <div
+              style="position: absolute; webkit-transform: translate(-50%,-50%) translate(894.86px,1072.25px) ; transform: translate(-50%,-50%) translate(894.86px,1072.25px) ;"
+            >
+              <button
+                class="v-btn v-btn--round theme--light tree-of-dependencies__show-all-btn"
+              >
+                <div
+                  class="v-btn__content"
+                >
+                  Show all (606)
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-tooltip__content menuable__content__active network-graph__tooltip"
+      />
+    </div>
+  </c-zoom-overlay-stub>
+  <c-help-icon-stub
+    color="secondary"
+    icon="help"
+    icon-class="map-preview__help-icon"
+    size="32"
+    text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Ctrl + Left mouse click + drag - pan the area
+"
+    top=""
+  />
+</div>
+`;

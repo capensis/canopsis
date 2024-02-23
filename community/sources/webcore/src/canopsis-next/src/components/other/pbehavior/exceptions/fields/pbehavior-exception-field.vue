@@ -32,8 +32,8 @@
         />
       </v-flex>
       <v-flex
-        class="pl-2"
         v-if="withType"
+        class="pl-2"
       >
         <c-pbehavior-type-field
           v-if="editing"
@@ -49,19 +49,24 @@
         />
       </v-flex>
       <v-flex
-        class="pbehavior-exception-field__actions"
         v-if="!disabled"
+        class="pbehavior-exception-field__actions"
       >
         <v-btn
-          class="btn--editing"
           :input-value="editing"
+          class="btn--editing"
           icon
           fab
           @click="toggleEditing"
         >
-          <v-icon>edit</v-icon>
-          <v-icon color="primary">
+          <v-icon
+            v-if="editing"
+            color="primary"
+          >
             check
+          </v-icon>
+          <v-icon v-else>
+            edit
           </v-icon>
         </v-btn>
         <v-btn
@@ -76,10 +81,10 @@
     </v-layout>
     <v-layout>
       <v-checkbox
-        class="mt-0"
         v-model="fullDay"
         :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
         :disabled="disabled || !editing"
+        class="mt-0"
         color="primary"
         hide-details
       />

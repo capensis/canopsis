@@ -5,8 +5,8 @@
       required
     />
     <kpi-filter-patterns-form
-      class="mt-2"
       v-field="form.patterns"
+      class="mt-2"
     />
   </v-layout>
 </template>

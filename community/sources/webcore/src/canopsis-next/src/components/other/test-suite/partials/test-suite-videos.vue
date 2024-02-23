@@ -11,10 +11,10 @@
         xs6
       >
         <video
-          class="d-block"
-          controls
           :src="video"
+          class="d-block"
           width="100%"
+          controls
         >
           <source :src="video">
         </video>
