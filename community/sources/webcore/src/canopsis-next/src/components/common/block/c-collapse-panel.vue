@@ -1,8 +1,8 @@
 <template>
   <v-expansion-panels
+    :style="panelStyle"
     class="c-collapse-panel elevation-2"
     accordion
-    :style="panelStyle"
   >
     <v-expansion-panel class="c-collapse-panel__panel">
       <v-expansion-panel-header :color="headerColor">

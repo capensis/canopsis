@@ -26,16 +26,16 @@
     </template>
     <template #actions="">
       <v-btn
-        class="mr-2 mx-0"
         v-if="withExternal"
+        class="mr-2 mx-0"
         color="primary"
         @click.prevent="addExternal"
       >
         {{ $t('kpi.addExternal') }}
       </v-btn>
       <v-btn
-        class="mr-2 mx-0"
         v-if="withExternal"
+        class="mr-2 mx-0"
         color="primary"
         @click.prevent="addAuto"
       >

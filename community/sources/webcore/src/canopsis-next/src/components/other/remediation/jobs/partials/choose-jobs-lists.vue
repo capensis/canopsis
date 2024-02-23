@@ -30,8 +30,8 @@
     <template #mass-actions="{ selected, count }">
       <v-btn
         class="ma-2"
-        outlined
         color="primary"
+        outlined
         @click="$emit('select', selected)"
       >
         {{ $tc('remediation.job.addJobs', count, { count: count }) }}

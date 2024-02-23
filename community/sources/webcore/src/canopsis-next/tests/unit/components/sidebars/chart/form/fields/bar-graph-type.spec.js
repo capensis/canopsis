@@ -41,7 +41,7 @@ describe('bar-graph-type', () => {
 
     selectRadioGroup(wrapper).setChecked(!value);
 
-    expect(wrapper).toEmit('input', !value);
+    expect(wrapper).toEmitInput(!value);
   });
 
   test('Renders `bar-graph-type` with default props', () => {

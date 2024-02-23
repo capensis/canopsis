@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { TIME_UNITS } from '@/constants';
 
 import PeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
@@ -45,12 +44,7 @@ describe('periodic-refresh', () => {
       },
     });
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...form,
       periodic_refresh: {
         ...form.periodic_refresh,
@@ -77,14 +71,9 @@ describe('periodic-refresh', () => {
       unit: TIME_UNITS.week,
     };
 
-    selectPeriodicRefreshField(wrapper).vm.$emit('input', newValue);
+    selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       periodic_refresh: newValue,
     });
   });
@@ -106,14 +95,9 @@ describe('periodic-refresh', () => {
 
     const newLiveWatching = true;
 
-    selectLiveWatchingField(wrapper).vm.$emit('input', newLiveWatching);
+    selectLiveWatchingField(wrapper).triggerCustomEvent('input', newLiveWatching);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...form,
       liveWatching: newLiveWatching,
     });

@@ -2,18 +2,18 @@
   <v-tooltip left>
     <template #activator="{ on }">
       <v-badge
-        class="logged-users-count"
         :color="badgeColor"
+        class="logged-users-count"
         overlap
       >
         <template #badge="">
           {{ count }}
         </template>
         <v-btn
-          v-on="on"
           text
           icon
           small
+          v-on="on"
         >
           <v-icon
             color="white"

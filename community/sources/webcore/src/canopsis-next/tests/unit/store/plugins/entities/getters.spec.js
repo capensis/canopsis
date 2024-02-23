@@ -4,9 +4,11 @@ import { normalize } from 'normalizr';
 
 import { createVueInstance } from '@unit/utils/vue';
 import { fakeAlarms } from '@unit/data/alarm';
+
+import { ENTITIES_TYPES } from '@/constants';
+
 import entitiesPlugin, { types } from '@/store/plugins/entities';
 import { alarmSchema } from '@/store/schemas';
-import { ENTITIES_TYPES } from '@/constants';
 
 const mockData = {
   alarms: fakeAlarms(1),

@@ -5,6 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 type EventRegexMatches struct {
@@ -19,6 +20,8 @@ type EventRegexMatches struct {
 	Author        pattern.RegexMatches
 	Initiator     pattern.RegexMatches
 	ExtraInfos    map[string]pattern.RegexMatches
+
+	MatchedRegexp utils.RegexExpression
 }
 
 func NewEventRegexMatches() EventRegexMatches {
@@ -52,6 +55,15 @@ func (m *EventRegexMatches) SetRegexMatches(fieldName string, matches pattern.Re
 
 func (m *EventRegexMatches) SetInfoRegexMatches(fieldName string, matches pattern.RegexMatches) {
 	m.ExtraInfos[fieldName] = matches
+}
+
+func (m *EventRegexMatches) SetMatchedRegexp(regexp utils.RegexExpression) (err error) {
+	if m.MatchedRegexp == nil {
+		m.MatchedRegexp = regexp
+	} else if m.MatchedRegexp.String() != regexp.String() {
+		err = pattern.ErrOverwriteMatchedRegexp
+	}
+	return
 }
 
 func ValidateEventPattern(p pattern.Event) bool {
@@ -121,6 +133,10 @@ func MatchEventPatternWithRegexMatches(p pattern.Event, event *types.Event) (boo
 							matched, regexMatches, err = v.Condition.MatchStringWithRegexpMatches(s)
 							if matched {
 								eventRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
+
+								if len(regexMatches) != 0 {
+									err = eventRegexMatches.SetMatchedRegexp(v.Condition.GetRegexp())
+								}
 							}
 						}
 					case pattern.FieldTypeInt:
@@ -158,6 +174,10 @@ func MatchEventPatternWithRegexMatches(p pattern.Event, event *types.Event) (boo
 				matched, regexMatches, err = v.Condition.MatchStringWithRegexpMatches(str)
 				if matched {
 					eventRegexMatches.SetRegexMatches(f, regexMatches)
+
+					if len(regexMatches) != 0 {
+						err = eventRegexMatches.SetMatchedRegexp(v.Condition.GetRegexp())
+					}
 				}
 			} else if i, ok := event.GetIntField(f); ok {
 				matched, err = v.Condition.MatchInt(i)

@@ -1,9 +1,8 @@
 <template>
   <v-textarea
-    class="c-payload-textarea-field"
-    ref="field"
     v-validate="rules"
     v-field="value"
+    ref="field"
     :label="label"
     :name="name"
     :rows="rows"
@@ -13,6 +12,7 @@
     :row-height="lineHeight"
     :style="textareaStyle"
     :error="!!linesErrors.length"
+    class="c-payload-textarea-field"
     auto-grow
     @blur="handleBlur"
     @input="debouncedOnSelectionChange"
@@ -34,23 +34,23 @@
           @input="pasteVariable"
         />
         <span
-          class="c-payload-textarea-field__lines"
           :style="linesStyle"
+          class="c-payload-textarea-field__lines"
         >
           <span
-            class="c-payload-textarea-field__line"
             v-for="(line, index) in lines"
             :key="index"
             :style="lineStyle"
+            class="c-payload-textarea-field__line"
           >
             <span
-              class="c-payload-textarea-field__fake-line"
               v-if="selectedVariable && index === selectedVariable.index"
+              class="c-payload-textarea-field__fake-line"
             >
               <span>{{ line.text.slice(0, selectedVariable.start) }}</span>
               <span
-                class="c-payload-textarea-field__highlight"
                 ref="variable"
+                class="c-payload-textarea-field__highlight"
               >
                 <span>{{ line.text.slice(selectedVariable.start, selectedVariable.end) }}</span>
               </span>
@@ -61,10 +61,10 @@
             >
               <template #activator="{ on }">
                 <v-icon
-                  class="c-payload-textarea-field__warning-icon"
-                  v-on="on"
                   :size="lineHeight"
+                  class="c-payload-textarea-field__warning-icon"
                   color="error"
+                  v-on="on"
                 >
                   warning
                 </v-icon>

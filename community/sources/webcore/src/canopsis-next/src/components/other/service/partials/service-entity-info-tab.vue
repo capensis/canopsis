@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-layout
-      class="pa-2"
       v-if="actions.length"
+      class="pa-2"
       align-center
       wrap
     >

@@ -1,8 +1,8 @@
 <template>
   <v-layout
-    v-on="$listeners"
     justify-space-around
     align-center
+    v-on="$listeners"
   >
     <v-icon
       :style="{ color, caretColor: color }"

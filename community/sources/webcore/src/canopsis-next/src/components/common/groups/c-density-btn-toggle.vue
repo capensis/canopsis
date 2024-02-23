@@ -1,14 +1,14 @@
 <template>
   <v-radio-group
-    class="density__radio-group"
     v-if="column"
     v-field="value"
     :name="name"
+    class="density__radio-group"
   >
     <v-layout
-      class="mb-3"
       v-for="type in types"
       :key="type.value"
+      class="mb-3"
     >
       <v-flex xs6>
         <v-radio
@@ -25,10 +25,10 @@
     </v-layout>
   </v-radio-group>
   <v-btn-toggle
-    class="density__btn-toggle"
     v-else
     v-field="value"
     :name="name"
+    class="density__btn-toggle"
     tile
     group
     mandatory
@@ -40,11 +40,11 @@
     >
       <template #activator="{ on }">
         <v-btn
-          class="ma-0"
-          v-on="on"
           :value="type.value"
+          class="ma-0"
           small
           text
+          v-on="on"
         >
           <v-icon small>
             {{ type.icon }}

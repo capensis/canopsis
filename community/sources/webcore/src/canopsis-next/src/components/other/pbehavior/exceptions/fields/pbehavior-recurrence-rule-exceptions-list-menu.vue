@@ -2,11 +2,11 @@
   <v-menu offset-y>
     <template #activator="{ on }">
       <v-btn
-        class="mr-0"
-        v-on="on"
         :loading="pending"
         :disabled="!availableExceptions.length"
+        class="mr-0"
         color="primary"
+        v-on="on"
       >
         {{ $t('pbehavior.exceptions.choose') }}
       </v-btn>

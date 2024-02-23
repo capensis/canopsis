@@ -9,11 +9,11 @@
         <template #activator="{ on: tooltipOn }">
           <v-btn
             v-bind="speedDialBind"
-            v-on="tooltipOn"
             class="primary"
             dark
             fab
             small
+            v-on="tooltipOn"
           >
             <v-icon>add</v-icon>
             <v-icon>close</v-icon>
@@ -25,11 +25,11 @@
     <v-tooltip bottom>
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           color="indigo"
           fab
           dark
           small
+          v-on="on"
           @click.prevent.stop="showCreateServiceModal"
         >
           <v-icon size="24">
