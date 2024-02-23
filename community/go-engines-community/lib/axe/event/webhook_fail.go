@@ -47,8 +47,8 @@ func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	if event.Parameters.TicketInfo.TicketRuleID == "" {
-		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookFail, outputBuilder.String(),
-			event.Parameters)
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookFail, event.Parameters.RuleExecution,
+			outputBuilder.String(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.steps": addStepUpdateQuery(newStepQuery),
@@ -64,9 +64,10 @@ func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			stepType = types.AlarmStepWebhookComplete
 		}
 
-		newStepQuery := execStepUpdateQueryWithInPbhInterval(stepType, requestOutput, event.Parameters)
-		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicketFail, ticketOutput,
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(stepType, event.Parameters.RuleExecution, requestOutput,
 			event.Parameters)
+		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicketFail,
+			event.Parameters.RuleExecution, ticketOutput, event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.steps":   addStepUpdateQuery(newStepQuery, newTicketStepQuery),

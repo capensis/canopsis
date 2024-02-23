@@ -45,6 +45,13 @@ const (
 	IconManualSuccessfulManualAvailable
 )
 
+const (
+	AlarmStepDeclareTicketRuleInProgress = "declareticketruleinprogress"
+	AlarmStepDeclareTicketRuleComplete   = "declareticketrulecomplete"
+	AlarmStepDeclareTicketRuleFail       = "declareticketrulefail"
+	AlarmStepWebhookInProgress           = "webhookinprogress"
+)
+
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -132,16 +139,20 @@ type SortRequest struct {
 }
 
 type DetailsRequest struct {
-	ID                 string               `json:"_id" binding:"required"`
-	Search             string               `json:"search"`
-	SearchBy           []string             `json:"search_by"`
-	Opened             *bool                `json:"opened"`
-	WithInstructions   bool                 `json:"with_instructions"`
-	WithDeclareTickets bool                 `json:"with_declare_tickets"`
-	WithDependencies   bool                 `json:"with_dependencies"`
-	Steps              *StepsRequest        `json:"steps"`
-	Children           *ChildDetailsRequest `json:"children"`
-	PerfData           []string             `json:"perf_data"`
+	ID                 string        `json:"_id" binding:"required"`
+	Search             string        `json:"search"`
+	SearchBy           []string      `json:"search_by"`
+	Opened             *bool         `json:"opened"`
+	WithInstructions   bool          `json:"with_instructions"`
+	WithDeclareTickets bool          `json:"with_declare_tickets"`
+	WithDependencies   bool          `json:"with_dependencies"`
+	Steps              *StepsRequest `json:"steps"`
+	GroupedSteps       struct {
+		IDs      []string `json:"ids"`
+		Reversed bool     `json:"reversed"`
+	} `json:"grouped_steps"`
+	Children *ChildDetailsRequest `json:"children"`
+	PerfData []string             `json:"perf_data"`
 }
 
 func (r *DetailsRequest) Format() {
@@ -184,6 +195,7 @@ type StepsRequest struct {
 	pagination.Query
 	Reversed bool   `json:"reversed"`
 	Type     string `json:"type"`
+	Group    bool   `json:"group"`
 }
 
 type ChildDetailsRequest struct {
@@ -203,8 +215,9 @@ type Details struct {
 	// Only for websocket
 	ID string `bson:"-" json:"_id,omitempty"`
 
-	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
-	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
+	Steps        *StepDetails                  `bson:"steps" json:"steps,omitempty"`
+	GroupedSteps map[string][]common.AlarmStep `bson:"grouped_steps,omitempty" json:"grouped_steps,omitempty"`
+	Children     *ChildrenDetails              `bson:"children" json:"children,omitempty"`
 
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 

@@ -48,7 +48,7 @@ func (p *assocTicketProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 
 	entity := *event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepAssocTicket,
+	newStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepAssocTicket, "",
 		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{

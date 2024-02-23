@@ -450,32 +450,117 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		pipeline = append(pipeline, getDependsCountPipeline()...)
 	}
 
-	if r.Steps != nil {
-		stepMatch := bson.M{}
-		if r.Steps.Type != "" {
-			stepMatch["v.steps._t"] = r.Steps.Type
+	if len(r.GroupedSteps.IDs) > 0 {
+		groupedStepsField := bson.M{}
+		for _, displayGroup := range r.GroupedSteps.IDs {
+			groupedStepsField[displayGroup] = bson.M{"$filter": bson.M{
+				"input": "$v.steps",
+				"cond":  bson.M{"$eq": bson.A{"$$this.dgroup", displayGroup}},
+			}}
+			if r.GroupedSteps.Reversed {
+				groupedStepsField[displayGroup] = bson.M{"$reverseArray": groupedStepsField[displayGroup]}
+			}
 		}
 
+		pipeline = append(pipeline, bson.M{
+			"$addFields": bson.M{
+				"grouped_steps": groupedStepsField,
+			},
+		})
+	}
+
+	if r.Steps != nil {
 		var stepsArray any = "$v.steps"
-		if len(stepMatch) > 0 {
+		if r.Steps.Group {
 			pipeline = append(pipeline,
 				bson.M{"$unwind": bson.M{
 					"path":                       "$v.steps",
 					"preserveNullAndEmptyArrays": true,
 					"includeArrayIndex":          "step_index",
 				}},
-				bson.M{"$match": stepMatch},
+			)
+			pipeline = append(pipeline,
+				bson.M{"$addFields": bson.M{
+					"group": "$v.steps.dgroup",
+				}},
+				bson.M{"$group": bson.M{
+					"_id": bson.M{
+						"_id": "$_id",
+						"group": bson.M{"$cond": bson.M{
+							"if":   "$group",
+							"then": "$group",
+							"else": "$step_index",
+						}},
+					},
+					"data":       bson.M{"$first": "$$ROOT"},
+					"group":      bson.M{"$first": "$group"},
+					"step_index": bson.M{"$first": "$step_index"},
+					"lastStep":   bson.M{"$last": "$v.steps"},
+					"steps":      bson.M{"$push": "$v.steps"},
+				}},
+				bson.M{"$addFields": bson.M{
+					"steps": bson.M{"$cond": bson.M{
+						"if": "$group",
+						"then": bson.M{"$switch": bson.M{
+							"branches": []bson.M{
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$lastStep.initiator", types.InitiatorUser}},
+										{"$eq": bson.A{"$lastStep._t", types.AlarmStepWebhookStart}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$lastStep",
+										bson.M{"_t": AlarmStepDeclareTicketRuleInProgress},
+									}},
+								},
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$lastStep.initiator", types.InitiatorUser}},
+										{"$in": bson.A{"$lastStep._t", bson.A{types.AlarmStepWebhookComplete, types.AlarmStepDeclareTicket}}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$lastStep",
+										bson.M{"_t": AlarmStepDeclareTicketRuleComplete},
+									}},
+								},
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$lastStep.initiator", types.InitiatorUser}},
+										{"$in": bson.A{"$lastStep._t", bson.A{types.AlarmStepWebhookFail, types.AlarmStepDeclareTicketFail}}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$lastStep",
+										bson.M{"_t": AlarmStepDeclareTicketRuleFail},
+									}},
+								},
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$lastStep.initiator", types.InitiatorSystem}},
+										{"$eq": bson.A{"$lastStep._t", types.AlarmStepWebhookStart}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$lastStep",
+										bson.M{"_t": AlarmStepWebhookInProgress},
+									}},
+								},
+							},
+							"default": "$lastStep",
+						}},
+						"else": "$lastStep",
+					}},
+				}},
 			)
 			if r.Steps.Reversed {
 				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": -1}})
 			} else {
 				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": 1}})
 			}
+
 			pipeline = append(pipeline,
 				bson.M{"$group": bson.M{
-					"_id":   "$_id",
-					"data":  bson.M{"$first": "$$ROOT"},
-					"steps": bson.M{"$push": "$v.steps"},
+					"_id":   "$_id._id",
+					"data":  bson.M{"$first": "$data"},
+					"steps": bson.M{"$push": "$steps"},
 				}},
 				bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{
 					"$mergeObjects": bson.A{
@@ -491,6 +576,15 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 			)
 		} else if r.Steps.Reversed {
 			stepsArray = bson.M{"$reverseArray": "$v.steps"}
+		}
+
+		if r.Steps.Type != "" {
+			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+				"v.steps": bson.M{"$filter": bson.M{
+					"input": "$v.steps",
+					"cond":  bson.M{"$eq": bson.A{"$$this._t", r.Steps.Type}},
+				}},
+			}})
 		}
 
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{

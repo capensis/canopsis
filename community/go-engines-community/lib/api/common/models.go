@@ -256,5 +256,6 @@ type AlarmStep struct {
 	// Ticket related fields
 	types.TicketInfo `bson:",inline"`
 
-	InPbehaviorInterval bool `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
+	DisplayGroup        string `bson:"dgroup,omitempty" json:"display_group,omitempty"`
+	InPbehaviorInterval bool   `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
 }

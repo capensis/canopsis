@@ -49,18 +49,20 @@ func valStepUpdateQueryWithInPbhInterval(stepType string, value types.CpsNumber,
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
 }
 
-func execStepUpdateQueryWithInPbhInterval(stepType, msg string, params rpc.AxeParameters) bson.M {
+func execStepUpdateQueryWithInPbhInterval(stepType, displayGroup, msg string, params rpc.AxeParameters) bson.M {
 	newStep := types.NewAlarmStep(stepType, params.Timestamp, params.Author, msg, params.User, params.Role,
 		params.Initiator, false)
 	newStep.Execution = params.Execution
+	newStep.DisplayGroup = displayGroup
 
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
 }
 
-func ticketStepUpdateQueryWithInPbhInterval(stepType string, msg string, params rpc.AxeParameters) bson.M {
+func ticketStepUpdateQueryWithInPbhInterval(stepType string, displayGroup, msg string, params rpc.AxeParameters) bson.M {
 	newStep := types.NewTicketStep(stepType, params.Timestamp, params.Author, msg, params.User, params.Role,
 		params.Initiator, params.TicketInfo, false)
 	newStep.Execution = params.Execution
+	newStep.DisplayGroup = displayGroup
 
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
 }

@@ -35,8 +35,8 @@ func (p *webhookStartProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 		"exec": event.Parameters.Execution,
 		"_t":   types.AlarmStepWebhookStart,
 	}}}
-	newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStart, event.Parameters.Output,
-		event.Parameters)
+	newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStart, event.Parameters.RuleExecution,
+		event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.steps": addStepUpdateQuery(newStepQuery),

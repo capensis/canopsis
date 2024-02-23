@@ -351,7 +351,8 @@ paths:
                     "opened": true,
                     "steps": {
                       "page": 1,
-                      "limit": 10
+                      "limit": 10,
+                      "reversed": true
                     },
                     "children": {
                       "page": 1,
@@ -366,6 +367,16 @@ paths:
                     "opened": true,
                     "steps": {
                       "page": 2
+                    }
+                  },
+                  {
+                    "_id": "6164d665-7ccb-4ffc-9d46-5350b2fefafe",
+                    "grouped_steps": {
+                      "reversed": true,
+                      "ids": [
+                        "14e237d4-ad08-47a5-87f2-8ffe6741541f",
+                        "0be1d3df-816b-4359-a2ba-7bcccb33ed4f"
+                      ]
                     }
                   }
                 ]
