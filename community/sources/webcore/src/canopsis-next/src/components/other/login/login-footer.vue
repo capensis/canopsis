@@ -18,8 +18,8 @@
       {{ $t('login.forum') }}
     </a>
     <a
-      class="version"
       :href="changeLogHref"
+      class="version"
       target="_blank"
     >
       {{ version }}

@@ -2,8 +2,8 @@
   <tr>
     <td class="cursor-pointer">
       <c-expand-btn
-        class="mr-2"
         :expanded="expanded"
+        class="mr-2"
         @expand="$emit('expand', !expanded)"
       />
       <span>{{ group.name }}</span>

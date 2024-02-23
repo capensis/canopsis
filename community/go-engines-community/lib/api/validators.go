@@ -221,8 +221,9 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})
 
 	stateSettingsValidator := statesettings.NewValidator()
-	v.RegisterStructValidation(stateSettingsValidator.ValidateStateSettingRequest, statesettings.StateSettingRequest{})
-	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThresholds, statesettings.StateThresholds{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateEditRequest, statesettings.EditRequest{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateJUnitThresholds, statesettings.JUnitThreshold{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThreshold, statesettings.StateThreshold{})
 
 	eventfilterValidator := eventfilter.NewValidator(client)
 	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRuleCollection, "ID")

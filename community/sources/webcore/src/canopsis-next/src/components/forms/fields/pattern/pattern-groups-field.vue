@@ -35,16 +35,16 @@
       align-center
     >
       <v-btn
-        class="mr-2"
         :color="hasGroupsErrors ? 'error' : 'primary'"
         :disabled="disabled"
+        class="mr-2"
         @click="addFilterGroup"
       >
         {{ $t('pattern.addGroup') }}
       </v-btn>
       <span
-        class="error--text"
         v-show="hasGroupsErrors"
+        class="error--text"
       >
         {{ $t('pattern.errors.groupRequired') }}
       </span>

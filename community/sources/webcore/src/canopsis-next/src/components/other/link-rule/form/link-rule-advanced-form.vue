@@ -4,8 +4,8 @@
       {{ $t('linkRule.sourceCodeAlert') }}
     </p>
     <java-script-code-editor
-      class="java-script-code-editor"
       v-field="value"
+      class="java-script-code-editor"
       resettable
     />
   </v-layout>

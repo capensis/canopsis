@@ -1,8 +1,8 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
 
 import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
@@ -112,7 +112,7 @@ describe('kpi-rating-settings', () => {
     const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    kpiRatingSettingsListElement.vm.$emit('update:options', {
+    kpiRatingSettingsListElement.triggerCustomEvent('update:options', {
       itemsPerPage,
       page,
     });

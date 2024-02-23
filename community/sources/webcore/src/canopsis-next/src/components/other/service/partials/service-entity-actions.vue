@@ -21,6 +21,7 @@
             v-else
             :disabled="action.disabled"
             :loading="action.loading"
+            class="ml-2"
             depressed
             small
             light

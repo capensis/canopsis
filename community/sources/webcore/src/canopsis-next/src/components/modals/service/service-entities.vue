@@ -43,8 +43,8 @@
     </template>
     <template #actions="">
       <v-alert
-        class="actions-requests-alert my-0 mr-2 pa-1 pr-2"
         :value="actionsRequests.length > 0"
+        class="actions-requests-alert my-0 mr-2 pa-1 pr-2"
         type="info"
         dismissible
         @input="clearActions"
@@ -55,8 +55,8 @@
         <template #activator="{ on }">
           <v-btn
             class="mx-2"
-            v-on="on"
             color="secondary"
+            v-on="on"
             @click="refresh"
           >
             <v-icon>refresh</v-icon>
@@ -72,10 +72,10 @@
         {{ $t('common.close') }}
       </v-btn>
       <v-btn
-        class="primary"
         v-if="entitiesActionsInQueue"
         :loading="submitting"
         :disabled="submitting || !actionsRequests.length"
+        class="primary"
         type="submit"
         @click="submit"
       >

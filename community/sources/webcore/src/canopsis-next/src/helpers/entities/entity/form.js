@@ -40,6 +40,7 @@ export const isEntityComponentType = type => type === ENTITY_TYPES.component;
  * @return {EntityForm}
  */
 export const entityToForm = (entity = {}) => ({
+  _id: entity._id ?? '',
   name: entity.name ?? '',
   description: entity.description ?? '',
   type: entity.type ?? BASIC_ENTITY_TYPES.connector,
@@ -60,7 +61,7 @@ export const entityToForm = (entity = {}) => ({
  * @return {Entity}
  */
 export const formToEntity = (form) => {
-  const entity = omit(form, ['coordinates']);
+  const entity = omit(form, ['coordinates', '_id']);
 
   if (isNumber(form.coordinates.lat) && isNumber(form.coordinates.lng)) {
     entity.coordinates = form.coordinates;

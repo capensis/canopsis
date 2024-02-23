@@ -1,7 +1,7 @@
 <template>
   <div
-    class="modals-wrapper"
     :class="{ 'modals-wrapper--active': modals.length > 0 }"
+    class="modals-wrapper"
   >
     <modal-base
       v-for="modal in modals"

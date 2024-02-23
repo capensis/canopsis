@@ -1,11 +1,12 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
+import { MERMAID_THEMES } from '@/constants';
+
+import { mermaidPointToForm } from '@/helpers/entities/map/form';
 
 import MermaidEditor from '@/components/other/map/form/fields/mermaid-editor.vue';
-import { MERMAID_THEMES } from '@/constants';
-import { mermaidPointToForm } from '@/helpers/entities/map/form';
 
 const stubs = {
   'mermaid-code-editor': true,
@@ -47,9 +48,9 @@ describe('mermaid-editor', () => {
 
     const mermaidCodeEditor = selectMermaidCodeEditor(wrapper);
 
-    mermaidCodeEditor.vm.$emit('input', newCode);
+    mermaidCodeEditor.triggerCustomEvent('input', newCode);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       code: newCode,
     });
@@ -66,9 +67,9 @@ describe('mermaid-editor', () => {
 
     const mermaidThemeField = selectMermaidThemeField(wrapper);
 
-    mermaidThemeField.vm.$emit('input', newTheme);
+    mermaidThemeField.triggerCustomEvent('input', newTheme);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       theme: newTheme,
     });
@@ -85,9 +86,9 @@ describe('mermaid-editor', () => {
 
     const mermaidPoints = selectMermaidPoints(wrapper);
 
-    mermaidPoints.vm.$emit('input', newPoints);
+    mermaidPoints.triggerCustomEvent('input', newPoints);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       points: newPoints,
     });
@@ -102,7 +103,7 @@ describe('mermaid-editor', () => {
 
     const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await addLocationBtn.vm.$emit('input', true);
+    await addLocationBtn.triggerCustomEvent('input', true);
 
     const mermaidPoints = selectMermaidPoints(wrapper);
 

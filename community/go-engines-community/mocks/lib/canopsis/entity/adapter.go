@@ -172,21 +172,6 @@ func (mr *MockAdapterMockRecorder) GetAllWithLastUpdateDateBefore(arg0, arg1, ar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllWithLastUpdateDateBefore", reflect.TypeOf((*MockAdapter)(nil).GetAllWithLastUpdateDateBefore), arg0, arg1, arg2)
 }
 
-// GetEntityByID mocks base method.
-func (m *MockAdapter) GetEntityByID(arg0 context.Context, arg1 string) (types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEntityByID", arg0, arg1)
-	ret0, _ := ret[0].(types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetEntityByID indicates an expected call of GetEntityByID.
-func (mr *MockAdapterMockRecorder) GetEntityByID(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntityByID", reflect.TypeOf((*MockAdapter)(nil).GetEntityByID), arg0, arg1)
-}
-
 // GetIDs mocks base method.
 func (m *MockAdapter) GetIDs(arg0 context.Context, arg1 map[string]interface{}, arg2 *[]interface{}) error {
 	m.ctrl.T.Helper()

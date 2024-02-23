@@ -10,10 +10,10 @@
     <template #append="">
       <c-help-icon
         v-if="helpText"
-        icon="help"
         :text="helpText"
-        left
+        icon="help"
         max-width="250"
+        left
       />
     </template>
   </v-text-field>

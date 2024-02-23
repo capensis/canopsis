@@ -11,10 +11,10 @@
       >
         <template #activator="{ on }">
           <v-btn
-            v-on="on"
             :dark="dark"
             color="primary"
             fab
+            v-on="on"
             @click.stop="$listeners.create"
           >
             <v-icon>add</v-icon>

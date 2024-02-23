@@ -203,6 +203,8 @@ type Event struct {
 	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"healthcheck,omitempty"`
+
+	StateSettingUpdated bool `bson:"state_setting_updated,omitempty" json:"state_setting_updated,omitempty"`
 }
 
 // Format an event
@@ -236,6 +238,7 @@ func (e *Event) GetEID() string {
 	if e.Component != "" {
 		return e.Component
 	}
+
 	return e.Connector + "/" + e.ConnectorName
 }
 

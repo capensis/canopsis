@@ -1,8 +1,8 @@
 <template>
   <v-tabs
-    class="expand-panel secondary lighten-2"
     v-model="activeTab"
     :key="tabsKey"
+    class="expand-panel secondary lighten-2"
     background-color="secondary lighten-1"
     slider-color="primary"
     dark
@@ -181,7 +181,7 @@
                   :root="dependency"
                   :columns="widget.parameters.serviceDependenciesColumns"
                   include-root
-                  openable-root
+                  show-state-setting
                 />
               </v-card-text>
             </v-card>
@@ -201,7 +201,6 @@
                   :columns="widget.parameters.serviceDependenciesColumns"
                   include-root
                   impact
-                  openable-root
                 />
               </v-card-text>
             </v-card>
@@ -212,9 +211,7 @@
         v-if="hasEntityGantt"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt"
       >
-        <v-layout
-          class="pa-3 secondary lighten-2"
-        >
+        <v-layout class="pa-3 secondary lighten-2">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>

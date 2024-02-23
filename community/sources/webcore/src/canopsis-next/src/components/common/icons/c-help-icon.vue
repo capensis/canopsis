@@ -9,18 +9,18 @@
     <template #activator="{ bind, on }">
       <v-icon
         v-bind="bind"
-        v-on="on"
         :color="color"
         :size="size"
         :class="iconClass"
+        v-on="on"
       >
         {{ icon }}
       </v-icon>
     </template>
     <slot>
       <div
-        class="pre-wrap"
         v-html="text"
+        class="pre-wrap"
       />
     </slot>
   </v-tooltip>

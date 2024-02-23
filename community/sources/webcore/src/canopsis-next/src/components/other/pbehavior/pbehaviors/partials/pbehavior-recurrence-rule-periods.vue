@@ -23,17 +23,17 @@
     </v-layout>
     <v-layout>
       <v-data-iterator
-        class="data-iterator"
         :items="timespans"
         :loading="pending"
+        class="data-iterator"
       >
         <template #header="">
           <v-flex>
             <v-fade-transition>
               <v-progress-linear
-                class="progress ma-0"
                 v-show="pending"
                 :height="3"
+                class="progress ma-0"
                 color="primary"
                 indeterminate
               />

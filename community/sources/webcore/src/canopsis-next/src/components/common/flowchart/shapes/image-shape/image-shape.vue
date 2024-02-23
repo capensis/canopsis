@@ -6,7 +6,6 @@
     <template v-if="shape.svg">
       <component
         is="foreignObject"
-        v-on="$listeners"
         v-html="shape.svg"
         :style="svgStyle"
         :x="shape.x"
@@ -14,6 +13,7 @@
         :height="shape.height"
         :width="shape.width"
         cursor="move"
+        v-on="$listeners"
       />
     </template>
     <template v-else>
@@ -25,13 +25,13 @@
         :height="shape.height"
       />
       <image
-        v-on="$listeners"
         :href="shape.src"
         :x="shape.x"
         :y="shape.y"
         :width="shape.width"
         :height="shape.height"
         :cursor="readonly ? '' : 'move'"
+        v-on="$listeners"
       />
     </template>
     <text-editor

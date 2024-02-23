@@ -10,7 +10,6 @@
   >
     <template #activator="{ on }">
       <v-text-field
-        v-on="on"
         :class="contentClass"
         :value="value | date(format)"
         :label="label"
@@ -22,6 +21,7 @@
         :hide-details="hideDetails"
         :append-icon="clearable ? 'close' : ''"
         :readonly="!disabled"
+        v-on="on"
         @click:append="clear"
       >
         <template #append="">
@@ -30,13 +30,13 @@
       </v-text-field>
     </template>
     <v-date-picker
-      class="date-picker"
       v-field="value"
       :opened="opened"
       :color="color"
       :min="min"
       :max="max"
       :allowed-dates="allowedDates"
+      class="date-picker"
       @change="change"
     />
   </v-menu>

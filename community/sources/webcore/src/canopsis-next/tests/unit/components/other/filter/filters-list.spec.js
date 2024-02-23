@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ENTITIES_TYPES } from '@/constants';
 
 import FiltersList from '@/components/other/filter/filters-list.vue';
@@ -44,13 +44,9 @@ describe('filters-list', () => {
       },
     });
 
-    const addButton = selectAddButton(wrapper);
+    selectAddButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    addButton.vm.$emit('click', new Event('click'));
-
-    const addEvents = wrapper.emitted('add');
-
-    expect(addEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('add');
   });
 
   it('Edit filter modal opened after trigger edit button', () => {
@@ -66,13 +62,10 @@ describe('filters-list', () => {
     });
 
     const editedIndex = 1;
-    const filterTile = selectFilterTiles(wrapper).at(editedIndex);
-    filterTile.vm.$emit('edit');
 
-    const editEvents = wrapper.emitted('edit');
+    selectFilterTiles(wrapper).at(editedIndex).triggerCustomEvent('edit');
 
-    expect(editEvents).toHaveLength(1);
-    expect(editEvents[0]).toEqual([filters[editedIndex], editedIndex]);
+    expect(wrapper).toEmit('edit', filters[editedIndex]);
   });
 
   it('Confirmation modal opened after trigger delete button', () => {
@@ -88,14 +81,10 @@ describe('filters-list', () => {
     });
 
     const deleteIndex = 1;
-    const filterTile = selectFilterTiles(wrapper).at(deleteIndex);
 
-    filterTile.vm.$emit('delete');
+    selectFilterTiles(wrapper).at(deleteIndex).triggerCustomEvent('delete');
 
-    const deleteEvents = wrapper.emitted('delete');
-
-    expect(deleteEvents).toHaveLength(1);
-    expect(deleteEvents[0]).toEqual([filters[deleteIndex], deleteIndex]);
+    expect(wrapper).toEmit('delete', filters[deleteIndex]);
   });
 
   it('Should send updated filters array on dragging', () => {
@@ -111,9 +100,9 @@ describe('filters-list', () => {
     const updatedFilters = [...filters].reverse();
     const draggableField = selectDraggableField(wrapper);
 
-    draggableField.vm.$emit('input', updatedFilters);
+    draggableField.triggerCustomEvent('input', updatedFilters);
 
-    expect(wrapper).toEmit('input', updatedFilters);
+    expect(wrapper).toEmitInput(updatedFilters);
   });
 
   it('Renders `filters-list` with default props', () => {

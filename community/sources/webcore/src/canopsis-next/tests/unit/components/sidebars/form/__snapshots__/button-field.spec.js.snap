@@ -48,6 +48,7 @@ exports[`button-field Renders \`button-field\` with default props 1`] = `
     <div
       class="v-list-item__title"
     >
+      Custom title
     </div>
   </div>
   <div
