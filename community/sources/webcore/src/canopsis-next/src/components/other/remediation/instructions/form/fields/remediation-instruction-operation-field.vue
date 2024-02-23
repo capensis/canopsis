@@ -5,9 +5,9 @@
       xs1
     >
       <c-draggable-step-number
-        drag-class="operation-drag-handler"
         :disabled="disabled"
         :color="hasChildrenError ? 'error' : 'primary'"
+        drag-class="operation-drag-handler"
       >
         {{ operationNumber }}
       </c-draggable-step-number>
@@ -17,10 +17,10 @@
         <v-flex xs11>
           <v-layout>
             <c-expand-btn
-              class="operation-expand"
               v-if="!disabled"
               v-model="expanded"
               :color="!expanded && hasChildrenError ? 'error' : ''"
+              class="operation-expand"
             />
             <v-layout column>
               <v-text-field
@@ -72,8 +72,8 @@
         </v-flex>
         <span>
           <c-action-btn
-            class="mt-1"
             v-if="!disabled"
+            class="mt-1"
             type="delete"
             @click="$emit('remove')"
           />

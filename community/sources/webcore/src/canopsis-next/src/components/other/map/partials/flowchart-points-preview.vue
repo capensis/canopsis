@@ -1,14 +1,14 @@
 <template>
   <g class="flowchart-points-preview">
     <component
-      class="flowchart-points-preview__point"
+      is="foreignObject"
       v-for="{ point, x, y } in nonShapesIcons"
       :key="point._id"
       :x="x"
       :y="y"
       :width="iconSize"
       :height="iconSize"
-      is="foreignObject"
+      class="flowchart-points-preview__point"
       @click="openPopup(point, $event)"
     >
       <point-icon
@@ -19,14 +19,14 @@
       />
     </component>
     <component
-      class="flowchart-points-preview__point"
+      is="foreignObject"
       v-for="{ point, x, y } in shapesIcons"
       :key="point._id"
       :height="iconSize"
       :width="iconSize"
       :x="x"
       :y="y"
-      is="foreignObject"
+      class="flowchart-points-preview__point"
       @click="openPopup(point, $event)"
     >
       <point-icon

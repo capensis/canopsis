@@ -4,13 +4,13 @@
       <v-layout column>
         <v-layout align-center>
           <v-text-field
-            class="mr-2"
             v-field="form.reference"
             v-validate="'required'"
             :label="$t('externalData.fields.reference')"
             :error-messages="errors.collect(referenceFieldName)"
             :name="referenceFieldName"
             :disabled="disabled"
+            class="mr-2"
           >
             <template #append="">
               <c-help-icon
@@ -21,15 +21,15 @@
             </template>
           </v-text-field>
           <v-select
-            class="ml-2"
             v-field="form.type"
             :items="availableTypes"
             :label="$t('common.type')"
             :disabled="disabled"
+            class="ml-2"
           />
           <v-btn
-            class="mr-0"
             v-if="!disabled"
+            class="mr-0"
             icon
             @click="remove"
           >

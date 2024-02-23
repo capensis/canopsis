@@ -1,13 +1,13 @@
 <template>
   <v-layout column>
     <v-layout
-      class="mb-4"
       v-if="showStatus"
+      class="mb-4"
       align-center
     >
       <v-chip
-        class="mr-2"
         v-if="showRuleName"
+        class="mr-2"
         color="primary"
         text-color="white"
         small

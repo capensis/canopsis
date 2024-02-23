@@ -55,7 +55,6 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                 style="height: auto;"
               >
                 <div
-                  aria-labelledby="input-70"
                   class="v-input--radio-group__input"
                   role="radiogroup"
                 >
@@ -215,7 +214,6 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                 style="height: auto;"
               >
                 <div
-                  aria-labelledby="input-55"
                   class="v-input--radio-group__input"
                   role="radiogroup"
                 >

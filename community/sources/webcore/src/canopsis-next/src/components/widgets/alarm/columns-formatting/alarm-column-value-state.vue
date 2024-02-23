@@ -7,11 +7,12 @@
       :value="stateId"
       :badge-value="badgeValue"
       :small="small"
+      @click="$emit('click', $event)"
     />
     <v-icon
-      class="d-block"
       v-if="showIcon"
       :size="small ? 14 : undefined"
+      class="d-block"
       color="purple"
     >
       account_circle

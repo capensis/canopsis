@@ -66,7 +66,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 	for i, action := range rule.Config.Actions {
 		var parsedValue libtemplate.ParsedTemplate
 		switch action.Type {
-		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate:
+		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate, ActionSetTagsFromTemplate:
 			if str, ok := action.Value.(string); ok {
 				parsedValue = tplExecutor.Parse(str)
 			}
@@ -150,7 +150,7 @@ func ExecuteParsedTemplate(
 	tplName string,
 	parsedTpl libtemplate.ParsedTemplate,
 	tplData any,
-	event types.Event,
+	event *types.Event,
 	failureService FailureService,
 	templateExecutor libtemplate.Executor,
 ) (string, error) {
@@ -164,7 +164,7 @@ func ExecuteParsedTemplate(
 		res, err := templateExecutor.ExecuteByTpl(parsedTpl.Tpl, tplData)
 		if err != nil {
 			failReason := fmt.Sprintf("cannot execute template %q for event: %s", tplName, err)
-			failureService.Add(ruleID, FailureTypeInvalidTemplate, failReason, &event)
+			failureService.Add(ruleID, FailureTypeInvalidTemplate, failReason, event)
 			return "", err
 		}
 

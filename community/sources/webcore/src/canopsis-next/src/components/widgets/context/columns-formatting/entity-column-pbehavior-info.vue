@@ -5,8 +5,8 @@
   >
     <template #activator="{ on }">
       <v-icon
-        v-on="on"
         color="primary"
+        v-on="on"
       >
         {{ icon }}
       </v-icon>

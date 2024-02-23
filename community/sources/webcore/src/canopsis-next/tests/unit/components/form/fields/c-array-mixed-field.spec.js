@@ -43,18 +43,10 @@ describe('c-array-text-field', () => {
         values: [mockData.string],
       },
     });
-    const addButtonElement = wrapper.find('button.v-btn');
 
-    addButtonElement.trigger('click');
+    wrapper.find('button.v-btn').trigger('click');
 
-    const changeEvents = wrapper.emitted('change');
-    expect(changeEvents).toHaveLength(1);
-
-    const [newFieldsData] = changeEvents[0];
-    const [oldValue, newValue] = newFieldsData;
-
-    expect(oldValue).toEqual(mockData.string);
-    expect(newValue).toEqual('');
+    expect(wrapper).toEmit('change', [mockData.string, '']);
   });
 
   it('Value changed after trigger mixed field', () => {
@@ -65,16 +57,10 @@ describe('c-array-text-field', () => {
       },
     });
     const secondFieldElement = wrapper.findAll('v-layout-stub').at(0);
-    const mixedFieldElement = selectTextField(secondFieldElement);
 
-    mixedFieldElement.setValue(newFieldValue);
+    selectTextField(secondFieldElement).setValue(newFieldValue);
 
-    const changeEvents = wrapper.emitted('change');
-    expect(changeEvents).toHaveLength(1);
-
-    const [newFieldsData] = changeEvents[0];
-
-    expect(newFieldsData).toEqual([newFieldValue, mockData.number]);
+    expect(wrapper).toEmit('change', [newFieldValue, mockData.number]);
   });
 
   it('Field removed after click on remove button', () => {
@@ -84,16 +70,10 @@ describe('c-array-text-field', () => {
       },
     });
     const secondFieldElement = wrapper.findAll('v-layout-stub').at(1);
-    const removeButtonElement = secondFieldElement.find('button.c-action-btn');
 
-    removeButtonElement.trigger('click');
+    secondFieldElement.find('button.c-action-btn').trigger('click');
 
-    const changeEvents = wrapper.emitted('change');
-    expect(changeEvents).toHaveLength(1);
-
-    const [newFieldsData] = changeEvents[0];
-
-    expect(newFieldsData).toEqual([mockData.string]);
+    expect(wrapper).toEmit('change', [mockData.string]);
   });
 
   it('Renders `c-array-text-field` with default props correctly', () => {

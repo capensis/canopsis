@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ENTITIES_STATES } from '@/constants';
+
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 const stubs = {
@@ -27,15 +28,9 @@ describe('state-criticity-field', () => {
       },
     });
 
-    const buttonToggleElement = wrapper.find('input.v-btn-toggle');
+    wrapper.find('input.v-btn-toggle').setValue(ENTITIES_STATES.ok);
 
-    buttonToggleElement.setValue(ENTITIES_STATES.ok);
-
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(ENTITIES_STATES.ok);
+    expect(wrapper).toEmitInput(ENTITIES_STATES.ok);
   });
 
   it('Renders `state-criticity-field` with default props correctly', () => {

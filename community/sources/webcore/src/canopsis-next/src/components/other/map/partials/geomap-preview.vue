@@ -1,18 +1,18 @@
 <template>
   <c-zoom-overlay>
     <geomap
-      class="geomap-preview"
       ref="map"
       :min-zoom="minZoom"
       :disabled="!!activePoint"
+      class="geomap-preview"
     >
       <geomap-control-zoom
-        position="topleft"
         :disabled="!!activePoint"
+        position="topleft"
       />
       <geomap-control-layers
-        position="topright"
         :disabled="!!activePoint"
+        position="topright"
       />
       <geomap-tile-layer
         :name="$t('map.layers.openStreetMap')"

@@ -1,8 +1,8 @@
 <template>
   <v-text-field
-    class="time-picker__select"
     :value="value"
     :label="label"
+    class="time-picker__select"
     placeholder="−−:−−"
     hide-details
     disabled

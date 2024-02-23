@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
 
 import CServiceWeatherStateCounterField from '@/components/forms/fields/service-weather/c-service-weather-state-counter-field.vue';
@@ -19,9 +20,9 @@ describe('c-service-weather-state-counter-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
+    selectField.triggerCustomEvent('input', SERVICE_WEATHER_STATE_COUNTERS.all);
 
-    expect(wrapper).toEmit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
+    expect(wrapper).toEmitInput(SERVICE_WEATHER_STATE_COUNTERS.all);
   });
 
   it('Renders `c-service-weather-state-counter-field` with default props', async () => {

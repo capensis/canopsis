@@ -1,7 +1,6 @@
 <template>
   <g>
     <rect
-      v-on="$listeners"
       v-bind="$attrs"
       :x="x"
       :y="y"
@@ -11,6 +10,7 @@
       :height="height"
       :stroke="stroke"
       :stroke-width="strokeWidth"
+      v-on="$listeners"
     />
     <path
       :stroke="stroke"

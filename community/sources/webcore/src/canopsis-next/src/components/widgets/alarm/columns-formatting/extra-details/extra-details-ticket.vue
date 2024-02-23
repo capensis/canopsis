@@ -6,8 +6,8 @@
     >
       <template #activator="{ on }">
         <v-badge
-          class="time-line-flag"
           :value="isLastFailed"
+          class="time-line-flag"
           color="transparent"
           overlap
         >
@@ -38,9 +38,9 @@
         column
       >
         <div
-          class="text-md-center"
           v-for="(ticket, index) in shownTickets"
           :key="index"
+          class="text-md-center"
         >
           <strong>{{ ticket.ticket_rule_name }} {{ getTicketStatusText(ticket) }}</strong>
           <div>{{ $t('common.by') }} : {{ ticket.a }}</div>

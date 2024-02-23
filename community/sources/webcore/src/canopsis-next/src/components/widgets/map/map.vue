@@ -9,8 +9,8 @@
         xs3
       >
         <c-entity-category-field
-          class="mr-3"
           :category="query.category"
+          class="mr-3"
           @input="updateCategory"
         />
       </v-flex>
@@ -55,8 +55,8 @@
     </template>
     <template v-else>
       <v-layout
-        class="pa-4"
         v-if="pending"
+        class="pa-4"
         justify-center
       >
         <v-progress-circular
@@ -66,11 +66,11 @@
       </v-layout>
     </template>
     <map-breadcrumbs
-      class="mb-2"
       v-if="previousMaps.length"
       :previous-maps="previousMaps"
       :active-map="mapState"
       :pending="pending"
+      class="mb-2"
       @click="backToBreadcrumb"
     />
     <component

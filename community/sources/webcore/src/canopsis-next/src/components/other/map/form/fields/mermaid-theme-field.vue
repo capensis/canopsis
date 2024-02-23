@@ -1,12 +1,12 @@
 <template>
   <v-select
-    class="my-0"
     v-field="value"
     v-validate="'required'"
     :items="themes"
     :error-messages="errors.collect(name)"
     :label="$t('mermaid.theme')"
     :name="name"
+    class="my-0"
     hide-details
     light
   />
