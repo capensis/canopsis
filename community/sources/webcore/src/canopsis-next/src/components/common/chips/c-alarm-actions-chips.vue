@@ -1,8 +1,8 @@
 <template>
   <v-layout
-    class="c-alarm-actions-chips"
     :key="wrapperKey"
     :class="{ 'c-alarm-actions-chips--small': small }"
+    class="c-alarm-actions-chips"
     wrap
     align-center
   >
@@ -17,8 +17,8 @@
       @close="closeItem(item)"
     >
       <slot
-        name="item"
         :item="item"
+        name="item"
       >
         <span>{{ item[itemText] }}</span>
       </slot>
@@ -34,6 +34,7 @@
       <template #activator="{ on }">
         <v-btn
           class="c-alarm-actions-chips__more-btn ma-0"
+          color="grey"
           icon
           v-on="on"
         >
@@ -48,23 +49,23 @@
       <v-card>
         <v-card-text>
           <v-layout
-            class="c-alarm-actions-chips__more"
             :class="{ 'c-alarm-actions-chips--small': small }"
+            class="c-alarm-actions-chips__more"
             wrap
           >
             <c-alarm-action-chip
-              class="mx-0"
               v-for="item in dropDownItems"
               :key="item[itemValue]"
               :class="itemClass"
               :color="item.color"
               :closable="closable"
+              class="mx-0"
               @click="selectItem(item)"
               @close="closeItem(item)"
             >
               <slot
-                name="item"
                 :item="item"
+                name="item"
               >
                 <span>{{ item[itemText] }}</span>
               </slot>

@@ -30,16 +30,16 @@
           </v-expand-transition>
           <v-text-field
             v-field="form.description"
-            :label="$t('common.description')"
             key="description"
+            :label="$t('common.description')"
           />
           <v-layout>
             <v-flex xs5>
               <c-name-field
-                class="mr-2"
                 v-field="form.name"
-                :name="nameFieldName"
                 key="name"
+                :name="nameFieldName"
+                class="mr-2"
                 required
               />
             </v-flex>
@@ -47,10 +47,11 @@
               <c-payload-text-field
                 v-if="isStringTemplateValueType"
                 v-field="form.value"
+                key="from"
                 :label="$t('common.value')"
                 :variables="variables"
                 :name="valueFieldName"
-                key="value"
+                class="ml-2"
                 required
                 clearable
               />
@@ -58,25 +59,27 @@
                 v-else-if="isStringCopyValueType"
                 v-field="form.value"
                 v-validate="'required'"
+                key="value"
                 :label="$t('common.value')"
                 :error-messages="errors.collect(valueFieldName)"
                 :items="copyValueVariables"
                 :name="valueFieldName"
-                key="value"
+                class="ml-2"
               />
               <event-filter-enrichment-action-form-select-rags-value
                 v-else-if="isSelectValueType"
                 v-field="form.value"
+                key="value"
                 :items="setTagsItems"
                 :name="valueFieldName"
-                key="value"
               />
               <c-mixed-field
                 v-else
                 v-field="form.value"
+                key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
-                key="value"
+                class="ml-2"
               />
             </v-flex>
           </v-layout>

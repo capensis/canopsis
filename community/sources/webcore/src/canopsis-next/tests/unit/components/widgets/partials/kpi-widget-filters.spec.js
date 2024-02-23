@@ -38,7 +38,7 @@ describe('kpi-widget-filters', () => {
       to: Faker.datatype.number(),
     };
 
-    selectQuickDateIntervalField(wrapper).vm.$emit('input', newInterval);
+    selectQuickDateIntervalField(wrapper).triggerCustomEvent('input', newInterval);
 
     expect(wrapper).toEmit('update:interval', newInterval);
   });
@@ -52,7 +52,7 @@ describe('kpi-widget-filters', () => {
       },
     });
 
-    selectSamplingField(wrapper).vm.$emit('input', SAMPLINGS.month);
+    selectSamplingField(wrapper).triggerCustomEvent('input', SAMPLINGS.month);
 
     expect(wrapper).toEmit('update:sampling', SAMPLINGS.month);
   });
@@ -67,7 +67,7 @@ describe('kpi-widget-filters', () => {
 
     const newFilters = [Faker.datatype.string(), Faker.datatype.string()];
 
-    selectFilterSelector(wrapper).vm.$emit('input', newFilters);
+    selectFilterSelector(wrapper).triggerCustomEvent('input', newFilters);
 
     expect(wrapper).toEmit('update:filters', newFilters);
   });

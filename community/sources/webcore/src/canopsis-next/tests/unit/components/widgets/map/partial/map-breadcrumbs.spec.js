@@ -19,7 +19,7 @@ describe('map-breadcrumbs', () => {
     const index = 2;
     const button = selectButtonByIndex(wrapper, index);
 
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('click', { index: 2 });
   });

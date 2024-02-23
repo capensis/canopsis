@@ -1,9 +1,9 @@
 <template>
   <limited-time-line-chart
-    class="text--primary"
     :datasets="datasets"
     :options="lastHourChartOptions"
     :dark="$system.dark"
+    class="text--primary"
   >
     <template #actions="{ chart }">
       <v-layout

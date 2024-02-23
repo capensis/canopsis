@@ -1019,7 +1019,7 @@ func updateMetaAlarmState(alarm *types.Alarm, entity types.Entity, timestamp dat
 
 	author := strings.Replace(entity.Connector, "/", ".", 1)
 	if state != currentState {
-		// Event is an OK, so the alarm should be resolved anyway
+		// Event is an Ok, so the alarm should be resolved anyway
 		if alarm.IsStateLocked() && state != types.AlarmStateOK {
 			return nil
 		}

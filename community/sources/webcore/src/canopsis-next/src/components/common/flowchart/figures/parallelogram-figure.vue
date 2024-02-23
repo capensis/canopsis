@@ -1,7 +1,7 @@
 <template>
   <path
-    v-on="$listeners"
     :d="parallelogramPath"
+    v-on="$listeners"
   />
 </template>
 

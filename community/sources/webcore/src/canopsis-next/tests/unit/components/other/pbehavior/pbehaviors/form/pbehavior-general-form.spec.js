@@ -1,9 +1,9 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
+
 import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
@@ -103,9 +103,9 @@ describe('pbehavior-general-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectNameField(wrapper).vm.$emit('input', newName);
+    selectNameField(wrapper).triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', { ...form, name: newName });
+    expect(wrapper).toEmitInput({ ...form, name: newName });
   });
 
   test('Enabled changed after trigger enabled field', () => {
@@ -117,9 +117,9 @@ describe('pbehavior-general-form', () => {
 
     const newEnabled = !form.enabled;
 
-    selectEnabledField(wrapper).vm.$emit('input', newEnabled);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
   });
 
   test('Start on trigger enabled after trigger enabled field', () => {
@@ -133,9 +133,9 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectStartOnTriggerField(wrapper).vm.$emit('input', true);
+    selectStartOnTriggerField(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: true,
@@ -155,9 +155,9 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectStartOnTriggerField(wrapper).vm.$emit('input', false);
+    selectStartOnTriggerField(wrapper).triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: false,
@@ -180,9 +180,9 @@ describe('pbehavior-general-form', () => {
       unit: TIME_UNITS.week,
     };
 
-    selectDurationField(wrapper).vm.$emit('input', newDuration);
+    selectDurationField(wrapper).triggerCustomEvent('input', newDuration);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: true,
@@ -202,9 +202,9 @@ describe('pbehavior-general-form', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:start', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: false,
@@ -224,9 +224,9 @@ describe('pbehavior-general-form', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:end', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:end', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: false,
@@ -244,9 +244,9 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:end');
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:end');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: false,
@@ -264,10 +264,10 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       start_on_trigger: false,
@@ -287,10 +287,10 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('No ending enabled after trigger checkbox field', async () => {
@@ -308,10 +308,10 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).vm.$emit('change', true);
+    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       type,
@@ -336,10 +336,10 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).vm.$emit('change', false);
+    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       type,
@@ -365,10 +365,10 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).vm.$emit('change', false);
+    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('No ending changed after form type changed field', async () => {
@@ -398,7 +398,7 @@ describe('pbehavior-general-form', () => {
     });
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...newForm,
       tstop: new Date(1610396800000),
     });
@@ -431,7 +431,7 @@ describe('pbehavior-general-form', () => {
     });
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...newForm,
       tstop: new Date(1610492399999),
     });
@@ -464,7 +464,7 @@ describe('pbehavior-general-form', () => {
     });
     await flushPromises();
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('Reason changed after trigger reason field', () => {
@@ -478,9 +478,9 @@ describe('pbehavior-general-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectReasonField(wrapper).vm.$emit('input', newReason);
+    selectReasonField(wrapper).triggerCustomEvent('input', newReason);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       reason: newReason,
@@ -498,9 +498,9 @@ describe('pbehavior-general-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectTypeField(wrapper).vm.$emit('input', newType);
+    selectTypeField(wrapper).triggerCustomEvent('input', newType);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       type: newType,
@@ -521,9 +521,9 @@ describe('pbehavior-general-form', () => {
       },
     ];
 
-    selectPbehaviorCommentsField(wrapper).vm.$emit('input', newComments);
+    selectPbehaviorCommentsField(wrapper).triggerCustomEvent('input', newComments);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       comments: newComments,
     });
@@ -538,9 +538,9 @@ describe('pbehavior-general-form', () => {
 
     const newColor = Faker.internet.color();
 
-    selectEnabledColorPickerField(wrapper).vm.$emit('input', newColor);
+    selectEnabledColorPickerField(wrapper).triggerCustomEvent('input', newColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       color: newColor,

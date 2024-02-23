@@ -1,11 +1,11 @@
 <template>
   <v-combobox
-    class="view-group-field"
     v-field="value"
     v-validate="'required'"
     :items="groups"
     :label="$t('view.groupIds')"
     :error-messages="errors.collect('group')"
+    class="view-group-field"
     item-text="title"
     item-value="_id"
     name="group"
@@ -14,8 +14,8 @@
   >
     <template #item="{ item }">
       <v-list-item-avatar
-        class="view-group-field__avatar"
         v-if="item.is_private"
+        class="view-group-field__avatar"
         size="20"
       >
         <v-icon small>

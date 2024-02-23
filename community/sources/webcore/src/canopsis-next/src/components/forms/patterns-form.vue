@@ -9,7 +9,6 @@
       name="title"
     />
     <c-patterns-field
-      class="mt-2"
       v-field="form"
       :with-alarm="withAlarm"
       :with-entity="withEntity"
@@ -20,6 +19,7 @@
       :entity-attributes="entityAttributes"
       :entity-types="entityTypes"
       :entity-counters-type="entityCountersType"
+      class="mt-2"
       some-required
     />
   </v-layout>

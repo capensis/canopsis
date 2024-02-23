@@ -16,13 +16,13 @@
         column
       >
         <div
-          class="pre-wrap"
           v-html="description"
+          class="pre-wrap"
         />
         <img
-          class="my-2"
           v-if="image"
           :src="image"
+          class="my-2"
           alt=""
           @click="showImageViewerModal"
         >

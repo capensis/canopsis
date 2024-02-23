@@ -14,9 +14,9 @@
       <groups-top-bar-playlists />
     </v-tabs>
     <groups-settings-button
-      tooltip-left
       :wrapper-props="{ direction: 'bottom', absolute: true, right: true, bottom: true }"
       :button-props="{ fab: true, dark: true, small: true }"
+      tooltip-left
       @toggleEditingMode="toggleEditingMode"
     />
   </v-layout>

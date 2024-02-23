@@ -1,7 +1,7 @@
 <template>
   <div
-    class="c-date-interval"
     :class="{ 'c-date-interval--column': column }"
+    class="c-date-interval"
   >
     <c-date-picker-field
       v-field="value.from"

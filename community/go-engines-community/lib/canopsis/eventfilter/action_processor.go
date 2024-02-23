@@ -40,10 +40,10 @@ func (p *actionProcessor) Process(
 	_ context.Context,
 	ruleID string,
 	action ParsedAction,
-	event types.Event,
+	event *types.Event,
 	regexMatch RegexMatch,
 	externalData map[string]any,
-) (types.Event, error) {
+) (bool, error) {
 	const (
 		TagsNameVar  = "name"
 		TagsValueVar = "value"
@@ -54,51 +54,51 @@ func (p *actionProcessor) Process(
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return event, err
+			return false, err
 		}
 
-		return event, nil
+		return false, nil
 	case ActionSetFieldFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "field", event, regexMatch, externalData)
 		if err != nil {
-			return event, err
+			return false, err
 		}
 
 		err = event.SetField(action.Name, value)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return event, err
+			return false, err
 		}
 
-		return event, nil
+		return false, nil
 	case ActionSetEntityInfo:
 		if !types.IsInfoValueValid(action.Value) {
 			failReason := fmt.Sprintf("action %d cannot set %q entity info: invalid type of %v", action.Index,
 				action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return event, types.ErrInvalidInfoType
+			return false, types.ErrInvalidInfoType
 		}
 
-		*event.Entity = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
+		entityUpdated := p.setEntityInfo(event.Entity, action.Value, action.Name, action.Description)
 
-		return event, nil
+		return entityUpdated, nil
 	case ActionSetEntityInfoFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "entity info", event, regexMatch, externalData)
 		if err != nil {
-			return event, err
+			return false, err
 		}
 
-		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
+		entityUpdated := p.setEntityInfo(event.Entity, value, action.Name, action.Description)
 
-		return event, nil
+		return entityUpdated, nil
 	case ActionCopy:
 		strValue, ok := action.Value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot copy to %q field: value %v must be path to field",
 				action.Index, action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return event, ErrShouldBeAString
+			return false, ErrShouldBeAString
 		}
 
 		t := Template{
@@ -114,26 +114,26 @@ func (p *actionProcessor) Process(
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 				action.Name, err.Error())
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-			return event, err
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+			return false, err
 		}
 
 		err = event.SetField(action.Name, value)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 				action.Name, err.Error())
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-			return event, err
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+			return false, err
 		}
 
-		return event, nil
+		return false, nil
 	case ActionCopyToEntityInfo:
 		strValue, ok := action.Value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot copy to %q entity info: value %v must be path to field",
 				action.Index, action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return event, ErrShouldBeAString
+			return false, ErrShouldBeAString
 		}
 
 		t := Template{
@@ -149,27 +149,28 @@ func (p *actionProcessor) Process(
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: %s", action.Index,
 				strValue, action.Name, err.Error())
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-			return event, err
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+			return false, err
 		}
 
 		if !types.IsInfoValueValid(value) {
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: invalid type of %v",
 				action.Index, strValue, action.Name, value)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-			return event, types.ErrInvalidInfoType
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+			return false, types.ErrInvalidInfoType
 		}
 
-		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
+		entityUpdated := p.setEntityInfo(event.Entity, value, action.Name, action.Description)
 
-		return event, nil
+		return entityUpdated, nil
 	case ActionSetTags:
 		strValue, ok := action.Value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot set tags in %q: value %v must be path to field", action.Index,
 				action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return event, ErrShouldBeAString
+
+			return false, ErrShouldBeAString
 		}
 		t := Template{
 			Event:        event,
@@ -180,22 +181,24 @@ func (p *actionProcessor) Process(
 		value, err := utils.GetField(t, strValue)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot read source field to set tags in %q: %s", action.Index, action.Name, err)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-			return event, err
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+			return false, err
 		}
 		if regexMatch.MatchedRegexp == nil {
-			return event, nil
+			return false, nil
 		}
 		fieldValue, ok := value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot assert field's type as string to set tags in %q: %s",
 				action.Index, action.Name, err)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-			return event, ErrShouldBeAString
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+
+			return false, ErrShouldBeAString
 		}
+
 		matches := utils.FindAllStringSubmatchMapWithRegexExpression(regexMatch.MatchedRegexp, fieldValue)
 		if len(matches) == 0 {
-			return event, nil
+			return false, nil
 		}
 
 		tags := make(map[string]string, len(matches))
@@ -208,16 +211,19 @@ func (p *actionProcessor) Process(
 		}
 
 		if len(tags) == 0 {
-			return event, nil
+			return false, nil
 		}
 
 		err = event.SetField(action.Name, tags)
-		return event, err
+		if err != nil {
+			return false, err
+		}
 
+		return false, nil
 	case ActionSetTagsFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "tags", event, regexMatch, externalData)
 		if err != nil {
-			return event, err
+			return false, err
 		}
 
 		var tags map[string]string
@@ -232,7 +238,7 @@ func (p *actionProcessor) Process(
 				}
 			}
 			if len(tags) == 0 {
-				return event, nil
+				return false, nil
 			}
 		} else {
 			tags = map[string]string{
@@ -241,15 +247,20 @@ func (p *actionProcessor) Process(
 		}
 
 		err = event.SetField("Tags", tags)
-		return event, err
+		if err != nil {
+			return false, err
+		}
+
+		return false, nil
 	}
 
 	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
-	p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
-	return event, fmt.Errorf("action type = %s is invalid", action.Type)
+	p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+
+	return false, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleID, target string, event types.Event, regexMatch RegexMatch, externalData map[string]any) (string, error) {
+func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleID, target string, event *types.Event, regexMatch RegexMatch, externalData map[string]any) (string, error) {
 	if action.ParsedValue.Text == "" {
 		failReason := fmt.Sprintf("action %d cannot set %q %s: %v must be template", action.Index,
 			action.Name, target, action.Value)
@@ -268,7 +279,7 @@ func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleI
 	return value, err
 }
 
-func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, description string) types.Entity {
+func (p *actionProcessor) setEntityInfo(entity *types.Entity, value any, name, description string) bool {
 	enableSorting := p.configProvider.Get().EnableArraySortingInEntityInfos
 	if enableSorting {
 		if s, ok := utils.IsStringSlice(value); ok {
@@ -287,7 +298,7 @@ func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, de
 		}
 
 		if reflect.DeepEqual(prev, value) {
-			return entity
+			return false
 		}
 	}
 
@@ -302,9 +313,8 @@ func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, de
 	}
 
 	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
-	entity.IsUpdated = true
 
-	return entity
+	return true
 }
 
 var ErrShouldBeAString = fmt.Errorf("value should be a string")

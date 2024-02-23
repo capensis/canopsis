@@ -6,9 +6,9 @@
   >
     <c-storage-field
       v-field="storage"
-      v-on="$listeners"
       :required="required"
       :disabled="disabled"
+      v-on="$listeners"
     />
   </widget-settings-item>
 </template>

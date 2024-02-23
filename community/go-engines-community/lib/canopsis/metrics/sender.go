@@ -46,6 +46,8 @@ type Sender interface {
 	SendPerfData(timestamp time.Time, entityID, name string, value float64, unit string)
 
 	SendEventMetrics(alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChange, timestamp time.Time, initiator, userID, instructionID, notAckedMetricType string)
+
+	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 }
 
 type nullSender struct{}
@@ -167,3 +169,5 @@ func (s *nullSender) SendPerfData(_ time.Time, _, _ string, _ float64, _ string)
 func (s *nullSender) SendEventMetrics(_ types.Alarm, _ types.Entity, _ types.AlarmChange, _ time.Time, _, _, _, _ string) {
 
 }
+
+func (s *nullSender) SendSliMetric(_ time.Time, _ types.Alarm, _ types.Entity) {}

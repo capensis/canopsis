@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { TIME_UNITS } from '@/constants';
 
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
@@ -47,9 +48,9 @@ describe('alarm-status-rule-form', () => {
 
     const newValue = Faker.datatype.string();
 
-    nameField.vm.$emit('input', newValue);
+    nameField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { name: newValue });
+    expect(wrapper).toEmitInput({ name: newValue });
   });
 
   test('Duration changed after trigger duration field', () => {
@@ -66,9 +67,9 @@ describe('alarm-status-rule-form', () => {
       unit: TIME_UNITS.hour,
     };
 
-    durationField.vm.$emit('input', newDuration);
+    durationField.triggerCustomEvent('input', newDuration);
 
-    expect(wrapper).toEmit('input', { duration: newDuration });
+    expect(wrapper).toEmitInput({ duration: newDuration });
   });
 
   test('Priority changed after trigger priority field', () => {
@@ -82,9 +83,9 @@ describe('alarm-status-rule-form', () => {
 
     const newPriority = Faker.datatype.number();
 
-    priorityField.vm.$emit('input', newPriority);
+    priorityField.triggerCustomEvent('input', newPriority);
 
-    expect(wrapper).toEmit('input', { priority: newPriority });
+    expect(wrapper).toEmitInput({ priority: newPriority });
   });
 
   test('Freq limit changed after trigger number field', () => {
@@ -99,9 +100,9 @@ describe('alarm-status-rule-form', () => {
 
     const newFreqLimit = Faker.datatype.number();
 
-    numberField.vm.$emit('input', newFreqLimit);
+    numberField.triggerCustomEvent('input', newFreqLimit);
 
-    expect(wrapper).toEmit('input', { freq_limit: newFreqLimit });
+    expect(wrapper).toEmitInput({ freq_limit: newFreqLimit });
   });
 
   test('Description changed after trigger description field', () => {
@@ -115,9 +116,9 @@ describe('alarm-status-rule-form', () => {
 
     const newDescription = Faker.datatype.string();
 
-    descriptionField.vm.$emit('input', newDescription);
+    descriptionField.triggerCustomEvent('input', newDescription);
 
-    expect(wrapper).toEmit('input', { description: newDescription });
+    expect(wrapper).toEmitInput({ description: newDescription });
   });
 
   test('Patterns changed after trigger patterns field', () => {
@@ -133,9 +134,9 @@ describe('alarm-status-rule-form', () => {
       alarm_pattern: {},
     };
 
-    alarmStatusRulePatternsForm.vm.$emit('input', newPatterns);
+    alarmStatusRulePatternsForm.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', { patterns: newPatterns });
+    expect(wrapper).toEmitInput({ patterns: newPatterns });
   });
 
   test('Renders `alarm-status-rule-form` with default props', () => {

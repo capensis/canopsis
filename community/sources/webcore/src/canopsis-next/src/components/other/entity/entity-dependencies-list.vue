@@ -18,8 +18,8 @@
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
-          class="mr-3"
           :category="query.category"
+          class="mr-3"
           @input="updateCategory"
         />
       </v-flex>

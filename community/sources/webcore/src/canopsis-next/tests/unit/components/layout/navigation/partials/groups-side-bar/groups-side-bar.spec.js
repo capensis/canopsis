@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createEntitiesModule,
@@ -10,8 +9,9 @@ import {
   createNavigationModule,
   createViewModule,
 } from '@unit/utils/store';
-import { CRUD_ACTIONS, MAX_LIMIT, USERS_PERMISSIONS } from '@/constants';
 import { mockPopups } from '@unit/utils/mock-hooks';
+
+import { CRUD_ACTIONS, MAX_LIMIT, USERS_PERMISSIONS } from '@/constants';
 
 import GroupsSideBar from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar.vue';
 
@@ -57,9 +57,9 @@ describe('groups-side-bar', () => {
   it('Side bar opened after trigger navigation', async () => {
     const wrapper = factory({ store });
 
-    selectNavigationDrawer(wrapper).vm.$emit('input', true);
+    selectNavigationDrawer(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Groups fetched after mount', async () => {
@@ -119,8 +119,8 @@ describe('groups-side-bar', () => {
 
     const updatedGroups = [...availableGroups].reverse();
 
-    selectDraggableField(wrapper).vm.$emit('input', updatedGroups);
-    selectSubmitButton(wrapper).vm.$emit('click');
+    selectDraggableField(wrapper).triggerCustomEvent('input', updatedGroups);
+    selectSubmitButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -155,7 +155,7 @@ describe('groups-side-bar', () => {
 
     fetchGroupsList.mockClear();
 
-    selectSubmitButton(wrapper).vm.$emit('click');
+    selectSubmitButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -198,8 +198,8 @@ describe('groups-side-bar', () => {
 
     const updatedGroups = [...availableGroups].reverse();
 
-    selectDraggableField(wrapper).vm.$emit('input', updatedGroups);
-    selectCancelButton(wrapper).vm.$emit('click');
+    selectDraggableField(wrapper).triggerCustomEvent('input', updatedGroups);
+    selectCancelButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -209,7 +209,7 @@ describe('groups-side-bar', () => {
   it('Editing mode changed after trigger settings button', async () => {
     const wrapper = factory({ store });
 
-    selectGroupsSettingsButton(wrapper).vm.$emit('toggleEditingMode');
+    selectGroupsSettingsButton(wrapper).triggerCustomEvent('toggleEditingMode');
 
     expect(toggleEditingMode).toBeCalled();
   });

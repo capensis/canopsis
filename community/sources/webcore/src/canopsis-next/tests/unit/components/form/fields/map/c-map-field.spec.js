@@ -1,9 +1,9 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { MAX_LIMIT } from '@/constants';
 
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
@@ -70,9 +70,9 @@ describe('c-map-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', map._id);
+    selectField.triggerCustomEvent('input', map._id);
 
-    expect(wrapper).toEmit('input', map._id);
+    expect(wrapper).toEmitInput(map._id);
   });
 
   it('Renders `c-map-field` with default props', () => {

@@ -5,8 +5,8 @@
   >
     <v-fade-transition>
       <div
-        class="zoom-overlay"
         v-if="shown"
+        class="zoom-overlay"
       >
         <span class="zoom-overlay__text">{{ $t('common.ctrlZoom') }}</span>
       </div>

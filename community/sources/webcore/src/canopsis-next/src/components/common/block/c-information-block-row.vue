@@ -1,7 +1,5 @@
 <template>
-  <v-layout
-    class="pt-2"
-  >
+  <v-layout class="pt-2">
     <v-flex :style="labelStyles">
       <h4 class="text-subtitle-1 font-weight-bold">
         {{ label }}
