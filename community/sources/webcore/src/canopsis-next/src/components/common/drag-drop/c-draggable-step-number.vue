@@ -5,16 +5,16 @@
   >
     <span class="handler">
       <v-icon
-        class="draggable"
         v-show="!disabled"
         :class="dragClass"
+        class="draggable"
       >
         drag_indicator
       </v-icon>
     </span>
     <v-avatar
-      class="white--text"
       :color="color"
+      class="white--text"
       size="32"
     >
       <slot />

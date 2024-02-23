@@ -2,10 +2,10 @@
   <v-tooltip top>
     <template #activator="{ on }">
       <v-layout
-        class="event-statistics__tooltip"
-        v-on="on"
         :class="{ 'event-statistics__tooltip--inactive': hasInactivePbehavior }"
+        class="event-statistics__tooltip"
         justify-center
+        v-on="on"
       >
         <span class="mr-1 success--text font-weight-bold">{{ entity.ok_events }}</span>
         <span>/</span>

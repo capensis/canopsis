@@ -1,18 +1,15 @@
 <template>
   <widget-settings-item :title="$t('settings.colorsSelector.title')">
-    <v-layout wrap>
-      <v-flex
+    <v-layout column>
+      <c-color-picker-field
+        v-field="levelsColors[level]"
         v-for="level in $constants.STATS_CRITICITY"
         :key="level"
-        xs12
-      >
-        <c-color-picker-field
-          v-field="levelsColors[level]"
-          :label="getButtonText(level)"
-          :type="colorType"
-          splitted
-        />
-      </v-flex>
+        :label="getButtonText(level)"
+        :type="colorType"
+        class="mb-3"
+        splitted
+      />
     </v-layout>
   </widget-settings-item>
 </template>

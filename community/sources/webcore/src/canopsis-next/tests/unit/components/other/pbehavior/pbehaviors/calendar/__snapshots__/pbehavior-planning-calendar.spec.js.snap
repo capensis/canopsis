@@ -4,9 +4,17 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
 <div
   class="fill-height"
 >
-  <c-calendar-stub
+  <div
+    class="c-calendar"
     color="primary"
     events=""
-  />
+  >
+    <pbehavior-create-event-stub
+      event="[object Object]"
+    />
+    <pbehavior-planning-calendar-legend-stub
+      exceptiontypes=""
+    />
+  </div>
 </div>
 `;

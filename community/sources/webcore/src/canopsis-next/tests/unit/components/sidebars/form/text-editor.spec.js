@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import TextEditor from '@/components/sidebars/form/fields/text-editor.vue';
@@ -67,12 +68,7 @@ describe('text-editor', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Text editor modal opened after trigger edit button', () => {
@@ -107,12 +103,7 @@ describe('text-editor', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Confirmation modal opened after trigger delete button', () => {
@@ -140,12 +131,7 @@ describe('text-editor', () => {
 
     modalArguments.config.action(Faker.datatype.string());
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual('');
+    expect(wrapper).toEmitInput('');
   });
 
   it('Renders `text-editor` with default props', () => {

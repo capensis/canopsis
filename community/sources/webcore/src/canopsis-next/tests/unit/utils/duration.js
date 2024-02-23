@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { randomArrayItem } from '@unit/utils/array';
+
 import { TIME_UNITS } from '@/constants';
 
 export const randomTimeUnit = () => randomArrayItem(Object.values(TIME_UNITS));

@@ -4,7 +4,6 @@
     column
   >
     <kpi-widget-filters
-      class="mx-3"
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
@@ -18,6 +17,7 @@
       :filter-disabled="filterDisabled"
       :filter-addable="filterAddable"
       :filter-editable="filterEditable"
+      class="mx-3"
       @update:filters="updateSelectedFilter"
       @update:interval="updateInterval"
     />
@@ -34,10 +34,10 @@
         transition
       />
       <c-advanced-data-table
-        class="kpi-widget__table pre-line"
         :items="preparedGroupMetrics"
         :loading="groupMetricsPending"
         :headers="headers"
+        class="kpi-widget__table pre-line"
         no-pagination
       />
     </v-layout>

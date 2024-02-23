@@ -1,19 +1,19 @@
 <template>
   <div
-    class="container text-center"
     v-if="total"
     :class="{ 'py-1': isTop }"
+    class="container text-center"
   >
     <ul
-      class="v-pagination"
       v-if="isTop"
+      class="v-pagination"
     >
       <li>
         <button
-          class="v-pagination__navigation"
-          data-test="paginationPreviewButton"
           :disabled="isPreviousPageDisabled"
           :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }"
+          class="v-pagination__navigation"
+          data-test="paginationPreviewButton"
           @click="previous"
         >
           <v-icon>chevron_left</v-icon>
@@ -24,10 +24,10 @@
       </div>
       <li>
         <button
-          class="v-pagination__navigation"
-          data-test="paginationNextButton"
           :disabled="isNextPageDisabled"
           :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }"
+          class="v-pagination__navigation"
+          data-test="paginationNextButton"
           @click="next"
         >
           <v-icon>chevron_right</v-icon>
@@ -41,10 +41,10 @@
     >
       <span class="text--secondary">{{ $t('common.paginationItems', { first, last, total }) }}</span>
       <v-pagination
-        data-test="vPagination"
         :value="page"
         :total-visible="$config.PAGINATION_TOTAL_VISIBLE"
         :length="totalPages"
+        data-test="vPagination"
         @input="updatePage"
       />
     </v-layout>

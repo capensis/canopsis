@@ -1,27 +1,23 @@
 <template>
   <v-layout column>
-    <v-layout
-      class="mt-3"
-    >
+    <v-layout class="mt-3">
       <v-flex xs12>
         <slot
-          name="no-data"
           v-if="!exdates.length"
+          name="no-data"
         />
         <pbehavior-exception-field
-          class="mb-3"
-          v-for="(exdate, index) in exdates"
           v-field="exdates[index]"
+          v-for="(exdate, index) in exdates"
           :key="exdate.key"
           :disabled="disabled"
           :with-type="withExdateType"
+          class="mb-3"
           @delete="removeItemFromArray(index)"
         />
       </v-flex>
     </v-layout>
-    <v-layout
-      v-if="!disabled"
-    >
+    <v-layout v-if="!disabled">
       <slot name="actions">
         <v-flex>
           <v-btn

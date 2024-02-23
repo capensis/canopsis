@@ -1,16 +1,16 @@
 <template>
   <div>
     <view-tabs
-      class="view-tabs--absolute"
       v-if="view && isTabsChanged"
       :tabs.sync="tabs"
       :changed="isTabsChanged"
       :updatable="updatable"
+      class="view-tabs--absolute"
     />
     <v-fade-transition>
       <v-overlay
-        class="view-tabs__overlay"
         :value="view && isTabsChanged"
+        class="view-tabs__overlay"
         z-index="10"
       >
         <v-btn

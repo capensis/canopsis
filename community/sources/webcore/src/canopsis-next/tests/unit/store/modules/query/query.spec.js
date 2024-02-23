@@ -4,7 +4,9 @@ import Faker from 'faker';
 
 import { fakeTimestamp } from '@unit/data/date';
 import { mockDateGetTime } from '@unit/utils/mock-hooks';
+
 import SetSeveralPlugin from '@/plugins/set-several';
+
 import queryModule, { types } from '@/store/modules/query';
 
 const { actions, state: initialState, mutations, getters } = queryModule;

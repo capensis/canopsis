@@ -3,8 +3,8 @@
     <template #activator="{ on }">
       <v-btn
         class="mx-2 my-1"
-        v-on="on"
         text
+        v-on="on"
       >
         {{ currentType }}
         <v-icon>arrow_drop_down</v-icon>

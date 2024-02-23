@@ -17,9 +17,9 @@
         <v-layout v-else>
           <v-expansion-panel dark>
             <v-expansion-panel-content
-              class="secondary"
               v-for="group in groups"
               :key="group._id"
+              class="secondary"
               ripple
             >
               <template #header="">
@@ -30,9 +30,9 @@
                 dark
               >
                 <v-expansion-panel-content
-                  class="secondary lighten-1"
                   v-for="view in group.views"
                   :key="view._id"
+                  class="secondary lighten-1"
                   ripple
                 >
                   <template #header="">
@@ -40,9 +40,9 @@
                   </template>
                   <v-list class="pa-0">
                     <v-list-item
-                      class="secondary lighten-2"
                       v-for="tab in view.tabs"
                       :key="tab._id"
+                      class="secondary lighten-2"
                       ripple
                       @click="selectTab(tab._id, view._id)"
                     >

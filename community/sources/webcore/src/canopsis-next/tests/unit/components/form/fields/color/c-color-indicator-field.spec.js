@@ -1,7 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
+import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 
 const stubs = {
   'v-radio-group': {
@@ -25,14 +26,10 @@ describe('c-color-indicator-field', () => {
 
   it('Value changed after trigger the input', () => {
     const wrapper = factory({ propsData: { value: COLOR_INDICATOR_TYPES.state } });
-    const input = wrapper.find('input.v-radio-group');
 
-    input.setValue(COLOR_INDICATOR_TYPES.impactState);
+    wrapper.find('input.v-radio-group').setValue(COLOR_INDICATOR_TYPES.impactState);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([COLOR_INDICATOR_TYPES.impactState]);
+    expect(wrapper).toEmitInput(COLOR_INDICATOR_TYPES.impactState);
   });
 
   it('Renders `c-color-indicator-field` with state value correctly', () => {

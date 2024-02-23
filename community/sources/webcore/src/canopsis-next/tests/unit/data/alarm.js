@@ -2,6 +2,7 @@ import { range } from 'lodash';
 import Faker from 'faker';
 
 import { fakeMeta } from '@unit/data/request-data';
+
 import { fakeTimestamp } from './date';
 
 export const fakeAlarm = () => ({

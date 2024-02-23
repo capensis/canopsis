@@ -8,14 +8,14 @@
       {{ $t('externalData.empty') }}
     </c-alert>
     <external-data-item-form
-      class="mb-3"
-      v-for="(item, index) in form"
       v-field="form[index]"
-      :name="`${name}.${item.key}`"
+      v-for="(item, index) in form"
       :key="item.key"
+      :name="`${name}.${item.key}`"
       :disabled="disabled"
       :types="types"
       :variables="variables"
+      class="mb-3"
       @remove="removeItemFromArray(index)"
     />
     <v-flex v-if="!disabled">

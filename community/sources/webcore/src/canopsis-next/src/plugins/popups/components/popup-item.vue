@@ -1,25 +1,25 @@
 <template>
   <v-alert
-    class="alert-without-border"
     v-model="visible"
-    v-on="alertListeners"
     :type="type"
+    class="alert-without-border"
     transition="fade-transition"
     dismissible
+    v-on="alertListeners"
   >
     <div
-      class="progress"
       v-if="autoClose"
+      class="progress"
     >
       <div
-        class="progress-line"
         :style="progressLineStyle"
         :class="progressLineClass"
+        class="progress-line"
       />
     </div>
     <c-compiled-template
-      class="pre-line"
       :template="text"
+      class="pre-line"
     />
   </v-alert>
 </template>

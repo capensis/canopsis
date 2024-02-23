@@ -25,9 +25,9 @@
     />
     <remediation-instruction-stats-summary-row :label="$t('remediation.instructionStat.alarmStates')">
       <affect-alarm-states
-        class="remediation-instruction-stats-summary--alarm-states"
         v-if="remediationInstruction.alarm_states"
         :alarm-states="remediationInstruction.alarm_states"
+        class="remediation-instruction-stats-summary--alarm-states"
       />
     </remediation-instruction-stats-summary-row>
     <remediation-instruction-stats-summary-row :label="$t('remediation.instructionStat.okAlarmStates')">

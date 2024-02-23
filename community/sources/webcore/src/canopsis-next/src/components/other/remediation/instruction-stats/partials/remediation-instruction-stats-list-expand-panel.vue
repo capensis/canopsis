@@ -18,8 +18,8 @@
       <v-flex xs12>
         <v-card class="pa-3">
           <v-tabs-items
-            class="pt-2"
             v-model="activeTab"
+            class="pt-2"
           >
             <v-tab-item>
               <v-flex

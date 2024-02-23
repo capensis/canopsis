@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { PATTERN_OPERATORS } from '@/constants';
 
 import PatternOperatorField from '@/components/forms/fields/pattern/pattern-operator-field.vue';
@@ -29,16 +29,10 @@ describe('pattern-operator-field', () => {
         value: PATTERN_OPERATORS.notExist,
       },
     });
-    const selectField = selectSelectField(wrapper);
 
-    selectField.setValue(PATTERN_OPERATORS.notExist);
+    selectSelectField(wrapper).setValue(PATTERN_OPERATORS.notExist);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(PATTERN_OPERATORS.notExist);
+    expect(wrapper).toEmitInput(PATTERN_OPERATORS.notExist);
   });
 
   test('Renders `pattern-operator-field` with default props', () => {

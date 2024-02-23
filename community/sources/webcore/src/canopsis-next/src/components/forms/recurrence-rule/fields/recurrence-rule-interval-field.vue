@@ -9,8 +9,8 @@
       />
     </v-flex>
     <v-flex
-      class="pl-2"
       v-if="value.interval"
+      class="pl-2"
       xs6
     >
       {{ intervalTimeString }}

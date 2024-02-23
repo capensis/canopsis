@@ -13,14 +13,10 @@
           {{ $t('modals.remediationInstructionApproval.requested') }}
         </span>
       </v-layout>
-      <v-layout
-        class="mt-3"
-      >
+      <v-layout class="mt-3">
         <span class="grey--text text--darken-2">{{ $tc('common.comment', 1) }}:</span>
       </v-layout>
-      <v-layout
-        class="mt-3"
-      >
+      <v-layout class="mt-3">
         <span>{{ approval.comment }}</span>
       </v-layout>
     </v-card-text>

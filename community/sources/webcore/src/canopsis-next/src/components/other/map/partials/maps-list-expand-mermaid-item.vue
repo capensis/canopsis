@@ -1,7 +1,7 @@
 <template>
   <mermaid-preview
-    class="mermaid-expand-panel"
     :map="map"
+    class="mermaid-expand-panel"
   />
 </template>
 

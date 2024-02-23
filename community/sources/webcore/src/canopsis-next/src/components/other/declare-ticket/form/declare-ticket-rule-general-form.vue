@@ -12,9 +12,7 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout
-      class="mb-2"
-    >
+    <v-layout class="mb-2">
       <v-flex
         class="mr-3"
         xs8

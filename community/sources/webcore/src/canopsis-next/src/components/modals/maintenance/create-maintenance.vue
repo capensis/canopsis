@@ -19,9 +19,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :loading="submitting"
           :disabled="isDisabled"
+          class="primary"
           type="submit"
         >
           {{ $t(config.maintenance ? 'common.submit' : 'modals.createMaintenance.enableMaintenance') }}

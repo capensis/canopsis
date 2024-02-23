@@ -1,13 +1,13 @@
 <template>
   <c-enabled-field
     v-field="value"
-    :label="$t('settings.liveWatching')"
     hide-details
   >
-    <template #append="">
+    <template #label="">
+      {{ $t('settings.liveWatching') }}
       <c-help-icon
         :text="$t('settings.liveWatchingTooltip')"
-        icon-class="mt-1"
+        icon-class="mt-1 ml-2"
         color="info"
         top
       />

@@ -1,8 +1,8 @@
 <template>
   <v-layout column>
     <v-btn
-      class="secondary ma-0 mb-1"
       :disabled="disabled || zoomInDisabled"
+      class="secondary ma-0 mb-1"
       icon
       dark
       @click="zoomIn"
@@ -10,8 +10,8 @@
       <v-icon>add</v-icon>
     </v-btn>
     <v-btn
-      class="secondary ma-0 mb-1"
       :disabled="disabled || zoomOutDisabled"
+      class="secondary ma-0 mb-1"
       dark
       icon
       @click="zoomOut"

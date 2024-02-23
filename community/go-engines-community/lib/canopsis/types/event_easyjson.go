@@ -4,7 +4,9 @@ package types
 
 import (
 	json "encoding/json"
+
 	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -295,6 +297,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.IsInstructionMatched = bool(in.Bool())
 		case "healthcheck":
 			out.Healthcheck = bool(in.Bool())
+		case "state_setting_updated":
+			out.StateSettingUpdated = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -661,6 +665,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"healthcheck\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.Healthcheck))
+	}
+	if in.StateSettingUpdated {
+		const prefix string = ",\"state_setting_updated\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.StateSettingUpdated))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
@@ -1096,29 +1105,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Connector = string(in.String())
 		case "component":
 			out.Component = string(in.String())
-		case "services":
-			if in.IsNull() {
-				in.Skip()
-				out.Services = nil
-			} else {
-				in.Delim('[')
-				if out.Services == nil {
-					if !in.IsDelim(']') {
-						out.Services = make([]string, 0, 4)
-					} else {
-						out.Services = []string{}
-					}
-				} else {
-					out.Services = (out.Services)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v22 string
-					v22 = string(in.String())
-					out.Services = append(out.Services, v22)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
 		case "last_idle_rule_apply":
 			out.LastIdleRuleApply = string(in.String())
 		case "idle_since":
@@ -1163,6 +1149,29 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "sli_avail_state":
 			out.SliAvailState = int64(in.Int64())
+		case "services":
+			if in.IsNull() {
+				in.Skip()
+				out.Services = nil
+			} else {
+				in.Delim('[')
+				if out.Services == nil {
+					if !in.IsDelim(']') {
+						out.Services = make([]string, 0, 4)
+					} else {
+						out.Services = []string{}
+					}
+				} else {
+					out.Services = (out.Services)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v22 string
+					v22 = string(in.String())
+					out.Services = append(out.Services, v22)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "services_to_add":
 			if in.IsNull() {
 				in.Skip()
@@ -1221,6 +1230,22 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.SoftDeleted).UnmarshalJSON(data))
 				}
 			}
+		case "state_info":
+			if in.IsNull() {
+				in.Skip()
+				out.StateInfo = nil
+			} else {
+				if out.StateInfo == nil {
+					out.StateInfo = new(StateInfo)
+				}
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(in, out.StateInfo)
+			}
+		case "component_state_settings":
+			out.ComponentStateSettings = bool(in.Bool())
+		case "component_state_settings_to_add":
+			out.ComponentStateSettingsToAdd = bool(in.Bool())
+		case "component_state_settings_to_remove":
+			out.ComponentStateSettingsToRemove = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -1357,20 +1382,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.Component))
 	}
-	if len(in.Services) != 0 {
-		const prefix string = ",\"services\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v29, v30 := range in.Services {
-				if v29 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v30))
-			}
-			out.RawByte(']')
-		}
-	}
 	if in.LastIdleRuleApply != "" {
 		const prefix string = ",\"last_idle_rule_apply\":"
 		out.RawString(prefix)
@@ -1410,6 +1421,20 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Int64(int64(in.SliAvailState))
 	}
+	if len(in.Services) != 0 {
+		const prefix string = ",\"services\":"
+		out.RawString(prefix)
+		{
+			out.RawByte('[')
+			for v29, v30 := range in.Services {
+				if v29 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v30))
+			}
+			out.RawByte(']')
+		}
+	}
 	if len(in.ServicesToAdd) != 0 {
 		const prefix string = ",\"services_to_add\":"
 		out.RawString(prefix)
@@ -1442,6 +1467,270 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"soft_deleted\":"
 		out.RawString(prefix)
 		out.Raw((*in.SoftDeleted).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"state_info\":"
+		out.RawString(prefix)
+		if in.StateInfo == nil {
+			out.RawString("null")
+		} else {
+			easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(out, *in.StateInfo)
+		}
+	}
+	if in.ComponentStateSettings {
+		const prefix string = ",\"component_state_settings\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ComponentStateSettings))
+	}
+	if in.ComponentStateSettingsToAdd {
+		const prefix string = ",\"component_state_settings_to_add\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ComponentStateSettingsToAdd))
+	}
+	if in.ComponentStateSettingsToRemove {
+		const prefix string = ",\"component_state_settings_to_remove\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ComponentStateSettingsToRemove))
+	}
+	out.RawByte('}')
+}
+func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(in *jlexer.Lexer, out *StateInfo) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "_id":
+			out.ID = string(in.String())
+		case "inherited_pattern":
+			if in.IsNull() {
+				in.Skip()
+				out.InheritedPattern = nil
+			} else {
+				if out.InheritedPattern == nil {
+					out.InheritedPattern = new(pattern.Entity)
+				}
+				if in.IsNull() {
+					in.Skip()
+					*out.InheritedPattern = nil
+				} else {
+					in.Delim('[')
+					if *out.InheritedPattern == nil {
+						if !in.IsDelim(']') {
+							*out.InheritedPattern = make(pattern.Entity, 0, 2)
+						} else {
+							*out.InheritedPattern = pattern.Entity{}
+						}
+					} else {
+						*out.InheritedPattern = (*out.InheritedPattern)[:0]
+					}
+					for !in.IsDelim(']') {
+						var v35 []pattern.FieldCondition
+						if in.IsNull() {
+							in.Skip()
+							v35 = nil
+						} else {
+							in.Delim('[')
+							if v35 == nil {
+								if !in.IsDelim(']') {
+									v35 = make([]pattern.FieldCondition, 0, 0)
+								} else {
+									v35 = []pattern.FieldCondition{}
+								}
+							} else {
+								v35 = (v35)[:0]
+							}
+							for !in.IsDelim(']') {
+								var v36 pattern.FieldCondition
+								easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(in, &v36)
+								v35 = append(v35, v36)
+								in.WantComma()
+							}
+							in.Delim(']')
+						}
+						*out.InheritedPattern = append(*out.InheritedPattern, v35)
+						in.WantComma()
+					}
+					in.Delim(']')
+				}
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(out *jwriter.Writer, in StateInfo) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"_id\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.InheritedPattern != nil {
+		const prefix string = ",\"inherited_pattern\":"
+		out.RawString(prefix)
+		if *in.InheritedPattern == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v37, v38 := range *in.InheritedPattern {
+				if v37 > 0 {
+					out.RawByte(',')
+				}
+				if v38 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+					out.RawString("null")
+				} else {
+					out.RawByte('[')
+					for v39, v40 := range v38 {
+						if v39 > 0 {
+							out.RawByte(',')
+						}
+						easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(out, v40)
+					}
+					out.RawByte(']')
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	out.RawByte('}')
+}
+func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(in *jlexer.Lexer, out *pattern.FieldCondition) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "field":
+			out.Field = string(in.String())
+		case "field_type":
+			out.FieldType = string(in.String())
+		case "cond":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Condition).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(out *jwriter.Writer, in pattern.FieldCondition) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"field\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Field))
+	}
+	if in.FieldType != "" {
+		const prefix string = ",\"field_type\":"
+		out.RawString(prefix)
+		out.String(string(in.FieldType))
+	}
+	{
+		const prefix string = ",\"cond\":"
+		out.RawString(prefix)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(out, in.Condition)
+	}
+	out.RawByte('}')
+}
+func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(in *jlexer.Lexer, out *pattern.Condition) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "type":
+			out.Type = string(in.String())
+		case "value":
+			if m, ok := out.Value.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.Value.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.Value = in.Interface()
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(out *jwriter.Writer, in pattern.Condition) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"value\":"
+		out.RawString(prefix)
+		if m, ok := in.Value.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.Value.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.Value))
+		}
 	}
 	out.RawByte('}')
 }
@@ -1556,9 +1845,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Tags = (out.Tags)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v35 string
-					v35 = string(in.String())
-					out.Tags = append(out.Tags, v35)
+					var v41 string
+					v41 = string(in.String())
+					out.Tags = append(out.Tags, v41)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1579,9 +1868,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.ExternalTags = (out.ExternalTags)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v36 string
-					v36 = string(in.String())
-					out.ExternalTags = append(out.ExternalTags, v36)
+					var v42 string
+					v42 = string(in.String())
+					out.ExternalTags = append(out.ExternalTags, v42)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1602,9 +1891,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.InternalTags = (out.InternalTags)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v37 string
-					v37 = string(in.String())
-					out.InternalTags = append(out.InternalTags, v37)
+					var v43 string
+					v43 = string(in.String())
+					out.InternalTags = append(out.InternalTags, v43)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1614,7 +1903,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.AddError((out.InternalTagsUpdated).UnmarshalJSON(data))
 			}
 		case "v":
-			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(in, &out.Value)
+			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, &out.Value)
 		case "kpi_assigned_instructions":
 			if in.IsNull() {
 				in.Skip()
@@ -1631,9 +1920,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.KpiAssignedInstructions = (out.KpiAssignedInstructions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v38 string
-					v38 = string(in.String())
-					out.KpiAssignedInstructions = append(out.KpiAssignedInstructions, v38)
+					var v44 string
+					v44 = string(in.String())
+					out.KpiAssignedInstructions = append(out.KpiAssignedInstructions, v44)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1654,9 +1943,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.KpiExecutedInstructions = (out.KpiExecutedInstructions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v39 string
-					v39 = string(in.String())
-					out.KpiExecutedInstructions = append(out.KpiExecutedInstructions, v39)
+					var v45 string
+					v45 = string(in.String())
+					out.KpiExecutedInstructions = append(out.KpiExecutedInstructions, v45)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1677,9 +1966,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.KpiAssignedAutoInstructions = (out.KpiAssignedAutoInstructions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v40 string
-					v40 = string(in.String())
-					out.KpiAssignedAutoInstructions = append(out.KpiAssignedAutoInstructions, v40)
+					var v46 string
+					v46 = string(in.String())
+					out.KpiAssignedAutoInstructions = append(out.KpiAssignedAutoInstructions, v46)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1700,9 +1989,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.KpiExecutedAutoInstructions = (out.KpiExecutedAutoInstructions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v41 string
-					v41 = string(in.String())
-					out.KpiExecutedAutoInstructions = append(out.KpiExecutedAutoInstructions, v41)
+					var v47 string
+					v47 = string(in.String())
+					out.KpiExecutedAutoInstructions = append(out.KpiExecutedAutoInstructions, v47)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1745,11 +2034,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v42, v43 := range in.Tags {
-				if v42 > 0 {
+			for v48, v49 := range in.Tags {
+				if v48 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v43))
+				out.String(string(v49))
 			}
 			out.RawByte(']')
 		}
@@ -1761,11 +2050,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v44, v45 := range in.ExternalTags {
-				if v44 > 0 {
+			for v50, v51 := range in.ExternalTags {
+				if v50 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v45))
+				out.String(string(v51))
 			}
 			out.RawByte(']')
 		}
@@ -1777,11 +2066,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v46, v47 := range in.InternalTags {
-				if v46 > 0 {
+			for v52, v53 := range in.InternalTags {
+				if v52 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v47))
+				out.String(string(v53))
 			}
 			out.RawByte(']')
 		}
@@ -1794,18 +2083,18 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	{
 		const prefix string = ",\"v\":"
 		out.RawString(prefix)
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(out, in.Value)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, in.Value)
 	}
 	if len(in.KpiAssignedInstructions) != 0 {
 		const prefix string = ",\"kpi_assigned_instructions\":"
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v48, v49 := range in.KpiAssignedInstructions {
-				if v48 > 0 {
+			for v54, v55 := range in.KpiAssignedInstructions {
+				if v54 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v49))
+				out.String(string(v55))
 			}
 			out.RawByte(']')
 		}
@@ -1815,11 +2104,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v50, v51 := range in.KpiExecutedInstructions {
-				if v50 > 0 {
+			for v56, v57 := range in.KpiExecutedInstructions {
+				if v56 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v51))
+				out.String(string(v57))
 			}
 			out.RawByte(']')
 		}
@@ -1829,11 +2118,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v52, v53 := range in.KpiAssignedAutoInstructions {
-				if v52 > 0 {
+			for v58, v59 := range in.KpiAssignedAutoInstructions {
+				if v58 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v53))
+				out.String(string(v59))
 			}
 			out.RawByte(']')
 		}
@@ -1843,11 +2132,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v54, v55 := range in.KpiExecutedAutoInstructions {
-				if v54 > 0 {
+			for v60, v61 := range in.KpiExecutedAutoInstructions {
+				if v60 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v55))
+				out.String(string(v61))
 			}
 			out.RawByte(']')
 		}
@@ -1859,7 +2148,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	out.RawByte('}')
 }
-func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(in *jlexer.Lexer, out *AlarmValue) {
+func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in *jlexer.Lexer, out *AlarmValue) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1886,7 +2175,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.ACK == nil {
 					out.ACK = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.ACK)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.ACK)
 			}
 		case "canceled":
 			if in.IsNull() {
@@ -1896,7 +2185,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Canceled == nil {
 					out.Canceled = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.Canceled)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Canceled)
 			}
 		case "snooze":
 			if in.IsNull() {
@@ -1906,7 +2195,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Snooze == nil {
 					out.Snooze = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.Snooze)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Snooze)
 			}
 		case "state":
 			if in.IsNull() {
@@ -1916,7 +2205,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.State == nil {
 					out.State = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.State)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.State)
 			}
 		case "status":
 			if in.IsNull() {
@@ -1926,7 +2215,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Status == nil {
 					out.Status = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.Status)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Status)
 			}
 		case "last_comment":
 			if in.IsNull() {
@@ -1936,7 +2225,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.LastComment == nil {
 					out.LastComment = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.LastComment)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.LastComment)
 			}
 		case "change_state":
 			if in.IsNull() {
@@ -1946,7 +2235,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.ChangeState == nil {
 					out.ChangeState = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.ChangeState)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.ChangeState)
 			}
 		case "tickets":
 			if in.IsNull() {
@@ -1964,9 +2253,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Tickets = (out.Tickets)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v56 AlarmStep
-					easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, &v56)
-					out.Tickets = append(out.Tickets, v56)
+					var v62 AlarmStep
+					easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, &v62)
+					out.Tickets = append(out.Tickets, v62)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1979,7 +2268,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Ticket == nil {
 					out.Ticket = new(AlarmStep)
 				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, out.Ticket)
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Ticket)
 			}
 		case "steps":
 			if in.IsNull() {
@@ -1997,9 +2286,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Steps = (out.Steps)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v57 AlarmStep
-					easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in, &v57)
-					out.Steps = append(out.Steps, v57)
+					var v63 AlarmStep
+					easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, &v63)
+					out.Steps = append(out.Steps, v63)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2064,9 +2353,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.LongOutputHistory = (out.LongOutputHistory)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v58 string
-					v58 = string(in.String())
-					out.LongOutputHistory = append(out.LongOutputHistory, v58)
+					var v64 string
+					v64 = string(in.String())
+					out.LongOutputHistory = append(out.LongOutputHistory, v64)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2115,9 +2404,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Parents = (out.Parents)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v59 string
-					v59 = string(in.String())
-					out.Parents = append(out.Parents, v59)
+					var v65 string
+					v65 = string(in.String())
+					out.Parents = append(out.Parents, v65)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2138,9 +2427,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Children = (out.Children)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v60 string
-					v60 = string(in.String())
-					out.Children = append(out.Children, v60)
+					var v66 string
+					v66 = string(in.String())
+					out.Children = append(out.Children, v66)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2161,9 +2450,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.UnlinkedParents = (out.UnlinkedParents)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v61 string
-					v61 = string(in.String())
-					out.UnlinkedParents = append(out.UnlinkedParents, v61)
+					var v67 string
+					v67 = string(in.String())
+					out.UnlinkedParents = append(out.UnlinkedParents, v67)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2189,29 +2478,29 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v62 map[string]interface{}
+					var v68 map[string]interface{}
 					if in.IsNull() {
 						in.Skip()
 					} else {
 						in.Delim('{')
-						v62 = make(map[string]interface{})
+						v68 = make(map[string]interface{})
 						for !in.IsDelim('}') {
 							key := string(in.String())
 							in.WantColon()
-							var v63 interface{}
-							if m, ok := v63.(easyjson.Unmarshaler); ok {
+							var v69 interface{}
+							if m, ok := v69.(easyjson.Unmarshaler); ok {
 								m.UnmarshalEasyJSON(in)
-							} else if m, ok := v63.(json.Unmarshaler); ok {
+							} else if m, ok := v69.(json.Unmarshaler); ok {
 								_ = m.UnmarshalJSON(in.Raw())
 							} else {
-								v63 = in.Interface()
+								v69 = in.Interface()
 							}
-							(v62)[key] = v63
+							(v68)[key] = v69
 							in.WantComma()
 						}
 						in.Delim('}')
 					}
-					(out.Infos)[key] = v62
+					(out.Infos)[key] = v68
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -2225,9 +2514,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v64 string
-					v64 = string(in.String())
-					(out.RuleVersion)[key] = v64
+					var v70 string
+					v70 = string(in.String())
+					(out.RuleVersion)[key] = v70
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -2266,7 +2555,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes6(out *jwriter.Writer, in AlarmValue) {
+func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out *jwriter.Writer, in AlarmValue) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2274,7 +2563,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"ack\":"
 		first = false
 		out.RawString(prefix[1:])
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.ACK)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.ACK)
 	}
 	if in.Canceled != nil {
 		const prefix string = ",\"canceled\":"
@@ -2284,7 +2573,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.Canceled)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Canceled)
 	}
 	if in.Snooze != nil {
 		const prefix string = ",\"snooze\":"
@@ -2294,7 +2583,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.Snooze)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Snooze)
 	}
 	if in.State != nil {
 		const prefix string = ",\"state\":"
@@ -2304,7 +2593,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.State)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.State)
 	}
 	if in.Status != nil {
 		const prefix string = ",\"status\":"
@@ -2314,7 +2603,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.Status)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Status)
 	}
 	if in.LastComment != nil {
 		const prefix string = ",\"last_comment\":"
@@ -2324,7 +2613,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.LastComment)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.LastComment)
 	}
 	if in.ChangeState != nil {
 		const prefix string = ",\"change_state\":"
@@ -2334,7 +2623,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.ChangeState)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.ChangeState)
 	}
 	if len(in.Tickets) != 0 {
 		const prefix string = ",\"tickets\":"
@@ -2346,11 +2635,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 		{
 			out.RawByte('[')
-			for v65, v66 := range in.Tickets {
-				if v65 > 0 {
+			for v71, v72 := range in.Tickets {
+				if v71 > 0 {
 					out.RawByte(',')
 				}
-				easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, v66)
+				easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, v72)
 			}
 			out.RawByte(']')
 		}
@@ -2363,7 +2652,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, *in.Ticket)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Ticket)
 	}
 	{
 		const prefix string = ",\"steps\":"
@@ -2377,11 +2666,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v67, v68 := range in.Steps {
-				if v67 > 0 {
+			for v73, v74 := range in.Steps {
+				if v73 > 0 {
 					out.RawByte(',')
 				}
-				easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out, v68)
+				easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, v74)
 			}
 			out.RawByte(']')
 		}
@@ -2448,11 +2737,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v69, v70 := range in.LongOutputHistory {
-				if v69 > 0 {
+			for v75, v76 := range in.LongOutputHistory {
+				if v75 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v70))
+				out.String(string(v76))
 			}
 			out.RawByte(']')
 		}
@@ -2499,11 +2788,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v71, v72 := range in.Parents {
-				if v71 > 0 {
+			for v77, v78 := range in.Parents {
+				if v77 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v72))
+				out.String(string(v78))
 			}
 			out.RawByte(']')
 		}
@@ -2515,11 +2804,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v73, v74 := range in.Children {
-				if v73 > 0 {
+			for v79, v80 := range in.Children {
+				if v79 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v74))
+				out.String(string(v80))
 			}
 			out.RawByte(']')
 		}
@@ -2531,11 +2820,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v75, v76 := range in.UnlinkedParents {
-				if v75 > 0 {
+			for v81, v82 := range in.UnlinkedParents {
+				if v81 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v76))
+				out.String(string(v82))
 			}
 			out.RawByte(']')
 		}
@@ -2562,34 +2851,34 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v77First := true
-			for v77Name, v77Value := range in.Infos {
-				if v77First {
-					v77First = false
+			v83First := true
+			for v83Name, v83Value := range in.Infos {
+				if v83First {
+					v83First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v77Name))
+				out.String(string(v83Name))
 				out.RawByte(':')
-				if v77Value == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+				if v83Value == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
 					out.RawString(`null`)
 				} else {
 					out.RawByte('{')
-					v78First := true
-					for v78Name, v78Value := range v77Value {
-						if v78First {
-							v78First = false
+					v84First := true
+					for v84Name, v84Value := range v83Value {
+						if v84First {
+							v84First = false
 						} else {
 							out.RawByte(',')
 						}
-						out.String(string(v78Name))
+						out.String(string(v84Name))
 						out.RawByte(':')
-						if m, ok := v78Value.(easyjson.Marshaler); ok {
+						if m, ok := v84Value.(easyjson.Marshaler); ok {
 							m.MarshalEasyJSON(out)
-						} else if m, ok := v78Value.(json.Marshaler); ok {
+						} else if m, ok := v84Value.(json.Marshaler); ok {
 							out.Raw(m.MarshalJSON())
 						} else {
-							out.Raw(json.Marshal(v78Value))
+							out.Raw(json.Marshal(v84Value))
 						}
 					}
 					out.RawByte('}')
@@ -2605,16 +2894,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v79First := true
-			for v79Name, v79Value := range in.RuleVersion {
-				if v79First {
-					v79First = false
+			v85First := true
+			for v85Name, v85Value := range in.RuleVersion {
+				if v85First {
+					v85First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v79Name))
+				out.String(string(v85Name))
 				out.RawByte(':')
-				out.String(string(v79Value))
+				out.String(string(v85Value))
 			}
 			out.RawByte('}')
 		}
@@ -2660,7 +2949,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	out.RawByte('}')
 }
-func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(in *jlexer.Lexer, out *AlarmStep) {
+func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in *jlexer.Lexer, out *AlarmStep) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2698,7 +2987,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.AddError((out.Value).UnmarshalJSON(data))
 			}
 		case "statecounter":
-			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, &out.StateCounter)
+			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes9(in, &out.StateCounter)
 		case "pbehavior_canonical_type":
 			out.PbehaviorCanonicalType = string(in.String())
 		case "initiator":
@@ -2732,9 +3021,9 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v80 string
-					v80 = string(in.String())
-					(out.TicketData)[key] = v80
+					var v86 string
+					v86 = string(in.String())
+					(out.TicketData)[key] = v86
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -2749,7 +3038,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes7(out *jwriter.Writer, in AlarmStep) {
+func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out *jwriter.Writer, in AlarmStep) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2791,7 +3080,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	if true {
 		const prefix string = ",\"statecounter\":"
 		out.RawString(prefix)
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, in.StateCounter)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes9(out, in.StateCounter)
 	}
 	if in.PbehaviorCanonicalType != "" {
 		const prefix string = ",\"pbehavior_canonical_type\":"
@@ -2848,23 +3137,23 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		{
 			out.RawByte('{')
-			v81First := true
-			for v81Name, v81Value := range in.TicketData {
-				if v81First {
-					v81First = false
+			v87First := true
+			for v87Name, v87Value := range in.TicketData {
+				if v87First {
+					v87First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v81Name))
+				out.String(string(v87Name))
 				out.RawByte(':')
-				out.String(string(v81Value))
+				out.String(string(v87Value))
 			}
 			out.RawByte('}')
 		}
 	}
 	out.RawByte('}')
 }
-func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in *jlexer.Lexer, out *CropCounter) {
+func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes9(in *jlexer.Lexer, out *CropCounter) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2907,7 +3196,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out *jwriter.Writer, in CropCounter) {
+func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes9(out *jwriter.Writer, in CropCounter) {
 	out.RawByte('{')
 	first := true
 	_ = first

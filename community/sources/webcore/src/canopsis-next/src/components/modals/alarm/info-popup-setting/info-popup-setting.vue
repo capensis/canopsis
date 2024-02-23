@@ -7,10 +7,10 @@
       <template #text="">
         <v-layout justify-end>
           <v-btn
+            color="secondary"
             icon
             fab
             small
-            color="secondary"
             @click="addPopup"
           >
             <v-icon>add</v-icon>
@@ -18,9 +18,9 @@
         </v-layout>
         <v-layout column>
           <v-card
-            class="my-1"
             v-for="(popup, index) in form.popups"
             :key="index"
+            class="my-1"
             color="secondary white--text"
             flat
           >
@@ -69,9 +69,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :loading="submitting"
           :disabled="isDisabled"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}

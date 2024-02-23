@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { fakeUsersForTreeview } from '@unit/data/treeview';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
@@ -15,19 +13,6 @@ describe('c-treeview-data-table', () => {
   ];
 
   const snapshotFactory = generateRenderer(CTreeviewDataTable);
-
-  it('Renders `c-treeview-data-table` with default and required props', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        headers,
-        items: snapshotItems,
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper).toMatchSnapshot();
-  });
 
   it('Renders `c-treeview-data-table` with default and required props', async () => {
     const wrapper = snapshotFactory({
