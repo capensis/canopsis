@@ -1,8 +1,8 @@
 <template>
   <div>
     <mermaid-point-marker
-      ref="points"
       v-for="point in points"
+      ref="points"
       :key="point._id"
       :x="point.x"
       :y="point.y"

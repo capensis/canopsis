@@ -29,8 +29,8 @@
     </template>
     <template #unread_failures_count="{ item }">
       <c-circle-badge
-        class="error"
         v-if="item.unread_failures_count"
+        class="error"
       >
         {{ item.unread_failures_count }}
       </c-circle-badge>

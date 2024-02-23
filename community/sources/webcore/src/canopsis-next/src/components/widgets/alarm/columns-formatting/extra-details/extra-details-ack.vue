@@ -25,8 +25,8 @@
           {{ $t('common.initiator') }} : {{ ack.initiator }}
         </div>
         <div
-          class="c-extra-details__message"
           v-if="ack.m"
+          class="c-extra-details__message"
         >
           {{ $tc('common.comment') }} : {{ ack.m }}
         </div>

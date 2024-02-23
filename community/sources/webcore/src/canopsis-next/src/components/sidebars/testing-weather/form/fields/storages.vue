@@ -5,10 +5,10 @@
   >
     <c-storages-field
       v-field="storages"
-      v-on="$listeners"
       :label="$t('settings.serverStorage')"
       :disabled="disabled"
       :help-text="helpText"
+      v-on="$listeners"
     />
   </widget-settings-item>
 </template>

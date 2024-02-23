@@ -103,6 +103,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
 							Err:          errors.New("scenario doesn't exist"),
+							EntityType:   task.Entity.Type,
 						}
 						return
 					}
@@ -113,6 +114,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
 							Err:          err,
+							EntityType:   task.Entity.Type,
 						}
 						return
 					}
@@ -130,6 +132,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
 							Err:          err,
+							EntityType:   task.Entity.Type,
 						}
 						return
 					}
@@ -182,6 +185,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						Alarm:        task.Alarm,
 						FifoAckEvent: task.FifoAckEvent,
 						Err:          err,
+						EntityType:   task.Entity.Type,
 					}
 					return
 				}
@@ -190,6 +194,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					e.outputChannel <- ScenarioResult{
 						Alarm:        task.Alarm,
 						FifoAckEvent: task.FifoAckEvent,
+						EntityType:   task.Entity.Type,
 					}
 				}
 			}(ctx, scenariosTask)
@@ -238,6 +243,7 @@ func (e *redisBasedManager) finishExecution(
 			Err:              executionErr,
 			ActionExecutions: execution.ActionExecutions,
 			FifoAckEvent:     execution.FifoAckEvent,
+			EntityType:       execution.Entity.Type,
 		}
 	}
 }

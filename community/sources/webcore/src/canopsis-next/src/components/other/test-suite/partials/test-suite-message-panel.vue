@@ -2,8 +2,8 @@
   <div class="test-suite-message">
     <v-card>
       <v-card-title
-        class="white--text"
         :style="{ backgroundColor: color }"
+        class="white--text"
       >
         {{ title }}
       </v-card-title>

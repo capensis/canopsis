@@ -14,17 +14,17 @@
 
       <v-tab-item eager>
         <idle-rule-general-form
-          ref="general"
           v-field="form"
+          ref="general"
           :is-entity-type="isEntityType"
         />
       </v-tab-item>
       <v-tab-item eager>
         <idle-rule-patterns-form
-          class="mt-2"
-          ref="patterns"
           v-field="form.patterns"
+          ref="patterns"
           :is-entity-type="isEntityType"
+          class="mt-2"
         />
       </v-tab-item>
     </v-tabs>

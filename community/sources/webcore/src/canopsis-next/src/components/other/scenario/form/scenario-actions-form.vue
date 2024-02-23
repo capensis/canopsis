@@ -7,10 +7,10 @@
       {{ $t('scenario.emptyActions') }}
     </c-alert>
     <c-card-iterator-field
-      class="mb-2"
       v-field="actions"
-      item-key="key"
       :draggable-group="draggableGroup"
+      class="mb-2"
+      item-key="key"
     >
       <template #item="{ item: action, index }">
         <scenario-action-field
@@ -24,16 +24,16 @@
     </c-card-iterator-field>
     <v-layout align-center>
       <v-btn
-        class="ml-0"
         :color="hasActionsErrors ? 'error' : 'primary'"
+        class="ml-0"
         outlined
         @click="addAction"
       >
         {{ $t('scenario.addAction') }}
       </v-btn>
       <span
-        class="error--text"
         v-show="hasActionsErrors"
+        class="error--text"
       >
         {{ $t('scenario.errors.actionRequired') }}
       </span>

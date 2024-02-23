@@ -26,8 +26,8 @@
           {{ $t('common.initiator') }} : {{ snooze.initiator }}
         </div>
         <div
-          class="c-extra-details__message"
           v-if="snooze.m"
+          class="c-extra-details__message"
         >
           {{ $tc('common.comment') }} : {{ snooze.m }}
         </div>

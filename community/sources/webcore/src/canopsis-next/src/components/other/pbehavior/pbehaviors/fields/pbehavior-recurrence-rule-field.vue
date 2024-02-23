@@ -14,8 +14,8 @@
       >
         <template #activator="{ on }">
           <v-btn
-            v-on="on"
             icon
+            v-on="on"
           >
             <v-icon color="grey darken-1">
               info

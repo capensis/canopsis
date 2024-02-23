@@ -1,9 +1,9 @@
 <template>
   <v-tabs
     background-color="secondary lighten-1"
+    slider-color="primary"
     dark
     centered
-    slider-color="primary"
   >
     <v-tab>{{ $t('common.description') }}</v-tab>
     <v-tab-item>

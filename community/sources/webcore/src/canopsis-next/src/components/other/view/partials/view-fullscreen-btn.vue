@@ -1,17 +1,17 @@
 <template>
   <v-tooltip
-    class="view-fullscreen-btn"
     :left="leftTooltip"
     :top="topTooltip"
+    class="view-fullscreen-btn"
   >
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         :value="value"
         class="view-fullscreen-btn__button"
         small
         fab
         dark
+        v-on="on"
         @click.stop="toggleFullScreen"
       >
         <v-icon small>

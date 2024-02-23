@@ -13,8 +13,8 @@
         :height="height"
       />
       <div
-        class="v-tooltip__content menuable__content__active"
         ref="tooltip"
+        class="v-tooltip__content menuable__content__active"
       />
     </v-layout>
     <c-table-pagination

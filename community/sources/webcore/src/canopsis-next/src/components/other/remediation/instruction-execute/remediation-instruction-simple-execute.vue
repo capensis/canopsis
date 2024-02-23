@@ -6,9 +6,9 @@
     >
       <span class="text-subtitle-1 mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
       <v-btn
-        class="primary ma-0"
         v-if="!isJobsFinished"
         :loading="executed"
+        class="primary ma-0"
         @click="$emit('run:jobs')"
       >
         <span>{{ $t('remediation.instructionExecute.runJobs') }}</span>

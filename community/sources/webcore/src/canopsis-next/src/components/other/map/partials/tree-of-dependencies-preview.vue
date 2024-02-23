@@ -2,10 +2,10 @@
   <div class="tree-of-dependencies__preview">
     <c-zoom-overlay>
       <network-graph
-        class="fill-height black--text"
         ref="networkGraph"
         :options="options"
         :node-html-label-options="nodeHtmlLabelsOptions"
+        class="fill-height black--text"
         ctrl-wheel-zoom
       />
     </c-zoom-overlay>
@@ -198,6 +198,7 @@ export default {
         progressEl.classList.add(
           'v-progress-circular',
           'v-progress-circular--indeterminate',
+          'v-progress-circular--visible',
           'white--text',
           'position-relative',
         );
@@ -224,10 +225,16 @@ export default {
         badgeEl.appendChild(pending ? getProgressEl() : getBadgeIconEl(entity, opened));
         badgeEl.classList.add(
           'v-badge__badge',
+          'd-inline-flex',
+          'justify-center',
+          'align-center',
           'grey',
           'darken-1',
           'cursor-pointer',
+          'pa-0',
         );
+        badgeEl.style.width = '20px';
+        badgeEl.style.height = '20px';
         badgeEl.dataset.id = entity._id;
 
         return badgeEl;
@@ -560,11 +567,11 @@ export default {
     /**
      * Show modal window with all entity dependencies
      *
-     * @param {string} entityId
+     * @param {Entity} entity
      */
-    showAllDependenciesModal(entityId) {
+    showAllDependenciesModal(entity) {
       const config = {
-        entityId,
+        entity,
         impact: this.impact,
       };
 
@@ -602,7 +609,7 @@ export default {
         return;
       }
 
-      this.showAllDependenciesModal(entity._id);
+      this.showAllDependenciesModal(entity);
     },
   },
 };

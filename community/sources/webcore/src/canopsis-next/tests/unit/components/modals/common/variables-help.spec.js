@@ -2,9 +2,11 @@ import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { fakeAlarm } from '@unit/data/alarm';
+
+import ClickOutside from '@/services/click-outside';
+
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { saveJsonFile } from '@/helpers/file/files';
-import ClickOutside from '@/services/click-outside';
 
 import VariablesHelp from '@/components/modals/common/variables-help.vue';
 

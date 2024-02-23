@@ -24,8 +24,8 @@
     </template>
     <template #item="{ item }">
       <td
-        class="text-center"
         v-if="!exporting && (item.disabled || isMetricNotCreated(item))"
+        class="text-center"
         colspan="2"
       >
         <div>{{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}</div>

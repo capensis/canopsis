@@ -23,10 +23,10 @@
         />
       </v-flex>
       <slot
-        name="toolbar"
         :selected="selected"
         :update-search="updateSearchHandler"
         :clear-search="clearSearchHandler"
+        name="toolbar"
       />
       <v-flex
         v-if="hasMassActionsSlot"
@@ -34,14 +34,14 @@
       >
         <v-expand-transition>
           <v-layout
-            class="px-2 mt-1"
             v-show="selected.length"
+            class="px-2 mt-1"
           >
             <slot
-              name="mass-actions"
               :selected="selected"
               :count="selected.length"
               :clear-selected="clearSelected"
+              name="mass-actions"
             />
           </v-layout>
         </v-expand-transition>
@@ -85,8 +85,8 @@
         #expanded-item="props"
       >
         <div
-          class="secondary lighten-2"
           v-if="isExpandableItem(props.item)"
+          class="secondary lighten-2"
         >
           <slot
             v-bind="props"

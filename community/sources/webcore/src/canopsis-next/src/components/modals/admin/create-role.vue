@@ -22,8 +22,8 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary white--text"
           :disabled="isDisabled"
+          class="primary white--text"
           type="submit"
         >
           {{ $t('common.submit') }}

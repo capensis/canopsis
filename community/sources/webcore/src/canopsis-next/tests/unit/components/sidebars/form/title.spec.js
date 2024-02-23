@@ -38,18 +38,11 @@ describe('title', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textField.setValue(newValue);
+    selectTextField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `title` with default props', () => {

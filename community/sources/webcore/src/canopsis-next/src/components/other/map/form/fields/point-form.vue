@@ -17,8 +17,8 @@
         #icon="{ item }"
       >
         <v-icon
-          class="mr-2"
           v-if="item.coordinates"
+          class="mr-2"
         >
           pin_drop
         </v-icon>

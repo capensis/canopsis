@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { LINE_TYPES } from '@/constants';
 
 import FlowchartLineTypeField from '@/components/common/flowchart/fields/flowchart-line-type-field.vue';
@@ -24,9 +25,9 @@ describe('flowchart-line-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', LINE_TYPES.verticalCurve);
+    selectField.triggerCustomEvent('input', LINE_TYPES.verticalCurve);
 
-    expect(wrapper).toEmit('input', LINE_TYPES.verticalCurve);
+    expect(wrapper).toEmitInput(LINE_TYPES.verticalCurve);
   });
 
   test('Renders `flowchart-line-type-field` with default props', () => {

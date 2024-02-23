@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { isArray, keyBy, pick } from 'lodash';
+import { isArray, keyBy, pick, isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
@@ -124,6 +124,16 @@ export default {
       }
 
       return this.$tc('common.entity');
+    },
+  },
+  watch: {
+    entityTypes(entityTypes, oldEntityTypes) {
+      if (!isEqual(entityTypes, oldEntityTypes)) {
+        this.query.page = 1;
+
+        this.updateModel(isArray(this.value) ? [] : '');
+        this.fetchEntities();
+      }
     },
   },
   methods: {

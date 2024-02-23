@@ -31,9 +31,9 @@
         </v-flex>
       </v-layout>
       <c-collapse-panel
-        class="my-2"
         v-if="isFrequencyEnabled"
         :color="advancedCollapseColor"
+        class="my-2"
       >
         <template #header="">
           <span>{{ $t('recurrenceRule.tabs.advanced') }}</span>

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
@@ -224,10 +222,8 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
     expect(validator.errors.has(`${name}.create`)).toBeTruthy();
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toHaveBeenEmit('input');
 
     wrapper.destroy();
   });
@@ -266,13 +262,9 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-    const [eventData] = inputEvents[0];
-
     expect(createMock).toBeCalledWith(expect.any(Object), { data: { name: categoryName } }, undefined);
     expect(fetchListMock).toBeCalledTimes(2);
-    expect(inputEvents).toHaveLength(1);
-    expect(eventData).toBe(category);
+    expect(wrapper).toEmitInput(category);
     expect(textField.vm.value).toBe('');
   });
 
@@ -309,10 +301,8 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
     expect(fetchListMock).toBeCalledTimes(1);
-    expect(inputEvents).toBe(undefined);
+    expect(wrapper).not.toHaveBeenEmit('input');
     expect(textField.vm.value).toBe('');
   });
 

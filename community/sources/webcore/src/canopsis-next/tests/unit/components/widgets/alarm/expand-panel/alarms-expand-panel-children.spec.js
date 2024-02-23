@@ -1,5 +1,6 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { fakeStaticAlarms, fakeAlarm } from '@unit/data/alarm';
+
 import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsExpandPanelChildren from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-children.vue';

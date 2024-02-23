@@ -4,22 +4,22 @@
     wrap
   >
     <c-quick-date-interval-field
-      class="mr-4"
       v-field="query.interval"
       :min="minDate"
       :quick-ranges="quickRanges"
+      class="mr-4"
     />
     <c-sampling-field
-      class="mr-4 kpi-sli-toolbar__sampling"
       v-field="query.sampling"
+      class="mr-4 kpi-sli-toolbar__sampling"
     />
     <kpi-sli-show-mode-field
-      class="mr-4 kpi-sli-toolbar__show-mode"
       v-field="query.type"
+      class="mr-4 kpi-sli-toolbar__show-mode"
     />
     <c-filter-field
-      class="kpi-sli-toolbar__filters"
       v-field="query.filter"
+      class="kpi-sli-toolbar__filters"
     />
   </v-layout>
 </template>

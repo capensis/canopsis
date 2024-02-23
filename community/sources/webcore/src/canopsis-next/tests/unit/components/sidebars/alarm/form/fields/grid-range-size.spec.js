@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createNumberInputStub } from '@unit/stubs/input';
+
 import GridRangeSize from '@/components/sidebars/alarm/form/fields/grid-range-size.vue';
 
 const stubs = {
@@ -37,18 +37,11 @@ describe('grid-range-size', () => {
   it('Value changed after trigger range slider field', () => {
     const wrapper = factory();
 
-    const rangeSliderField = selectRangeSliderField(wrapper);
-
     const newValue = 3;
 
-    rangeSliderField.setValue(newValue);
+    selectRangeSliderField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `grid-range-size` with default and required props', () => {

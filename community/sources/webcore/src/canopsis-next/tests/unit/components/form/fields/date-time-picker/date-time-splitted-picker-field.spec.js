@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
 
@@ -42,9 +40,9 @@ describe('date-time-splitted-picker-field', () => {
       },
     });
 
-    selectDatePickerField(wrapper).vm.$emit('input', '2022-03-11');
+    selectDatePickerField(wrapper).triggerCustomEvent('input', '2022-03-11');
 
-    expect(wrapper).toEmit('input', new Date('2022-03-11T14:55:00.000Z'));
+    expect(wrapper).toEmitInput(new Date('2022-03-11T14:55:00.000Z'));
   });
 
   test('Time changed after trigger time field', () => {
@@ -54,9 +52,9 @@ describe('date-time-splitted-picker-field', () => {
       },
     });
 
-    selectTimePickerField(wrapper).vm.$emit('input', '12:15');
+    selectTimePickerField(wrapper).triggerCustomEvent('input', '12:15');
 
-    expect(wrapper).toEmit('input', new Date('1998-11-01T11:15:00.000Z'));
+    expect(wrapper).toEmitInput(new Date('1998-11-01T11:15:00.000Z'));
   });
 
   test('Renders `date-time-splitted-picker-field` with default props', () => {

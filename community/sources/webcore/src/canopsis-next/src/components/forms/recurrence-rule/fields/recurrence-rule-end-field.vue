@@ -13,34 +13,34 @@
       </template>
     </v-radio>
     <v-radio
-      class="mb-0"
       :value="types.date"
+      class="mb-0"
       color="primary"
     >
       <template #label="">
         <span>{{ $t('recurrenceRule.on') }}</span>
         <date-time-splitted-picker-field
-          class="ml-3"
           v-field="value.until"
           v-validate="dateTimeSplittedRules"
           :placeholder="$t('common.date')"
           :disabled="!isDateType"
+          class="ml-3"
           name="until"
         />
       </template>
     </v-radio>
     <v-radio
-      class="mb-0"
       :value="types.after"
+      class="mb-0"
       color="primary"
     >
       <template #label="">
         <span>{{ $t('recurrenceRule.after') }}</span>
         <c-number-field
-          class="mx-3"
           v-field="value.count"
           :disabled="!isAfterType"
           :required="isAfterType"
+          class="mx-3"
           name="count"
         />
         <span class="text-lowercase">{{ $tc('recurrenceRule.occurrence', value.count || 1) }}</span>

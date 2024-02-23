@@ -7,8 +7,8 @@
   >
     <template #activator="">
       <slot
-        name="activator"
         :bind="bind"
+        name="activator"
       />
     </template>
     <slot :value="value" />

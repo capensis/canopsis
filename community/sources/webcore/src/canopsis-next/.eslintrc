@@ -68,6 +68,35 @@
     }],
     "vue/no-v-text-v-html-on-component": "off",
     "vue/require-component-is": "off",
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 3,
+      "multiline": 1
+    }],
+    "vue/first-attribute-linebreak": ["error", {
+      "singleline": "beside"
+    }],
+    "vue/component-name-in-template-casing": ["error", "kebab-case", {
+      "registeredComponentsOnly": true
+    }],
+    "vue/attributes-order": ["error", {
+      "order": [
+        "GLOBAL",
+        "CONDITIONALS",
+        "DEFINITION",
+        "TWO_WAY_BINDING",
+        "CONTENT",
+        "OTHER_DIRECTIVES",
+        "LIST_RENDERING",
+        "RENDER_MODIFIERS",
+        "UNIQUE",
+        "SLOT",
+        "ATTR_DYNAMIC",
+        "ATTR_STATIC",
+        "ATTR_SHORTHAND_BOOL",
+        "EVENTS"
+      ],
+      "alphabetical": false
+    }],
     "vuejs-accessibility/label-has-for": "off",
     "vuejs-accessibility/click-events-have-key-events": "off",
     "vuejs-accessibility/form-control-has-label": "off",
@@ -124,29 +153,23 @@
       "newlines-between": "always"
     }],
     "no-unused-expressions": "off",
-    "no-restricted-syntax": [
-      "error",
-      {
-        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateShallowRenderer']",
-        "message": "generateShallowRenderer should be used inside describe."
-      },
-      {
-        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateRenderer']",
-        "message": "generateRenderer should be used inside describe."
-      },
-      {
-        "selector": "ImportDeclaration[source.value=/form\\u002Fpartials/]",
-        "message": "All fields should be moved inside `/form/fields/`."
-      },
-      {
-        "selector": "ImportDeclaration[source.value=/\\u002Fpartial\\u002F/]",
-        "message": "`partial` folder deprecated. Please, rename to `partials`."
-      },
-      {
-        "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
-        "message": "`field` folder deprecated. Please, rename to `field`."
-      }
-    ],
+    "no-restricted-syntax": ["off"],
+    "no-restricted-imports": ["error", {
+      "patterns": [
+        {
+          "group": ["**/form/partials/**", "**/form/partial/**"],
+          "message": "All fields should be moved inside `/form/fields/`."
+        },
+        {
+          "group": ["**/field/**"],
+          "message": "`field` folder deprecated. Please, rename to `fields`."
+        },
+        {
+          "group": ["**/partial/**"],
+          "message": "`partial` folder deprecated. Please, rename to `partials`."
+        }
+      ]
+    }],
     "import-newlines/enforce": [
       "error",
       {

@@ -6,10 +6,10 @@
     <template #text="">
       <v-layout column>
         <v-card
-          class="my-1 cursor-pointer"
           v-for="{ type, text, icon, on, children } in availableTypes"
-          v-on="on"
           :key="type"
+          class="my-1 cursor-pointer"
+          v-on="on"
         >
           <v-menu
             :disabled="!children"
@@ -18,8 +18,8 @@
           >
             <template #activator="{ on: menuOn }">
               <v-card-title
-                v-on="menuOn"
                 primary-title
+                v-on="menuOn"
               >
                 <v-layout
                   wrap
@@ -39,8 +39,8 @@
             <v-list>
               <v-list-item
                 v-for="child in children"
-                v-on="child.on"
                 :key="child.type"
+                v-on="child.on"
               >
                 <v-list-item-avatar>
                   <v-icon>{{ child.icon }}</v-icon>

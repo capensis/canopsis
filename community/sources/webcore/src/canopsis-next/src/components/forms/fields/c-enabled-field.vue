@@ -1,12 +1,12 @@
 <template>
   <v-switch
     v-field="value"
-    v-on="listeners"
     :label="label || $t('common.enabled')"
     :color="color"
     :disabled="disabled"
     :readonly="readonly"
     :hide-details="hideDetails"
+    v-on="listeners"
   >
     <template #label="">
       <slot name="label" />

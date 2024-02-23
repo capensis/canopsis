@@ -9,10 +9,10 @@
   >
     <template #activator="{ on }">
       <v-icon
-        class="d-block"
-        v-on="on"
         :color="color"
         :size="size"
+        class="d-block"
+        v-on="on"
       >
         sync_problem
       </v-icon>

@@ -6,7 +6,8 @@ import (
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -21,32 +22,35 @@ import (
 func NewAckProcessor(
 	client mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
-	stateCountersService statecounters.StateCountersService,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	eventsSender entitycounters.EventsSender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) Processor {
 	return &ackProcessor{
-		client:                  client,
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:        client.Collection(mongo.EntityMongoCollection),
-		configProvider:          configProvider,
-		stateCountersService:    stateCountersService,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		metricsSender:           metricsSender,
-		logger:                  logger,
+		client:                          client,
+		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:                client.Collection(mongo.EntityMongoCollection),
+		configProvider:                  configProvider,
+		entityServiceCountersCalculator: entityServiceCountersCalculator,
+		eventsSender:                    eventsSender,
+		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metricsSender:                   metricsSender,
+		logger:                          logger,
 	}
 }
 
 type ackProcessor struct {
-	client                  mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	entityCollection        mongo.DbCollection
-	configProvider          config.AlarmConfigProvider
-	stateCountersService    statecounters.StateCountersService
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	metricsSender           metrics.Sender
-	logger                  zerolog.Logger
+	client                          mongo.DbClient
+	alarmCollection                 mongo.DbCollection
+	entityCollection                mongo.DbCollection
+	configProvider                  config.AlarmConfigProvider
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
+	eventsSender                    entitycounters.EventsSender
+	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metricsSender                   metrics.Sender
+	logger                          zerolog.Logger
 }
 
 func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -55,7 +59,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 		return result, nil
 	}
 
-	entity := *event.Entity
+	entity := event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.ack"] = nil
 	conf := p.configProvider.Get()
@@ -74,7 +78,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 			"not_acked_since",
 		}},
 	}
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
@@ -145,7 +149,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 			}
 		}
 
-		updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+		updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, entity, &result.Alarm, result.AlarmChange)
 
 		return err
 	})
@@ -163,7 +167,7 @@ func (p *ackProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	notAckedMetricType string,
 ) {
 	p.metricsSender.SendEventMetrics(
@@ -178,7 +182,7 @@ func (p *ackProcessor) postProcess(
 	)
 
 	for servID, servInfo := range updatedServiceStates {
-		err := p.stateCountersService.UpdateServiceState(ctx, servID, servInfo)
+		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update service state")
 		}

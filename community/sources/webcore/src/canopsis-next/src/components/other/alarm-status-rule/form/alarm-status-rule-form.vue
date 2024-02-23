@@ -21,9 +21,9 @@
       required
     />
     <alarm-status-rule-patterns-form
-      class="mt-2"
       v-field="form.patterns"
       :flapping="flapping"
+      class="mt-2"
     />
   </v-layout>
 </template>

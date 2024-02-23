@@ -14,15 +14,15 @@
         </v-flex>
         <v-flex xs11>
           <scenario-info-item
-            class="scenario-info-type px-2"
             :label="$t('common.type')"
             :value="action.type"
+            class="scenario-info-type px-2"
             hide-icon
           />
           <v-expand-transition mode="out-in">
             <v-layout
-              class="px-2"
               v-if="expanded"
+              class="px-2"
               column
             >
               <v-tabs
@@ -36,8 +36,8 @@
               </v-tabs>
               <v-divider />
               <v-tabs-items
-                class="pt-2"
                 v-model="activeTab"
+                class="pt-2"
               >
                 <v-tab-item>
                   <scenario-action-card-general-tab :action="action" />

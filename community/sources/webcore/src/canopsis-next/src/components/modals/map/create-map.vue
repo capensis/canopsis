@@ -7,9 +7,9 @@
       <template #text="">
         <v-layout column>
           <v-flex
-            class="my-1 cursor-pointer"
             v-for="type in availableTypes"
             :key="type"
+            class="my-1 cursor-pointer"
             @click="selectType(type)"
           >
             <v-card>
