@@ -95,7 +95,7 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newStepQuery := execStepUpdateQueryWithInPbhInterval(alarmStepType, event.Parameters.Output, event.Parameters)
+	newStepQuery := execStepUpdateQueryWithInPbhInterval(alarmStepType, "", event.Parameters.Output, event.Parameters)
 	var update []bson.M
 
 	switch alarmChangeType {

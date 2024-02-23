@@ -36,6 +36,7 @@ type AxeParameters struct {
 	WebhookFailReason string            `json:"webhook_fail_reason,omitempty"`
 	WebhookError      *Error            `json:"webhook_error,omitempty"`
 	EmitTrigger       bool              `json:"emit_trigger,omitempty"`
+	RuleExecution     string            `bson:"rule_execution,omitempty"`
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
@@ -48,8 +49,9 @@ type AxeParameters struct {
 	Tstart         *datetime.CpsTime `json:"tstart,omitempty"`
 	Tstop          *datetime.CpsTime `json:"tstop,omitempty"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty"`
+	// Instruction and Webhook
+	Execution string `json:"execution,omitempty"`
 	// Instruction
-	Execution   string `json:"execution,omitempty"`
 	Instruction string `json:"instruction,omitempty"`
 	// Trigger
 	Trigger string `json:"trigger,omitempty"`

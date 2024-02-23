@@ -386,6 +386,12 @@ definitions:
         items:
           type: string
         type: array
+      grouped_steps:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/common.AlarmStep'
+          type: array
+        type: object
       steps:
         $ref: '#/definitions/alarm.StepDetails'
     type: object
@@ -395,6 +401,15 @@ definitions:
         type: string
       children:
         $ref: '#/definitions/alarm.ChildDetailsRequest'
+      grouped_steps:
+        properties:
+          ids:
+            items:
+              type: string
+            type: array
+          reversed:
+            type: boolean
+        type: object
       opened:
         type: boolean
       perf_data:
@@ -564,6 +579,8 @@ definitions:
     type: object
   alarm.StepsRequest:
     properties:
+      group:
+        type: boolean
       limit:
         type: integer
       page:
@@ -1143,6 +1160,8 @@ definitions:
       _t:
         type: string
       a:
+        type: string
+      display_group:
         type: string
       in_pbh:
         type: boolean
