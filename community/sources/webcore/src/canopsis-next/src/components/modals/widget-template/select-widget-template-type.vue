@@ -6,9 +6,9 @@
     <template #text="">
       <v-layout column>
         <v-card
-          class="my-1 cursor-pointer"
           v-for="{ value, text, icon } in availableTypes"
           :key="value"
+          class="my-1 cursor-pointer"
           @click="selectType(value)"
         >
           <v-card-title primary-title>

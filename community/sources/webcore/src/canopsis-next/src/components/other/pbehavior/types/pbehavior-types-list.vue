@@ -21,8 +21,8 @@
     </template>
     <template #icon_name="{ item }">
       <v-chip
-        class="pbehavior-type-icon"
         :color="item.color"
+        class="pbehavior-type-icon"
       >
         <v-icon
           :color="getIconColor(item.color)"

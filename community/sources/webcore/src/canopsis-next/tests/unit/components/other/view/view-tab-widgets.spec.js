@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createQueryModule,
   createActiveViewModule,
@@ -205,7 +204,7 @@ describe('view-tab-widgets', () => {
       newHeightForThirdWidgetOnDesktop,
     );
 
-    gridLayoutElement.vm.$emit('input', newLayouts);
+    gridLayoutElement.triggerCustomEvent('input', newLayouts);
 
     await flushPromises();
     await wrapper.vm.updatePositions();

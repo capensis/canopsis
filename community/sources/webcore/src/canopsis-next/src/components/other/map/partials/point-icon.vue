@@ -1,8 +1,8 @@
 <template>
   <span
+    :style="pointStyles"
     class="point-icon"
     v-on="$listeners"
-    :style="pointStyles"
   >
     <v-icon
       :size="icon.size || size"

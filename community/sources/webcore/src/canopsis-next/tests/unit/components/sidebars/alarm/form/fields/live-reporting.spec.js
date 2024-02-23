@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
+
 import { MODALS } from '@/constants';
 
 import LiveReporting from '@/components/sidebars/alarm/form/fields/live-reporting.vue';
@@ -72,12 +73,7 @@ describe('live-reporting', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Text editor modal opened after trigger edit button', () => {
@@ -112,12 +108,7 @@ describe('live-reporting', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Value removed after trigger delete button', () => {
@@ -131,12 +122,7 @@ describe('live-reporting', () => {
 
     deleteButton.trigger('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({});
+    expect(wrapper).toEmitInput({});
   });
 
   it('Renders `live-reporting` with default props', () => {

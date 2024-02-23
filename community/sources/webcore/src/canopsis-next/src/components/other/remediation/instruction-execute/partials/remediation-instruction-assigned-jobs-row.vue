@@ -3,9 +3,9 @@
     <td class="pa-0">
       <v-layout align-center>
         <v-btn
-          class="primary"
           v-if="executable"
           :disabled="isRunningJob || isFailedJob"
+          class="primary"
           rounded
           small
           block
@@ -14,8 +14,8 @@
           {{ job.name }}
         </v-btn>
         <span
-          class="text-body-1"
           v-else
+          class="text-body-1"
         >
           {{ job.name }}
         </span>
@@ -27,11 +27,11 @@
         >
           <template #activator="{ on }">
             <v-btn
-              class="mr-1"
-              v-on="on"
               :loading="outputPending"
+              class="mr-1"
               icon
               small
+              v-on="on"
               @click="toggleExpanded"
             >
               <v-icon :color="isFailedJob ? 'error' : 'success'">
@@ -42,8 +42,8 @@
           <div v-if="job.fail_reason">
             <span>{{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;</span>
             <span
-              class="pre-wrap"
               v-html="job.fail_reason"
+              class="pre-wrap"
             />
           </div>
         </v-tooltip>
@@ -54,10 +54,10 @@
           <template #activator="{ on }">
             <v-btn
               class="error ml-2"
-              v-on="on"
               rounded
               small
               block
+              v-on="on"
               @click="$emit('cancel-job-execution', job)"
             >
               {{ $t('common.cancel') }}
@@ -77,20 +77,20 @@
     </td>
     <template v-else>
       <progress-cell
-        class="text-center"
         :pending="isRunningJob && !job.started_at"
+        class="text-center"
       >
         <span v-if="!isCancelledJob">{{ job.started_at | date('long', '-') }}</span>
       </progress-cell>
       <progress-cell
-        class="text-center"
         :pending="shownLaunchedPendingJob"
+        class="text-center"
       >
         <span>{{ job.launched_at | date('long', '-') }}</span>
       </progress-cell>
       <progress-cell
-        class="text-center"
         :pending="shownCompletedPendingJob"
+        class="text-center"
       >
         <span>{{ job.completed_at | date('long', '-') }}</span>
       </progress-cell>

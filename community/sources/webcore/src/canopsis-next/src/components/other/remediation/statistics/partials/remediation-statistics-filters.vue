@@ -4,21 +4,21 @@
     wrap
   >
     <c-quick-date-interval-field
-      class="mr-4"
       v-field="query.interval"
       :min="minDate"
+      class="mr-4"
     />
     <c-sampling-field
-      class="remediation-statistics-filters__sampling mr-4"
       v-field="query.sampling"
+      class="remediation-statistics-filters__sampling mr-4"
     />
     <remediation-statistics-show-mode-field
-      class="remediation-statistics-filters__type mr-4"
       v-field="query.type"
+      class="remediation-statistics-filters__type mr-4"
     />
     <remediation-statistics-instructions-field
-      class="remediation-statistics-filters__instruction"
       v-field="query.instruction"
+      class="remediation-statistics-filters__instruction"
     />
   </v-layout>
 </template>

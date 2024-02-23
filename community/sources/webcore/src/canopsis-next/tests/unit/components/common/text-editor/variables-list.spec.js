@@ -33,9 +33,9 @@ describe('variables-list', () => {
 
     const variableTile = selectVariableTileByIndex(wrapper, 0);
 
-    variableTile.vm.$emit('click');
+    variableTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Submenu opened when mouseover tile', async () => {
@@ -65,7 +65,7 @@ describe('variables-list', () => {
       left: 112,
       width: 88,
     });
-    await variableTile.vm.$emit('mouseenter', { target: variableTile.element });
+    await variableTile.triggerCustomEvent('mouseenter', { target: variableTile.element });
 
     const menu = selectMenu(wrapper);
     expect(menu.vm.positionX).toEqual(200);
@@ -95,14 +95,14 @@ describe('variables-list', () => {
 
     const firstVariableTile = selectVariableTileByIndex(wrapper, 0);
 
-    await firstVariableTile.vm.$emit('mouseenter', {
+    await firstVariableTile.triggerCustomEvent('mouseenter', {
       target: firstVariableTile.element,
     });
 
     expect(selectMenu(wrapper).element).toBeTruthy();
 
     const secondVariableTile = selectVariableTileByIndex(wrapper, 1);
-    await secondVariableTile.vm.$emit('mouseenter', {
+    await secondVariableTile.triggerCustomEvent('mouseenter', {
       target: secondVariableTile.element,
     });
   });
@@ -122,7 +122,7 @@ describe('variables-list', () => {
 
     const firstVariableTile = selectVariableTileByIndex(wrapper, 0);
 
-    await firstVariableTile.vm.$emit('mouseenter', {
+    await firstVariableTile.triggerCustomEvent('mouseenter', {
       target: firstVariableTile.element,
     });
 
@@ -130,9 +130,9 @@ describe('variables-list', () => {
 
     const value = Faker.datatype.string();
 
-    variablesList.vm.$emit('input', value);
+    variablesList.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', `${parentValue}.${value}`);
+    expect(wrapper).toEmitInput(`${parentValue}.${value}`);
   });
 
   test('Renders `variables-list` with default props', () => {

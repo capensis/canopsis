@@ -14,8 +14,8 @@
             :color="form.color"
           />
           <broadcast-message-form
-            class="pa-3"
             v-model="form"
+            class="pa-3"
           />
         </v-layout>
       </template>
@@ -28,8 +28,8 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary white--text"
           :disabled="isDisabled"
+          class="primary white--text"
           type="submit"
         >
           {{ $t('common.submit') }}

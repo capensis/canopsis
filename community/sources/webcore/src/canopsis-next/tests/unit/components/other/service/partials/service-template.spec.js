@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
@@ -59,9 +58,9 @@ describe('service-template', () => {
 
     const entitiesList = selectEntitiesList(wrapper);
 
-    await entitiesList.vm.$emit('refresh');
+    await entitiesList.triggerCustomEvent('refresh');
 
-    expect(wrapper).toEmit('refresh');
+    expect(wrapper).toHaveBeenEmit('refresh');
   });
 
   test('Add action applied after triggers entities list', async () => {
@@ -76,11 +75,9 @@ describe('service-template', () => {
 
     await flushPromises();
 
-    const entitiesList = selectEntitiesList(wrapper);
+    await selectEntitiesList(wrapper).triggerCustomEvent('add:action');
 
-    await entitiesList.vm.$emit('add:action');
-
-    expect(wrapper).toEmit('add:action');
+    expect(wrapper).toHaveBeenEmit('add:action');
   });
 
   test('Pagination updated after triggers entities list', async () => {
@@ -101,7 +98,7 @@ describe('service-template', () => {
       page: Faker.datatype.number(),
     };
 
-    await entitiesList.vm.$emit('update:options', newPagination);
+    await entitiesList.triggerCustomEvent('update:options', newPagination);
 
     expect(wrapper).toEmit('update:options', newPagination);
   });

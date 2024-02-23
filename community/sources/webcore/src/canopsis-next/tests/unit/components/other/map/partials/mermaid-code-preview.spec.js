@@ -1,8 +1,10 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 import { MERMAID_THEMES } from '@/constants';
+
 import { renderMermaid } from '@/helpers/mermaid';
+
+import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
 jest.mock('@/helpers/mermaid', () => ({
   renderMermaid: jest.fn(

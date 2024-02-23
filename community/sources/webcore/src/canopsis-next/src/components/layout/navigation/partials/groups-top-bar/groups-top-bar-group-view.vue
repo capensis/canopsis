@@ -10,8 +10,8 @@
         lock
       </v-icon>
       <v-btn
-        class="edit-view-button"
         v-show="view.is_private || hasViewEditButtonAccess"
+        class="edit-view-button"
         depressed
         small
         icon
@@ -22,8 +22,8 @@
         </v-icon>
       </v-btn>
       <v-btn
-        class="duplicate-view-button"
         v-show="view.is_private || isNavigationEditingMode"
+        class="duplicate-view-button"
         depressed
         small
         icon

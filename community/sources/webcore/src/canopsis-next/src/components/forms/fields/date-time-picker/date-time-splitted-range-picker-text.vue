@@ -1,7 +1,5 @@
 <template>
-  <v-layout
-    class="date-time-splitted-range-picker-field"
-  >
+  <v-layout class="date-time-splitted-range-picker-field">
     <v-flex class="date-time-splitted-range-picker-field__start">
       <date-time-splitted-picker-text
         :value="start"

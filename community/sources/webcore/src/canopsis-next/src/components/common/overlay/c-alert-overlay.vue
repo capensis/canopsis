@@ -1,13 +1,13 @@
 <template>
   <v-fade-transition>
     <v-layout
-      class="alert"
       v-show="value"
+      class="alert"
     >
       <div
-        class="overlay"
         :class="backgroundColor"
         :style="{ opacity: opacity }"
+        class="overlay"
       />
       <div class="content">
         <slot>

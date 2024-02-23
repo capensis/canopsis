@@ -1,14 +1,14 @@
 <template>
   <v-combobox
-    ref="field"
     v-validate="rules"
+    ref="field"
     :value="value"
     :search-input="value"
     :label="label || $t('common.payload')"
     :items="availableVariables"
     :disabled="disabled"
     :return-object="false"
-    :menu-props="{ value: !!variables.length && variablesShown }"
+    :menu-props="{ value: !!variables.length && variablesShown, offsetY: true }"
     :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"

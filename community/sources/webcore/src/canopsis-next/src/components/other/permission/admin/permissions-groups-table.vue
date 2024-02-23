@@ -20,13 +20,13 @@
     </template>
     <template #expanded-item="{ item }">
       <permissions-table
-        :key="`expanded-${item.name}`"
-        class="expand-permissions-table"
         v-show="expanded.find(({ name }) => item.name === name)"
+        :key="`expanded-${item.name}`"
         :permissions="item.permissions"
         :roles="roles"
         :changed-roles="changedRoles"
         :disabled="disabled"
+        class="expand-permissions-table"
         @change="$listeners.change"
       />
     </template>

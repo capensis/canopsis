@@ -14,8 +14,8 @@
         >
           <template #label="{ item }">
             <slot
-              name="expand"
               :item="item"
+              name="expand"
             >
               <v-avatar
                 class="white--text"
@@ -26,8 +26,8 @@
               </v-avatar>
             </slot>
             <slot
-              name="expand-append"
               :item="item"
+              name="expand-append"
             />
           </template>
         </v-treeview>
@@ -45,7 +45,7 @@
           loader-height="2"
           hide-default-footer
         >
-          <template #items="props">
+          <template #item="props">
             <slot
               v-bind="props"
               name="items"
@@ -151,6 +151,10 @@ export default {
         this.opened.includes(item.parentKey)
         && this.isDependencyOpen(this.itemsById[item.parentKey], [...parentKeys, item.key])
       );
+    },
+
+    clearOpened() {
+      this.opened = [];
     },
   },
 };

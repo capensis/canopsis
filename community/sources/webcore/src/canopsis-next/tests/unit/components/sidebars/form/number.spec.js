@@ -32,9 +32,9 @@ describe('field-number', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectNumberField(wrapper).vm.$emit('input', newValue);
+    selectNumberField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `field-number` with default props', () => {

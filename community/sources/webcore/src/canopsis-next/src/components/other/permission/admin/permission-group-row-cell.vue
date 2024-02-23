@@ -1,12 +1,12 @@
 <template>
   <td>
     <v-simple-checkbox
-      class="ma-0 pa-0"
       v-bind="checkbox.bind"
-      v-on="checkbox.on"
       :disabled="disabled || disabledForRole"
+      class="ma-0 pa-0"
       color="primary"
       hide-details="hideDetails"
+      v-on="checkbox.on"
     />
   </td>
 </template>

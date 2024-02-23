@@ -23,9 +23,9 @@
         {{ $t('common.cancel') }}
       </v-btn>
       <v-btn
-        class="primary"
         :disabled="isDisabled"
         :loading="submitting"
+        class="primary"
         data-test="colorPickerSubmitButton"
         @click="submit"
       >

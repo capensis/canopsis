@@ -1,11 +1,10 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import PointFormDialog from '@/components/other/map/form/fields/point-form-dialog.vue';
@@ -80,7 +79,7 @@ describe('point-form-dialog', () => {
 
     const pointForm = selectPointForm(wrapper);
 
-    pointForm.vm.$emit('input', newPoint);
+    pointForm.triggerCustomEvent('input', newPoint);
 
     const submitButton = selectSubmitButton(wrapper);
     submitButton.trigger('click');
@@ -144,7 +143,7 @@ describe('point-form-dialog', () => {
 
     await flushPromises();
 
-    expect(wrapper).not.toEmit('submit');
+    expect(wrapper).not.toHaveBeenEmit('submit');
   });
 
   test('Point dialog closed after trigger cancel button', () => {
@@ -156,7 +155,7 @@ describe('point-form-dialog', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    expect(wrapper).toEmit('cancel');
+    expect(wrapper).toHaveBeenEmit('cancel');
   });
 
   test('Point dialog closed after trigger close button', () => {
@@ -170,7 +169,7 @@ describe('point-form-dialog', () => {
 
     closeButton.trigger('click');
 
-    expect(wrapper).toEmit('cancel');
+    expect(wrapper).toHaveBeenEmit('cancel');
   });
 
   test('Point removed after trigger delete button', () => {
@@ -185,7 +184,7 @@ describe('point-form-dialog', () => {
 
     deleteButton.trigger('click');
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   test('Cancel emitted after click outside and confirm close', async () => {
@@ -211,7 +210,7 @@ describe('point-form-dialog', () => {
     };
 
     const pointForm = selectPointForm(wrapper);
-    await pointForm.vm.$emit('input', newPoint);
+    await pointForm.triggerCustomEvent('input', newPoint);
 
     wrapper.clickOutside();
 
@@ -232,7 +231,7 @@ describe('point-form-dialog', () => {
 
     modalArguments.config.action(false);
 
-    expect(wrapper).toEmit('cancel');
+    expect(wrapper).toHaveBeenEmit('cancel');
   });
 
   test('Submit emitted after click outside and confirm save', async () => {
@@ -257,7 +256,7 @@ describe('point-form-dialog', () => {
     };
 
     const pointForm = selectPointForm(wrapper);
-    await pointForm.vm.$emit('input', newPoint);
+    await pointForm.triggerCustomEvent('input', newPoint);
 
     wrapper.clickOutside();
 

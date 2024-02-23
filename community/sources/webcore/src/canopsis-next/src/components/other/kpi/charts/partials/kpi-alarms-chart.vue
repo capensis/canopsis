@@ -8,9 +8,9 @@
   >
     <template #actions="{ chart }">
       <kpi-chart-export-actions
-        class="mt-4"
         :downloading="downloading"
         :chart="chart"
+        class="mt-4"
         v-on="$listeners"
       />
     </template>
