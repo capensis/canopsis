@@ -697,6 +697,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Approbation des consignes',
+    dismissed: 'a rejeté vos mises à jour',
     requested: 'vous a sollicité pour une pour approbation',
     tabs: {
       updated: 'Mise à jour',

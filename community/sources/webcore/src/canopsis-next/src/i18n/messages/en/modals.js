@@ -697,6 +697,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Instruction approval',
+    dismissed: 'has dismissed your updates',
     requested: 'requested for approval',
     tabs: {
       updated: 'Updated',
