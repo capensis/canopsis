@@ -7,6 +7,8 @@
     />
     <state-settings-summary
       v-if="showStateSetting"
+      :pending="pendingStateSetting"
+      :state-setting="stateSetting"
       :entity="root"
     />
     <c-treeview-data-table
@@ -66,6 +68,7 @@
 
 <script>
 import { get, uniq } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
@@ -86,6 +89,8 @@ import ServiceDependenciesShowTypeField
 
 import ServiceDependenciesExpand from './service-dependencies-expand.vue';
 import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
+
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
   components: {
@@ -128,6 +133,8 @@ export default {
 
       metaByIds: {},
       pendingByIds: {},
+      pendingStateSetting: true,
+      stateSetting: undefined,
 
       showType: TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies,
     };
@@ -189,12 +196,36 @@ export default {
       this.setRootDependencies();
       this.fetchRootDependencies();
     },
+    showStateSetting: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.fetchEntityStateSetting();
+        }
+      },
+    },
   },
   mounted() {
     this.setRootDependencies();
     this.fetchRootDependencies();
   },
   methods: {
+    ...mapEntityActions({
+      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
+    }),
+
+    async fetchEntityStateSetting() {
+      this.pendingStateSetting = true;
+
+      try {
+        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.root._id } });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pendingStateSetting = false;
+      }
+    },
+
     async fetchRootDependencies() {
       const ids = await this.fetchDependenciesById(this.rootId);
 
