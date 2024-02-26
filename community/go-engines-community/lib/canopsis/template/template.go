@@ -335,6 +335,17 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return string(runeStr[start:end])
 		},
+		"strlen": func(str string) int64 {
+			return int64(len([]rune(str)))
+		},
+		"strpos": func(str, substr string) int64 {
+			idx := strings.Index(str, substr)
+			if idx < 0 {
+				return -1
+			}
+
+			return int64(len([]rune(str[:idx])))
+		},
 		"add": func(a, b any) (int64, error) {
 			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
 				return x + y, nil
