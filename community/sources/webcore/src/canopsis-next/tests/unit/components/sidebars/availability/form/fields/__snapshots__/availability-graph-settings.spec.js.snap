@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-graph-settings Renders \`availability-graph-settings\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Availability graph settings"
+>
+  <c-enabled-field-stub
+    value="true"
+  />
+  <transition-stub
+    name="expand-transition"
+  >
+    <div>
+      <c-quick-date-interval-type-field-stub
+        label="Default time range"
+        name="customName.default_time_range"
+        ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        value="last7Days"
+      />
+      <c-availability-show-type-field-stub
+        label="Default availability display"
+        name="customName.show_type"
+        value="1"
+      />
+    </div>
+  </transition-stub>
+</widget-settings-item-stub>
+`;
+
+exports[`availability-graph-settings Renders \`availability-graph-settings\` with required props 1`] = `
+<widget-settings-item-stub
+  title="Availability graph settings"
+>
+  <c-enabled-field-stub />
+  <transition-stub
+    name="expand-transition"
+  >
+    <!---->
+  </transition-stub>
+</widget-settings-item-stub>
+`;
