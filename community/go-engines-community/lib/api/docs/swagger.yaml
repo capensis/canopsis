@@ -368,16 +368,6 @@ paths:
                     "steps": {
                       "page": 2
                     }
-                  },
-                  {
-                    "_id": "6164d665-7ccb-4ffc-9d46-5350b2fefafe",
-                    "grouped_steps": {
-                      "reversed": true,
-                      "ids": [
-                        "14e237d4-ad08-47a5-87f2-8ffe6741541f",
-                        "0be1d3df-816b-4359-a2ba-7bcccb33ed4f"
-                      ]
-                    }
                   }
                 ]
         required: true
