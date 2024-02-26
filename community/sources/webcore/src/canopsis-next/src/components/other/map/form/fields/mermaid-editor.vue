@@ -1,13 +1,13 @@
 <template>
   <v-layout column>
     <v-layout
-      class="mermaid-editor mb-2"
       :style="editorStyles"
+      class="mermaid-editor mb-2"
     >
       <v-flex class="mermaid-editor__sidebar">
         <mermaid-code-editor
-          class="fill-height"
           v-field="form.code"
+          class="fill-height"
         />
       </v-flex>
       <v-flex class="mermaid-editor__content">
@@ -17,12 +17,12 @@
           justify-end
         >
           <add-location-btn
-            class="mr-2"
             v-model="addOnClick"
+            class="mr-2"
           />
           <mermaid-theme-field
-            class="mermaid-editor__theme-picker"
             v-field="form.theme"
+            class="mermaid-editor__theme-picker"
           />
         </v-layout>
         <div class="mermaid-editor__preview">
@@ -31,9 +31,9 @@
             :theme="form.theme"
           />
           <mermaid-points-editor
-            class="mermaid-editor__points"
             v-field="form.points"
             :add-on-click="addOnClick"
+            class="mermaid-editor__points"
           />
         </div>
       </v-flex>

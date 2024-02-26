@@ -1,9 +1,8 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import ClickOutside from '@/services/click-outside';
 
 import ConfirmAckWithTicket from '@/components/modals/alarm/confirm-ack-with-ticket.vue';

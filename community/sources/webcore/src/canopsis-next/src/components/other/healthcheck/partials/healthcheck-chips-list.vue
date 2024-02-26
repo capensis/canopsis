@@ -1,7 +1,7 @@
 <template>
   <c-responsive-list
-    class="ml-4"
     :items="preparedEngines"
+    class="ml-4"
     item-key="name"
     item-value="label"
   >
@@ -12,9 +12,9 @@
       >
         <template #activator="{ on }">
           <c-engine-chip
+            :color="item.color"
             class="ma-1"
             v-on="{ ...chipListeners, ...on }"
-            :color="item.color"
           >
             {{ item.label }}
           </c-engine-chip>

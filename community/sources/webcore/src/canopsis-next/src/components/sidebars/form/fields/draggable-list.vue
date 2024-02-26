@@ -10,17 +10,17 @@
     >
       <v-flex xs1>
         <v-icon
-          class="draggable"
           :class="handleClass"
+          class="draggable"
         >
           drag_indicator
         </v-icon>
       </v-flex>
       <v-flex xs8>
         <slot
-          name="title"
           :item="item"
           :index="index"
+          name="title"
         >
           <span>{{ item[itemText] }}</span>
         </slot>

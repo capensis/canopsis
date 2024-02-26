@@ -167,7 +167,7 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
                 class="v-card__text"
               >
                 <div
-                  class="v-tabs v-tabs--fixed-tabs theme--light"
+                  class="v-tabs v-tabs--centered theme--light"
                 >
                   <div
                     class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
@@ -311,7 +311,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                 class="v-card__text"
               >
                 <div
-                  class="v-tabs v-tabs--fixed-tabs theme--light"
+                  class="v-tabs v-tabs--centered theme--light"
                 >
                   <div
                     class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
@@ -467,7 +467,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
                 class="v-card__text"
               >
                 <div
-                  class="v-tabs v-tabs--fixed-tabs theme--light"
+                  class="v-tabs v-tabs--centered theme--light"
                 >
                   <div
                     class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"

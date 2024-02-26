@@ -3,8 +3,9 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 import { ALARM_FIELDS } from '@/constants';
+
+import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -42,7 +43,7 @@ describe('info-popup-form', () => {
 
     columnField.setValue(columns[1].value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       template,
       column: columns[1].value,
     });
@@ -64,9 +65,9 @@ describe('info-popup-form', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    textEditorField.vm.$emit('input', newTemplate);
+    textEditorField.triggerCustomEvent('input', newTemplate);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       template: newTemplate,
       column,
     });

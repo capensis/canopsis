@@ -1,9 +1,9 @@
 <template>
   <v-card :class="{ 'fill-min-height': fillHeight }">
     <v-card-title
-      class="white--text"
       v-if="$slots.title"
       :style="titleStyle"
+      class="white--text"
     >
       <div class="modal-wrapper__title text-h5">
         <div>
@@ -20,8 +20,8 @@
     <template v-if="!$modal.minimized">
       <v-card-text
         v-if="$slots.text"
-        :class="textClass"
         key="text"
+        :class="textClass"
       >
         <slot name="text" />
       </v-card-text>
@@ -29,7 +29,7 @@
         <v-divider key="divider" />
         <v-card-actions
           key="actions"
-          class="justify-end px-2 py-3"
+          class="justify-end align-center px-2 py-3"
         >
           <slot name="actions" />
         </v-card-actions>

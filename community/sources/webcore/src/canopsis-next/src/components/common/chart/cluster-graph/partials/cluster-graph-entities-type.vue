@@ -5,8 +5,8 @@
     </h6>
     <v-layout justify-center>
       <v-radio-group
-        class="my-0"
         v-field="impact"
+        class="my-0"
         row
         hide-details
       >

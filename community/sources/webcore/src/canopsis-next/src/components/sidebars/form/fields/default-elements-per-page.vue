@@ -4,10 +4,10 @@
     :sub-title="subTitle"
   >
     <v-select
-      class="select"
       v-field="value"
       :label="$t('settings.elementsPerPage')"
       :items="$config.PAGINATION_PER_PAGE_VALUES"
+      class="select"
       hide-details
       single-line
       dense

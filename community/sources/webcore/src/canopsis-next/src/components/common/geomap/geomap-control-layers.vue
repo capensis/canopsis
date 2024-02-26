@@ -20,8 +20,8 @@
             column
           >
             <v-radio-group
-              class="mt-0"
               :value="activeLayer"
+              class="mt-0"
               color="primary"
               column
               hide-details
@@ -38,11 +38,11 @@
             <template v-if="overlays.length">
               <v-divider class="my-2" />
               <v-checkbox
-                class="mt-0 pt-0"
                 v-for="overlay in overlays"
                 :key="overlay.name"
                 :input-value="isLayerActive(overlay.layer)"
                 :label="overlay.name"
+                class="mt-0 pt-0"
                 hide-details
                 @change="enableOverlay(overlay, $event)"
               />

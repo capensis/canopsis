@@ -5,13 +5,13 @@
   >
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         :input-value="editing"
         :loading="editingProcess"
         class="view-editing-btn__button"
         fab
         dark
         small
+        v-on="on"
         @click.stop="toggleEditing"
       >
         <v-icon small>

@@ -31,6 +31,8 @@ type API interface {
 	ArchiveUnlinked(c *gin.Context)
 	CleanArchived(c *gin.Context)
 	GetContextGraph(c *gin.Context)
+	CheckStateSetting(c *gin.Context)
+	GetStateSetting(c *gin.Context)
 }
 
 type api struct {
@@ -277,6 +279,49 @@ func (a *api) GetContextGraph(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+// CheckStateSetting
+// @Param request body CheckStateSettingRequest true "request"
+// @Success 200 {object} StateSettingResponse
+func (a *api) CheckStateSetting(c *gin.Context) {
+	request := CheckStateSettingRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	response, err := a.store.CheckStateSetting(c, request)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetStateSetting
+// @Success 200 {object} StateSettingResponse
+func (a *api) GetStateSetting(c *gin.Context) {
+	request := ContextGraphRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	response, err := a.store.GetStateSetting(c, request.ID)
+	if err != nil {
+		if errors.Is(err, ErrNoFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+			return
+		}
+
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func (a *api) toggle(c *gin.Context, enabled bool) {

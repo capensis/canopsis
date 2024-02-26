@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    class="text-pairs"
     :class="{ 'text-pairs__disabled': disabled }"
+    class="text-pairs"
     wrap
   >
     <v-flex
@@ -18,8 +18,8 @@
         name="no-data"
       />
       <c-text-pair-field
-        v-for="(item, index) in items"
         v-field="items[index]"
+        v-for="(item, index) in items"
         :key="item[itemKey]"
         :disabled="disabled"
         :value-required="valueRequired"
@@ -33,8 +33,8 @@
       >
         <template #append-value="">
           <slot
-            name="append-value"
             :item="item"
+            name="append-value"
           />
         </template>
       </c-text-pair-field>

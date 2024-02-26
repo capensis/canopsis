@@ -6,8 +6,8 @@
     @change="inputHandler"
   >
     <v-btn
-      class="ma-0"
       :value="true"
+      class="ma-0"
       light
       text
       block

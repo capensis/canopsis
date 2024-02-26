@@ -1,8 +1,8 @@
 <template>
   <component
+    :is="component"
     v-field="value"
     v-validate="rules"
-    :is="component"
     :items="availableRoles"
     :label="label || $tc('common.role')"
     :loading="pending"

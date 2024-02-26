@@ -287,6 +287,8 @@ export default {
   regexp: 'Expression régulière',
   archive: 'Archive',
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
+  event: 'Événement | Événements',
+  showMore: 'Afficher plus ({current} sur {total})',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

@@ -79,24 +79,20 @@ func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime
 			},
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "alarms",
 		}},
 		{"$match": bson.M{"alarms": bson.A{}}},
 		{"$lookup": bson.M{
-			"from": mongo.ResolvedAlarmMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.ResolvedAlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "resolved_alarms",
@@ -128,12 +124,12 @@ func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetim
 			},
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "component",
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"type":  types.EntityTypeResource,
-					"$expr": bson.M{"$eq": bson.A{"$component", "$$entity"}},
+					"type": types.EntityTypeResource,
 				}},
 				{"$limit": 1},
 			},
@@ -141,24 +137,20 @@ func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetim
 		}},
 		{"$match": bson.M{"depends": bson.A{}}},
 		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "alarms",
 		}},
 		{"$match": bson.M{"alarms": bson.A{}}},
 		{"$lookup": bson.M{
-			"from": mongo.ResolvedAlarmMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.ResolvedAlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "resolved_alarms",
@@ -192,36 +184,30 @@ func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetim
 			},
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "connector",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$connector", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "depends",
 		}},
 		{"$match": bson.M{"depends": bson.A{}}},
 		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "alarms",
 		}},
 		{"$match": bson.M{"alarms": bson.A{}}},
 		{"$lookup": bson.M{
-			"from": mongo.ResolvedAlarmMongoCollection,
-			"let":  bson.M{"entity": "$_id"},
+			"from":         mongo.ResolvedAlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
-				}},
 				{"$limit": 1},
 			},
 			"as": "resolved_alarms",

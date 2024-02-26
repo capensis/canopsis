@@ -36,9 +36,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="warning"
           :disabled="isDisabled || !remediationInstructionApproval"
           :loading="submitting"
+          class="warning"
           depressed
           text
           @click="dismiss"
@@ -46,9 +46,9 @@
           {{ $t('common.dismiss') }}
         </v-btn>
         <v-btn
-          class="primary"
           :disabled="isDisabled || !remediationInstructionApproval"
           :loading="submitting"
+          class="primary"
           @click="approve"
         >
           {{ $t('common.approve') }}

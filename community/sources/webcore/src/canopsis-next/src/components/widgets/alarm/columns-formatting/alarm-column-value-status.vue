@@ -12,9 +12,9 @@
   >
     <template #activator="{ on }">
       <v-icon
-        v-on="on"
         :size="iconSize"
         :style="{ color: statusColor, caretColor: statusColor }"
+        v-on="on"
       >
         {{ status.icon }}
       </v-icon>

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { fakeUsersForTreeview } from '@unit/data/treeview';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';

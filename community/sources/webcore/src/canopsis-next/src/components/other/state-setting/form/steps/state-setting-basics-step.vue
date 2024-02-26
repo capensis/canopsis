@@ -6,17 +6,17 @@
     >
       <v-flex xs8>
         <c-name-field
-          class="mr-2"
           v-field="form.title"
           :label="$t('common.title')"
+          class="mr-2"
           name="title"
           required
         />
       </v-flex>
       <v-flex xs4>
         <c-priority-field
-          class="mx-2"
           v-field="form.priority"
+          class="mx-2"
           required
         />
       </v-flex>
@@ -24,8 +24,8 @@
     <v-layout align-center>
       <v-flex xs5>
         <c-enabled-field
-          class="ml-2"
           v-field="form.enabled"
+          class="ml-2"
         />
       </v-flex>
       <v-flex xs7>

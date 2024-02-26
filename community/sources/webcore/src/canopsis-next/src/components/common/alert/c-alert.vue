@@ -1,8 +1,8 @@
 <template>
   <v-alert
-    class="c-alert"
     v-bind="$attrs"
     :value="value"
+    class="c-alert"
   >
     <slot />
   </v-alert>

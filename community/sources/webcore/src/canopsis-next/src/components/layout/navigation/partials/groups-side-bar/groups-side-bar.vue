@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-navigation-drawer
-      class="side-bar secondary"
       v-model="isOpen"
       :width="$config.SIDE_BAR_WIDTH"
       :class="{ 'side-bar--editing': isNavigationEditingMode }"
       :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal"
+      class="side-bar secondary"
       app
     >
       <template #prepend>
@@ -15,12 +15,10 @@
           <app-version class="version" />
         </div>
       </template>
-      <section
-        :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]"
-      >
+      <section :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]">
         <v-layout
-          class="pa-2"
           v-if="!mutatedGroups.length && groupsPending"
+          class="pa-2"
           justify-center
         >
           <v-progress-circular
@@ -30,19 +28,19 @@
         </v-layout>
         <c-draggable-list-field
           v-else
-          class="groups-panel"
           v-model="mutatedGroups"
           :component-data="{ props: expansionPanelsProps }"
           :disabled="!isNavigationEditingMode"
+          class="groups-panel"
           draggable=".groups-panel__item--public"
           component="v-expansion-panels"
         >
           <groups-side-bar-group
-            class="groups-panel__item--public"
             v-for="(group, index) in mutatedGroups"
             :key="group._id"
             :group.sync="mutatedGroups[index]"
             :is-groups-order-changed="isGroupsOrderChanged"
+            class="groups-panel__item--public"
           />
           <template
             v-if="hasAccessToPrivateView"
@@ -65,8 +63,8 @@
       />
       <v-fade-transition>
         <v-overlay
-          class="side-bar__overlay"
           :value="isGroupsOrderChanged"
+          class="side-bar__overlay"
         >
           <v-btn
             class="primary ma-2"

@@ -1,14 +1,14 @@
 <template>
   <v-app-bar
-    class="top-bar primary"
     :height="$config.TOP_BAR_HEIGHT"
+    class="top-bar primary"
     dense
     fixed
     app
   >
     <v-app-bar-nav-icon
-      class="ml-0 white--text"
       v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation"
+      class="ml-0 white--text"
       @click="$emit('toggleSideBar')"
     />
     <v-layout

@@ -2,13 +2,13 @@
   <g @dblclick.stop="enableEditingMode">
     <parallelogram-figure
       v-bind="shape.properties"
-      v-on="$listeners"
       :width="shape.width"
       :height="shape.height"
       :offset="shape.offset"
       :x="shape.x"
       :y="shape.y"
       :cursor="readonly ? '' : 'move'"
+      v-on="$listeners"
     />
     <text-editor
       ref="editor"

@@ -40,7 +40,7 @@ describe('c-id-field', () => {
 
     textField.setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `c-id-field` with default props', () => {

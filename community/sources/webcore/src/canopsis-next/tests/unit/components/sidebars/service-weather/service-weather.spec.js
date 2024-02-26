@@ -1,8 +1,7 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 import {
@@ -22,6 +21,7 @@ import {
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
+
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import ServiceWeatherSettings from '@/components/sidebars/service-weather/service-weather.vue';
@@ -47,6 +47,7 @@ const stubs = {
   'field-switcher': true,
   'field-modal-type': true,
   'field-action-required-settings': true,
+  'field-tree-of-dependencies-settings': true,
 };
 
 const generateDefaultServiceWeatherWidget = () => ({
@@ -77,6 +78,7 @@ const selectFieldCounters = wrapper => wrapper.find('field-counters-selector-stu
 const selectFieldSwitcherByIndex = (wrapper, index) => wrapper.findAll('field-switcher-stub').at(index);
 const selectIsPriorityField = wrapper => selectFieldSwitcherByIndex(wrapper, 0);
 const selectIsHideGrayField = wrapper => selectFieldSwitcherByIndex(wrapper, 1);
+const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
 const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
 const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
 
@@ -236,7 +238,7 @@ describe('service-weather', () => {
 
     const fieldTitle = selectFieldTitle(wrapper);
 
-    fieldTitle.vm.$emit('input', newTitle);
+    fieldTitle.triggerCustomEvent('input', newTitle);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -260,7 +262,7 @@ describe('service-weather', () => {
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', {
+    fieldPeriodicRefresh.triggerCustomEvent('input', {
       ...wrapper.vm.form.parameters,
       periodic_refresh: periodicRefresh,
     });
@@ -300,7 +302,7 @@ describe('service-weather', () => {
 
     const filter = Faker.datatype.string();
 
-    selectFieldFilters(wrapper).vm.$emit('input', filter);
+    selectFieldFilters(wrapper).triggerCustomEvent('input', filter);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -327,7 +329,7 @@ describe('service-weather', () => {
       widgetColumns: [],
     };
 
-    selectAlarmsListModalForm(wrapper).vm.$emit('input', newAlarmsList);
+    selectAlarmsListModalForm(wrapper).triggerCustomEvent('input', newAlarmsList);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -345,7 +347,7 @@ describe('service-weather', () => {
 
     const newLimit = Faker.datatype.number();
 
-    selectFieldNumber(wrapper).vm.$emit('input', newLimit);
+    selectFieldNumber(wrapper).triggerCustomEvent('input', newLimit);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -365,7 +367,7 @@ describe('service-weather', () => {
 
     const newColorIndicator = COLOR_INDICATOR_TYPES.impactState;
 
-    fieldColorIndicator.vm.$emit('input', newColorIndicator);
+    fieldColorIndicator.triggerCustomEvent('input', newColorIndicator);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -386,7 +388,7 @@ describe('service-weather', () => {
       order: SORT_ORDERS.asc,
     };
 
-    selectFieldSortColumn(wrapper).vm.$emit('input', newSort);
+    selectFieldSortColumn(wrapper).triggerCustomEvent('input', newSort);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -404,7 +406,7 @@ describe('service-weather', () => {
 
     const newItemsPerPage = Faker.datatype.number();
 
-    selectFieldDefaultElementsPerPage(wrapper).vm.$emit('input', newItemsPerPage);
+    selectFieldDefaultElementsPerPage(wrapper).triggerCustomEvent('input', newItemsPerPage);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -423,7 +425,7 @@ describe('service-weather', () => {
     const blockTemplate = Faker.datatype.string();
     const blockTemplateTemplate = Faker.datatype.string();
 
-    selectFieldBlockTemplate(wrapper).vm.$emit('input', blockTemplate, blockTemplateTemplate);
+    selectFieldBlockTemplate(wrapper).triggerCustomEvent('input', blockTemplate, blockTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -450,7 +452,7 @@ describe('service-weather', () => {
     const modalTemplate = Faker.datatype.string();
     const modalTemplateTemplate = Faker.datatype.string();
 
-    selectFieldModalTemplate(wrapper).vm.$emit('input', modalTemplate, modalTemplateTemplate);
+    selectFieldModalTemplate(wrapper).triggerCustomEvent('input', modalTemplate, modalTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -477,7 +479,7 @@ describe('service-weather', () => {
     const entityTemplate = Faker.datatype.string();
     const entityTemplateTemplate = Faker.datatype.string();
 
-    selectFieldEntityTemplate(wrapper).vm.$emit('input', entityTemplate, entityTemplateTemplate);
+    selectFieldEntityTemplate(wrapper).triggerCustomEvent('input', entityTemplate, entityTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -503,7 +505,7 @@ describe('service-weather', () => {
 
     const newSize = Faker.datatype.number();
 
-    selectFieldColumnMobile(wrapper).vm.$emit('input', newSize);
+    selectFieldColumnMobile(wrapper).triggerCustomEvent('input', newSize);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -521,7 +523,7 @@ describe('service-weather', () => {
 
     const newSize = Faker.datatype.number();
 
-    selectFieldColumnTablet(wrapper).vm.$emit('input', newSize);
+    selectFieldColumnTablet(wrapper).triggerCustomEvent('input', newSize);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -539,7 +541,7 @@ describe('service-weather', () => {
 
     const newSize = Faker.datatype.number();
 
-    selectFieldColumnDesktop(wrapper).vm.$emit('input', newSize);
+    selectFieldColumnDesktop(wrapper).triggerCustomEvent('input', newSize);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -562,7 +564,7 @@ describe('service-weather', () => {
       left: Faker.datatype.number(),
     };
 
-    selectMarginsForm(wrapper).vm.$emit('input', newMargins);
+    selectMarginsForm(wrapper).triggerCustomEvent('input', newMargins);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -580,7 +582,7 @@ describe('service-weather', () => {
 
     const newHeightFactor = Faker.datatype.number();
 
-    selectFieldSlider(wrapper).vm.$emit('input', newHeightFactor);
+    selectFieldSlider(wrapper).triggerCustomEvent('input', newHeightFactor);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -603,7 +605,7 @@ describe('service-weather', () => {
       state_types: [Faker.datatype.string()],
     };
 
-    selectFieldCounters(wrapper).vm.$emit('input', newCounters);
+    selectFieldCounters(wrapper).triggerCustomEvent('input', newCounters);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -619,7 +621,7 @@ describe('service-weather', () => {
   test('Is priority enabled changed after trigger switcher field', async () => {
     const wrapper = factory();
 
-    selectIsPriorityField(wrapper).vm.$emit('input', true);
+    selectIsPriorityField(wrapper).triggerCustomEvent('input', true);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -635,7 +637,7 @@ describe('service-weather', () => {
   test('Is priority enabled changed after trigger switcher field', async () => {
     const wrapper = factory();
 
-    selectIsHideGrayField(wrapper).vm.$emit('input', true);
+    selectIsHideGrayField(wrapper).triggerCustomEvent('input', true);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -648,10 +650,26 @@ describe('service-weather', () => {
     });
   });
 
+  test('Is entities actions in queue changed after trigger switcher field', async () => {
+    const wrapper = factory();
+
+    selectEntitiesActionsInQueueField(wrapper).triggerCustomEvent('input', true);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'entitiesActionsInQueue', true),
+      },
+    });
+  });
+
   test('Modal type changed after trigger modal type field', async () => {
     const wrapper = factory();
 
-    selectFieldModalType(wrapper).vm.$emit('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo);
+    selectFieldModalType(wrapper).triggerCustomEvent('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -673,7 +691,7 @@ describe('service-weather', () => {
       color: Faker.internet.color(),
     };
 
-    selectFieldActionRequiredSettingsType(wrapper).vm.$emit('input', newValue);
+    selectFieldActionRequiredSettingsType(wrapper).triggerCustomEvent('input', newValue);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,

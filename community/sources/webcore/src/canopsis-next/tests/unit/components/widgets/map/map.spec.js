@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createActiveViewModule,
   createAlarmModule,
@@ -12,6 +11,7 @@ import {
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import {
   ENTITY_TYPES,
   MAP_TYPES,
@@ -19,6 +19,7 @@ import {
   USERS_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
+
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import MapWidget from '@/components/widgets/map/map.vue';
@@ -154,7 +155,7 @@ describe('map', () => {
 
     const nextMap = { _id: Faker.datatype.string() };
 
-    mapPreview.vm.$emit('show:map', nextMap);
+    mapPreview.triggerCustomEvent('show:map', nextMap);
 
     await flushPromises();
 
@@ -184,13 +185,13 @@ describe('map', () => {
     const nextMap = { _id: Faker.datatype.string() };
 
     const mapPreview = selectMapPreview(wrapper);
-    mapPreview.vm.$emit('show:map', nextMap);
+    mapPreview.triggerCustomEvent('show:map', nextMap);
 
     await flushPromises();
     fetchMapStateWithoutStore.mockClear();
 
     const breadcrumbs = selectMapBreadcrumbs(wrapper);
-    breadcrumbs.vm.$emit('click', { index: 0 });
+    breadcrumbs.triggerCustomEvent('click', { index: 0 });
 
     await flushPromises();
 
@@ -220,7 +221,7 @@ describe('map', () => {
     const nextMap = { _id: Faker.datatype.string() };
 
     const mapPreview = selectMapPreview(wrapper);
-    mapPreview.vm.$emit('show:map', nextMap);
+    mapPreview.triggerCustomEvent('show:map', nextMap);
 
     await flushPromises();
     fetchMapStateWithoutStore.mockClear();
@@ -275,7 +276,7 @@ describe('map', () => {
       _id: Faker.datatype.string(),
     };
 
-    entityCategoryField.vm.$emit('input', category);
+    entityCategoryField.triggerCustomEvent('input', category);
 
     expect(updateUserPreference).toBeCalledWith(
       expect.any(Object),
@@ -327,7 +328,7 @@ describe('map', () => {
 
     const entityId = Faker.datatype.string();
 
-    mapPreview.vm.$emit('show:alarms', {
+    mapPreview.triggerCustomEvent('show:alarms', {
       entity: {
         _id: entityId,
         type: ENTITY_TYPES.service,
@@ -389,7 +390,7 @@ describe('map', () => {
 
     const entityId = Faker.datatype.string();
 
-    mapPreview.vm.$emit('show:alarms', {
+    mapPreview.triggerCustomEvent('show:alarms', {
       entity: {
         _id: entityId,
         type: ENTITY_TYPES.component,

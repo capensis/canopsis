@@ -8,8 +8,8 @@
     <template #activator="{ on }">
       <v-btn
         class="white--text"
-        v-on="on"
         text
+        v-on="on"
       >
         {{ $t('common.administration') }}
       </v-btn>
@@ -17,17 +17,17 @@
     <v-list class="py-0">
       <template v-for="(group, index) in administrationGroupedLinks">
         <v-subheader
-          class="text-subtitle-1"
           :key="`${group.title}-title`"
+          class="text-subtitle-1"
           @click.stop=""
         >
           {{ group.title }}
         </v-subheader>
         <top-bar-menu-link
-          class="top-bar-administration-menu-link"
           v-for="link in group.links"
           :key="link.title"
           :link="link"
+          class="top-bar-administration-menu-link"
         />
         <v-divider
           v-if="index &lt; administrationGroupedLinks.length - 1"

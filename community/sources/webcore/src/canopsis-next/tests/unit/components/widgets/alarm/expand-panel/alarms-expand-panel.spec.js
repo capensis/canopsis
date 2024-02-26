@@ -1,7 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
-
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
 import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USERS_PERMISSIONS } from '@/constants';
@@ -81,8 +79,22 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     infoModule,
   ]);
 
-  const factory = generateShallowRenderer(AlarmsExpandPanel, { stubs });
-  const snapshotFactory = generateRenderer(AlarmsExpandPanel, { stubs });
+  const factory = generateShallowRenderer(AlarmsExpandPanel, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmsExpandPanel, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   afterEach(() => {
     jest.clearAllMocks();

@@ -43,9 +43,9 @@
       :disabled="disabled"
     />
     <c-information-block
-      class="mb-2"
       :title="$tc('common.header', 2)"
       :help-text="$t('common.request.headersHelpText')"
+      class="mb-2"
       help-icon="help"
       help-icon-color="grey darken-1"
     >

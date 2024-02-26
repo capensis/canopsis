@@ -39,6 +39,7 @@ import {
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+import { getMapEntityText } from '@/helpers/entities/map/list';
 
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 
@@ -133,6 +134,7 @@ export default {
         props: {
           required: true,
           entityTypes: this.entityTypes,
+          itemText: getMapEntityText,
         },
       };
     },

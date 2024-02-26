@@ -1,9 +1,9 @@
 <template>
   <v-radio-group
-    class="mt-0"
     v-field="value"
     :label="label"
     :disabled="disabled"
+    class="mt-0"
     color="primary"
     hide-details
     mandatory

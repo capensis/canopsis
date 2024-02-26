@@ -3,8 +3,8 @@
     <template #actions>
       <v-layout justify-end>
         <v-btn
-          class="primary"
           v-if="isEmpty && addable"
+          class="primary"
           small
           @click="$emit('create', $event)"
         >
@@ -12,15 +12,15 @@
         </v-btn>
         <template v-else>
           <v-btn
-            class="primary"
+            class="primary mr-2"
             small
             @click="$emit('edit', $event)"
           >
             <span>{{ $t('common.edit') }}</span>
           </v-btn>
           <v-btn
-            class="error"
             v-if="removable"
+            class="error"
             small
             @click="$emit('delete', $event)"
           >

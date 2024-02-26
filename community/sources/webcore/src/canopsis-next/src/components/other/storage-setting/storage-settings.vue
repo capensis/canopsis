@@ -1,12 +1,12 @@
 <template>
   <v-layout
-    class="my-2"
     v-if="!form"
+    class="my-2"
     justify-center
   >
     <v-progress-circular
-      indeterminate
       color="primary"
+      indeterminate
     />
   </v-layout>
   <v-flex
@@ -28,9 +28,9 @@
         justify-end
       >
         <v-btn
-          class="primary mr-0"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary mr-0"
           type="submit"
         >
           {{ $t('common.submit') }}

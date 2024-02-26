@@ -32,9 +32,9 @@ describe('tag-form', () => {
 
     const newValue = Faker.datatype.string();
 
-    selectValueField(wrapper).vm.$emit('input', newValue);
+    selectValueField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { value: newValue });
+    expect(wrapper).toEmitInput({ value: newValue });
   });
 
   test('Color changed after trigger color picker field', () => {
@@ -48,9 +48,9 @@ describe('tag-form', () => {
 
     const newValue = Faker.internet.color();
 
-    selectColorPickerField(wrapper).vm.$emit('input', newValue);
+    selectColorPickerField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { color: newValue });
+    expect(wrapper).toEmitInput({ color: newValue });
   });
 
   test('Tag patterns changed after trigger patterns form', () => {
@@ -68,9 +68,9 @@ describe('tag-form', () => {
       entity_pattern: {},
     };
 
-    selectTagPatternsForm(wrapper).vm.$emit('input', newPatterns);
+    selectTagPatternsForm(wrapper).triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       value: 'Value',
       patterns: newPatterns,
     });

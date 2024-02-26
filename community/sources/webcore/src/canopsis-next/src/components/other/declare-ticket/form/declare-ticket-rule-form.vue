@@ -13,16 +13,16 @@
 
     <v-tab-item eager>
       <declare-ticket-rule-general-form
-        class="mt-2"
-        ref="general"
         v-field="form"
+        ref="general"
+        class="mt-2"
       />
     </v-tab-item>
     <v-tab-item eager>
       <declare-ticket-rule-patterns-form
-        class="mt-2"
-        ref="patterns"
         v-field="form.patterns"
+        ref="patterns"
+        class="mt-2"
       />
     </v-tab-item>
     <v-tab-item>
@@ -32,8 +32,8 @@
           xs10
         >
           <declare-ticket-rule-test-query
-            class="mt-2"
             :form="form"
+            class="mt-2"
           />
         </v-flex>
       </v-layout>

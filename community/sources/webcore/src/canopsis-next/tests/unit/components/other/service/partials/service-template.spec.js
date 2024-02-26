@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
@@ -38,6 +37,11 @@ describe('service-template', () => {
       service,
       options: {},
     },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Refresh applied after triggers entities list', async () => {
@@ -54,9 +58,26 @@ describe('service-template', () => {
 
     const entitiesList = selectEntitiesList(wrapper);
 
-    await entitiesList.vm.$emit('refresh');
+    await entitiesList.triggerCustomEvent('refresh');
 
-    expect(wrapper).toEmit('refresh');
+    expect(wrapper).toHaveBeenEmit('refresh');
+  });
+
+  test('Add action applied after triggers entities list', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        serviceEntities: [{}, {}],
+        widgetParameters: {
+          modalTemplate,
+        },
+      },
+    });
+
+    await flushPromises();
+
+    await selectEntitiesList(wrapper).triggerCustomEvent('add:action');
+
+    expect(wrapper).toHaveBeenEmit('add:action');
   });
 
   test('Pagination updated after triggers entities list', async () => {
@@ -77,7 +98,7 @@ describe('service-template', () => {
       page: Faker.datatype.number(),
     };
 
-    await entitiesList.vm.$emit('update:options', newPagination);
+    await entitiesList.triggerCustomEvent('update:options', newPagination);
 
     expect(wrapper).toEmit('update:options', newPagination);
   });

@@ -23,8 +23,8 @@
       color="error"
     />
     <v-btn
-      class="v-btn-legacy-m--y"
       :disabled="disabled"
+      class="v-btn-legacy-m--y"
       color="primary"
       outlined
       @click="addItem"

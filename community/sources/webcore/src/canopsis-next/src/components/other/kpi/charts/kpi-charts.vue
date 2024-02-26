@@ -6,20 +6,20 @@
   >
     <div class="kpi-charts">
       <c-information-block
-        class="mb-5"
         :title="$t('kpi.alarmMetrics')"
+        class="mb-5"
       >
         <kpi-alarms :unavailable="unavailable" />
       </c-information-block>
       <c-information-block
-        class="mb-5"
         :title="$tc('common.rating', 2)"
+        class="mb-5"
       >
         <kpi-rating :unavailable="unavailable" />
       </c-information-block>
       <c-information-block
-        class="mb-5"
         :title="$t('kpi.sli')"
+        class="mb-5"
       >
         <kpi-sli :unavailable="unavailable" />
       </c-information-block>

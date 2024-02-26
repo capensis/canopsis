@@ -42,6 +42,8 @@
           :entity="item"
           :column="column"
           :columns-filters="columnsFilters"
+          :show-root-cause-by-state-click="showRootCauseByStateClick"
+          @click:state="openRootCauseDiagram"
         />
       </template>
       <template #actions="{ item }">
@@ -55,12 +57,13 @@
           :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns"
           :active-alarms-columns="widget.parameters.activeAlarmsColumns"
           :charts="widget.parameters.charts"
+          :tree-of-dependencies-show-type="widget.parameters.treeOfDependenciesShowType"
         />
       </template>
       <template #mass-actions="{ selected, clearSelected }">
         <mass-actions-panel
-          class="ml-3"
           :items="selected"
+          class="ml-3"
           @clear:items="clearSelected"
         />
       </template>
@@ -76,6 +79,8 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
@@ -153,6 +158,10 @@ export default {
         ]
         : [];
     },
+
+    showRootCauseByStateClick() {
+      return this.widget.parameters.showRootCauseByStateClick ?? true;
+    },
   },
   async mounted() {
     this.columnsFiltersPending = true;
@@ -174,6 +183,16 @@ export default {
         ...this.query,
 
         page,
+      });
+    },
+
+    openRootCauseDiagram(entity) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
+        },
       });
     },
   },

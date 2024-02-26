@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { TIME_UNITS } from '@/constants';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
@@ -36,9 +37,9 @@ describe('snooze-event-form', () => {
 
     const durationField = selectDurationField(wrapper);
 
-    durationField.vm.$emit('input', duration);
+    durationField.triggerCustomEvent('input', duration);
 
-    expect(wrapper).toEmit('input', { ...form, duration });
+    expect(wrapper).toEmitInput({ ...form, duration });
   });
 
   test('Output changed after trigger description field', () => {
@@ -57,9 +58,9 @@ describe('snooze-event-form', () => {
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', comment);
+    descriptionField.triggerCustomEvent('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Renders `snooze-event-form` with required props', () => {

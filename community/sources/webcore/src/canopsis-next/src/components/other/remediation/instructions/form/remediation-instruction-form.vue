@@ -3,16 +3,16 @@
     <v-layout>
       <v-flex xs3>
         <c-instruction-type-field
-          class="mb-2"
           v-field="form.type"
           :disabled="disabled || !isNew"
+          class="mb-2"
         />
       </v-flex>
       <v-flex>
         <c-enabled-field
-          class="mt-0"
           v-field="form.enabled"
           :disabled="disabledCommon"
+          class="mt-0"
           hide-details
         />
       </v-flex>
@@ -44,8 +44,8 @@
         />
       </v-flex>
       <v-flex
-        class="ml-2"
         v-if="isAutoType"
+        class="ml-2"
         xs3
       >
         <c-priority-field

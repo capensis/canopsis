@@ -21,7 +21,9 @@
             :widget-parameters="widgetParameters"
             :options.sync="options"
             :total-items="serviceEntitiesMeta.total_count"
+            :actions-requests="actionsRequests"
             @refresh="refresh"
+            @add:action="addAction"
           />
         </v-tab-item>
         <v-tab :disabled="!hasPbehaviorListAccess">
@@ -40,14 +42,21 @@
       </v-tabs>
     </template>
     <template #actions="">
-      <v-tooltip
-        top
+      <v-alert
+        :value="actionsRequests.length > 0"
+        class="actions-requests-alert my-0 mr-2 pa-1 pr-2"
+        type="info"
+        dismissible
+        @input="clearActions"
       >
+        {{ actionsRequests.length }} {{ $tc('modals.service.actionInQueue', actionsRequests.length) }}
+      </v-alert>
+      <v-tooltip top>
         <template #activator="{ on }">
           <v-btn
-            v-on="on"
             class="mx-2"
             color="secondary"
+            v-on="on"
             @click="refresh"
           >
             <v-icon>refresh</v-icon>
@@ -61,6 +70,16 @@
         @click="$modals.hide"
       >
         {{ $t('common.close') }}
+      </v-btn>
+      <v-btn
+        v-if="entitiesActionsInQueue"
+        :loading="submitting"
+        :disabled="submitting || !actionsRequests.length"
+        class="primary"
+        type="submit"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
       </v-btn>
     </template>
   </modal-wrapper>
@@ -76,6 +95,8 @@ import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -96,11 +117,14 @@ export default {
     localQueryMixin,
     modalInnerMixin,
     entitiesServiceEntityMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'actionsRequests' }),
   ],
   data() {
     return {
       pending: true,
       unavailableEntitiesAction: {},
+      actionsRequests: [],
       query: {
         itemsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
         sortBy: ['state'],
@@ -119,6 +143,10 @@ export default {
 
     widgetParameters() {
       return this.config.widgetParameters;
+    },
+
+    entitiesActionsInQueue() {
+      return this.widgetParameters?.entitiesActionsInQueue ?? false;
     },
 
     serviceEntitiesWithKey() {
@@ -150,8 +178,22 @@ export default {
   },
 
   methods: {
-    refresh() {
+    refresh(immediate = false) {
+      if (!immediate && this.entitiesActionsInQueue) {
+        return Promise.resolve();
+      }
+
       return this.$periodicRefresh.notify();
+    },
+
+    addAction(action) {
+      this.actionsRequests.push(action);
+    },
+
+    clearActions(value) {
+      if (!value) {
+        this.actionsRequests = [];
+      }
     },
 
     async fetchList() {
@@ -165,6 +207,18 @@ export default {
 
       this.pending = false;
     },
+
+    async submit() {
+      await Promise.all(this.actionsRequests.map(({ action }) => action()));
+
+      this.$modals.hide();
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.actions-requests-alert {
+  line-height: 15px;
+}
+</style>
