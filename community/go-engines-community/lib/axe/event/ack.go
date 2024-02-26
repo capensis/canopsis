@@ -63,10 +63,8 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.ack"] = nil
 	conf := p.configProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepAck, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, true)
-	newStepQuery := stepUpdateQuery(newStep)
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAck,
+		utils.TruncateString(event.Parameters.Output, conf.OutputLength), event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.ack":   newStepQuery,
@@ -195,49 +193,4 @@ func (p *ackProcessor) postProcess(
 	if err != nil {
 		p.logger.Err(err).Msg("cannot process meta alarm")
 	}
-}
-
-func getOpenAlarmMatch(event rpc.AxeEvent) bson.M {
-	if event.Alarm != nil {
-		return bson.M{
-			"_id":        event.Alarm.ID,
-			"v.resolved": nil,
-		}
-	}
-
-	if event.AlarmID != "" {
-		return bson.M{
-			"_id":        event.AlarmID,
-			"v.resolved": nil,
-		}
-	}
-
-	return bson.M{
-		"d":          event.Entity.ID,
-		"v.resolved": nil,
-	}
-}
-
-func getOpenAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
-	match := getOpenAlarmMatch(event)
-	match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
-	return match
-}
-
-func stepUpdateQuery(newStep types.AlarmStep) bson.M {
-	return bson.M{"$cond": bson.M{
-		"if": bson.M{"$and": []bson.M{
-			{"$eq": bson.A{bson.M{"$type": "$v.pbehavior_info.id"}, "string"}},
-			{"$ne": bson.A{"$v.pbehavior_info.id", ""}},
-		}},
-		"then": bson.M{"$mergeObjects": bson.A{
-			newStep,
-			bson.M{"in_pbh": true},
-		}},
-		"else": newStep,
-	}}
-}
-
-func addStepUpdateQuery(newStepQueries ...bson.M) bson.M {
-	return bson.M{"$concatArrays": bson.A{"$v.steps", newStepQueries}}
 }

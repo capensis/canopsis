@@ -46,18 +46,10 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.canceled"] = nil
 	output := event.Parameters.Output
-	newStep := types.NewAlarmStep(types.AlarmStepCancel, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-	newStepQuery := stepUpdateQuery(newStep)
-	newIncStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-	newDecStepStatus := types.NewAlarmStep(types.AlarmStepStatusDecrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepCancel, output, event.Parameters)
 	newStatus := types.CpsNumber(types.AlarmStatusCancelled)
-	newIncStepStatus.Value = newStatus
-	newDecStepStatus.Value = newStatus
-	newIncStepStatusQuery := stepUpdateQuery(newIncStepStatus)
-	newDecStepStatusQuery := stepUpdateQuery(newDecStepStatus)
+	newIncStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusIncrease, newStatus, output, event.Parameters)
+	newDecStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusDecrease, newStatus, output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.canceled": newStepQuery,

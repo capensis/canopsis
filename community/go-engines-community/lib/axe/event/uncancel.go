@@ -60,19 +60,15 @@ func (p *uncancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			return err
 		}
 
-		uncancelStep := types.NewAlarmStep(types.AlarmStepUncancel, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-		uncancelStepQuery := stepUpdateQuery(uncancelStep)
+		uncancelStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepUncancel, event.Parameters.Output, event.Parameters)
 		alarm.Value.Canceled = nil
 		newStatus := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
-		newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-		newStepStatus.Value = newStatus
+		alarmStepType := types.AlarmStepStatusIncrease
 		if alarm.Value.Status.Value > newStatus {
-			newStepStatus.Type = types.AlarmStepStatusDecrease
+			alarmStepType = types.AlarmStepStatusDecrease
 		}
 
-		newStepStatusQuery := stepUpdateQuery(newStepStatus)
+		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, event.Parameters.Output, event.Parameters)
 		update := []bson.M{
 			{"$unset": bson.A{
 				"v.canceled",

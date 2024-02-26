@@ -46,9 +46,7 @@ func (p *commentProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Res
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	conf := p.configProvider.Get()
 	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepComment, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-	newStepQuery := stepUpdateQuery(newStep)
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepComment, output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.last_comment": newStepQuery,
