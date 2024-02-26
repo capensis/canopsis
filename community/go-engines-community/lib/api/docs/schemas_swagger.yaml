@@ -386,12 +386,6 @@ definitions:
         items:
           type: string
         type: array
-      grouped_steps:
-        additionalProperties:
-          items:
-            $ref: '#/definitions/common.AlarmStep'
-          type: array
-        type: object
       steps:
         $ref: '#/definitions/alarm.StepDetails'
     type: object
@@ -401,15 +395,6 @@ definitions:
         type: string
       children:
         $ref: '#/definitions/alarm.ChildDetailsRequest'
-      grouped_steps:
-        properties:
-          ids:
-            items:
-              type: string
-            type: array
-          reversed:
-            type: boolean
-        type: object
       opened:
         type: boolean
       perf_data:
@@ -568,11 +553,54 @@ definitions:
       type:
         $ref: '#/definitions/pbehavior.Type'
     type: object
+  alarm.Step:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      in_pbh:
+        type: boolean
+      initiator:
+        type: string
+      m:
+        type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+      steps:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
+      t:
+        type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
   alarm.StepDetails:
     properties:
       data:
         items:
-          $ref: '#/definitions/common.AlarmStep'
+          $ref: '#/definitions/alarm.Step'
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
@@ -1160,8 +1188,6 @@ definitions:
       _t:
         type: string
       a:
-        type: string
-      display_group:
         type: string
       in_pbh:
         type: boolean
