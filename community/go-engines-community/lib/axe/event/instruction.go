@@ -5,13 +5,11 @@ import (
 	"errors"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -97,10 +95,7 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newStep := types.NewAlarmStep(alarmStepType, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-	newStep.Execution = event.Parameters.Execution
-	newStepQuery := stepUpdateQuery(newStep)
+	newStepQuery := execStepUpdateQueryWithInPbhInterval(alarmStepType, event.Parameters.Output, event.Parameters)
 	var update []bson.M
 
 	switch alarmChangeType {
@@ -224,59 +219,4 @@ func (p *instructionProcessor) postProcess(
 	)
 
 	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.logger)
-}
-
-func sendTriggerEvent(
-	ctx context.Context,
-	event rpc.AxeEvent,
-	result Result,
-	amqpPublisher libamqp.Publisher,
-	encoder encoding.Encoder,
-	logger zerolog.Logger,
-) {
-	switch result.AlarmChange.Type {
-	case types.AlarmChangeTypeAutoInstructionFail,
-		types.AlarmChangeTypeAutoInstructionComplete,
-		types.AlarmChangeTypeInstructionJobFail,
-		types.AlarmChangeTypeInstructionJobComplete:
-	case types.AlarmChangeTypeDeclareTicketWebhook:
-		if !event.Parameters.EmitTrigger {
-			return
-		}
-	default:
-		return
-	}
-
-	body, err := encoder.Encode(types.Event{
-		EventType:     types.EventTypeTrigger,
-		Connector:     result.Alarm.Value.Connector,
-		ConnectorName: result.Alarm.Value.ConnectorName,
-		Component:     result.Alarm.Value.Component,
-		Resource:      result.Alarm.Value.Resource,
-		SourceType:    event.Entity.Type,
-		AlarmChange:   &result.AlarmChange,
-		AlarmID:       result.Alarm.ID,
-		Initiator:     types.InitiatorSystem,
-	})
-	if err != nil {
-		logger.Err(err).Msgf("cannot encode event")
-		return
-	}
-
-	err = amqpPublisher.PublishWithContext(
-		ctx,
-		"",
-		canopsis.FIFOQueueName,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  canopsis.JsonContentType,
-			Body:         body,
-			DeliveryMode: amqp.Persistent,
-		},
-	)
-	if err != nil {
-		logger.Err(err).Msgf("cannot send trigger event")
-		return
-	}
 }
