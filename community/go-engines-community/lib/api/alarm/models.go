@@ -199,14 +199,6 @@ type DetailsResponse struct {
 	Error  string            `json:"error,omitempty"`
 }
 
-type EntityDetails struct {
-	types.Entity `bson:",inline" json:",inline"`
-	// DependsCount contains only service's dependencies
-	DependsCount int `bson:"depends_count" json:"depends_count"`
-	// ImpactsCount contains only services
-	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
-}
-
 type Details struct {
 	// Only for websocket
 	ID string `bson:"-" json:"_id,omitempty"`
@@ -218,8 +210,8 @@ type Details struct {
 
 	IsMetaAlarm bool  `json:"-" bson:"is_meta_alarm"`
 	StepsCount  int64 `json:"-" bson:"steps_count"`
-	// Entity isn't the same as Entity of Alarm, but have counts in response as well
-	Entity EntityDetails `json:"entity" bson:"entity"`
+
+	Entity entity.Entity `json:"entity" bson:"entity"`
 }
 
 type StepDetails struct {
