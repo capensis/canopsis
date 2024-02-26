@@ -40,7 +40,11 @@ func (s *EntityCounters) Reset() {
 	s.Acknowledged = 0
 	s.AcknowledgedUnderPbh = 0
 	s.NotAcknowledged = 0
-	clear(s.PbehaviorCounters)
+	if s.PbehaviorCounters == nil {
+		s.PbehaviorCounters = make(map[string]int)
+	} else {
+		clear(s.PbehaviorCounters)
+	}
 	s.UnderPbehavior = 0
 	s.Depends = 0
 	s.Output = ""
