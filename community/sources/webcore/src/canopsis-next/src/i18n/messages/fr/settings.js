@@ -23,6 +23,7 @@ export default {
     [SIDE_BARS.numbersSettings]: 'Paramètres des nombres',
     [SIDE_BARS.userStatisticsSettings]: 'Paramètres des statistiques utilisateur',
     [SIDE_BARS.alarmStatisticsSettings]: 'Paramètres des statistiques d\'alarme',
+    [SIDE_BARS.availabilitySettings]: 'Paramètres de disponibilité',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
