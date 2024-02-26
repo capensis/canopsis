@@ -299,4 +299,8 @@ export default {
     split: 'Split data by value path',
   },
   entitiesActionsInQueue: 'Stack entities actions and apply simultaneously',
+  availability: {
+    graphSettings: 'Availability graph settings',
+    defaultAvailabilityDisplay: 'Default availability display',
+  },
 };
