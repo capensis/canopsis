@@ -35,9 +35,8 @@ func ValidateListRequest(sl validator.StructLevel) {
 
 func ValidateDetailsRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(DetailsRequest)
-	if r.Steps == nil && len(r.GroupedSteps.IDs) == 0 && r.Children == nil {
+	if r.Steps == nil && r.Children == nil {
 		sl.ReportError(r.Steps, "Steps", "Steps", "required", "")
-		sl.ReportError(r.GroupedSteps, "GroupedSteps", "GroupedSteps", "required", "")
 		sl.ReportError(r.Children, "Children", "Children", "required", "")
 	}
 }
