@@ -85,9 +85,13 @@ export default {
     hasStateSetting() {
       return this.form.type === ENTITY_TYPES.component;
     },
-
-    formToEntity() {
-      return formToEntity;
+  },
+  methods: {
+    formToEntity(entity) {
+      return {
+        ...formToEntity(entity),
+        _id: entity._id,
+      };
     },
   },
 };

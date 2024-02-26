@@ -1,7 +1,7 @@
 <template>
   <div class="entity-dependencies-by-state-settings">
     <c-zoom-overlay>
-      <c-progress-overlay :pending="!ready || pending" />
+      <c-progress-overlay :pending="!ready || isLoading" />
       <network-graph
         ref="networkGraph"
         :options="options"
@@ -17,7 +17,6 @@
 
 <script>
 import { omit } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
@@ -43,8 +42,6 @@ import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-depend
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
-const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
-
 export default {
   components: { NetworkGraph },
   mixins: [entitiesEntityDependenciesMixin],
@@ -52,6 +49,14 @@ export default {
     entity: {
       type: Object,
       required: true,
+    },
+    stateSetting: {
+      type: Object,
+      required: false,
+    },
+    pending: {
+      type: Boolean,
+      default: false,
     },
     colorIndicator: {
       type: String,
@@ -61,13 +66,16 @@ export default {
   data() {
     return {
       ready: false,
-      pending: true,
-      stateSetting: undefined,
+      pendingEntities: true,
       metaByEntityId: {},
       entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
   },
   computed: {
+    isLoading() {
+      return this.pending || this.pendingEntities;
+    },
+
     isEventsStateSettings() {
       return this.stateSetting && !this.stateSetting?.title;
     },
@@ -193,10 +201,14 @@ export default {
     },
   },
   async mounted() {
-    this.pending = true;
+    this.pendingEntities = true;
     this.$refs.networkGraph.$cy.on('tap', this.tapHandler);
 
-    await this.fetchEntityStateSetting();
+    if (!this.isEventsStateSettings) {
+      await this.fetchDependencies(this.entity._id);
+    } else {
+      this.resetLayout();
+    }
 
     /**
      * @desc: We are waiting modal showing animation
@@ -206,30 +218,12 @@ export default {
       this.ready = true;
     }, VUETIFY_ANIMATION_DELAY);
 
-    if (!this.isEventsStateSettings) {
-      await this.fetchDependencies(this.entity._id);
-    } else {
-      this.resetLayout();
-    }
-
-    this.pending = false;
+    this.pendingEntities = false;
   },
   beforeDestroy() {
     this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
   },
   methods: {
-    ...mapEntityActions({
-      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
-    }),
-
-    async fetchEntityStateSetting() {
-      try {
-        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.entity._id } });
-      } catch (err) {
-        console.error(err);
-      }
-    },
-
     getEventsNodeElementByEntity(entity) {
       const eventsNodeId = `${entity._id}_events-node`;
 
