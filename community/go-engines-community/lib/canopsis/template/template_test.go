@@ -332,6 +332,126 @@ func TestFunctions(t *testing.T) {
 				ExpectedRes: "lé",
 			},
 		},
+		"strlen": {
+			{
+				Tpl: `{{strlen .String }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "13",
+			},
+			{
+				Tpl: `{{strlen .String }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "8",
+			},
+		},
+		"strpos": {
+			{
+				Tpl: `{{strpos .String "w" }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "7",
+			},
+			{
+				Tpl: `{{strpos .String "ém" }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "2",
+			},
+			{
+				Tpl: `{{strpos .String "invalid" }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "-1",
+			},
+		},
+		"substr_complex": {
+			{
+				Tpl: `{{ $var := add .A .B }}{{ substrLeft .String $var }}`,
+				TplData: map[string]any{
+					"A":      1,
+					"B":      2,
+					"String": "qwerty",
+				},
+				ExpectedRes: "qwe",
+			},
+			{
+				Tpl: `{{substrLeft .String (sub (strlen .String) 8) }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substrLeft .String (strpos .String ",") }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substrLeft .String (sub (strlen .String) 6) }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "él",
+			},
+			{
+				Tpl: `{{substrLeft .String (strpos .String "ém") }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "él",
+			},
+			{
+				Tpl: `{{substrLeft .String (strpos .String "invalid") }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) 7) }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) (strpos .String "w")) }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) 2) }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "émenta",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) (strpos .String "ém")) }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "émenta",
+			},
+			{
+				Tpl: `{{substrRight .String (strpos .String "invalid") }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+		},
 		"add": {
 			{
 				Tpl: `{{ add .A .B }}`,
@@ -418,17 +538,6 @@ func TestFunctions(t *testing.T) {
 					"B": 2.5,
 				},
 				ExpectedErr: ErrFailedConvertToInt64,
-			},
-		},
-		"substr_add_example": {
-			{
-				Tpl: `{{ $var := add .A .B }}{{ substrLeft .String $var }}`,
-				TplData: map[string]any{
-					"A":      1,
-					"B":      2,
-					"String": "qwerty",
-				},
-				ExpectedRes: "qwe",
 			},
 		},
 	}
