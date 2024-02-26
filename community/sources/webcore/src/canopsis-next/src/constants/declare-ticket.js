@@ -19,3 +19,15 @@ export const DECLARE_TICKET_EXECUTION_STATUSES = {
   succeeded: 2,
   failed: 3,
 };
+
+export const DECLARE_TICKET_TIMELINE_STEPS = {
+  declareTicket: 'declareticket',
+  declareTicketFail: 'declareticketfail',
+  webhookStart: 'webhookstart',
+  webhookComplete: 'webhookcomplete',
+  webhookFail: 'webhookfail',
+  webhookProgress: 'webhookprogress', // TODO: NEW
+  ticketDeclarationRuleProgress: 'ticketdeclatetionruleprogress', // TODO: NEW
+  ticketDeclarationRuleCompleted: 'ticketdeclatetionrulecomplete', // TODO: NEW
+  ticketDeclarationRuleFailed: 'ticketdeclatetionrulefailed', // TODO: NEW
+};

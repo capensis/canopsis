@@ -1,7 +1,7 @@
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  EVENT_ENTITY_TYPES,
+  EVENT_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   TRIGGERS_TYPES,
@@ -439,17 +439,17 @@ export default {
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
   },
-  entityEventTypes: {
-    [EVENT_ENTITY_TYPES.ack]: 'Ack',
-    [EVENT_ENTITY_TYPES.ackRemove]: 'Ack remove',
-    [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
-    [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
-    [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
-    [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
-    [EVENT_ENTITY_TYPES.changeState]: 'Change state',
-    [EVENT_ENTITY_TYPES.check]: 'Check',
-    [EVENT_ENTITY_TYPES.comment]: 'Comment',
-    [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
+  eventTypes: {
+    [EVENT_TYPES.ack]: 'Ack',
+    [EVENT_TYPES.ackRemove]: 'Ack remove',
+    [EVENT_TYPES.assocTicket]: 'Associate ticket',
+    [EVENT_TYPES.declareTicket]: 'Declare ticket',
+    [EVENT_TYPES.cancel]: 'Cancel',
+    [EVENT_TYPES.uncancel]: 'Uncancel',
+    [EVENT_TYPES.changeState]: 'Change state',
+    [EVENT_TYPES.check]: 'Check',
+    [EVENT_TYPES.comment]: 'Comment',
+    [EVENT_TYPES.snooze]: 'Snooze',
   },
 
   triggers: {

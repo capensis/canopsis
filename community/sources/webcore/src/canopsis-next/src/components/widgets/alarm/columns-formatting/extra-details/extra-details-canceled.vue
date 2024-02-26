@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -51,7 +51,7 @@ export default {
     },
 
     icon() {
-      return getEntityEventIcon(EVENT_ENTITY_TYPES.delete);
+      return getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.fastCancel);
     },
   },
 };
