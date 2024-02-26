@@ -7,8 +7,8 @@
     <template #activator="{ on }">
       <v-btn
         class="white--text"
-        v-on="on"
         text
+        v-on="on"
       >
         {{ userName }}
       </v-btn>

@@ -3,8 +3,8 @@
     <c-progress-overlay :pending="pending" />
     <c-page-header />
     <div
-      class="mb-3 text-center"
       v-if="hasAnyError"
+      class="mb-3 text-center"
     >
       <v-chip
         color="error"
@@ -27,23 +27,23 @@
         </v-tab>
       </v-tabs>
       <v-tabs-items
-        class="healthcheck__tabs"
         v-model="activeTab"
+        class="healthcheck__tabs"
       >
         <v-tab-item class="healthcheck__graph-tab">
           <healthcheck-network-graph
-            class="healthcheck__graph"
             v-if="!pending && !hasServerError"
             :services="services"
             :engines-graph="enginesGraph"
             :engines-parameters="enginesParameters"
             :has-invalid-engines-order="hasInvalidEnginesOrder"
             :max-queue-length="maxQueueLength"
+            class="healthcheck__graph"
             show-description
           />
           <h2
-            class="my-4 text-h5 text-center"
             v-else-if="hasServerError"
+            class="my-4 text-h5 text-center"
           >
             {{ $t('healthcheck.systemStatusServerError') }}
           </h2>

@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub, createSelectInputStub } from '@unit/stubs/input';
+
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
@@ -67,9 +68,9 @@ describe('meta-alarm-rule-form', () => {
 
     const newId = Faker.datatype.string();
 
-    idField.vm.$emit('input', newId);
+    idField.triggerCustomEvent('input', newId);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       _id: newId,
     });
@@ -86,9 +87,9 @@ describe('meta-alarm-rule-form', () => {
 
     const outputTemplate = Faker.datatype.string();
 
-    descriptionField.vm.$emit('input', outputTemplate);
+    descriptionField.triggerCustomEvent('input', outputTemplate);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       output_template: outputTemplate,
     });
@@ -105,9 +106,9 @@ describe('meta-alarm-rule-form', () => {
 
     const name = Faker.datatype.string();
 
-    nameField.vm.$emit('input', name);
+    nameField.triggerCustomEvent('input', name);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       name,
     });
@@ -128,9 +129,9 @@ describe('meta-alarm-rule-form', () => {
 
     const newAutoResolve = !autoResolve;
 
-    enabledField.vm.$emit('input', newAutoResolve);
+    enabledField.triggerCustomEvent('input', newAutoResolve);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       auto_resolve: newAutoResolve,
     });
@@ -145,9 +146,9 @@ describe('meta-alarm-rule-form', () => {
 
     const metaAlarmRuleTypeField = selectMetaAlarmRuleTypeField(wrapper);
 
-    metaAlarmRuleTypeField.vm.$emit('input', META_ALARMS_RULE_TYPES.attribute);
+    metaAlarmRuleTypeField.triggerCustomEvent('input', META_ALARMS_RULE_TYPES.attribute);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       type: META_ALARMS_RULE_TYPES.attribute,
     });
@@ -170,9 +171,9 @@ describe('meta-alarm-rule-form', () => {
       corel_id: Faker.datatype.string(),
     };
 
-    metaAlarmRuleCorelForm.vm.$emit('input', newCorelConfig);
+    metaAlarmRuleCorelForm.triggerCustomEvent('input', newCorelConfig);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...corelForm,
       config: newCorelConfig,
     });
@@ -191,9 +192,9 @@ describe('meta-alarm-rule-form', () => {
       threshold_count: 0.2,
     };
 
-    metaAlarmRuleThresholdForm.vm.$emit('input', newThresholdConfig);
+    metaAlarmRuleThresholdForm.triggerCustomEvent('input', newThresholdConfig);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       config: newThresholdConfig,
     });
@@ -212,9 +213,9 @@ describe('meta-alarm-rule-form', () => {
       time_interval: {},
     };
 
-    metaAlarmRuleTimeBasedForm.vm.$emit('input', newTimeBasedConfig);
+    metaAlarmRuleTimeBasedForm.triggerCustomEvent('input', newTimeBasedConfig);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       config: newTimeBasedConfig,
     });
@@ -237,9 +238,9 @@ describe('meta-alarm-rule-form', () => {
       value_paths: [Faker.datatype.string()],
     };
 
-    metaAlarmRuleValuePathsForm.vm.$emit('input', newValuePathsConfig);
+    metaAlarmRuleValuePathsForm.triggerCustomEvent('input', newValuePathsConfig);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...valuegroupForm,
       config: newValuePathsConfig,
     });
@@ -260,9 +261,9 @@ describe('meta-alarm-rule-form', () => {
       },
     };
 
-    patternsField.vm.$emit('input', newPatterns);
+    patternsField.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       patterns: newPatterns,
     });

@@ -12,9 +12,9 @@
       absolute
     >
       <slot
-        name="menu"
         :position="position"
         :data="data"
+        name="menu"
       />
     </v-menu>
   </div>

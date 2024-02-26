@@ -1,9 +1,9 @@
 <template>
   <v-rating
-    class="layout"
     v-field="value"
     :readonly="readonly"
     :hover="hover"
+    class="layout"
     background-color="primary"
     medium
     half-increments

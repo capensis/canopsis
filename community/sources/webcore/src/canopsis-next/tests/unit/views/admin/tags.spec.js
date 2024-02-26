@@ -1,14 +1,13 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { omit } from 'lodash';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules, createAlarmTagModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MODALS, TAG_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import Tags from '@/views/admin/tags.vue';
-import { omit } from 'lodash';
 
 const stubs = {
   'c-page': true,
@@ -142,7 +141,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    selectTagsList(wrapper).vm.$emit('edit', tag);
+    selectTagsList(wrapper).triggerCustomEvent('edit', tag);
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -192,7 +191,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    selectTagsList(wrapper).vm.$emit('duplicate', tag);
+    selectTagsList(wrapper).triggerCustomEvent('duplicate', tag);
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -239,7 +238,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    await selectTagsList(wrapper).vm.$emit('remove', tag._id);
+    await selectTagsList(wrapper).triggerCustomEvent('remove', tag._id);
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -280,7 +279,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    await selectTagsList(wrapper).vm.$emit('remove-selected', [tag]);
+    await selectTagsList(wrapper).triggerCustomEvent('remove-selected', [tag]);
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(

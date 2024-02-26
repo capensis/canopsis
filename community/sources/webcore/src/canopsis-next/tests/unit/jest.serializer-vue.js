@@ -1,4 +1,12 @@
-const { serialize } = require('jest-snapshot/build/utils');
+const prettyFormat = require('pretty-format');
+const { getSerializers } = require('jest-snapshot');
+
+const serialize = value => prettyFormat.format(value, {
+  escapeRegex: true,
+  indent: 2,
+  plugins: getSerializers(),
+  printFunctionName: false,
+});
 
 const isHtmlString = received => received && typeof received === 'string' && received[0] === '<';
 const isVueWrapper = received => (
@@ -21,6 +29,7 @@ module.exports = {
     const preparedHTML = html
       .replace(/ aria-owns="[-\w]+"/g, '')
       .replace(/ id="input-[-\d]+"/g, '')
+      .replace(/ aria-labelledby="input-[\d]+"/g, '')
       .replace(/ id="list-[-\d]+"/g, '')
       .replace(/ id="list-item-[-\d]+"/g, '')
       .replace(/ data-v[-\w]+=""/g, '')

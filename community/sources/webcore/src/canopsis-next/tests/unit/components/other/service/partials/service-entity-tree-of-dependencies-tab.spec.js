@@ -7,10 +7,7 @@ const stubs = {
 };
 
 describe('service-entity-tree-of-dependencies-tab', () => {
-  const snapshotFactory = generateRenderer(ServiceEntityTreeOfDependenciesTab, {
-
-    stubs,
-  });
+  const snapshotFactory = generateRenderer(ServiceEntityTreeOfDependenciesTab, { stubs });
 
   test('Renders `service-entity-tree-of-dependencies-tab` with default props', () => {
     const wrapper = snapshotFactory({

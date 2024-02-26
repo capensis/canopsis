@@ -1,12 +1,12 @@
 <template>
   <v-layout
-    class="my-2"
     :class="{ 'error--text': isFailedStatus }"
+    class="my-2"
     align-center
   >
     <v-icon
-      class="mr-1"
       :color="iconColor"
+      class="mr-1"
     >
       alarm
     </v-icon>

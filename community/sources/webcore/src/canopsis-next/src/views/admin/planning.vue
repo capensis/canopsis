@@ -6,8 +6,8 @@
         <v-card class="ma-2">
           <v-tabs
             v-model="activeTab"
-            fixed-tabs
             slider-color="primary"
+            fixed-tabs
           >
             <template v-if="hasReadAnyPbehaviorTypeAccess">
               <v-tab :href="`#${$constants.PLANNING_TABS.types}`">

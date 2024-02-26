@@ -28,17 +28,17 @@
       align-center
     >
       <v-btn
-        class="mr-2"
         :disabled="disabled"
         :color="hasRulesErrors ? 'error' : 'primary'"
+        class="mr-2"
         outlined
         @click="addFilterRule"
       >
         {{ $t('pattern.addRule') }}
       </v-btn>
       <span
-        class="error--text"
         v-show="hasRulesErrors"
+        class="error--text"
       >
         {{ $t('pattern.errors.existExcluded') }}
       </span>

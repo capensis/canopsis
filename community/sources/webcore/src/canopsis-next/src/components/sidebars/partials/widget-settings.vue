@@ -1,7 +1,7 @@
 <template>
   <v-form
-    class="widget-settings"
     :class="{ 'widget-settings--divider': divider }"
+    class="widget-settings"
     @submit.prevent="$emit('submit')"
   >
     <v-list
@@ -11,9 +11,9 @@
       <slot />
     </v-list>
     <v-btn
-      class="mx-2 my-1"
       :loading="submitting"
       :disabled="submitting || errors.any()"
+      class="mx-2 my-1"
       type="submit"
       color="primary"
     >
@@ -51,8 +51,10 @@ export default {
   }
 
   &--divider {
-    .v-list-group:not(:last-of-type) {
-      border-bottom: var(--item-divider-border);
+    .v-list-group, .widget-settings-flat-item {
+      &:not(:last-of-type) {
+        border-bottom: var(--item-divider-border);
+      }
     }
   }
 

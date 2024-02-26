@@ -1,10 +1,10 @@
 <template>
   <router-link
-    class="panel-item-content-link"
     :class="{ editing: isNavigationEditingMode }"
     :event="routerLinkEvents"
     :title="view.title"
     :to="viewLink"
+    class="panel-item-content-link"
   >
     <group-view-panel
       :view="view"

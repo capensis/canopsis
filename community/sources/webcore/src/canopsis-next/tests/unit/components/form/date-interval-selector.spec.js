@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
+
 import { ALARM_INTERVAL_FIELDS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
@@ -35,16 +36,9 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const tstartField = selectTstartField(wrapper);
+    selectTstartField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last6Hour.start);
 
-    tstartField.vm.$emit('input', QUICK_RANGES.last6Hour.start);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       tstart: QUICK_RANGES.last6Hour.start,
     });
@@ -57,16 +51,9 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const tstopField = selectTstopField(wrapper);
+    selectTstopField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last6Hour.stop);
 
-    tstopField.vm.$emit('input', QUICK_RANGES.last6Hour.stop);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       tstop: QUICK_RANGES.last6Hour.stop,
     });
@@ -79,18 +66,11 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const tstartField = selectTstartField(wrapper);
-
     const timestamp = fakeTimestamp();
 
-    tstartField.vm.$emit('update:objectValue', timestamp);
+    selectTstartField(wrapper).triggerCustomEvent('update:objectValue', timestamp);
 
-    const updateStopObjectValueEvents = wrapper.emitted('update:startObjectValue');
-
-    expect(updateStopObjectValueEvents).toHaveLength(1);
-
-    const [eventData] = updateStopObjectValueEvents[0];
-    expect(eventData).toBe(timestamp);
+    expect(wrapper).toEmit('update:startObjectValue', timestamp);
   });
 
   test('Stop object value updated after trigger update object value', () => {
@@ -100,18 +80,11 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const tstopField = selectTstopField(wrapper);
-
     const timestamp = fakeTimestamp();
 
-    tstopField.vm.$emit('update:objectValue', timestamp);
+    selectTstopField(wrapper).triggerCustomEvent('update:objectValue', timestamp);
 
-    const updateStopObjectValueEvents = wrapper.emitted('update:stopObjectValue');
-
-    expect(updateStopObjectValueEvents).toHaveLength(1);
-
-    const [eventData] = updateStopObjectValueEvents[0];
-    expect(eventData).toBe(timestamp);
+    expect(wrapper).toEmit('update:stopObjectValue', timestamp);
   });
 
   test('Range updated after trigger quick range field', () => {
@@ -121,16 +94,9 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
+    selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.previousMonth);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.previousMonth);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       tstart: QUICK_RANGES.previousMonth.start,
       tstop: QUICK_RANGES.previousMonth.stop,
@@ -144,16 +110,9 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
+    selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.custom);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.custom);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       periodUnit: TIME_UNITS.hour,
       periodValue: 1,
@@ -169,13 +128,9 @@ describe('date-interval-selector', () => {
       },
     });
 
-    const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
+    selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last3Hour);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.last3Hour);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('Dates prepared after trigger prepare callback', () => {

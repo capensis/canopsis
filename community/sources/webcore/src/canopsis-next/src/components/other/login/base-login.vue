@@ -34,8 +34,8 @@
             </v-btn>
             <v-flex xs9>
               <c-alert
-                class="py-1 my-0 font-weight-bold"
                 :value="!!serverErrorMessage"
+                class="py-1 my-0 font-weight-bold"
                 type="error"
               >
                 {{ serverErrorMessage }}

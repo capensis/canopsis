@@ -3,10 +3,10 @@
     <div class="time-line-card__header text--secondary">
       <template v-if="isNotStateCounter">
         <c-alarm-chip
-          class="chips pr-2"
           v-if="!isStepTypeAction"
           :value="step.val"
           :type="stepType"
+          class="chips pr-2"
         />
         <p>{{ stepTitle }}</p>
       </template>

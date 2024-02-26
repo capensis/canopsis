@@ -6,8 +6,8 @@
         pending
       />
       <div
-        class="playlist"
         v-else-if="playlist"
+        class="playlist"
       >
         <c-page-header v-if="!isFullscreenMode">
           {{ playlist.name }}
@@ -15,8 +15,8 @@
         <portal :to="$constants.PORTALS_NAMES.additionalTopBarItems">
           <v-fade-transition>
             <v-toolbar-items
-              class="playlist__actions mr-2"
               v-if="!pending"
+              class="playlist__actions mr-2"
             >
               <span class="playlist__timer white--text mr-2">{{ time | duration }}</span>
               <v-btn
@@ -65,8 +65,8 @@
         </portal>
         <div class="position-relative playlist__tabs-wrapper">
           <div
-            class="playlist__play-button-wrapper"
             v-if="!played"
+            class="playlist__play-button-wrapper"
           >
             <v-btn
               color="primary"
@@ -81,8 +81,8 @@
           <v-fade-transition mode="out-in">
             <view-tab-widgets
               v-if="activeTab"
-              :tab="activeTab"
               :key="activeTab._id"
+              :tab="activeTab"
             />
           </v-fade-transition>
         </div>
