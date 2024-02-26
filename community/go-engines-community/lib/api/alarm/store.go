@@ -416,8 +416,11 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		{"$unwind": "$" + entityLookupName},
 	}
 
+	pipeline = append(pipeline, getEntityCategoryLookup()...)
+	pipeline = append(pipeline, getEntityPbehaviorInfoTypeLookup()...)
 	if r.WithDependencies {
 		pipeline = append(pipeline, getImpactsCountPipeline()...)
+		pipeline = append(pipeline, getDependsCountPipeline()...)
 	}
 
 	if r.Steps != nil {
