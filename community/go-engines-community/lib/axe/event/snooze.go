@@ -45,10 +45,8 @@ func (p *snoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	entity := *event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.snooze"] = nil
-	newStep := types.NewAlarmStep(types.AlarmStepSnooze, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-	newStep.Value = types.CpsNumber(event.Parameters.Duration.AddTo(event.Parameters.Timestamp).Unix())
-	newStepQuery := stepUpdateQuery(newStep)
+	stepVal := types.CpsNumber(event.Parameters.Duration.AddTo(event.Parameters.Timestamp).Unix())
+	newStepQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepSnooze, stepVal, event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.snooze":         newStepQuery,

@@ -71,14 +71,12 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 
 		conf := p.configProvider.Get()
 		output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-		newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-			event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-		newStepStatus.Value = newStatus
+		alarmStepType := types.AlarmStepStatusIncrease
 		if alarm.Value.Status.Value > newStatus {
-			newStepStatus.Type = types.AlarmStepStatusDecrease
+			alarmStepType = types.AlarmStepStatusDecrease
 		}
 
-		newStepStatusQuery := stepUpdateQuery(newStepStatus)
+		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, output, event.Parameters)
 		matchUpdate := getOpenAlarmMatchWithStepsLimit(event)
 		update := []bson.M{
 			{"$set": bson.M{

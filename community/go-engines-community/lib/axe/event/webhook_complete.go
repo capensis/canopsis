@@ -58,10 +58,8 @@ func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEve
 	alarmChange := types.NewAlarmChange()
 	var update []bson.M
 	if event.Parameters.Ticket == "" {
-		newStep := types.NewAlarmStep(types.AlarmStepWebhookComplete, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-		newStep.Execution = event.Parameters.Execution
-		newStepQuery := stepUpdateQuery(newStep)
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.Output,
+			event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.steps": addStepUpdateQuery(newStepQuery),
@@ -69,15 +67,10 @@ func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEve
 		}
 		alarmChange.Type = types.AlarmChangeTypeWebhookComplete
 	} else {
-		newStep := types.NewAlarmStep(types.AlarmStepWebhookComplete, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
-		newStep.Execution = event.Parameters.Execution
-		newStepQuery := stepUpdateQuery(newStep)
-		newTicketStep := types.NewTicketStep(types.AlarmStepDeclareTicket, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-			event.Parameters.TicketInfo, false)
-		newTicketStep.Execution = event.Parameters.Execution
-		newTicketStepQuery := stepUpdateQuery(newTicketStep)
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.Output,
+			event.Parameters)
+		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket,
+			event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.ticket":  newTicketStepQuery,
