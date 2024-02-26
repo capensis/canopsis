@@ -6,11 +6,11 @@
 import { difference } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { EVENT_ENTITY_TYPES, ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
 
 import featuresService from '@/services/features';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import { isCancelledAlarmStatus, isClosedAlarmStatus, isResolvedAlarm } from '@/helpers/entities/alarm/form';
 
@@ -91,7 +91,6 @@ export default {
     actions() {
       const unCancelAction = {
         type: ALARM_LIST_ACTIONS_TYPES.unCancel,
-        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.uncancel),
         title: this.$t('alarm.actions.titles.unCancel'),
         method: this.showUnCancelEventModal,
       };
@@ -103,37 +102,31 @@ export default {
       const actions = [
         {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
           title: this.$t('alarm.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
           title: this.$t('alarm.actions.titles.ack'),
           method: this.showAckModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
           title: this.$t('alarm.actions.titles.fastAck'),
           method: this.createMassFastAckEvent,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
           title: this.$t('alarm.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: '$vuetify.icons.list_delete',
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
-          icon: 'delete',
           title: this.$t('alarm.actions.titles.fastCancel'),
           method: this.createFastCancelEvent,
         },
@@ -145,7 +138,6 @@ export default {
 
       actions.push({
         type: ALARM_LIST_ACTIONS_TYPES.comment,
-        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
         title: this.$t('alarm.actions.titles.comment'),
         method: this.showCreateCommentEventModal,
       });
@@ -154,7 +146,6 @@ export default {
         if (this.alarmsWithAssignedDeclareTicketRules.length) {
           actions.push({
             type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
             title: this.$t('alarm.actions.titles.declareTicket'),
             method: this.showCreateDeclareTicketModal,
           });
@@ -162,7 +153,6 @@ export default {
 
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           title: this.$t('alarm.actions.titles.associateTicket'),
           method: this.showCreateAssociateTicketModal,
         });
@@ -171,7 +161,6 @@ export default {
       actions.push(
         {
           type: ALARM_LIST_ACTIONS_TYPES.snooze,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
           title: this.$t('alarm.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
@@ -181,7 +170,6 @@ export default {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
             title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
             method: this.showCreateManualMetaAlarmModal,
           },
@@ -230,6 +218,7 @@ export default {
         ...this.linksActions,
       ].map(action => ({
         ...action,
+        icon: action.icon ?? getAlarmActionIcon(action.type),
         loading: this.isActionTypeInPending(action.type),
       }));
     },

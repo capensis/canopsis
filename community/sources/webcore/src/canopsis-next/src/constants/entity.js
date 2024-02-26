@@ -43,57 +43,29 @@ export const ENTITY_FIELDS = {
 };
 
 export const EVENT_ENTITY_TYPES = {
-  ack: 'ack',
-  check: 'check',
-  fastAck: 'fastAck',
-  ackRemove: 'ackremove',
-  pbehaviorAdd: 'pbehaviorAdd',
-  pbehaviorList: 'pbehaviorList',
-  assocTicket: 'assocticket',
-  cancel: 'cancel',
-  uncancel: 'uncancel',
-  delete: 'delete',
-  changeState: 'changestate',
-  declareTicket: 'declareticket',
-  declareTicketFail: 'declareticketfail',
-  webhookStart: 'webhookstart',
-  webhookComplete: 'webhookcomplete',
-  webhookFail: 'webhookfail',
-  snooze: 'snooze',
-  validate: 'validate',
-  invalidate: 'invalidate',
-  pause: 'pause',
-  play: 'play',
-  group: 'group',
-  pbhenter: 'pbhenter',
-  pbhleave: 'pbhleave',
-  comment: 'comment',
-  createManualMetaAlarm: 'createManualMetaAlarm',
-  removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
-  removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
-  stateinc: 'stateinc',
-  statedec: 'statedec',
-  statusinc: 'statusinc',
-  statusdec: 'statusdec',
-  unsooze: 'unsooze',
-  metaalarmattach: 'metaalarmattach',
-  executeInstruction: 'executeInstruction',
-  instructionStart: 'instructionstart',
-  instructionPause: 'instructionpause',
-  instructionResume: 'instructionresume',
-  instructionComplete: 'instructioncomplete',
-  instructionAbort: 'instructionabort',
-  instructionFail: 'instructionfail',
-  instructionJobStart: 'instructionjobstart',
-  instructionJobComplete: 'instructionjobcomplete',
-  instructionJobAbort: 'instructionjobabort',
-  instructionJobFail: 'instructionjobfail',
-  autoInstructionStart: 'autoinstructionstart',
-  autoInstructionComplete: 'autoinstructioncomplete',
-  autoInstructionFail: 'autoinstructionfail',
-  autoInstructionAlreadyRunning: 'autoinstructionalreadyrunning',
-  junitTestSuiteUpdate: 'junittestsuiteupdate',
-  junitTestCaseUpdate: 'junittestcaseupdate',
+  ack: 'ack', // TODO: ServiceWeather
+  fastAck: 'fastAck', // TODO: ServiceWeather
+  ackRemove: 'ackremove', // TODO: ServiceWeather, EventPattern
+  pbehaviorList: 'pbehaviorList', // TODO: ServiceWeather
+  cancel: 'cancel', // TODO: ServiceWeather, EventPattern
+  delete: 'delete', // TODO: ServiceWeather
+  assocTicket: 'assocticket', // TODO: DeclareTicket, EventPattern
+  declareTicket: 'declareticket', // TODO: DeclareTicket, EventPattern
+  declareTicketFail: 'declareticketfail', // TODO: DeclareTicket, EventPattern
+  webhookStart: 'webhookstart', // TODO: DeclareTicket, EventPattern
+  webhookComplete: 'webhookcomplete', // TODO: DeclareTicket, EventPattern
+  webhookFail: 'webhookfail', // TODO: DeclareTicket, EventPattern
+  snooze: 'snooze', // TODO: EventPattern
+  unsooze: 'unsooze', // TODO: remove
+  validate: 'validate', // TODO: ServiceWeather
+  invalidate: 'invalidate', // TODO: ServiceWeather
+  pause: 'pause', // TODO: ServiceWeather
+  play: 'play', // TODO: ServiceWeather
+  pbhenter: 'pbhenter', // TODO: remove
+  pbhleave: 'pbhleave', // TODO: remove
+  comment: 'comment', // TODO: ServiceWeather, EventPattern
+  metaalarmattach: 'metaalarmattach', // TODO: remove
+  executeInstruction: 'executeInstruction', // TODO: ServiceWeather
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -205,19 +177,17 @@ export const WEATHER_ACTIONS_TYPES = {
 };
 
 export const EVENT_ENTITY_ICONS_BY_TYPE = {
-  [EVENT_ENTITY_TYPES.ack]: 'playlist_add_check',
-  [EVENT_ENTITY_TYPES.fastAck]: 'check',
-  [EVENT_ENTITY_TYPES.pbehaviorAdd]: 'pause',
+  [EVENT_ENTITY_TYPES.ack]: 'check',
+  [EVENT_ENTITY_TYPES.fastAck]: 'done_all',
   [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
-  [EVENT_ENTITY_TYPES.ackRemove]: 'not_interested',
-  [EVENT_ENTITY_TYPES.declareTicket]: 'report_problem',
+  [EVENT_ENTITY_TYPES.ackRemove]: 'remove_done',
+  [EVENT_ENTITY_TYPES.declareTicket]: 'note_add',
   [EVENT_ENTITY_TYPES.declareTicketFail]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
-  [EVENT_ENTITY_TYPES.assocTicket]: 'local_play',
+  [EVENT_ENTITY_TYPES.assocTicket]: 'sticky_note_2',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
-  [EVENT_ENTITY_TYPES.changeState]: 'thumbs_up_down',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
   [EVENT_ENTITY_TYPES.invalidate]: 'thumb_down',
@@ -226,29 +196,9 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.pbhenter]: 'pause',
   [EVENT_ENTITY_TYPES.pbhleave]: 'play_arrow',
   [EVENT_ENTITY_TYPES.comment]: 'comment',
-  [EVENT_ENTITY_TYPES.createManualMetaAlarm]: 'center_focus_strong',
-  [EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
-  [EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm]: 'link_off',
   [EVENT_ENTITY_TYPES.metaalarmattach]: 'center_focus_weak',
   [EVENT_ENTITY_TYPES.executeInstruction]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionStart]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionPause]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionResume]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionComplete]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionAbort]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionFail]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobStart]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobComplete]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobAbort]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobFail]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionStart]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionFail]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'assignment',
-  [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'keyboard_arrow_up',
-  [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'keyboard_arrow_up',
-  [EVENT_ENTITY_TYPES.cancel]: 'delete',
-  [EVENT_ENTITY_TYPES.uncancel]: 'delete_forever',
+  [EVENT_ENTITY_TYPES.cancel]: 'block',
   groupChildren: 'center_focus_strong',
   groupParents: 'center_focus_weak',
 };

@@ -36,10 +36,10 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 
 export default {
   props: {
@@ -54,7 +54,7 @@ export default {
     },
 
     icon() {
-      return getEntityEventIcon(EVENT_ENTITY_TYPES.ack);
+      return getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.ack);
     },
   },
 };

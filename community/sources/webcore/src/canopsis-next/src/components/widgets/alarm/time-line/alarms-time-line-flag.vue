@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_LIST_TIMELINE_STEPS } from '@/constants';
 
 import { formatStep } from '@/helpers/entities/entity/formatting';
 
@@ -49,7 +49,10 @@ export default {
     },
 
     isActiveBadge() {
-      return [EVENT_ENTITY_TYPES.declareTicketFail, EVENT_ENTITY_TYPES.webhookFail].includes(this.step._t);
+      return [
+        ALARM_LIST_TIMELINE_STEPS.declareTicketFail,
+        ALARM_LIST_TIMELINE_STEPS.webhookFail,
+      ].includes(this.step._t);
     },
   },
 };

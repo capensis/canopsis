@@ -63,9 +63,9 @@
 <script>
 import { last } from 'lodash';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -89,12 +89,12 @@ export default {
     },
 
     icon() {
-      return getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket);
+      return getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
     },
   },
   methods: {
     isSuccessTicketDeclaration(ticket = {}) {
-      return [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket?._t);
+      return [ALARM_LIST_ACTIONS_TYPES.declareTicket, ALARM_LIST_ACTIONS_TYPES.associateTicket].includes(ticket?._t);
     },
 
     getTicketStatusText(ticket) {

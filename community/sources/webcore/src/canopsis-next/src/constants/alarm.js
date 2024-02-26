@@ -114,11 +114,9 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
   history: 'history',
   exportPdf: 'exportPdf',
-  groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
-  updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
 
   ack: 'ack',
@@ -147,6 +145,87 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 
   addBookmark: 'addBookmark',
   removeBookmark: 'removeBookmark',
+};
+
+export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
+  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
+  [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
+  [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
+  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: '$vuetify.icons.sticky_note_2',
+  [ALARM_LIST_ACTIONS_TYPES.changeState]: 'thumbs_up_down',
+  [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'help',
+  [ALARM_LIST_ACTIONS_TYPES.history]: 'history',
+  [ALARM_LIST_ACTIONS_TYPES.exportPdf]: 'assignment_returned',
+  [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]: 'center_focus_strong',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]: 'link_off',
+  [ALARM_LIST_ACTIONS_TYPES.comment]: 'comment',
+
+  [ALARM_LIST_ACTIONS_TYPES.ack]: 'check',
+  [ALARM_LIST_ACTIONS_TYPES.fastAck]: 'done_all',
+  [ALARM_LIST_ACTIONS_TYPES.ackRemove]: 'remove_done',
+
+  [ALARM_LIST_ACTIONS_TYPES.cancel]: 'block',
+  [ALARM_LIST_ACTIONS_TYPES.fastCancel]: 'delete',
+  [ALARM_LIST_ACTIONS_TYPES.unCancel]: 'delete_forever',
+
+  [ALARM_LIST_ACTIONS_TYPES.executeInstruction]: 'assignment',
+
+  [ALARM_LIST_ACTIONS_TYPES.addBookmark]: '$vuetify.icons.bookmark_add',
+  [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: '$vuetify.icons.bookmark_remove',
+};
+
+export const ALARM_LIST_TIMELINE_STEPS = {
+  ack: 'ack',
+  ackRemove: 'ackremove',
+  assocTicket: 'assocticket',
+  cancel: 'cancel',
+  uncancel: 'uncancel',
+  changeState: 'changestate',
+  declareTicket: 'declareticket',
+  declareTicketFail: 'declareticketfail',
+  webhookStart: 'webhookstart',
+  webhookProgress: 'webhookprogress', // TODO: NEW
+  webhookComplete: 'webhookcomplete',
+  webhookFail: 'webhookfail',
+  ticketDeclarationRuleProgress: 'ticketdeclatetionruleprogress', // TODO: NEW
+  ticketDeclarationRuleCompleted: 'ticketdeclatetionrulecomplete', // TODO: NEW
+  ticketDeclarationRuleFailed: 'ticketdeclatetionrulefailed', // TODO: NEW
+  snooze: 'snooze',
+  pbhenter: 'pbhenter',
+  pbhleave: 'pbhleave',
+  comment: 'comment',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  unsooze: 'unsooze',
+  metaalarmattach: 'metaalarmattach',
+  instructionStart: 'instructionstart',
+  instructionPause: 'instructionpause',
+  instructionResume: 'instructionresume',
+  instructionComplete: 'instructioncomplete',
+  instructionAbort: 'instructionabort',
+  instructionFail: 'instructionfail',
+  instructionJobStart: 'instructionjobstart',
+  instructionJobComplete: 'instructionjobcomplete',
+  instructionJobFail: 'instructionjobfail',
+  autoInstructionStart: 'autoinstructionstart',
+  autoInstructionComplete: 'autoinstructioncomplete',
+  autoInstructionFail: 'autoinstructionfail',
+  junitTestSuiteUpdate: 'junittestsuiteupdate',
+  junitTestCaseUpdate: 'junittestcaseupdate',
+  stateCounter: 'statecounter',
+};
+
+export const ALARMS_LIST_COLORS_BY_TIMELINE_STEPS = {
+  [ALARM_LIST_TIMELINE_STEPS.ack]: COLORS.entitiesEvents.ack,
+  [ALARM_LIST_TIMELINE_STEPS.ackRemove]: COLORS.entitiesEvents.ackRemove,
+  [ALARM_LIST_TIMELINE_STEPS.snooze]: COLORS.entitiesEvents.snooze,
+  [ALARM_LIST_TIMELINE_STEPS.pbhenter]: COLORS.entitiesEvents.pbhenter,
+  [ALARM_LIST_TIMELINE_STEPS.pbhleave]: COLORS.entitiesEvents.pbhleave,
+  [ALARM_LIST_TIMELINE_STEPS.comment]: COLORS.entitiesEvents.comment,
+  [ALARM_LIST_TIMELINE_STEPS.metaalarmattach]: COLORS.entitiesEvents.metaalarmattach,
 };
 
 export const META_ALARMS_RULE_TYPES = {

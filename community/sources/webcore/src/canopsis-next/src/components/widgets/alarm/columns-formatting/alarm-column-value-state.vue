@@ -23,6 +23,8 @@
 <script>
 import { get } from 'lodash';
 
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+
 /**
  * Component for the 'state' column of the alarms list
  *
@@ -61,7 +63,7 @@ export default {
     },
 
     showIcon() {
-      return get(this.alarm, 'v.state._t') === this.$constants.EVENT_ENTITY_TYPES.changeState;
+      return get(this.alarm, 'v.state._t') === ALARM_LIST_ACTIONS_TYPES.changeState;
     },
   },
 };
