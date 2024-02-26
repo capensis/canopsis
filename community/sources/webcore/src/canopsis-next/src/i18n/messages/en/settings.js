@@ -23,6 +23,7 @@ export default {
     [SIDE_BARS.numbersSettings]: 'Numbers settings',
     [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
     [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
+    [SIDE_BARS.availabilitySettings]: 'Availability settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
