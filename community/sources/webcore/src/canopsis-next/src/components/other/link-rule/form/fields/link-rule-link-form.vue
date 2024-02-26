@@ -4,10 +4,10 @@
       <v-layout column>
         <v-layout align-center>
           <c-name-field
-            class="mr-2"
             v-field="form.label"
             :label="$t('common.label')"
             :name="labelFieldName"
+            class="mr-2"
             required
           />
           <c-action-btn

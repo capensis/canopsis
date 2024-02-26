@@ -1,10 +1,10 @@
 <template>
   <widget-settings-item :title="$t('settings.chart.sharesType')">
     <v-radio-group
-      class="mt-0"
       v-field="value"
       :name="name"
       :label="label"
+      class="mt-0"
     >
       <v-radio
         v-for="showMode in showModes"

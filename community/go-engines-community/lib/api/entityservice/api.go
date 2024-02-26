@@ -73,7 +73,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // GetDependencies
-// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
+// @Success 200 {object} common.PaginatedListResponse{data=[]ContextGraphEntity}
 func (a *api) GetDependencies(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -104,7 +104,7 @@ func (a *api) GetDependencies(c *gin.Context) {
 }
 
 // GetImpacts
-// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
+// @Success 200 {object} common.PaginatedListResponse{data=[]ContextGraphEntity}
 func (a *api) GetImpacts(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -151,11 +151,18 @@ func (a *api) Create(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+
 		panic(err)
 	}
 
 	service, err := a.store.Create(c, request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -200,11 +207,18 @@ func (a *api) Update(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+
 		panic(err)
 	}
 
 	service, serviceChanges, err := a.store.Update(c, request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 

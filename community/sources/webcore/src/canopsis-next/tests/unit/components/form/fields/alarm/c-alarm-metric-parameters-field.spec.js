@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
@@ -23,7 +24,7 @@ describe('c-alarm-metric-parameters-field', () => {
 
     selectAutocompleteNode(wrapper).$emit('input', ALARM_METRIC_PARAMETERS.maxAck);
 
-    expect(wrapper).toEmit('input', ALARM_METRIC_PARAMETERS.maxAck);
+    expect(wrapper).toEmitInput(ALARM_METRIC_PARAMETERS.maxAck);
   });
 
   it('Renders `c-alarm-metric-parameters-field` with default props', async () => {

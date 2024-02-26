@@ -106,6 +106,7 @@ export const MODALS = {
   createEntity: 'create-entity',
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
+  entitiesRootCauseDiagram: 'entities-root-cause-diagram',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
@@ -114,6 +115,7 @@ export const MODALS = {
 
   createStateSetting: 'create-state-setting',
   createJunitStateSetting: 'create-junit-state-setting',
+  stateSettingInheritedEntityPattern: 'state-setting-inherited-entity-pattern',
 
   archiveDisabledEntities: 'archive-disabled-entities',
 

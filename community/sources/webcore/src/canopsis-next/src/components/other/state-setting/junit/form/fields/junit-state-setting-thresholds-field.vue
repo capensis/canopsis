@@ -2,11 +2,11 @@
   <v-layout>
     <v-flex xs4>
       <h5 class="text-subtitle-1 font-weight-bold">
-        {{ $t('stateSetting.criterion') }}: {{ label }}
+        {{ $t('stateSetting.junit.criterion') }}: {{ label }}
       </h5>
       <junit-state-setting-thresholds-type-field
-        class="mt-3"
         v-field="value.type"
+        class="mt-3"
       />
     </v-flex>
     <v-flex>

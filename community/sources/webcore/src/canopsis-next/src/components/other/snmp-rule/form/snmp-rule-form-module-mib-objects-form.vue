@@ -10,11 +10,11 @@
         >
           <template #activator="{ on }">
             <v-text-field
-              class="vars-input pt-0"
-              v-on="on"
               v-field="form.value"
               :label="$t('snmpRule.moduleMibObjects')"
+              class="vars-input pt-0"
               hide-details
+              v-on="on"
             >
               <template
                 v-if="large"

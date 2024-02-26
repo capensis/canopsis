@@ -21,21 +21,21 @@
         />
       </v-layout>
       <junit-state-setting-threshold-field
-        class="pl-4 pt-2"
         v-field="form.junit_thresholds.skipped"
         :label="$t('common.skipped')"
+        class="pl-4 pt-2"
         name="junit_thresholds.skipped"
       />
       <junit-state-setting-threshold-field
-        class="pl-4 pt-2"
         v-field="form.junit_thresholds.errors"
         :label="$tc('common.error', 2)"
+        class="pl-4 pt-2"
         name="junit_thresholds.errors"
       />
       <junit-state-setting-threshold-field
-        class="pl-4 pt-2"
         v-field="form.junit_thresholds.failures"
         :label="$t('common.failures')"
+        class="pl-4 pt-2"
         name="junit_thresholds.failures"
       />
     </v-layout>

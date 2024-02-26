@@ -275,3 +275,12 @@ html {
 .v-icon svg {
   fill: currentColor;
 }
+
+@for $i from 0 through 16 {
+  .row-gap-#{$i}, .gap-#{$i} {
+    row-gap: $i * 4px;
+  }
+  .col-gap-#{$i}, .gap-#{$i} {
+    column-gap: $i * 4px;
+  }
+}

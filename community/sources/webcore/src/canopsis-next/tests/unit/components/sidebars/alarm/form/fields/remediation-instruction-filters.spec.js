@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import RemediationInstructionsFilters from '@/components/sidebars/alarm/form/fields/remediation-instructions-filters.vue';
@@ -49,16 +50,9 @@ describe('remediation-instructions-filters', () => {
       },
     });
 
-    const remediationInstructionsFiltersListField = selectRemediationInstructionsFiltersListField(wrapper);
+    selectRemediationInstructionsFiltersListField(wrapper).triggerCustomEvent('input', filters);
 
-    remediationInstructionsFiltersListField.vm.$emit('input', filters);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(filters);
+    expect(wrapper).toEmitInput(filters);
   });
 
   it('Instruction filter added after separator add button', () => {
@@ -99,12 +93,7 @@ describe('remediation-instructions-filters', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       ...filters,
       { ...actionValue, _id: expect.any(String) },
     ]);

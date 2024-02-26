@@ -200,6 +200,7 @@ export default {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
     massActionsDescription: 'You can choose entities to perform actions',
+    actionInQueue: 'action in queue|actions in queue',
     entity: {
       tabs: {
         info: 'Info',
@@ -907,7 +908,7 @@ export default {
     title: 'Select widget template type',
   },
   entityDependenciesList: {
-    title: 'Centreon impacted entities',
+    title: '{name} impacted entities',
   },
   createDeclareTicketRule: {
     create: {

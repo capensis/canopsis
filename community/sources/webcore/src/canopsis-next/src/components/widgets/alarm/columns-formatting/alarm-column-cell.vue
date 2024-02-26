@@ -1,18 +1,18 @@
 <template>
   <v-menu
-    class="alarms-column-cell"
     v-if="column.popupTemplate"
     v-model="opened"
     :close-on-content-click="false"
     :open-on-click="false"
+    class="alarms-column-cell"
     offset-x
   >
     <template #activator="{ on }">
       <v-layout
         class="alarms-column-cell__layout"
-        v-on="on"
         d-inline-flex
         align-center
+        v-on="on"
       >
         <div
           v-if="column.isHtml"
@@ -21,12 +21,12 @@
         <div
           v-else
           v-bind="component.bind"
-          v-on="component.on"
           :is="component.is"
+          v-on="component.on"
         />
         <v-btn
-          class="ma-0 alarms-column-cell__show-info-btn"
           :class="{ 'alarms-column-cell__show-info-btn--small': small }"
+          class="ma-0 alarms-column-cell__show-info-btn"
           icon
           small
           @click.stop="showInfoPopup"
@@ -50,8 +50,8 @@
   <div
     v-else
     v-bind="component.bind"
-    v-on="component.on"
     :is="component.is"
+    v-on="component.on"
   />
 </template>
 

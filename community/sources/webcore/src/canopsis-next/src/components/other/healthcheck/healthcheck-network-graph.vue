@@ -1,10 +1,10 @@
 <template>
   <network-graph
-    class="healthcheck-network-graph"
     ref="networkGraph"
     :options="options"
     :node-html-label-options="nodeHtmlLabelsOptions"
     :tooltip-options="tooltipOptions"
+    class="healthcheck-network-graph"
     @node:tap="nodeTapHandler"
     @node:mouseover="nodeMouseoverHandler"
     @node:mouseout="nodeMouseoutHandler"

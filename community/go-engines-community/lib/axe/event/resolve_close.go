@@ -8,7 +8,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -22,7 +23,9 @@ import (
 
 func NewResolveCloseProcessor(
 	dbClient mongo.DbClient,
-	stateCountersService statecounters.StateCountersService,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	componentCountersCalculator calculator.ComponentCountersCalculator,
+	eventsSender entitycounters.EventsSender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -30,30 +33,34 @@ func NewResolveCloseProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &resolveCloseProcessor{
-		dbClient:                dbClient,
-		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
-		resolvedAlarmCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
-		stateCountersService:    stateCountersService,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		metricsSender:           metricsSender,
-		remediationRpcClient:    remediationRpcClient,
-		encoder:                 encoder,
-		logger:                  logger,
+		dbClient:                        dbClient,
+		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
+		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		entityServiceCountersCalculator: entityServiceCountersCalculator,
+		componentCountersCalculator:     componentCountersCalculator,
+		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metricsSender:                   metricsSender,
+		remediationRpcClient:            remediationRpcClient,
+		eventsSender:                    eventsSender,
+		encoder:                         encoder,
+		logger:                          logger,
 	}
 }
 
 type resolveCloseProcessor struct {
-	dbClient                mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	entityCollection        mongo.DbCollection
-	resolvedAlarmCollection mongo.DbCollection
-	stateCountersService    statecounters.StateCountersService
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	metricsSender           metrics.Sender
-	remediationRpcClient    engine.RPCClient
-	encoder                 encoding.Encoder
-	logger                  zerolog.Logger
+	dbClient                        mongo.DbClient
+	alarmCollection                 mongo.DbCollection
+	entityCollection                mongo.DbCollection
+	resolvedAlarmCollection         mongo.DbCollection
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
+	componentCountersCalculator     calculator.ComponentCountersCalculator
+	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metricsSender                   metrics.Sender
+	remediationRpcClient            engine.RPCClient
+	eventsSender                    entitycounters.EventsSender
+	encoder                         encoding.Encoder
+	logger                          zerolog.Logger
 }
 
 func (p *resolveCloseProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -64,12 +71,36 @@ func (p *resolveCloseProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 
 	match := getOpenAlarmMatch(event)
 	match["v.state.val"] = types.AlarmStateOK
-	result, updatedServiceStates, notAckedMetricType, err := processResolve(ctx, match, event, p.stateCountersService, p.dbClient, p.alarmCollection, p.entityCollection, p.resolvedAlarmCollection)
+	result, updatedServiceStates, notAckedMetricType, componentStateChanged, newComponentState, err := processResolve(
+		ctx,
+		match,
+		event,
+		p.entityServiceCountersCalculator,
+		p.componentCountersCalculator,
+		p.dbClient,
+		p.alarmCollection,
+		p.entityCollection,
+		p.resolvedAlarmCollection,
+	)
 	if err != nil || result.Alarm.ID == "" {
 		return result, err
 	}
 
-	go postProcessResolve(context.Background(), event, result, updatedServiceStates, notAckedMetricType, p.stateCountersService, p.metaAlarmEventProcessor, p.metricsSender, p.remediationRpcClient, p.encoder, p.logger)
+	go postProcessResolve(
+		context.Background(),
+		event,
+		result,
+		updatedServiceStates,
+		componentStateChanged,
+		newComponentState,
+		notAckedMetricType,
+		p.eventsSender,
+		p.metaAlarmEventProcessor,
+		p.metricsSender,
+		p.remediationRpcClient,
+		p.encoder,
+		p.logger,
+	)
 
 	return result, nil
 }
@@ -78,14 +109,19 @@ func processResolve(
 	ctx context.Context,
 	match bson.M,
 	event rpc.AxeEvent,
-	stateCountersService statecounters.StateCountersService,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	componentCountersCalculator calculator.ComponentCountersCalculator,
 	dbClient mongo.DbClient,
 	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
-) (Result, map[string]statecounters.UpdatedServicesInfo, string, error) {
+) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
 	result := Result{}
 	update := getResolveAlarmUpdate(datetime.NewCpsTime())
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
+
+	var componentStateChanged bool
+	var newComponentState int
+
 	err := dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
@@ -153,23 +189,33 @@ func processResolve(
 			return err
 		}
 
-		updatedServiceStates, err = stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			ctx,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			&result.Alarm,
+			&entity,
+			result.AlarmChange,
+		)
+
 		return err
 	})
 	if err != nil || result.Alarm.ID == "" {
-		return result, nil, "", err
+		return result, nil, "", false, 0, err
 	}
 
-	return result, updatedServiceStates, notAckedMetricType, nil
+	return result, updatedServiceStates, notAckedMetricType, componentStateChanged, newComponentState, nil
 }
 
 func postProcessResolve(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
+	componentChanged bool,
+	newComponentState int,
 	notAckedMetricType string,
-	stateCountersService statecounters.StateCountersService,
+	eventsSender entitycounters.EventsSender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -188,9 +234,16 @@ func postProcessResolve(
 	)
 
 	for servID, servInfo := range updatedServiceStates {
-		err := stateCountersService.UpdateServiceState(ctx, servID, servInfo)
+		err := eventsSender.UpdateServiceState(ctx, servID, servInfo)
 		if err != nil {
 			logger.Err(err).Msg("failed to update service state")
+		}
+	}
+
+	if componentChanged {
+		err := eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		if err != nil {
+			logger.Err(err).Msg("failed to update component state")
 		}
 	}
 

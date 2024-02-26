@@ -21,9 +21,9 @@
       >
         <template #activator="{ on }">
           <v-chip
-            v-on="on"
             :class="getSelectedClass(item)"
             :close="item.deprecated"
+            v-on="on"
             @click:close="removeItemFromArray(index)"
           >
             {{ getSelectedText(item) }}
@@ -35,12 +35,12 @@
     <template #item="{ item, attrs, on, parent }">
       <v-list-item
         v-bind="attrs"
-        :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : tile.props.activeClass"
+        :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : attrs.activeClass"
         @click="on.click"
       >
         <v-list-item-action>
           <v-checkbox
-            :input-value="attrs.value"
+            :input-value="attrs.inputValue"
             :color="parent.color"
             hide-details
           />
@@ -53,12 +53,12 @@
           >
             <v-flex>{{ item.text }}</v-flex>
             <component
-              class="ml-1"
               v-if="additionalValuesComponentsByTypes[item.type]"
               v-bind="additionalValuesComponentsByTypes[item.type].bind"
-              v-on="additionalValuesComponentsByTypes[item.type].on"
               :is="additionalValuesComponentsByTypes[item.type].is"
               :disabled="!attrs.value"
+              class="ml-1"
+              v-on="additionalValuesComponentsByTypes[item.type].on"
               @click.prevent.stop=""
             />
           </v-layout>

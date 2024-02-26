@@ -4,10 +4,10 @@
       {{ $t('notificationSetting.instruction.header') }}
     </h4>
     <v-checkbox
-      class="my-2"
       v-field="form.instruction.rate"
       :disabled="!form.instruction.rate_frequency.value"
       :label="$t('notificationSetting.instruction.rate')"
+      class="my-2"
       color="primary"
       hide-details
     />

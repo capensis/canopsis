@@ -8,16 +8,16 @@
     </v-flex>
     <v-flex xs4>
       <c-number-field
-        class="ma-1 pa-0"
         v-if="isNumberType"
         v-field="value"
         :name="name"
+        class="ma-1 pa-0"
       />
       <c-percents-field
-        class="ma-1 pa-0"
         v-else
         v-field="value"
         :name="name"
+        class="ma-1 pa-0"
       />
     </v-flex>
   </v-layout>

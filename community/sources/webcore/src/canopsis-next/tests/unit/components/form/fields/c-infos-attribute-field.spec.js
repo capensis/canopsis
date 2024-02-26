@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
@@ -31,14 +30,9 @@ describe('c-infos-attribute-field', () => {
 
     const newDictionary = 'newDictionary';
 
-    dictionarySelect.vm.$emit('input', newDictionary);
+    dictionarySelect.triggerCustomEvent('input', newDictionary);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       dictionary: newDictionary,
       field: value.field,
     });
@@ -59,14 +53,9 @@ describe('c-infos-attribute-field', () => {
 
     const newField = 'newField';
 
-    fieldSelect.vm.$emit('input', newField);
+    fieldSelect.triggerCustomEvent('input', newField);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       dictionary: value.dictionary,
       field: newField,
     });

@@ -14,8 +14,8 @@
           both-counters
         />
         <c-collapse-panel
-          class="mt-3"
           :title="$t('remediation.pattern.tabs.pbehaviorTypes.title')"
+          class="mt-3"
         >
           <remediation-patterns-pbehavior-types-form v-model="form" />
         </c-collapse-panel>
@@ -30,9 +30,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}

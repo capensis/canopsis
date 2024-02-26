@@ -1,12 +1,13 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { COLORS } from '@/config';
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+
+import { COLORS } from '@/config';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateTag from '@/components/modals/tag/create-tag.vue';
@@ -237,7 +238,7 @@ describe('create-tag', () => {
       color: Faker.internet.color(),
     };
 
-    selectTagForm(wrapper).vm.$emit('input', newForm);
+    selectTagForm(wrapper).triggerCustomEvent('input', newForm);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();

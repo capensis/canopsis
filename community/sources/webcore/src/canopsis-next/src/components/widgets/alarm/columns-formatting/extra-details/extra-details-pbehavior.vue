@@ -6,9 +6,9 @@
     >
       <template #activator="{ on }">
         <span
+          :style="{ backgroundColor: color }"
           class="c-extra-details__badge"
           v-on="on"
-          :style="{ backgroundColor: color }"
         >
           <v-icon
             :color="iconColor"

@@ -2,13 +2,13 @@
   <g class="flowchart-points-editor">
     <component
       is="foreignObject"
-      class="flowchart-points-editor__point"
       v-for="{ point, x, y } in nonShapesIcons"
       :key="point._id"
       :x="x"
       :y="y"
       :width="iconSize"
       :height="iconSize"
+      class="flowchart-points-editor__point"
       @click.stop=""
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
       @dblclick.stop="openEditPointByClick($event, point)"
@@ -21,13 +21,13 @@
     </component>
     <component
       is="foreignObject"
-      class="flowchart-points-editor__point"
       v-for="{ point, x, y } in shapesIcons"
       :key="point._id"
       :height="iconSize"
       :width="iconSize"
       :x="x"
       :y="y"
+      class="flowchart-points-editor__point"
       @mouseup.prevent.stop=""
       @mousedown.prevent.stop=""
       @click.stop=""
