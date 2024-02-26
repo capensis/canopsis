@@ -17,7 +17,7 @@ import {
   ALARM_EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
-  EVENT_ENTITY_TYPES,
+  EVENT_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_SOURCE_TYPES,
   PATTERN_OPERATORS,
@@ -142,20 +142,9 @@ export default {
     },
 
     eventTypes() {
-      return [
-        EVENT_ENTITY_TYPES.ack,
-        EVENT_ENTITY_TYPES.ackRemove,
-        EVENT_ENTITY_TYPES.assocTicket,
-        EVENT_ENTITY_TYPES.declareTicket,
-        EVENT_ENTITY_TYPES.cancel,
-        EVENT_ENTITY_TYPES.uncancel,
-        EVENT_ENTITY_TYPES.changeState,
-        EVENT_ENTITY_TYPES.check,
-        EVENT_ENTITY_TYPES.comment,
-        EVENT_ENTITY_TYPES.snooze,
-      ].map(value => ({
+      return Object.values(EVENT_TYPES).map(value => ({
         value,
-        text: this.$t(`common.entityEventTypes.${value}`),
+        text: this.$t(`common.eventTypes.${value}`),
       }));
     },
 

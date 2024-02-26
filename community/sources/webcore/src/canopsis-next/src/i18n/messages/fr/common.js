@@ -1,7 +1,7 @@
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  EVENT_ENTITY_TYPES,
+  EVENT_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   TRIGGERS_TYPES,
@@ -439,17 +439,17 @@ export default {
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
-  entityEventTypes: {
-    [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
-    [EVENT_ENTITY_TYPES.ackRemove]: 'Supprimer l\'acquittement',
-    [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
-    [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
-    [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
-    [EVENT_ENTITY_TYPES.uncancel]: 'Annuler l\'annulation',
-    [EVENT_ENTITY_TYPES.changeState]: 'Changer et vérrouiller la criticité',
-    [EVENT_ENTITY_TYPES.check]: 'Vérifier',
-    [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
-    [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
+  eventTypes: {
+    [EVENT_TYPES.ack]: 'Acquitter',
+    [EVENT_TYPES.ackRemove]: 'Supprimer l\'acquittement',
+    [EVENT_TYPES.assocTicket]: 'Associer un ticket',
+    [EVENT_TYPES.declareTicket]: 'Déclarer un incident',
+    [EVENT_TYPES.cancel]: 'Annuler',
+    [EVENT_TYPES.uncancel]: 'Annuler l\'annulation',
+    [EVENT_TYPES.changeState]: 'Changer et vérrouiller la criticité',
+    [EVENT_TYPES.check]: 'Vérifier',
+    [EVENT_TYPES.comment]: 'Commenter l\'alarme',
+    [EVENT_TYPES.snooze]: 'Mettre en veille',
   },
 
   triggers: {

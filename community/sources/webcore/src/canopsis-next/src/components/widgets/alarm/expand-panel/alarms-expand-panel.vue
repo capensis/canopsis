@@ -88,8 +88,9 @@
                 indeterminate
               />
               <v-card-text>
-                <alarms-time-line
-                  :steps="steps"
+                <alarm-timeline
+                  :steps="steps.data"
+                  :meta="steps.meta"
                   :is-html-enabled="isHtmlEnabled"
                   @update:page="updateStepsQueryPage"
                 />
@@ -246,7 +247,7 @@ import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehav
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
-import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
+import AlarmTimeline from '../timeline-2/alarm-timeline.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
 
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
@@ -258,7 +259,7 @@ export default {
     DeclaredTicketsList,
     PbehaviorsSimpleList,
     ServiceDependencies,
-    AlarmsTimeLine,
+    AlarmTimeline,
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
