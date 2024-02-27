@@ -1,19 +1,27 @@
 <template>
   <v-layout column>
-    <alarm-timeline-filters />
+    <c-enabled-field
+      :value="query.group"
+      :label="$t('alarm.timeline.groupItems')"
+      @input="updateGroup"
+    />
     <alarm-timeline-days :days="days" />
+    <c-pagination
+      :total="meta.total_count"
+      :limit="meta.per_page"
+      :page="meta.page"
+      @input="updatePage"
+    />
   </v-layout>
 </template>
 
 <script>
 import { groupAlarmSteps } from '@/helpers/entities/alarm/step/list';
 
-import AlarmTimelineFilters from './alarm-timeline-filters.vue';
 import AlarmTimelineDays from './alarm-timeline-days.vue';
 
 export default {
   components: {
-    AlarmTimelineFilters,
     AlarmTimelineDays,
   },
   props: {
@@ -25,10 +33,29 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    query: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
     days() {
       return groupAlarmSteps(this.steps);
+    },
+  },
+  methods: {
+    updateGroup(group) {
+      this.$emit('update:query', {
+        ...this.query,
+        group,
+      });
+    },
+
+    updatePage(page) {
+      this.$emit('update:query', {
+        ...this.query,
+        page,
+      });
     },
   },
 };

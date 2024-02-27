@@ -1,7 +1,9 @@
 <template>
-  <c-enabled-field />
+  <div>Expand</div>
 </template>
 
 <script>
-export default {};
+export default {
+
+};
 </script>

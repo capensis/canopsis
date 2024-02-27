@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <alarm-timeline-days-item-steps-item
+    <alarm-timeline-step
       v-for="step in steps"
       :key="step.key"
       :step="step"
@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import AlarmTimelineDaysItemStepsItem from './alarm-timeline-days-item-steps-item.vue';
+import AlarmTimelineStep from './alarm-timeline-step.vue';
 
 export default {
-  components: { AlarmTimelineDaysItemStepsItem },
+  components: { AlarmTimelineStep },
   props: {
     steps: {
       type: Array,

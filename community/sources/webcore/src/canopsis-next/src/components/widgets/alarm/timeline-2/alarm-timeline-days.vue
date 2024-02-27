@@ -7,16 +7,16 @@
       column
     >
       <span class="grey--text my-2">{{ date }}</span>
-      <alarm-timeline-days-item-steps :steps="steps" />
+      <alarm-timeline-steps :steps="steps" />
     </v-layout>
   </v-layout>
 </template>
 
 <script>
-import AlarmTimelineDaysItemSteps from './alarm-timeline-days-item-steps.vue';
+import AlarmTimelineSteps from './alarm-timeline-steps.vue';
 
 export default {
-  components: { AlarmTimelineDaysItemSteps },
+  components: { AlarmTimelineSteps },
   props: {
     days: {
       type: Object,
