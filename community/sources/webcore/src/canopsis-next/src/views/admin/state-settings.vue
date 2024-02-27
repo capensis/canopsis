@@ -1,19 +1,27 @@
 <template>
-  <state-settings-list
-    :options.sync="options"
-    :state-settings="stateSettings"
-    :total-items="stateSettingsMeta.total_count"
-    :pending="stateSettingsPending"
-    :addable="hasCreateAnyStateSettingAccess"
-    :updatable="hasUpdateAnyStateSettingAccess"
-    :removable="hasDeleteAnyStateSettingAccess"
-    @edit="showEditStateSettingModal"
-    @duplicate="showDuplicateStateSettingModal"
-    @remove="showRemoveStateSettingModal"
-  />
+  <c-page
+    :creatable="hasCreateAnyStateSettingAccess"
+    :create-tooltip="$t('modals.createStateSetting.create.title')"
+    @refresh="fetchList"
+    @create="showCreateStateSettingModal"
+  >
+    <state-settings-list
+      :options.sync="options"
+      :state-settings="stateSettings"
+      :total-items="stateSettingsMeta.total_count"
+      :pending="stateSettingsPending"
+      :addable="hasCreateAnyStateSettingAccess"
+      :updatable="hasUpdateAnyStateSettingAccess"
+      :removable="hasDeleteAnyStateSettingAccess"
+      @edit="showEditStateSettingModal"
+      @duplicate="showDuplicateStateSettingModal"
+      @remove="showRemoveStateSettingModal"
+    />
+  </c-page>
 </template>
 
 <script>
+
 import { JUNIT_STATE_SETTING_ID, MODALS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -33,6 +41,21 @@ export default {
     this.fetchList();
   },
   methods: {
+    showCreateStateSettingModal() {
+      this.$modals.show({
+        name: MODALS.createStateSetting,
+        config: {
+          title: this.$t('modals.createStateSetting.create.title'),
+          action: async (newStateSetting) => {
+            await this.createStateSetting({ data: newStateSetting });
+
+            this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
+            this.fabListeners?.refresh();
+          },
+        },
+      });
+    },
+
     showEditJunitStateSettingModal(stateSetting) {
       this.$modals.show({
         name: MODALS.createJunitStateSetting,

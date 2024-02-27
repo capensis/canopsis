@@ -97,6 +97,7 @@ export const SOCKET_ROOMS = {
   declareticket: 'declareticket',
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
+  icons: 'icons',
 };
 
 export const API_ROUTES = {
@@ -227,6 +228,7 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  icons: '/api/v4/icons',
   themes: {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',
