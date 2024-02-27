@@ -5,8 +5,8 @@
     </div>
     <v-flex class="timeline-step__main-content-wrapper">
       <v-layout class="timeline-step__main-content pb-2" column>
-        <v-layout>
-          <div class="timeline-step__icon mr-2">
+        <v-layout class="gap-2">
+          <div class="timeline-step__icon">
             <v-icon size="20">
               $vuetify.icons.webhook
             </v-icon>
@@ -14,9 +14,9 @@
           <c-expand-btn
             v-if="hasChildren"
             v-model="expanded"
-            class="timeline-step__expand-button mr-2"
+            class="timeline-step__expand-button"
           />
-          <div class="timeline-step__title text-subtitle-2 mr-2">
+          <div class="timeline-step__title text-subtitle-2">
             title
           </div>
           <div v-if="resultIcon" class="timeline-step__result-icon">
@@ -53,7 +53,8 @@ export default {
   computed: {
     wrapperClass() {
       return {
-        'timeline-step--pbehavior-start': this.step._t !== ALARM_LIST_TIMELINE_STEPS.pbhenter,
+        'timeline-step--pbehavior': this.step.in_pbh,
+        'timeline-step--pbehavior-start': this.step._t === ALARM_LIST_TIMELINE_STEPS.pbhenter,
         'timeline-step--pbehavior-end': this.step._t === ALARM_LIST_TIMELINE_STEPS.pbhleave,
       };
     },
@@ -100,7 +101,7 @@ $borderColor: #cecece;
 
 .timeline-step {
   &__main-content {
-    border-bottom: 2px solid $borderColor;
+    border-bottom: 1px solid $borderColor;
 
     &-wrapper {
       position: relative;
@@ -110,8 +111,8 @@ $borderColor: #cecece;
       .timeline-step--pbehavior-start &:before, .timeline-step--pbehavior &:before {
         content: '';
         position: absolute;
-        width: 2px;
-        left: -1px;
+        width: 1px;
+        left: 0;
         bottom: 0;
         background: $borderColor;
         height: 100%;

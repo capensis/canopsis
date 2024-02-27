@@ -91,8 +91,9 @@
                 <alarm-timeline
                   :steps="steps.data"
                   :meta="steps.meta"
+                  :query="stepsQuery"
                   :is-html-enabled="isHtmlEnabled"
-                  @update:page="updateStepsQueryPage"
+                  @update:query="updateStepsQuery"
                 />
               </v-card-text>
             </v-card>
