@@ -1009,4 +1009,13 @@ export default {
   archiveDisabledEntities: {
     text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
   },
+  createIcon: {
+    create: {
+      title: 'Upload icon',
+      success: 'Icon was uploaded',
+    },
+    remove: {
+      success: 'Icon was removed',
+    },
+  },
 };
