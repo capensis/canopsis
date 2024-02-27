@@ -3,7 +3,7 @@ import { createCheckboxInputStub } from '@unit/stubs/input';
 
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 
-import CAvailabilityShowTypeField from '@/components/forms/fields/availability/c-availability-show-type-field.vue';
+import CAvailabilityShowTypeRadioField from '@/components/forms/fields/availability/c-availability-show-type-radio-field.vue';
 
 const stubs = {
   'v-radio-group': createCheckboxInputStub('v-radio-group'),
@@ -11,9 +11,9 @@ const stubs = {
 
 const selectRadioGroup = wrapper => wrapper.find('.v-radio-group');
 
-describe('c-availability-show-type-field', () => {
-  const factory = generateShallowRenderer(CAvailabilityShowTypeField, { stubs });
-  const snapshotFactory = generateRenderer(CAvailabilityShowTypeField);
+describe('c-availability-show-type-radio-field', () => {
+  const factory = generateShallowRenderer(CAvailabilityShowTypeRadioField, { stubs });
+  const snapshotFactory = generateRenderer(CAvailabilityShowTypeRadioField);
 
   test('Show type changed after trigger radio field', () => {
     const wrapper = factory({
@@ -27,13 +27,13 @@ describe('c-availability-show-type-field', () => {
     expect(wrapper).toEmitInput(AVAILABILITY_SHOW_TYPE.duration);
   });
 
-  test('Renders `c-availability-show-type-field` with required props', () => {
+  test('Renders `c-availability-show-type-radio-field` with required props', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `c-availability-show-type-field` with custom props', () => {
+  test('Renders `c-availability-show-type-radio-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: AVAILABILITY_SHOW_TYPE.duration,

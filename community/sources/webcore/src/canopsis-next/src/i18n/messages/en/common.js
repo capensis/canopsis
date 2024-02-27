@@ -194,6 +194,8 @@ export default {
   uptime: 'Uptime',
   maintenance: 'Maintenance',
   downtime: 'Downtime',
+  totalActiveTime: 'Total active time',
+  inactiveTime: 'Inactive time',
   toTheTop: 'To the top',
   time: 'Time',
   lastModifiedOn: 'Last modified on',
