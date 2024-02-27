@@ -193,6 +193,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {
       reversed: true,
+      group: true,
       page: 1,
       limit: PAGINATION_LIMIT,
     },
