@@ -2723,6 +2723,17 @@ definitions:
           $ref: '#/definitions/healthcheck.Service'
         type: array
     type: object
+  icon.Response:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
   idlerule.BulkDeleteRequestItem:
     properties:
       _id:
