@@ -9,7 +9,7 @@
           :ranges="intervalRanges"
           :label="$t('settings.defaultTimeRange')"
         />
-        <c-availability-show-type-field
+        <c-availability-show-type-radio-field
           v-field="form.default_show_type"
           :label="$t('settings.availability.defaultAvailabilityDisplay')"
           :name="defaultShowTypeFieldName"

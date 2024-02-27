@@ -1,11 +1,19 @@
 <template>
-  <v-select
+  <v-radio-group
     v-field="value"
-    :items="types"
     :name="name"
     :label="label"
     hide-details
-  />
+    mandatory
+  >
+    <v-radio
+      v-for="type in types"
+      :key="type.value"
+      :label="type.label"
+      :value="type.value"
+      color="primary"
+    />
+  </v-radio-group>
 </template>
 
 <script>
@@ -30,10 +38,10 @@ export default {
     types() {
       return [{
         value: AVAILABILITY_SHOW_TYPE.percent,
-        text: this.$tc('common.percent'),
+        label: this.$tc('common.percent'),
       }, {
         value: AVAILABILITY_SHOW_TYPE.duration,
-        text: this.$t('common.duration'),
+        label: this.$t('common.duration'),
       }];
     },
   },
