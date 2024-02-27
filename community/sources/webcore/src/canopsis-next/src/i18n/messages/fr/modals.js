@@ -1009,4 +1009,13 @@ export default {
   archiveDisabledEntities: {
     text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
   },
+  createIcon: {
+    create: {
+      title: 'Icône de téléchargement',
+      success: 'L\'icône a été téléchargée',
+    },
+    remove: {
+      success: 'L\'icône a été supprimée',
+    },
+  },
 };
