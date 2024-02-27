@@ -1,6 +1,6 @@
 <template>
   <td>
-    <v-simple-checkbox
+    <v-checkbox
       v-bind="checkbox.bind"
       :disabled="disabled || disabledForRole"
       class="ma-0 pa-0"

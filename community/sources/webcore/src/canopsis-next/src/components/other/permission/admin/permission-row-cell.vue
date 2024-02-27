@@ -1,6 +1,6 @@
 <template>
   <td>
-    <v-simple-checkbox
+    <v-checkbox
       v-for="(checkbox, index) in checkboxes"
       v-bind="checkbox.bind"
       :key="index"
