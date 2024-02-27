@@ -9,6 +9,7 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -148,4 +149,9 @@ func DirHasReadableFiles(ctx context.Context, paths []string) bool {
 		}
 	}
 	return result
+}
+
+func Sanitize(filename string) string {
+	re := regexp.MustCompile(`[/\\?%*:|"<>]`)
+	return re.ReplaceAllString(filename, "-")
 }
