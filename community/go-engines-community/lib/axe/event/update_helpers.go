@@ -294,11 +294,10 @@ func processResolve(
 	dbClient mongo.DbClient,
 	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
 ) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
-	result := Result{}
 	update := getResolveAlarmUpdate(datetime.NewCpsTime())
+	result := Result{}
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
-
 	var componentStateChanged bool
 	var newComponentState int
 
@@ -306,6 +305,8 @@ func processResolve(
 		result = Result{}
 		updatedServiceStates = nil
 		notAckedMetricType = ""
+		componentStateChanged = false
+		newComponentState = 0
 
 		beforeAlarm := types.Alarm{}
 		opts := options.FindOneAndUpdate().
