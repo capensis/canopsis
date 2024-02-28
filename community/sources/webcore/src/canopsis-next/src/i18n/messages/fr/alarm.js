@@ -54,13 +54,13 @@ export default {
       comment: 'Commenter l\'alarme',
     },
     iconsTitles: {
-      ack: 'Acquitter',
+      ack: 'Acquittée',
       declareTicket: 'Déclarer un incident',
-      canceled: 'Annulé',
-      snooze: 'Mettre en veille',
+      canceled: 'Annulée',
+      snooze: 'Mise en veille',
       pbehaviors: 'Définir un comportement périodique',
       grouping: 'Meta-alarmes',
-      comment: 'Commentaire',
+      comment: 'Commentée',
     },
     iconsFields: {
       ticketNumber: 'Numéro de ticket',
