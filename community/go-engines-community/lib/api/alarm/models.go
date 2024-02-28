@@ -199,14 +199,6 @@ type DetailsResponse struct {
 	Error  string            `json:"error,omitempty"`
 }
 
-type EntityDetails struct {
-	types.Entity `bson:",inline" json:",inline"`
-	// DependsCount contains only service's dependencies
-	DependsCount int `bson:"depends_count" json:"depends_count"`
-	// ImpactsCount contains only services
-	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
-}
-
 type Details struct {
 	// Only for websocket
 	ID string `bson:"-" json:"_id,omitempty"`
@@ -218,8 +210,8 @@ type Details struct {
 
 	IsMetaAlarm bool  `json:"-" bson:"is_meta_alarm"`
 	StepsCount  int64 `json:"-" bson:"steps_count"`
-	// Entity isn't the same as Entity of Alarm, but have counts in response as well
-	Entity EntityDetails `json:"entity" bson:"entity"`
+
+	Entity entity.Entity `json:"entity" bson:"entity"`
 }
 
 type StepDetails struct {
@@ -307,6 +299,7 @@ type AlarmValue struct {
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`

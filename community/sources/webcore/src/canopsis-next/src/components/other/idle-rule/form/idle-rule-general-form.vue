@@ -2,9 +2,9 @@
   <v-layout column>
     <template v-if="!isEntityType">
       <idle-rule-alarm-type-field
-        class="mb-2"
         v-field="form.alarm_condition"
         :label="$t('common.type')"
+        class="mb-2"
       />
     </template>
     <c-name-field

@@ -1,9 +1,9 @@
 <template>
   <card-with-see-alarms-btn
-    class="cursor-pointer service-weather-item"
     :class="itemClasses"
     :show-button="showAlarmsButton"
     :style="itemStyle"
+    class="cursor-pointer service-weather-item"
     @click.native="handleCardClick"
     @show:alarms="$emit('show:alarms')"
   >
@@ -17,9 +17,9 @@
           justify-start
         >
           <c-compiled-template
-            class="service-weather-item__template pa-3"
             :template="template"
             :context="templateContext"
+            class="service-weather-item__template pa-3"
           />
         </v-layout>
         <v-layout
@@ -32,13 +32,13 @@
             top
           />
           <impact-state-indicator
-            class="mr-1"
             v-if="priorityEnabled"
             :value="service.impact_state"
+            class="mr-1"
           />
           <v-btn
-            class="ma-0"
             v-if="showVariablesHelpButton"
+            class="ma-0"
             icon
             small
             @click.stop="showVariablesHelpModal(service)"
@@ -52,16 +52,16 @@
           </v-btn>
         </v-layout>
         <v-icon
+          :color="color"
           class="service-weather-item__background"
           size="5em"
-          :color="color"
         >
           {{ backgroundIcon }}
         </v-icon>
         <v-icon
-          class="service-weather-item__secondary-icon mb-1 mr-1"
           v-if="service.secondary_icon"
           :color="color"
+          class="service-weather-item__secondary-icon mb-1 mr-1"
         >
           {{ service.secondary_icon }}
         </v-icon>

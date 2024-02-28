@@ -1,15 +1,15 @@
 <template>
   <v-stepper
-    class="dynamic-info-form"
     v-model="stepper"
+    class="dynamic-info-form"
     non-linear
   >
     <v-stepper-header>
       <v-stepper-step
-        class="py-0"
         :complete="stepper > steps.GENERAL"
         :step="steps.GENERAL"
         :rules="[() => !hasGeneralFormAnyError]"
+        class="py-0"
         editable
       >
         {{ $t('common.general') }}
@@ -17,10 +17,10 @@
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
-        class="py-0"
         :complete="stepper > steps.INFOS"
         :step="steps.INFOS"
         :rules="[() => !hasInfosFormAnyError]"
+        class="py-0"
         editable
       >
         {{ $t('modals.createDynamicInfo.steps.infos.title') }}
@@ -28,10 +28,10 @@
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
-        class="py-0"
         :complete="stepper > steps.PATTERNS"
         :step="steps.PATTERNS"
         :rules="[() => !hasPatternsFormAnyError]"
+        class="py-0"
         editable
       >
         {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
@@ -40,34 +40,34 @@
     </v-stepper-header>
     <v-stepper-items>
       <v-stepper-content
-        class="pa-0"
         :step="steps.GENERAL"
+        class="pa-0"
       >
         <dynamic-info-general-form
-          class="pa-4"
           v-field="form"
-          :is-disabled-id-field="isDisabledIdField"
           ref="generalForm"
+          :is-disabled-id-field="isDisabledIdField"
+          class="pa-4"
         />
       </v-stepper-content>
       <v-stepper-content
-        class="pa-0"
         :step="steps.INFOS"
+        class="pa-0"
       >
         <dynamic-info-infos-form
-          class="pa-4"
           v-field="form.infos"
           ref="infosForm"
+          class="pa-4"
         />
       </v-stepper-content>
       <v-stepper-content
-        class="pa-0"
         :step="steps.PATTERNS"
+        class="pa-0"
       >
         <dynamic-info-patterns-form
-          class="pa-4"
           v-field="form.patterns"
           ref="patternsForm"
+          class="pa-4"
         />
       </v-stepper-content>
     </v-stepper-items>

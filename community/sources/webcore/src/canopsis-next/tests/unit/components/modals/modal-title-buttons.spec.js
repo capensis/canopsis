@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
@@ -54,7 +53,7 @@ describe('modal-title-buttons', () => {
 
     const closeButton = selectButton(wrapper);
 
-    closeButton.vm.$emit('click');
+    closeButton.triggerCustomEvent('click');
 
     expect($modals.hide).toBeCalledWith({ id: modal.id });
   });
@@ -81,7 +80,7 @@ describe('modal-title-buttons', () => {
 
     const closeButton = selectButton(wrapper);
 
-    closeButton.vm.$emit('click');
+    closeButton.triggerCustomEvent('click');
 
     expect(close).toBeCalled();
   });
@@ -107,7 +106,7 @@ describe('modal-title-buttons', () => {
 
     await flushPromises();
 
-    selectButton(wrapper).vm.$emit('click');
+    selectButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.minimize).toBeCalledWith({ id: modal.id });
   });
@@ -134,7 +133,7 @@ describe('modal-title-buttons', () => {
 
     const maximizeButton = selectButton(wrapper);
 
-    maximizeButton.vm.$emit('click');
+    maximizeButton.triggerCustomEvent('click');
 
     expect($modals.maximize).toBeCalledWith({ id: modal.id });
   });

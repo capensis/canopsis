@@ -20,9 +20,9 @@
             dark
           >
             <v-expansion-panel
-              class="secondary"
               v-for="group in groups"
               :key="group._id"
+              class="secondary"
             >
               <v-expansion-panel-header>
                 {{ group.title }}
@@ -30,9 +30,9 @@
               <v-expansion-panel-content ripple>
                 <v-list class="py-0 px-2 secondary">
                   <v-list-item
-                    class="secondary lighten-1"
                     v-for="view in group.views"
                     :key="view._id"
+                    class="secondary lighten-1"
                     ripple
                     @click="selectView(view._id)"
                   >

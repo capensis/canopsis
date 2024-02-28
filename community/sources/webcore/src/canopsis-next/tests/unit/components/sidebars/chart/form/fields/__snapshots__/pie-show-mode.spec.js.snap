@@ -15,7 +15,6 @@ exports[`pie-show-mode Renders \`pie-show-mode\` with custom props 1`] = `
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-22"
           class="v-input--radio-group__input"
           role="radiogroup"
         >
@@ -116,7 +115,6 @@ exports[`pie-show-mode Renders \`pie-show-mode\` with required props 1`] = `
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-11"
           class="v-input--radio-group__input"
           role="radiogroup"
         >

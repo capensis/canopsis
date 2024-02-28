@@ -1,8 +1,8 @@
 <template>
   <div
-    class="c-engine-chip white--text font-weight-bold"
     :style="{ background: color }"
     :class="{ 'cursor-pointer': !!$listeners.click }"
+    class="c-engine-chip white--text font-weight-bold"
     v-on="$listeners"
   >
     <slot />

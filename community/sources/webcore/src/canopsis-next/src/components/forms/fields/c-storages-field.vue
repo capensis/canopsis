@@ -31,9 +31,9 @@
     <v-flex xs12>
       <v-layout>
         <v-btn
+          :disabled="disabled"
           class="ml-0"
           color="primary"
-          :disabled="disabled"
           @click="$emit('add')"
         >
           {{ $t('common.add') }}

@@ -5,12 +5,13 @@
       handle=".action-drag-handler"
     >
       <event-filter-enrichment-action-form
-        class="mb-3"
-        v-for="(action, index) in actions"
         v-field="actions[index]"
-        :name="`${name}.${action.key}`"
+        v-for="(action, index) in actions"
         :key="action.key"
+        :name="`${name}.${action.key}`"
         :variables="variables"
+        :set-tags-items="setTagsItems"
+        class="mb-3"
         @remove="removeItemFromArray(index)"
       />
       <v-flex>
@@ -54,6 +55,10 @@ export default {
     name: {
       type: String,
       default: 'actions',
+    },
+    setTagsItems: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

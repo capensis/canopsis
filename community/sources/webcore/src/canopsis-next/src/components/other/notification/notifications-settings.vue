@@ -21,9 +21,9 @@
           justify-end
         >
           <v-btn
-            class="primary mr-0"
             :disabled="isDisabled"
             :loading="submitting"
+            class="primary mr-0"
             type="submit"
           >
             {{ $t('common.submit') }}

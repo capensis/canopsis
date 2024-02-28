@@ -6,8 +6,8 @@
   >
     <v-layout align-center>
       <label
-        class="theme-color-picker-field__label mr-2"
         :class="{ 'theme-color-picker-field__label--disabled': disabled }"
+        class="theme-color-picker-field__label mr-2"
       >
         {{ label }}
       </label>

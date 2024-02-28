@@ -1,9 +1,7 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
 
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
@@ -82,14 +80,9 @@ describe('c-pattern-field', () => {
     const wrapper = factory({ store });
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', PATTERN_CUSTOM_ITEM_VALUE);
+    selectField.triggerCustomEvent('input', PATTERN_CUSTOM_ITEM_VALUE);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(PATTERN_CUSTOM_ITEM_VALUE);
+    expect(wrapper).toEmitInput(PATTERN_CUSTOM_ITEM_VALUE);
   });
 
   test('Renders `c-pattern-field` with default props', () => {

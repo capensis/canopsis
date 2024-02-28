@@ -1,7 +1,7 @@
 <template>
   <span
-    class="text-caption text--secondary"
     :class="{ 'error--text': error }"
+    class="text-caption text--secondary"
   >{{ message }}</span>
 </template>
 

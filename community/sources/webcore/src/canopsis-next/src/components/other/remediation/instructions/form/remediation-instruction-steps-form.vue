@@ -7,11 +7,11 @@
       {{ $t('remediation.instruction.emptySteps') }}
     </c-alert>
     <c-card-iterator-field
-      class="mb-2"
       v-field="steps"
-      item-key="key"
       :disabled="disabled"
       :draggable-group="draggableGroup"
+      class="mb-2"
+      item-key="key"
     >
       <template #item="{ index }">
         <remediation-instruction-step-field
@@ -24,17 +24,17 @@
     </c-card-iterator-field>
     <v-layout align-center>
       <v-btn
-        class="mr-2"
         :color="hasStepsErrors ? 'error' : 'primary'"
         :disabled="disabled"
+        class="mr-2"
         outlined
         @click="addStep"
       >
         {{ $t('remediation.instruction.addStep') }}
       </v-btn>
       <span
-        class="error--text"
         v-show="hasStepsErrors"
+        class="error--text"
       >
         {{ $t('remediation.instruction.errors.stepRequired') }}
       </span>

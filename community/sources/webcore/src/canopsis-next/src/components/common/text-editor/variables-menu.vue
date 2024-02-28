@@ -1,12 +1,12 @@
 <template>
   <v-menu
+    ref="menu"
     :value="visible"
     :position-x="positionX"
     :position-y="positionY"
     :close-on-content-click="false"
     :ignore-click-outside="ignoreClickOutside"
     max-height="300"
-    ref="menu"
     @input="$emit('close')"
   >
     <variables-list

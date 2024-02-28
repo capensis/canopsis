@@ -59,9 +59,9 @@ describe('pattern-editor-field', () => {
 
     const patternField = selectPatternField(wrapper);
 
-    patternField.vm.$emit('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
+    patternField.triggerCustomEvent('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       id: PATTERN_CUSTOM_ITEM_VALUE,
       groups: [],
     });
@@ -96,9 +96,9 @@ describe('pattern-editor-field', () => {
       ],
     };
 
-    patternField.vm.$emit('input', pattern);
+    patternField.triggerCustomEvent('input', pattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       id,
       groups: [{
         key: expect.any(String),
@@ -163,9 +163,9 @@ describe('pattern-editor-field', () => {
 
     const editButton = selectEditButton(wrapper);
 
-    await editButton.vm.$emit('click');
+    await editButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       id: PATTERN_CUSTOM_ITEM_VALUE,
     });
@@ -195,11 +195,11 @@ describe('pattern-editor-field', () => {
       },
     };
 
-    advancedEditor.vm.$emit('input', [[
+    advancedEditor.triggerCustomEvent('input', [[
       patternRule,
     ]]);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       groups: [{
         key: expect.any(String),

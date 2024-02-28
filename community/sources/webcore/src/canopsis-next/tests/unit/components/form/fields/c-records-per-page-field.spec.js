@@ -74,15 +74,10 @@ describe('c-items-per-page-field', () => {
   it('Set value into select element', () => {
     const value = PAGINATION_PER_PAGE_VALUES[0];
     const wrapper = factory();
-    const select = wrapper.find('select.v-select');
 
-    select.setValue(value);
+    wrapper.find('select.v-select').setValue(value);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toBeTruthy();
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0].map(e => parseInt(e, 10))).toEqual([value]);
+    expect(wrapper).toEmitInput(String(value));
   });
 
   it('Renders `c-items-per-page-field` with default props', async () => {

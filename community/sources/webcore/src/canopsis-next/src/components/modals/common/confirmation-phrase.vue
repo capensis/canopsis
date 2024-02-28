@@ -10,8 +10,8 @@
           icon="info"
         >
           <span
-            class="pre-line"
             v-html="config.text"
+            class="pre-line"
           />
         </v-alert>
         <div class="my-3">
@@ -21,22 +21,22 @@
           <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>
         </div>
         <v-text-field
-          class="mt-2"
           v-model="phrase"
           :label="$t('modals.confirmationPhrase.phrase')"
+          class="mt-2"
         />
       </template>
       <template #actions="">
         <v-btn
-          @click="$modals.hide"
           text
+          @click="$modals.hide"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :loading="submitting"
           :disabled="isDisabled || !phrasesEqual"
+          class="primary"
           type="submit"
         >
           {{ $t('common.yes') }}

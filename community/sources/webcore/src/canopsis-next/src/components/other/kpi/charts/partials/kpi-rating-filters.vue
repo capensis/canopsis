@@ -5,31 +5,31 @@
       wrap
     >
       <c-quick-date-interval-field
-        class="mr-4"
         v-field="query.interval"
         :min="minDate"
         :quick-ranges="quickRanges"
+        class="mr-4"
       />
       <c-filter-field
-        class="mr-4 kpi-rating-toolbar__filters"
         v-field="query.filter"
         :disabled="isUserMetric"
+        class="mr-4 kpi-rating-toolbar__filters"
       />
       <kpi-rating-criteria-field
-        class="mr-4 kpi-rating-toolbar__criteria"
         :value="query.criteria"
+        class="mr-4 kpi-rating-toolbar__criteria"
         mandatory
         @input="updateCriteria"
       />
       <kpi-rating-metric-field
-        class="mr-4 kpi-rating-toolbar__metric"
         v-field="query.metric"
         :type="criteriaType"
+        class="mr-4 kpi-rating-toolbar__metric"
         hide-details
       />
       <c-items-per-page-field
-        class="mt-4"
         v-field="query.itemsPerPage"
+        class="mt-4"
       />
     </v-layout>
   </div>

@@ -1,8 +1,8 @@
 <template>
   <v-chip
-    class="c-alarm-action-chip"
     :class="chipClass"
     :color="color"
+    class="c-alarm-action-chip"
     small
     @click="$emit('click')"
   >
@@ -10,8 +10,8 @@
       <slot />
     </span>
     <v-icon
-      class="cursor-pointer ml-2"
       v-if="closable"
+      class="cursor-pointer ml-2"
       color="white"
       @click.stop="$emit('close')"
     >

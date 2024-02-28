@@ -7,18 +7,18 @@
     offset-lg2
   >
     <c-information-block
-      class="mb-5"
       :title="$t('healthcheck.messagesLastHour')"
+      class="mb-5"
     >
       <healthcheck-last-hour-graph
-        class="mt-4"
         :max-messages-per-minute="maxMessagesPerMinute"
+        class="mt-4"
       />
     </c-information-block>
     <c-information-block :title="$t('healthcheck.messagesHistory')">
       <healthcheck-history-graph
-        class="mt-4"
         :max-messages-per-minute="maxMessagesPerMinute"
+        class="mt-4"
       />
     </c-information-block>
   </v-flex>

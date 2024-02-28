@@ -22,9 +22,9 @@ describe('flowchart-number-field', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectField.vm.$emit('input', newValue);
+    selectField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `flowchart-number-field` with default props', async () => {

@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import AlarmsListRowInstructionsIcon from '@/components/widgets/alarm/partials/alarms-list-row-instructions-icon.vue';

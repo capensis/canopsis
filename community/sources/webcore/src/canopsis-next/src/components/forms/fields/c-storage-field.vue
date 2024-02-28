@@ -2,9 +2,9 @@
   <v-layout>
     <template v-if="value">
       <v-text-field
-        class="mt-0 pt-0"
         :value="value"
         :disabled="disabled"
+        class="mt-0 pt-0"
         readonly
         hide-details
       />
@@ -21,10 +21,10 @@
       />
     </template>
     <v-btn
-      class="ml-0"
       v-else
       :disabled="disabled"
       :color="errors.has(name) ? 'error' : 'primary'"
+      class="ml-0"
       @click="$emit('add')"
     >
       {{ $t('common.add') }}

@@ -1,7 +1,7 @@
 <template>
   <v-menu
-    class="group-item groups-top-bar-playlist"
     v-if="availablePlaylists.length"
+    class="group-item groups-top-bar-playlist"
     content-class="group-v-menu-content secondary"
     close-delay="0"
     open-on-hover
@@ -12,8 +12,8 @@
     <template #activator="{ on }">
       <v-btn
         class="groups-top-bar-playlist__dropdown-btn"
-        v-on="on"
         color="secondary lighten-1"
+        v-on="on"
       >
         <span>{{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}</span>
         <v-icon

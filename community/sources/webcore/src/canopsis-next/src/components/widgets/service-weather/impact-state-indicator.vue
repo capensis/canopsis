@@ -3,15 +3,15 @@
     <span class="impact-state-text white--text">{{ value }}</span>
     <div class="pointer-wrapper">
       <div
-        class="pointer"
         :style="pointerStyle"
+        class="pointer"
       />
       <div class="section-wrapper">
         <div
-          class="section"
           v-for="color in $config.COLORS.impactState"
           :key="color"
           :style="{ backgroundColor: color }"
+          class="section"
         />
       </div>
     </div>

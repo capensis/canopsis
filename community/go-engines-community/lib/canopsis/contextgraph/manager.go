@@ -4,500 +4,422 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const (
-	added   = 0
-	removed = 1
-)
+type Report struct {
+	// The check flags show if an entity should be included in a second transaction search
+	// to check services and state settings.
+	CheckResource  bool
+	CheckComponent bool
+	CheckConnector bool
+
+	// IsNew is used only for event metric
+	IsNew bool
+}
 
 func NewManager(
 	adapter libentity.Adapter,
 	dbClient libmongo.DbClient,
 	storage EntityServiceStorage,
-	metricMetaUpdater metrics.MetaUpdater,
+	stateSettingService statesetting.Assigner,
 	logger zerolog.Logger,
 ) Manager {
 	return &manager{
-		adapter:           adapter,
-		collection:        dbClient.Collection(libmongo.EntityMongoCollection),
-		storage:           storage,
-		metricMetaUpdater: metricMetaUpdater,
-		logger:            logger,
+		adapter:             adapter,
+		entityCollection:    dbClient.Collection(libmongo.EntityMongoCollection),
+		storage:             storage,
+		stateSettingService: stateSettingService,
+		logger:              logger,
 	}
 }
 
 type manager struct {
-	adapter           libentity.Adapter
-	storage           EntityServiceStorage
-	collection        libmongo.DbCollection
-	metricMetaUpdater metrics.MetaUpdater
-	logger            zerolog.Logger
+	adapter             libentity.Adapter
+	storage             EntityServiceStorage
+	entityCollection    libmongo.DbCollection
+	services            []entityservice.EntityService
+	stateSettingService statesetting.Assigner
+	logger              zerolog.Logger
 }
 
-func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity, updateServicesData bool) (types.Entity, error) {
-	writeModels := make([]mongo.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(entities)))))
+func (m *manager) InheritComponentFields(resource, component *types.Entity, commRegister libmongo.CommandsRegister) error {
+	update := make(bson.M)
+	var err error
 
-	var eventEntity types.Entity
+	if len(component.Infos) > 0 {
+		update["component_infos"] = component.Infos
+	}
 
-	bulkBytesSize := 0
-	var newModel mongo.WriteModel
-	for _, ent := range entities {
-		set := bson.M{}
+	if component.StateInfo != nil {
+		matched := true
 
-		if ent.ID == eventEntityID {
-			eventEntity = ent
-		}
-
-		if ent.IsNew {
-			newModel = mongo.NewInsertOneModel().SetDocument(ent)
-		} else {
-			if ent.Infos != nil {
-				set["infos"] = ent.Infos
-			}
-
-			if ent.ComponentInfos != nil {
-				set["component_infos"] = ent.ComponentInfos
-			}
-
-			set["connector"] = ent.Connector
-
-			if updateServicesData {
-				if ent.Services != nil {
-					set["services"] = ent.Services
-				}
-
-				if ent.ServicesToAdd != nil {
-					set["services_to_add"] = ent.ServicesToAdd
-				}
-
-				if ent.ServicesToRemove != nil {
-					set["services_to_remove"] = ent.ServicesToRemove
-				}
-			}
-
-			newModel = mongo.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": ent.ID}).
-				SetUpdate(bson.M{"$set": set})
-		}
-
-		b, err := bson.Marshal(newModel)
-		if err != nil {
-			return types.Entity{}, err
-		}
-
-		newModelLen := len(b)
-		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
-			_, err := m.collection.BulkWrite(ctx, writeModels)
+		if component.StateInfo.InheritedPattern != nil {
+			matched, err = match.MatchEntityPattern(*component.StateInfo.InheritedPattern, resource)
 			if err != nil {
-				return types.Entity{}, err
+				return err
 			}
-
-			writeModels = writeModels[:0]
-			bulkBytesSize = 0
 		}
 
-		bulkBytesSize += newModelLen
-		writeModels = append(writeModels, newModel)
+		if matched && !resource.ComponentStateSettings {
+			resource.ComponentStateSettings = true
+			if !resource.ComponentStateSettingsToRemove {
+				resource.ComponentStateSettingsToAdd = true
+			} else {
+				resource.ComponentStateSettingsToRemove = false
+			}
 
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err := m.collection.BulkWrite(ctx, writeModels)
+			update["component_state_settings"] = resource.ComponentStateSettings
+			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
+			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
+		} else if !matched && resource.ComponentStateSettings {
+			resource.ComponentStateSettings = false
+			if !resource.ComponentStateSettingsToAdd {
+				resource.ComponentStateSettingsToRemove = true
+			} else {
+				resource.ComponentStateSettingsToAdd = false
+			}
+
+			update["component_state_settings"] = resource.ComponentStateSettings
+			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
+			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
+		}
+	}
+
+	if len(update) > 0 {
+		commRegister.RegisterUpdate(resource.ID, update)
+	}
+
+	return nil
+}
+
+func (m *manager) LoadServices(ctx context.Context) error {
+	var err error
+
+	m.services, err = m.storage.GetAll(ctx)
+
+	return err
+}
+
+func (m *manager) AssignServices(entity *types.Entity, commRegister libmongo.CommandsRegister) {
+	servicesMap := make(map[string]struct{}, len(entity.Services))
+	toAddMap := make(map[string]bool)
+	toRemoveMap := make(map[string]bool)
+	for _, id := range entity.Services {
+		servicesMap[id] = struct{}{}
+	}
+
+	for _, serv := range m.services {
+		serviceID := serv.ID
+		_, found := servicesMap[serviceID]
+		matched := false
+		if len(serv.EntityPattern) > 0 {
+			var err error
+			matched, err = match.MatchEntityPattern(serv.EntityPattern, entity)
 			if err != nil {
-				return types.Entity{}, err
+				m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
+			}
+		}
+
+		if matched {
+			if !found && entity.Enabled {
+				toAddMap[serviceID] = true
 			}
 
-			writeModels = writeModels[:0]
-			bulkBytesSize = 0
+			if found && !entity.Enabled {
+				toRemoveMap[serviceID] = true
+			}
+		} else if found {
+			toRemoveMap[serviceID] = true
 		}
 	}
 
-	if len(writeModels) != 0 {
-		_, err := m.collection.BulkWrite(ctx, writeModels)
-		if err != nil {
-			return types.Entity{}, err
+	if len(toAddMap) == 0 && len(toRemoveMap) == 0 {
+		return
+	}
+
+	servicesToAddMap := make(map[string]bool, len(entity.ServicesToAdd))
+	for _, id := range entity.ServicesToAdd {
+		servicesToAddMap[id] = true
+	}
+
+	servicesToRemoveMap := make(map[string]bool, len(entity.ServicesToRemove))
+	for _, id := range entity.ServicesToRemove {
+		servicesToRemoveMap[id] = true
+	}
+
+	newServices := make([]string, 0, len(toAddMap)+len(entity.Services)-len(toRemoveMap))
+	newServicesToAdd := make([]string, 0, max(len(entity.ServicesToAdd), len(toAddMap)))
+	newServicesToRemove := make([]string, 0, max(len(entity.ServicesToRemove), len(toRemoveMap)))
+
+	for id := range toAddMap {
+		newServices = append(newServices, id)
+		if !servicesToRemoveMap[id] {
+			newServicesToAdd = append(newServicesToAdd, id)
 		}
 	}
 
-	return eventEntity, nil
+	for id := range toRemoveMap {
+		if !servicesToAddMap[id] {
+			newServicesToRemove = append(newServicesToRemove, id)
+		}
+	}
+
+	for idx := 0; idx < len(entity.ServicesToAdd); idx++ {
+		if !toRemoveMap[entity.ServicesToAdd[idx]] {
+			newServicesToAdd = append(newServicesToAdd, entity.ServicesToAdd[idx])
+		}
+	}
+
+	for idx := 0; idx < len(entity.ServicesToRemove); idx++ {
+		if !toAddMap[entity.ServicesToRemove[idx]] {
+			newServicesToRemove = append(newServicesToRemove, entity.ServicesToRemove[idx])
+		}
+	}
+
+	for idx := 0; idx < len(entity.Services); idx++ {
+		if !toRemoveMap[entity.Services[idx]] {
+			newServices = append(newServices, entity.Services[idx])
+		}
+	}
+
+	commRegister.RegisterUpdate(
+		entity.ID,
+		bson.M{
+			"services_to_add":    newServicesToAdd,
+			"services_to_remove": newServicesToRemove,
+			"services":           newServices,
+		},
+	)
+
+	entity.ServicesToAdd = newServicesToAdd
+	entity.ServicesToRemove = newServicesToRemove
+	entity.Services = newServices
 }
 
-func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([]types.Entity, error) {
-	if len(entities) == 0 {
-		return nil, nil
-	}
-
-	services, err := m.storage.GetAll(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	entitiesData := make(map[string][2][]string) // array's indexes: 0 - added to impact, 1 - removed from impact
-
-	for i := range entities {
-		ent := entities[i]
-		entityID := ent.ID
-		servicesMap := make(map[string]struct{}, len(ent.Services))
-		for _, id := range ent.Services {
-			servicesMap[id] = struct{}{}
-		}
-
-		for _, serv := range services {
-			serviceID := serv.ID
-			_, found := servicesMap[serviceID]
-			matched := false
-			if len(serv.EntityPattern) > 0 {
-				var err error
-				matched, err = match.MatchEntityPattern(serv.EntityPattern, &ent)
-				if err != nil {
-					m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
-				}
-			}
-
-			if matched {
-				if !found && ent.Enabled {
-					entData := entitiesData[entityID]
-					entData[added] = append(entData[added], serviceID)
-					entitiesData[entityID] = entData
-				}
-
-				if found && !ent.Enabled {
-					entData := entitiesData[entityID]
-					entData[removed] = append(entData[removed], serviceID)
-					entitiesData[entityID] = entData
-				}
-			} else if found {
-				entData := entitiesData[entityID]
-				entData[removed] = append(entData[removed], serviceID)
-				entitiesData[entityID] = entData
-			}
-		}
-	}
-
-	updatedEntities := make([]types.Entity, 0, len(entities))
-	for _, ent := range entities {
-		data, ok := entitiesData[ent.ID]
-		if !ok {
-			updatedEntities = append(updatedEntities, ent)
-			continue
-		}
-
-		addedTo := data[added]
-		removedFrom := data[removed]
-
-		toAddMap := make(map[string]bool, len(addedTo))
-		for _, impact := range addedTo {
-			toAddMap[impact] = true
-		}
-
-		toRemoveMap := make(map[string]bool, len(removedFrom))
-		for _, impact := range removedFrom {
-			toRemoveMap[impact] = true
-		}
-
-		servicesToAddMap := make(map[string]bool, len(ent.ServicesToAdd))
-		for _, id := range ent.ServicesToAdd {
-			servicesToAddMap[id] = true
-		}
-
-		servicesToRemoveMap := make(map[string]bool, len(ent.ServicesToRemove))
-		for _, id := range ent.ServicesToRemove {
-			servicesToRemoveMap[id] = true
-		}
-
-		newServices := make([]string, 0, len(ent.Services))
-		newServicesToAdd := make([]string, 0, len(ent.ServicesToAdd))
-		newServicesToRemove := make([]string, 0, len(ent.ServicesToRemove))
-
-		newServices = append(newServices, addedTo...)
-
-		for idx := 0; idx < len(addedTo); idx++ {
-			if !servicesToRemoveMap[addedTo[idx]] {
-				newServicesToAdd = append(newServicesToAdd, addedTo[idx])
-			}
-		}
-
-		for idx := 0; idx < len(removedFrom); idx++ {
-			if !servicesToAddMap[removedFrom[idx]] {
-				newServicesToRemove = append(newServicesToRemove, removedFrom[idx])
-			}
-		}
-
-		for idx := 0; idx < len(ent.ServicesToAdd); idx++ {
-			if !toRemoveMap[ent.ServicesToAdd[idx]] {
-				newServicesToAdd = append(newServicesToAdd, ent.ServicesToAdd[idx])
-			}
-		}
-
-		for idx := 0; idx < len(ent.ServicesToRemove); idx++ {
-			if !toAddMap[ent.ServicesToRemove[idx]] {
-				newServicesToRemove = append(newServicesToRemove, ent.ServicesToRemove[idx])
-			}
-		}
-
-		for idx := 0; idx < len(ent.Services); idx++ {
-			if !toRemoveMap[ent.Services[idx]] {
-				newServices = append(newServices, ent.Services[idx])
-			}
-		}
-
-		ent.ServicesToAdd = newServicesToAdd
-		ent.ServicesToRemove = newServicesToRemove
-		ent.Services = newServices
-
-		updatedEntities = append(updatedEntities, ent)
-	}
-
-	return updatedEntities, nil
-}
-
-func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error) {
+func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) (types.Entity, error) {
 	if serviceID == "" {
-		return types.Entity{}, nil, nil
+		return types.Entity{}, nil
 	}
 
 	service, err := m.storage.Get(ctx, serviceID)
 	if err != nil {
-		return types.Entity{}, nil, err
+		return types.Entity{}, err
 	}
 
 	if !service.Enabled || service.ID == "" {
-		return m.processDisabledService(ctx, service, serviceID)
+		err := m.processDisabledService(ctx, serviceID, commRegister)
+		if err != nil {
+			return types.Entity{}, err
+		}
+
+		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
+		err = m.LoadServices(ctx)
+		if err != nil {
+			return types.Entity{}, err
+		}
+
+		m.AssignServices(&service.Entity, commRegister)
+
+		return service.Entity, nil
 	}
 
-	query, negativeQuery, err := getServiceQueries(service)
+	query, negativeQuery, err := service.GetMongoQueries()
 	if err != nil {
-		return types.Entity{}, nil, err
+		return types.Entity{}, err
 	}
 
 	if query == nil || negativeQuery == nil {
-		return types.Entity{}, nil, fmt.Errorf("can't get queries from patterns")
+		return types.Entity{}, fmt.Errorf("can't get queries from patterns")
 	}
 
 	var entitiesToRemove []types.Entity
 
-	cursor, err := m.collection.Find(
+	cursor, err := m.entityCollection.Aggregate(
 		ctx,
-		bson.M{"$and": bson.A{
-			bson.M{"services": serviceID},
-			negativeQuery,
-		}},
+		[]bson.M{
+			{
+				"$match": bson.M{
+					"$and": bson.A{
+						bson.M{"services": serviceID},
+						negativeQuery,
+					},
+				},
+			},
+			{
+				"$project": bson.M{
+					"_id":             1,
+					"services":        1,
+					"services_to_add": 1,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_add": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_add",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
 	)
 	if err != nil {
-		return types.Entity{}, nil, err
+		return types.Entity{}, err
 	}
 
 	err = cursor.All(ctx, &entitiesToRemove)
 	if err != nil {
-		return types.Entity{}, nil, err
+		return types.Entity{}, err
 	}
 
-	updatedEntities := make([]types.Entity, 0, len(entitiesToRemove))
-	entitiesToRemoveMap := make(map[string]bool, len(entitiesToRemove))
 	for _, ent := range entitiesToRemove {
-		entitiesToRemoveMap[ent.ID] = true
-
-		for idx, impServ := range ent.Services {
-			if impServ == serviceID {
-				ent.Services = append(ent.Services[:idx], ent.Services[idx+1:]...)
-				break
-			}
-		}
-
-		for idx, impServ := range ent.ServicesToAdd {
-			if impServ == serviceID {
-				ent.ServicesToAdd = append(ent.ServicesToAdd[:idx], ent.ServicesToAdd[idx+1:]...)
-				break
-			}
-		}
-
-		updatedEntities = append(updatedEntities, ent)
+		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_add": ent.ServicesToAdd})
 	}
 
 	var entitiesToAdd []types.Entity
-	cursor, err = m.collection.Find(
+
+	cursor, err = m.entityCollection.Aggregate(
 		ctx,
-		bson.M{"$and": bson.A{
-			bson.M{"services": bson.M{"$ne": serviceID}},
-			query,
-		}})
+		[]bson.M{
+			{
+				"$match": bson.M{
+					"$and": bson.A{
+						bson.M{"services": bson.M{"$ne": serviceID}},
+						query,
+					},
+				},
+			},
+			{
+				"$project": bson.M{
+					"_id":                1,
+					"services":           1,
+					"services_to_remove": 1,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_remove": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_remove",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
+	)
 	if err != nil {
-		return types.Entity{}, nil, err
+		return types.Entity{}, err
 	}
 
 	err = cursor.All(ctx, &entitiesToAdd)
 	if err != nil {
-		return types.Entity{}, nil, err
+		return types.Entity{}, err
 	}
 
 	for _, ent := range entitiesToAdd {
-		for idx, impServ := range ent.ServicesToRemove {
-			if impServ == serviceID {
-				ent.ServicesToRemove = append(ent.ServicesToRemove[:idx], ent.ServicesToRemove[idx+1:]...)
-				break
-			}
-		}
-
 		ent.Services = append(ent.Services, serviceID)
-		updatedEntities = append(updatedEntities, ent)
+		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_remove": ent.ServicesToRemove})
 	}
 
-	return service.Entity, append(updatedEntities, types.Entity{
-		ID:      service.ID,
-		Enabled: service.Enabled,
-	}), nil
+	_, err = m.AssignStateSetting(ctx, &service.Entity, commRegister)
+	if err != nil {
+		return types.Entity{}, err
+	}
+
+	// todo: should be called to get fresh services from the db, should be removed when we do something with cache
+	err = m.LoadServices(ctx)
+	if err != nil {
+		return types.Entity{}, err
+	}
+
+	m.AssignServices(&service.Entity, commRegister)
+
+	return service.Entity, nil
 }
 
-func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error) {
-	eventEntity, err := m.adapter.GetEntityByID(ctx, event.GetEID())
-	isNew := errors.Is(err, libentity.ErrNotFound)
-	if err != nil && !isNew {
-		return types.Entity{}, nil, err
-	}
+func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
+	var report Report
 
-	if !event.IsContextable() || event.IsOnlyServiceUpdate() || eventEntity.SoftDeleted != nil {
-		if isNew {
-			return types.Entity{}, nil, fmt.Errorf("entity %s doesn't exist", event.GetEID())
-		}
+	var resource *types.Entity
+	var componentExist bool
+	var connectorExist bool
+	var err error
 
-		return eventEntity, nil, nil
-	}
-
-	if event.SourceType == types.SourceTypeService {
-		return eventEntity, nil, nil
-	}
-
-	if event.SourceType != types.SourceTypeResource && event.SourceType != types.SourceTypeComponent {
-		return types.Entity{}, nil, nil
-	}
-
-	now := datetime.NewCpsTime()
-	if event.EventType == types.EventTypeCheck {
-		eventEntity.LastEventDate = &now
-	}
-
+	componentID := event.Component
+	resourceID := event.Resource + "/" + componentID
 	connectorName := event.ConnectorName
 	connectorID := event.Connector + "/" + connectorName
 
-	var contextGraphEntities []types.Entity
-
-	if event.SourceType == types.SourceTypeComponent {
-		if isNew {
-			exist, err := m.entityExist(ctx, connectorID)
-			if err != nil {
-				return types.Entity{}, nil, err
-			}
-
-			if !exist {
-				contextGraphEntities = []types.Entity{
-					{
-						ID:            connectorID,
-						Name:          connectorName,
-						EnableHistory: []datetime.CpsTime{now},
-						Enabled:       true,
-						Type:          types.EntityTypeConnector,
-						Infos:         map[string]types.Info{},
-						ImpactLevel:   types.EntityDefaultImpactLevel,
-						Created:       now,
-						LastEventDate: &now,
-						IsNew:         true,
-						Healthcheck:   event.Healthcheck,
-					},
-				}
-			} else {
-				_, err := m.collection.UpdateOne(
-					ctx,
-					bson.M{"_id": connectorID},
-					bson.M{"$set": bson.M{"last_event_date": now}},
-				)
-				if err != nil {
-					return types.Entity{}, nil, err
-				}
-			}
-
-			return types.Entity{
-				ID:            event.Component,
-				Name:          event.Component,
-				Connector:     connectorID,
-				EnableHistory: []datetime.CpsTime{now},
-				Enabled:       true,
-				Type:          types.EntityTypeComponent,
-				Component:     event.Component,
-				Infos:         map[string]types.Info{},
-				ImpactLevel:   types.EntityDefaultImpactLevel,
-				Created:       now,
-				IsNew:         true,
-				LastEventDate: &now,
-				Healthcheck:   event.Healthcheck,
-			}, contextGraphEntities, nil
+	if !event.IsContextable() || event.IsOnlyServiceUpdate() {
+		resource, err = m.getEntity(ctx, resourceID)
+		if err != nil {
+			return report, err
 		}
 
-		// if component isn't new, then check if connector exists, if not upsert it.
-		// if connector exists update last_event_date
-		connectorExist := true
-
-		if eventEntity.Connector != connectorID {
-			connectorExist, err = m.entityExist(ctx, connectorID)
-			if err != nil {
-				return types.Entity{}, nil, err
-			}
+		if resource == nil {
+			return report, fmt.Errorf("resource %s doesn't exist", resourceID)
 		}
 
-		if !connectorExist {
-			eventEntity.Connector = connectorID
-			eventEntity.IsUpdated = true
-
-			contextGraphEntities = []types.Entity{
-				{
-					ID:            connectorID,
-					Name:          connectorName,
-					EnableHistory: []datetime.CpsTime{now},
-					Enabled:       true,
-					Type:          types.EntityTypeConnector,
-					Infos:         map[string]types.Info{},
-					ImpactLevel:   types.EntityDefaultImpactLevel,
-					Created:       now,
-					LastEventDate: &now,
-					Healthcheck:   event.Healthcheck,
-				},
-			}
-		} else {
-			_, err := m.collection.UpdateOne(
-				ctx,
-				bson.M{"_id": connectorID},
-				bson.M{"$set": bson.M{"last_event_date": now}},
-			)
-			if err != nil {
-				return types.Entity{}, nil, err
-			}
+		if event.IsOnlyServiceUpdate() {
+			report.CheckResource = true // to check services and state settings.
 		}
 
-		return eventEntity, contextGraphEntities, err
+		event.Entity = resource
+
+		return report, nil
 	}
 
-	//if resource is new, then upsert connector and component
-	if isNew {
-		connectorExist, err := m.entityExist(ctx, connectorID)
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
+	resource, componentExist, connectorExist, err = m.getResourceEntities(ctx, resourceID, componentID, connectorID)
+	if err != nil {
+		return report, err
+	}
 
+	if resource != nil && resource.SoftDeleted != nil {
+		event.Entity = resource
+
+		// clean report
+		return Report{}, nil
+	}
+
+	now := datetime.NewCpsTime()
+
+	if resource == nil {
 		if !connectorExist {
-			contextGraphEntities = append(contextGraphEntities, types.Entity{
+			commRegister.RegisterInsert(&types.Entity{
 				ID:            connectorID,
 				Name:          connectorName,
 				EnableHistory: []datetime.CpsTime{now},
@@ -507,103 +429,62 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				Created:       now,
 				LastEventDate: &now,
-				IsNew:         true,
 				Healthcheck:   event.Healthcheck,
 			})
+
+			report.CheckConnector = true
 		} else {
-			_, err := m.collection.UpdateOne(
-				ctx,
-				bson.M{"_id": connectorID},
-				bson.M{"$set": bson.M{"last_event_date": now}},
-			)
-			if err != nil {
-				return types.Entity{}, nil, err
-			}
-		}
-
-		componentInfosDoc := struct {
-			ComponentInfos map[string]types.Info `bson:"infos"`
-		}{}
-
-		cursor, err := m.collection.Aggregate(
-			ctx,
-			[]bson.M{
-				{
-					"$match": bson.M{
-						"_id": event.Component,
-					},
-				},
-				{
-					"$project": bson.M{
-						"infos": 1,
-					},
-				},
-			},
-		)
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
-
-		componentExist := false
-		if cursor.Next(ctx) {
-			componentExist = true
-			err = cursor.Decode(&componentInfosDoc)
-			if err != nil {
-				return types.Entity{}, nil, err
-			}
+			commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
 		}
 
 		if !componentExist {
-			contextGraphEntities = append(contextGraphEntities, types.Entity{
-				ID:            event.Component,
-				Name:          event.Component,
+			commRegister.RegisterInsert(&types.Entity{
+				ID:            componentID,
+				Name:          componentID,
 				Connector:     connectorID,
 				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeComponent,
-				Component:     event.Component,
+				Component:     componentID,
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				Created:       now,
-				IsNew:         true,
 				LastEventDate: &now,
 				Healthcheck:   event.Healthcheck,
 			})
+
+			report.CheckComponent = true
 		}
 
-		return types.Entity{
-			ID:             event.Resource + "/" + event.Component,
-			Name:           event.Resource,
-			EnableHistory:  []datetime.CpsTime{now},
-			Enabled:        true,
-			Type:           types.EntityTypeResource,
-			Connector:      connectorID,
-			Component:      event.Component,
-			Infos:          map[string]types.Info{},
-			ComponentInfos: componentInfosDoc.ComponentInfos,
-			ImpactLevel:    types.EntityDefaultImpactLevel,
-			IsNew:          true,
-			Created:        now,
-			LastEventDate:  &now,
-			Healthcheck:    event.Healthcheck,
-		}, contextGraphEntities, nil
-	}
-
-	//if resource isn't new, then check if component or connector exists, if not upsert them.
-	connectorExist := true
-
-	if eventEntity.Connector != connectorID {
-		connectorExist, err = m.entityExist(ctx, connectorID)
-		if err != nil {
-			return types.Entity{}, nil, err
+		resource = &types.Entity{
+			ID:            resourceID,
+			Name:          event.Resource,
+			EnableHistory: []datetime.CpsTime{now},
+			Enabled:       true,
+			Type:          types.EntityTypeResource,
+			Connector:     connectorID,
+			Component:     event.Component,
+			Infos:         map[string]types.Info{},
+			ImpactLevel:   types.EntityDefaultImpactLevel,
+			Created:       now,
+			LastEventDate: &now,
+			Healthcheck:   event.Healthcheck,
 		}
+
+		commRegister.RegisterInsert(resource)
+		report.CheckResource = true
+		report.IsNew = true
+
+		event.Entity = resource
+
+		return report, nil
 	}
 
-	if !connectorExist {
-		eventEntity.Connector = connectorID
-		eventEntity.IsUpdated = true
+	if resource.Connector != connectorID && !connectorExist {
+		resource.Connector = connectorID
 
-		contextGraphEntities = append(contextGraphEntities, types.Entity{
+		commRegister.RegisterUpdate(resourceID, bson.M{"connector": connectorID, "last_event_date": now})
+		commRegister.RegisterInsert(&types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
 			EnableHistory: []datetime.CpsTime{now},
@@ -613,25 +494,191 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			ImpactLevel:   types.EntityDefaultImpactLevel,
 			Created:       now,
 			LastEventDate: &now,
-			IsNew:         true,
 			Healthcheck:   event.Healthcheck,
 		})
+
+		report.CheckResource = true
+		report.CheckConnector = true
 	} else {
-		_, err := m.collection.UpdateOne(
-			ctx,
-			bson.M{"_id": connectorID},
-			bson.M{"$set": bson.M{"last_event_date": now}},
-		)
+		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": now})
+	}
+
+	resource.LastEventDate = &now
+	event.Entity = resource
+
+	return report, nil
+}
+
+func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
+	var report Report
+
+	var component *types.Entity
+	var connectorExist bool
+	var err error
+
+	componentID := event.Component
+	connectorName := event.ConnectorName
+	connectorID := event.Connector + "/" + connectorName
+
+	if !event.IsContextable() || event.IsOnlyServiceUpdate() {
+		component, err = m.getEntity(ctx, componentID)
 		if err != nil {
-			return types.Entity{}, nil, err
+			return report, err
+		}
+
+		if component == nil {
+			return report, fmt.Errorf("component %s doesn't exist", componentID)
+		}
+
+		if event.IsOnlyServiceUpdate() {
+			report.CheckComponent = true // to process state setting and component_infos for resources
+		}
+
+		event.Entity = component
+
+		return report, nil
+	} else {
+		component, connectorExist, err = m.getComponentEntities(ctx, componentID, connectorID)
+		if err != nil {
+			return report, err
 		}
 	}
 
-	return eventEntity, contextGraphEntities, nil
+	if component != nil && component.SoftDeleted != nil {
+		event.Entity = component
+
+		// clean report
+		return Report{}, nil
+	}
+
+	now := datetime.NewCpsTime()
+
+	if component == nil {
+		if !connectorExist {
+			commRegister.RegisterInsert(&types.Entity{
+				ID:            connectorID,
+				Name:          connectorName,
+				EnableHistory: []datetime.CpsTime{now},
+				Enabled:       true,
+				Type:          types.EntityTypeConnector,
+				Infos:         map[string]types.Info{},
+				ImpactLevel:   types.EntityDefaultImpactLevel,
+				Created:       now,
+				LastEventDate: &now,
+				Healthcheck:   event.Healthcheck,
+			})
+
+			report.CheckConnector = true
+		} else {
+			commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		}
+
+		component = &types.Entity{
+			ID:            componentID,
+			Name:          componentID,
+			EnableHistory: []datetime.CpsTime{now},
+			Enabled:       true,
+			Type:          types.EntityTypeComponent,
+			Connector:     connectorID,
+			Component:     componentID,
+			Infos:         map[string]types.Info{},
+			ImpactLevel:   types.EntityDefaultImpactLevel,
+			Created:       now,
+			LastEventDate: &now,
+			Healthcheck:   event.Healthcheck,
+		}
+
+		commRegister.RegisterInsert(component)
+		report.CheckComponent = true
+		report.IsNew = true
+
+		event.Entity = component
+
+		return report, nil
+	}
+
+	if component.Connector != connectorID && !connectorExist {
+		component.Connector = connectorID
+
+		commRegister.RegisterUpdate(componentID, bson.M{"connector": connectorID, "last_event_date": now})
+		commRegister.RegisterInsert(&types.Entity{
+			ID:            connectorID,
+			Name:          connectorName,
+			EnableHistory: []datetime.CpsTime{now},
+			Enabled:       true,
+			Type:          types.EntityTypeConnector,
+			Infos:         map[string]types.Info{},
+			ImpactLevel:   types.EntityDefaultImpactLevel,
+			Created:       now,
+			LastEventDate: &now,
+			Healthcheck:   event.Healthcheck,
+		})
+
+		report.CheckComponent = true
+		report.CheckConnector = true
+	} else {
+		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": now})
+	}
+
+	component.LastEventDate = &now
+	event.Entity = component
+
+	return report, nil
+}
+
+func (m *manager) HandleService(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
+	var service *types.Entity
+	var err error
+
+	serviceID := event.Component
+
+	service, err = m.getEntity(ctx, serviceID)
+	if err != nil {
+		return Report{}, err
+	}
+
+	if service == nil {
+		return Report{}, fmt.Errorf("service %s doesn't exist", serviceID)
+	} else if service.SoftDeleted != nil {
+		event.Entity = service
+
+		return Report{}, nil
+	}
+
+	now := datetime.NewCpsTime()
+	commRegister.RegisterUpdate(serviceID, bson.M{"last_event_date": now})
+	service.LastEventDate = &now
+	event.Entity = service
+
+	return Report{}, nil
+}
+
+func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
+	var connector *types.Entity
+	var err error
+
+	connectorName := event.ConnectorName
+	connectorID := event.Connector + "/" + connectorName
+
+	connector, err = m.getEntity(ctx, connectorID)
+	if err != nil {
+		return Report{}, err
+	}
+
+	if connector == nil {
+		return Report{}, fmt.Errorf("connector %s doesn't exist", connectorID)
+	}
+
+	event.Entity = connector
+	commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": datetime.NewCpsTime()})
+
+	return Report{}, nil
 }
 
 func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) error {
-	cursor, err := m.collection.Aggregate(ctx, []bson.M{
+	cursor, err := m.entityCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"connector": bson.M{"$nin": bson.A{nil, ""}}}},
 		{"$unwind": "$services"},
 		{"$group": bson.M{
@@ -707,130 +754,213 @@ func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) er
 	return err
 }
 
-func (m *manager) FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error) {
+func (m *manager) ProcessComponentDependencies(ctx context.Context, component *types.Entity, commRegister libmongo.CommandsRegister) ([]string, error) {
 	if component.Type != types.EntityTypeComponent {
 		return nil, nil
 	}
 
-	cursor, err := m.collection.Find(ctx, bson.M{"component": component.ID, "type": bson.M{"$ne": types.EntityTypeComponent}})
+	cursor, err := m.entityCollection.Find(
+		ctx,
+		bson.M{"_id": bson.M{"$ne": component.ID}, "component": component.ID},
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	defer cursor.Close(ctx)
 
-	resources := make([]types.Entity, 0)
+	var ids []string
 	for cursor.Next(ctx) {
 		var resource types.Entity
+		update := make(bson.M)
 
 		err = cursor.Decode(&resource)
 		if err != nil {
 			return nil, err
 		}
 
-		resource.ComponentInfos = component.Infos
-		resources = append(resources, resource)
+		ids = append(ids, resource.ID)
+		update["component_infos"] = component.Infos
+
+		matched := true
+
+		if component.StateInfo != nil {
+			if component.StateInfo.InheritedPattern != nil {
+				matched, err = match.MatchEntityPattern(*component.StateInfo.InheritedPattern, &resource)
+				if err != nil {
+					return nil, err
+				}
+			}
+		} else {
+			matched = false
+		}
+
+		if matched {
+			update["component_state_settings"] = true
+			update["component_state_settings_to_add"] = false
+			update["component_state_settings_to_remove"] = false
+		} else if !matched {
+			update["component_state_settings"] = false
+			update["component_state_settings_to_add"] = false
+			update["component_state_settings_to_remove"] = false
+		}
+
+		commRegister.RegisterUpdate(resource.ID, update)
 	}
 
-	return resources, nil
+	return ids, nil
 }
 
-func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp datetime.CpsTime) error {
-	if eventType != types.EventTypeCheck {
+func (m *manager) UpdateLastEventDate(ctx context.Context, event *types.Event, updateConnectorLastEventDate bool) error {
+	if event.EventType != types.EventTypeCheck || event.Entity.LastEventDate == nil {
 		return nil
 	}
 
-	_, err := m.collection.UpdateOne(
+	var query bson.M
+	if updateConnectorLastEventDate {
+		query = bson.M{"_id": bson.M{"$in": bson.A{event.Entity.ID, event.Entity.Connector}}}
+	} else {
+		query = bson.M{"_id": event.Entity.ID}
+	}
+
+	_, err := m.entityCollection.UpdateMany(
 		ctx,
-		bson.M{"_id": entityID},
-		bson.M{"$set": bson.M{"last_event_date": timestamp}},
-		options.Update().SetUpsert(true),
+		query,
+		bson.M{"$set": bson.M{"last_event_date": event.Entity.LastEventDate}},
 	)
 
 	return err
 }
 
-func (m *manager) processDisabledService(ctx context.Context, service entityservice.EntityService, serviceID string) (types.Entity, []types.Entity, error) {
-	var dependedEntities []types.Entity
-	cursor, err := m.collection.Find(ctx, bson.M{"services": serviceID})
+func (m *manager) AssignStateSetting(ctx context.Context, entity *types.Entity, commRegister libmongo.CommandsRegister) (bool, error) {
+	return m.stateSettingService.AssignStateSetting(ctx, entity, commRegister)
+}
+
+func (m *manager) getResourceEntities(ctx context.Context, resourceID, componentID, connectorID string) (*types.Entity, bool, bool, error) {
+	var resource *types.Entity
+	var componentExist bool
+	var connectorExist bool
+
+	cursor, err := m.entityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": bson.A{resourceID, componentID, connectorID}}})
 	if err != nil {
-		return types.Entity{}, nil, err
+		return nil, componentExist, connectorExist, err
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var ent types.Entity
+
+		err = cursor.Decode(&ent)
+		if err != nil {
+			return nil, componentExist, connectorExist, err
+		}
+
+		if ent.Type == types.EntityTypeResource {
+			resource = &ent
+		} else if ent.Type == types.EntityTypeComponent {
+			componentExist = true
+		} else {
+			connectorExist = true
+		}
+	}
+
+	return resource, componentExist, connectorExist, nil
+}
+
+func (m *manager) getComponentEntities(ctx context.Context, componentID, connectorID string) (*types.Entity, bool, error) {
+	var component *types.Entity
+	var connectorExist bool
+
+	cursor, err := m.entityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": bson.A{componentID, connectorID}}})
+	if err != nil {
+		return nil, connectorExist, err
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var ent types.Entity
+
+		err = cursor.Decode(&ent)
+		if err != nil {
+			return nil, connectorExist, err
+		}
+
+		if ent.Type == types.EntityTypeComponent {
+			component = &ent
+		} else {
+			connectorExist = true
+		}
+	}
+
+	return component, connectorExist, nil
+}
+
+func (m *manager) getEntity(ctx context.Context, id string) (*types.Entity, error) {
+	var eventEntity types.Entity
+
+	err := m.entityCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&eventEntity)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &eventEntity, nil
+}
+
+func (m *manager) processDisabledService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) error {
+	var dependedEntities []types.Entity
+	cursor, err := m.entityCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			{
+				"$match": bson.M{"services": serviceID},
+			},
+			{
+				"$project": bson.M{
+					"_id":             1,
+					"services":        1,
+					"services_to_add": 1,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_add": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_add",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return err
 	}
 
 	err = cursor.All(ctx, &dependedEntities)
 	if err != nil {
-		return types.Entity{}, nil, err
+		return err
 	}
 
-	for idx, ent := range dependedEntities {
-		for impIdx, impServ := range ent.Services {
-			if impServ == serviceID {
-				ent.Services = append(ent.Services[:impIdx], ent.Services[impIdx+1:]...)
-				break
-			}
-		}
-
-		for impIdx, impServ := range ent.ServicesToAdd {
-			if impServ == serviceID {
-				ent.ServicesToAdd = append(ent.ServicesToAdd[:impIdx], ent.ServicesToAdd[impIdx+1:]...)
-				break
-			}
-		}
-
-		dependedEntities[idx] = ent
+	for _, ent := range dependedEntities {
+		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_add": ent.ServicesToAdd})
 	}
 
-	var impactedEntities []types.Entity
-	cursor, err = m.collection.Find(ctx, bson.M{"depends": serviceID})
-	if err != nil {
-		return types.Entity{}, nil, err
-	}
-
-	err = cursor.All(ctx, &impactedEntities)
-	if err != nil {
-		return types.Entity{}, nil, err
-	}
-
-	for idx, ent := range impactedEntities {
-		service.Services = append(service.Services, ent.ID)
-		impactedEntities[idx] = ent
-	}
-
-	if service.Entity.ID != "" {
-		impactedEntities = append(impactedEntities, service.Entity)
-	}
-
-	return service.Entity, append(dependedEntities, impactedEntities...), nil
-}
-
-func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
-	err := m.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return false, nil
-		}
-
-		return false, err
-	}
-
-	return true, nil
-}
-
-func getServiceQueries(service entityservice.EntityService) (interface{}, interface{}, error) {
-	var query, negativeQuery interface{}
-	var err error
-
-	if len(service.EntityPattern) > 0 {
-		query, err = db.EntityPatternToMongoQuery(service.EntityPattern, "")
-		if err != nil {
-			return nil, nil, err
-		}
-
-		negativeQuery, err = db.EntityPatternToNegativeMongoQuery(service.EntityPattern, "")
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	return query, negativeQuery, nil
+	return nil
 }

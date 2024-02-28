@@ -23,8 +23,8 @@
           <v-flex>
             <v-btn
               class="ml-0 mt-3"
-              v-on="on"
               color="primary"
+              v-on="on"
             >
               {{ $t('common.add') }}
             </v-btn>

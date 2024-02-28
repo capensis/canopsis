@@ -24,18 +24,18 @@
       ghost-class="white"
     >
       <v-card
-        class="my-2"
         v-for="(job, index) in jobs"
         :key="job.key"
+        class="my-2"
       >
         <v-card-text>
           <remediation-instruction-job-field
-            class="py-1"
             v-field="jobs[index]"
             :jobs="jobsItems"
             :name="job.key"
             :job-number="index + 1"
             :disabled="disabled"
+            class="py-1"
             @remove="removeItemFromArray(index)"
           />
         </v-card-text>
@@ -43,17 +43,17 @@
     </c-draggable-list-field>
     <v-layout align-center>
       <v-btn
-        class="ml-0"
         :color="hasJobsErrors ? 'error' : 'primary'"
         :disabled="disabled"
+        class="ml-0"
         outlined
         @click="addJob"
       >
         {{ $t('remediation.instruction.addJob') }}
       </v-btn>
       <span
-        class="error--text"
         v-show="hasJobsErrors"
+        class="error--text"
       >
         {{ $t('remediation.instruction.errors.jobRequired') }}
       </span>

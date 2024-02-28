@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createCheckboxInputStub } from '@unit/stubs/input';
+
 import { AGGREGATE_FUNCTIONS } from '@/constants';
 
 import CAlarmMetricAggregateFunctionField from '@/components/forms/fields/kpi/c-alarm-metric-aggregate-function-field.vue';
@@ -22,9 +22,9 @@ describe('c-alarm-metric-aggregate-function-field', () => {
       },
     });
 
-    selectRadioGroup(wrapper).vm.$emit('input', AGGREGATE_FUNCTIONS.max);
+    selectRadioGroup(wrapper).triggerCustomEvent('input', AGGREGATE_FUNCTIONS.max);
 
-    expect(wrapper).toEmit('input', AGGREGATE_FUNCTIONS.max);
+    expect(wrapper).toEmitInput(AGGREGATE_FUNCTIONS.max);
   });
 
   it('Renders `c-alarm-metric-aggregate-function-field` with default props', () => {

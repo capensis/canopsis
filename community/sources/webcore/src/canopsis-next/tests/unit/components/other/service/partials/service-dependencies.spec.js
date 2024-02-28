@@ -1,7 +1,5 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createEntityModule, createMockedStoreModules, createServiceModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES, MODALS } from '@/constants';
@@ -14,26 +12,18 @@ import ServiceDependencies from '@/components/other/service/partials/service-dep
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
   'c-no-events-icon': true,
+  'service-dependencies-show-type-field': true,
+  'state-settings-summary': true,
+  'service-dependencies-expand': true,
   'service-dependencies-entity-cell': true,
 };
 
 const selectTreeviewTable = wrapper => wrapper.find('.service-dependencies');
 const selectNodeExpandPanel = wrapper => wrapper.findAll('.v-treeview-node__label');
-const selectMoreButton = wrapper => wrapper.find('button.v-btn');
-const selectDependenciesModalButton = wrapper => wrapper.find('button.v-btn');
+const selectServiceDependenciesExpand = wrapper => wrapper.find('service-dependencies-expand-stub');
 
 describe('service-dependencies', () => {
   const $modals = mockModals();
-  const fetchDependenciesWithoutStore = jest.fn()
-    .mockResolvedValue({
-      data: [],
-      meta: {},
-    });
-  const fetchImpactsWithoutStore = jest.fn()
-    .mockResolvedValue({
-      data: [],
-      meta: {},
-    });
 
   const data = [
     {
@@ -53,6 +43,7 @@ describe('service-dependencies', () => {
       state: 1,
       impact_level: 1,
       impact_state: 0,
+      depends_count: 3,
       has_impacts: false,
     },
     {
@@ -91,26 +82,22 @@ describe('service-dependencies', () => {
     ],
   };
 
-  const serviceModule = {
-    name: 'service',
-    actions: {
-      fetchDependenciesWithoutStore,
-      fetchImpactsWithoutStore,
-    },
-  };
+  const { entityModule } = createEntityModule();
+  const { serviceModule, fetchDependenciesWithoutStore, fetchImpactsWithoutStore } = createServiceModule();
+
   const columns = [
     { value: ENTITY_FIELDS.name },
     { value: ENTITY_FIELDS.type },
   ].map(column => ({
     ...column,
 
-    value: `entity.${column.value}`,
     sortable: false,
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
 
   const store = createMockedStoreModules([
     serviceModule,
+    entityModule,
   ]);
 
   const snapshotFactory = generateRenderer(ServiceDependencies, { stubs });
@@ -134,6 +121,7 @@ describe('service-dependencies', () => {
         params: {
           limit: 10,
           with_flags: true,
+          define_state: false,
         },
       },
       undefined,
@@ -164,6 +152,7 @@ describe('service-dependencies', () => {
         params: {
           limit: 10,
           with_flags: true,
+          define_state: false,
         },
       },
       undefined,
@@ -193,9 +182,12 @@ describe('service-dependencies', () => {
     fetchDependenciesWithoutStore.mockClear();
 
     const expandPanel = selectNodeExpandPanel(wrapper).at(2);
-    const moreButton = selectMoreButton(expandPanel);
+    const moreButton = selectServiceDependenciesExpand(expandPanel);
 
-    moreButton.trigger('click');
+    moreButton.triggerCustomEvent('load', {
+      entity: data[2],
+      parentId: entity._id,
+    });
 
     await flushPromises();
 
@@ -207,6 +199,7 @@ describe('service-dependencies', () => {
           limit: 10,
           page: 2,
           with_flags: true,
+          define_state: false,
         },
       },
       undefined,
@@ -232,9 +225,9 @@ describe('service-dependencies', () => {
     await flushPromises();
 
     const expandPanel = selectNodeExpandPanel(wrapper).at(1);
-    const dependenciesModalButton = selectDependenciesModalButton(expandPanel);
+    const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
 
-    dependenciesModalButton.trigger('click');
+    dependenciesModalButton.triggerCustomEvent('show', { entity: data[1] });
 
     const [, entityWithDeps] = data;
 
@@ -270,9 +263,9 @@ describe('service-dependencies', () => {
     await flushPromises();
 
     const expandPanel = selectNodeExpandPanel(wrapper).at(2);
-    const dependenciesModalButton = selectDependenciesModalButton(expandPanel);
+    const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
 
-    dependenciesModalButton.trigger('click');
+    dependenciesModalButton.triggerCustomEvent('show', { entity: data[2] });
 
     expect($modals.show).not.toBeCalled();
   });
@@ -303,6 +296,7 @@ describe('service-dependencies', () => {
         dark: true,
         light: true,
         impact: true,
+        showStateSetting: true,
         columns: [
           {
             label: 'Custom name label',
@@ -315,7 +309,6 @@ describe('service-dependencies', () => {
         ].map(column => ({
           ...column,
 
-          value: `entity.${column.value}`,
           sortable: false,
           text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),
