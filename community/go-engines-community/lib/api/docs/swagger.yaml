@@ -161,6 +161,63 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarm-display-names:
+    get:
+      tags:
+        - alarm-display-names
+      summary: Find alarm display names
+      description: |
+        Get paginated alarm display names.
+        
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-find-alarm-display-names
+      parameters:
+        - in: query
+          name: alarm_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"v.component\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_component\"}}]]"
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
+        - in: query
+          name: pbehavior_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}]]"
+        - in: query
+          name: sort
+          description: sort query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.DisplayNameData'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarm-export:
     post:
       tags:
