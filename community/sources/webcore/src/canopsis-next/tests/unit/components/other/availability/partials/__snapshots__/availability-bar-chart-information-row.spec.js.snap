@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-bar-chart-information-row Renders \`availability-bar-chart-information-row\` with custom props 1`] = `
+<div
+  class="layout availability-bar-chart-information-row gap-4 align-center"
+>
+  <div
+    class="availability-bar-chart-information-row__color"
+    style="background-color: rgb(47, 171, 99);"
+  />
+  <div
+    class="availability-bar-chart-information-row__label"
+  >
+    Custom label
+  </div>
+  <div
+    class="availability-bar-chart-information-row__value"
+  >
+    <div
+      class="default-slot"
+    />
+  </div>
+</div>
+`;
+
+exports[`availability-bar-chart-information-row Renders \`availability-bar-chart-information-row\` with required props 1`] = `
+<div
+  class="layout availability-bar-chart-information-row gap-4 align-center"
+>
+  <div
+    class="availability-bar-chart-information-row__color"
+    style="background-color: transparent;"
+  />
+  <div
+    class="availability-bar-chart-information-row__label"
+  >
+    Required label
+  </div>
+  <div
+    class="availability-bar-chart-information-row__value"
+  />
+</div>
+`;

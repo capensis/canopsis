@@ -9,12 +9,8 @@ const stubs = {
   'availability-bar-chart-information-row': true,
 };
 
-const snapshotStubs = {
-  ...stubs,
-};
-
 describe('availability-bar-chart', () => {
-  const snapshotFactory = generateRenderer(AvailabilityBarChart, { stubs: snapshotStubs });
+  const snapshotFactory = generateRenderer(AvailabilityBarChart, { stubs });
 
   test('Renders `availability-bar-chart` with required props', () => {
     const wrapper = snapshotFactory({
