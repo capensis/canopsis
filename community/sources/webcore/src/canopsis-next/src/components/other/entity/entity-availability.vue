@@ -1,12 +1,13 @@
 <template>
-  <v-layout>
-    <chart-loader v-if="pending" :has-data="!!availability" />
+  <v-layout class="entity-availability position-relative" justify-center>
+    <c-progress-overlay :pending="pending" />
     <availability-bar
       v-if="availability"
       :query="query"
       :availability="availability"
       :default-show-type="defaultShowType"
       :min-date="minAvailableDate"
+      class="entity-availability__content"
       @update:interval="updateInterval"
     />
   </v-layout>
@@ -21,10 +22,9 @@ import { localQueryMixin } from '@/mixins/query/query';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 
 import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
-import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
 
 export default {
-  components: { ChartLoader, AvailabilityBar },
+  components: { AvailabilityBar },
   mixins: [localQueryMixin, queryIntervalFilterMixin],
   props: {
     entity: {
@@ -109,3 +109,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.entity-availability {
+  &__content {
+    max-width: 900px;
+  }
+}
+</style>
