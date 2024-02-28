@@ -44,29 +44,27 @@ func NewMetaAlarmEventProcessor(
 	logger zerolog.Logger,
 ) libalarm.MetaAlarmEventProcessor {
 	return &metaAlarmEventProcessor{
-		dbClient:                  dbClient,
-		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
-		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
-		metaAlarmStatesService:    metaAlarmStatesService,
-		adapter:                   adapter,
-		ruleAdapter:               ruleAdapter,
-		alarmStatusService:        alarmStatusService,
-		alarmConfigProvider:       alarmConfigProvider,
-		encoder:                   encoder,
-		amqpPublisher:             amqpPublisher,
-		metricsSender:             metricsSender,
-		templateExecutor:          templateExecutor,
-		logger:                    logger,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		metaAlarmStatesService: metaAlarmStatesService,
+		adapter:                adapter,
+		ruleAdapter:            ruleAdapter,
+		alarmStatusService:     alarmStatusService,
+		alarmConfigProvider:    alarmConfigProvider,
+		encoder:                encoder,
+		amqpPublisher:          amqpPublisher,
+		metricsSender:          metricsSender,
+		templateExecutor:       templateExecutor,
+		logger:                 logger,
 	}
 }
 
 type metaAlarmEventProcessor struct {
-	dbClient                  mongo.DbClient
-	alarmCollection           mongo.DbCollection
-	metaAlarmStatesCollection mongo.DbCollection
-	metaAlarmStatesService    correlation.MetaAlarmStateService
-	adapter                   libalarm.Adapter
-	ruleAdapter               correlation.RulesAdapter
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	metaAlarmStatesService correlation.MetaAlarmStateService
+	adapter                libalarm.Adapter
+	ruleAdapter            correlation.RulesAdapter
 
 	alarmStatusService  alarmstatus.Service
 	alarmConfigProvider config.AlarmConfigProvider
@@ -90,9 +88,9 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 	var metaAlarm types.Alarm
 	var activateChildEvents []types.Event
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedChildrenAlarms = make([]types.Alarm, 0)
+		updatedChildrenAlarms = updatedChildrenAlarms[:0]
 		metaAlarm = types.Alarm{}
-		activateChildEvents = make([]types.Event, 0)
+		activateChildEvents = activateChildEvents[:0]
 		rule, err := p.ruleAdapter.GetRule(ctx, event.Parameters.MetaAlarmRuleID)
 		if err != nil {
 			return fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", event.Parameters.MetaAlarmRuleID, err)
@@ -145,7 +143,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		var lastChild types.AlarmWithEntity
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 		eventsCount := types.CpsNumber(0)
-		var childWriteModels []mongodriver.WriteModel
+		var writeModels []mongodriver.WriteModel
 
 		if len(childEntityIDs) > 0 {
 			childAlarms, err := p.getAlarmsWithEntityByEntityIds(ctx, childEntityIDs)
@@ -157,7 +155,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 				lastChild = childAlarms[len(childAlarms)-1]
 			}
 
-			childWriteModels = make([]mongodriver.WriteModel, 0, len(childAlarms))
+			writeModels = make([]mongodriver.WriteModel, 0, len(childAlarms))
 			newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)
 			for _, childAlarm := range childAlarms {
 				if childAlarm.Alarm.Value.State != nil {
@@ -189,7 +187,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 						})
 					}
 
-					childWriteModels = append(childWriteModels, mongodriver.NewUpdateOneModel().
+					writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
 						SetFilter(bson.M{
 							"_id":       childAlarm.Alarm.ID,
 							"v.parents": bson.M{"$ne": metaAlarm.EntityID},
@@ -229,17 +227,10 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 
 		metaAlarm.Value.Output = output
 		metaAlarm.Value.EventsCount = eventsCount
-
-		_, err = p.alarmCollection.InsertOne(ctx, metaAlarm)
+		writeModels = append(writeModels, mongodriver.NewInsertOneModel().SetDocument(metaAlarm))
+		_, err = p.alarmCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			return fmt.Errorf("cannot create alarm: %w", err)
-		}
-
-		if len(childWriteModels) > 0 {
-			_, err = p.alarmCollection.BulkWrite(ctx, childWriteModels)
-			if err != nil {
-				return fmt.Errorf("cannot update children alarms: %w", err)
-			}
+			return err
 		}
 
 		if !rule.IsManual() && !archived {
@@ -274,8 +265,8 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 	var activateChildEvents []types.Event
 	var metaAlarm types.Alarm
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedChildrenAlarms = make([]types.Alarm, 0)
-		activateChildEvents = make([]types.Event, 0)
+		updatedChildrenAlarms = updatedChildrenAlarms[:0]
+		activateChildEvents = activateChildEvents[:0]
 		metaAlarm = types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
 		if err != nil {
@@ -447,7 +438,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 	var updatedChildrenAlarms []types.Alarm
 	var metaAlarm types.Alarm
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedChildrenAlarms = make([]types.Alarm, 0)
+		updatedChildrenAlarms = updatedChildrenAlarms[:0]
 		metaAlarm = types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
 		if err != nil {
