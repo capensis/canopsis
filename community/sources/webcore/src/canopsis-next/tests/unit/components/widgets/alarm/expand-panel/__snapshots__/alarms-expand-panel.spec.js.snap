@@ -63,6 +63,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         <!---->
         <!---->
         <!---->
+        <!---->
       </div>
     </div>
     <div
@@ -179,7 +180,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -199,6 +200,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <!---->
       <!---->
@@ -293,6 +295,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
     Impact chain
         </a>
+        <!---->
         <!---->
       </div>
     </div>
@@ -437,7 +440,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -466,7 +469,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           id="trackSource"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -498,7 +501,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           id="impactChain"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -522,6 +525,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
     </div>
   </div>
@@ -598,6 +602,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
     Gantt chart
         </a>
+        <!---->
       </div>
     </div>
     <div
@@ -714,7 +719,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -745,7 +750,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           id="entityGantt"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -765,6 +770,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -832,6 +838,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         <!---->
         <!---->
         <!---->
+        <!---->
       </div>
     </div>
     <div
@@ -948,7 +955,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -968,6 +975,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <!---->
       <!---->

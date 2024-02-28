@@ -38,9 +38,13 @@ export default {
       type: Number,
       required: false,
     },
+    defaultShowType: {
+      type: Number,
+      default: AVAILABILITY_SHOW_TYPE.percent,
+    },
   },
-  setup() {
-    const showType = ref(AVAILABILITY_SHOW_TYPE.percent);
+  setup(props) {
+    const showType = ref(props.defaultShowType);
 
     return {
       showType,

@@ -72,7 +72,7 @@
 <script>
 import { MODALS, PATTERN_TABS, PATTERN_TYPES } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 import { entitiesCorporatePatternsMixin } from '@/mixins/entities/pattern/corporate';
 import {

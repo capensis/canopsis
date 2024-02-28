@@ -75,6 +75,7 @@
         v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
       />
+      <field-availability-graph-settings v-model="form.parameters.availability" />
       <field-root-cause-settings v-model="form.parameters" />
       <field-live-reporting v-model="form.parameters.liveReporting" />
       <field-info-popup
@@ -203,6 +204,7 @@ import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
+import FieldAvailabilityGraphSettings from '../availability/form/fields/availability-graph-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
@@ -232,6 +234,7 @@ import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue'
 export default {
   name: SIDE_BARS.alarmSettings,
   components: {
+    FieldAvailabilityGraphSettings,
     FieldRootCauseSettings,
     WidgetSettingsGroup,
     WidgetSettings,

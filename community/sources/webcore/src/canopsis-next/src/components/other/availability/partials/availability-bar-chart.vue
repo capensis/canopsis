@@ -13,18 +13,20 @@
       <availability-bar-chart-information-row :label="$t('common.downtime')" :color="downtimeColor">
         {{ downtimeValue }}
       </availability-bar-chart-information-row>
-      <template v-if="!isPercentType">
-        <availability-bar-chart-information-row :label="$t('common.totalActiveTime')" class="text--secondary">
-          {{ totalActiveTimeDuration }}
-        </availability-bar-chart-information-row>
-        <availability-bar-chart-information-row
-          v-if="inactiveTime"
-          :label="$t('common.inactiveTime')"
-          class="text--disabled"
-        >
-          {{ inactiveTimeDuration }}
-        </availability-bar-chart-information-row>
-      </template>
+      <v-expand-transition>
+        <div v-if="!isPercentType">
+          <availability-bar-chart-information-row :label="$t('common.totalActiveTime')" class="text--secondary">
+            {{ totalActiveTimeDuration }}
+          </availability-bar-chart-information-row>
+          <availability-bar-chart-information-row
+            v-if="inactiveTime"
+            :label="$t('common.inactiveTime')"
+            class="text--disabled"
+          >
+            {{ inactiveTimeDuration }}
+          </availability-bar-chart-information-row>
+        </div>
+      </v-expand-transition>
     </v-layout>
   </v-layout>
 </template>

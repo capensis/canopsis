@@ -291,6 +291,7 @@ export default {
   convertToCustomColumn: 'Convert column to custom',
   event: 'Event | Events',
   showMore: 'Show more ({current} of {total})',
+  availability: 'Availability',
   variableTypes: {
     string: 'String',
     number: 'Number',

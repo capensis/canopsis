@@ -54,7 +54,7 @@ import {
   prepareRemediationInstructionExecutionsForAlarmTimeline,
 } from '@/helpers/entities/remediation/instruction-execution/list';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import AlarmHorizontalTimeLine from '@/components/widgets/alarm/time-line/horizontal-time-line.vue';
