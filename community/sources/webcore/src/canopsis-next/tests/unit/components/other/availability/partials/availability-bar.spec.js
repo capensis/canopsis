@@ -78,13 +78,13 @@ describe('availability-bar', () => {
     });
 
     expect(
-      +selectAvailabilityBarChart(wrapper).attributes('type'),
+      +selectAvailabilityBarChart(wrapper).attributes('showtype'),
     ).toEqual(AVAILABILITY_SHOW_TYPE.percent);
 
     await selectAvailabilityBarFilters(wrapper).triggerCustomEvent('update:show-type', AVAILABILITY_SHOW_TYPE.duration);
 
     expect(
-      +selectAvailabilityBarChart(wrapper).attributes('type'),
+      +selectAvailabilityBarChart(wrapper).attributes('showtype'),
     ).toEqual(AVAILABILITY_SHOW_TYPE.duration);
   });
 

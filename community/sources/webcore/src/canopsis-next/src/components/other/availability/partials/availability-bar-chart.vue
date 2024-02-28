@@ -61,12 +61,16 @@ export default {
       type: String,
       default: COLORS.kpi.downtime,
     },
-    type: {
+    showType: {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.duration,
     },
   },
   computed: {
+    isPercentType() {
+      return this.showType === AVAILABILITY_SHOW_TYPE.percent;
+    },
+
     totalTime() {
       return this.uptime + this.downtime;
     },
@@ -85,10 +89,6 @@ export default {
 
     downtimeDuration() {
       return convertDurationToString(this.downtime);
-    },
-
-    isPercentType() {
-      return this.type === AVAILABILITY_SHOW_TYPE.percent;
     },
 
     uptimeValue() {

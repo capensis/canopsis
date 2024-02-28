@@ -10,7 +10,7 @@
       :downtime="availability.downtime"
       :uptime="availability.uptime"
       :inactive-time="availability.inactive_time"
-      :type="showType"
+      :show-type="showType"
     />
   </v-layout>
 </template>
