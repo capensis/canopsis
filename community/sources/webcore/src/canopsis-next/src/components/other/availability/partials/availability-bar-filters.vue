@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
 export default {
@@ -35,10 +37,12 @@ export default {
       required: false,
     },
   },
-  computed: {
-    quickRanges() {
-      return Object.values(AVAILABILITY_QUICK_RANGES);
-    },
+  setup() {
+    const quickRanges = computed(() => Object.values(AVAILABILITY_QUICK_RANGES));
+
+    return {
+      quickRanges,
+    };
   },
 };
 </script>

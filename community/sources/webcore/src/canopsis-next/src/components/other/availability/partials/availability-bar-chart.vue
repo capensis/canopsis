@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 import { COLORS } from '@/config';
 
@@ -66,55 +68,34 @@ export default {
       default: AVAILABILITY_SHOW_TYPE.duration,
     },
   },
-  computed: {
-    isPercentType() {
-      return this.showType === AVAILABILITY_SHOW_TYPE.percent;
-    },
+  setup(props) {
+    const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
 
-    totalTime() {
-      return this.uptime + this.downtime;
-    },
+    const totalTime = computed(() => props.uptime + props.downtime);
 
-    uptimePercent() {
-      return this.convertValueToPercentString(this.uptime);
-    },
+    const convertValueToPercent = value => (value / totalTime.value) * 100;
+    const convertValueToPercentString = value => `${convertNumberToFixedString(convertValueToPercent(value), 2)}%`;
 
-    uptimeDuration() {
-      return convertDurationToString(this.uptime);
-    },
+    const uptimePercent = computed(() => convertValueToPercentString(props.uptime));
+    const downtimePercent = computed(() => convertValueToPercentString(props.downtime));
 
-    downtimePercent() {
-      return this.convertValueToPercentString(this.downtime);
-    },
+    const uptimeDuration = computed(() => convertDurationToString(props.uptime));
+    const downtimeDuration = computed(() => convertDurationToString(props.downtime));
+    const totalActiveTimeDuration = computed(() => convertDurationToString(totalTime.value));
+    const inactiveTimeDuration = computed(() => convertDurationToString(props.inactiveTime));
 
-    downtimeDuration() {
-      return convertDurationToString(this.downtime);
-    },
+    const uptimeValue = computed(() => (isPercentType.value ? uptimePercent.value : uptimeDuration.value));
+    const downtimeValue = computed(() => (isPercentType.value ? downtimePercent.value : downtimeDuration.value));
 
-    uptimeValue() {
-      return this.isPercentType ? this.uptimePercent : this.uptimeDuration;
-    },
-
-    downtimeValue() {
-      return this.isPercentType ? this.downtimePercent : this.downtimeDuration;
-    },
-
-    totalActiveTimeDuration() {
-      return convertDurationToString(this.totalTime);
-    },
-
-    inactiveTimeDuration() {
-      return convertDurationToString(this.inactiveTime);
-    },
-  },
-  methods: {
-    convertValueToPercent(value) {
-      return (value / this.totalTime) * 100;
-    },
-
-    convertValueToPercentString(value) {
-      return `${convertNumberToFixedString(this.convertValueToPercent(value), 2)}%`;
-    },
+    return {
+      isPercentType,
+      uptimePercent,
+      downtimePercent,
+      uptimeValue,
+      downtimeValue,
+      totalActiveTimeDuration,
+      inactiveTimeDuration,
+    };
   },
 };
 </script>
