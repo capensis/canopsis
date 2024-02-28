@@ -5,7 +5,7 @@ exports[`availability-bar Renders \`availability-bar\` with custom props 1`] = `
   class="layout gap-5 column"
 >
   <availability-bar-filters-stub
-    minintervaldate="1708988400"
+    minintervaldate="1709038503904"
     showtype="0"
   />
   <availability-bar-chart-stub
