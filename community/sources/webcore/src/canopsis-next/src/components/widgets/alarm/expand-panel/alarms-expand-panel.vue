@@ -180,7 +180,14 @@
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.availability"
       >
         <alarms-expand-panel-tab-item-wrapper :card-flex-class="cardFlexClass">
-          <alarms-expand-panel-availability :alarm="alarm" :widget="widget" />
+          <v-layout justify-center>
+            <entity-availability
+              :entity="alarm.entity"
+              :default-time-range="widget.parameters.availability.default_time_range"
+              :default-show-type="widget.parameters.availability.default_show_type"
+              class="alarms-expand-panel__availability"
+            />
+          </v-layout>
         </alarms-expand-panel-tab-item-wrapper>
       </v-tab-item>
     </v-tabs-items>
@@ -206,6 +213,7 @@ import ServiceDependencies from '@/components/other/service/partials/service-dep
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
+import EntityAvailability from '@/components/other/entity/entity-availability.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
@@ -213,10 +221,10 @@ import EntityGantt from '../entity-gantt/entity-gantt.vue';
 import AlarmsExpandPanelTabItemWrapper from './alarms-expand-panel-tab-item-wrapper.vue';
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
-import AlarmsExpandPanelAvailability from './alarms-expand-panel-availability.vue';
 
 export default {
   components: {
+    EntityAvailability,
     AlarmsExpandPanelTabItemWrapper,
     EntityCharts,
     DeclaredTicketsList,
@@ -226,7 +234,6 @@ export default {
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
-    AlarmsExpandPanelAvailability,
   },
   mixins: [
     entitiesInfoMixin,
@@ -397,15 +404,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .tab-item-card {
-    margin: auto;
+@media (min-width: 0) {
+  .xs0 {
+    max-width: 0;
+    max-height: 0;
+    overflow: hidden;
   }
+}
 
-  @media (min-width: 0) {
-    .xs0 {
-      max-width: 0;
-      max-height: 0;
-      overflow: hidden;
-    }
+.alarms-expand-panel {
+  &__availability {
+    max-width: 900px;
   }
+}
 </style>
