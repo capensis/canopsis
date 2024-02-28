@@ -11,10 +11,6 @@ const stubs = {
   'availability-bar-chart': true,
 };
 
-const snapshotStubs = {
-  ...stubs,
-};
-
 const selectAvailabilityBarFilters = wrapper => wrapper.find('availability-bar-filters-stub');
 const selectAvailabilityBarChart = wrapper => wrapper.find('availability-bar-chart-stub');
 
@@ -28,7 +24,7 @@ describe('availability-bar', () => {
     },
   });
   const snapshotFactory = generateRenderer(AvailabilityBar, {
-    stubs: snapshotStubs,
+    stubs,
     parentComponent: {
       provide: {
         $system: {},
