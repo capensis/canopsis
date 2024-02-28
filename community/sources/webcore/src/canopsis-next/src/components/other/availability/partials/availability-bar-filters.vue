@@ -54,6 +54,7 @@ export default {
 .availability-bar-filters {
   &__show-type, &__interval {
     max-width: 200px;
+    flex: 1;
   }
 }
 </style>
