@@ -5,7 +5,7 @@
       v-if="availability"
       :query="query"
       :availability="availability"
-      :default-show-type="widget.parameters.availability.default_show_type"
+      :default-show-type="defaultShowType"
       :min-date="minAvailableDate"
       @update:interval="updateInterval"
     />
@@ -27,17 +27,21 @@ export default {
   components: { ChartLoader, AvailabilityBar },
   mixins: [localQueryMixin, queryIntervalFilterMixin],
   props: {
-    alarm: {
+    entity: {
       type: Object,
       required: true,
     },
-    widget: {
-      type: Object,
-      required: true,
+    defaultTimeRange: {
+      type: String,
+      required: false,
+    },
+    defaultShowType: {
+      type: Number,
+      required: false,
     },
   },
   data() {
-    const { default_time_range: defaultTimeRange } = this.widget.parameters.availability;
+    const { start, stop } = QUICK_RANGES[this.defaultTimeRange];
 
     return {
       pending: false,
@@ -45,8 +49,8 @@ export default {
       minDate: null,
       query: {
         interval: {
-          from: QUICK_RANGES[defaultTimeRange].start,
-          to: QUICK_RANGES[defaultTimeRange].stop,
+          from: start,
+          to: stop,
         },
       },
     };
@@ -96,7 +100,6 @@ export default {
           downtime: Math.round(Math.random() * 100000),
           inactive_time: Math.round(Math.random() * 1000),
         };
-        this.minDate;
       } catch (err) {
         console.error(err);
       } finally {
