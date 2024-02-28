@@ -3,6 +3,7 @@ package correlation
 import (
 	"context"
 	"errors"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -55,7 +56,13 @@ func (a *metaAlarmStateService) GetMetaAlarmState(ctx context.Context, ruleID st
 	return metaAlarmState, nil
 }
 
-func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error) {
+func (a *metaAlarmStateService) UpdateOpenedState(
+	ctx context.Context,
+	state MetaAlarmState,
+	previousVersion int64,
+	previousState int,
+	upsert bool,
+) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -68,6 +75,7 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 				"version": 1,
 			},
 			"$set": bson.M{
+				"expired_at":               state.ExpiredAt,
 				"children_entity_ids":      state.ChildrenEntityIDs,
 				"children_timestamps":      state.ChildrenTimestamps,
 				"parents_entity_ids":       state.ParentsEntityIDs,
@@ -92,9 +100,6 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 
 func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error) {
 	state.ID = state.ID + "-" + state.MetaAlarmName
-	now := datetime.NewCpsTime()
-	state.CreatedAt = &now
-
 	_, err := a.metaAlarmStatesCollection.InsertOne(ctx, state)
 	if err != nil {
 		if mongodriver.IsDuplicateKeyError(err) {
@@ -107,7 +112,13 @@ func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlar
 	return true, nil
 }
 
-func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error) {
+func (a *metaAlarmStateService) SwitchStateToReady(
+	ctx context.Context,
+	state MetaAlarmState,
+	previousVersion int64,
+	previousState int,
+	upsert bool,
+) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -117,6 +128,7 @@ func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state Me
 		},
 		bson.M{
 			"$set": bson.M{
+				"expired_at":          state.ExpiredAt,
 				"state":               Ready,
 				"children_entity_ids": state.ChildrenEntityIDs,
 				"children_timestamps": state.ChildrenTimestamps,
@@ -139,7 +151,14 @@ func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state Me
 	return true, nil
 }
 
-func (a *metaAlarmStateService) PushChild(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, entityID string, alarmLastUpdate int64) (bool, error) {
+func (a *metaAlarmStateService) PushChild(
+	ctx context.Context,
+	state MetaAlarmState,
+	previousVersion int64,
+	previousState int,
+	entityID string,
+	alarmLastUpdate int64,
+) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -148,6 +167,9 @@ func (a *metaAlarmStateService) PushChild(ctx context.Context, state MetaAlarmSt
 			"state":   previousState,
 		},
 		bson.M{
+			"$set": bson.M{
+				"expired_at": state.ExpiredAt,
+			},
 			"$push": bson.M{
 				"children_entity_ids": entityID,
 				"children_timestamps": alarmLastUpdate,
@@ -245,7 +267,8 @@ func (a *metaAlarmStateService) RefreshMetaAlarmStateGroup(ctx context.Context, 
 func (a *metaAlarmStateService) SwitchStateToCreated(ctx context.Context, stateID string) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(ctx, bson.M{"_id": stateID, "state": Ready}, bson.M{
 		"$set": bson.M{
-			"state": Created,
+			"expired_at": time.Now(),
+			"state":      Created,
 		},
 	})
 	if err != nil || res.MatchedCount == 0 {
