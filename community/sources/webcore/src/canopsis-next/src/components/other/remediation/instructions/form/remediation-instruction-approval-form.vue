@@ -1,16 +1,14 @@
 <template>
   <v-layout column>
     <v-checkbox
-      v-field="needApprove"
+      v-model="needApprove"
       :label="$t('remediation.instruction.requestApproval')"
       :disabled="disabled || required"
       color="primary"
       hide-details
     />
     <template v-if="needApprove">
-      <v-layout
-        v-if="disabled"
-      >
+      <v-layout v-if="disabled">
         <span class="text-subtitle-1 grey--text my-4">{{ assignLabel }}: {{ assignValue }}</span>
       </v-layout>
       <v-layout

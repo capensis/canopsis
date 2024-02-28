@@ -6,10 +6,10 @@
     >
       <template #activator="{ on }">
         <v-checkbox
-          v-on="on"
           v-field="form.ack_resources"
           :label="$t('alarm.ackResources')"
           color="primary"
+          v-on="on"
         />
       </template>
       <span>{{ $t('alarm.ackResourcesQuestion') }}</span>

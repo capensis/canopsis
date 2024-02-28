@@ -212,8 +212,10 @@ export const isResolvedAlarm = alarm => !!alarm.v.resolved;
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isActionAvailableForAlarm = alarm => !isClosedAlarmStatus(alarm)
-  && !(isCancelledAlarmStatus(alarm) && isResolvedAlarm(alarm));
+export const isActionAvailableForAlarm = alarm => !isAlarmStateOk(alarm)
+  && !isResolvedAlarm(alarm)
+  && !isClosedAlarmStatus(alarm)
+  && !isCancelledAlarmStatus(alarm);
 
 /**
  * Checks if alarm have critical state

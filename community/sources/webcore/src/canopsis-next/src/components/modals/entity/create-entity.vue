@@ -5,7 +5,7 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <entity-form v-model="form" />
+        <entity-form v-model="form" :prepare-state-setting-form="prepareStateSettingForm" />
       </template>
       <template #actions="">
         <v-btn
@@ -17,9 +17,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}
@@ -68,6 +68,14 @@ export default {
     },
   },
   methods: {
+    prepareStateSettingForm(entity) {
+      return {
+        ...formToEntity(entity),
+        connector: this.config.entity.connector,
+        _id: entity._id,
+      };
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

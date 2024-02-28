@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
@@ -44,14 +42,9 @@ describe('date-time-picker-menu', () => {
 
     const newDate = new Date(1387536600000);
 
-    await dateTimePicker.vm.$emit('input', newDate);
+    await dateTimePicker.triggerCustomEvent('input', newDate);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newDate);
+    expect(wrapper).toEmitInput(newDate);
   });
 
   test('Menu opened after trigger button', async () => {
@@ -75,7 +68,7 @@ describe('date-time-picker-menu', () => {
 
     const dateTimePicker = selectDateTimePicker(wrapper);
 
-    dateTimePicker.vm.$emit('close');
+    dateTimePicker.triggerCustomEvent('close');
 
     await flushPromises();
 

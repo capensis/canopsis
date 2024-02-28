@@ -1,8 +1,8 @@
 <template>
   <div>
     <pbehavior-comment-field
-      v-for="(comment, index) in comments"
       v-field="comments[index]"
+      v-for="(comment, index) in comments"
       :key="comment.key"
       @remove="removeItemFromArray(index)"
     />

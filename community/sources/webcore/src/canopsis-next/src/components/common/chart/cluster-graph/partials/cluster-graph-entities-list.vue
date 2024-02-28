@@ -4,9 +4,9 @@
       {{ $tc('common.entity', 2) }}
     </h6>
     <v-card
-      class="ma-2"
       v-for="(entityItem, index) in entities"
       :key="entityItem.key"
+      class="ma-2"
     >
       <v-card-text>
         <c-entity-field

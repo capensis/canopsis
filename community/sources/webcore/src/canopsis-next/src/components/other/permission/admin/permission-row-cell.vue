@@ -1,14 +1,14 @@
 <template>
   <td>
     <v-simple-checkbox
-      class="ma-0 pa-0"
       v-for="(checkbox, index) in checkboxes"
       v-bind="checkbox.bind"
-      v-on="checkbox.on"
       :key="index"
       :disabled="disabled || disabledForRole"
+      class="ma-0 pa-0"
       color="primary"
       hide-details
+      v-on="checkbox.on"
     />
   </td>
 </template>

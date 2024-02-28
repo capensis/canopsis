@@ -1,9 +1,9 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorReasonModule } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { MAX_LIMIT } from '@/constants';
 
 import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
@@ -53,9 +53,9 @@ describe('c-pbehavior-reason-field', () => {
       },
     });
 
-    selectSelectField(wrapper).vm.$emit('input', reason._id);
+    selectSelectField(wrapper).triggerCustomEvent('input', reason._id);
 
-    expect(wrapper).toEmit('input', reason._id);
+    expect(wrapper).toEmitInput(reason._id);
   });
 
   test('Renders `c-pbehavior-reason-field` with default props', () => {

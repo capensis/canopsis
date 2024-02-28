@@ -10,9 +10,9 @@
       <span class="text-subtitle-1 font-weight-bold">{{ $tc('remediation.instruction.job', 2) }}:</span>
     </v-flex>
     <c-instruction-job-chip
-      class="mr-2"
       v-for="job in jobs"
       :key="job._id"
+      class="mr-2"
     >
       {{ job.name }}
     </c-instruction-job-chip>

@@ -7,7 +7,6 @@
         xs6
       >
         <v-autocomplete
-          class="pt-0"
           v-validate="'required'"
           :value="form.moduleName"
           :items="modules"
@@ -15,6 +14,7 @@
           :loading="modulesPending"
           :placeholder="$t('snmpRule.module')"
           :error-messages="errors.collect('moduleName')"
+          class="pt-0"
           item-text="moduleName"
           item-value="_id"
           name="moduleName"
@@ -28,13 +28,13 @@
         xs6
       >
         <v-autocomplete
-          class="pt-0"
           v-validate="'required'"
           :value="form.mib"
           :items="moduleMibs"
           :loading="moduleMibsPending"
           :menu-props="{ offsetY: true }"
           :error-messages="errors.collect('mib')"
+          class="pt-0"
           item-text="name"
           item-value="_id"
           name="mib"

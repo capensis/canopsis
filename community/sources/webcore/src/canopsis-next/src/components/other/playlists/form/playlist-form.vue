@@ -22,9 +22,7 @@
     >
       {{ $t('modals.createPlaylist.manageTabs') }}
     </v-btn>
-    <v-layout
-      class="py-4"
-    >
+    <v-layout class="py-4">
       <v-layout
         v-if="tabsPending"
         justify-center

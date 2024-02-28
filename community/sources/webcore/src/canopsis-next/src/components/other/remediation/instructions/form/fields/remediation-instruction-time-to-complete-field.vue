@@ -16,13 +16,13 @@
       xs4
     >
       <v-select
-        class="time-complete-unit"
         v-field="duration.unit"
         v-validate="'required'"
         :label="$t('common.unit')"
         :items="availableUnits"
         :name="unitFieldName"
         :disabled="disabled"
+        class="time-complete-unit"
         hide-details
       />
     </v-flex>

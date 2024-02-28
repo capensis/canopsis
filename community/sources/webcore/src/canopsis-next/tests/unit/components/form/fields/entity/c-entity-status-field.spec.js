@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ENTITIES_STATUSES } from '@/constants';
 
 import CEntityStatusField from '@/components/forms/fields/entity/c-entity-status-field.vue';
@@ -21,14 +21,9 @@ describe('c-entity-status-field', () => {
     });
     const selectElement = wrapper.find('select.v-select');
 
-    selectElement.vm.$emit('input', ENTITIES_STATUSES.cancelled);
+    selectElement.triggerCustomEvent('input', ENTITIES_STATUSES.cancelled);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(ENTITIES_STATUSES.cancelled);
+    expect(wrapper).toEmitInput(ENTITIES_STATUSES.cancelled);
   });
 
   it('Renders `c-entity-status-field` with default props', () => {

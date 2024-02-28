@@ -1,8 +1,8 @@
 <template>
   <div>
     <p
-      class="pre-wrap"
       v-if="!engine.is_running"
+      class="pre-wrap"
     >
       {{ systemDownMessage }}
     </p>
@@ -18,14 +18,14 @@
       />
     </div>
     <p
-      class="pre-wrap"
       v-if="engine.is_queue_overflown"
+      class="pre-wrap"
     >
       {{ $t('healthcheck.queueOverflowed', { queueLength, maxQueueLength }) }}
     </p>
     <p
-      class="pre-wrap"
       v-if="engine.is_diff_instances_config"
+      class="pre-wrap"
     >
       {{ $t('healthcheck.invalidInstancesConfiguration') }}
     </p>

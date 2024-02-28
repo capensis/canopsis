@@ -13,7 +13,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-123"
           class="v-input--radio-group__input"
           role="radiogroup"
         >
@@ -338,7 +337,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-146"
           class="v-input--radio-group__input"
           role="radiogroup"
         >
@@ -458,7 +456,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-90"
           class="v-input--radio-group__input"
           role="radiogroup"
         >
@@ -780,7 +777,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-113"
           class="v-input--radio-group__input"
           role="radiogroup"
         >

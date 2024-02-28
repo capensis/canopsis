@@ -10,16 +10,16 @@
   >
     <group-panel
       v-for="group in groups"
-      :group="group"
       :key="group._id"
+      :group="group"
       hide-actions
     >
       <template #title>
         <v-layout align-center>
           <v-checkbox
-            class="group-checkbox mt-0 pt-0"
             :input-value="selected.groups"
             :value="group._id"
+            class="group-checkbox mt-0 pt-0"
             color="primary"
             @change="changeGroup(group, $event)"
           />
@@ -44,8 +44,8 @@
                 <span class="text-truncate fill-width">
                   {{ view.title }}
                   <span
-                    class="ml-1"
                     v-show="view.description"
+                    class="ml-1"
                   >
                     ({{ view.description }})
                   </span>

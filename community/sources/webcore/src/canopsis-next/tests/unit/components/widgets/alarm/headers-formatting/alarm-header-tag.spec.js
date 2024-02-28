@@ -42,7 +42,7 @@ describe('alarm-header-tag', () => {
 
     chip.trigger('close');
 
-    expect(wrapper).toEmit('clear');
+    expect(wrapper).toHaveBeenEmit('clear');
   });
 
   it('Renders `alarm-header-tag` with selected tag', () => {

@@ -1,9 +1,9 @@
 <template>
   <line-shape
-    v-on="$listeners"
     :shape="shape"
     :readonly="readonly"
     :marker-end="`url(#${shape._id}-end)`"
+    v-on="$listeners"
   >
     <marker
       :id="`${shape._id}-end`"

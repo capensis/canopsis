@@ -21,17 +21,17 @@
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
-          class="mr-3 mt-0"
           :category="query.category"
+          class="mr-3 mt-0"
           hide-details
           @input="updateCategory"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCorrelation">
         <v-switch
-          class="mt-0"
           :value="query.correlation"
           :label="$t('common.correlation')"
+          class="mt-0"
           color="primary"
           hide-details
           @change="updateCorrelation"
@@ -67,9 +67,9 @@
       </v-flex>
       <v-flex v-if="hasAccessToFilterByBookmark">
         <v-switch
-          class="mt-0"
           :value="query.only_bookmarks"
           :label="$t('alarm.filterByBookmark')"
+          class="mt-0"
           color="primary"
           hide-details
           @change="updateOnlyBookmarks"
@@ -86,8 +86,8 @@
       </v-flex>
       <v-flex>
         <v-chip
-          class="primary white--text"
           v-if="activeRange"
+          class="primary white--text"
           close
           label
           @click:close="removeHistoryFilter"
@@ -111,7 +111,6 @@
       </v-flex>
     </v-layout>
     <alarms-list-table
-      class="mt-2"
       ref="alarmsTable"
       :widget="widget"
       :alarms="alarms"
@@ -131,6 +130,7 @@
       :draggable-column="draggableColumn"
       :cells-content-behavior="cellsContentBehavior"
       :columns-settings="columnsSettings"
+      class="mt-2"
       expandable
       densable
       @select:tag="selectTag"

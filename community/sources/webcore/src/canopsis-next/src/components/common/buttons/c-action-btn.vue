@@ -8,13 +8,13 @@
   >
     <template #activator="{ on: tooltipOn }">
       <slot
-        name="button"
         :on="tooltipOn"
+        name="button"
       >
         <v-badge
-          class="c-action-btn__badge"
           v-if="badgeValue"
           :color="badgeColor"
+          class="c-action-btn__badge"
           overlap
         >
           <template #badge="">
@@ -27,12 +27,12 @@
             >
               <template #activator="{ on: badgeTooltipOn }">
                 <slot
-                  name="badgeIcon"
                   :on="badgeTooltipOn"
+                  name="badgeIcon"
                 >
                   <v-icon
-                    v-on="badgeTooltipOn"
                     color="white"
+                    v-on="badgeTooltipOn"
                   >
                     {{ badgeIcon }}
                   </v-icon>
@@ -42,14 +42,14 @@
             </v-tooltip>
           </template>
           <v-btn
-            class="ma-0 c-action-btn__button"
-            v-on="tooltipOn"
             :disabled="disabled"
             :loading="loading"
             :small="small"
             :color="btnColor"
             :dark="dark"
+            class="ma-0 c-action-btn__button"
             icon
+            v-on="tooltipOn"
             @click.stop.prevent="$listeners.click"
           >
             <v-icon :color="preparedProps.color">
@@ -58,15 +58,15 @@
           </v-btn>
         </v-badge>
         <v-btn
-          class="mx-1 my-0 c-action-btn__button"
           v-else
-          v-on="tooltipOn"
           :disabled="disabled"
           :loading="loading"
           :small="small"
           :color="btnColor"
           :dark="dark"
+          class="mx-1 my-0 c-action-btn__button"
           icon
+          v-on="tooltipOn"
           @click.stop.prevent="$listeners.click"
         >
           <v-icon :color="preparedProps.color">
