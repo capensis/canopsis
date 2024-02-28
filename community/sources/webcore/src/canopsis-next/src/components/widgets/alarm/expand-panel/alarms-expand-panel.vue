@@ -185,7 +185,6 @@
               :entity="alarm.entity"
               :default-time-range="widget.parameters.availability.default_time_range"
               :default-show-type="widget.parameters.availability.default_show_type"
-              class="alarms-expand-panel__availability"
             />
           </v-layout>
         </alarms-expand-panel-tab-item-wrapper>
@@ -409,12 +408,6 @@ export default {
     max-width: 0;
     max-height: 0;
     overflow: hidden;
-  }
-}
-
-.alarms-expand-panel {
-  &__availability {
-    max-width: 900px;
   }
 }
 </style>
