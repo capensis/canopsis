@@ -648,8 +648,28 @@ export default {
       title: 'Dependencies for {name}',
     },
   },
-  stateSetting: {
-    title: 'JUnit test suite state settings',
+  createStateSetting: {
+    create: {
+      title: 'Create state compute method',
+      success: 'State compute method created!',
+    },
+    edit: {
+      title: 'Edit state compute method',
+      success: 'State compute method edited!',
+    },
+    duplicate: {
+      title: 'Duplicate state compute method',
+      success: 'State compute method duplicated!',
+    },
+    remove: {
+      success: 'State compute method deleted!',
+    },
+  },
+  createJunitStateSetting: {
+    edit: {
+      title: 'JUnit test suite state settings',
+      success: 'JUnit test suite state setting edited!',
+    },
   },
   defineStorage: {
     title: 'Define result storage',
@@ -677,6 +697,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Instruction approval',
+    dismissed: 'has dismissed your updates',
     requested: 'requested for approval',
     tabs: {
       updated: 'Updated',
@@ -888,7 +909,7 @@ export default {
     title: 'Select widget template type',
   },
   entityDependenciesList: {
-    title: 'Centreon impacted entities',
+    title: '{name} impacted entities',
   },
   createDeclareTicketRule: {
     create: {

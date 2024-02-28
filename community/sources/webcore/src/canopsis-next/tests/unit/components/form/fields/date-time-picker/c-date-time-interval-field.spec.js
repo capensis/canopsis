@@ -37,8 +37,8 @@ describe('c-date-time-interval-field', () => {
       max: timestamp,
     });
 
-    fromField.vm.$emit('input', newValue);
-    expect(wrapper).toEmit('input', { ...value, from: newValue });
+    fromField.triggerCustomEvent('input', newValue);
+    expect(wrapper).toEmitInput({ ...value, from: newValue });
   });
 
   test('To changed after trigger to date time picker field', () => {
@@ -58,8 +58,8 @@ describe('c-date-time-interval-field', () => {
       max: timestamp,
     });
 
-    toField.vm.$emit('input', newValue);
-    expect(wrapper).toEmit('input', { ...value, to: newValue });
+    toField.triggerCustomEvent('input', newValue);
+    expect(wrapper).toEmitInput({ ...value, to: newValue });
   });
 
   test('Renders `c-date-time-interval-field` with default props', () => {

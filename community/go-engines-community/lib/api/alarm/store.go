@@ -428,6 +428,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		collection = s.resolvedDbCollection
 	}
 
+	const entityLookupName = "entity"
 	pipeline := []bson.M{
 		{"$match": match},
 		{"$addFields": bson.M{
@@ -437,13 +438,16 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
-			"as":           "entity",
+			"as":           entityLookupName,
 		}},
-		{"$unwind": "$entity"},
+		{"$unwind": "$" + entityLookupName},
 	}
 
+	pipeline = append(pipeline, getEntityCategoryLookup()...)
+	pipeline = append(pipeline, getEntityPbehaviorInfoTypeLookup()...)
 	if r.WithDependencies {
 		pipeline = append(pipeline, getImpactsCountPipeline()...)
+		pipeline = append(pipeline, getDependsCountPipeline()...)
 	}
 
 	if r.Steps != nil {

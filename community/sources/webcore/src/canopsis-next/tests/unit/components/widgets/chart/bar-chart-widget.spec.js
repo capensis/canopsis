@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createActiveViewModule,
   createAlarmModule,
@@ -14,6 +13,7 @@ import {
 } from '@unit/utils/store';
 import { randomArrayItem } from '@unit/utils/array';
 import { mockDateNow } from '@unit/utils/mock-hooks';
+
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
 import BarChartWidget from '@/components/widgets/chart/bar-chart-widget.vue';

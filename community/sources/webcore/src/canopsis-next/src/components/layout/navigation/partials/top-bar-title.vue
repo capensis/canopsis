@@ -5,18 +5,18 @@
       parent-element="span"
     />
     <div
-      class="badge-wrapper"
       v-if="showBadge"
+      class="badge-wrapper"
     >
       <v-tooltip right>
         <template #activator="{ on, attrs }">
           <v-btn
             class="badge-button"
-            v-on="on"
             v-bind="attrs"
             color="error"
             icon
             small
+            v-on="on"
             @click="showInfoModal"
           >
             <v-icon

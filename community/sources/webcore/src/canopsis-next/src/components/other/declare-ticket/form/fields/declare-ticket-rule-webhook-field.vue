@@ -20,10 +20,10 @@
       hide-url
     />
     <declare-ticket-rule-ticket-mapping-field
-      class="mb-2"
       v-field="value.declare_ticket"
       :name="`${name}.declare_ticket`"
       :is-declare-ticket-exist="isDeclareTicketExist"
+      class="mb-2"
       hide-empty-response
       ticket-id-required
       only-one-ticket-id

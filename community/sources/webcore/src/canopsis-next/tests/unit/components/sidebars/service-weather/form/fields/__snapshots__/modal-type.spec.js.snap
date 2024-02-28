@@ -16,7 +16,6 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-24"
           class="v-input--radio-group__input"
           role="radiogroup"
         >
@@ -141,7 +140,6 @@ exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = 
         style="height: auto;"
       >
         <div
-          aria-labelledby="input-11"
           class="v-input--radio-group__input"
           role="radiogroup"
         >

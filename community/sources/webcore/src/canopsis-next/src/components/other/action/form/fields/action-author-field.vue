@@ -1,9 +1,9 @@
 <template>
   <v-layout column>
     <c-enabled-field
-      class="mt-0"
       v-field="value.forward_author"
       :label="$t('scenario.forwardAuthor')"
+      class="mt-0"
     />
     <v-text-field
       v-if="!value.forward_author"

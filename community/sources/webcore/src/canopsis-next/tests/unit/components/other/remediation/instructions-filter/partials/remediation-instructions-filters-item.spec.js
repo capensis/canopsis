@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import RemediationInstructionsFiltersItem from '@/components/other/remediation/instructions-filter/partials/remediation-instructions-filters-item.vue';
@@ -55,9 +56,9 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    selectChip(wrapper).vm.$emit('click:close');
+    selectChip(wrapper).triggerCustomEvent('click:close');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...lockedFilter,
       disabled: !lockedFilter.disabled,
     });
@@ -71,9 +72,9 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    selectChip(wrapper).vm.$emit('click:close');
+    selectChip(wrapper).triggerCustomEvent('click:close');
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   it('Edit instruction filter modal opened after trigger click event on the chip', () => {
@@ -90,7 +91,7 @@ describe('remediation-instructions-filters-item', () => {
 
     const chip = selectChip(wrapper);
 
-    chip.vm.$emit('click');
+    chip.triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -116,12 +117,7 @@ describe('remediation-instructions-filters-item', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Renders `remediation-instructions-filters-item` with default props', () => {

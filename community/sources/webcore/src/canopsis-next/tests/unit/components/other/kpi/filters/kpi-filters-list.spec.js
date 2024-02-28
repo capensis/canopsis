@@ -137,7 +137,7 @@ describe('kpi-filters-list', () => {
       },
     });
 
-    await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
+    await selectExpandButtonByRow(wrapper, 0).triggerCustomEvent('expand');
 
     expect(wrapper).toMatchSnapshot();
   });

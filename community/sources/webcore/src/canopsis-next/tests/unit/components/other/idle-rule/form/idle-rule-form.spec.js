@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { IDLE_RULE_TYPES } from '@/constants';
 
 import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
@@ -33,9 +34,9 @@ describe('idle-rule-form', () => {
 
     const newValue = !enabled;
 
-    enabledField.vm.$emit('input', newValue);
+    enabledField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { enabled: newValue });
+    expect(wrapper).toEmitInput({ enabled: newValue });
   });
 
   test('IDLE Rule fields changed after trigger general form', () => {
@@ -52,9 +53,9 @@ describe('idle-rule-form', () => {
       description: Faker.datatype.string(),
     };
 
-    generalForm.vm.$emit('input', newValue);
+    generalForm.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('IDLE Rule patterns changed after trigger patterns form', () => {
@@ -74,9 +75,9 @@ describe('idle-rule-form', () => {
       alarm_pattern: {},
     };
 
-    patternsForm.vm.$emit('input', newPatterns);
+    patternsForm.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       enabled: true,
       name: 'Name',
       patterns: newPatterns,

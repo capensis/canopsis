@@ -9,8 +9,8 @@
         :key="index"
       >
         <div
-          class="alarms-timeline-steps-date text--disabled"
           v-show="index === 0"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div class="date">
             {{ day }}
@@ -21,12 +21,12 @@
             {{ step.t | date('time') }}
           </div>
           <alarms-time-line-flag
-            class="flag"
             :step="step"
+            class="flag"
           />
           <slot
-            name="card"
             :step="step"
+            name="card"
           />
         </div>
       </li>

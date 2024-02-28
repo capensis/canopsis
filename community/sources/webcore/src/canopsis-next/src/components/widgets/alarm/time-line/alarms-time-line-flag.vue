@@ -1,7 +1,7 @@
 <template>
   <v-badge
-    class="time-line-flag"
     :value="isActiveBadge"
+    class="time-line-flag"
     color="transparent"
     overlap
   >

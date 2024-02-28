@@ -1,6 +1,5 @@
 <template>
   <c-lazy-search-field
-    class="c-alarm-tag-field"
     v-field="value"
     :items="alarmTags"
     :label="label || $tc('common.tag')"
@@ -9,6 +8,7 @@
     :name="name"
     :menu-props="{ contentClass: 'c-alarm-tag-field__list' }"
     :has-more="hasMoreTags"
+    class="c-alarm-tag-field"
     item-text="value"
     item-value="value"
     hide-details
@@ -23,9 +23,9 @@
   >
     <template #selection="{ item, index }">
       <c-alarm-action-chip
-        class="c-alarm-tag-field__tag"
         :color="item.color"
         :title="item.value"
+        class="c-alarm-tag-field__tag"
         closable
         ellipsis
         @close="removeItemFromArray(index)"

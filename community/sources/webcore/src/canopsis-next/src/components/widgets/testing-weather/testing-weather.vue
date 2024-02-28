@@ -12,8 +12,8 @@
       />
     </v-fade-transition>
     <v-layout
-      class="fill-height"
       key="content"
+      class="fill-height"
       wrap
     >
       <template v-if="testSuites.length">

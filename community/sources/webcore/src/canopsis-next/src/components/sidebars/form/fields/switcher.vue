@@ -2,8 +2,8 @@
   <widget-settings-flat-item :title="title">
     <template #actions>
       <v-switch
-        class="ma-0 pa-0"
         :input-value="value"
+        class="ma-0 pa-0"
         color="primary"
         hide-details
         @change="$emit('input', $event)"

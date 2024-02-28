@@ -5,12 +5,12 @@
   >
     <template #button="">
       <v-btn
-        class="mx-1 ma-0"
         v-clipboard:copy="value"
         v-clipboard:success="onSuccessCopied"
         v-clipboard:error="onErrorCopied"
         :small="small"
         :fab="fab"
+        class="mx-1 ma-0"
         icon
       >
         <v-icon

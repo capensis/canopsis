@@ -1,20 +1,20 @@
 <template>
   <div
-    class="c-quick-interval"
     :class="{ 'c-quick-interval--reverse': reverse, 'c-quick-interval--short': short }"
+    class="c-quick-interval"
   >
     <template v-if="short">
       <v-menu
-        offset-y
         :close-on-content-click="false"
+        offset-y
       >
         <template #activator="{ on }">
           <v-text-field
-            v-on="on"
             :value="shortValue"
             :label="$t('common.interval')"
             readonly
             hide-details
+            v-on="on"
           />
         </template>
         <v-card width="400px">
@@ -31,10 +31,10 @@
                   @input="updateModel($event)"
                 />
                 <c-quick-date-interval-type-field
-                  class="c-quick-interval__range ml-4"
                   :value="range"
                   :ranges="availableQuickRanges"
                   :disabled="disabled"
+                  class="c-quick-interval__range ml-4"
                   hide-details
                   return-object
                   @input="updateIntervalRange"

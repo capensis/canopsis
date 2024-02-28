@@ -37,6 +37,14 @@ const (
 
 	// ActionCopy is a type of action that copies a value from a field to another.
 	ActionCopy = "copy"
+
+	// ActionSetTags is a type of action that sets tags of an event using a regex from
+	// selected field.
+	ActionSetTags = "set_tags"
+
+	// ActionSetTagsFromTemplate is a type of action that sets tags of an event
+	// using a regex applied to template result.
+	ActionSetTagsFromTemplate = "set_tags_from_template"
 )
 
 type ExternalDataParameters struct {
@@ -113,7 +121,7 @@ type RegexMatch struct {
 }
 
 type Template struct {
-	Event        types.Event
+	Event        *types.Event
 	RegexMatch   RegexMatch
 	ExternalData map[string]interface{}
 }

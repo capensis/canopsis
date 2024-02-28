@@ -12,8 +12,8 @@
       />
     </v-fade-transition>
     <v-layout
-      class="fill-height"
       key="content"
+      class="fill-height"
       wrap
     >
       <v-alert
@@ -29,10 +29,10 @@
           :class="flexSize"
         >
           <counter-item
-            class="weatherItem"
             :counter="counter"
             :widget="widget"
             :query="queryWithoutFilters"
+            class="weatherItem"
           />
         </v-flex>
       </template>

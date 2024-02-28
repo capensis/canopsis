@@ -1,13 +1,13 @@
 <template>
   <v-layout
-    class="theme-enabled-color-picker-field"
     :class="{ 'theme-enabled-color-picker-field--disabled': !value.enabled }"
+    class="theme-enabled-color-picker-field"
     column
   >
     <c-enabled-field
-      class="mt-0"
       v-field="value.enabled"
       :label="enableLabel"
+      class="mt-0"
     >
       <template #append="">
         <c-help-icon

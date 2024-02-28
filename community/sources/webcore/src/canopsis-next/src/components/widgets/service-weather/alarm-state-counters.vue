@@ -3,8 +3,8 @@
     <template #activator="{ on }">
       <v-layout
         class="alarm-counters fill-height"
-        v-on="on"
         column
+        v-on="on"
       >
         <alarm-counter
           v-for="counter in preparedCounters"

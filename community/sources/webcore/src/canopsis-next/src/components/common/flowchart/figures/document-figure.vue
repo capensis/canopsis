@@ -1,7 +1,7 @@
 <template>
   <path
-    v-on="$listeners"
     :d="path"
+    v-on="$listeners"
   />
 </template>
 

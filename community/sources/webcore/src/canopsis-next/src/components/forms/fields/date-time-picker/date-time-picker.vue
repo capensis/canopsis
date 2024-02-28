@@ -1,8 +1,8 @@
 <template>
   <v-sheet>
     <div
-      class="v-picker__title primary text-center"
       v-if="label"
+      class="v-picker__title primary text-center"
     >
       <span class="text-h5">{{ label }}</span>
     </div>
@@ -14,15 +14,15 @@
       >
         <v-flex class="v-date-time-picker__subtitle-wrapper">
           <span
-            class="v-date-time-picker__subtitle"
             :class="{ 'grey--text darken-1': !localValue }"
+            class="v-date-time-picker__subtitle"
           >{{ valueString }}</span>
         </v-flex>
         <v-flex class="v-date-time-picker__subtitle-wrapper">
           <time-picker-field
-            class="v-date-time-picker__subtitle"
             :value="timeString"
             :round-hours="roundHours"
+            class="v-date-time-picker__subtitle"
             @input="updateTime"
           />
         </v-flex>
