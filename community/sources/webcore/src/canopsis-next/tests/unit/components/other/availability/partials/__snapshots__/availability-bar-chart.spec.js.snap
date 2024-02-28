@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-bar-chart Renders \`availability-bar-chart\` with custom props 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <div
+    aria-valuemax="100"
+    aria-valuemin="0"
+    aria-valuenow="60"
+    class="v-progress-linear v-progress-linear--visible theme--light"
+    role="progressbar"
+    style="height: 50px;"
+  >
+    <div
+      class="v-progress-linear__background"
+      style="opacity: 1; left: 60%; width: 40%; background-color: rgb(43, 62, 79); border-color: #2b3e4f;"
+    />
+    <div
+      class="v-progress-linear__buffer"
+    />
+    <transition-stub
+      name="slide-x-transition"
+    >
+      <div
+        class="v-progress-linear__determinate"
+        style="width: 60%; background-color: rgb(47, 171, 99); border-color: #2fab63;"
+      />
+    </transition-stub>
+  </div>
+  <div
+    class="layout column"
+  >
+    <availability-bar-chart-information-row-stub
+      color="#2fab63"
+      label="Uptime"
+    >
+      8 hrs 20 mins
+    </availability-bar-chart-information-row-stub>
+    <availability-bar-chart-information-row-stub
+      color="#2b3e4f"
+      label="Downtime"
+    >
+      5 hrs 33 mins 20 secs
+    </availability-bar-chart-information-row-stub>
+    <availability-bar-chart-information-row-stub
+      class="text--secondary"
+      color="transparent"
+      label="Total active time"
+    >
+        13 hrs 53 mins 20 secs
+    </availability-bar-chart-information-row-stub>
+    <availability-bar-chart-information-row-stub
+      class="text--disabled"
+      color="transparent"
+      label="Inactive time"
+    >
+        33 mins 20 secs
+    </availability-bar-chart-information-row-stub>
+  </div>
+</div>
+`;
+
+exports[`availability-bar-chart Renders \`availability-bar-chart\` with required props 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <div
+    aria-valuemax="100"
+    aria-valuemin="0"
+    aria-valuenow="66.67"
+    class="v-progress-linear v-progress-linear--visible theme--light"
+    role="progressbar"
+    style="height: 50px;"
+  >
+    <div
+      class="v-progress-linear__background"
+      style="opacity: 1; left: 66.67%; width: 33.33%; background-color: rgb(196, 196, 196); border-color: #c4c4c4;"
+    />
+    <div
+      class="v-progress-linear__buffer"
+    />
+    <transition-stub
+      name="slide-x-transition"
+    >
+      <div
+        class="v-progress-linear__determinate"
+        style="width: 66.67%; background-color: rgb(91, 110, 127); border-color: #5b6e7f;"
+      />
+    </transition-stub>
+  </div>
+  <div
+    class="layout column"
+  >
+    <availability-bar-chart-information-row-stub
+      color="#5b6E7f"
+      label="Uptime"
+    >
+      5 hrs 33 mins 20 secs
+    </availability-bar-chart-information-row-stub>
+    <availability-bar-chart-information-row-stub
+      color="#c4c4c4"
+      label="Downtime"
+    >
+      2 hrs 46 mins 40 secs
+    </availability-bar-chart-information-row-stub>
+    <availability-bar-chart-information-row-stub
+      class="text--secondary"
+      color="transparent"
+      label="Total active time"
+    >
+        8 hrs 20 mins
+    </availability-bar-chart-information-row-stub>
+    <!---->
+  </div>
+</div>
+`;
