@@ -3,6 +3,7 @@ package correlation
 import (
 	"math"
 	"sort"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -37,8 +38,9 @@ type MetaAlarmState struct {
 	ParentsEntityIDs  []string `bson:"parents_entity_ids"`
 	ParentsTimestamps []int64  `bson:"parents_timestamps"`
 
-	// CreatedAt should be set only for archive state, time.Time for ttl index.
-	CreatedAt *datetime.CpsTime `bson:"created_at,omitempty"`
+	// ExpiredAt is used to remove expired state.
+	// Type should be time.Time for ttl index.
+	ExpiredAt time.Time `bson:"expired_at,omitempty"`
 
 	ChildInactiveExpireAt *datetime.CpsTime `bson:"child_inactive_expire_at,omitempty"`
 }
@@ -53,6 +55,17 @@ func (s *MetaAlarmState) Reset(id string) {
 		ChildrenTimestamps: make([]int64, 0, 1),
 		ParentsEntityIDs:   make([]string, 0, 1),
 		ParentsTimestamps:  make([]int64, 0, 1),
+	}
+}
+
+func (s *MetaAlarmState) ResetExpireAt(timeIntervalInSeconds int64) {
+	s.ExpiredAt = time.Now().Add(time.Duration(timeIntervalInSeconds) * time.Second)
+}
+
+func (s *MetaAlarmState) ResetChildInactiveExpireAt(childInactiveDelay *datetime.DurationWithUnit) {
+	if childInactiveDelay != nil && childInactiveDelay.Value > 0 {
+		childInactiveExpireAt := childInactiveDelay.AddTo(datetime.NewCpsTime())
+		s.ChildInactiveExpireAt = &childInactiveExpireAt
 	}
 }
 
