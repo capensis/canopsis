@@ -291,6 +291,7 @@ export default {
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
   event: 'Événement | Événements',
   showMore: 'Afficher plus ({current} sur {total})',
+  availability: 'Disponibilité',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

@@ -28,7 +28,7 @@ import { MODALS } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesThemesMixin } from '@/mixins/entities/theme';
 import { permissionsTechnicalProfileThemeMixin } from '@/mixins/permissions/technical/profile/theme';
 
