@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
@@ -40,18 +42,16 @@ export default {
       default: 'availability',
     },
   },
-  computed: {
-    defaultTimeRangeFieldName() {
-      return `${this.name}.default_time_range`;
-    },
+  setup(props) {
+    const defaultTimeRangeFieldName = computed(() => `${props.name}.default_time_range`);
+    const defaultShowTypeFieldName = computed(() => `${props.name}.show_type`);
+    const intervalRanges = computed(() => Object.values(AVAILABILITY_QUICK_RANGES));
 
-    defaultShowTypeFieldName() {
-      return `${this.name}.show_type`;
-    },
-
-    intervalRanges() {
-      return Object.values(AVAILABILITY_QUICK_RANGES);
-    },
+    return {
+      defaultTimeRangeFieldName,
+      defaultShowTypeFieldName,
+      intervalRanges,
+    };
   },
 };
 </script>
