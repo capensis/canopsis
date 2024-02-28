@@ -12,7 +12,7 @@ exports[`availability-bar Renders \`availability-bar\` with custom props 1`] = `
     downtime="20000"
     downtimecolor="#c4c4c4"
     inactivetime="2000"
-    type="0"
+    showtype="0"
     uptime="30000"
     uptimecolor="#5b6E7f"
   />
@@ -30,7 +30,7 @@ exports[`availability-bar Renders \`availability-bar\` with required props 1`] =
     downtime="10000"
     downtimecolor="#c4c4c4"
     inactivetime="1000"
-    type="0"
+    showtype="0"
     uptime="20000"
     uptimecolor="#5b6E7f"
   />
