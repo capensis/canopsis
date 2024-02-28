@@ -496,3 +496,32 @@ func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
 type LinksRequest struct {
 	Ids []string `form:"ids[]" json:"ids" binding:"required,notblank"`
 }
+
+type GetDisplayNamesRequest struct {
+	pagination.Query
+
+	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	Search string `form:"search" json:"search"`
+
+	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
+	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
+	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+}
+
+type DisplayNameData struct {
+	ID          string `bson:"_id" json:"_id"`
+	DisplayName string `bson:"display_name" json:"display_name"`
+}
+
+type GetDisplayNamesResponse struct {
+	Data       []DisplayNameData `bson:"data" json:"data"`
+	TotalCount int64             `bson:"total_count" json:"total_count"`
+}
+
+func (r *GetDisplayNamesResponse) GetData() interface{} {
+	return r.Data
+}
+
+func (r *GetDisplayNamesResponse) GetTotal() int64 {
+	return r.TotalCount
+}
