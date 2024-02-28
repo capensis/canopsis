@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import VueI18n, { } from 'vue-i18n';
 import { merge } from 'lodash';
 
 import { DEFAULT_LOCALE } from '@/config';

@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 
 import AvailabilityBarChart from './availability-bar-chart.vue';
@@ -37,9 +39,11 @@ export default {
       required: false,
     },
   },
-  data() {
+  setup() {
+    const showType = ref(AVAILABILITY_SHOW_TYPE.percent);
+
     return {
-      showType: AVAILABILITY_SHOW_TYPE.percent,
+      showType,
     };
   },
 };
