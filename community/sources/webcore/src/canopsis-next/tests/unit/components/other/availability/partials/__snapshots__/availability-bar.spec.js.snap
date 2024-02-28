@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-bar Renders \`availability-bar\` with custom props 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <availability-bar-filters-stub
+    minintervaldate="1708988400"
+    showtype="0"
+  />
+  <availability-bar-chart-stub
+    downtime="20000"
+    downtimecolor="#c4c4c4"
+    inactivetime="2000"
+    type="0"
+    uptime="30000"
+    uptimecolor="#5b6E7f"
+  />
+</div>
+`;
+
+exports[`availability-bar Renders \`availability-bar\` with required props 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <availability-bar-filters-stub
+    showtype="0"
+  />
+  <availability-bar-chart-stub
+    downtime="10000"
+    downtimecolor="#c4c4c4"
+    inactivetime="1000"
+    type="0"
+    uptime="20000"
+    uptimecolor="#5b6E7f"
+  />
+</div>
+`;
