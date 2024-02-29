@@ -8,7 +8,7 @@
       short
       @input="$emit('update:interval', $event)"
     />
-    <c-availability-show-type-field
+    <availability-show-type-field
       :value="showType"
       :label="$t('common.show')"
       class="availability-bar-filters__show-type"
@@ -22,7 +22,10 @@ import { computed } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
+import AvailabilityShowTypeField from '@/components/other/availability/form/fields/availability-show-type-field.vue';
+
 export default {
+  components: { AvailabilityShowTypeField },
   props: {
     interval: {
       type: Object,
