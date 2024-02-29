@@ -9,9 +9,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -40,26 +43,26 @@ type store struct {
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
-	serviceCountersCollection mongo.DbCollection
+	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
-
-	linkGenerator link.Generator
-
-	logger zerolog.Logger
+	stateSettingDbCollection  mongo.DbCollection
+	linkGenerator             link.Generator
+	enableSameServiceNames    bool
+	logger                    zerolog.Logger
 }
 
-func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Logger) Store {
+func NewStore(db mongo.DbClient, linkGenerator link.Generator, enableSameServiceNames bool, logger zerolog.Logger) Store {
 	return &store{
 		dbClient:                  db,
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
-		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersCollection),
+		entityCounters:            db.Collection(mongo.EntityCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
-
-		linkGenerator: linkGenerator,
-
-		logger: logger,
+		stateSettingDbCollection:  db.Collection(mongo.StateSettingsMongoCollection),
+		linkGenerator:             linkGenerator,
+		enableSameServiceNames:    enableSameServiceNames,
+		logger:                    logger,
 	}
 }
 
@@ -99,7 +102,9 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}).
+		FindOne(ctx, bson.M{
+			"_id": r.ID, "type": bson.M{"$in": []string{types.EntityTypeService, types.EntityTypeComponent}},
+			"soft_deleted": bson.M{"$exists": false}}).
 		Decode(&service)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -108,9 +113,50 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		return nil, err
 	}
 	now := datetime.NewCpsTime()
-	match := bson.M{"services": service.ID}
+	var match bson.M
+	switch service.Type {
+	case types.EntityTypeService:
+		match = bson.M{"services": service.ID, "_id": bson.M{"$ne": service.ID}}
+	case types.EntityTypeComponent:
+		if service.StateInfo == nil {
+			return &ContextGraphAggregationResult{Data: make([]ContextGraphEntity, 0)}, nil
+		}
+
+		match = bson.M{"component": service.ID, "_id": bson.M{"$ne": service.ID}}
+	}
+
+	if r.DefineState {
+		ec := entitycounters.EntityCounters{}
+		err = s.entityCounters.FindOne(
+			ctx, bson.M{"_id": service.ID}, options.FindOne().SetProjection(bson.M{"rule": 1})).Decode(&ec)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, err
+		}
+		if ec.Rule != nil {
+			var entityPattern *pattern.Entity
+			switch ec.Rule.Method {
+			case statesetting.MethodInherited, statesetting.MethodDependencies:
+				entityPattern = ec.Rule.InheritedEntityPattern
+			}
+			if entityPattern != nil {
+				var patternMongoQuery bson.M
+				patternMongoQuery, err = db.EntityPatternToMongoQuery(*entityPattern, "")
+				if err != nil {
+					return nil, err
+				}
+
+				match = bson.M{
+					"$and": []bson.M{
+						match,
+						patternMongoQuery,
+					},
+				}
+			}
+		}
+	}
+
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
-		r.WithFlags, now)
+		r.WithFlags, r.DefineState, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -131,33 +177,68 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		s.logger.Err(err).Msg("cannot fetch links")
 	}
 
+	if r.WithFlags && r.DefineState {
+		var defaultStateSetting StateSettingResponse
+		for i := range result.Data {
+			if result.Data[i].StateSetting == nil && result.Data[i].Type == types.EntityTypeService {
+				if defaultStateSetting.ID == "" {
+					err = s.stateSettingDbCollection.FindOne(ctx, bson.M{"_id": statesetting.ServiceID}).Decode(&defaultStateSetting)
+					if err != nil {
+						if errors.Is(err, mongodriver.ErrNoDocuments) {
+							return result, nil
+						}
+
+						return nil, err
+					}
+				}
+
+				result.Data[i].StateSetting = &defaultStateSetting
+			}
+		}
+	}
+
 	return result, nil
 }
 
 func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
 	e := types.Entity{}
-	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"services": 1})).
-		Decode(&e)
+	err := s.dbCollection.FindOne(ctx,
+		bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}},
+		options.FindOne().SetProjection(bson.M{"services": 1, "component": 1, "type": 1}),
+	).Decode(&e)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
 	}
+
 	result := &ContextGraphAggregationResult{}
-	if len(e.Services) == 0 {
-		result.Data = make([]entity.Entity, 0)
+	match := make([]bson.M, 0)
+	if e.Type == types.EntityTypeResource {
+		match = append(match, bson.M{
+			"_id":            e.Component,
+			"type":           types.EntityTypeComponent,
+			"state_info._id": bson.M{"$nin": bson.A{nil, ""}},
+		})
+	}
+
+	if len(e.Services) > 0 {
+		match = append(match, bson.M{
+			"_id":  bson.M{"$in": e.Services},
+			"type": types.EntityTypeService,
+		})
+	}
+
+	if len(match) == 0 {
+		result.Data = make([]ContextGraphEntity, 0)
+
 		return result, nil
 	}
 
-	match := bson.M{
-		"_id":  bson.M{"$in": e.Services},
-		"type": types.EntityTypeService,
-	}
 	now := datetime.NewCpsTime()
-	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
-		r.WithFlags, now)
+	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(bson.M{"$or": match}, r.Query, r.SortRequest, r.Category, r.Search,
+		r.WithFlags, false, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -218,12 +299,27 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+		if !s.enableSameServiceNames {
+			err := s.dbCollection.FindOne(ctx, bson.M{
+				"name":         service.Name,
+				"type":         types.EntityTypeService,
+				"soft_deleted": nil,
+			}).Err()
+			if err == nil {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
+			if !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return err
+			}
+		}
+
 		_, err := s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			return err
 		}
 
-		_, err = s.serviceCountersCollection.InsertOne(ctx, statecounters.EntityServiceCounters{
+		_, err = s.entityCounters.InsertOne(ctx, entitycounters.EntityCounters{
 			ID:             service.ID,
 			OutputTemplate: service.OutputTemplate,
 		})
@@ -272,6 +368,22 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		service = nil
 		serviceChanges = ServiceChanges{}
 		oldValues := &entityservice.EntityService{}
+		if !s.enableSameServiceNames {
+			err := s.dbCollection.FindOne(ctx, bson.M{
+				"_id":          bson.M{"$ne": request.ID},
+				"name":         request.Name,
+				"type":         types.EntityTypeService,
+				"soft_deleted": nil,
+			}).Err()
+			if err == nil {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
+			if !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return err
+			}
+		}
+
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{
@@ -292,7 +404,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		serviceChanges.IsToggled = request.Enabled != nil && oldValues.Enabled != *request.Enabled
 		serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPattern, request.EntityPattern)
 
-		_, err = s.serviceCountersCollection.UpdateOne(
+		_, err = s.entityCounters.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID}, bson.M{
 				"$set": bson.M{

@@ -79,6 +79,8 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
@@ -184,10 +186,14 @@ export default {
       });
     },
 
-    openRootCauseDiagram() {
-      /**
-       * TODO: Should be added show modal mechanism
-       */
+    openRootCauseDiagram(entity) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
+        },
+      });
     },
   },
 };

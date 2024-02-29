@@ -19,15 +19,18 @@
         </v-btn>
       </div>
     </div>
-    <div
+    <v-layout
       :class="{ disabled: fullDisabled }"
-      class="file-selector-button-wrapper"
+      align-center
       v-on="wrapperListeners"
     >
       <slot
         :disabled="fullDisabled"
         :loading="loading"
         :on="scopedActivatorSlotListeners"
+        :clear="internalClear"
+        :drop="dropFiles"
+        :files="files"
         name="activator"
       >
         <v-btn
@@ -38,11 +41,12 @@
           <v-icon>cloud_upload</v-icon>
         </v-btn>
       </slot>
-    </div>
+    </v-layout>
     <input
       ref="fileInput"
       :multiple="multiple"
       :accept="accept"
+      :name="name"
       class="hidden"
       type="file"
       @change="change"
@@ -53,7 +57,7 @@
       class="mt-2"
     >
       <v-messages
-        :value="errorMessages"
+        :value="errors.collect(name)"
         color="error"
       />
     </div>
@@ -64,15 +68,6 @@
 import { union } from 'lodash';
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.files;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
   inject: ['$validator'],
   props: {
     name: {
@@ -99,9 +94,16 @@ export default {
       type: String,
       default: null,
     },
-    errorMessages: {
-      type: Array,
-      default: () => [],
+    /**
+     * File size in kilobytes (KB)
+     */
+    maxFileSize: {
+      type: [String, Number],
+      required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
     hideDetails: {
       type: Boolean,
@@ -111,6 +113,7 @@ export default {
   data() {
     return {
       files: [],
+      filesForValidator: [],
     };
   },
   computed: {
@@ -135,39 +138,109 @@ export default {
         click: this.selectFiles,
       };
     },
+
+    errorMessages() {
+      return this.$validator.errors.collect();
+    },
+  },
+  mounted() {
+    this.attachField();
+  },
+  beforeDestroy() {
+    this.detachField();
   },
   methods: {
+    attachField() {
+      const rules = {
+        required: this.required,
+      };
+
+      if (this.accept) {
+        rules.mimes = this.accept.split(',');
+      }
+
+      if (this.maxFileSize) {
+        rules.size = Number(this.maxFileSize);
+      }
+
+      this.$validator.attach({
+        name: this.name,
+        rules,
+        getter: () => this.filesForValidator,
+        vm: this,
+      });
+    },
+
+    detachField() {
+      this.$validator.detach(this.name);
+    },
+
     selectFiles(event) {
-      event.stopPropagation();
+      event?.stopPropagation();
 
       if (!this.fullDisabled) {
         this.$refs.fileInput.click();
       }
     },
 
-    change(e) {
-      const files = Object.values(e.target.files);
-      this.files = this.multiple
-        ? union(this.files, files)
-        : files;
+    async dropFiles(event) {
+      const { files } = event?.dataTransfer ?? {};
 
-      this.$emit('change', this.files);
+      if (files) {
+        this.setFilesForValidator(files);
+
+        const isValid = await this.$validator.validate(this.name);
+
+        if (isValid) {
+          this.setFiles(this.filesForValidator);
+        }
+      }
     },
 
-    internalClear() {
-      this.$refs.fileInput.value = null;
-      this.files = [];
+    async change(event) {
+      this.setFilesForValidator(event.target.files);
 
+      const isValid = await this.$validator.validate(this.name);
+
+      if (isValid) {
+        this.setFiles(this.filesForValidator);
+      }
+    },
+
+    setFilesForValidator(files) {
+      this.filesForValidator = this.multiple
+        ? union(this.files, [...files])
+        : [...files];
+    },
+
+    setFiles(files) {
+      this.files = [...files];
       this.$emit('change', this.files);
     },
 
     clear() {
       this.$refs.fileInput.value = null;
       this.files = [];
+      this.filesForValidator = [];
+
+      this.errors.remove(this.name);
     },
 
-    removeFileFromSelections(name) {
-      this.files = this.files.filter(file => file.name !== name);
+    internalClear() {
+      this.clear();
+      this.$emit('change', this.files);
+    },
+
+    async removeFileFromSelections(name) {
+      this.setFilesForValidator(this.files.filter(file => file.name !== name));
+
+      const isValid = await this.$validator.validate(this.name);
+
+      if (!isValid) {
+        return;
+      }
+
+      this.setFiles(this.filesForValidator);
 
       if (!this.files.length) {
         this.internalClear();
@@ -182,19 +255,5 @@ export default {
 <style lang="scss" scoped>
   .hidden {
     display: none;
-  }
-
-  .file-selector-button-wrapper {
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    cursor: pointer;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-
-    &.disabled {
-      cursor: default;
-    }
   }
 </style>

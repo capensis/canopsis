@@ -62,6 +62,7 @@ import vectorMetricsModule from './vector-metrics';
 import groupMetricsModule from './group-metrics';
 import tagModule from './tag';
 import themeModule from './theme';
+import iconModule from './icon';
 
 export default {
   alarm: alarmModule,
@@ -128,4 +129,5 @@ export default {
   groupMetrics: groupMetricsModule,
   tag: tagModule,
   theme: themeModule,
+  icon: iconModule,
 };

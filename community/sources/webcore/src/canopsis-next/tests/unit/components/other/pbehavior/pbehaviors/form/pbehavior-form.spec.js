@@ -6,17 +6,10 @@ import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavio
 
 const stubs = {
   'pbehavior-general-form': true,
-  'pbehavior-comments-field': true,
-  'recurrence-rule-form': true,
-  'pbehavior-recurrence-rule-exceptions-field': true,
-  'c-enabled-color-picker-field': true,
-  'c-collapse-panel': true,
   'pbehavior-patterns-form': true,
 };
 
 const selectPbehaviorGeneralForm = wrapper => wrapper.find('pbehavior-general-form-stub');
-const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
-const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
 const selectPatternsField = wrapper => wrapper.find('pbehavior-patterns-form-stub');
 
 describe('pbehavior-form', () => {
@@ -63,34 +56,6 @@ describe('pbehavior-form', () => {
     expect(wrapper).toEmitInput(newForm);
   });
 
-  test('Comments updated after trigger pbehavior comments field', () => {
-    const form = {
-      name: Faker.datatype.string(),
-      enabled: Faker.datatype.boolean(),
-      patterns: {},
-      comments: [],
-    };
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newComments = [
-      {
-        key: Faker.datatype.string(),
-        message: Faker.datatype.string(),
-      },
-    ];
-
-    selectPbehaviorCommentsField(wrapper).triggerCustomEvent('input', newComments);
-
-    expect(wrapper).toEmitInput({
-      ...form,
-      comments: newComments,
-    });
-  });
-
   test('Filter updated after trigger pbehavior filter field', () => {
     const form = {
       name: Faker.datatype.string(),
@@ -112,31 +77,6 @@ describe('pbehavior-form', () => {
     expect(wrapper).toEmitInput({
       ...form,
       patterns: newPatterns,
-    });
-  });
-
-  test('Color changed after trigger color field', () => {
-    const form = {
-      name: Faker.datatype.string(),
-      rrule: '',
-      patterns: {},
-      comments: [],
-    };
-
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newColor = Faker.internet.color();
-
-    selectEnabledColorPickerField(wrapper).triggerCustomEvent('input', newColor);
-
-    expect(wrapper).toEmitInput({
-      ...form,
-
-      color: newColor,
     });
   });
 
