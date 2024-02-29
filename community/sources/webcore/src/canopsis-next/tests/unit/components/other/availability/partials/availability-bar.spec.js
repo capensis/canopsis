@@ -7,11 +7,11 @@ import { AVAILABILITY_SHOW_TYPE, QUICK_RANGES } from '@/constants';
 import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
 
 const stubs = {
-  'availability-bar-filters': true,
+  'availability-filters': true,
   'availability-bar-chart': true,
 };
 
-const selectAvailabilityBarFilters = wrapper => wrapper.find('availability-bar-filters-stub');
+const selectAvailabilityBarFilters = wrapper => wrapper.find('availability-filters-stub');
 const selectAvailabilityBarChart = wrapper => wrapper.find('availability-bar-chart-stub');
 
 describe('availability-bar', () => {

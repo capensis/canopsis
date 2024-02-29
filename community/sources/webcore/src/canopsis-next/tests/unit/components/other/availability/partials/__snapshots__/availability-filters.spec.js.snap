@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availabilfilters Renders \`availabilfilters\` with custom props 1`] = `
+<div
+  class="layout availability-filters gap-6 wrap"
+>
+  <c-quick-date-interval-field-stub
+    class="availability-filters__interval"
+    interval="[object Object]"
+    min="1000000000"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    short=""
+  />
+  <c-availability-show-type-field-stub
+    class="availability-filters__show-type"
+    label="Show"
+    value="1"
+  />
+</div>
+`;
+
+exports[`availability-filters Renders \`availability-filters\` with custom props 1`] = `
+<div
+  class="layout availability-filters gap-6 wrap"
+>
+  <c-quick-date-interval-field-stub
+    class="availability-filters__interval"
+    interval="[object Object]"
+    min="1000000000"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    short=""
+  />
+  <c-availability-show-type-field-stub
+    class="availability-filters__show-type"
+    label="Show"
+    value="1"
+  />
+</div>
+`;
+
+exports[`availability-filters Renders \`availability-filters\` with default props 1`] = `
+<div
+  class="layout availability-filters gap-6 wrap"
+>
+  <c-quick-date-interval-field-stub
+    class="availability-filters__interval"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    short=""
+  />
+  <c-availability-show-type-field-stub
+    class="availability-filters__show-type"
+    label="Show"
+  />
+</div>
+`;
