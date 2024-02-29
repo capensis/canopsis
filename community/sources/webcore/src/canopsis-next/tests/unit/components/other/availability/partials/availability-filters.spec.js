@@ -3,7 +3,7 @@ import { randomArrayItem } from '@unit/utils/array';
 
 import { AVAILABILITY_SHOW_TYPE, QUICK_RANGES } from '@/constants';
 
-import AvailabilityBarFilters from '@/components/other/availability/partials/availability-bar-filters.vue';
+import AvailabilityFilters from '@/components/other/availability/partials/availability-filters.vue';
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -13,9 +13,9 @@ const stubs = {
 const selectQuickDateIntervalField = wrapper => wrapper.find('c-quick-date-interval-field-stub');
 const selectAvailabilityShowTypeField = wrapper => wrapper.find('availability-show-type-field-stub');
 
-describe('availability-bar-filters', () => {
-  const factory = generateShallowRenderer(AvailabilityBarFilters, { stubs });
-  const snapshotFactory = generateRenderer(AvailabilityBarFilters, { stubs });
+describe('availability-filters', () => {
+  const factory = generateShallowRenderer(AvailabilityFilters, { stubs });
+  const snapshotFactory = generateRenderer(AvailabilityFilters, { stubs });
 
   test('Interval changed after trigger quick interval field', async () => {
     const wrapper = factory();
@@ -37,13 +37,13 @@ describe('availability-bar-filters', () => {
     expect(wrapper).toEmit('update:showType', newValue);
   });
 
-  test('Renders `availability-bar-filters` with default props', () => {
+  test('Renders `availability-filters` with default props', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `availability-bar-filters` with custom props', () => {
+  test('Renders `availability-filters` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         interval: QUICK_RANGES.yesterday,

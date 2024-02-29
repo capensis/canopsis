@@ -35,9 +35,6 @@ describe('text-editor', () => {
     stubs,
     attachTo: document.body,
     parentComponent: {
-      $_veeValidate: {
-        validator: 'new',
-      },
       provide: {
         $clickOutside: new ClickOutside(),
         $system: {},
@@ -47,9 +44,6 @@ describe('text-editor', () => {
   const snapshotFactory = generateRenderer(TextEditor, {
     stubs: snapshotStubs,
     parentComponent: {
-      $_veeValidate: {
-        validator: 'new',
-      },
       provide: {
         $clickOutside: new ClickOutside(),
         $system: {},
@@ -78,8 +72,6 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -105,8 +97,6 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith(text);
     expect($modals.hide).toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -116,6 +106,9 @@ describe('text-editor', () => {
         modal: {
           config: {
             action,
+            rules: {
+              required: true,
+            },
           },
         },
       },
@@ -124,26 +117,12 @@ describe('text-editor', () => {
       },
     });
 
-    const textEditorField = selectTextEditorField(wrapper);
-
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => textEditorField.vm,
-      vm: textEditorField.vm,
-    });
-
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
-
-    validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -163,8 +142,6 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -194,8 +171,6 @@ describe('text-editor', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
-
-    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -228,8 +203,6 @@ describe('text-editor', () => {
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith(text);
     expect($modals.hide).not.toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -268,8 +241,6 @@ describe('text-editor', () => {
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
-
-    wrapper.destroy();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
@@ -301,8 +272,6 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
-
-    wrapper.destroy();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -322,8 +291,6 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalled();
-
-    wrapper.destroy();
   });
 
   test('Renders `text-editor` with empty modal', async () => {
@@ -342,7 +309,5 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
-
-    wrapper.destroy();
   });
 });

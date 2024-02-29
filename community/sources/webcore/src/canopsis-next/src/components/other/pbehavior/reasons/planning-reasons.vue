@@ -17,7 +17,7 @@ import { MODALS } from '@/constants';
 
 import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
 import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import PlanningReasonsList from './pbehavior-reasons-list.vue';
 
