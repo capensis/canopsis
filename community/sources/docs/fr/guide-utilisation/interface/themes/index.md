@@ -39,3 +39,18 @@ Les éléments graphiques personnalisables dans Canopsis sont regroupés dans 4 
 ![parametres4](./img/themes_parametres4.png)
 
 
+## Variables Handlebars associées
+
+Il est possible de conditionner certains affichages en fonction du thème appliqué.  
+Pour cela, vous disposez de la variable `theme` et notamment `theme.name` que vous pouvez utiliser comme suit : 
+
+```js
+{{#if theme.dark}}
+<p style="background:black;color:white">Thème  dark activé</p>
+{{else}}
+<p style="background:white;color:black">Thème light activé</p>
+{{/if}}
+
+{{#compare theme.name '==' 'Canopsis'}}<p>Le thème actif est <span style="background-color:white;color:black">Canopsis</span></p>{{/compare}}
+{{#compare theme.name '==' 'Canopsis dark'}}<p>Le thème actif est <span style="background-color:black;color:white">Canopsis dark</span></p>{{/compare}}
+```
