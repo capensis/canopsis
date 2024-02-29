@@ -815,7 +815,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   </span>
                 </button>
                 <file-selector-stub
-                  errormessages=""
                   hidedetails="true"
                 >
                   <button
@@ -1783,7 +1782,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   </span>
                 </button>
                 <file-selector-stub
-                  errormessages=""
                   hidedetails="true"
                 >
                   <button

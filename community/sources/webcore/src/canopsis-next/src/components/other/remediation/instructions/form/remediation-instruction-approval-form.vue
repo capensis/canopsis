@@ -1,7 +1,7 @@
 <template>
   <v-layout column>
     <v-checkbox
-      v-field="needApprove"
+      v-model="needApprove"
       :label="$t('remediation.instruction.requestApproval')"
       :disabled="disabled || required"
       color="primary"
