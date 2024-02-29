@@ -131,6 +131,28 @@ export default createEntityModule({
       return request.get(API_ROUTES.entityStateSetting, { params });
     },
 
+    async fetchAvailabilityWithoutStore(context, { id, params } = {}) {
+      // return request.get(API_ROUTES.entityAvailability, { params });
+      // eslint-disable-next-line no-console
+      console.info(id, params);
+      /**
+       * TODO: Should be replaced on real fetch function
+       */
+      await new Promise(r => setTimeout(r, 2000));
+
+      const minDate = new Date();
+      minDate.setDate(minDate.getDate() - 3);
+
+      return {
+        availability: {
+          uptime: Math.round(Math.random() * 100000),
+          downtime: Math.round(Math.random() * 100000),
+          inactive_time: Math.round(Math.random() * 1000),
+        },
+        min_date: Math.round(minDate.getTime() / 1000),
+      };
+    },
+
     fetchListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.entity, { params });
     },

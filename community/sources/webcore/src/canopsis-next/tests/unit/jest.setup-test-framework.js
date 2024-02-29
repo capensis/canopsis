@@ -145,7 +145,12 @@ function toBeDispatchedWith(received, expected) {
 
     return { pass: true };
   } catch (err) {
-    return err.matcherResult;
+    const { pass, message } = err.matcherResult ?? { pass: false, message: '' };
+
+    return {
+      pass,
+      message: isFunction(message) ? message : () => message,
+    };
   }
 }
 

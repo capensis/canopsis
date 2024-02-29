@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="entity-availability position-relative" justify-center>
+  <v-layout class="entity-availability position-relative" align-start justify-center>
     <c-progress-overlay :pending="pending" />
     <availability-bar
       v-if="availability"
@@ -14,14 +14,19 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { QUICK_RANGES } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { localQueryMixin } from '@/mixins/query/query';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 
 import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
+
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
   components: { AvailabilityBar },
@@ -33,7 +38,7 @@ export default {
     },
     defaultTimeRange: {
       type: String,
-      required: false,
+      default: QUICK_RANGES.today.value,
     },
     defaultShowType: {
       type: Number,
@@ -75,6 +80,14 @@ export default {
     this.fetchList();
   },
   methods: {
+    ...mapEntityActions({
+      fetchEntityAvailabilityWithoutStore: 'fetchAvailabilityWithoutStore',
+    }),
+
+    customQueryCondition(query, oldQuery) {
+      return isMetricsQueryChanged(query, oldQuery, this.minDate);
+    },
+
     getQuery() {
       return {
         ...this.getIntervalQuery(),
@@ -85,21 +98,13 @@ export default {
       this.pending = true;
 
       try {
-        /**
-         * TODO: Should be replaced on real fetch function
-         */
-        await new Promise(r => setTimeout(r, 2000));
+        const { min_date: minDate, availability } = await this.fetchEntityAvailabilityWithoutStore({
+          id: this.entity._id,
+          params: this.getQuery(),
+        });
 
-        const minDate = new Date();
-        minDate.setDate(minDate.getDate() - 3);
-
-        this.minDate = Math.round(minDate.getTime() / 1000);
-
-        this.availability = {
-          uptime: Math.round(Math.random() * 100000),
-          downtime: Math.round(Math.random() * 100000),
-          inactive_time: Math.round(Math.random() * 1000),
-        };
+        this.minDate = minDate;
+        this.availability = availability;
       } catch (err) {
         console.error(err);
       } finally {
@@ -112,6 +117,8 @@ export default {
 
 <style lang="scss">
 .entity-availability {
+  min-height: 100px;
+
   &__content {
     max-width: 900px;
   }
