@@ -47,17 +47,14 @@ func (p *declareTicketWebhookProcessor) Process(ctx context.Context, event rpc.A
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newTicketStep := types.NewTicketStep(types.AlarmStepDeclareTicket, event.Parameters.Timestamp, event.Parameters.Author,
-		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-		event.Parameters.TicketInfo)
-	update := bson.M{
-		"$set": bson.M{
-			"v.ticket": newTicketStep,
-		},
-		"$push": bson.M{
-			"v.tickets": newTicketStep,
-			"v.steps":   newTicketStep,
-		},
+	newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket,
+		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.ticket":  newTicketStepQuery,
+			"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
+			"v.steps":   addStepUpdateQuery(newTicketStepQuery),
+		}},
 	}
 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
