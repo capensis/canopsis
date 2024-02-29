@@ -13,6 +13,14 @@ export const REMEDIATION_INSTRUCTION_TYPES = {
   simpleManual: 2,
 };
 
+export const REMEDIATION_INSTRUCTION_STATUSES = {
+  approved: 0,
+  createdAndApproveRequested: 1,
+  updatedAndApproveRequested: 2,
+  createdAndDismissed: 3,
+  updatedAndDismissed: 4,
+};
+
 export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
   role: 0,
   user: 1,

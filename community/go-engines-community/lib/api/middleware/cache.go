@@ -5,9 +5,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/url"
 	"sort"
+	"strings"
 	"time"
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
@@ -15,16 +17,27 @@ import (
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
+	"github.com/jellydator/ttlcache/v2"
 )
 
-func Cache(
-	defaultExpire time.Duration,
-	getExpire func() time.Duration,
-) gin.HandlerFunc {
-	redisStore := persist.NewMemoryStore(defaultExpire)
-	return cache.Cache(redisStore, defaultExpire, cache.WithPrefixKey(libredis.ApiCacheRequestKey), cache.WithCacheStrategyByRequest(func(c *gin.Context) (bool, cache.Strategy) {
+func NewCacheMiddlewareGetter(defaultExpire time.Duration, getExpire func() time.Duration) *CacheMiddlewareGetter {
+	return &CacheMiddlewareGetter{
+		memoryStore:   persist.NewMemoryStore(defaultExpire),
+		defaultExpire: defaultExpire,
+		getExpire:     getExpire,
+	}
+}
+
+type CacheMiddlewareGetter struct {
+	memoryStore   *persist.MemoryStore
+	defaultExpire time.Duration
+	getExpire     func() time.Duration
+}
+
+func (g *CacheMiddlewareGetter) Cache() gin.HandlerFunc {
+	return cache.Cache(g.memoryStore, g.defaultExpire, cache.WithPrefixKey(libredis.ApiCacheRequestKey), cache.WithCacheStrategyByRequest(func(c *gin.Context) (bool, cache.Strategy) {
 		buff := bytes.Buffer{}
-		getRequestUriIgnoreQueryOrder(&buff, c.Request.URL)
+		getRequestQueryIgnoreOrder(&buff, c.Request.URL)
 		if c.Request.URL.Fragment != "" {
 			buff.WriteRune('#')
 			buff.WriteString(c.Request.URL.EscapedFragment())
@@ -48,20 +61,41 @@ func Cache(
 		}
 
 		var cacheDuration time.Duration
-		if getExpire != nil {
-			cacheDuration = getExpire()
+		if g.getExpire != nil {
+			cacheDuration = g.getExpire()
 		}
 
 		cacheKey := sha256.Sum256(buff.Bytes())
 		return true, cache.Strategy{
-			CacheKey:      hex.EncodeToString(cacheKey[:]),
+			CacheKey:      c.Request.URL.Path + hex.EncodeToString(cacheKey[:]),
 			CacheDuration: cacheDuration,
 		}
 	}))
 }
 
-func getRequestUriIgnoreQueryOrder(buff *bytes.Buffer, u *url.URL) {
-	buff.WriteString(u.Path)
+func (g *CacheMiddlewareGetter) ClearCache(path string) gin.HandlerFunc {
+	keyPrefix := libredis.ApiCacheRequestKey + path
+
+	return func(context *gin.Context) {
+		keys := g.memoryStore.Cache.GetKeys()
+		for _, key := range keys {
+			if !strings.HasPrefix(key, keyPrefix) {
+				continue
+			}
+
+			err := g.memoryStore.Delete(key)
+			if err != nil {
+				if errors.Is(err, ttlcache.ErrNotFound) {
+					continue
+				}
+
+				panic(err)
+			}
+		}
+	}
+}
+
+func getRequestQueryIgnoreOrder(buff *bytes.Buffer, u *url.URL) {
 	values := u.Query()
 	if len(values) == 0 {
 		return

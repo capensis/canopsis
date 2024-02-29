@@ -28,6 +28,7 @@ export default {
     requestApproval: 'Demande d\'approbation',
     type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
+    approvalDismissed: 'L\'instruction est rejetée',
     needApprove: 'Une approbation est nécessaire',
     executeInstruction: 'Exécuter la consigne "{instructionName}"',
     resumeInstruction: 'Reprendre la consigne "{instructionName}"',
