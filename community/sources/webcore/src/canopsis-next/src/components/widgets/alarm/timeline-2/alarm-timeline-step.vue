@@ -17,7 +17,7 @@
             class="timeline-step__expand-button"
           />
           <div class="timeline-step__title text-subtitle-2">
-            title
+            {{ title }}
           </div>
           <div v-if="resultIcon" class="timeline-step__result-icon">
             <v-icon :color="resultIcon.color">
@@ -34,15 +34,26 @@
 </template>
 
 <script>
-import { ALARM_LIST_STEPS, DATETIME_FORMATS } from '@/constants';
+import {
+  ALARM_LIST_STEPS,
+  ALARM_STEPS_WITH_AUTHOR_IN_TITLE,
+  ALARM_STEPS_WITH_LAUNCHED_IN_TITLE,
+  ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE,
+  DATETIME_FORMATS,
+} from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 export default {
   props: {
     step: {
       type: Object,
       default: () => ({}),
+    },
+    child: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -54,8 +65,8 @@ export default {
     wrapperClass() {
       return {
         'timeline-step--pbehavior': this.step.in_pbh,
-        'timeline-step--pbehavior-start': this.step._t === ALARM_LIST_STEPS.pbhenter,
-        'timeline-step--pbehavior-end': this.step._t === ALARM_LIST_STEPS.pbhleave,
+        'timeline-step--pbehavior-enter': this.step._t === ALARM_LIST_STEPS.pbhenter,
+        'timeline-step--pbehavior-leave': this.step._t === ALARM_LIST_STEPS.pbhleave,
       };
     },
 
@@ -65,6 +76,37 @@ export default {
 
     hasChildren() {
       return !!this.step.steps?.length;
+    },
+
+    title() {
+      const { _t: type, a: author, t: timestamp, val: value } = this.step;
+      const hasLaunchedMessage = ALARM_STEPS_WITH_LAUNCHED_IN_TITLE.includes(type);
+      const hasConditionForAuthorMessage = ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE.includes(type);
+      const hasAuthorMessage = ALARM_STEPS_WITH_AUTHOR_IN_TITLE.includes(type)
+        && ((hasConditionForAuthorMessage && !this.child) || !hasConditionForAuthorMessage);
+      const payload = { author };
+
+      switch (type) {
+        case ALARM_LIST_STEPS.statusdec:
+        case ALARM_LIST_STEPS.statusinc:
+          payload.status = this.$t(`common.statusTypes.${value}`);
+          break;
+        case ALARM_LIST_STEPS.snooze:
+          payload.duration = convertDurationToString(value - timestamp);
+          break;
+      }
+
+      let title = this.$t(`alarm.timeline.steps.${type}`, payload);
+
+      if (hasLaunchedMessage) {
+        title += `, ${this.$t('alarm.timeline.launched')}`;
+      }
+
+      if (hasAuthorMessage) {
+        title += ` ${this.$t('alarm.timeline.by')} ${author}`;
+      }
+
+      return title;
     },
 
     resultIcon() {
@@ -108,7 +150,7 @@ $borderColor: #cecece;
       margin-left: $margins;
       padding: 0 $margins;
 
-      .timeline-step--pbehavior-start &:before, .timeline-step--pbehavior &:before {
+      .timeline-step--pbehavior-leave &:before, .timeline-step--pbehavior &:before {
         content: '';
         position: absolute;
         width: 1px;
@@ -118,14 +160,14 @@ $borderColor: #cecece;
         height: 100%;
       }
 
-      .timeline-step--pbehavior-start &:before {
+      .timeline-step--pbehavior-leave &:before {
         height: calc(100% - 30px);
       }
     }
   }
 
   &__icon {
-    .timeline-step--pbehavior-start &, .timeline-step--pbehavior-end & {
+    .timeline-step--pbehavior-leave &, .timeline-step--pbehavior-enter & {
       position: absolute;
       left: 0;
       transform: translateX(-50%);
