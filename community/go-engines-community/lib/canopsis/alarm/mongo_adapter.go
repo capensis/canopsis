@@ -127,8 +127,8 @@ func (a mongoAdapter) GetAlarmsByID(ctx context.Context, id string) ([]types.Ala
 	return a.getAlarms(ctx, bson.M{"d": id})
 }
 
-func (a mongoAdapter) GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
+func (a mongoAdapter) GetAlarmsWithCancelMark(ctx context.Context) ([]types.AlarmWithEntity, error) {
+	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.canceled": bson.M{"$ne": nil},
 		"$or": []bson.M{
 			{"v.resolved": nil},
@@ -137,8 +137,8 @@ func (a mongoAdapter) GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alar
 	})
 }
 
-func (a mongoAdapter) GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
+func (a mongoAdapter) GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.AlarmWithEntity, error) {
+	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.snooze": bson.M{"$ne": nil},
 		"$or": []bson.M{
 			{"v.resolved": nil},

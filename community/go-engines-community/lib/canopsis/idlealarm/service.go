@@ -33,6 +33,7 @@ func NewService(
 	alarmAdapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
 	pbhRpcClient engine.RPCClient,
+	connector string,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Service {
@@ -41,6 +42,7 @@ func NewService(
 		alarmAdapter:  alarmAdapter,
 		entityAdapter: entityAdapter,
 		pbhRpcClient:  pbhRpcClient,
+		connector:     connector,
 		encoder:       encoder,
 		logger:        logger,
 	}
@@ -51,13 +53,14 @@ type baseService struct {
 	alarmAdapter  libalarm.Adapter
 	entityAdapter libentity.Adapter
 	pbhRpcClient  engine.RPCClient
+	connector     string
 	encoder       encoding.Encoder
 	logger        zerolog.Logger
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	now := datetime.NewCpsTime()
-	eventGenerator := libevent.NewGenerator("engine", "axe")
+	eventGenerator := libevent.NewGenerator(s.connector, s.connector)
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
@@ -212,7 +215,7 @@ func (s *baseService) applyRules(
 				}
 			}
 
-			return s.applyEntityRule(rule, entity, lastAlarm, eventGenerator)
+			return s.applyEntityRule(rule, entity, eventGenerator)
 		}
 	}
 
@@ -228,16 +231,16 @@ func (s *baseService) applyAlarmRule(
 ) (*types.Event, error) {
 	idleRuleApply := fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition)
 	event := types.Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
+		Connector:     s.connector,
+		ConnectorName: s.connector,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
+		SourceType:    entity.Type,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: idleRuleApply,
 	}
-	event.SourceType = event.DetectSourceType()
 
 	event.Output = rule.Operation.Parameters.Output
 	if rule.Operation.Parameters.State != nil {
@@ -318,22 +321,11 @@ func (s *baseService) applyAlarmRule(
 func (s *baseService) applyEntityRule(
 	rule idlerule.Rule,
 	entity types.Entity,
-	alarm *types.Alarm,
 	eventGenerator libevent.Generator,
 ) (*types.Event, error) {
-	event := types.Event{}
-	if alarm == nil {
-		var err error
-		event, err = eventGenerator.Generate(entity)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		event.Connector = alarm.Value.Connector
-		event.ConnectorName = alarm.Value.ConnectorName
-		event.Component = alarm.Value.Component
-		event.Resource = alarm.Value.Resource
-		event.SourceType = event.DetectSourceType()
+	event, err := eventGenerator.Generate(entity)
+	if err != nil {
+		return nil, err
 	}
 
 	event.EventType = types.EventTypeNoEvents
@@ -360,14 +352,12 @@ func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, 
 			State:         types.AlarmStateOK,
 			Connector:     alarm.Value.Connector,
 			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			SourceType:    types.SourceTypeConnector,
 			Timestamp:     datetime.NewCpsTime(),
 			Initiator:     types.InitiatorSystem,
 			Output:        alarm.Value.State.Message,
 			Author:        alarm.Value.State.Author,
 		}
-		events[i].SourceType = events[i].DetectSourceType()
 	}
 
 	return events, nil

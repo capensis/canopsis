@@ -37,7 +37,7 @@ func NewService(
 	}
 }
 
-func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
+func (s *service) ResolveClosed(ctx context.Context) ([]types.AlarmWithEntity, error) {
 	now := datetime.NewCpsTime()
 
 	rules, err := s.resolveRuleAdapter.Get(ctx)
@@ -61,7 +61,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 	}
 	defer cursor.Close(ctx)
 
-	alarmsToResolve := make([]types.Alarm, 0)
+	alarmsToResolve := make([]types.AlarmWithEntity, 0)
 	for cursor.Next(ctx) {
 		alarmWithEntity := types.AlarmWithEntity{}
 		if err := cursor.Decode(&alarmWithEntity); err != nil {
@@ -84,7 +84,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 					before := rule.Duration.SubFrom(now)
 
 					if lastStep.Timestamp.Before(before) {
-						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
+						alarmsToResolve = append(alarmsToResolve, alarmWithEntity)
 					}
 				}
 
@@ -96,8 +96,8 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 	return alarmsToResolve, nil
 }
 
-func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
-	canceledAlarms := make([]types.Alarm, 0)
+func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.AlarmWithEntity, error) {
+	canceledAlarms := make([]types.AlarmWithEntity, 0)
 
 	alarms, err := s.adapter.GetAlarmsWithCancelMark(ctx)
 	if err != nil {
@@ -105,7 +105,7 @@ func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmCo
 	}
 
 	for _, alarm := range alarms {
-		if time.Since(alarm.Value.Canceled.Timestamp.Time) >= alarmConfig.CancelAutosolveDelay {
+		if time.Since(alarm.Alarm.Value.Canceled.Timestamp.Time) >= alarmConfig.CancelAutosolveDelay {
 			canceledAlarms = append(canceledAlarms, alarm)
 		}
 	}
@@ -113,8 +113,8 @@ func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmCo
 	return canceledAlarms, nil
 }
 
-func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
-	unsnoozedAlarms := make([]types.Alarm, 0)
+func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.AlarmWithEntity, error) {
+	unsnoozedAlarms := make([]types.AlarmWithEntity, 0)
 
 	alarms, err := s.adapter.GetAlarmsWithSnoozeMark(ctx)
 	if err != nil {
@@ -122,7 +122,7 @@ func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmCo
 	}
 
 	for _, alarm := range alarms {
-		if !alarm.IsSnoozed() && (alarm.IsInActivePeriod() || alarmConfig.DisableActionSnoozeDelayOnPbh) {
+		if !alarm.Alarm.IsSnoozed() && (alarm.Alarm.IsInActivePeriod() || alarmConfig.DisableActionSnoozeDelayOnPbh) {
 			unsnoozedAlarms = append(unsnoozedAlarms, alarm)
 		}
 	}
@@ -130,8 +130,8 @@ func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmCo
 	return unsnoozedAlarms, nil
 }
 
-func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error) {
-	updatedAlarms := make([]types.Alarm, 0)
+func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.AlarmWithEntity, error) {
+	updatedAlarms := make([]types.AlarmWithEntity, 0)
 
 	flappingAlarms, err := s.adapter.GetAlarmsWithFlappingStatus(ctx)
 	if err != nil {
@@ -143,7 +143,7 @@ func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, erro
 		newStatus := s.alarmStatusService.ComputeStatus(alarm.Alarm, alarm.Entity)
 
 		if newStatus != currentAlarmStatus {
-			updatedAlarms = append(updatedAlarms, alarm.Alarm)
+			updatedAlarms = append(updatedAlarms, alarm)
 		}
 	}
 

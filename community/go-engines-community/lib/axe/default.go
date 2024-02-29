@@ -164,12 +164,12 @@ func NewEngine(
 
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, libalarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
-		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), logger)
+		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), canopsis.AxeConnector, logger)
 
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector)
 	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
 	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
 
@@ -406,6 +406,7 @@ func NewEngine(
 				libalarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				pbhRpcClientForIdleRules,
+				canopsis.AxeConnector,
 				json.NewEncoder(),
 				logger,
 			),
