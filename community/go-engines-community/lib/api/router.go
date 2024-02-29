@@ -215,6 +215,11 @@ func RegisterRoutes(
 				userApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
+			userRouter.PATCH("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
+				userApi.Patch,
+				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
 			userRouter.DELETE("/:id",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
 				userApi.Delete,

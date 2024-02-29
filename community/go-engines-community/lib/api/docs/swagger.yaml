@@ -12244,6 +12244,67 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    patch:
+      tags:
+        - users
+      summary: Partial user update by id
+      description: |
+        Partial user update by id.
+        
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-patch-by-id
+      parameters:
+        - name: id
+          in: path
+          description: user id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.PatchRequest'
+            examples:
+              password:
+                summary: Update password
+                description: Update password
+                value: {
+                  "password": "qweRTY123"
+                }
+              email:
+                summary: Update email
+                description: Update email
+                value: {
+                  "email": "new-email@canopsis.net"
+                }
+              ui_theme:
+                summary: Update UI theme
+                description: Update UI theme
+                value: {
+                  "ui_theme": "canopsis_dark"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.User'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     put:
       tags:
         - users
