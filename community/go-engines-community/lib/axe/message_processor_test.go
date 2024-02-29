@@ -306,7 +306,7 @@ func benchmarkMessageProcessor(
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
-		template.NewExecutor(templateConfigProvider, tzConfigProvider), logger)
+		template.NewExecutor(templateConfigProvider, tzConfigProvider), canopsis.AxeConnector, logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -319,7 +319,7 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, "")
 
 	m := DependencyMaker{}
 	p := MessageProcessor{

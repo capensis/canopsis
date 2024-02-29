@@ -4,37 +4,39 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EventManager interface {
-	GetEvent(ResolveResult, types.Alarm, time.Time) types.Event
+	GetEvent(ResolveResult, types.Alarm, types.Entity, time.Time) types.Event
 	GetEventType(resolveResult ResolveResult, curPbehaviorInfo types.PbehaviorInfo) (eventType string, output string)
 }
 
 type eventManager struct {
+	connector string
 }
 
-func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, now time.Time) types.Event {
+func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, entity types.Entity, now time.Time) types.Event {
 	eventType, output := r.GetEventType(resolveResult, alarm.Value.PbehaviorInfo)
 	if eventType == "" {
 		return types.Event{}
 	}
 
 	event := types.Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
+		Connector:     r.connector,
+		ConnectorName: r.connector,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
+		SourceType:    entity.Type,
 		Timestamp:     datetime.CpsTime{Time: now},
 		EventType:     eventType,
 		Output:        output,
 		PbehaviorInfo: NewPBehaviorInfo(datetime.CpsTime{Time: now}, resolveResult),
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	}
-
-	event.SourceType = event.DetectSourceType()
 
 	return event
 }
@@ -75,8 +77,10 @@ func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo
 	return eventType, output
 }
 
-func NewEventManager() EventManager {
-	return eventManager{}
+func NewEventManager(connector string) EventManager {
+	return eventManager{
+		connector: connector,
+	}
 }
 
 func NewPBehaviorInfo(time datetime.CpsTime, result ResolveResult) types.PbehaviorInfo {

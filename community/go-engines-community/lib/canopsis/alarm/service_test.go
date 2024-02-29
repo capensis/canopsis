@@ -25,19 +25,19 @@ func TestService_ResolveCancels(t *testing.T) {
 
 	var dataSets = []struct {
 		testName       string
-		findAlarms     []types.Alarm
+		findAlarms     []types.AlarmWithEntity
 		findError      error
 		expectedCancel int
 	}{
 		{
 			"given no alarms should return empty result",
-			[]types.Alarm{},
+			[]types.AlarmWithEntity{},
 			nil,
 			0,
 		},
 		{
 			"given canceled alarms with cancel time < CancelAutosolveDelay should return empty result",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now(),
 				}),
@@ -53,7 +53,7 @@ func TestService_ResolveCancels(t *testing.T) {
 		},
 		{
 			"given canceled alarms and canceled alarms with cancel time > CancelAutosolveDelay should return count of alarms with time > CancelAutosolveDelay",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now(),
 				}),
@@ -69,7 +69,7 @@ func TestService_ResolveCancels(t *testing.T) {
 		},
 		{
 			"given canceled alarms with valid time should return count of alarms",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
@@ -85,7 +85,7 @@ func TestService_ResolveCancels(t *testing.T) {
 		},
 		{
 			"given find error should return error",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
@@ -141,19 +141,19 @@ func TestService_ResolveSnoozes(t *testing.T) {
 
 	var dataSets = []struct {
 		testName          string
-		findAlarms        []types.Alarm
+		findAlarms        []types.AlarmWithEntity
 		findError         error
 		expectedUnsnoozes int
 	}{
 		{
 			"given no alarms should return empty result",
-			[]types.Alarm{},
+			[]types.AlarmWithEntity{},
 			nil,
 			0,
 		},
 		{
 			"given snoozed alarms and none unsnoozed alarms should return empty result",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*2)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*3)),
@@ -163,7 +163,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 		},
 		{
 			"given snoozed alarms and snoozed alarms unsnoozed time <= now should return count of unsnoozed alarms",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-2)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-3)),
@@ -173,7 +173,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 		},
 		{
 			"given snoozed alarms with unsnoozed time <= now should return count of alarms",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-1)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-2)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-3)),
@@ -183,7 +183,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 		},
 		{
 			"given snoozed alarms and snoozed alarms with active pbehavior should return count of active alarms",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-1)),
 				newSnoozedAlarmWithActivePbh(time.Now(), time.Now().Add(time.Minute*-2)),
 				newSnoozedAlarmWithActivePbh(time.Now(), time.Now().Add(time.Minute*-3)),
@@ -194,7 +194,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 		},
 		{
 			"given snoozed alarms and snoozed alarms with maintenance pbehavior should return count of active alarms",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-1)),
 				newSnoozedAlarmWithMaintenancePbh(time.Now(), time.Now().Add(time.Minute*-2)),
 				newSnoozedAlarmWithMaintenancePbh(time.Now(), time.Now().Add(time.Minute*-3)),
@@ -205,7 +205,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 		},
 		{
 			"given find error should return error",
-			[]types.Alarm{
+			[]types.AlarmWithEntity{
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-1)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-2)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-3)),
@@ -247,60 +247,68 @@ func TestService_ResolveSnoozes(t *testing.T) {
 	}
 }
 
-func newCancelAlarm(time datetime.CpsTime) types.Alarm {
-	return types.Alarm{
-		Value: types.AlarmValue{
-			Canceled: &types.AlarmStep{
-				Type:      types.AlarmStepCancel,
-				Timestamp: time,
+func newCancelAlarm(time datetime.CpsTime) types.AlarmWithEntity {
+	return types.AlarmWithEntity{
+		Alarm: types.Alarm{
+			Value: types.AlarmValue{
+				Canceled: &types.AlarmStep{
+					Type:      types.AlarmStepCancel,
+					Timestamp: time,
+				},
 			},
 		},
 	}
 }
 
-func newSnoozedAlarm(snoozeStart time.Time, snoozeEnd time.Time) types.Alarm {
-	return types.Alarm{
-		Value: types.AlarmValue{
-			Snooze: &types.AlarmStep{
-				Type:      types.AlarmStepSnooze,
-				Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
-				Author:    "",
-				Message:   "",
-				Value:     types.CpsNumber(snoozeEnd.Unix()),
+func newSnoozedAlarm(snoozeStart time.Time, snoozeEnd time.Time) types.AlarmWithEntity {
+	return types.AlarmWithEntity{
+		Alarm: types.Alarm{
+			Value: types.AlarmValue{
+				Snooze: &types.AlarmStep{
+					Type:      types.AlarmStepSnooze,
+					Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
+					Author:    "",
+					Message:   "",
+					Value:     types.CpsNumber(snoozeEnd.Unix()),
+				},
 			},
 		},
 	}
 }
 
-func newSnoozedAlarmWithActivePbh(snoozeStart time.Time, snoozeEnd time.Time) types.Alarm {
-	return types.Alarm{
-		Value: types.AlarmValue{
-			PbehaviorInfo: types.PbehaviorInfo{
-				CanonicalType: pbehavior.TypeActive,
-			},
-			Snooze: &types.AlarmStep{
-				Type:      types.AlarmStepSnooze,
-				Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
-				Author:    "",
-				Message:   "",
-				Value:     types.CpsNumber(snoozeEnd.Unix()),
+func newSnoozedAlarmWithActivePbh(snoozeStart time.Time, snoozeEnd time.Time) types.AlarmWithEntity {
+	return types.AlarmWithEntity{
+		Alarm: types.Alarm{
+			Value: types.AlarmValue{
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: pbehavior.TypeActive,
+				},
+				Snooze: &types.AlarmStep{
+					Type:      types.AlarmStepSnooze,
+					Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
+					Author:    "",
+					Message:   "",
+					Value:     types.CpsNumber(snoozeEnd.Unix()),
+				},
 			},
 		},
 	}
 }
 
-func newSnoozedAlarmWithMaintenancePbh(snoozeStart time.Time, snoozeEnd time.Time) types.Alarm {
-	return types.Alarm{
-		Value: types.AlarmValue{
-			PbehaviorInfo: types.PbehaviorInfo{
-				CanonicalType: pbehavior.TypeMaintenance,
-			},
-			Snooze: &types.AlarmStep{
-				Type:      types.AlarmStepSnooze,
-				Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
-				Author:    "",
-				Message:   "",
-				Value:     types.CpsNumber(snoozeEnd.Unix()),
+func newSnoozedAlarmWithMaintenancePbh(snoozeStart time.Time, snoozeEnd time.Time) types.AlarmWithEntity {
+	return types.AlarmWithEntity{
+		Alarm: types.Alarm{
+			Value: types.AlarmValue{
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+				Snooze: &types.AlarmStep{
+					Type:      types.AlarmStepSnooze,
+					Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
+					Author:    "",
+					Message:   "",
+					Value:     types.CpsNumber(snoozeEnd.Unix()),
+				},
 			},
 		},
 	}

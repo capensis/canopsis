@@ -98,7 +98,7 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 		return nil, err
 	}
 
-	pbhEvent := p.EventManager.GetEvent(resolveResult, alarm, time.Now())
+	pbhEvent := p.EventManager.GetEvent(resolveResult, alarm, entity, time.Now())
 	if pbhEvent.EventType == "" {
 		return nil, nil
 	}

@@ -72,12 +72,13 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, userna
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeAck,
-		Output:    r.Comment,
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeAck,
+		Output:     r.Comment,
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -103,12 +104,13 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, use
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeAckremove,
-		Output:    r.Comment,
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeAckremove,
+		Output:     r.Comment,
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -130,13 +132,14 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, 
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeSnooze,
-		Output:    r.Comment,
-		Duration:  types.CpsNumber(d.Value),
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeSnooze,
+		Output:     r.Comment,
+		Duration:   types.CpsNumber(d.Value),
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -153,12 +156,13 @@ func (s *store) Cancel(ctx context.Context, id string, r Request, userId, userna
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeCancel,
-		Output:    r.Comment,
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeCancel,
+		Output:     r.Comment,
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -175,12 +179,13 @@ func (s *store) Uncancel(ctx context.Context, id string, r Request, userId, user
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeUncancel,
-		Output:    r.Comment,
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeUncancel,
+		Output:     r.Comment,
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -208,6 +213,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		TicketInfo: ticketInfo,
 		Component:  alarm.Alarm.Value.Component,
 		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
 		UserID:     userId,
 		Author:     username,
 	}
@@ -235,12 +241,13 @@ func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeComment,
-		Output:    r.Comment,
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeComment,
+		Output:     r.Comment,
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -257,13 +264,14 @@ func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest
 	}
 
 	event := types.Event{
-		EventType: types.EventTypeChangestate,
-		State:     types.CpsNumber(*r.State),
-		Output:    r.Comment,
-		Component: alarm.Alarm.Value.Component,
-		Resource:  alarm.Alarm.Value.Resource,
-		UserID:    userId,
-		Author:    username,
+		EventType:  types.EventTypeChangestate,
+		State:      types.CpsNumber(*r.State),
+		Output:     r.Comment,
+		Component:  alarm.Alarm.Value.Component,
+		Resource:   alarm.Alarm.Value.Resource,
+		SourceType: alarm.Entity.Type,
+		UserID:     userId,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -312,11 +320,10 @@ func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEnt
 }
 
 func (s *store) sendEvent(ctx context.Context, event types.Event) error {
-	event.Connector = canopsis.ApiName
-	event.ConnectorName = canopsis.ApiName
+	event.Connector = canopsis.ApiConnector
+	event.ConnectorName = canopsis.ApiConnector
 	event.Initiator = types.InitiatorUser
 	event.Timestamp = datetime.NewCpsTime()
-	event.SourceType = event.DetectSourceType()
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		return err
@@ -380,12 +387,13 @@ func (s *store) ackResources(
 		}
 
 		event := types.Event{
-			EventType: types.EventTypeAck,
-			Output:    comment,
-			Component: alarm.Alarm.Value.Component,
-			Resource:  alarm.Alarm.Value.Resource,
-			UserID:    userId,
-			Author:    username,
+			EventType:  types.EventTypeAck,
+			Output:     comment,
+			Component:  alarm.Alarm.Value.Component,
+			Resource:   alarm.Alarm.Value.Resource,
+			SourceType: alarm.Entity.Type,
+			UserID:     userId,
+			Author:     username,
 		}
 		err = s.sendEvent(ctx, event)
 		if err != nil {
@@ -444,6 +452,7 @@ func (s *store) ticketResources(
 			TicketInfo: ticketInfo,
 			Component:  alarm.Alarm.Value.Component,
 			Resource:   alarm.Alarm.Value.Resource,
+			SourceType: alarm.Entity.Type,
 			UserID:     userId,
 			Author:     username,
 		}

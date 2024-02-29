@@ -558,7 +558,7 @@ func (p *checkProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}

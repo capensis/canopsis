@@ -28,10 +28,10 @@ type Adapter interface {
 	GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error)
 
 	// GetAlarmsWithCancelMark returns all alarms where v.cancel is not null
-	GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alarm, error)
+	GetAlarmsWithCancelMark(ctx context.Context) ([]types.AlarmWithEntity, error)
 
 	// GetAlarmsWithSnoozeMark returns all alarms where v.snooze is not null
-	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error)
+	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.AlarmWithEntity, error)
 
 	// GetAlarmsWithFlappingStatus returns all alarms whose status is flapping
 	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.AlarmWithEntity, error)
@@ -114,15 +114,15 @@ type MetaAlarmEventProcessor interface {
 
 type Service interface {
 	// ResolveClosed close ok alarms.
-	ResolveClosed(ctx context.Context) ([]types.Alarm, error)
+	ResolveClosed(ctx context.Context) ([]types.AlarmWithEntity, error)
 
 	// ResolveCancels close canceled alarms when time has expired
-	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.AlarmWithEntity, error)
 
 	// ResolveSnoozes remove snooze state when snooze time has expired
-	ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.AlarmWithEntity, error)
 
 	// UpdateFlappingAlarms updates the status of the flapping alarms, removing
 	// the flapping status if needed.
-	UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error)
+	UpdateFlappingAlarms(ctx context.Context) ([]types.AlarmWithEntity, error)
 }
