@@ -303,5 +303,6 @@ export default {
   availability: {
     graphSettings: 'Availability graph settings',
     defaultAvailabilityDisplay: 'Default availability display',
+    defaultParameterToDisplay: 'Default parameter to display',
   },
 };
