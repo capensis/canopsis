@@ -24,10 +24,15 @@
         :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateActiveAlarmsColumnsTemplate"
       />
-      <field-quick-date-interval-type v-field="form.parameters.default_time_range" :ranges="availabilityRanges" />
+      <field-quick-date-interval-type
+        v-if="showInterval"
+        v-field="form.parameters.default_time_range"
+        :ranges="availabilityRanges"
+      />
       <field-availability-display-parameter v-field="form.parameters.default_display_parameter" />
       <field-availability-display-show-type v-field="form.parameters.default_show_type" />
       <field-filters
+        v-if="showFilter"
         v-field="form.parameters.mainFilter"
         :filters="form.filters"
         :widget-id="widgetId"
@@ -93,6 +98,14 @@ export default {
       required: false,
     },
     alarmColumnsWidgetTemplatesPending: {
+      type: Boolean,
+      default: false,
+    },
+    showInterval: {
+      type: Boolean,
+      default: false,
+    },
+    showFilter: {
       type: Boolean,
       default: false,
     },
