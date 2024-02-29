@@ -1,6 +1,6 @@
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITIES_STATES } from '@/constants';
+import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ALARM_STATES } from '@/constants';
 
 import AlarmsTimeLineCard from '@/components/widgets/alarm/time-line/alarms-time-line-card.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -34,7 +34,7 @@ describe('alarms-time-line-card', () => {
     t: 1626159262,
     a: 'root',
     m: 'State counter',
-    val: Object.entries(ENTITIES_STATES)
+    val: Object.entries(ALARM_STATES)
       .reduce((acc, [key, state]) => ({
         [`state:${state}`]: key,
         ...acc,

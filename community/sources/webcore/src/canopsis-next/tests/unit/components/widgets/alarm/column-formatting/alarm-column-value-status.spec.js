@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATES, ALARM_STATUSES } from '@/constants';
+import { ALARM_STATES, ALARM_STATUSES } from '@/constants';
 
 import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formatting/alarm-column-value-status.vue';
 
@@ -16,7 +16,7 @@ describe('alarm-column-value-status', () => {
     attachTo: document.body,
   });
 
-  it.each(Object.entries(ENTITIES_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', async (_, state) => {
+  it.each(Object.entries(ALARM_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', async (_, state) => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -47,7 +47,7 @@ describe('alarm-column-value-status', () => {
           entity: {},
           v: {
             state: {
-              val: ENTITIES_STATES.ok,
+              val: ALARM_STATES.ok,
             },
             status: {
               val: status,

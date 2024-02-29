@@ -1,6 +1,6 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATES, ALARM_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_STATES, ALARM_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import TimeLineFlag from '@/components/widgets/alarm/time-line/alarms-time-line-flag.vue';
 
@@ -27,7 +27,7 @@ describe('alarms-time-line-flag', () => {
   });
 
   it.each(
-    Object.entries(ENTITIES_STATES),
+    Object.entries(ALARM_STATES),
   )('Renders `alarms-time-line-flag` with state: %s', (_, status) => {
     const wrapper = snapshotFactory({
       propsData: {

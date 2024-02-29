@@ -77,20 +77,6 @@ export const ENTITY_INFOS_TYPE = {
   action: 'action',
 };
 
-export const ENTITIES_STATES_KEYS = {
-  ok: 'ok',
-  minor: 'minor',
-  major: 'major',
-  critical: 'critical',
-};
-
-export const ENTITIES_STATES = {
-  ok: 0,
-  minor: 1,
-  major: 2,
-  critical: 3,
-};
-
 export const SERVICE_STATES = {
   ok: 'ok',
   minor: 'minor',
@@ -131,7 +117,7 @@ export const WEATHER_ACTIONS_TYPES = {
   executeInstruction: 'executeInstruction',
 };
 
-export const EVENT_ENTITY_ICONS_BY_TYPE = {
+export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
   [EVENT_ENTITY_TYPES.ack]: 'check',
   [EVENT_ENTITY_TYPES.fastAck]: 'done_all',
   [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
@@ -181,12 +167,6 @@ export const ENTITY_EVENT_BY_ACTION_TYPE = {
   [WEATHER_ACTIONS_TYPES.executeInstruction]: EVENT_ENTITY_TYPES.executeInstruction,
   [WEATHER_ACTIONS_TYPES.declareTicket]: EVENT_ENTITY_TYPES.declareTicket,
   [WEATHER_ACTIONS_TYPES.entityAckRemove]: EVENT_ENTITY_TYPES.ackRemove,
-};
-
-export const UNKNOWN_VALUE_STYLE = {
-  color: COLORS.status.unknown,
-  text: 'Invalid val',
-  icon: 'clear',
 };
 
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {

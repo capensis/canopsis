@@ -7,7 +7,7 @@
       v-field="thresholds[key]"
       v-for="key in sortedThresholdsKeys"
       :key="key"
-      :label="$t(`stateSetting.states.${key}`)"
+      :label="getLabel(key)"
       :name="`${name}.${key}`"
       :state="key"
       @input="errors.remove(name)"
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import { ALARM_STATES } from '@/constants';
+
 import { formValidationHeaderMixin } from '@/mixins/form';
 import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
@@ -57,6 +59,10 @@ export default {
     this.detachRequiredRule();
   },
   methods: {
+    getLabel(key) {
+      return this.$t(`common.stateTypes.${ALARM_STATES[key]}`);
+    },
+
     requiredRuleGetter() {
       return Object.values(this.thresholds).some(({ enabled }) => enabled);
     },

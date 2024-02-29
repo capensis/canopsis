@@ -1,28 +1,9 @@
 import { isNumber } from 'lodash';
 
-import { COLORS, CSS_COLORS_VARS } from '@/config';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { CSS_COLORS_VARS } from '@/config';
+import { COLOR_INDICATOR_TYPES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
-/**
- * Get color by entity impact state
- *
- * @param {number} value
- * @returns {string}
- */
-export const getImpactStateColor = value => COLORS.impactState[value];
-
-/**
- * Get color by entity impact state
- *
- * @param {number} value
- * @returns {string}
- */
-export const getEntityStateColor = value => ({
-  [ENTITIES_STATES.ok]: CSS_COLORS_VARS.state.ok,
-  [ENTITIES_STATES.minor]: CSS_COLORS_VARS.state.minor,
-  [ENTITIES_STATES.major]: CSS_COLORS_VARS.state.major,
-  [ENTITIES_STATES.critical]: CSS_COLORS_VARS.state.critical,
-}[value]);
+import { getAlarmImpactStateColor, getAlarmStateColor } from '../alarm/color';
 
 /**
  * Get color for a entity by colorIndicator and isGrey parameters
@@ -39,10 +20,10 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
     const state = isNumber(entity.state) ? entity.state : entity.state?.val;
 
-    return getEntityStateColor(state);
+    return getAlarmStateColor(state);
   }
 
-  return getImpactStateColor(entity.impact_state);
+  return getAlarmImpactStateColor(entity.impact_state);
 };
 
 /**

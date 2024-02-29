@@ -13,6 +13,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-copy-wrapper', 'c-links-list', 'service-entities-list',
+    'v-icon',
   ]),
   allowedAttributes: {
     '*': [
@@ -32,6 +33,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
       ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
+    'v-icon': ['color', 'large', 'small', 'dark', 'dense', 'tag'],
   },
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
 };

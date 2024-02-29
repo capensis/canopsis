@@ -1,5 +1,13 @@
-import { CSS_COLORS_VARS } from '@/config';
+import { COLORS, CSS_COLORS_VARS } from '@/config';
 import { ALARM_STATES, ALARM_STATUSES } from '@/constants';
+
+/**
+ * Get color by impact state
+ *
+ * @param {number} impactState
+ * @returns {string}
+ */
+export const getAlarmImpactStateColor = impactState => COLORS.impactState[impactState];
 
 /**
  * Get color by entity impact state

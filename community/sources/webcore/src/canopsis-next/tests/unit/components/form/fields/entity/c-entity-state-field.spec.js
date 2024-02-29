@@ -1,7 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 
@@ -16,15 +16,15 @@ describe('c-entity-state-field', () => {
   it('State type changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {
-        value: ENTITIES_STATES.ok,
+        value: ALARM_STATES.ok,
       },
     });
 
     const valueElement = wrapper.find('select.v-select');
 
-    valueElement.triggerCustomEvent('input', ENTITIES_STATES.critical);
+    valueElement.triggerCustomEvent('input', ALARM_STATES.critical);
 
-    expect(wrapper).toEmitInput(ENTITIES_STATES.critical);
+    expect(wrapper).toEmitInput(ALARM_STATES.critical);
   });
 
   it('Renders `c-entity-state-field` with default props', () => {
@@ -39,7 +39,7 @@ describe('c-entity-state-field', () => {
   it('Renders `c-entity-state-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: ENTITIES_STATES.major,
+        value: ALARM_STATES.major,
         label: 'Custom label',
         name: 'name',
         disabled: true,

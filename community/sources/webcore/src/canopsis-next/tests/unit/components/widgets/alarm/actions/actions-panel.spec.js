@@ -15,7 +15,7 @@ import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-  ENTITIES_STATES,
+  ALARM_STATES,
   ALARM_STATUSES,
   ENTITY_PATTERN_FIELDS,
   INSTRUCTION_EXECUTION_ICONS,
@@ -629,7 +629,7 @@ describe('actions-panel', () => {
     const [{ config }] = $modals.show.mock.calls[0];
 
     const changeStateEvent = {
-      state: ENTITIES_STATES.critical,
+      state: ALARM_STATES.critical,
       comment: Faker.datatype.string(),
     };
 
@@ -775,7 +775,7 @@ describe('actions-panel', () => {
           val: ALARM_STATUSES.flapping,
         },
         state: {
-          val: ENTITIES_STATES.ok,
+          val: ALARM_STATES.ok,
         },
       },
     };
@@ -810,7 +810,7 @@ describe('actions-panel', () => {
           val: ALARM_STATUSES.closed,
         },
         state: {
-          val: ENTITIES_STATES.ok,
+          val: ALARM_STATES.ok,
         },
       },
     };
@@ -851,7 +851,7 @@ describe('actions-panel', () => {
           val: ALARM_STATUSES.closed,
         },
         state: {
-          val: ENTITIES_STATES.ok,
+          val: ALARM_STATES.ok,
         },
       },
     };
