@@ -7,11 +7,11 @@ import AvailabilityBarFilters from '@/components/other/availability/partials/ava
 
 const stubs = {
   'c-quick-date-interval-field': true,
-  'c-availability-show-type-field': true,
+  'availability-show-type-field': true,
 };
 
 const selectQuickDateIntervalField = wrapper => wrapper.find('c-quick-date-interval-field-stub');
-const selectAvailabilityShowTypeField = wrapper => wrapper.find('c-availability-show-type-field-stub');
+const selectAvailabilityShowTypeField = wrapper => wrapper.find('availability-show-type-field-stub');
 
 describe('availability-bar-filters', () => {
   const factory = generateShallowRenderer(AvailabilityBarFilters, { stubs });

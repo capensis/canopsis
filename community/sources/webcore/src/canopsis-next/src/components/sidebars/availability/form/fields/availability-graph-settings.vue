@@ -9,7 +9,7 @@
           :ranges="intervalRanges"
           :label="$t('settings.defaultTimeRange')"
         />
-        <c-availability-show-type-radio-field
+        <availability-show-type-radio-field
           v-field="form.default_show_type"
           :label="$t('settings.availability.defaultAvailabilityDisplay')"
           :name="defaultShowTypeFieldName"
@@ -25,9 +25,10 @@ import { computed } from 'vue';
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import AvailabilityShowTypeRadioField from '@/components/other/availability/form/fields/availability-show-type-radio-field.vue';
 
 export default {
-  components: { WidgetSettingsItem },
+  components: { WidgetSettingsItem, AvailabilityShowTypeRadioField },
   model: {
     prop: 'form',
     event: 'input',

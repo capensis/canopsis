@@ -13,9 +13,7 @@ exports[`availability-bar-chart-information-row Renders \`availability-bar-chart
   >
     Custom label
   </div>
-  <div
-    class="availability-bar-chart-information-row__value"
-  >
+  <div>
     <div
       class="default-slot"
     />
@@ -36,8 +34,6 @@ exports[`availability-bar-chart-information-row Renders \`availability-bar-chart
   >
     Required label
   </div>
-  <div
-    class="availability-bar-chart-information-row__value"
-  />
+  <div />
 </div>
 `;

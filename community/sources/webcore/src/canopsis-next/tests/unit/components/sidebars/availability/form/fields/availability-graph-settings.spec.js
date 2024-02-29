@@ -8,12 +8,12 @@ const stubs = {
   'widget-settings-item': true,
   'c-enabled-field': true,
   'c-quick-date-interval-type-field': true,
-  'c-availability-show-type-radio-field': true,
+  'availability-show-type-radio-field': true,
 };
 
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectQuickDateIntervalTypeField = wrapper => wrapper.find('c-quick-date-interval-type-field-stub');
-const selectAvailabilityShowTypeField = wrapper => wrapper.find('c-availability-show-type-radio-field-stub');
+const selectAvailabilityShowTypeField = wrapper => wrapper.find('availability-show-type-radio-field-stub');
 
 describe('availability-graph-settings', () => {
   const factory = generateShallowRenderer(AvailabilityGraphSettings, { stubs });

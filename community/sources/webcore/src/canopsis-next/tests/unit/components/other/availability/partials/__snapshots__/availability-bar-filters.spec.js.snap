@@ -11,9 +11,10 @@ exports[`availability-bar-filters Renders \`availability-bar-filters\` with cust
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
   />
-  <c-availability-show-type-field-stub
+  <availability-show-type-field-stub
     class="availability-bar-filters__show-type"
     label="Show"
+    name="availability"
     value="1"
   />
 </div>
@@ -28,9 +29,11 @@ exports[`availability-bar-filters Renders \`availability-bar-filters\` with defa
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
   />
-  <c-availability-show-type-field-stub
+  <availability-show-type-field-stub
     class="availability-bar-filters__show-type"
     label="Show"
+    name="availability"
+    value="0"
   />
 </div>
 `;

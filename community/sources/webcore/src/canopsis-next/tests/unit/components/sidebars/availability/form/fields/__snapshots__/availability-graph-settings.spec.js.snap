@@ -17,7 +17,7 @@ exports[`availability-graph-settings Renders \`availability-graph-settings\` wit
         ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         value="last7Days"
       />
-      <c-availability-show-type-radio-field-stub
+      <availability-show-type-radio-field-stub
         label="Default availability display"
         name="customName.show_type"
         value="1"

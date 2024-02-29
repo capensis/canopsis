@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-availability-show-type-radio-field Renders \`c-availability-show-type-radio-field\` with custom props 1`] = `
+exports[`availability-show-type-radio-field Renders \`availability-show-type-radio-field\` with custom props 1`] = `
 <div
   class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
 >
@@ -87,7 +87,7 @@ exports[`c-availability-show-type-radio-field Renders \`c-availability-show-type
 </div>
 `;
 
-exports[`c-availability-show-type-radio-field Renders \`c-availability-show-type-radio-field\` with required props 1`] = `
+exports[`availability-show-type-radio-field Renders \`availability-show-type-radio-field\` with required props 1`] = `
 <div
   class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
 >
