@@ -14,9 +14,9 @@
 import { isArray } from 'lodash';
 
 import {
+  ALARM_STATES,
   ALARM_EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
-  ENTITIES_STATES,
   EVENT_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_SOURCE_TYPES,
@@ -25,7 +25,7 @@ import {
   PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
-import CEntityOldStateField from '@/components/forms/fields/entity/c-entity-old-state-field.vue';
+import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-state-field.vue';
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
@@ -245,9 +245,9 @@ export default {
           PATTERN_OPERATORS.higher,
           PATTERN_OPERATORS.lower,
         ],
-        defaultValue: ENTITIES_STATES.ok,
+        defaultValue: ALARM_STATES.ok,
         valueField: {
-          is: CEntityOldStateField,
+          is: CAlarmOldStateField,
         },
       };
     },

@@ -68,7 +68,7 @@ export default {
         operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
-          is: 'c-entity-state-field',
+          is: 'c-alarm-state-field',
         },
       };
     },

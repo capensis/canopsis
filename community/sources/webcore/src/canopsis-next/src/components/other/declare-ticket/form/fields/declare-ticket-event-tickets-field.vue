@@ -23,7 +23,7 @@
 <script>
 import { groupBy } from 'lodash';
 
-import { ALARM_LIST_TIMELINE_STEPS } from '@/constants';
+import { ALARM_LIST_STEPS } from '@/constants';
 
 import { filterValue } from '@/helpers/array';
 
@@ -60,7 +60,7 @@ export default {
     successAlarmTickets() {
       return this.alarmTickets
         .filter(ticket => (
-          [ALARM_LIST_TIMELINE_STEPS.declareTicket, ALARM_LIST_TIMELINE_STEPS.assocTicket].includes(ticket._t)
+          [ALARM_LIST_STEPS.declareTicket, ALARM_LIST_STEPS.assocTicket].includes(ticket._t)
         ));
     },
 

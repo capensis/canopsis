@@ -31,8 +31,8 @@ import {
   ALARM_EVENT_INITIATORS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
-  ENTITIES_STATES,
-  ENTITIES_STATUSES,
+  ALARM_STATES,
+  ALARM_STATUSES,
   ALARM_FIELDS_TO_LABELS_KEYS,
   MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
@@ -231,9 +231,9 @@ export default {
           PATTERN_OPERATORS.equal,
           PATTERN_OPERATORS.notEqual,
         ],
-        defaultValue: ENTITIES_STATUSES.ongoing,
+        defaultValue: ALARM_STATUSES.ongoing,
         valueField: {
-          is: 'c-entity-status-field',
+          is: 'c-alarm-state-field',
         },
       };
     },
@@ -246,9 +246,9 @@ export default {
           PATTERN_OPERATORS.higher,
           PATTERN_OPERATORS.lower,
         ],
-        defaultValue: ENTITIES_STATES.ok,
+        defaultValue: ALARM_STATES.ok,
         valueField: {
-          is: 'c-entity-state-field',
+          is: 'c-alarm-state-field',
         },
       };
     },

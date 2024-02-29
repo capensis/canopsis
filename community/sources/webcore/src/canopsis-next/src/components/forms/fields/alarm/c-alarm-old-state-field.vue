@@ -14,7 +14,7 @@
         :name="name"
         required
       />
-      <c-entity-state-field
+      <c-alarm-state-field
         v-else
         v-field="value"
         :name="name"
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -46,13 +46,13 @@ export default {
   },
   data() {
     return {
-      oldMode: this.value > ENTITIES_STATES.critical,
+      oldMode: this.value > ALARM_STATES.critical,
     };
   },
   methods: {
     updateOldMode(value) {
-      if (!value && this.value > ENTITIES_STATES.critical) {
-        this.updateModel(ENTITIES_STATES.ok);
+      if (!value && this.value > ALARM_STATES.critical) {
+        this.updateModel(ALARM_STATES.ok);
       }
     },
   },

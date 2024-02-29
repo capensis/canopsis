@@ -16,7 +16,7 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   ENTITIES_STATES,
-  ENTITIES_STATUSES,
+  ALARM_STATUSES,
   ENTITY_PATTERN_FIELDS,
   INSTRUCTION_EXECUTION_ICONS,
   META_ALARMS_RULE_TYPES,
@@ -173,7 +173,7 @@ describe('actions-panel', () => {
     v: {
       ack: {},
       status: {
-        val: ENTITIES_STATUSES.flapping,
+        val: ALARM_STATUSES.flapping,
       },
       state: {},
     },
@@ -279,7 +279,7 @@ describe('actions-panel', () => {
         component: 'alarm-component',
         resource: 'alarm-resource',
         status: {
-          val: ENTITIES_STATUSES.ongoing,
+          val: ALARM_STATUSES.ongoing,
         },
         state: {
           val: 'state-val',
@@ -725,7 +725,7 @@ describe('actions-panel', () => {
         component: 'alarm-component',
         resource: 'alarm-resource',
         status: {
-          val: ENTITIES_STATUSES.ongoing,
+          val: ALARM_STATUSES.ongoing,
         },
         state: {
           val: 'state-val',
@@ -772,7 +772,7 @@ describe('actions-panel', () => {
         component: 'alarm-component',
         resource: 'alarm-resource',
         status: {
-          val: ENTITIES_STATUSES.flapping,
+          val: ALARM_STATUSES.flapping,
         },
         state: {
           val: ENTITIES_STATES.ok,
@@ -847,7 +847,7 @@ describe('actions-panel', () => {
       pbehavior,
       v: {
         status: {
-          val: ENTITIES_STATUSES.closed,
+          val: ALARM_STATUSES.closed,
         },
       },
     };
@@ -863,7 +863,7 @@ describe('actions-panel', () => {
           ...alarmData,
           v: {
             status: {
-              val: ENTITIES_STATUSES.closed,
+              val: ALARM_STATUSES.closed,
             },
           },
         },
@@ -982,7 +982,7 @@ describe('actions-panel', () => {
         component: 'alarm-component',
         resource: 'alarm-resource',
         status: {
-          val: ENTITIES_STATUSES.ongoing,
+          val: ALARM_STATUSES.ongoing,
         },
         state: {
           val: 'state-val',
@@ -1518,7 +1518,7 @@ describe('actions-panel', () => {
           ...alarm,
           v: {
             status: {
-              val: ENTITIES_STATUSES.ongoing,
+              val: ALARM_STATUSES.ongoing,
             },
           },
         },
@@ -1535,7 +1535,7 @@ describe('actions-panel', () => {
       ...alarm,
       v: {
         status: {
-          val: ENTITIES_STATUSES.closed,
+          val: ALARM_STATUSES.closed,
         },
       },
     };
@@ -1579,7 +1579,7 @@ describe('actions-panel', () => {
           entity: undefined,
           v: {
             status: {
-              val: ENTITIES_STATUSES.stealthy,
+              val: ALARM_STATUSES.stealthy,
             },
           },
         },
@@ -1655,7 +1655,7 @@ describe('actions-panel', () => {
 
           v: {
             status: {
-              val: ENTITIES_STATUSES.closed,
+              val: ALARM_STATUSES.closed,
             },
           },
           links: {

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -50,7 +50,7 @@ export default {
     },
 
     availableStateTypes() {
-      return Object.values(ENTITIES_STATES)
+      return Object.values(ALARM_STATES)
         .map(value => ({ value, text: this.$t(`common.stateTypes.${value}`) }));
     },
   },

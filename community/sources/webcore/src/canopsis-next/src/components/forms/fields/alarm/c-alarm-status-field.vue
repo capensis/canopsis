@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { ENTITIES_STATUSES } from '@/constants';
+import { ALARM_STATUSES } from '@/constants';
 
 export default {
   model: {
@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     alarmStates() {
-      return Object.values(ENTITIES_STATUSES).map(value => ({
+      return Object.values(ALARM_STATUSES).map(value => ({
         value,
         text: this.$t(`common.statusTypes.${value}`),
       }));
