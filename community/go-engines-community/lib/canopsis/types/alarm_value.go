@@ -136,7 +136,7 @@ func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string, inPbehaviorInterva
 	newStep := NewAlarmStep(
 		AlarmStepMetaAlarmAttach,
 		datetime.NewCpsTime(),
-		cps.CorrelationConnector+"."+cps.CorrelationConnector,
+		cps.DefaultEventAuthor,
 		fmt.Sprintf("Rule: {%s}\n Displayname: {%s}\n Entity: {%s}",
 			ruleName,
 			metaAlarm.Value.DisplayName,
