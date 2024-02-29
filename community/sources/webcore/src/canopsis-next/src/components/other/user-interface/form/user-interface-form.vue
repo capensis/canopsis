@@ -102,9 +102,8 @@
         <span class="v-label file-selector__label">{{ $t('userInterface.logo') }}</span>
         <v-layout>
           <file-selector
-            v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`"
             ref="fileSelector"
-            :error-messages="errors.collect('logo')"
+            :max-file-size="maxFileSize"
             :disabled="disabled"
             class="mt-1"
             accept="image/*"
@@ -119,13 +118,14 @@
 </template>
 
 <script>
+import { MAX_ICON_SIZE_IN_KB } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     FileSelector,
     TextEditorField,
@@ -146,6 +146,10 @@ export default {
     },
   },
   computed: {
+    maxFileSize() {
+      return MAX_ICON_SIZE_IN_KB;
+    },
+
     textEditorConfig() {
       return { disabled: this.disabled };
     },

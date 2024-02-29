@@ -58,6 +58,7 @@ type Store interface {
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error)
+	GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error)
 }
 
 type store struct {
@@ -115,6 +116,32 @@ func NewStore(
 
 		logger: logger,
 	}
+}
+
+func (s *store) GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error) {
+	now := datetime.NewCpsTime()
+
+	pipeline, err := s.getQueryBuilder().CreateGetDisplayNamesPipeline(r, now)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var result GetDisplayNamesResponse
+	for cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &result, nil
 }
 
 func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error) {
@@ -401,6 +428,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		collection = s.resolvedDbCollection
 	}
 
+	const entityLookupName = "entity"
 	pipeline := []bson.M{
 		{"$match": match},
 		{"$addFields": bson.M{
@@ -410,13 +438,16 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
-			"as":           "entity",
+			"as":           entityLookupName,
 		}},
-		{"$unwind": "$entity"},
+		{"$unwind": "$" + entityLookupName},
 	}
 
+	pipeline = append(pipeline, getEntityCategoryLookup()...)
+	pipeline = append(pipeline, getEntityPbehaviorInfoTypeLookup()...)
 	if r.WithDependencies {
 		pipeline = append(pipeline, getImpactsCountPipeline()...)
+		pipeline = append(pipeline, getDependsCountPipeline()...)
 	}
 
 	if r.Steps != nil {

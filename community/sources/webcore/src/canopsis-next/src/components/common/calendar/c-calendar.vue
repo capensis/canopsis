@@ -129,6 +129,7 @@
       :close-on-click="false"
       :position-x="positionX"
       :position-y="positionY"
+      attach=".modals-wrapper"
       content-class="c-calendar__popover-wrapper"
     >
       <v-card v-if="popoverOpen">
@@ -395,13 +396,19 @@ export default {
     updateRange({ start, end }) {
       const parsedStart = getStartOfWeek(start, this.weekdays);
       const parsedEnd = getEndOfWeek(end, this.weekdays);
-
-      this.filled = {
+      const newFilled = {
         start: convertDateToStartOfDayDateObject(parsedStart.date),
         end: convertDateToEndOfDayDateObject(parsedEnd.date),
       };
 
-      this.$emit('change:pagination');
+      if (
+        this.filled.start?.getTime() !== newFilled.start.getTime()
+        || this.filled.end?.getTime() !== newFilled.end.getTime()
+      ) {
+        this.filled = newFilled;
+
+        this.$emit('change:pagination');
+      }
     },
 
     setFocusDate(date) {

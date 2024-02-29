@@ -115,6 +115,17 @@ const stateSettingThresholdsToForm = (thresholds = {}) => (
 );
 
 /**
+ * Convert state setting pattern to form
+ *
+ * @param {PatternGroups} pattern
+ * @return {FilterPatterns}
+ */
+export const stateSettingPatternToForm = pattern => filterPatternsToForm(
+  { [PATTERNS_FIELDS.entity]: pattern },
+  [PATTERNS_FIELDS.entity],
+);
+
+/**
  * Convert state setting to form
  *
  * @param {StateSetting} [stateSetting = {}]
@@ -126,14 +137,8 @@ export const stateSettingToForm = (stateSetting = {}) => ({
   enabled: stateSetting.enabled ?? true,
   method: stateSetting.method ?? STATE_SETTING_METHODS.inherited,
   type: stateSetting.type ?? ENTITY_TYPES.component,
-  entity_pattern: filterPatternsToForm(
-    { [PATTERNS_FIELDS.entity]: stateSetting.entity_pattern },
-    [PATTERNS_FIELDS.entity],
-  ),
-  inherited_entity_pattern: filterPatternsToForm(
-    { [PATTERNS_FIELDS.entity]: stateSetting.inherited_entity_pattern },
-    [PATTERNS_FIELDS.entity],
-  ),
+  entity_pattern: stateSettingPatternToForm(stateSetting.entity_pattern),
+  inherited_entity_pattern: stateSettingPatternToForm(stateSetting.inherited_entity_pattern),
   state_thresholds: stateSettingThresholdsToForm(stateSetting.state_thresholds),
 });
 

@@ -40,6 +40,7 @@ import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
+import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -59,6 +60,7 @@ export default {
     entitiesInfoMixin,
     entitiesUserMixin,
     entitiesTemplateVarsMixin,
+    vuetifyCustomIconsRegisterMixin,
   ],
   data() {
     return {
@@ -88,14 +90,15 @@ export default {
   },
   created() {
     this.registerCurrentUserOnceWatcher();
+    this.socketConnectWithErrorHandling();
   },
   async mounted() {
-    this.socketConnectWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
 
     await Promise.all([
       this.fetchCurrentUserWithErrorHandling(),
-      this.fetchTemplateVars(),
+      this.fetchTemplateVarsWithErrorHandling(),
+      this.fetchIconsWithRegistering(),
     ]);
 
     await this.fetchAppInfoWithErrorHandling();
@@ -236,6 +239,14 @@ export default {
         console.error(err);
       } finally {
         this.appInfoLocalPending = false;
+      }
+    },
+
+    async fetchTemplateVarsWithErrorHandling() {
+      try {
+        await this.fetchTemplateVars();
+      } catch (err) {
+        console.error(err);
       }
     },
   },

@@ -4,19 +4,19 @@
     v-validate="rules"
     :label="label"
     :hint="hint"
-    :items="availableIconNames"
+    :items="allIcons"
     :name="name"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
     persistent-hint
   >
     <template #selection="{ item }">
-      <v-icon>{{ item }}</v-icon>
-      <span class="ml-2">{{ item }}</span>
+      <v-icon>{{ item.value }}</v-icon>
+      <span class="ml-2">{{ item.text }}</span>
     </template>
     <template #item="{ item }">
-      <v-icon>{{ item }}</v-icon>
-      <span class="ml-2">{{ item }}</span>
+      <v-icon>{{ item.value }}</v-icon>
+      <span class="ml-2">{{ item.text }}</span>
     </template>
     <template #no-data="">
       <slot name="no-data" />
@@ -25,10 +25,17 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+import { formBaseMixin } from '@/mixins/form';
+
 import materialIconNameByCode from '@/assets/material-icons/MaterialIcons-Regular.json';
+
+const { mapGetters } = createNamespacedHelpers('icon');
 
 export default {
   inject: ['$validator'],
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -60,14 +67,40 @@ export default {
     },
   },
   computed: {
-    availableIconNames() {
-      return Object.keys(materialIconNameByCode);
+    ...mapGetters(['registeredIconsById']),
+
+    registeredIconsItems() {
+      return Object.values(this.registeredIconsById)
+        .map(({ title }) => ({ text: title, value: `$vuetify.icon.${title}` }));
+    },
+
+    materialIconsItems() {
+      return Object.keys(materialIconNameByCode).map(name => ({ text: name, value: name }));
+    },
+
+    allIcons() {
+      if (!this.registeredIconsItems.length) {
+        return this.materialIconsItems;
+      }
+
+      return [
+        ...this.registeredIconsItems,
+        { divider: true },
+        ...this.materialIconsItems,
+      ];
     },
 
     rules() {
       return {
         required: this.required,
       };
+    },
+  },
+  watch: {
+    registeredIconsItems(items) {
+      if (!items.some(({ value }) => value === this.value)) {
+        this.updateModel('');
+      }
     },
   },
 };

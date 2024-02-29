@@ -480,8 +480,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   <service-dependencies-stub
                     columns="[object Object]"
                     includeroot="true"
-                    openableroot="true"
                     root="[object Object]"
+                    showstatesetting="true"
                     type="0"
                   />
                 </div>
@@ -513,7 +513,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                     columns="[object Object]"
                     impact="true"
                     includeroot="true"
-                    openableroot="true"
                     root="[object Object]"
                     type="0"
                   />

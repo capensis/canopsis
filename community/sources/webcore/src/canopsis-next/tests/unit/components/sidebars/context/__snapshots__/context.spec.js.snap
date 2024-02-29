@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`context Renders \`context\` widget settings with all rights 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value=""
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-default-sort-column-stub
+      columns="[object Object],[object Object]"
+      columnslabel="Column name"
+      value="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names for tree of dependencies"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      value="2"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for active alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      entitycounterstype="true"
+      filters=""
+      widgetid="3f8dba7c-f39e-42ae-912c-e78cb39669c5"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+    <field-context-entities-types-filter-stub
+      value=""
+    />
+    <export-csv-form-stub
+      form="[object Object]"
+      templates=""
+      type="entity"
+      withoutinfosattributes="true"
+    />
+  </widget-settings-group-stub>
+  <charts-form-stub
+    charts=""
+  />
+</widget-settings-stub>
+`;
+
+exports[`context Renders \`context\` widget settings with custom props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value="Context widget title"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-default-sort-column-stub
+      columns=""
+      columnslabel="Column name"
+      value="[object Object]"
+    />
+    <field-columns-stub
+      columns=""
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+    />
+    <field-columns-stub
+      columns="[object Object]"
+      label="Column names for tree of dependencies"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      value="1"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for active alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <!---->
+    <field-context-entities-types-filter-stub
+      value="service"
+    />
+    <export-csv-form-stub
+      form="[object Object]"
+      templates=""
+      type="entity"
+      withoutinfosattributes="true"
+    />
+  </widget-settings-group-stub>
+  <charts-form-stub
+    charts=""
+  />
+</widget-settings-stub>
+`;
+
+exports[`context Renders \`context\` widget settings with default props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value=""
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-default-sort-column-stub
+      columns="[object Object],[object Object]"
+      columnslabel="Column name"
+      value="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names for tree of dependencies"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      value="2"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for active alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <!---->
+    <field-context-entities-types-filter-stub
+      value=""
+    />
+    <export-csv-form-stub
+      form="[object Object]"
+      templates=""
+      type="entity"
+      withoutinfosattributes="true"
+    />
+  </widget-settings-group-stub>
+  <charts-form-stub
+    charts=""
+  />
+</widget-settings-stub>
+`;

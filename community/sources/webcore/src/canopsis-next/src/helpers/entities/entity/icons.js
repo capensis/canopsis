@@ -1,4 +1,4 @@
-import { ENTITY_TYPES, EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
+import { ENTITY_TYPES_ICONS, EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
 
 /**
  * Get icon by entity type
@@ -6,11 +6,7 @@ import { ENTITY_TYPES, EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
  * @param {EntityType} type
  * @returns {string}
  */
-export const getIconByEntityType = type => (
-  type === ENTITY_TYPES.service
-    ? '$vuetify.icons.engineering'
-    : 'person'
-);
+export const getIconByEntityType = type => ENTITY_TYPES_ICONS[type] ?? 'perm_identity';
 
 /**
  * Get icon for entity event

@@ -193,6 +193,10 @@ export const CreateServicePauseEvent = () => ({
   component: import(/* webpackChunkName: "Context" */ './service/create-service-pause-event.vue'),
   loading: LoaderOverlay,
 });
+export const EntitiesRootCauseDiagram = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entities-root-cause-diagram.vue'),
+  loading: LoaderOverlay,
+});
 export const SelectView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
   loading: LoaderOverlay,
@@ -321,6 +325,10 @@ export const CreateJunitStateSetting = () => ({
   component: import(/* webpackChunkName: "Parameters" */ './state-setting/create-junit-state-setting.vue'),
   loading: LoaderOverlay,
 });
+export const StateSettingInheritedEntityPattern = () => ({
+  component: import(/* webpackChunkName: "Context" */ './state-setting/state-setting-inherited-entity-pattern.vue'),
+  loading: LoaderOverlay,
+});
 export const ArchiveDisabledEntities = () => ({
   component: import(/* webpackChunkName: "Parameters" */ './storage-setting/archive-disabled-entities.vue'),
   loading: LoaderOverlay,
@@ -412,5 +420,10 @@ export const CreateTag = () => ({
 
 export const CreateTheme = () => ({
   component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateIcon = () => ({
+  component: import(/* webpackChunkName: "Common" */ './icon/create-icon.vue'),
   loading: LoaderOverlay,
 });

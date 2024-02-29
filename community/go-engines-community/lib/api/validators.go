@@ -49,7 +49,7 @@ import (
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
+func RegisterValidators(client mongo.DbClient) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
 		return
@@ -176,24 +176,14 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	entityserviceValidator := entityservice.NewValidator(client)
 	entityserviceUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.EntityMongoCollection, "ID")
-	entityserviceUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.EntityMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		entityserviceUniqueIDValidator.Validate(ctx, sl)
-		if !enableSameServiceNames {
-			entityserviceUniqueNameValidator.Validate(ctx, sl)
-		}
 		entityserviceValidator.ValidateCreateRequest(sl)
 	}, entityservice.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		if !enableSameServiceNames {
-			entityserviceUniqueNameValidator.Validate(ctx, sl)
-		}
 		entityserviceValidator.ValidateUpdateRequest(sl)
 	}, entityservice.UpdateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		if !enableSameServiceNames {
-			entityserviceUniqueNameValidator.Validate(ctx, sl)
-		}
 		entityserviceValidator.ValidateUpdateRequest(sl)
 	}, entityservice.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(entityserviceValidator.ValidateEditRequest, entityservice.EditRequest{})
@@ -231,8 +221,9 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})
 
 	stateSettingsValidator := statesettings.NewValidator()
-	v.RegisterStructValidation(stateSettingsValidator.ValidateStateSettingRequest, statesettings.StateSettingRequest{})
-	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThresholds, statesettings.StateThresholds{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateEditRequest, statesettings.EditRequest{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateJUnitThresholds, statesettings.JUnitThreshold{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThreshold, statesettings.StateThreshold{})
 
 	eventfilterValidator := eventfilter.NewValidator(client)
 	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRuleCollection, "ID")

@@ -15,6 +15,7 @@ import {
   ALARM_UNSORTABLE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   TREE_OF_DEPENDENCIES_SHOW_TYPES,
+  COLOR_INDICATOR_TYPES,
 } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
@@ -44,6 +45,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
  * @property {string} exportCsvDatetimeFormat
  * @property {AlarmChart[]} charts
  * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  * @property {number} treeOfDependenciesShowType
  */
 
@@ -94,6 +96,7 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   charts: addKeyInEntities(parameters.charts),
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
   treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
 });
 

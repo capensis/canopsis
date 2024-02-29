@@ -77,9 +77,8 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
-    <field-switcher-stub
-      title="Show root cause diagram called from Severity column"
-      value="true"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-live-reporting-stub
       value="[object Object]"
@@ -661,9 +660,8 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
-    <field-switcher-stub
-      title="Show root cause diagram called from Severity column"
-      value="true"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-live-reporting-stub
       value="[object Object]"
@@ -1249,9 +1247,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
-    <field-switcher-stub
-      title="Show root cause diagram called from Severity column"
-      value="true"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-live-reporting-stub
       value="[object Object]"

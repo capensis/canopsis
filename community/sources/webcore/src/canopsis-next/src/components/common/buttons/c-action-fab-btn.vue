@@ -1,11 +1,12 @@
 <template>
   <c-action-btn v-bind="$attrs">
-    <template #button="">
+    <template #button="{ on }">
       <v-btn
         :color="color"
         small
         fab
         dark
+        v-on="on"
         @click.stop="$listeners.click"
       >
         <v-icon small>

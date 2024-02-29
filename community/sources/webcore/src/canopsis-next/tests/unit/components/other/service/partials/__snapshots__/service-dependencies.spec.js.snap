@@ -7,7 +7,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
   light="true"
 >
   <!---->
-  <state-settings-summary-stub />
+  <state-settings-summary-stub
+    entity="[object Object]"
+  />
   <div
     class="treeview-data-table service-dependencies v-sheet theme--light"
   >
@@ -112,7 +114,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   <th
                     aria-label="Custom name label"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -123,7 +125,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   <th
                     aria-label="Custom type label"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
@@ -171,7 +173,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
   class="layout column"
 >
   <!---->
-  <state-settings-summary-stub />
+  <!---->
   <div
     class="treeview-data-table service-dependencies v-sheet theme--light"
   >
@@ -209,14 +211,17 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
           <div
             aria-expanded="false"
-            class="v-treeview-node v-treeview-node--leaf"
+            class="v-treeview-node"
           >
             <div
               class="v-treeview-node__root"
             >
-              <div
-                class="v-treeview-node__level"
-              />
+              <button
+                class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+                type="button"
+              >
+                arrow_drop_down
+              </button>
               <div
                 class="v-treeview-node__content"
               >
@@ -336,7 +341,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <th
                     aria-label="Name"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -347,7 +352,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <th
                     aria-label="Type"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
@@ -461,7 +466,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
   class="layout column"
 >
   <!---->
-  <state-settings-summary-stub />
+  <!---->
   <div
     class="treeview-data-table service-dependencies v-sheet theme--light"
   >
@@ -499,14 +504,17 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           </div>
           <div
             aria-expanded="false"
-            class="v-treeview-node v-treeview-node--leaf"
+            class="v-treeview-node"
           >
             <div
               class="v-treeview-node__root"
             >
-              <div
-                class="v-treeview-node__level"
-              />
+              <button
+                class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+                type="button"
+              >
+                arrow_drop_down
+              </button>
               <div
                 class="v-treeview-node__content"
               >
@@ -593,7 +601,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <th
                     aria-label="Name"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -604,7 +612,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <th
                     aria-label="Type"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
@@ -674,7 +682,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
   class="layout column"
 >
   <!---->
-  <state-settings-summary-stub />
+  <!---->
   <div
     class="treeview-data-table service-dependencies v-sheet theme--light"
   >
@@ -726,7 +734,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   <th
                     aria-label="Name"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -737,7 +745,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   <th
                     aria-label="Type"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >

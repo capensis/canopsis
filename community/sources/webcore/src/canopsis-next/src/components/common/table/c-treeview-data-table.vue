@@ -152,6 +152,10 @@ export default {
         && this.isDependencyOpen(this.itemsById[item.parentKey], [...parentKeys, item.key])
       );
     },
+
+    clearOpened() {
+      this.opened = [];
+    },
   },
 };
 </script>

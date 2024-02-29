@@ -4,7 +4,6 @@
     :columns="columns"
     class="pa-3"
     impact
-    openable-root
   />
 </template>
 

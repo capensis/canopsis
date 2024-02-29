@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -17,8 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
-	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
-	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
@@ -32,6 +31,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/icon"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -75,6 +75,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
@@ -89,6 +90,10 @@ import (
 )
 
 const BaseUrl = "/api/v4"
+
+const mimeTypeSvg = "image/svg+xml"
+
+const cacheExpiration = time.Hour
 
 // RegisterRoutes
 // nolint: contextcheck
@@ -115,7 +120,6 @@ func RegisterRoutes(
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	filesRoot string,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
@@ -124,6 +128,8 @@ func RegisterRoutes(
 	authorProvider author.Provider,
 	healthcheckStore healthcheck.Store,
 	tplExecutor libtemplate.Executor,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
+	enableSameServiceNames bool,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -372,6 +378,11 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.Count,
 		)
+		protected.GET(
+			"/alarm-display-names",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmAPI.GetDisplayNames,
+		)
 		exportExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
 		{
@@ -581,6 +592,18 @@ func RegisterRoutes(
 				entityAPI.GetContextGraph,
 			)
 
+			entityRouter.POST(
+				"/check-state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.CheckStateSetting,
+			)
+
+			entityRouter.GET(
+				"/state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.GetStateSetting,
+			)
+
 			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
@@ -617,7 +640,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, logger), entityPublChan,
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, enableSameServiceNames, logger), entityPublChan,
 			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
@@ -1410,50 +1433,50 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
-		contextGraphRouter := protected.Group("/contextgraph")
-		{
-			contextGraphRouter.PUT(
-				"import",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportAll,
-			)
-			contextGraphRouter.PUT(
-				"import-partial",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportPartial,
-			)
-			contextGraphRouter.GET(
-				"import/status/:id",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
-				contextGraphAPIV1.Status,
-			)
-		}
-
-		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportAll,
+			contextGraphAPI.ImportAll,
 		)
 		protected.PUT(
 			"contextgraph-import-partial",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportPartial,
+			contextGraphAPI.ImportPartial,
+		)
+		protected.GET(
+			"contextgraph-import-status/:id",
+			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
+			contextGraphAPI.Status,
 		)
 
 		stateSettingsRouter := protected.Group("/state-settings")
 		{
-			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient), actionLogger)
-			stateSettingsRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
-				stateSettingsApi.Update,
+			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient, stateSettingsUpdatesChan), actionLogger)
+			stateSettingsRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionCreate, enforcer),
+				stateSettingsApi.Create,
 			)
 			stateSettingsRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
 				stateSettingsApi.List,
+			)
+			stateSettingsRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				stateSettingsApi.Get,
+			)
+			stateSettingsRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionUpdate, enforcer),
+				stateSettingsApi.Update,
+			)
+			stateSettingsRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionDelete, enforcer),
+				stateSettingsApi.Delete,
 			)
 		}
 
@@ -2021,7 +2044,7 @@ func RegisterRoutes(
 		fileRouter := protected.Group("/file")
 		{
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
-				filesRoot,
+				conf.File.Upload,
 				libfile.NewEtagEncoder(),
 			), conf.File.UploadMaxSize))
 			fileRouter.POST(
@@ -2042,6 +2065,52 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFile, model.PermissionDelete, enforcer),
 				fileAPI.Delete,
+			)
+		}
+
+		iconsCacheMiddlewareGetter := middleware.NewCacheMiddlewareGetter(cacheExpiration, nil)
+		iconsPath := "/icons"
+		iconRouter := protected.Group(iconsPath)
+		{
+			iconStore := icon.NewStore(
+				dbClient,
+				libfile.NewStorage(conf.File.Icon, libfile.NewEtagEncoder()),
+			)
+			iconApi := icon.NewApi(iconStore, websocketHub, actionLogger, conf.File.IconMaxSize, []string{mimeTypeSvg})
+			iconRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Create,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.GET(
+				"",
+				iconsCacheMiddlewareGetter.Cache(),
+				iconApi.List,
+			)
+			iconRouter.GET(
+				"/:id",
+				security.GetFileAuthMiddleware(),
+				iconsCacheMiddlewareGetter.Cache(),
+				iconApi.Get,
+			)
+			iconRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Delete,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Update,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.PATCH(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Patch,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
 		}
 

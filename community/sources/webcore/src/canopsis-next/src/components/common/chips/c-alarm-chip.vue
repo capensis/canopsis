@@ -10,7 +10,7 @@
       overlap
     >
       <template #badge="">
-        <span>{{ badgeValue }}</span>
+        <span class="px-1">{{ badgeValue }}</span>
       </template>
       <span
         :style="{ backgroundColor: style.color }"
@@ -83,7 +83,7 @@ export default {
       min-width: 16px;
       width: auto;
       height: 16px;
-      inset: auto auto calc(100% - 4px) calc(100% - 6px) !important;
+      inset: -14px -6px auto auto !important;
       line-height: 16px;
     }
 
@@ -104,7 +104,7 @@ export default {
           min-width: 12px;
           height: 12px;
           line-height: 15px;
-          inset: auto auto calc(100% - 4px) calc(100% - 6px) !important;
+          inset: -9px -6px auto auto !important;
         }
       }
     }
