@@ -96,17 +96,17 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	eventsCount += len(statusUpdated)
 	for _, alarm := range statusUpdated {
 		eventUpdateStatus := types.Event{
-			Connector:     alarm.Value.Connector,
-			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			Connector:     canopsis.AxeConnector,
+			ConnectorName: canopsis.AxeConnector,
+			Component:     alarm.Alarm.Value.Component,
+			Resource:      alarm.Alarm.Value.Resource,
+			SourceType:    alarm.Entity.Type,
 			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeUpdateStatus,
 			Author:        canopsis.DefaultEventAuthor,
 			Output:        "",
 			Initiator:     types.InitiatorSystem,
 		}
-		eventUpdateStatus.SourceType = eventUpdateStatus.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventUpdateStatus)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
@@ -116,15 +116,16 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	eventsCount += len(closed)
 	for _, alarm := range closed {
 		eventResolveClosed := types.Event{
-			Connector:     alarm.Value.Connector,
-			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			Connector:     canopsis.AxeConnector,
+			ConnectorName: canopsis.AxeConnector,
+			Component:     alarm.Alarm.Value.Component,
+			Resource:      alarm.Alarm.Value.Resource,
+			SourceType:    alarm.Entity.Type,
 			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeResolveClose,
+			Author:        canopsis.DefaultEventAuthor,
 			Initiator:     types.InitiatorSystem,
 		}
-		eventResolveClosed.SourceType = eventResolveClosed.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventResolveClosed)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
@@ -134,15 +135,16 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	eventsCount += len(cancelResolved)
 	for _, alarm := range cancelResolved {
 		eventResolveCancel := types.Event{
-			Connector:     alarm.Value.Connector,
-			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			Connector:     canopsis.AxeConnector,
+			ConnectorName: canopsis.AxeConnector,
+			Component:     alarm.Alarm.Value.Component,
+			Resource:      alarm.Alarm.Value.Resource,
+			SourceType:    alarm.Entity.Type,
 			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeResolveCancel,
+			Author:        canopsis.DefaultEventAuthor,
 			Initiator:     types.InitiatorSystem,
 		}
-		eventResolveCancel.SourceType = eventResolveCancel.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventResolveCancel)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
@@ -152,15 +154,16 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	eventsCount += len(unsnoozedAlarms)
 	for _, alarm := range unsnoozedAlarms {
 		eventUnsnooze := types.Event{
-			Connector:     alarm.Value.Connector,
-			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			Connector:     canopsis.AxeConnector,
+			ConnectorName: canopsis.AxeConnector,
+			Component:     alarm.Alarm.Value.Component,
+			Resource:      alarm.Alarm.Value.Resource,
+			SourceType:    alarm.Entity.Type,
 			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeUnsnooze,
+			Author:        canopsis.DefaultEventAuthor,
 			Initiator:     types.InitiatorSystem,
 		}
-		eventUnsnooze.SourceType = eventUnsnooze.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventUnsnooze)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")

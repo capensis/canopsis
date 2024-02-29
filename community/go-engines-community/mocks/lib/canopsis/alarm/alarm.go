@@ -129,10 +129,10 @@ func (mr *MockAdapterMockRecorder) GetAlarmsByID(arg0, arg1 interface{}) *gomock
 }
 
 // GetAlarmsWithCancelMark mocks base method.
-func (m *MockAdapter) GetAlarmsWithCancelMark(arg0 context.Context) ([]types.Alarm, error) {
+func (m *MockAdapter) GetAlarmsWithCancelMark(arg0 context.Context) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAlarmsWithCancelMark", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
+	ret0, _ := ret[0].([]types.AlarmWithEntity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -159,10 +159,10 @@ func (mr *MockAdapterMockRecorder) GetAlarmsWithFlappingStatus(arg0 interface{})
 }
 
 // GetAlarmsWithSnoozeMark mocks base method.
-func (m *MockAdapter) GetAlarmsWithSnoozeMark(arg0 context.Context) ([]types.Alarm, error) {
+func (m *MockAdapter) GetAlarmsWithSnoozeMark(arg0 context.Context) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAlarmsWithSnoozeMark", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
+	ret0, _ := ret[0].([]types.AlarmWithEntity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -563,10 +563,10 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // ResolveCancels mocks base method.
-func (m *MockService) ResolveCancels(arg0 context.Context, arg1 config.AlarmConfig) ([]types.Alarm, error) {
+func (m *MockService) ResolveCancels(arg0 context.Context, arg1 config.AlarmConfig) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ResolveCancels", arg0, arg1)
-	ret0, _ := ret[0].([]types.Alarm)
+	ret0, _ := ret[0].([]types.AlarmWithEntity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -578,10 +578,10 @@ func (mr *MockServiceMockRecorder) ResolveCancels(arg0, arg1 interface{}) *gomoc
 }
 
 // ResolveClosed mocks base method.
-func (m *MockService) ResolveClosed(arg0 context.Context) ([]types.Alarm, error) {
+func (m *MockService) ResolveClosed(arg0 context.Context) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ResolveClosed", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
+	ret0, _ := ret[0].([]types.AlarmWithEntity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -593,10 +593,10 @@ func (mr *MockServiceMockRecorder) ResolveClosed(arg0 interface{}) *gomock.Call 
 }
 
 // ResolveSnoozes mocks base method.
-func (m *MockService) ResolveSnoozes(arg0 context.Context, arg1 config.AlarmConfig) ([]types.Alarm, error) {
+func (m *MockService) ResolveSnoozes(arg0 context.Context, arg1 config.AlarmConfig) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ResolveSnoozes", arg0, arg1)
-	ret0, _ := ret[0].([]types.Alarm)
+	ret0, _ := ret[0].([]types.AlarmWithEntity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -608,10 +608,10 @@ func (mr *MockServiceMockRecorder) ResolveSnoozes(arg0, arg1 interface{}) *gomoc
 }
 
 // UpdateFlappingAlarms mocks base method.
-func (m *MockService) UpdateFlappingAlarms(arg0 context.Context) ([]types.Alarm, error) {
+func (m *MockService) UpdateFlappingAlarms(arg0 context.Context) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateFlappingAlarms", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
+	ret0, _ := ret[0].([]types.AlarmWithEntity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
