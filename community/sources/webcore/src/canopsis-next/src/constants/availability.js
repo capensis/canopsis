@@ -5,6 +5,11 @@ export const AVAILABILITY_SHOW_TYPE = {
   duration: 1,
 };
 
+export const AVAILABILITY_DISPLAY_PARAMETERS = {
+  uptime: 0,
+  downtime: 1,
+};
+
 export const AVAILABILITY_QUICK_RANGES = {
   [QUICK_RANGES.last1Hour.value]: QUICK_RANGES.last1Hour,
   [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
