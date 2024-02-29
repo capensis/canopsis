@@ -17,7 +17,7 @@ exports[`quick-date-interval-type Renders \`quick-date-interval-type\` with defa
   title="Default time range"
 >
   <c-quick-date-interval-type-field-stub
-    ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
 </widget-settings-item-stub>
 `;

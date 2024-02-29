@@ -4,7 +4,16 @@
     divider
     @submit="submit"
   >
-    <availability-form v-model="form" />
+    <availability-form
+      v-model="form"
+      :widget-id="widget._id"
+      :entity-columns-widget-templates="entityColumnsWidgetTemplates"
+      :entity-columns-widget-templates-pending="widgetTemplatesPending"
+      :alarm-columns-widget-templates="alarmColumnsWidgetTemplates"
+      :alarm-columns-widget-templates-pending="widgetTemplatesPending"
+      @update:widgetColumnsTemplate="updateWidgetColumnsTemplate"
+      @update:activeAlarmsColumnsTemplate="updateActiveAlarmsColumnsTemplate"
+    />
   </widget-settings>
 </template>
 
@@ -12,6 +21,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 
 import WidgetSettings from '../partials/widget-settings.vue';
 
@@ -25,6 +35,18 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
+    widgetTemplatesMixin,
   ],
+  methods: {
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
+
+    updateActiveAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'activeAlarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'activeAlarmsColumns', columns);
+    },
+  },
 };
 </script>
