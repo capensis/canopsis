@@ -104,7 +104,7 @@ export default {
   link: 'Link | Links',
   stack: 'Stack',
   edition: 'Edition',
-  icon: 'Icon',
+  icon: 'Icon | Icons',
   fullscreen: 'Fullscreen',
   interval: 'Interval',
   status: 'Status',
@@ -287,6 +287,8 @@ export default {
   regexp: 'Regexp',
   archive: 'Archive',
   convertToCustomColumn: 'Convert column to custom',
+  event: 'Event | Events',
+  showMore: 'Show more ({current} of {total})',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -554,5 +556,15 @@ export default {
       + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
       + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
       + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+  },
+
+  fileSelector: {
+    dragAndDrop: {
+      label: 'Drag&drop to upload',
+      labelAction: 'or browse',
+    },
+    fileTypes: {
+      svg: 'SVG file',
+    },
   },
 };

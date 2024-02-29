@@ -73,6 +73,8 @@ export default {
   isHideGrayEnabled: 'Show hide gray',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
   showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
+  rootCauseSettings: 'Root cause diagram settings',
+  entitiesColorIndicator: 'Entities color indicator',
   alarmsColumns: 'Alarm list columns',
   resolvedAlarmsColumns: 'Column names for resolved alarms',
   activeAlarmsColumns: 'Column names for active alarms',

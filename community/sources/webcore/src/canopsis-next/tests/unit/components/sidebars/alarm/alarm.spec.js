@@ -51,6 +51,7 @@ const stubs = {
   'field-default-elements-per-page': createInputStub('field-default-elements-per-page'),
   'field-opened-resolved-filter': createInputStub('field-opened-resolved-filter'),
   'field-filters': createInputStub('field-filters'),
+  'field-root-cause-settings': createInputStub('field-root-cause-settings'),
   'field-remediation-instructions-filters': createInputStub('field-remediation-instructions-filters'),
   'field-live-reporting': createInputStub('field-live-reporting'),
   'field-info-popup': createInputStub('field-info-popup'),
@@ -88,6 +89,7 @@ const snapshotStubs = {
   'export-csv-form': true,
   'charts-form': true,
   'field-resize-column-behavior': true,
+  'field-root-cause-settings': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
@@ -128,10 +130,7 @@ const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle
   wrapper,
   'Actions allowed when state OK?',
 );
-const selectFieldShowRootCauseByStateClick = wrapper => selectSwitcherFieldByTitle(
-  wrapper,
-  'Show root cause diagram called from Severity column',
-);
+const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -915,7 +914,7 @@ describe('alarm', () => {
     });
   });
 
-  test('Clear filter disabled changed after trigger switcher field', async () => {
+  test('Root cause settings changed after trigger root cause settings field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -926,9 +925,12 @@ describe('alarm', () => {
       },
     });
 
-    const showRootCauseByStateClick = Faker.datatype.boolean();
-
-    selectFieldShowRootCauseByStateClick(wrapper).triggerCustomEvent('input', showRootCauseByStateClick);
+    const newParameters = {
+      ...widget.parameters,
+      showRootCauseByStateClick: false,
+      rootCauseColorIndicator: COLOR_INDICATOR_TYPES.impactState,
+    };
+    selectFieldRootCauseSettings(wrapper).triggerCustomEvent('input', newParameters);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -936,7 +938,14 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'showRootCauseByStateClick', showRootCauseByStateClick),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          formToWidgetParameters({
+            type: WIDGET_TYPES.alarmList,
+            parameters: newParameters,
+          }),
+        ),
       },
     });
   });

@@ -245,8 +245,8 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
-  <field-switcher-stub
-    title="Show root cause diagram called from Severity column"
+  <field-root-cause-settings-stub
+    parameters="[object Object]"
   />
 </widget-settings-group-stub>
 `;
@@ -495,8 +495,8 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
-  <field-switcher-stub
-    title="Show root cause diagram called from Severity column"
+  <field-root-cause-settings-stub
+    parameters="[object Object]"
   />
 </widget-settings-group-stub>
 `;

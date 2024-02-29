@@ -3,7 +3,6 @@
     v-field="patterns"
     :entity-attributes="entityAttributes"
     :entity-types="entityTypes"
-    name="rule_patterns"
     required
     with-entity
     entity-counters-type
@@ -27,28 +26,14 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    entityTypes: {
+      type: Array,
+      default: () => [...STATE_SETTING_ENTITY_TYPES],
+    },
   },
   computed: {
-    entityTypes() {
-      return [...STATE_SETTING_ENTITY_TYPES];
-    },
-
-    typeOptions() {
-      return {
-        valueField: {
-          props: {
-            types: this.entityTypes,
-          },
-        },
-      };
-    },
-
     entityAttributes() {
       return [
-        {
-          value: ENTITY_PATTERN_FIELDS.type,
-          options: this.typeOptions,
-        },
         {
           value: ENTITY_PATTERN_FIELDS.component,
           options: { disabled: true },

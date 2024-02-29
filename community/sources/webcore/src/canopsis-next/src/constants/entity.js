@@ -1,5 +1,8 @@
 import { COLORS } from '@/config';
 
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
+
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const ENTITY_FIELDS = {
@@ -415,4 +418,40 @@ export const TREE_OF_DEPENDENCIES_SHOW_TYPES = {
   allDependencies: 0,
   dependenciesDefiningTheState: 1,
   custom: 2,
+};
+
+export const ROOT_CAUSE_DIAGRAM_NODE_SIZE = 50;
+
+export const ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE = 30;
+
+export const ROOT_CAUSE_DIAGRAM_OPTIONS = {
+  fitPadding: 40,
+  wheelSensitivity: 0.3,
+  minZoom: 0.05,
+  maxZoom: 1.5,
+  nodeSize: ROOT_CAUSE_DIAGRAM_NODE_SIZE,
+};
+
+export const ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET = 5;
+
+export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
+  name: 'dagre',
+  animate: 'end',
+  fit: true,
+  rankDir: 'LR',
+  padding: 40,
+  minLen: 5,
+};
+
+export const ENTITY_TYPES_ICONS = {
+  [ENTITY_TYPES.component]: 'developer_board',
+  [ENTITY_TYPES.connector]: 'perm_identity',
+  [ENTITY_TYPES.resource]: 'perm_identity',
+  [ENTITY_TYPES.service]: '$vuetify.icons.engineering',
+};
+
+export const ENTITY_TYPES_ICONS_FOR_CYTOSCAPE = {
+  ...ENTITY_TYPES_ICONS,
+
+  [ENTITY_TYPES.service]: engineeringIcon,
 };

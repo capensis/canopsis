@@ -104,7 +104,7 @@ export default {
   link: 'Lien | Liens',
   stack: 'Pile',
   edition: 'Édition',
-  icon: 'Icône',
+  icon: 'Icône | Icônes',
   fullscreen: 'Plein écran',
   interval: 'Période',
   status: 'Statut',
@@ -287,6 +287,8 @@ export default {
   regexp: 'Expression régulière',
   archive: 'Archive',
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
+  event: 'Événement | Événements',
+  showMore: 'Afficher plus ({current} sur {total})',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -554,5 +556,15 @@ export default {
       + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
       + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
       + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+  },
+
+  fileSelector: {
+    dragAndDrop: {
+      label: 'Glisser-déposer pour télécharger',
+      labelAction: 'ou parcourir',
+    },
+    fileTypes: {
+      svg: 'fichier SVG',
+    },
   },
 };
