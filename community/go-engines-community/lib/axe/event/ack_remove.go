@@ -63,15 +63,16 @@ func (p *ackRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.ack"] = bson.M{"$ne": nil}
 	conf := p.configProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepAckRemove, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$set":  bson.M{"not_acked_since": event.Parameters.Timestamp},
-		"$push": bson.M{"v.steps": newStep},
-		"$unset": bson.M{
-			"v.ack": "",
-		},
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAckRemove,
+		utils.TruncateString(event.Parameters.Output, conf.OutputLength), event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"not_acked_since": event.Parameters.Timestamp,
+			"v.steps":         addStepUpdateQuery(newStepQuery),
+		}},
+		{"$unset": bson.A{
+			"v.ack",
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
