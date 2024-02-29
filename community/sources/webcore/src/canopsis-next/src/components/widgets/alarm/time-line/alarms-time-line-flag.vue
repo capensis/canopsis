@@ -21,9 +21,7 @@
 </template>
 
 <script>
-import { ALARM_LIST_TIMELINE_STEPS } from '@/constants';
-
-import { formatStep } from '@/helpers/entities/entity/formatting';
+import { ALARM_LIST_STEPS } from '@/constants';
 
 /**
  * Component for the flag on the alarms list's timeline
@@ -45,13 +43,13 @@ export default {
   },
   computed: {
     style() {
-      return formatStep(this.step);
+      return {};
     },
 
     isActiveBadge() {
       return [
-        ALARM_LIST_TIMELINE_STEPS.declareTicketFail,
-        ALARM_LIST_TIMELINE_STEPS.webhookFail,
+        ALARM_LIST_STEPS.declareTicketFail,
+        ALARM_LIST_STEPS.webhookFail,
       ].includes(this.step._t);
     },
   },

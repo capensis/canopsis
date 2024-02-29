@@ -25,7 +25,7 @@
             </v-icon>
           </div>
         </v-layout>
-        <div class="grey--text mt-2">
+        <div class="grey--text mt-2 pre-wrap">
           message
         </div>
       </v-layout>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { ALARM_LIST_TIMELINE_STEPS, DATETIME_FORMATS } from '@/constants';
+import { ALARM_LIST_STEPS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 
@@ -54,8 +54,8 @@ export default {
     wrapperClass() {
       return {
         'timeline-step--pbehavior': this.step.in_pbh,
-        'timeline-step--pbehavior-start': this.step._t === ALARM_LIST_TIMELINE_STEPS.pbhenter,
-        'timeline-step--pbehavior-end': this.step._t === ALARM_LIST_TIMELINE_STEPS.pbhleave,
+        'timeline-step--pbehavior-start': this.step._t === ALARM_LIST_STEPS.pbhenter,
+        'timeline-step--pbehavior-end': this.step._t === ALARM_LIST_STEPS.pbhleave,
       };
     },
 
@@ -64,7 +64,7 @@ export default {
     },
 
     hasChildren() {
-      return true;
+      return !!this.step.steps?.length;
     },
 
     resultIcon() {
@@ -73,15 +73,15 @@ export default {
         color: 'success',
       };
       /* switch (this.step._t) {
-        case ALARM_LIST_TIMELINE_STEPS.ticketDeclarationRuleCompleted:
-        case ALARM_LIST_TIMELINE_STEPS.webhookComplete:
+        case ALARM_LIST_STEPS.ticketDeclarationRuleCompleted:
+        case ALARM_LIST_STEPS.webhookComplete:
           return {
             icon: 'check_circle',
             color: 'success',
           };
 
-        case ALARM_LIST_TIMELINE_STEPS.ticketDeclarationRuleFailed:
-        case ALARM_LIST_TIMELINE_STEPS.webhookFail:
+        case ALARM_LIST_STEPS.ticketDeclarationRuleFailed:
+        case ALARM_LIST_STEPS.webhookFail:
           return {
             icon: 'cancel',
             color: 'error',

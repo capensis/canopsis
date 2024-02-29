@@ -21,7 +21,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     availableStateValues() {
-      return this.allowChangeSeverityToInfo ? ENTITIES_STATES : omit(ENTITIES_STATES, ['ok']);
+      return this.allowChangeSeverityToInfo ? ALARM_STATES : omit(ALARM_STATES, ['ok']);
     },
 
     outputFieldName() {

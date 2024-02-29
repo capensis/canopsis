@@ -33,7 +33,7 @@
 
 <script>
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
-import { formatStep } from '@/helpers/entities/entity/formatting';
+import { formatNotificationAlarmStep } from '@/helpers/entities/alarm/step/formatting';
 
 import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
 
@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     style() {
-      return formatStep(this.step);
+      return formatNotificationAlarmStep(this.step);
     },
 
     sanitizedStepMessage() {

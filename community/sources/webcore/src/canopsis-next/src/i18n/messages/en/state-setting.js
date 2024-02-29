@@ -42,7 +42,7 @@ export default {
     [STATE_SETTING_THRESHOLDS_CONDITIONS.greater]: 'Greater than',
     [STATE_SETTING_THRESHOLDS_CONDITIONS.less]: 'Less than',
   },
-  states: {
+  states: { // TODO: remove
     [ENTITIES_STATES_KEYS.ok]: 'OK',
     [ENTITIES_STATES_KEYS.minor]: 'Minor',
     [ENTITIES_STATES_KEYS.major]: 'Major',

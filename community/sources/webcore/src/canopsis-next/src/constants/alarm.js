@@ -104,6 +104,61 @@ export const ALARM_LEVELS_COLORS = {
   critical: COLORS.state.critical,
 };
 
+export const ALARM_STATES = {
+  ok: 0,
+  minor: 1,
+  major: 2,
+  critical: 3,
+};
+
+export const ALARM_STATES_KEYS = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
+export const ALARM_STATES_TEXTS = {
+  [ALARM_STATES.ok]: 'ok',
+  [ALARM_STATES.minor]: 'minor',
+  [ALARM_STATES.major]: 'major',
+  [ALARM_STATES.critical]: 'critical',
+};
+
+export const ALARM_STATES_ICONS = {
+  [ALARM_STATES.ok]: 'assistant_photo',
+  [ALARM_STATES.minor]: 'assistant_photo',
+  [ALARM_STATES.major]: 'assistant_photo',
+  [ALARM_STATES.critical]: 'assistant_photo',
+};
+
+export const ALARM_STATUSES = {
+  closed: 0,
+  ongoing: 1,
+  stealthy: 2,
+  flapping: 3,
+  cancelled: 4,
+  noEvents: 5,
+};
+
+export const ALARM_STATUSES_ICONS = {
+  [ALARM_STATUSES.closed]: 'check_circle_outline',
+  [ALARM_STATUSES.ongoing]: 'warning',
+  [ALARM_STATUSES.stealthy]: 'swap_vert',
+  [ALARM_STATUSES.flapping]: 'swap_vert',
+  [ALARM_STATUSES.cancelled]: 'highlight_off',
+  [ALARM_STATUSES.noEvents]: 'sync_problem',
+};
+
+export const ALARM_STATUSES_TEXTS = {
+  [ALARM_STATUSES.closed]: 'closed',
+  [ALARM_STATUSES.ongoing]: 'ongoing',
+  [ALARM_STATUSES.stealthy]: 'stealthy',
+  [ALARM_STATUSES.flapping]: 'flapping',
+  [ALARM_STATUSES.cancelled]: 'cancelled',
+  [ALARM_STATUSES.noEvents]: 'no events',
+};
+
 export const ALARM_LIST_ACTIONS_TYPES = {
   pbehaviorAdd: 'pbehaviorAdd',
   moreInfos: 'moreInfos',
@@ -175,12 +230,10 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: '$vuetify.icons.bookmark_remove',
 };
 
-export const ALARM_LIST_TIMELINE_STEPS = {
+export const ALARM_LIST_STEPS = {
   ack: 'ack',
   ackRemove: 'ackremove',
   assocTicket: 'assocticket',
-  cancel: 'cancel',
-  uncancel: 'uncancel',
   changeState: 'changestate',
   declareTicket: 'declareticket',
   declareTicketFail: 'declareticketfail',
@@ -216,16 +269,60 @@ export const ALARM_LIST_TIMELINE_STEPS = {
   junitTestSuiteUpdate: 'junittestsuiteupdate',
   junitTestCaseUpdate: 'junittestcaseupdate',
   stateCounter: 'statecounter',
+  activate: 'activate',
+  resolve: 'resolve',
 };
 
-export const ALARMS_LIST_COLORS_BY_TIMELINE_STEPS = {
-  [ALARM_LIST_TIMELINE_STEPS.ack]: COLORS.entitiesEvents.ack,
-  [ALARM_LIST_TIMELINE_STEPS.ackRemove]: COLORS.entitiesEvents.ackRemove,
-  [ALARM_LIST_TIMELINE_STEPS.snooze]: COLORS.entitiesEvents.snooze,
-  [ALARM_LIST_TIMELINE_STEPS.pbhenter]: COLORS.entitiesEvents.pbhenter,
-  [ALARM_LIST_TIMELINE_STEPS.pbhleave]: COLORS.entitiesEvents.pbhleave,
-  [ALARM_LIST_TIMELINE_STEPS.comment]: COLORS.entitiesEvents.comment,
-  [ALARM_LIST_TIMELINE_STEPS.metaalarmattach]: COLORS.entitiesEvents.metaalarmattach,
+export const ALARM_STEPS_ICONS = {
+  [ALARM_LIST_STEPS.ack]: 'check',
+  [ALARM_LIST_STEPS.ackRemove]: 'remove_done',
+  [ALARM_LIST_STEPS.assocTicket]: '$vuetify.icons.sticky_note_2',
+  [ALARM_LIST_STEPS.changeState]: 'warining',
+  [ALARM_LIST_STEPS.declareTicket]: 'note_add',
+  [ALARM_LIST_STEPS.declareTicketFail]: 'note_add',
+  [ALARM_LIST_STEPS.webhookStart]: '$vuetify.icons.webhook',
+  [ALARM_LIST_STEPS.webhookProgress]: '$vuetify.icons.webhook',
+  [ALARM_LIST_STEPS.webhookComplete]: '$vuetify.icons.webhook',
+  [ALARM_LIST_STEPS.webhookFail]: '$vuetify.icons.webhook',
+  [ALARM_LIST_STEPS.ticketDeclarationRuleProgress]: 'note_add',
+  [ALARM_LIST_STEPS.ticketDeclarationRuleCompleted]: 'note_add',
+  [ALARM_LIST_STEPS.ticketDeclarationRuleFailed]: 'note_add',
+  [ALARM_LIST_STEPS.snooze]: 'alarm',
+  [ALARM_LIST_STEPS.unsooze]: 'alarm_off',
+  [ALARM_LIST_STEPS.pbhenter]: 'pause',
+  [ALARM_LIST_STEPS.pbhleave]: 'pause',
+  [ALARM_LIST_STEPS.comment]: 'comment',
+  [ALARM_LIST_STEPS.metaalarmattach]: 'center_focus_weak',
+  [ALARM_LIST_STEPS.instructionStart]: '$vuetify.icons.manual_instruction',
+  [ALARM_LIST_STEPS.instructionPause]: '$vuetify.icons.manual_instruction',
+  [ALARM_LIST_STEPS.instructionResume]: '$vuetify.icons.manual_instruction',
+  [ALARM_LIST_STEPS.instructionComplete]: '$vuetify.icons.manual_instruction',
+  [ALARM_LIST_STEPS.instructionAbort]: '$vuetify.icons.manual_instruction',
+  [ALARM_LIST_STEPS.instructionFail]: '$vuetify.icons.manual_instruction',
+  [ALARM_LIST_STEPS.instructionJobStart]: 'assignment',
+  [ALARM_LIST_STEPS.instructionJobComplete]: 'assignment',
+  [ALARM_LIST_STEPS.instructionJobFail]: 'assignment',
+  [ALARM_LIST_STEPS.autoInstructionStart]: 'assignment',
+  [ALARM_LIST_STEPS.autoInstructionComplete]: 'assignment',
+  [ALARM_LIST_STEPS.autoInstructionFail]: 'assignment',
+  [ALARM_LIST_STEPS.activate]: 'notifications',
+  [ALARM_LIST_STEPS.resolve]: 'check_circle_outline',
+};
+
+export const ALARM_STEPS_COLORS = {
+  [ALARM_LIST_STEPS.ack]: COLORS.entitiesEvents.ack,
+  [ALARM_LIST_STEPS.ackRemove]: COLORS.entitiesEvents.ackRemove,
+  [ALARM_LIST_STEPS.snooze]: COLORS.entitiesEvents.snooze,
+  [ALARM_LIST_STEPS.pbhenter]: COLORS.entitiesEvents.pbhenter,
+  [ALARM_LIST_STEPS.pbhleave]: COLORS.entitiesEvents.pbhleave,
+  [ALARM_LIST_STEPS.comment]: COLORS.entitiesEvents.comment,
+  [ALARM_LIST_STEPS.metaalarmattach]: COLORS.entitiesEvents.metaalarmattach,
+};
+
+export const ALARM_UNKNOWN_VALUE = {
+  color: COLORS.status.unknown,
+  text: 'Invalid val',
+  icon: 'clear',
 };
 
 export const META_ALARMS_RULE_TYPES = {
