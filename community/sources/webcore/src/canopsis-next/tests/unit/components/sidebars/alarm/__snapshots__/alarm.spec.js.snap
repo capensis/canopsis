@@ -77,6 +77,10 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
+    />
     <field-root-cause-settings-stub
       parameters="[object Object]"
     />
@@ -659,6 +663,10 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <!---->
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
+    />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
     />
     <field-root-cause-settings-stub
       parameters="[object Object]"
@@ -1246,6 +1254,10 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <!---->
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
+    />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
     />
     <field-root-cause-settings-stub
       parameters="[object Object]"
