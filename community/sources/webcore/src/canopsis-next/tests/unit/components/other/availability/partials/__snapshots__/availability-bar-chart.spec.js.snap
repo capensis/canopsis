@@ -43,20 +43,26 @@ exports[`availability-bar-chart Renders \`availability-bar-chart\` with custom p
     >
       5 hrs 33 mins 20 secs
     </availability-bar-chart-information-row-stub>
-    <availability-bar-chart-information-row-stub
-      class="text--secondary"
-      color="transparent"
-      label="Total active time"
+    <transition-stub
+      name="expand-transition"
     >
-        13 hrs 53 mins 20 secs
-    </availability-bar-chart-information-row-stub>
-    <availability-bar-chart-information-row-stub
-      class="text--disabled"
-      color="transparent"
-      label="Inactive time"
-    >
-        33 mins 20 secs
-    </availability-bar-chart-information-row-stub>
+      <div>
+        <availability-bar-chart-information-row-stub
+          class="text--secondary"
+          color="transparent"
+          label="Total active time"
+        >
+          13 hrs 53 mins 20 secs
+        </availability-bar-chart-information-row-stub>
+        <availability-bar-chart-information-row-stub
+          class="text--disabled"
+          color="transparent"
+          label="Inactive time"
+        >
+          33 mins 20 secs
+        </availability-bar-chart-information-row-stub>
+      </div>
+    </transition-stub>
   </div>
 </div>
 `;
@@ -104,14 +110,20 @@ exports[`availability-bar-chart Renders \`availability-bar-chart\` with required
     >
       2 hrs 46 mins 40 secs
     </availability-bar-chart-information-row-stub>
-    <availability-bar-chart-information-row-stub
-      class="text--secondary"
-      color="transparent"
-      label="Total active time"
+    <transition-stub
+      name="expand-transition"
     >
-        8 hrs 20 mins
-    </availability-bar-chart-information-row-stub>
-    <!---->
+      <div>
+        <availability-bar-chart-information-row-stub
+          class="text--secondary"
+          color="transparent"
+          label="Total active time"
+        >
+          8 hrs 20 mins
+        </availability-bar-chart-information-row-stub>
+        <!---->
+      </div>
+    </transition-stub>
   </div>
 </div>
 `;
