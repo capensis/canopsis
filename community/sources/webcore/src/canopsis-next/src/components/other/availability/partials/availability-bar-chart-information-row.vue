@@ -4,7 +4,7 @@
     <div class="availability-bar-chart-information-row__label">
       {{ label }}
     </div>
-    <div class="availability-bar-chart-information-row__value">
+    <div>
       <slot />
     </div>
   </v-layout>
@@ -36,7 +36,5 @@ export default {
     flex-shrink: 0;
     width: 250px;
   }
-
-  &__value {}
 }
 </style>
