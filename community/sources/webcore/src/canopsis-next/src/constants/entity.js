@@ -88,42 +88,12 @@ export const ENTITIES_STATES = {
   critical: 3,
 };
 
-export const ENTITIES_STATUSES = {
-  closed: 0,
-  ongoing: 1,
-  stealthy: 2,
-  flapping: 3,
-  cancelled: 4,
-  noEvents: 5,
-};
-
-export const ENTITIES_STATES_STYLES_ICONS = {
-  [ENTITIES_STATES.ok]: 'assistant_photo',
-  [ENTITIES_STATES.minor]: 'assistant_photo',
-  [ENTITIES_STATES.major]: 'assistant_photo',
-  [ENTITIES_STATES.critical]: 'assistant_photo',
-};
-
-export const ENTITIES_STATES_STYLES_TEXT = {
-  [ENTITIES_STATES.ok]: 'ok',
-  [ENTITIES_STATES.minor]: 'minor',
-  [ENTITIES_STATES.major]: 'major',
-  [ENTITIES_STATES.critical]: 'critical',
-};
-
 export const SERVICE_STATES = {
   ok: 'ok',
   minor: 'minor',
   major: 'major',
   critical: 'critical',
   pause: 'pause',
-};
-
-export const COUNTER_STATES_ICONS = {
-  [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
-  [ENTITIES_STATES_KEYS.minor]: 'person',
-  [ENTITIES_STATES_KEYS.major]: 'person',
-  [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
 };
 
 export const WEATHER_ICONS = {
@@ -135,24 +105,6 @@ export const WEATHER_ICONS = {
   [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
   [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
   [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
-};
-
-export const ENTITIES_STATUSES_STYLES_ICONS = {
-  [ENTITIES_STATUSES.closed]: 'check_circle_outline',
-  [ENTITIES_STATUSES.ongoing]: 'warning',
-  [ENTITIES_STATUSES.stealthy]: 'swap_vert',
-  [ENTITIES_STATUSES.flapping]: 'swap_vert',
-  [ENTITIES_STATUSES.cancelled]: 'highlight_off',
-  [ENTITIES_STATUSES.noEvents]: 'sync_problem',
-};
-
-export const ENTITIES_STATUSES_STYLES_TEXT = {
-  [ENTITIES_STATUSES.closed]: 'closed',
-  [ENTITIES_STATUSES.ongoing]: 'ongoing',
-  [ENTITIES_STATUSES.stealthy]: 'stealthy',
-  [ENTITIES_STATUSES.flapping]: 'flapping',
-  [ENTITIES_STATUSES.cancelled]: 'cancelled',
-  [ENTITIES_STATUSES.noEvents]: 'no events',
 };
 
 export const WEATHER_ACTIONS_TYPES = {

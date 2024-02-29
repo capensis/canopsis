@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ALARM_STATUSES } from '@/constants';
 
 import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formatting/alarm-column-value-status.vue';
 
@@ -26,7 +26,7 @@ describe('alarm-column-value-status', () => {
               val: state,
             },
             status: {
-              val: ENTITIES_STATUSES.ongoing,
+              val: ALARM_STATUSES.ongoing,
             },
           },
         },
@@ -39,7 +39,7 @@ describe('alarm-column-value-status', () => {
   });
 
   it.each(
-    Object.entries(omit(ENTITIES_STATUSES, ['ongoing', 'noEvents'])),
+    Object.entries(omit(ALARM_STATUSES, ['ongoing', 'noEvents'])),
   )('Renders `alarm-column-value-status` with status: %s', async (_, status) => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -71,7 +71,7 @@ describe('alarm-column-value-status', () => {
           },
           v: {
             status: {
-              val: ENTITIES_STATUSES.noEvents,
+              val: ALARM_STATUSES.noEvents,
             },
           },
         },

@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import { ENTITIES_STATUSES } from '@/constants';
+import { ALARM_STATUSES } from '@/constants';
 
-import { formatState, formatStatus } from '@/helpers/entities/entity/formatting';
+import { formatAlarmState, formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
 
 export default {
   props: {
@@ -49,11 +49,11 @@ export default {
     },
 
     isNoEventsStatus() {
-      return this.statusValue === ENTITIES_STATUSES.noEvents;
+      return this.statusValue === ALARM_STATUSES.noEvents;
     },
 
     isOngoingStatus() {
-      return this.statusValue === ENTITIES_STATUSES.ongoing;
+      return this.statusValue === ALARM_STATUSES.ongoing;
     },
 
     idleSince() {
@@ -61,11 +61,11 @@ export default {
     },
 
     status() {
-      return formatStatus(this.statusValue);
+      return formatAlarmStatus(this.statusValue);
     },
 
     state() {
-      return formatState(this.alarm.v.state.val);
+      return formatAlarmState(this.alarm.v.state.val);
     },
 
     statusColor() {

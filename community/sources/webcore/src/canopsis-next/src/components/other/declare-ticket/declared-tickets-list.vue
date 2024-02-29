@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { ALARM_LIST_TIMELINE_STEPS } from '@/constants';
+import { ALARM_LIST_STEPS } from '@/constants';
 
 import { isValidUrl } from '@/plugins/validator/helpers/is-valid-url';
 
@@ -72,7 +72,7 @@ export default {
     },
 
     isSuccessTicket(ticket) {
-      return [ALARM_LIST_TIMELINE_STEPS.declareTicket, ALARM_LIST_TIMELINE_STEPS.assocTicket].includes(ticket._t);
+      return [ALARM_LIST_STEPS.declareTicket, ALARM_LIST_STEPS.assocTicket].includes(ticket._t);
     },
 
     getIconProps(item) {

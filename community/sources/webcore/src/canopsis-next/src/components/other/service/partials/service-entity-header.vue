@@ -68,7 +68,7 @@
 import { get } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 
@@ -117,7 +117,7 @@ export default {
         });
       }
 
-      if (this.entity.status?.val === ENTITIES_STATUSES.cancelled) {
+      if (this.entity.status?.val === ALARM_STATUSES.cancelled) {
         extraIcons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           color: 'grey darken-1',

@@ -1,6 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATUSES, ENTITY_INFOS_TYPE, EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_STATUSES, ENTITY_INFOS_TYPE, EVENT_ENTITY_TYPES } from '@/constants';
 
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 
@@ -36,7 +36,7 @@ describe('c-alarm-chip', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it.each(Object.entries(ENTITIES_STATUSES))('Renders `c-alarm-chip` with status: %s', (_, value) => {
+  it.each(Object.entries(ALARM_STATUSES))('Renders `c-alarm-chip` with status: %s', (_, value) => {
     const wrapper = snapshotFactory({
       propsData: {
         value,

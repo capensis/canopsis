@@ -43,8 +43,8 @@ export const getAlarmDetailsDataPreparer = widgetId => data => (
 /**
  * Get grouped steps by date
  *
- * @param {AlarmEvent[]} steps
- * @return {Object.<string, AlarmEvent[]>}
+ * @param {AlarmStep[]} steps
+ * @return {Object.<string, AlarmStep[]>}
  */
 export const groupAlarmSteps = steps => ( // TODO: remove
   groupBy(steps, step => convertDateToString(step.t, DATETIME_FORMATS.short))

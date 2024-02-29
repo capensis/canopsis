@@ -13,7 +13,7 @@ import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-  ENTITIES_STATUSES,
+  ALARM_STATUSES,
   ENTITY_PATTERN_FIELDS,
   LINK_RULE_ACTIONS,
   META_ALARMS_RULE_TYPES,
@@ -98,7 +98,7 @@ describe('mass-actions-panel', () => {
       component: `alarm-component-${index}`,
       resource: `alarm-resource-${index}`,
       status: {
-        val: ENTITIES_STATUSES.ongoing,
+        val: ALARM_STATUSES.ongoing,
       },
       state: {
         val: `state-val-${index}`,
