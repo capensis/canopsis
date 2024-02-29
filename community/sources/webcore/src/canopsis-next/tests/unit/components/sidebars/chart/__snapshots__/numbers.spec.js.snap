@@ -12,18 +12,6 @@ exports[`numbers Renders \`numbers\` widget settings with custom props and permi
 </widget-settings-stub>
 `;
 
-exports[`numbers Renders \`numbers\` widget settings with custom props and permissions 2`] = `
-<widget-settings-stub
-  divider="true"
->
-  <numbers-widget-form-stub
-    form="[object Object]"
-    withperiodicrefresh="true"
-    withpreset="true"
-  />
-</widget-settings-stub>
-`;
-
 exports[`numbers Renders \`numbers\` widget settings with default props 1`] = `
 <widget-settings-stub
   divider="true"

@@ -11,6 +11,10 @@
       :entity-columns-widget-templates-pending="widgetTemplatesPending"
       :alarm-columns-widget-templates="alarmColumnsWidgetTemplates"
       :alarm-columns-widget-templates-pending="widgetTemplatesPending"
+      :show-interval="hasAccessToInterval"
+      :show-filter="hasAccessToListFilters"
+      :filter-addable="hasAccessToAddFilter"
+      :filter-editable="hasAccessToEditFilter"
       @update:widgetColumnsTemplate="updateWidgetColumnsTemplate"
       @update:activeAlarmsColumnsTemplate="updateActiveAlarmsColumnsTemplate"
     />
@@ -22,6 +26,8 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
+import { permissionsWidgetsAvailabilityFilters } from '@/mixins/permissions/widgets/availability/filters';
+import { permissionsWidgetsAlarmStatisticsInterval } from '@/mixins/permissions/widgets/availability/interval';
 
 import WidgetSettings from '../partials/widget-settings.vue';
 
@@ -36,6 +42,8 @@ export default {
   mixins: [
     widgetSettingsMixin,
     widgetTemplatesMixin,
+    permissionsWidgetsAvailabilityFilters,
+    permissionsWidgetsAlarmStatisticsInterval,
   ],
   methods: {
     updateWidgetColumnsTemplate(template, columns) {

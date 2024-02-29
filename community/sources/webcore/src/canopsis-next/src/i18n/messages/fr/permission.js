@@ -21,6 +21,7 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Droits pour le widget : Nombres',
     [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Droits pour le widget : Statistiques des utilisateurs',
     [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Droits pour le widget : Statistiques des alarmes',
+    [USER_PERMISSIONS_PREFIXES.business.availability]: 'Droits pour le widget : Disponibilité',
   },
   api: {
     general: 'Général',
@@ -494,6 +495,30 @@ export default {
     },
     [USERS_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
       name: 'Droits sur les statistiques des alarmes : Afficher les filtres',
+      description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
+    },
+
+    /**
+     * Business Availability
+     */
+    [USERS_PERMISSIONS.business.availability.actions.interval]: {
+      name: 'Droits à la disponibilité : Intervalle',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'intervalle de temps pour les données affichées',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.listFilters]: {
+      name: 'Droits à la disponibilité : Afficher les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.editFilter]: {
+      name: 'Droits à la disponibilité : Modifier les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.addFilter]: {
+      name: 'Droits à la disponibilité : Ajouter des filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.userFilter]: {
+      name: 'Droits à la disponibilité : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
 
