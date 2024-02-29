@@ -166,10 +166,10 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	alarmConfig := p.alarmConfigProvider.Get()
 	alarm := p.newAlarm(params, entity, now, alarmConfig)
 	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
-		params.Output, params.User, params.Role, params.Initiator)
+		params.Output, params.User, params.Role, params.Initiator, false)
 	stateStep.Value = *params.State
 	statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, params.Author,
-		params.Output, params.User, params.Role, params.Initiator)
+		params.Output, params.User, params.Role, params.Initiator, false)
 	statusStep.Value = types.AlarmStatusNoEvents
 	alarm.Value.State = &stateStep
 	err = alarm.Value.Steps.Add(stateStep)
@@ -201,7 +201,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 			pbehaviorInfo.ReasonName,
 		)
 		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, canopsis.DefaultEventAuthor,
-			pbhOutput, "", "", types.InitiatorSystem)
+			pbhOutput, "", "", types.InitiatorSystem, false)
 		newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
 		alarm.Value.PbehaviorInfo = pbehaviorInfo
 		err := alarm.Value.Steps.Add(newStep)
@@ -269,7 +269,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	var stateStep types.AlarmStep
 	if newState != previousState {
 		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
-			params.Output, params.User, params.Role, params.Initiator)
+			params.Output, params.User, params.Role, params.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		stateStep.Value = newState
 		alarmChange.Type = types.AlarmChangeTypeStateIncrease
 		if newState < previousState {
@@ -308,7 +308,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		}
 	} else {
 		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, params.Author,
-			params.Output, params.User, params.Role, params.Initiator)
+			params.Output, params.User, params.Role, params.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		statusStep.Value = newStatus
 		if newStatus < previousStatus {
 			statusStep.Type = types.AlarmStepStatusDecrease

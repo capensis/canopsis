@@ -42,6 +42,8 @@ type AlarmStep struct {
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 
 	TicketInfo `bson:",inline"`
+
+	InPbehaviorInterval bool `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
 }
 
 func (s *AlarmStep) GetInitiator() string {
@@ -101,7 +103,12 @@ func (t TicketInfo) GetStepMessage() string {
 
 // NewAlarmStep returns an AlarmStep.
 // If the timestamp or author are empty, default values will be used to create an AlarmStep.
-func NewAlarmStep(stepType string, timestamp datetime.CpsTime, author, msg, userID, role, initiator string) AlarmStep {
+func NewAlarmStep(
+	stepType string,
+	timestamp datetime.CpsTime,
+	author, msg, userID, role, initiator string,
+	inPbehaviorInterval bool,
+) AlarmStep {
 	authorAlarmStep := author
 	if authorAlarmStep == "" {
 		authorAlarmStep = cps.DefaultEventAuthor
@@ -113,26 +120,32 @@ func NewAlarmStep(stepType string, timestamp datetime.CpsTime, author, msg, user
 	}
 
 	return AlarmStep{
-		Author:    authorAlarmStep,
-		UserID:    userID,
-		Message:   msg,
-		Timestamp: timestampAlarmStep,
-		Type:      stepType,
-		Role:      role,
-		Initiator: initiator,
+		Author:              authorAlarmStep,
+		UserID:              userID,
+		Message:             msg,
+		Timestamp:           timestampAlarmStep,
+		Type:                stepType,
+		Role:                role,
+		Initiator:           initiator,
+		InPbehaviorInterval: inPbehaviorInterval,
 	}
 }
 
-func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string) AlarmStep {
-	newStep := NewAlarmStep(AlarmStepMetaAlarmAttach,
+func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string, inPbehaviorInterval bool) AlarmStep {
+	newStep := NewAlarmStep(
+		AlarmStepMetaAlarmAttach,
 		datetime.NewCpsTime(),
 		StepEngineCorrelationAuthor,
 		fmt.Sprintf("Rule: {%s}\n Displayname: {%s}\n Entity: {%s}",
 			ruleName,
 			metaAlarm.Value.DisplayName,
 			metaAlarm.EntityID),
-		"", "", InitiatorSystem,
+		"",
+		"",
+		InitiatorSystem,
+		inPbehaviorInterval,
 	)
+
 	return newStep
 }
 
@@ -269,13 +282,14 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// If last step is last change of status
 		// create and append new statecounter
 		newStep := AlarmStep{
-			Author:       currentStatus.Author,
-			Initiator:    currentStatus.Initiator,
-			Message:      currentStatus.Message,
-			Value:        currentStatus.Value,
-			Timestamp:    datetime.NewCpsTime(),
-			Type:         AlarmStepStateCounter,
-			StateCounter: CropCounter{},
+			Author:              currentStatus.Author,
+			Initiator:           currentStatus.Initiator,
+			Message:             currentStatus.Message,
+			Value:               currentStatus.Value,
+			InPbehaviorInterval: currentStatus.InPbehaviorInterval,
+			Timestamp:           datetime.NewCpsTime(),
+			Type:                AlarmStepStateCounter,
+			StateCounter:        CropCounter{},
 		}
 
 		s = append(s, newStep)
@@ -283,13 +297,14 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// Else if the step just after the status isn't statecounter
 		// create and insert new statecounter right after status
 		newStep := AlarmStep{
-			Author:       currentStatus.Author,
-			Initiator:    currentStatus.Initiator,
-			Message:      currentStatus.Message,
-			Value:        currentStatus.Value,
-			Timestamp:    datetime.NewCpsTime(),
-			Type:         AlarmStepStateCounter,
-			StateCounter: CropCounter{},
+			Author:              currentStatus.Author,
+			Initiator:           currentStatus.Initiator,
+			Message:             currentStatus.Message,
+			Value:               currentStatus.Value,
+			InPbehaviorInterval: currentStatus.InPbehaviorInterval,
+			Timestamp:           datetime.NewCpsTime(),
+			Type:                AlarmStepStateCounter,
+			StateCounter:        CropCounter{},
 		}
 
 		// insert
@@ -479,8 +494,14 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-func NewTicketStep(stepType string, timestamp datetime.CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
-	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
+func NewTicketStep(
+	stepType string,
+	timestamp datetime.CpsTime,
+	author, msg, userID, role, initiator string,
+	ticketInfo TicketInfo,
+	inPbehaviorInterval bool,
+) AlarmStep {
+	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator, inPbehaviorInterval)
 
 	s.TicketInfo = ticketInfo
 

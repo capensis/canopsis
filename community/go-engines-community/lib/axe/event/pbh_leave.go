@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -102,7 +101,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
 			newStep := types.NewAlarmStep(types.AlarmStepPbhLeave, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
 			newStep.PbehaviorCanonicalType = alarm.Value.PbehaviorInfo.CanonicalType
 			update := bson.M{
 				"$push":  bson.M{"v.steps": newStep},
@@ -231,45 +230,4 @@ func (p *pbhLeaveProcessor) postProcess(
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
 		}
 	}
-}
-
-func resolveSnoozeAfterPbhLeave(timestamp datetime.CpsTime, alarm types.Alarm) int64 {
-	if alarm.Value.Snooze == nil || alarm.Value.Snooze.Initiator == types.InitiatorUser {
-		return 0
-	}
-
-	steps := alarm.Value.Steps
-	var snoozeDuration int64
-	var snoozeElapsed int64
-	var lastEnterTime int64
-
-Loop:
-	for i := len(steps) - 1; i >= 0; i-- {
-		step := steps[i]
-		switch step.Type {
-		case types.AlarmStepSnooze:
-			// this means, that snooze step is happened after pbh_enter step,
-			// it's possible to do with a scenario feature, so if it happens,
-			// then elapsed time = 0
-			if lastEnterTime == 0 {
-				snoozeElapsed = 0
-			} else {
-				snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
-			}
-
-			snoozeDuration = int64(step.Value) - step.Timestamp.Unix()
-
-			break Loop
-		case types.AlarmStepPbhEnter:
-			if step.PbehaviorCanonicalType != pbehavior.TypeActive {
-				lastEnterTime = step.Timestamp.Unix()
-			}
-		case types.AlarmStepPbhLeave:
-			if step.PbehaviorCanonicalType != pbehavior.TypeActive {
-				snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
-			}
-		}
-	}
-
-	return timestamp.Unix() + snoozeDuration - snoozeElapsed
 }
