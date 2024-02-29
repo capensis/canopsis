@@ -226,13 +226,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with availability 1
                 <div
                   class="v-card__text"
                 >
-                  <div
-                    class="layout justify-center"
-                  >
-                    <entity-availability-stub
-                      entity="[object Object]"
-                    />
-                  </div>
+                  <entity-availability-stub
+                    defaulttimerange="today"
+                    entity="[object Object]"
+                  />
                 </div>
               </div>
             </div>
@@ -797,15 +794,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 <div
                   class="v-card__text"
                 >
-                  <div
-                    class="layout justify-center"
-                  >
-                    <entity-availability-stub
-                      defaultshowtype="1"
-                      defaulttimerange="last6Months"
-                      entity="[object Object]"
-                    />
-                  </div>
+                  <entity-availability-stub
+                    defaultshowtype="1"
+                    defaulttimerange="last6Months"
+                    entity="[object Object]"
+                  />
                 </div>
               </div>
             </div>
