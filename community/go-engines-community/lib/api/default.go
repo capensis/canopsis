@@ -335,7 +335,6 @@ func Default(
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			p.UserInterfaceConfigProvider,
-			cfg.File.Upload,
 			websocketHub,
 			websocketStore,
 			broadcastMessageChan,
@@ -488,6 +487,10 @@ func newWebsocketHub(
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomMessageRates, apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan); err != nil {
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
 		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
 

@@ -99,4 +99,6 @@ const (
 	ColorThemeCollection = "color_theme"
 
 	EngineNotificationCollection = "engine_notification"
+
+	IconCollection = "icon"
 )

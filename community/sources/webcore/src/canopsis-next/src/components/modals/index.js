@@ -422,3 +422,8 @@ export const CreateTheme = () => ({
   component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateIcon = () => ({
+  component: import(/* webpackChunkName: "Common" */ './icon/create-icon.vue'),
+  loading: LoaderOverlay,
+});

@@ -9,7 +9,7 @@
     <c-icon-field
       v-if="enabled"
       v-field="icon"
-      :label="$t('common.icon')"
+      :label="$tc('common.icon', 1)"
       :name="name"
       required
     />

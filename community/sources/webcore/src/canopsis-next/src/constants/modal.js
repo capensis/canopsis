@@ -118,4 +118,6 @@ export const MODALS = {
   stateSettingInheritedEntityPattern: 'state-setting-inherited-entity-pattern',
 
   archiveDisabledEntities: 'archive-disabled-entities',
+
+  createIcon: 'create-icon',
 };

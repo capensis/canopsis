@@ -23,8 +23,6 @@
 import { createNamespacedHelpers } from 'vuex';
 import { isArray, keyBy, pick } from 'lodash';
 
-import { ALARM_FIELDS } from '@/constants';
-
 import { formArrayMixin } from '@/mixins/form';
 
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
@@ -47,7 +45,7 @@ export default {
     },
     itemText: {
       type: String,
-      default: 'v.display_name',
+      default: 'display_name',
     },
     itemValue: {
       type: String,
@@ -99,14 +97,13 @@ export default {
     },
   },
   methods: {
-    ...mapAlarmActions({ fetchAlarmsListWithoutStore: 'fetchListWithoutStore' }),
+    ...mapAlarmActions({ fetchAlarmsDisplayNamesWithoutStore: 'fetchDisplayNamesWithoutStore' }),
 
     getQuery() {
       return {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
-        active_columns: [ALARM_FIELDS.id, ALARM_FIELDS.displayName],
         ...this.params,
       };
     },
@@ -115,7 +112,7 @@ export default {
       try {
         this.pending = true;
 
-        const { data, meta } = await this.fetchAlarmsListWithoutStore({
+        const { data, meta } = await this.fetchAlarmsDisplayNamesWithoutStore({
           params: this.getQuery(),
         });
 
