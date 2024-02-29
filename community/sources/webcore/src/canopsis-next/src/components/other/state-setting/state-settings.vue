@@ -16,7 +16,7 @@
 <script>
 import { JUNIT_STATE_SETTING_ID, MODALS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesStateSettingMixin } from '@/mixins/entities/state-setting';
 import { permissionsTechnicalStateSettingMixin } from '@/mixins/permissions/technical/state-setting';
 

@@ -23,14 +23,14 @@
 import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
 import { QUICK_RANGES, SAMPLINGS, KPI_SLI_GRAPH_DATA_TYPE, DATETIME_FORMATS } from '@/constants';
 
-import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
-import { localQueryMixin } from '@/mixins/query-local/query';
-import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { localQueryMixin } from '@/mixins/query/query';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
@@ -44,7 +44,7 @@ export default {
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    metricsIntervalFilterMixin,
+    queryIntervalFilterMixin,
     metricsExportMixinCreator({
       createExport: 'createKpiSliExport',
       fetchExport: 'fetchMetricExport',
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     interval() {
-      return convertMetricIntervalToTimestamp({
+      return convertQueryIntervalToTimestamp({
         interval: this.query.interval,
         timezone: this.$system.timezone,
       });

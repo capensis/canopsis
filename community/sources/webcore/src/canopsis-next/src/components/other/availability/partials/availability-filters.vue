@@ -1,17 +1,17 @@
 <template>
-  <v-layout class="availability-bar-filters gap-6" wrap>
+  <v-layout class="availability-filters gap-6" wrap>
     <c-quick-date-interval-field
       :interval="interval"
       :min="minIntervalDate"
       :quick-ranges="quickRanges"
-      class="availability-bar-filters__interval"
+      class="availability-filters__interval"
       short
       @input="$emit('update:interval', $event)"
     />
     <availability-show-type-field
       :value="showType"
       :label="$t('common.show')"
-      class="availability-bar-filters__show-type"
+      class="availability-filters__show-type"
       @input="$emit('update:showType', $event)"
     />
   </v-layout>
@@ -51,9 +51,10 @@ export default {
 </script>
 
 <style lang="scss">
-.availability-bar-filters {
+.availability-filters {
   &__show-type, &__interval {
     max-width: 200px;
+    flex: 1;
   }
 }
 </style>

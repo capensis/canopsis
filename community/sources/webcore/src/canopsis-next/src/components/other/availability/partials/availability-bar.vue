@@ -1,6 +1,6 @@
 <template>
   <v-layout class="gap-5" column>
-    <availability-bar-filters
+    <availability-filters
       :interval="query.interval"
       :show-type.sync="showType"
       :min-interval-date="minDate"
@@ -21,10 +21,10 @@ import { ref } from 'vue';
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 
 import AvailabilityBarChart from './availability-bar-chart.vue';
-import AvailabilityBarFilters from './availability-bar-filters.vue';
+import AvailabilityFilters from './availability-filters.vue';
 
 export default {
-  components: { AvailabilityBarFilters, AvailabilityBarChart },
+  components: { AvailabilityFilters, AvailabilityBarChart },
   props: {
     availability: {
       type: Object,
@@ -38,9 +38,13 @@ export default {
       type: Number,
       required: false,
     },
+    defaultShowType: {
+      type: Number,
+      default: AVAILABILITY_SHOW_TYPE.percent,
+    },
   },
-  setup() {
-    const showType = ref(AVAILABILITY_SHOW_TYPE.percent);
+  setup(props) {
+    const showType = ref(props.defaultShowType);
 
     return {
       showType,

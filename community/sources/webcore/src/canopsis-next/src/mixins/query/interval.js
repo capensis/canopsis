@@ -1,6 +1,6 @@
-import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
-export const metricsIntervalFilterMixin = {
+export const queryIntervalFilterMixin = {
   inject: ['$system'],
   methods: {
     getIntervalQuery() {
@@ -10,7 +10,7 @@ export const metricsIntervalFilterMixin = {
         return {};
       }
 
-      return convertMetricIntervalToTimestamp({
+      return convertQueryIntervalToTimestamp({
         interval,
         timezone: this.$system.timezone,
       });

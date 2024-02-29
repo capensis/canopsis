@@ -1,5 +1,249 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with availability 1`] = `
+<div
+  class="v-tabs expand-panel secondary lighten-2 v-tabs--centered theme--dark"
+>
+  <div
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <!---->
+        <a
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          href="#timeLine"
+          role="tab"
+          tabindex="0"
+        >
+    Timeline
+        </a>
+        <!---->
+        <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#pbehavior"
+          role="tab"
+          tabindex="0"
+        >
+    Pbehaviors
+        </a>
+        <!---->
+        <!---->
+        <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#entityGantt"
+          role="tab"
+          tabindex="0"
+        >
+    Gantt chart
+        </a>
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#availability"
+          role="tab"
+          tabindex="0"
+        >
+    Availability
+        </a>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="timeLine"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  aria-valuemax="100"
+                  aria-valuemin="0"
+                  class="v-progress-linear v-progress-linear--visible theme--light"
+                  role="progressbar"
+                  style="height: 0px;"
+                >
+                  <div
+                    class="v-progress-linear__background primary"
+                    style="opacity: 0.3; left: 0%; width: 100%;"
+                  />
+                  <div
+                    class="v-progress-linear__buffer"
+                    style="height: 0px;"
+                  />
+                  <transition-stub
+                    name="fade-transition"
+                  >
+                    <div
+                      class="v-progress-linear__indeterminate"
+                    >
+                      <div
+                        class="v-progress-linear__indeterminate long primary"
+                      />
+                      <div
+                        class="v-progress-linear__indeterminate short primary"
+                      />
+                    </div>
+                  </transition-stub>
+                </div>
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-time-line-stub
+                    steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <!---->
+      <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="pbehavior"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <!---->
+      <!---->
+      <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="entityGantt"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <entity-gantt-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="availability"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <div
+                    class="layout justify-center"
+                  >
+                    <entity-availability-stub
+                      entity="[object Object]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1`] = `
 <div
   class="v-tabs expand-panel secondary lighten-2 v-tabs--centered theme--dark"
@@ -59,6 +303,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         >
     Pbehaviors
         </a>
+        <!---->
         <!---->
         <!---->
         <!---->
@@ -179,7 +424,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -199,6 +444,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <!---->
       <!---->
@@ -294,6 +540,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
     Impact chain
         </a>
         <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#availability"
+          role="tab"
+          tabindex="0"
+        >
+    Availability
+        </a>
       </div>
     </div>
     <div
@@ -437,7 +692,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -466,7 +721,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           id="trackSource"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -498,7 +753,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           id="impactChain"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -523,6 +778,40 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         </div>
       </transition-stub>
       <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="availability"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <div
+                    class="layout justify-center"
+                  >
+                    <entity-availability-stub
+                      defaultshowtype="1"
+                      defaulttimerange="last6Months"
+                      entity="[object Object]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
     </div>
   </div>
 </div>
@@ -598,6 +887,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
     Gantt chart
         </a>
+        <!---->
       </div>
     </div>
     <div
@@ -714,7 +1004,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -745,7 +1035,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           id="entityGantt"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -765,6 +1055,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -832,6 +1123,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         <!---->
         <!---->
         <!---->
+        <!---->
       </div>
     </div>
     <div
@@ -948,7 +1240,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           id="pbehavior"
         >
           <div
-            class="layout pa-3 secondary lighten-2"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -968,6 +1260,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <!---->
       <!---->

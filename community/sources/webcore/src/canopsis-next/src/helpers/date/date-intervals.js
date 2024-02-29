@@ -346,7 +346,7 @@ export const getQuickRangeByDiffBetweenStartAndStop = (
  * @param {string} [timezone = getLocaleTimezone()]
  * @returns {Interval}
  */
-export const convertMetricIntervalToTimestamp = ({
+export const convertQueryIntervalToTimestamp = ({
   interval = {},
   format = DATETIME_FORMATS.datePicker,
   timezone = getLocaleTimezone(),
