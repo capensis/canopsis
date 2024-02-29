@@ -231,46 +231,56 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 };
 
 export const ALARM_LIST_STEPS = {
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  changeState: 'changestate',
+  stateCounter: 'statecounter',
+
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  resolve: 'resolve',
+  activate: 'activate',
+
   ack: 'ack',
   ackRemove: 'ackremove',
+
+  pbhenter: 'pbhenter',
+  pbhleave: 'pbhleave',
+
   assocTicket: 'assocticket',
-  changeState: 'changestate',
-  declareTicket: 'declareticket',
-  declareTicketFail: 'declareticketfail',
+
   webhookStart: 'webhookstart',
   webhookProgress: 'webhookprogress', // TODO: NEW
   webhookComplete: 'webhookcomplete',
   webhookFail: 'webhookfail',
+
+  declareTicket: 'declareticket',
+  declareTicketFail: 'declareticketfail',
   ticketDeclarationRuleProgress: 'ticketdeclatetionruleprogress', // TODO: NEW
   ticketDeclarationRuleCompleted: 'ticketdeclatetionrulecomplete', // TODO: NEW
   ticketDeclarationRuleFailed: 'ticketdeclatetionrulefailed', // TODO: NEW
+
   snooze: 'snooze',
-  pbhenter: 'pbhenter',
-  pbhleave: 'pbhleave',
+  unsnooze: 'unsnooze',
+
   comment: 'comment',
-  stateinc: 'stateinc',
-  statedec: 'statedec',
-  statusinc: 'statusinc',
-  statusdec: 'statusdec',
-  unsooze: 'unsooze',
+
   metaalarmattach: 'metaalarmattach',
+  metaalarmdetach: 'metaalarmdetach',
+
   instructionStart: 'instructionstart',
   instructionPause: 'instructionpause',
   instructionResume: 'instructionresume',
   instructionComplete: 'instructioncomplete',
   instructionAbort: 'instructionabort',
   instructionFail: 'instructionfail',
-  instructionJobStart: 'instructionjobstart',
-  instructionJobComplete: 'instructionjobcomplete',
-  instructionJobFail: 'instructionjobfail',
+
   autoInstructionStart: 'autoinstructionstart',
   autoInstructionComplete: 'autoinstructioncomplete',
   autoInstructionFail: 'autoinstructionfail',
+
   junitTestSuiteUpdate: 'junittestsuiteupdate',
   junitTestCaseUpdate: 'junittestcaseupdate',
-  stateCounter: 'statecounter',
-  activate: 'activate',
-  resolve: 'resolve',
 };
 
 export const ALARM_STEPS_ICONS = {
@@ -288,7 +298,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.ticketDeclarationRuleCompleted]: 'note_add',
   [ALARM_LIST_STEPS.ticketDeclarationRuleFailed]: 'note_add',
   [ALARM_LIST_STEPS.snooze]: 'alarm',
-  [ALARM_LIST_STEPS.unsooze]: 'alarm_off',
+  [ALARM_LIST_STEPS.unsnooze]: 'alarm_off',
   [ALARM_LIST_STEPS.pbhenter]: 'pause',
   [ALARM_LIST_STEPS.pbhleave]: 'pause',
   [ALARM_LIST_STEPS.comment]: 'comment',
@@ -299,9 +309,6 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.instructionComplete]: '$vuetify.icons.manual_instruction',
   [ALARM_LIST_STEPS.instructionAbort]: '$vuetify.icons.manual_instruction',
   [ALARM_LIST_STEPS.instructionFail]: '$vuetify.icons.manual_instruction',
-  [ALARM_LIST_STEPS.instructionJobStart]: 'assignment',
-  [ALARM_LIST_STEPS.instructionJobComplete]: 'assignment',
-  [ALARM_LIST_STEPS.instructionJobFail]: 'assignment',
   [ALARM_LIST_STEPS.autoInstructionStart]: 'assignment',
   [ALARM_LIST_STEPS.autoInstructionComplete]: 'assignment',
   [ALARM_LIST_STEPS.autoInstructionFail]: 'assignment',
@@ -318,6 +325,49 @@ export const ALARM_STEPS_COLORS = {
   [ALARM_LIST_STEPS.comment]: COLORS.entitiesEvents.comment,
   [ALARM_LIST_STEPS.metaalarmattach]: COLORS.entitiesEvents.metaalarmattach,
 };
+
+export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
+  ALARM_LIST_STEPS.statedec,
+  ALARM_LIST_STEPS.stateinc,
+  ALARM_LIST_STEPS.changeState,
+  ALARM_LIST_STEPS.statusdec,
+  ALARM_LIST_STEPS.statusinc,
+  ALARM_LIST_STEPS.resolve,
+  ALARM_LIST_STEPS.snooze,
+  ALARM_LIST_STEPS.unsnooze,
+  ALARM_LIST_STEPS.ack,
+  ALARM_LIST_STEPS.ackRemove,
+  ALARM_LIST_STEPS.pbhenter,
+  ALARM_LIST_STEPS.pbhleave,
+  ALARM_LIST_STEPS.assocTicket,
+  ALARM_LIST_STEPS.webhookStart,
+  ALARM_LIST_STEPS.webhookComplete,
+  ALARM_LIST_STEPS.webhookFail,
+  ALARM_LIST_STEPS.ticketDeclarationRuleCompleted,
+  ALARM_LIST_STEPS.ticketDeclarationRuleFailed,
+  ALARM_LIST_STEPS.instructionStart,
+  ALARM_LIST_STEPS.instructionPause,
+  ALARM_LIST_STEPS.instructionResume,
+  ALARM_LIST_STEPS.instructionComplete,
+  ALARM_LIST_STEPS.instructionAbort,
+  ALARM_LIST_STEPS.instructionFail,
+  ALARM_LIST_STEPS.metaalarmattach,
+  ALARM_LIST_STEPS.metaalarmdetach,
+  ALARM_LIST_STEPS.comment,
+];
+
+export const ALARM_STEPS_WITH_LAUNCHED_IN_TITLE = [
+  ALARM_LIST_STEPS.webhookComplete,
+  ALARM_LIST_STEPS.webhookFail,
+  ALARM_LIST_STEPS.ticketDeclarationRuleCompleted,
+  ALARM_LIST_STEPS.ticketDeclarationRuleFailed,
+];
+
+export const ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE = [
+  ALARM_LIST_STEPS.webhookStart,
+  ALARM_LIST_STEPS.webhookComplete,
+  ALARM_LIST_STEPS.webhookFail,
+];
 
 export const ALARM_UNKNOWN_VALUE = {
   color: COLORS.status.unknown,

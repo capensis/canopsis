@@ -1,5 +1,4 @@
 import {
-  ENTITIES_STATES_KEYS,
   STATE_SETTING_METHODS,
   STATE_SETTING_THRESHOLDS_METHODS,
   STATE_SETTING_THRESHOLDS_CONDITIONS,
@@ -46,12 +45,6 @@ export default {
   thresholdConditions: {
     [STATE_SETTING_THRESHOLDS_CONDITIONS.greater]: 'Greater than',
     [STATE_SETTING_THRESHOLDS_CONDITIONS.less]: 'Less than',
-  },
-  states: { // TODO: remove
-    [ENTITIES_STATES_KEYS.ok]: 'OK',
-    [ENTITIES_STATES_KEYS.minor]: 'Minor',
-    [ENTITIES_STATES_KEYS.major]: 'Major',
-    [ENTITIES_STATES_KEYS.critical]: 'Critical',
   },
   junit: {
     worstLabel: 'The worst of:',

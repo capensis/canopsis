@@ -21,8 +21,7 @@
 import { COLORS } from '@/config';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getImpactStateColor } from '@/helpers/entities/entity/color';
-import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
+import { getAlarmStateColor, getAlarmImpactStateColor } from '@/helpers/entities/alarm/color';
 
 export default {
   props: {
@@ -68,7 +67,7 @@ export default {
 
     color() {
       const color = this.isImpactState
-        ? getImpactStateColor(this.impactState)
+        ? getAlarmImpactStateColor(this.impactState)
         : getAlarmStateColor(this.state);
 
       return color ?? 'black';

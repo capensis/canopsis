@@ -9,12 +9,7 @@
           class="c-extra-details__badge brown darken-1"
           v-on="on"
         >
-          <v-icon
-            color="white"
-            small
-          >
-            {{ icon }}
-          </v-icon>
+          <v-icon color="white" small>center_focus_weak</v-icon>
         </span>
       </template>
       <div class="text-md-center">
@@ -36,8 +31,6 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
-
 export default {
   props: {
     rules: {
@@ -47,11 +40,6 @@ export default {
     total: {
       type: Number,
       default: 0,
-    },
-  },
-  computed: {
-    icon() {
-      return EVENT_ENTITY_ICONS_BY_TYPE.groupParents;
     },
   },
 };
