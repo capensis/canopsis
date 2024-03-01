@@ -17,9 +17,6 @@ exports[`availability-form Renders \`availability-form\` with custom props 1`] =
     templates="[object Object]"
     templatespending="true"
     type="entity"
-    withcolorindicator="true"
-    withhtml="true"
-    withtemplate="true"
   />
   <widget-settings-group-stub
     title="Advanced settings"
@@ -70,9 +67,6 @@ exports[`availability-form Renders \`availability-form\` with required props 1`]
     label="Column names"
     templates=""
     type="entity"
-    withcolorindicator="true"
-    withhtml="true"
-    withtemplate="true"
   />
   <widget-settings-group-stub
     title="Advanced settings"

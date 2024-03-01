@@ -15,8 +15,8 @@
       :show-filter="hasAccessToListFilters"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
-      @update:widgetColumnsTemplate="updateWidgetColumnsTemplate"
-      @update:activeAlarmsColumnsTemplate="updateActiveAlarmsColumnsTemplate"
+      @update:widget-columns-template="updateWidgetColumnsTemplate"
+      @update:active-alarms-columns-template="updateActiveAlarmsColumnsTemplate"
     />
   </widget-settings>
 </template>
