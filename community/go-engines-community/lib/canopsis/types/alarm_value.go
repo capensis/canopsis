@@ -43,7 +43,8 @@ type AlarmStep struct {
 
 	TicketInfo `bson:",inline"`
 
-	InPbehaviorInterval bool `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
+	DisplayGroup        string `bson:"dgroup,omitempty" json:"dgroup,omitempty"`
+	InPbehaviorInterval bool   `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
 }
 
 func (s *AlarmStep) GetInitiator() string {
