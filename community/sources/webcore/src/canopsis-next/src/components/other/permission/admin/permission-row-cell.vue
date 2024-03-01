@@ -54,7 +54,7 @@ export default {
           bind: {
             label: action !== CRUD_ACTIONS.can ? action : undefined,
 
-            value: getCheckboxValue(
+            inputValue: getCheckboxValue(
               this.permission._id,
               this.role.permissions,
               this.changedRole,
@@ -62,7 +62,7 @@ export default {
             ),
           },
           on: {
-            input: value => this.changeCheckboxValue(value, action),
+            change: value => this.changeCheckboxValue(value, action),
           },
         }));
       }
