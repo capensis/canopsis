@@ -33,7 +33,7 @@ import { MODALS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { permissionsTechnicalPlaylistMixin } from '@/mixins/permissions/technical/playlist';
 import { entitiesPlaylistMixin } from '@/mixins/entities/playlist';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import PlaylistsList from '@/components/other/playlists/playlists-list.vue';
 

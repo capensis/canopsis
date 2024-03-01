@@ -533,6 +533,7 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   impactChain: 'impactChain',
   entityGantt: 'entityGantt',
   charts: 'charts',
+  availability: 'availability',
 };
 
 export const ALARM_LINK_ICON_CHIP_WIDTH = 24;

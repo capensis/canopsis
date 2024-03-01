@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesEventFilterMixin } from '@/mixins/entities/event-filter';
 
 import EventFilterFailureTypeField from '../form/fields/event-filter-failure-type-field.vue';
