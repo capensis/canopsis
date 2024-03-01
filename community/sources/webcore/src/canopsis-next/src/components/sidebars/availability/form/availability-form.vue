@@ -21,6 +21,15 @@
         :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateActiveAlarmsColumnsTemplate"
       />
+      <field-columns
+        v-field="form.parameters.resolved_alarms_columns"
+        :template="form.parameters.resolved_alarms_columns_template"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="alarmColumnsWidgetTemplatesPending"
+        :label="$t('settings.resolvedAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        @update:template="updateResolvedAlarmsColumnsTemplate"
+      />
       <field-quick-date-interval-type
         v-if="showInterval"
         v-field="form.parameters.default_time_range"
@@ -127,6 +136,10 @@ export default {
 
     updateActiveAlarmsColumnsTemplate(template, columns) {
       this.$emit('update:active-alarms-columns-template', template, columns);
+    },
+
+    updateResolvedAlarmsColumnsTemplate(template, columns) {
+      this.$emit('update:resolved-alarms-columns-template', template, columns);
     },
   },
 };

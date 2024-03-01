@@ -28,6 +28,13 @@ exports[`availability-form Renders \`availability-form\` with custom props 1`] =
       templatespending="true"
       type="alarm"
     />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      templates="[object Object],[object Object]"
+      templatespending="true"
+      type="alarm"
+    />
     <field-quick-date-interval-type-stub
       ranges="[object Object]"
       value="today"
@@ -74,6 +81,12 @@ exports[`availability-form Renders \`availability-form\` with required props 1`]
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for active alarms"
+      templates=""
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
       templates=""
       type="alarm"
     />

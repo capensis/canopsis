@@ -1,6 +1,6 @@
 <template>
   <v-layout
-    class="py-2 px-3 gap-3"
+    class="gap-3"
     column
   >
     <availability-widget-filters
@@ -11,7 +11,7 @@
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
-      :locked-value="lockedFilter"
+      :locked-filter="lockedFilter"
       :filters="mainFilter"
       :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToListFilters"
@@ -19,6 +19,7 @@
       :filter-editable="hasAccessToEditFilter"
       :min-interval-date="minAvailableDate"
       :exporting="exporting"
+      class="px-3 pt-3"
       @export="exportAvailabilityList"
       @update:filters="updateSelectedFilter"
       @update:interval="updateInterval"
@@ -27,7 +28,17 @@
       @update:display-parameter="updateDisplayParameter"
     />
 
-    <pre>LIST: {{ query }}</pre>
+    <availability-list
+      :availabilities="availabilities"
+      :pending="availabilitiesPending"
+      :total-items="availabilitiesMeta.total_count"
+      :columns="widget.parameters.widget_columns"
+      :display-parameter="query.displayParameter"
+      :active-alarms-columns="widget.parameters.active_alarms_columns"
+      :resolved-alarms-columns="widget.parameters.resolved_alarms_columns"
+      :show-type="query.showType"
+      :options.sync="options"
+    />
   </v-layout>
 </template>
 
@@ -35,7 +46,7 @@
 import { pick } from 'lodash';
 
 import { getAvailabilityDownloadFileUrl } from '@/helpers/entities/availability/url';
-import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
@@ -47,11 +58,13 @@ import { permissionsWidgetsAlarmStatisticsInterval } from '@/mixins/permissions/
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { entitiesAvailabilityMixin } from '@/mixins/entities/availability';
+import { widgetOptionsMixin } from '@/mixins/widget/options';
 
 import AvailabilityWidgetFilters from '@/components/widgets/availability/partials/availability-widget-filters.vue';
+import AvailabilityList from '@/components/other/availability/availability-list.vue';
 
 export default {
-  components: { AvailabilityWidgetFilters },
+  components: { AvailabilityList, AvailabilityWidgetFilters },
   mixins: [
     widgetPeriodicRefreshMixin,
     widgetFilterSelectMixin,
@@ -60,6 +73,7 @@ export default {
     permissionsWidgetsAlarmStatisticsInterval,
     queryIntervalFilterMixin,
     entitiesAvailabilityMixin,
+    widgetOptionsMixin,
     exportMixinCreator({
       createExport: 'createAvailabilityExport',
       fetchExport: 'fetchAvailabilityExport',
@@ -114,8 +128,9 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
+        ...pick(this.query, ['page']),
         with_history: this.query.showTrend,
-        widget_filters: convertFilterToQuery(this.query.filter),
+        widget_filters: convertFiltersToQuery(this.query.filter, this.lockedFilter),
       };
     },
 
