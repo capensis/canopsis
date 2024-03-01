@@ -304,6 +304,10 @@ export const API_ROUTES = {
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
   },
+  availability: {
+    list: '/api/v4/cat/availabilities',
+    exportList: '/api/v4/cat/availability-export',
+  },
 };
 
 export const COLORS = {
