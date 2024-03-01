@@ -50,6 +50,7 @@ type Options struct {
 	TagsPeriodicalWaitTime   time.Duration
 	SliPeriodicalWaitTime    time.Duration
 	WithRemediation          bool
+	WithDynamicInfos         bool
 	RecomputeAllOnInit       bool
 	Workers                  int
 }
@@ -65,6 +66,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.BoolVar(&opts.WithDynamicInfos, "withDynamicInfos", false, "Update dynamic infos on RPC changes")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", 2, "Amount of workers to process main event flow")
@@ -116,6 +118,7 @@ func NewEngine(
 	)
 	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
+	var dynamicInfosRpcClient libengine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = libengine.NewRPCClient(
 			canopsis.AxeRPCConsumerName,
@@ -128,6 +131,26 @@ func NewEngine(
 			logger,
 		)
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
+	}
+
+	if options.WithDynamicInfos {
+		dynamicInfosRpcClient = libengine.NewRPCClient(
+			canopsis.AxeRPCConsumerName,
+			canopsis.DynamicInfosRPCQueueServerName,
+			canopsis.AxeDynamicInfosRPCClientQueueName,
+			cfg.Global.PrefetchCount,
+			cfg.Global.PrefetchSize,
+			&rpcDynamicInfosClientMessageProcessor{
+				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+				PublishCh:                amqpChannel,
+				Decoder:                  json.NewDecoder(),
+				Encoder:                  json.NewEncoder(),
+				Logger:                   logger,
+			},
+			amqpChannel,
+			logger,
+		)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.DynamicInfosRPCQueueServerName)
 	}
 
 	idleSinceService := entityservice.NewService(
@@ -332,6 +355,7 @@ func NewEngine(
 			EventProcessor:           eventProcessor,
 			ActionRpc:                actionRpcClient,
 			PbhRpc:                   pbhRpcClient,
+			DynamicInfosRpc:          dynamicInfosRpcClient,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
@@ -339,6 +363,10 @@ func NewEngine(
 		logger,
 	))
 	engineAxe.AddConsumer(pbhRpcClient)
+	if dynamicInfosRpcClient != nil {
+		engineAxe.AddConsumer(dynamicInfosRpcClient)
+	}
+
 	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:      options.PeriodicalWaitTime,
