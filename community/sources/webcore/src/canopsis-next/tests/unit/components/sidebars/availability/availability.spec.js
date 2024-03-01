@@ -179,6 +179,8 @@ describe('availability-settings', () => {
         widget_columns_template: CUSTOM_WIDGET_TEMPLATE,
         active_alarms_columns: [],
         active_alarms_columns_template: CUSTOM_WIDGET_TEMPLATE,
+        resolved_alarms_columns: [],
+        resolved_alarms_columns_template: CUSTOM_WIDGET_TEMPLATE,
         default_time_range: QUICK_RANGES.last30Days.value,
         default_display_parameter: AVAILABILITY_DISPLAY_PARAMETERS.downtime,
         default_show_type: AVAILABILITY_SHOW_TYPE.duration,
@@ -202,9 +204,7 @@ describe('availability-settings', () => {
       },
     });
 
-    const form = selectWidgetForm(wrapper);
-
-    form.triggerCustomEvent('input', updatedWidget);
+    selectWidgetForm(wrapper).triggerCustomEvent('input', updatedWidget);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -218,6 +218,7 @@ describe('availability-settings', () => {
           {
             ...updatedWidget.parameters,
             active_alarms_columns_template: '',
+            resolved_alarms_columns_template: '',
             widget_columns_template: '',
           },
         ),
@@ -294,6 +295,44 @@ describe('availability-settings', () => {
             ...widget.parameters,
             active_alarms_columns_template: templateId,
             active_alarms_columns: columns
+              .map(({ column, ...rest }) => ({ ...rest, value: column })),
+          },
+        ),
+      },
+    });
+  });
+
+  test('Resolved columns changed after trigger update:resolved-alarms-columns-template', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    const form = selectWidgetForm(wrapper);
+
+    const templateId = Faker.datatype.string();
+    const columns = [{
+      label: Faker.datatype.string(),
+      column: ENTITY_FIELDS.id,
+    }];
+
+    await form.triggerCustomEvent('update:resolved-alarms-columns-template', templateId, columns);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            resolved_alarms_columns_template: templateId,
+            resolved_alarms_columns: columns
               .map(({ column, ...rest }) => ({ ...rest, value: column })),
           },
         ),
