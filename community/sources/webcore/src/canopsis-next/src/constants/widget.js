@@ -23,6 +23,7 @@ export const WIDGET_TYPES = {
   numbers: 'Numbers',
   userStatistics: 'UserStatistics',
   alarmStatistics: 'AlarmStatistics',
+  availability: 'Availability',
 
   ...featuresService.get('constants.WIDGET_TYPES'),
 };
@@ -36,6 +37,7 @@ export const TOP_LEVEL_WIDGET_TYPES = [
   WIDGET_TYPES.counter,
   WIDGET_TYPES.testingWeather,
   WIDGET_TYPES.map,
+  WIDGET_TYPES.availability,
 ];
 
 export const COMPONENTS_BY_WIDGET_TYPES = {
@@ -53,6 +55,7 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.numbers]: 'numbers-widget',
   [WIDGET_TYPES.userStatistics]: 'user-statistics-widget',
   [WIDGET_TYPES.alarmStatistics]: 'alarm-statistics-widget',
+  [WIDGET_TYPES.availability]: 'availability-widget',
 
   ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };
@@ -73,6 +76,10 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.numbers]: 'functions',
   [WIDGET_TYPES.userStatistics]: 'perm_identity',
   [WIDGET_TYPES.alarmStatistics]: 'notification_important',
+  /**
+   * TODO: Icon should be changed
+   */
+  [WIDGET_TYPES.availability]: 'notification_important',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };
@@ -92,6 +99,7 @@ export const SIDE_BARS = {
   numbersSettings: 'numbers-settings',
   userStatisticsSettings: 'user-statistics-settings',
   alarmStatisticsSettings: 'alarm-statistics-settings',
+  availabilitySettings: 'availability-settings',
 
   ...featuresService.get('constants.SIDE_BARS'),
 };
@@ -111,6 +119,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.numbers]: SIDE_BARS.numbersSettings,
   [WIDGET_TYPES.userStatistics]: SIDE_BARS.userStatisticsSettings,
   [WIDGET_TYPES.alarmStatistics]: SIDE_BARS.alarmStatisticsSettings,
+  [WIDGET_TYPES.availability]: SIDE_BARS.availabilitySettings,
 
   ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
@@ -121,6 +130,7 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.map]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.userStatistics]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.alarmStatistics]: { edition: CANOPSIS_EDITION.pro },
+  [WIDGET_TYPES.availability]: { edition: CANOPSIS_EDITION.pro },
 
   ...featuresService.get('constants.WIDGET_TYPES_RULES'),
 };

@@ -55,6 +55,7 @@ import PieChartWidget from './chart/pie-chart-widget.vue';
 import NumbersWidget from './chart/numbers-widget.vue';
 import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
 import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
+import AvailabilityWidget from './availability/availability-widget.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
@@ -74,6 +75,7 @@ export default {
     NumbersWidget,
     UserStatisticsWidget,
     AlarmStatisticsWidget,
+    AvailabilityWidget,
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },
