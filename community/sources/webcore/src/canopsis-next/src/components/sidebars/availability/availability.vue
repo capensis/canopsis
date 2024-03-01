@@ -47,13 +47,13 @@ export default {
   ],
   methods: {
     updateWidgetColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
-      this.$set(this.form.parameters, 'widgetColumns', columns);
+      this.$set(this.form.parameters, 'widget_columns_template', template);
+      this.$set(this.form.parameters, 'widget_columns', columns);
     },
 
     updateActiveAlarmsColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'activeAlarmsColumnsTemplate', template);
-      this.$set(this.form.parameters, 'activeAlarmsColumns', columns);
+      this.$set(this.form.parameters, 'active_alarms_columns_template', template);
+      this.$set(this.form.parameters, 'active_alarms_columns', columns);
     },
   },
 };
