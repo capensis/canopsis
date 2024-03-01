@@ -56,21 +56,21 @@ export default {
             action,
           );
 
-          if (!acc.indeterminate && checkboxValue !== acc.value && !(index === 0 && maskIndex === 0)) {
+          if (!acc.indeterminate && checkboxValue !== acc.inputValue && !(index === 0 && maskIndex === 0)) {
             acc.indeterminate = true;
           }
 
-          acc.value = acc.value || checkboxValue;
+          acc.inputValue = acc.inputValue || checkboxValue;
         });
 
         return acc;
       }, {
-        value: false,
+        inputValue: false,
         indeterminate: false,
       });
 
       const on = {
-        input: value => this.group.permissions.forEach((permission) => {
+        change: value => this.group.permissions.forEach((permission) => {
           const actions = getPermissionActions(permission);
 
           actions.forEach(
