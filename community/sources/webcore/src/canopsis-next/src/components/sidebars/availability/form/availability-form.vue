@@ -9,9 +9,6 @@
       :templates-pending="entityColumnsWidgetTemplatesPending"
       :label="$t('settings.columnNames')"
       :type="$constants.ENTITIES_TYPES.entity"
-      with-template
-      with-html
-      with-color-indicator
       @update:template="updateWidgetColumnsTemplate"
     />
     <widget-settings-group :title="$t('settings.advancedSettings')">
@@ -83,7 +80,7 @@ export default {
     },
     widgetId: {
       type: String,
-      required: true,
+      required: false,
     },
     entityColumnsWidgetTemplates: {
       type: Array,

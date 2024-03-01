@@ -81,6 +81,6 @@ export const formToAvailabilityWidgetParameters = form => ({
   ...form,
   widget_columns: formToWidgetColumns(form.widget_columns),
   widget_columns_template: formToWidgetTemplateValue(form.widget_columns_template),
-  active_alarms_columns: formToWidgetColumns(form.widget_columns),
+  active_alarms_columns: formToWidgetColumns(form.active_alarms_columns),
   active_alarms_columns_template: formToWidgetTemplateValue(form.active_alarms_columns_template),
 });
