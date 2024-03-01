@@ -23,6 +23,7 @@ export default {
     [SIDE_BARS.numbersSettings]: 'Numbers settings',
     [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
     [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
+    [SIDE_BARS.availabilitySettings]: 'Availability settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -299,4 +300,8 @@ export default {
     split: 'Split data by value path',
   },
   entitiesActionsInQueue: 'Stack entities actions and apply simultaneously',
+  availability: {
+    graphSettings: 'Availability graph settings',
+    defaultAvailabilityDisplay: 'Default availability display',
+  },
 };
