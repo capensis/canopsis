@@ -50,7 +50,8 @@ func (p *autoWebhookCompleteProcessor) Process(ctx context.Context, event rpc.Ax
 	alarmChange := types.NewAlarmChange()
 	var update []bson.M
 	if event.Parameters.Ticket == "" {
-		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.Output, event.Parameters)
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.Execution,
+			event.Parameters.Output, event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.steps": addStepUpdateQuery(newStepQuery),
@@ -58,9 +59,10 @@ func (p *autoWebhookCompleteProcessor) Process(ctx context.Context, event rpc.Ax
 		}
 		alarmChange.Type = types.AlarmChangeTypeAutoWebhookComplete
 	} else {
-		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.Output, event.Parameters)
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.Execution,
+			event.Parameters.Output, event.Parameters)
 		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket,
-			event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
+			event.Parameters.Execution, event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.ticket":  newTicketStepQuery,
