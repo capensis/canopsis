@@ -180,13 +180,11 @@
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.availability"
       >
         <alarms-expand-panel-tab-item-wrapper :card-flex-class="cardFlexClass">
-          <v-layout justify-center>
-            <entity-availability
-              :entity="alarm.entity"
-              :default-time-range="widget.parameters.availability.default_time_range"
-              :default-show-type="widget.parameters.availability.default_show_type"
-            />
-          </v-layout>
+          <entity-availability
+            :entity="alarm.entity"
+            :default-time-range="widget.parameters.availability?.default_time_range"
+            :default-show-type="widget.parameters.availability?.default_show_type"
+          />
         </alarms-expand-panel-tab-item-wrapper>
       </v-tab-item>
     </v-tabs-items>
