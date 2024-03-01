@@ -225,7 +225,7 @@ describe('availability-settings', () => {
     });
   });
 
-  test('Widget columns changed after trigger update:widgetColumnsTemplate', async () => {
+  test('Widget columns changed after trigger update:widget-columns-template', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -241,7 +241,7 @@ describe('availability-settings', () => {
       column: ENTITY_FIELDS.id,
     }];
 
-    await form.triggerCustomEvent('update:widgetColumnsTemplate', templateId, columns);
+    await form.triggerCustomEvent('update:widget-columns-template', templateId, columns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -263,7 +263,7 @@ describe('availability-settings', () => {
     });
   });
 
-  test('Active columns changed after trigger update:activeAlarmsColumnsTemplate', async () => {
+  test('Active columns changed after trigger update:active-alarms-columns-template', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -279,7 +279,7 @@ describe('availability-settings', () => {
       column: ENTITY_FIELDS.id,
     }];
 
-    await form.triggerCustomEvent('update:activeAlarmsColumnsTemplate', templateId, columns);
+    await form.triggerCustomEvent('update:active-alarms-columns-template', templateId, columns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
