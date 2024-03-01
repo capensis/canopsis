@@ -645,7 +645,7 @@ func sendRemediationEvent(
 		entity = &result.Entity
 	}
 
-	body, err := encoder.Encode(types.RPCRemediationEvent{
+	body, err := encoder.Encode(rpc.RemediationEvent{
 		Alarm:       &result.Alarm,
 		Entity:      entity,
 		AlarmChange: result.AlarmChange,
