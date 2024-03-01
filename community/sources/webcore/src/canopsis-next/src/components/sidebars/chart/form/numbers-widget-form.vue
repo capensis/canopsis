@@ -43,7 +43,7 @@
       />
       <field-switcher
         v-field="form.parameters.show_trend"
-        :title="$t('settings.chart.showTrend')"
+        :title="$t('settings.showTrend')"
       />
     </widget-settings-group>
   </v-layout>

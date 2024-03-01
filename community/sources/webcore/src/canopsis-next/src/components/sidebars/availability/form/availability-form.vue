@@ -122,11 +122,11 @@ export default {
   },
   methods: {
     updateWidgetColumnsTemplate(template, columns) {
-      this.$emit('update:widgetColumnsTemplate', template, columns);
+      this.$emit('update:widget-columns-template', template, columns);
     },
 
     updateActiveAlarmsColumnsTemplate(template, columns) {
-      this.$emit('update:activeAlarmsColumnsTemplate', template, columns);
+      this.$emit('update:active-alarms-columns-template', template, columns);
     },
   },
 };
