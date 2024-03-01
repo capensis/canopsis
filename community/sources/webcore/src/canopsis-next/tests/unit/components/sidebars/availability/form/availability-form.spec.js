@@ -39,6 +39,10 @@ const selectActiveAlarmsColumnsField = wrapper => selectFieldColumnsByLabel(
   wrapper,
   'Column names for active alarms',
 );
+const selectResolvedAlarmsColumnsField = wrapper => selectFieldColumnsByLabel(
+  wrapper,
+  'Column names for resolved alarms',
+);
 const selectFieldQuickDateIntervalType = wrapper => wrapper.find('input.field-quick-date-interval-type');
 const selectFieldAvailabilityDisplayParameter = wrapper => wrapper.find('input.field-availability-display-parameter');
 const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
@@ -133,6 +137,28 @@ describe('availability-form', () => {
 
     expect(wrapper).toEmitInput(
       getWidgetRequestWithNewParametersProperty(widget, 'active_alarms_columns', newWidgetColumns),
+    );
+  });
+
+  test('REsolved alarms columns changed after trigger columns field', () => {
+    const widget = widgetToForm({ type: WIDGET_TYPES.availability });
+
+    const wrapper = factory({
+      propsData: {
+        form: widget,
+        widgetId: 'widget-id',
+      },
+    });
+
+    const newWidgetColumns = [{
+      value: Faker.lorem.word(),
+      label: Faker.lorem.word(),
+    }];
+
+    selectResolvedAlarmsColumnsField(wrapper).triggerCustomEvent('input', newWidgetColumns);
+
+    expect(wrapper).toEmitInput(
+      getWidgetRequestWithNewParametersProperty(widget, 'resolved_alarms_columns', newWidgetColumns),
     );
   });
 

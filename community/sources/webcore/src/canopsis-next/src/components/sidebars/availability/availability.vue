@@ -17,6 +17,7 @@
       :filter-editable="hasAccessToEditFilter"
       @update:widget-columns-template="updateWidgetColumnsTemplate"
       @update:active-alarms-columns-template="updateActiveAlarmsColumnsTemplate"
+      @update:resolved-alarms-columns-template="updateResolvedAlarmsColumnsTemplate"
     />
   </widget-settings>
 </template>
@@ -54,6 +55,11 @@ export default {
     updateActiveAlarmsColumnsTemplate(template, columns) {
       this.$set(this.form.parameters, 'active_alarms_columns_template', template);
       this.$set(this.form.parameters, 'active_alarms_columns', columns);
+    },
+
+    updateResolvedAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'resolved_alarms_columns_template', template);
+      this.$set(this.form.parameters, 'resolved_alarms_columns', columns);
     },
   },
 };
