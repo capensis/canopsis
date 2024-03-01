@@ -404,9 +404,14 @@ func (p *noEventsProcessor) postProcess(
 	result Result,
 	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
 ) {
+	entity := *event.Entity
+	if result.Entity.ID != "" {
+		entity = result.Entity
+	}
+
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
-		*event.Entity,
+		entity,
 		result.AlarmChange,
 		event.Parameters.Timestamp.Time,
 		event.Parameters.Initiator,
