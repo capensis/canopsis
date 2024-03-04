@@ -33,9 +33,9 @@ const (
 	WidgetTemplateMongoCollection = "widget_templates"
 	ViewGroupMongoCollection      = "viewgroups"
 
-	// Following collections are used for event statistics.
-	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
-	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
+	// MessageRateStatsHourCollectionName contains old stats
+	// deprecated
+	MessageRateStatsHourCollectionName = "message_rate_statistic_hour"
 
 	// Collection for ok/ko event statistics
 	EventStatistics = "event_statistics"
