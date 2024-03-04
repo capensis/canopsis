@@ -187,6 +187,21 @@ func (mr *MockStoreMockRecorder) GetDetails(arg0, arg1, arg2 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDetails", reflect.TypeOf((*MockStore)(nil).GetDetails), arg0, arg1, arg2)
 }
 
+// GetDisplayNames mocks base method.
+func (m *MockStore) GetDisplayNames(arg0 context.Context, arg1 alarm.GetDisplayNamesRequest) (*alarm.GetDisplayNamesResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDisplayNames", arg0, arg1)
+	ret0, _ := ret[0].(*alarm.GetDisplayNamesResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDisplayNames indicates an expected call of GetDisplayNames.
+func (mr *MockStoreMockRecorder) GetDisplayNames(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDisplayNames", reflect.TypeOf((*MockStore)(nil).GetDisplayNames), arg0, arg1)
+}
+
 // GetInstructionExecutionStatuses mocks base method.
 func (m *MockStore) GetInstructionExecutionStatuses(arg0 context.Context, arg1 []string, arg2 map[string][]alarm.AssignedInstruction) (map[string]alarm.ExecutionStatus, error) {
 	m.ctrl.T.Helper()

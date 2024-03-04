@@ -565,6 +565,11 @@ func getAlarmRefField(alarm types.Alarm, f string) (interface{}, bool) {
 			return nil, true
 		}
 		return alarm.Value.ActivationDate, true
+	case "v.change_state":
+		if alarm.Value.ChangeState == nil {
+			return nil, true
+		}
+		return alarm.Value.ChangeState, true
 	default:
 		return nil, false
 	}
