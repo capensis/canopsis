@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -258,10 +259,12 @@ func benchmarkMessageProcessorWithConfig(
 		b.Fatalf("unexpected error %v", err)
 	}
 
+	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, zerolog.Nop())
 	p := messageProcessor{
 		FeaturePrintEventOnError: true,
-		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
-		MetricsSender:            metrics.NewNullSender(),
+		AlarmConfigProvider:      alarmConfigProvider,
+		MetricsSender:            metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop()),
 		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
 		EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),

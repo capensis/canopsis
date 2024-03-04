@@ -154,6 +154,7 @@ type DataStorageConfig struct {
 }
 
 type MetricsConfig struct {
+	Enabled                bool
 	FlushInterval          time.Duration
 	SliInterval            time.Duration
 	UserSessionGapInterval time.Duration
@@ -1381,6 +1382,7 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 
 	return &BaseMetricsSettingsConfigProvider{
 		conf: MetricsConfig{
+			Enabled:                parseBool(cfg.Metrics.Enabled, "Enabled", sectionName, logger),
 			EnabledNotAckedMetrics: parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
 			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
 			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
@@ -1397,7 +1399,12 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 
 	sectionName := "metrics"
 
-	b, ok := parseUpdatedBool(cfg.Metrics.EnabledNotAckedMetrics, p.conf.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, p.logger)
+	b, ok := parseUpdatedBool(cfg.Metrics.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
+	if ok {
+		p.conf.Enabled = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledNotAckedMetrics, p.conf.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, p.logger)
 	if ok {
 		p.conf.EnabledNotAckedMetrics = b
 	}
