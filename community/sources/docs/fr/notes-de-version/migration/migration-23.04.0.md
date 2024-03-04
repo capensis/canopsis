@@ -195,10 +195,10 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     dnf install timescaledb-2-postgresql-13-2.9.3 timescaledb-2-loader-postgresql-13-2.9.3
     ```
 
-    Relancez le service `timescaledb` :
+    Relancez le service `timescaledb` (géré par PostgreSQL) :
 
     ```sh
-    systemctl start timescaledb
+    systemctl start postgresql-13.service
     ```
 
     Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
