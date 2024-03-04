@@ -19,9 +19,9 @@
 import { COLORS } from '@/config';
 import {
   SAMPLINGS,
-  TIME_UNITS,
   REMEDIATION_STATISTICS_BAR_PERCENTAGE,
   REMEDIATION_STATISTICS_CHART_DATA_TYPE,
+  TIME_UNITS_BY_SAMPLING,
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
@@ -69,12 +69,7 @@ export default {
     },
 
     samplingUnit() {
-      return {
-        [SAMPLINGS.hour]: TIME_UNITS.minute,
-        [SAMPLINGS.day]: TIME_UNITS.hour,
-        [SAMPLINGS.week]: TIME_UNITS.day,
-        [SAMPLINGS.month]: TIME_UNITS.day,
-      }[this.sampling];
+      return TIME_UNITS_BY_SAMPLING[this.sampling];
     },
 
     datasets() {
