@@ -153,6 +153,57 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
+func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now types.CpsTime) ([]bson.M, error) {
+	q.clear(now, "")
+
+	err := q.handlePatterns(FilterRequest{
+		BaseFilterRequest: BaseFilterRequest{
+			AlarmPattern:     r.AlarmPattern,
+			EntityPattern:    r.EntityPattern,
+			PbehaviorPattern: r.PbehaviorPattern,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	match := bson.M{"v.resolved": nil}
+
+	if r.Search != "" {
+		match["v.display_name"] = primitive.Regex{
+			Pattern: fmt.Sprintf(".*%s.*", r.Search),
+			Options: "i",
+		}
+	}
+
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+
+	sortDir := 1
+	if r.Sort == common.SortDesc {
+		sortDir = -1
+	}
+
+	q.sort = bson.M{"$sort": bson.M{"v.display_name": sortDir}}
+
+	// maps are not used need to call functions below
+	addedLookups := make(map[string]bool)
+	addedComputedFields := make(map[string]bool)
+
+	pipeline := make([]bson.M, 0)
+	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &pipeline)
+	pipeline = append(pipeline, q.alarmMatch...)
+
+	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &pipeline)
+	pipeline = append(pipeline, q.additionalMatch...)
+
+	return pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		q.sort,
+		[]bson.M{{"$project": bson.M{"_id": 1, "display_name": "$v.display_name"}}},
+	), nil
+}
+
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime, userID string) ([]bson.M, error) {
 	q.clear(now, userID)
 
@@ -248,6 +299,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -1499,33 +1551,18 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let": bson.M{"services": bson.M{"$cond": bson.M{
-				"if":   "$entity.services",
-				"then": "$entity.services",
-				"else": bson.A{},
-			}}},
-			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
-				}},
-				{"$project": bson.M{"_id": 1}},
-			},
-			"as": "service_impacts",
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let":  bson.M{"service": "$entity._id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$and": []bson.M{
-						{"$isArray": "$services"},
-						{"$in": bson.A{"$$service", "$services"}},
-					}},
-				}},
-				{"$project": bson.M{"_id": 1}},
-			},
-			"as": "depends",
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},
