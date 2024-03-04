@@ -168,20 +168,21 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
-	var user *User
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		user = nil
-		insertDoc, err := r.getBson(s.passwordEncoder)
-		if err != nil {
-			return err
-		}
+	insertDoc, err := r.getBson(s.passwordEncoder)
+	if err != nil {
+		return nil, err
+	}
 
+	var user *User
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
 		_, err = s.collection.InsertOne(ctx, insertDoc)
 		if err != nil {
 			return err
 		}
 
 		user, err = s.GetOneBy(ctx, r.Name)
+
 		return err
 	})
 	if err != nil {
@@ -192,14 +193,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
-	var user *User
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		user = nil
-		updateDoc, err := r.getBson(s.passwordEncoder)
-		if err != nil {
-			return err
-		}
+	updateDoc, err := r.getBson(s.passwordEncoder)
+	if err != nil {
+		return nil, err
+	}
 
+	var user *User
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
 			bson.M{"$set": updateDoc},
@@ -209,6 +210,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 		}
 
 		user, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
@@ -219,18 +221,24 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 }
 
 func (s *store) Patch(ctx context.Context, r PatchRequest) (*User, error) {
+	updateDoc, err := r.getBson(s.passwordEncoder)
+	if err != nil {
+		return nil, err
+	}
+
 	var user *User
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r.getBson(s.passwordEncoder)},
+			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
 
 		user, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
