@@ -59,6 +59,7 @@
             :height-factor="widget.parameters.heightFactor",
             :color-indicator="widget.parameters.colorIndicator",
             :priority-enabled="widget.parameters.isPriorityEnabled",
+            :secondary-icon-enabled="widget.parameters.isSecondaryIconEnabled",
             :counters-settings="widget.parameters.counters",
             :margin="widget.parameters.margin",
             @show:service="showAdditionalInfoModal(service)",
