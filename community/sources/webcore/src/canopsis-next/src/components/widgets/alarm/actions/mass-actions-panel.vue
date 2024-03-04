@@ -56,7 +56,7 @@ export default {
     },
 
     alarmsForActions() {
-      return this.localItems.filter((item) => {
+      return this.items.filter((item) => {
         if (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item)) {
           return true;
         }
