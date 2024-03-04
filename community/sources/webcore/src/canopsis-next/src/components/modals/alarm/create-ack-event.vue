@@ -10,7 +10,6 @@
             v-if="config.items"
             :items="config.items"
           />
-          <v-divider />
           <ack-event-form
             v-model="form"
             :is-note-required="isNoteRequired"

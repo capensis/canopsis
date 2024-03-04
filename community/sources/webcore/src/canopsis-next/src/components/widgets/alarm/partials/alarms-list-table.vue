@@ -323,7 +323,7 @@ export default {
     },
 
     unresolvedSelected() {
-      return this.selected.filter(item => isActionAvailableForAlarm(item));
+      return this.selected.filter(item => isActionAvailableForAlarm(item, this.widget));
     },
 
     expanded() {
