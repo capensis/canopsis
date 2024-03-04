@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty, omit, isArray } from 'lodash';
+import { isUndefined, isEmpty, omit, isArray, uniq, map } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -22,10 +22,58 @@ import {
 } from './date/date-intervals';
 import { isResolvedAlarm } from './entities';
 import { isRatioMetric } from './metrics';
+import { getTemplateVariables } from './handlebars';
 
 /**
  * WIDGET CONVERTERS
  */
+
+/**
+ * Gat available alarm and entity variables
+ *
+ * @param {string} template
+ * @returns {string[]}
+ */
+export const getAlarmVariablesByTemplate = template => getTemplateVariables(template)
+  .reduce((acc, variable) => {
+    if (variable.startsWith('alarm.') || variable.startsWith('entity.')) {
+      acc.push(variable.replace(/^(alarm)\./, ''));
+    }
+
+    return acc;
+  }, []);
+
+/**
+ * Get all used into templates alarm variables
+ *
+ * @param {WidgetColumn[]} widgetColumns
+ * @param {string} moreInfoTemplate
+ * @param {WidgetInfoPopup[]} infoPopups
+ * @returns {string[]}
+ */
+export const convertAlarmWidgetParametersToActiveColumns = ({ widgetColumns, moreInfoTemplate, infoPopups }) => {
+  const activeColumns = [];
+
+  widgetColumns.forEach(({ template, value }) => {
+    activeColumns.push(value);
+
+    if (template) {
+      activeColumns.push(...getAlarmVariablesByTemplate(template));
+    }
+  });
+
+  if (moreInfoTemplate) {
+    activeColumns.push(...getAlarmVariablesByTemplate(moreInfoTemplate));
+  }
+
+  if (infoPopups) {
+    infoPopups.forEach(({ template }) => {
+      activeColumns.push(...getAlarmVariablesByTemplate(template));
+    });
+  }
+
+  return uniq(activeColumns);
+};
 
 /**
  * This function converts widget.parameters.sort to query Object
@@ -85,7 +133,6 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    widgetColumns = [],
     itemsPerPage,
     sort,
     mainFilter,
@@ -112,8 +159,10 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  if (widgetColumns.length) {
-    query.active_columns = widgetColumns.map(v => v.value);
+  const activeColumns = convertAlarmWidgetParametersToActiveColumns(widget.parameters);
+
+  if (activeColumns.length) {
+    query.active_columns = activeColumns;
   }
 
   if (sort && sort.column && sort.order) {
@@ -479,15 +528,18 @@ const convertFiltersToQuery = (filter, lockedFilter) => [
  *
  * @param {Alarm} alarm
  * @param {Widget} widget
+ * @param {string} search
  * @returns {Object}
  */
-export const prepareAlarmDetailsQuery = (alarm, widget) => {
+export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
   const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
+    search,
+    search_by: map(columns, 'value'),
     _id: alarm._id,
     with_instructions: true,
     with_declare_tickets: true,

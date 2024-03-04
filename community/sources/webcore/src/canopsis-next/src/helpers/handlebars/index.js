@@ -1,7 +1,11 @@
 import promisedHandlebars from 'promised-handlebars';
 import HandlebarsLib from 'handlebars';
 
+import { THEMES_NAMES, THEMES } from '@/config';
+
 import store from '@/store';
+
+import commonMessages from '@/i18n/messages/en/common';
 
 import * as helpers from './helpers';
 
@@ -15,9 +19,17 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * @returns {Promise}
  */
 export async function compile(template, context = {}) {
+  const currentUser = store.getters['auth/currentUser'] ?? {};
+  const themeName = currentUser.ui_theme ?? THEMES_NAMES.canopsis;
   const handleBarFunction = Handlebars.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
+    theme: {
+      ...THEMES[themeName],
+
+      _id: themeName,
+      name: commonMessages.themes[themeName] ?? commonMessages.themes[THEMES_NAMES.canopsis],
+    },
 
     ...context,
   };
@@ -55,6 +67,81 @@ export function registerHelper(name, helper) {
 export function unregisterHelper(name) {
   Handlebars.unregisterHelper(name);
 }
+
+/**
+ * Get all node variables
+ *
+ * @param {
+ *   hbs.AST.BlockStatement |
+ *   hbs.AST.MustacheStatement |
+ *   hbs.AST.Program |
+ *   hbs.AST.PathExpression |
+ *   hbs.AST.SubExpression |
+ *   hbs.AST.HashPair |
+ *   hbs.AST.ContentStatement |
+ *   hbs.AST.Statement
+ * } node
+ * @returns {string[]}
+ */
+const getVariablesFromNode = (node) => {
+  switch (node?.type) {
+    case 'MustacheStatement':
+    case 'BlockStatement': {
+      const variables = [];
+
+      if (node.hash?.pairs) {
+        node.hash.pairs.forEach((item) => {
+          variables.push(...getVariablesFromNode(item));
+        });
+      }
+
+      if (node.program) {
+        variables.push(...getVariablesFromNode(node.program));
+      }
+
+      if (node.params) {
+        node.params.forEach((item) => {
+          variables.push(...getVariablesFromNode(item));
+        });
+      }
+
+      if (node.path) {
+        variables.push(...getVariablesFromNode(node.path));
+      }
+
+      return variables;
+    }
+    case 'Program':
+      return node.body?.reduce((acc, bodyNode) => {
+        acc.push(...getVariablesFromNode(bodyNode));
+
+        return acc;
+      }, []) ?? [];
+    case 'PathExpression':
+      return node?.original ? [node.original] : [];
+    case 'SubExpression':
+      return node.params.reduce((acc, item) => {
+        acc.push(...getVariablesFromNode(item));
+
+        return acc;
+      }, []);
+    case 'HashPair':
+      return getVariablesFromNode(node.value);
+    default:
+      return [];
+  }
+};
+
+/**
+ * Get all using variables in the template
+ *
+ * @param {string} template
+ * @returns {string[]}
+ */
+export const getTemplateVariables = template => getVariablesFromNode(
+  Handlebars.parseWithoutProcessing(template),
+)
+  .filter(variable => !Handlebars.helpers[variable]);
 
 /**
  * Register global helpers

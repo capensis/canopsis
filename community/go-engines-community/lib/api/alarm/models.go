@@ -129,6 +129,8 @@ type SortRequest struct {
 
 type DetailsRequest struct {
 	ID                 string               `json:"_id" binding:"required"`
+	Search             string               `json:"search"`
+	SearchBy           []string             `json:"search_by"`
 	Opened             *bool                `json:"opened"`
 	WithInstructions   bool                 `json:"with_instructions"`
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
@@ -229,7 +231,6 @@ type Alarm struct {
 	IsMetaAlarm          *bool          `bson:"is_meta_alarm,omitempty" json:"is_meta_alarm,omitempty"`
 	Children             *int64         `bson:"children,omitempty" json:"children,omitempty"`
 	ChildrenInstructions *bool          `bson:"children_instructions" json:"children_instructions,omitempty"`
-	FilteredChildrenIDs  []string       `bson:"filtered_children,omitempty" json:"filtered_children,omitempty"`
 	// Meta alarm child fields
 	Parents        *int64          `bson:"parents" json:"parents,omitempty"`
 	MetaAlarmRules []MetaAlarmRule `bson:"meta_alarm_rules" json:"meta_alarm_rules,omitempty"`
@@ -247,6 +248,9 @@ type Alarm struct {
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
 
 	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
+
+	// Only for details request
+	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
 }
 
 type MetaAlarmRule struct {

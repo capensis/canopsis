@@ -89,6 +89,7 @@
       :dense="dense",
       :refresh-alarms-list="fetchList",
       :selected-tag="query.tag",
+      :search="query.search",
       :selectable="!hideMassSelection",
       :hide-actions="hideActions",
       expandable,
@@ -125,7 +126,7 @@ import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/wi
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
