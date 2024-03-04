@@ -198,7 +198,7 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     Relancez le service `timescaledb` (géré par PostgreSQL) :
 
     ```sh
-    systemctl start postgresql-13.service
+    systemctl start postgresql-13
     ```
 
     Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
