@@ -25,11 +25,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         <alarm-general-table-stub
           items="[object Object]"
         />
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
-        />
         <ack-event-form-stub
           form="[object Object]"
           hideackresources="true"
@@ -173,11 +168,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
       >
         <alarm-general-table-stub
           items="[object Object]"
-        />
-        <hr
-          aria-orientation="horizontal"
-          class="v-divider theme--light"
-          role="separator"
         />
         <ack-event-form-stub
           form="[object Object]"
