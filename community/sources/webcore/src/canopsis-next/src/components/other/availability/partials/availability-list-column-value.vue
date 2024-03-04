@@ -34,7 +34,7 @@ export default {
     ));
 
     const totalTime = computed(() => props.availability.uptime + props.availability.downtime);
-    const percent = computed(() => convertNumberToRoundedPercentString(targetValue.value / totalTime.value));
+    const percent = computed(() => convertNumberToRoundedPercentString(targetValue.value / totalTime.value, 2));
     const duration = computed(() => convertDurationToString(targetValue.value));
     const value = computed(() => (isPercentType.value ? percent.value : duration.value));
 

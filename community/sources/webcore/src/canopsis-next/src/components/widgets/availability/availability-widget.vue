@@ -38,15 +38,16 @@
       :resolved-alarms-columns="widget.parameters.resolved_alarms_columns"
       :show-type="query.showType"
       :options.sync="options"
+      :interval="interval"
     />
   </v-layout>
 </template>
 
 <script>
-import { pick } from 'lodash';
+import { omit, pick } from 'lodash';
 
 import { getAvailabilityDownloadFileUrl } from '@/helpers/entities/availability/url';
-import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
+import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
@@ -98,14 +99,18 @@ export default {
         ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
         : null;
     },
+
+    interval() {
+      return this.getIntervalQuery();
+    },
   },
   methods: {
     customQueryCondition(query, oldQuery) {
-      const fields = ['showTrend', 'interval', 'filter'];
+      const omitFields = ['showType', 'displayParameter'];
 
       return isMetricsQueryChanged(
-        pick(query, fields),
-        pick(oldQuery, fields),
+        omit(query, omitFields),
+        omit(oldQuery, omitFields),
         this.minAvailableDate,
       );
     },
@@ -126,11 +131,19 @@ export default {
     },
 
     getQuery() {
+      const {
+        sortBy = [],
+        sortDesc = [],
+        showTrend,
+        filter,
+      } = this.query;
+
       return {
-        ...this.getIntervalQuery(),
-        ...pick(this.query, ['page']),
-        with_history: this.query.showTrend,
-        widget_filters: convertFiltersToQuery(this.query.filter, this.lockedFilter),
+        ...this.interval,
+        ...pick(this.query, ['page', 'itemsPerPage']),
+        ...convertSortToRequest(sortBy, sortDesc),
+        with_history: showTrend,
+        widget_filters: convertFiltersToQuery(filter, this.lockedFilter),
       };
     },
 

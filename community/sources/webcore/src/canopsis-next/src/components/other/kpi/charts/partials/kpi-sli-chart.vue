@@ -21,8 +21,9 @@ import {
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,
-  TIME_UNITS,
   KPI_SLI_GRAPH_DATA_TYPE,
+  MAX_TIME_VALUE_BY_SAMPLING,
+  TIME_UNITS_BY_SAMPLING,
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
@@ -64,12 +65,7 @@ export default {
   },
   computed: {
     maxValueBySampling() {
-      return {
-        [SAMPLINGS.hour]: 60,
-        [SAMPLINGS.day]: 24,
-        [SAMPLINGS.week]: 7,
-        [SAMPLINGS.month]: 31,
-      }[this.sampling];
+      return MAX_TIME_VALUE_BY_SAMPLING[this.sampling];
     },
 
     maxValueByType() {
@@ -81,12 +77,7 @@ export default {
     },
 
     samplingUnit() {
-      return {
-        [SAMPLINGS.hour]: TIME_UNITS.minute,
-        [SAMPLINGS.day]: TIME_UNITS.hour,
-        [SAMPLINGS.week]: TIME_UNITS.day,
-        [SAMPLINGS.month]: TIME_UNITS.day,
-      }[this.sampling];
+      return TIME_UNITS_BY_SAMPLING[this.sampling];
     },
 
     unit() {

@@ -23,3 +23,12 @@ export const AVAILABILITY_QUICK_RANGES = {
   [QUICK_RANGES.last3Months.value]: QUICK_RANGES.last3Months,
   [QUICK_RANGES.last6Months.value]: QUICK_RANGES.last6Months,
 };
+
+export const AVAILABILITY_LINE_CHART_Y_AXES_IDS = {
+  percent: 'yPercent',
+  time: 'yTime',
+};
+
+export const AVAILABILITY_LINE_CHART_X_AXES_IDS = {
+  default: 'x',
+};
