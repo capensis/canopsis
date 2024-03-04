@@ -70,6 +70,7 @@ export default {
   criticityLevels: 'Criticity levels',
   isPriorityEnabled: 'Show priority',
   isHideGrayEnabled: 'Show hide gray',
+  isSecondaryIconEnabled: 'Show secondary icon',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
   alarmsColumns: 'Alarm list columns',
   resolvedAlarmsColumns: 'Column names for resolved alarms',

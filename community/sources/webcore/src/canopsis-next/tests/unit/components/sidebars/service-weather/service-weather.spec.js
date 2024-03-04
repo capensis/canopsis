@@ -77,7 +77,8 @@ const selectFieldCounters = wrapper => wrapper.find('field-counters-selector-stu
 const selectFieldSwitcherByIndex = (wrapper, index) => wrapper.findAll('field-switcher-stub').at(index);
 const selectIsPriorityField = wrapper => selectFieldSwitcherByIndex(wrapper, 0);
 const selectIsHideGrayField = wrapper => selectFieldSwitcherByIndex(wrapper, 1);
-const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
+const selectIsSecondaryEnabledField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
+const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 3);
 const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
 const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
 
@@ -633,7 +634,7 @@ describe('service-weather', () => {
     });
   });
 
-  test('Is priority enabled changed after trigger switcher field', async () => {
+  test('Is hide gray enabled changed after trigger switcher field', async () => {
     const wrapper = factory();
 
     selectIsHideGrayField(wrapper).vm.$emit('input', true);
@@ -645,6 +646,22 @@ describe('service-weather', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isHideGrayEnabled', true),
+      },
+    });
+  });
+
+  test('Is secondary icon enabled changed after trigger switcher field', async () => {
+    const wrapper = factory();
+
+    selectIsSecondaryEnabledField(wrapper).vm.$emit('input', true);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isSecondaryIconEnabled', true),
       },
     });
   });
