@@ -106,6 +106,10 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       title="Show hide gray"
       value="true"
     />
+    <field-switcher-stub
+      title="Show secondary icon"
+      value="true"
+    />
     <field-modal-type-stub
       name="modalType"
       value="both"
@@ -234,6 +238,10 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     />
     <field-switcher-stub
       title="Show hide gray"
+      value="true"
+    />
+    <field-switcher-stub
+      title="Show secondary icon"
       value="true"
     />
     <field-modal-type-stub
