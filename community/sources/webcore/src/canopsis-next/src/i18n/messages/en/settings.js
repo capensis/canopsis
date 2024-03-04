@@ -71,6 +71,7 @@ export default {
   criticityLevels: 'Criticity levels',
   isPriorityEnabled: 'Show priority',
   isHideGrayEnabled: 'Show hide gray',
+  isSecondaryIconEnabled: 'Show secondary icon',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
   showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
   rootCauseSettings: 'Root cause diagram settings',

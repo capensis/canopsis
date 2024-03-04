@@ -59,7 +59,7 @@
           {{ backgroundIcon }}
         </v-icon>
         <v-icon
-          v-if="service.secondary_icon"
+          v-if="secondaryIconEnabled && service.secondary_icon"
           :color="color"
           class="service-weather-item__secondary-icon mb-1 mr-1"
         >
@@ -147,6 +147,10 @@ export default {
       default: false,
     },
     priorityEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    secondaryIconEnabled: {
       type: Boolean,
       default: true,
     },
