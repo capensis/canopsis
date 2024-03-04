@@ -402,12 +402,13 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 		ctx,
 		bson.M{
 			"enabled": true,
+			"type":    r.Type,
 			"method": bson.M{
 				"$in": []string{statesetting.MethodInherited, statesetting.MethodDependencies},
 			},
 		},
 		options.Find().SetSort(bson.M{"priority": 1}).SetProjection(bson.M{
-			"title": 1, "method": 1, "entity_pattern": 1,
+			"title": 1, "method": 1, "entity_pattern": 1, "type": 1,
 			"inherited_entity_pattern": 1, "state_thresholds": 1,
 		}),
 	)
@@ -599,6 +600,7 @@ func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettin
 	response := StateSettingResponse{}
 	response.ID = stateSetting.ID
 	response.Title = stateSetting.Title
+	response.Type = stateSetting.Type
 	response.Method = stateSetting.Method
 	response.InheritedEntityPattern = stateSetting.InheritedEntityPattern
 	if stateSetting.StateThresholds != nil {

@@ -2,6 +2,7 @@ import { isUndefined, omit, pick, cloneDeep } from 'lodash';
 
 import {
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
+  REMEDIATION_INSTRUCTION_STATUSES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
   WORKFLOW_TYPES,
@@ -66,6 +67,8 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  * @typedef {RemediationInstructionApprovalUser | RemediationInstructionApprovalRole} RemediationInstructionApproval
  * @property {string} comment
  * @property {RemediationInstructionApprovalRequestedBy} requested_by
+ * @property {string} [dismissed_comment]
+ * @property {RemediationInstructionApprovalRequestedBy} [dismissed_by]
  */
 
 /**
@@ -99,6 +102,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 /**
  * @typedef {RemediationInstructionManual | RemediationInstructionAuto} RemediationInstruction
  * @property {number} type
+ * @property {number} status
  * @property {string} name
  * @property {boolean} enabled
  * @property {string} description
@@ -123,6 +127,36 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  * @property {string} [role]
  * @property {string} comment
  */
+
+/**
+ * Check instruction status is requested approve
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isApproveRequested = instruction => [
+  REMEDIATION_INSTRUCTION_STATUSES.createdAndApproveRequested,
+  REMEDIATION_INSTRUCTION_STATUSES.updatedAndApproveRequested,
+].includes(instruction.status);
+
+/**
+ * Check instruction status is approved
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionApproved = instruction => instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
+
+/**
+ * Check instruction status is dismissed
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionDismissed = instruction => [
+  REMEDIATION_INSTRUCTION_STATUSES.createdAndDismissed,
+  REMEDIATION_INSTRUCTION_STATUSES.updatedAndDismissed,
+].includes(instruction.status);
 
 /**
  * Check instruction type is auto

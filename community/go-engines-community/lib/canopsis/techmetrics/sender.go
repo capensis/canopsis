@@ -240,9 +240,7 @@ func (s *sender) cleanBatches() {
 	s.batchesMx.Lock()
 	defer s.batchesMx.Unlock()
 
-	if len(s.batches) > 0 {
-		s.batches = make(map[string][][]any, 0)
-	}
+	clear(s.batches)
 }
 
 func (s *sender) addBatch(metricName string, args []any) {

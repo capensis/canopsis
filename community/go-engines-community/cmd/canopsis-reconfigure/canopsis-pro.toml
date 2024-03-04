@@ -87,6 +87,14 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_axe_dynamic_infos_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_che"
 durable = true
 autoDelete = false
@@ -249,6 +257,8 @@ JunitApi = "/tmp/canopsis/junit"
 SnmpMib = ["/usr/share/snmp/mibs"]
 # Another example when MIBs installed by snmp-mibs-downloader.deb package:
 # SnmpMib = ["/usr/share/snmp/mibs", "/usr/share/snmp/mibs/ietf", "/usr/share/snmp/mibs/iana"]
+Icon = "/opt/canopsis/var/lib/icons"
+IconMaxSize = 10240 # 10Kb
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
@@ -312,6 +322,7 @@ TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
 
 [Canopsis.metrics]
+Enabled = true
 # FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
 FlushInterval = "10s"
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.

@@ -1,5 +1,5 @@
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createEntityModule, createMockedStoreModules, createServiceModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES, MODALS } from '@/constants';
@@ -24,16 +24,6 @@ const selectServiceDependenciesExpand = wrapper => wrapper.find('service-depende
 
 describe('service-dependencies', () => {
   const $modals = mockModals();
-  const fetchDependenciesWithoutStore = jest.fn()
-    .mockResolvedValue({
-      data: [],
-      meta: {},
-    });
-  const fetchImpactsWithoutStore = jest.fn()
-    .mockResolvedValue({
-      data: [],
-      meta: {},
-    });
 
   const data = [
     {
@@ -92,13 +82,9 @@ describe('service-dependencies', () => {
     ],
   };
 
-  const serviceModule = {
-    name: 'service',
-    actions: {
-      fetchDependenciesWithoutStore,
-      fetchImpactsWithoutStore,
-    },
-  };
+  const { entityModule } = createEntityModule();
+  const { serviceModule, fetchDependenciesWithoutStore, fetchImpactsWithoutStore } = createServiceModule();
+
   const columns = [
     { value: ENTITY_FIELDS.name },
     { value: ENTITY_FIELDS.type },
@@ -111,6 +97,7 @@ describe('service-dependencies', () => {
 
   const store = createMockedStoreModules([
     serviceModule,
+    entityModule,
   ]);
 
   const snapshotFactory = generateRenderer(ServiceDependencies, { stubs });

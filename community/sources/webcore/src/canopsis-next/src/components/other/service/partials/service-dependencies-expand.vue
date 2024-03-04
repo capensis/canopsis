@@ -18,7 +18,7 @@
     </v-tooltip>
     <v-badge
       v-else
-      :value="!!item.entity?.pbehavior_info"
+      :value="!!item.entity?.pbehavior_info?.id"
       color="grey"
       overlap
     >

@@ -88,7 +88,6 @@ func GetImpactsCountPipeline() []bson.M {
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
-		{"$unwind": bson.M{"path": "$entity_counters", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "component",
@@ -122,7 +121,7 @@ func GetImpactsCountPipeline() []bson.M {
 						},
 						"$component_impacts.hasStateSettings",
 					}},
-					bson.M{"$sum": bson.A{1, "$service_impacts"}},
+					bson.M{"$sum": bson.A{1, bson.M{"$size": "$service_impacts"}}},
 					bson.M{"$size": "$service_impacts"},
 				},
 			},
