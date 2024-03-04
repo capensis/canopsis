@@ -178,7 +178,7 @@ export default {
     },
 
     isAlarmSelectable() {
-      return isActionAvailableForAlarm(this.alarm);
+      return isActionAvailableForAlarm(this.alarm, this.widget);
     },
 
     isNotFiltered() {
