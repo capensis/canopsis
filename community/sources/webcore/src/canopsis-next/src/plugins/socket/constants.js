@@ -13,6 +13,12 @@ export const RESPONSE_MESSAGES_TYPES = {
   authenticated: 4,
 };
 
+export const ICONS_RESPONSE_MESSAGES_TYPES = {
+  create: 0,
+  update: 1,
+  delete: 2,
+};
+
 export const MAX_RECONNECTS_COUNT = 10;
 
 export const PING_INTERVAL = 5000;

@@ -46,7 +46,7 @@
         <entity-state-setting
           v-if="hasStateSetting"
           :form="form"
-          :preparer="formToEntity"
+          :preparer="prepareStateSettingForm"
         />
       </v-layout>
     </v-tab-item>
@@ -59,8 +59,6 @@
 
 <script>
 import { ENTITY_TYPES } from '@/constants';
-
-import { formToEntity } from '@/helpers/entities/entity/form';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
@@ -80,14 +78,14 @@ export default {
       type: Object,
       required: true,
     },
+    prepareStateSettingForm: {
+      type: Function,
+      default: data => data,
+    },
   },
   computed: {
     hasStateSetting() {
       return this.form.type === ENTITY_TYPES.component;
-    },
-
-    formToEntity() {
-      return formToEntity;
     },
   },
 };

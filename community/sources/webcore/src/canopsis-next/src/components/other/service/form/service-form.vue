@@ -48,7 +48,7 @@
     <c-enabled-field v-field="form.enabled" />
     <entity-state-setting
       :form="form"
-      :preparer="formToService"
+      :preparer="prepareStateSettingForm"
     />
     <v-tabs
       slider-color="primary"
@@ -84,12 +84,9 @@ import { get } from 'lodash';
 
 import {
   ENTITY_PATTERN_FIELDS,
-  ENTITY_TYPES,
   SERVICE_WEATHER_STATE_COUNTERS,
   SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
 } from '@/constants';
-
-import { formToService } from '@/helpers/entities/service/form';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -110,6 +107,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    prepareStateSettingForm: {
+      type: Function,
+      default: data => data,
     },
   },
   computed: {
@@ -141,14 +142,6 @@ export default {
           options: { disabled: true },
         },
       ];
-    },
-  },
-  methods: {
-    formToService(service) {
-      return {
-        ...formToService(service),
-        type: ENTITY_TYPES.service,
-      };
     },
   },
 };
