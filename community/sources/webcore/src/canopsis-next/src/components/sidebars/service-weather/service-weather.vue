@@ -94,6 +94,8 @@
       v-divider
       field-switcher(v-model="form.parameters.isHideGrayEnabled", :title="$t('settings.isHideGrayEnabled')")
       v-divider
+      field-switcher(v-model="form.parameters.isSecondaryIconEnabled", :title="$t('settings.isSecondaryIconEnabled')")
+      v-divider
       field-modal-type(v-model="form.parameters.modalType")
       v-divider
       field-action-required-settings(v-model="form.parameters.actionRequiredSettings")
