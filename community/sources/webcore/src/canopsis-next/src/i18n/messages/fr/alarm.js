@@ -62,13 +62,13 @@ export default {
       removeBookmark: 'Supprimer le signet',
     },
     iconsTitles: {
-      ack: 'Acquitter',
+      ack: 'Acquittée',
       declareTicket: 'Déclarer un ticket',
-      canceled: 'Annulé',
-      snooze: 'Mettre en veille',
+      canceled: 'Annulée',
+      snooze: 'Mise en veille',
       pbehaviors: 'Définir un comportement périodique',
       grouping: 'Meta-alarmes',
-      comment: 'Commentaire',
+      comment: 'Commentée',
     },
     iconsFields: {
       ticketNumber: 'Numéro de ticket',
@@ -231,5 +231,6 @@ export default {
     openedChildren: 'Conséquences ouvertes',
     closedChildren: 'Conséquences fermées',
     canceledInitiator: 'Initiateur annulé',
+    changeState: 'Changer d\'état',
   },
 };

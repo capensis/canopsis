@@ -57,6 +57,7 @@ type Store interface {
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error)
+	GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error)
 }
 
 type store struct {
@@ -114,6 +115,32 @@ func NewStore(
 
 		logger: logger,
 	}
+}
+
+func (s *store) GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error) {
+	now := types.NewCpsTime()
+
+	pipeline, err := s.getQueryBuilder().CreateGetDisplayNamesPipeline(r, now)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var result GetDisplayNamesResponse
+	for cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &result, nil
 }
 
 func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error) {
