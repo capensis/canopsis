@@ -73,7 +73,6 @@
  * @property {string} output
  * @property {string} initial_output
  * @property {string[]} children
- * @property {string[]} filtered_children
  * @property {Object} extra
  * @property {number} last_update_date
  * @property {number} resolved
