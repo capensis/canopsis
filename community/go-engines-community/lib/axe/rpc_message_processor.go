@@ -106,11 +106,11 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		p.logError(err, "failed to process meta alarm", msg)
 	}
 
-	if alarmChange.Type == types.AlarmChangeTypeNone || p.DynamicInfosRpc == nil {
-		return p.getRpcEvent(res)
+	if p.DynamicInfosRpc != nil && p.forwardToDynamicInfos(res.AlarmChangeType) {
+		return p.sendEventToDynamicInfos(ctx, *alarm, *event.Entity, alarmChange, d)
 	}
 
-	return p.sendEventToDynamicInfos(ctx, *alarm, *event.Entity, alarmChange, d)
+	return p.getRpcEvent(res)
 }
 
 func (p *rpcMessageProcessor) getRpcEvent(event rpc.AxeResultEvent) ([]byte, error) {
@@ -396,4 +396,33 @@ func (p *rpcMessageProcessor) getErrRpcEvent(err error, alarm *types.Alarm) []by
 		Error: &rpc.Error{Error: err}},
 	)
 	return msg
+}
+
+func (p *rpcMessageProcessor) forwardToDynamicInfos(alarmChangeType types.AlarmChangeType) bool {
+	switch alarmChangeType {
+	case types.AlarmChangeTypeStateIncrease,
+		types.AlarmChangeTypeStateDecrease,
+		types.AlarmChangeTypeCreate,
+		types.AlarmChangeTypeCreateAndPbhEnter,
+		types.AlarmChangeTypeAck,
+		types.AlarmChangeTypeDoubleAck,
+		types.AlarmChangeTypeAckremove,
+		types.AlarmChangeTypeCancel,
+		types.AlarmChangeTypeUncancel,
+		types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeSnooze,
+		types.AlarmChangeTypeUnsnooze,
+		types.AlarmChangeTypeComment,
+		types.AlarmChangeTypeChangeState,
+		types.AlarmChangeTypePbhEnter,
+		types.AlarmChangeTypePbhLeave,
+		types.AlarmChangeTypePbhLeaveAndEnter,
+		types.AlarmChangeTypeUpdateStatus,
+		types.AlarmChangeTypeActivate,
+		types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
+		return true
+	}
+
+	return false
 }
