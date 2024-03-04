@@ -25,7 +25,7 @@
             v-icon(color="white", small) help
         v-icon.service-weather-item__background(size="5em", :color="color") {{ backgroundIcon }}
         v-icon.service-weather-item__secondary-icon.mb-1.mr-1(
-          v-if="service.secondary_icon",
+          v-if="secondaryIconEnabled && service.secondary_icon",
           :color="color"
         ) {{ service.secondary_icon }}
       alarm-pbehavior-counters(
@@ -107,6 +107,10 @@ export default {
       default: false,
     },
     priorityEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    secondaryIconEnabled: {
       type: Boolean,
       default: true,
     },
