@@ -23,7 +23,7 @@ export const checkStateSettingMixin = {
 
         this.stateSettingPending = true;
         const response = await this.checkEntityStateSetting({
-          data: pick(data, ['name', 'type', 'infos', 'impact_level']),
+          data: pick(data, ['_id', 'name', 'type', 'connector', 'infos', 'category', 'impact_level']),
         });
 
         this.stateSetting = response?.title ? response : undefined;

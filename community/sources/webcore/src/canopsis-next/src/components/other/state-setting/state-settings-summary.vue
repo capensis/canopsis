@@ -61,11 +61,8 @@
 
 <script>
 import { isUndefined } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITIES_STATES, MODALS, STATE_SETTING_METHODS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
-
-const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
   props: {
@@ -73,12 +70,14 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      pending: true,
-      stateSetting: {},
-    };
+    pending: {
+      type: Boolean,
+      required: true,
+    },
+    stateSetting: {
+      type: Object,
+      required: false,
+    },
   },
   computed: {
     isInheritedMethod() {
@@ -186,25 +185,7 @@ export default {
         ];
     },
   },
-  mounted() {
-    this.fetchStateSetting({ id: this.entity._id });
-  },
   methods: {
-    ...mapEntityActions({
-      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
-    }),
-
-    async fetchStateSetting() {
-      try {
-        this.pending = true;
-        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.entity._id } });
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.pending = false;
-      }
-    },
-
     showStateSettingsPatterns() {
       this.$modals.show({
         name: MODALS.stateSettingInheritedEntityPattern,

@@ -86,30 +86,6 @@ export default {
     title: 'Listes de lecture',
     message: 'Les listes de lecture peuvent être utilisées pour la personnalisation des vues qui peuvent être affichées les unes après les autres avec un délai associé.',
   },
-  [USERS_PERMISSIONS.technical.healthcheck]: {
-    title: 'Bilan de santé',
-    message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
-  },
-  [USERS_PERMISSIONS.technical.engine]: {
-    title: 'Engines',
-    message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-  },
-  [USERS_PERMISSIONS.technical.kpi]: {
-    title: 'KPI',
-    message: '', // TODO: add correct message
-  },
-  [USERS_PERMISSIONS.technical.map]: {
-    title: 'Cartographie',
-    message: '', // TODO: add correct message
-  },
-  [USERS_PERMISSIONS.technical.maintenance]: {
-    title: 'Mode de Maintenance',
-    message: '', // TODO: add correct message
-  },
-  [USERS_PERMISSIONS.technical.tag]: {
-    title: 'Gestion des Tags',
-    message: '', // TODO: add correct message
-  },
 
   /**
    * Admin general
@@ -125,6 +101,38 @@ export default {
     title: 'Consignes',
     message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des consignes visant à corriger des situations.',
   },
+  [USERS_PERMISSIONS.technical.healthcheck]: {
+    title: 'Bilan de santé',
+    message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
+  },
+  [USERS_PERMISSIONS.technical.engine]: {
+    title: 'Engines',
+    message: 'Cette page contient les informations sur la séquence et la configuration des moteurs. Pour fonctionner correctement, la chaîne des moteurs doit être continue.',
+  },
+  [USERS_PERMISSIONS.technical.kpi]: {
+    title: 'KPI',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.map]: {
+    title: 'Cartographie',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.maintenance]: {
+    title: 'Mode de Maintenance',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.tag]: {
+    title: 'Gestion des Tags',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.storageSettings]: {
+    title: 'Paramètres de stockage',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.stateSetting]: {
+    title: 'Paramètres d\'état',
+    // message: '', // TODO: add correct message
+  },
 
   /**
    * Notifications
@@ -139,6 +147,6 @@ export default {
    */
   [USERS_PERMISSIONS.technical.profile.theme]: {
     title: 'Thèmes graphiques',
-    message: '', // TODO: add correct message
+    // message: '', // TODO: add correct message
   },
 };
