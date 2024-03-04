@@ -448,7 +448,7 @@ func Default(
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)
 	})
-	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, dbClient, logger, flags.IntegrationPeriodicalWaitTime))
+	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, pgPoolProvider, logger, flags.IntegrationPeriodicalWaitTime))
 
 	return api, docsFile, nil
 }

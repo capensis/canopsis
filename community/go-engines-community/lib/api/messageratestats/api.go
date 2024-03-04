@@ -33,7 +33,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	stats, err := a.store.Find(c.Request.Context(), r)
+	stats, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +43,7 @@ func (a *api) List(c *gin.Context) {
 	}
 
 	if r.Interval == IntervalHour {
-		response.Meta.DeletedBefore, err = a.store.GetDeletedBeforeForHours(c.Request.Context())
+		response.Meta.DeletedBefore, err = a.store.GetDeletedBeforeForHours(c)
 		if err != nil {
 			panic(err)
 		}
