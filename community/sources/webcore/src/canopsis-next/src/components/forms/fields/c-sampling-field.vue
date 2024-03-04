@@ -1,7 +1,7 @@
 <template>
   <v-select
     v-field="value"
-    :items="samplings"
+    :items="availableSamplings"
     :disabled="disabled"
     :label="label || $t('common.sampling')"
     :name="name"
@@ -41,10 +41,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    samplings: {
+      type: Array,
+      default: () => Object.values(SAMPLINGS),
+    },
   },
   computed: {
-    samplings() {
-      return Object.values(SAMPLINGS).map(value => ({
+    availableSamplings() {
+      return this.samplings.map(value => ({
         value,
         text: this.$tc(`common.times.${value}`, 2),
       }));

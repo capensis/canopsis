@@ -21,6 +21,9 @@
         :availability="item"
         :active-alarms-columns="activeAlarmsColumns"
         :resolved-alarms-columns="resolvedAlarmsColumns"
+        :interval="interval"
+        :default-show-type="showType"
+        :display-parameter="displayParameter"
       />
     </template>
   </c-advanced-data-table>
@@ -71,6 +74,10 @@ export default {
     showType: {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.percent,
+    },
+    interval: {
+      type: Object,
+      required: true,
     },
   },
   computed: {

@@ -588,30 +588,20 @@ export const createServiceModule = () => {
 
 export const createEntityModule = () => {
   const fetchStateSettingWithoutStore = jest.fn();
-  const fetchAvailabilityWithoutStore = jest.fn().mockResolvedValue({
-    availability: {
-      uptime: 10,
-      downtime: 20,
-      inactive_time: 5,
-    },
-  });
 
   afterEach(() => {
     fetchStateSettingWithoutStore.mockClear();
-    fetchAvailabilityWithoutStore.mockClear();
   });
 
   const entityModule = {
     name: 'entity',
     actions: {
       fetchStateSettingWithoutStore,
-      fetchAvailabilityWithoutStore,
     },
   };
 
   return {
     fetchStateSettingWithoutStore,
-    fetchAvailabilityWithoutStore,
     entityModule,
   };
 };
@@ -1333,5 +1323,31 @@ export const createPlaylistModule = () => {
     playlistModule,
     playlists,
     fetchPlaylistsList,
+  };
+};
+
+export const createAvailabilityModule = () => {
+  const fetchAvailabilityWithoutStore = jest.fn().mockResolvedValue({
+    availability: {
+      uptime: 10,
+      downtime: 20,
+      inactive_time: 5,
+    },
+  });
+
+  afterEach(() => {
+    fetchAvailabilityWithoutStore.mockClear();
+  });
+
+  const availabilityModule = {
+    name: 'availability',
+    actions: {
+      fetchAvailabilityWithoutStore,
+    },
+  };
+
+  return {
+    availabilityModule,
+    fetchAvailabilityWithoutStore,
   };
 };
