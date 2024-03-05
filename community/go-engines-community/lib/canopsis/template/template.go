@@ -1,8 +1,12 @@
 package template
 
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/template/template.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template Executor
+
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"log"
 	"reflect"
 	"regexp"
@@ -12,11 +16,14 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
 )
 
 const EnvVar = "Env"
+
+var ErrFailedConvertToInt64 = errors.New("failed convert to int64")
+var ErrDivisionByZero = errors.New("division by zero")
 
 type ParsedTemplate struct {
 	Text string
@@ -86,7 +93,11 @@ func (e *executor) Parse(text string) ParsedTemplate {
 }
 
 func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
-	buf := e.bufPool.Get().(*bytes.Buffer)
+	buf, ok := e.bufPool.Get().(*bytes.Buffer)
+	if !ok {
+		return "", fmt.Errorf("unknown buffer type")
+	}
+
 	defer e.bufPool.Put(buf)
 	buf.Reset()
 	err := tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
@@ -157,14 +168,14 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return ""
 		},
 		// replace will replace a string, replacing matches of the regex with the replacement string
-		"replace": func(oldRegex string, new string, v interface{}) string {
+		"replace": func(oldRegex string, newV string, v interface{}) string {
 			if s, ok := v.(string); ok {
 				re, err := regexp.Compile(oldRegex)
 				if err != nil {
 					log.Printf("replace : %+v cannot be parsed by regexp, %v", oldRegex, err)
 					return ""
 				}
-				return re.ReplaceAllString(s, new)
+				return re.ReplaceAllString(s, newV)
 			}
 			log.Printf("replace : %+v is not a string", v)
 			return ""
@@ -197,14 +208,26 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 					log.Printf("localtime : %+v is not a CpsTime", v)
 					return ""
 				}
-				timezone = v[1].(string)
-				format = v[0].(string)
+
+				if timezone, ok = v[1].(string); !ok {
+					log.Printf("localtime : %+v is not a string", v[1])
+					return ""
+				}
+
+				if format, ok = v[0].(string); !ok {
+					log.Printf("localtime : %+v is not a string", v[0])
+					return ""
+				}
 			} else if len(v) == 2 {
 				if value, ok = castTime(v[1]); !ok {
 					log.Printf("localtime : %+v is not a CpsTime", v)
 					return ""
 				}
-				format = v[0].(string)
+
+				if format, ok = v[0].(string); !ok {
+					log.Printf("localtime : %+v is not a string", v[0])
+					return ""
+				}
 			} else {
 				log.Print("localtime : must have 1 or 2 arguments")
 				return ""
@@ -271,14 +294,133 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return ""
 		},
+		"substrLeft": func(str string, n int64) string {
+			runeStr := []rune(str)
+
+			if n < 1 {
+				return ""
+			}
+
+			if n >= int64(len(runeStr)) {
+				return str
+			}
+
+			return string(runeStr[:n])
+		},
+		"substrRight": func(str string, n int64) string {
+			runeStr := []rune(str)
+			lenRuneStr := int64(len(runeStr))
+
+			if n < 1 {
+				return ""
+			}
+
+			if n >= lenRuneStr {
+				return str
+			}
+
+			return string(runeStr[lenRuneStr-n:])
+		},
+		"substr": func(str string, start, n int64) string {
+			runeStr := []rune(str)
+			lenRuneStr := int64(len(runeStr))
+
+			if start < 0 || start >= lenRuneStr || n < 1 {
+				return ""
+			}
+
+			end := start + n
+
+			if end >= lenRuneStr {
+				return string(runeStr[start:])
+			}
+
+			return string(runeStr[start:end])
+		},
+		"strlen": func(str string) int64 {
+			return int64(len([]rune(str)))
+		},
+		"strpos": func(str, substr string) int64 {
+			idx := strings.Index(str, substr)
+			if idx < 0 {
+				return -1
+			}
+
+			return int64(len([]rune(str[:idx])))
+		},
+		"add": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
+				return x + y, nil
+			})
+		},
+		"sub": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
+				return x - y, nil
+			})
+		},
+		"mult": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
+				return x * y, nil
+			})
+		},
+		"div": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
+				if y == 0 {
+					return 0, ErrDivisionByZero
+				}
+
+				return x / y, nil
+			})
+		},
+	}
+}
+
+func wrapInt64ArithmeticFunc(a, b any, f func(x, y int64) (int64, error)) (int64, error) {
+	aInt64, ok := toInt64(a)
+	if !ok {
+		return 0, ErrFailedConvertToInt64
+	}
+
+	bInt64, ok := toInt64(b)
+	if !ok {
+		return 0, ErrFailedConvertToInt64
+	}
+
+	return f(aInt64, bInt64)
+}
+
+func toInt64(v any) (int64, bool) {
+	switch val := v.(type) {
+	case int:
+		return int64(val), true
+	case int8:
+		return int64(val), true
+	case int16:
+		return int64(val), true
+	case int32:
+		return int64(val), true
+	case int64:
+		return val, true
+	case uint:
+		return int64(val), true
+	case uint8:
+		return int64(val), true
+	case uint16:
+		return int64(val), true
+	case uint32:
+		return int64(val), true
+	case uint64:
+		return int64(val), true
+	default:
+		return 0, false
 	}
 }
 
 func castTime(v interface{}) (time.Time, bool) {
 	switch t := v.(type) {
-	case types.CpsTime:
+	case datetime.CpsTime:
 		return t.Time, true
-	case *types.CpsTime:
+	case *datetime.CpsTime:
 		if t == nil {
 			return time.Time{}, false
 		}

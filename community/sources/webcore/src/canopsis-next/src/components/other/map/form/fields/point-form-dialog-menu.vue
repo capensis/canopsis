@@ -1,19 +1,20 @@
-<template lang="pug">
-  v-menu(
-    :value="value",
-    :position-x="positionX",
-    :position-y="positionY",
-    :close-on-content-click="false",
-    ignore-click-outside,
+<template>
+  <v-menu
+    :value="value"
+    :position-x="positionX"
+    :position-y="positionY"
+    :close-on-content-click="false"
+    ignore-click-outside
     absolute
-  )
-    point-form-dialog(
-      v-on="$listeners",
-      v-if="value && point",
-      :point="point",
-      :editing="editing",
+  >
+    <point-form-dialog
+      v-if="value && point"
+      :point="point"
+      :editing="editing"
       :exists-entities="existsEntities"
-    )
+      v-on="$listeners"
+    />
+  </v-menu>
 </template>
 
 <script>

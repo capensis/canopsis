@@ -35,7 +35,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
   >
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value="Chart title"
     />
@@ -61,7 +61,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
 
 exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings with default props 1`] = `
 <v-layout-stub
-  column="column"
+  column=""
   tag="div"
 >
   <field-title-stub
@@ -88,7 +88,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
   >
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value=""
     />

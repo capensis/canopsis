@@ -1,26 +1,38 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        declare-ticket-rule-form(v-model="form")
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <declare-ticket-rule-form v-model="form" />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn(
-          :loading="checking",
-          color="orange",
-          dark,
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="checking"
+          color="orange"
+          dark
           @click="validateTemplateVariables"
-        ) {{ $t('declareTicket.checkSyntax') }}
-        v-btn.primary(
-          :loading="submitting",
+        >
+          {{ $t('declareTicket.checkSyntax') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

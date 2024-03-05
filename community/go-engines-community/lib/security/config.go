@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"gopkg.in/yaml.v3"
 )
 
@@ -131,14 +131,14 @@ func LoadConfig(configDir string) (Config, error) {
 
 func validateOAuth2Config(config OAuth2ProviderConfig) error {
 	if config.ExpirationInterval != "" {
-		_, err := types.ParseDurationWithUnit(config.ExpirationInterval)
+		_, err := datetime.ParseDurationWithUnit(config.ExpirationInterval)
 		if err != nil {
 			return fmt.Errorf("invalid expiration_interval: %w", err)
 		}
 	}
 
 	if config.InactivityInterval != "" {
-		_, err := types.ParseDurationWithUnit(config.InactivityInterval)
+		_, err := datetime.ParseDurationWithUnit(config.InactivityInterval)
 		if err != nil {
 			return fmt.Errorf("invalid inactivity_interval: %w", err)
 		}
@@ -190,28 +190,28 @@ func validateConfig(config Config) error {
 		switch name {
 		case AuthMethodBasic:
 			if config.Security.Basic.ExpirationInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Basic.ExpirationInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Basic.ExpirationInterval)
 				if err != nil {
 					return fmt.Errorf("invalid basic.expiration_interval: %w", err)
 				}
 			}
 
 			if config.Security.Basic.InactivityInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Basic.InactivityInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Basic.InactivityInterval)
 				if err != nil {
 					return fmt.Errorf("invalid basic.inactivity_interval: %w", err)
 				}
 			}
 		case AuthMethodLdap:
 			if config.Security.Ldap.ExpirationInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Ldap.ExpirationInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Ldap.ExpirationInterval)
 				if err != nil {
 					return fmt.Errorf("invalid ldap.expiration_interval: %w", err)
 				}
 			}
 
 			if config.Security.Ldap.InactivityInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Ldap.InactivityInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Ldap.InactivityInterval)
 				if err != nil {
 					return fmt.Errorf("invalid ldap.inactivity_interval: %w", err)
 				}
@@ -222,14 +222,14 @@ func validateConfig(config Config) error {
 			}
 		case AuthMethodCas:
 			if config.Security.Cas.ExpirationInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Cas.ExpirationInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Cas.ExpirationInterval)
 				if err != nil {
 					return fmt.Errorf("invalid cas.expiration_interval: %w", err)
 				}
 			}
 
 			if config.Security.Cas.InactivityInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Cas.InactivityInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Cas.InactivityInterval)
 				if err != nil {
 					return fmt.Errorf("invalid cas.inactivity_interval: %w", err)
 				}
@@ -240,14 +240,14 @@ func validateConfig(config Config) error {
 			}
 		case AuthMethodSaml:
 			if config.Security.Saml.ExpirationInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Saml.ExpirationInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Saml.ExpirationInterval)
 				if err != nil {
 					return fmt.Errorf("invalid saml.expiration_interval: %w", err)
 				}
 			}
 
 			if config.Security.Saml.InactivityInterval != "" {
-				_, err := types.ParseDurationWithUnit(config.Security.Saml.InactivityInterval)
+				_, err := datetime.ParseDurationWithUnit(config.Security.Saml.InactivityInterval)
 				if err != nil {
 					return fmt.Errorf("invalid saml.inactivity_interval: %w", err)
 				}

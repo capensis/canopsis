@@ -26,23 +26,23 @@ func NewChangeEntityApplicator(
 	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event types.Event, regexMatchWrapper RegexMatchWrapper) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper)
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (string, bool, error) {
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
-		return OutcomeDrop, event, err
+		return OutcomeDrop, false, err
 	}
 
 	templateParams := Template{
-		Event:             event,
-		RegexMatchWrapper: regexMatchWrapper,
-		ExternalData:      externalData,
+		Event:        event,
+		RegexMatch:   regexMatch,
+		ExternalData: externalData,
 	}
 
 	if rule.Config.Resource.Text != "" {
 		resource, err := ExecuteParsedTemplate(rule.ID, "Resource", rule.Config.Resource,
-			templateParams.GetTemplate(), event, a.failureService, a.templateExecutor)
+			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.Resource = resource
@@ -50,9 +50,9 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 
 	if rule.Config.Component.Text != "" {
 		component, err := ExecuteParsedTemplate(rule.ID, "Component", rule.Config.Component,
-			templateParams.GetTemplate(), event, a.failureService, a.templateExecutor)
+			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.Component = component
@@ -60,9 +60,9 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 
 	if rule.Config.Connector.Text != "" {
 		connector, err := ExecuteParsedTemplate(rule.ID, "Connector", rule.Config.Connector,
-			templateParams.GetTemplate(), event, a.failureService, a.templateExecutor)
+			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.Connector = connector
@@ -70,18 +70,18 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 
 	if rule.Config.ConnectorName.Text != "" {
 		connectorName, err := ExecuteParsedTemplate(rule.ID, "ConnectorName", rule.Config.ConnectorName,
-			templateParams.GetTemplate(), event, a.failureService, a.templateExecutor)
+			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.ConnectorName = connectorName
 	}
 
-	return OutcomePass, event, nil
+	return OutcomePass, false, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule ParsedRule, event types.Event, regexMatchWrapper RegexMatchWrapper) (map[string]interface{}, error) {
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -93,8 +93,8 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Parse
 		}
 
 		data, err := getter.Get(ctx, rule.ID, name, event, parameters, Template{
-			Event:             event,
-			RegexMatchWrapper: regexMatchWrapper,
+			Event:      event,
+			RegexMatch: regexMatch,
 		})
 		if err != nil {
 			return externalData, err

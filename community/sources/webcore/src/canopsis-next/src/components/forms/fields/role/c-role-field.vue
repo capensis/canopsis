@@ -1,21 +1,21 @@
-<template lang="pug">
-  component(
-    v-field="value",
-    v-validate="rules",
-    :is="component",
-    :items="availableRoles",
-    :label="label || $tc('common.role')",
-    :loading="pending",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
-    :multiple="multiple",
-    :chips="chips",
-    :small-chips="chips",
-    item-text="name",
-    item-value="_id",
+<template>
+  <component
+    :is="component"
+    v-field="value"
+    v-validate="rules"
+    :items="availableRoles"
+    :label="label || $tc('common.role')"
+    :loading="pending"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
+    :multiple="multiple"
+    :chips="chips"
+    :small-chips="chips"
+    item-text="name"
+    item-value="_id"
     return-object
-  )
+  />
 </template>
 
 <script>
@@ -60,6 +60,10 @@ export default {
     chips: {
       type: Boolean,
       default: false,
+    },
+    permission: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -117,7 +121,13 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await this.fetchRolesListWithoutStore({ params: { limit: MAX_LIMIT } });
+      const params = { limit: MAX_LIMIT };
+
+      if (this.permission) {
+        params.permission = this.permission;
+      }
+
+      const { data: items } = await this.fetchRolesListWithoutStore({ params });
 
       this.items = items;
       this.pending = false;

@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
@@ -14,8 +13,36 @@ const stubs = {
   'c-runtime-template': CRuntimeTemplate,
 };
 
+const selectAlarmColumnCell = wrapper => wrapper.find('alarm-column-cell-stub');
+
 describe('alarm-column-value', () => {
-  const snapshotFactory = generateRenderer(AlarmColumnValue, { stubs });
+  const snapshotFactory = generateRenderer(AlarmColumnValue, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const factory = generateShallowRenderer(AlarmColumnValue, { stubs });
+
+  it('Click state emitted after trigger click state event on alarm cell', async () => {
+    const wrapper = factory({
+      propsData: {
+        alarm: {
+          entity: {},
+        },
+        widget: {},
+        column: {
+          colorIndicator: COLOR_INDICATOR_TYPES.state,
+        },
+      },
+    });
+
+    selectAlarmColumnCell(wrapper).triggerCustomEvent('click:state');
+
+    expect(wrapper).toHaveBeenEmit('click:state');
+  });
 
   it('Renders `alarm-column-value` with required props', async () => {
     const wrapper = snapshotFactory({
@@ -30,7 +57,7 @@ describe('alarm-column-value', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value` with custom props', async () => {
@@ -48,7 +75,7 @@ describe('alarm-column-value', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value` with custom template', async () => {
@@ -72,6 +99,6 @@ describe('alarm-column-value', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

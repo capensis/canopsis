@@ -1,40 +1,55 @@
-<template lang="pug">
-  v-layout(column)
-    c-information-block-row(:label="$t('testSuite.xmlFeed')", :value="testSuite.xml_feed")
-    c-information-block-row(:label="$t('common.name')", :value="testSuite.name")
-    c-information-block-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
-    c-information-block-row(
-      :label="$t('testSuite.lastUpdate')"
-    ) {{ testSuite.last_update | date('testSuiteFormat') }}
-    c-information-block-row(
-      :label="$t('common.timeTaken')"
-    )
-      span(v-if="testSuite.time") {{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}
-    v-layout.mt-4(row)
-      v-layout(column)
-        c-information-block-row(:label="$t('testSuite.totalTests')", :value="testSuite.total")
-        test-suite-summary-status-row(
-          :label="$t('testSuite.disabledTests')",
-          :total="testSuite.total",
+<template>
+  <v-layout column>
+    <c-information-block-row
+      :label="$t('testSuite.xmlFeed')"
+      :value="testSuite.xml_feed"
+    />
+    <c-information-block-row
+      :label="$t('common.name')"
+      :value="testSuite.name"
+    />
+    <c-information-block-row
+      :label="$t('testSuite.hostname')"
+      :value="testSuite.hostname"
+    />
+    <c-information-block-row :label="$t('testSuite.lastUpdate')">
+      {{ testSuite.last_update | date('testSuiteFormat') }}
+    </c-information-block-row>
+    <c-information-block-row :label="$t('common.timeTaken')">
+      <span v-if="testSuite.time">{{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}</span>
+    </c-information-block-row>
+    <v-layout class="mt-4">
+      <v-layout column>
+        <c-information-block-row
+          :label="$t('testSuite.totalTests')"
+          :value="testSuite.total"
+        />
+        <test-suite-summary-status-row
+          :label="$t('testSuite.disabledTests')"
+          :total="testSuite.total"
           :count="testSuite.disabled"
-        )
-        test-suite-summary-status-row(
-          :label="$tc('common.error', 2)",
-          :total="testSuite.total",
+        />
+        <test-suite-summary-status-row
+          :label="$tc('common.error', 2)"
+          :total="testSuite.total"
           :count="testSuite.errors"
-        )
-        test-suite-summary-status-row(
-          :label="$t('common.failures')",
-          :total="testSuite.total",
+        />
+        <test-suite-summary-status-row
+          :label="$t('common.failures')"
+          :total="testSuite.total"
           :count="testSuite.failures"
-        )
-        test-suite-summary-status-row(
-          :label="$t('common.skipped')",
-          :total="testSuite.total",
+        />
+        <test-suite-summary-status-row
+          :label="$t('common.skipped')"
+          :total="testSuite.total"
           :count="testSuite.skipped"
-        )
-      v-flex(xs4)
-        test-suite-status-pie-chart(:statuses="testSuiteStatuses")
+        />
+      </v-layout>
+      <v-flex xs4>
+        <test-suite-status-pie-chart :statuses="testSuiteStatuses" />
+      </v-flex>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

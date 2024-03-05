@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import AlarmPbehaviorCounters from '@/components/widgets/service-weather/alarm-pbehavior-counters.vue';
 
@@ -45,7 +43,7 @@ describe('alarm-pbehavior-counters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -57,7 +55,7 @@ describe('alarm-pbehavior-counters', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 });

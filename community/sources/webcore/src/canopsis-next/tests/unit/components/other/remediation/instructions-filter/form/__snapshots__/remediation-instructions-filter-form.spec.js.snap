@@ -3,7 +3,7 @@
 exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with custom props 1`] = `
 <div>
   <div
-    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
     <div
       class="v-input__control"
@@ -16,39 +16,36 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           class="v-input--radio-group__input"
           role="radiogroup"
         >
-          <label
-            aria-hidden="true"
+          <legend
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             For alarms by instructions
-          </label>
+          </legend>
           <div
-            class="v-radio theme--light"
+            class="v-radio theme--light v-item--active"
           >
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light primary--text"
+              >
+                radio_button_checked
+              </i>
               <input
-                aria-checked="false"
-                aria-label="Show alarms with selected instructions"
+                aria-checked="true"
                 name="with"
                 role="radio"
                 type="radio"
                 value="true"
               />
               <div
-                class="v-input--selection-controls__ripple"
+                class="v-input--selection-controls__ripple primary--text"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -61,9 +58,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show alarms without selected instructions"
                 name="with"
                 role="radio"
                 type="radio"
@@ -72,15 +74,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -92,7 +87,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     </div>
   </div>
   <div
-    class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--switch primary--text"
   >
     <div
       class="v-input__control"
@@ -105,8 +100,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         >
           <input
             aria-checked="true"
-            aria-label="Select all"
-            role="checkbox"
+            aria-disabled="false"
+            role="switch"
             type="checkbox"
             value=""
           />
@@ -126,7 +121,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           </div>
         </div>
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: relative;"
         >
@@ -134,7 +128,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         </label>
       </div>
       <div
-        class="v-messages theme--light"
+        class="v-messages theme--light primary--text"
       >
         <transition-group-stub
           class="v-messages__wrapper"
@@ -145,13 +139,13 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     </div>
   </div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex md3 xs6"
     >
       <div
-        class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
       >
         <div
           class="v-input__control"
@@ -162,27 +156,25 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                check_box
+              </i>
               <input
                 aria-checked="true"
-                aria-label="Automatic"
                 disabled="disabled"
                 role="checkbox"
                 type="checkbox"
                 value=""
               />
               <div
-                class="v-input--selection-controls__ripple primary--text"
+                class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light primary--text"
-              >
-                check_box
-              </i>
             </div>
             <label
-              aria-hidden="true"
-              class="v-label theme--light"
+              class="v-label v-label--is-disabled theme--light"
               style="left: 0px; position: relative;"
             >
               Automatic
@@ -201,7 +193,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
     <div
-      class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
     >
       <div
         class="v-input__control"
@@ -212,27 +204,25 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              check_box
+            </i>
             <input
               aria-checked="true"
-              aria-label="Manual"
               disabled="disabled"
               role="checkbox"
               type="checkbox"
               value=""
             />
             <div
-              class="v-input--selection-controls__ripple primary--text"
+              class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light primary--text"
-            >
-              check_box
-            </i>
           </div>
           <label
-            aria-hidden="true"
-            class="v-label theme--light"
+            class="v-label v-label--is-disabled theme--light"
             style="left: 0px; position: relative;"
           >
             Manual
@@ -251,20 +241,21 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     </div>
   </div>
   <div
-    class="v-input v-text-field v-select v-input--is-disabled theme--light"
-    role="combobox"
+    class="v-input v-input--is-disabled theme--light v-text-field v-select v-select--is-multi"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--is-disabled theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -274,11 +265,9 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             class="v-select__selections"
           >
             <input
-              aria-label="Selected instructions"
               aria-readonly="false"
-              autocomplete="on"
+              autocomplete="off"
               disabled="disabled"
-              name="instructions"
               readonly="readonly"
               type="text"
             />
@@ -286,14 +275,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           <div
             class="v-input__append-inner"
           >
-            <div
-              class="v-input__icon v-input__icon--"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon v-icon--disabled v-icon--link material-icons theme--light"
-              />
-            </div>
+            <div />
           </div>
           <div
             class="v-input__append-inner"
@@ -303,16 +285,22 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             >
               <i
                 aria-hidden="true"
-                class="v-icon v-icon--disabled material-icons theme--light"
+                class="v-icon notranslate v-icon--disabled material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            name="instructions"
+            type="hidden"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -320,8 +308,10 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -331,13 +321,13 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     >
       <c-help-icon-stub
         icon="help"
-        left="left"
+        left=""
         text="Instructions of selected type are excluded from the list"
       />
     </div>
   </div>
   <div
-    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+    class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
     <div
       class="v-input__control"
@@ -350,22 +340,26 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           class="v-input--radio-group__input"
           role="radiogroup"
         >
-          <label
-            aria-hidden="true"
+          <legend
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             Alarms list display
-          </label>
+          </legend>
           <div
             class="v-radio theme--light"
           >
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show all filtered alarms"
                 name="with"
                 role="radio"
                 type="radio"
@@ -374,15 +368,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -395,9 +382,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show filtered alarms with instructions in progress"
                 name="with"
                 role="radio"
                 type="radio"
@@ -406,15 +398,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -427,9 +412,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Hide filtered alarms with instructions in progress"
                 name="with"
                 role="radio"
                 type="radio"
@@ -438,15 +428,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -463,7 +446,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
 exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with default props 1`] = `
 <div>
   <div
-    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+    class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
     <div
       class="v-input__control"
@@ -476,22 +459,26 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           class="v-input--radio-group__input"
           role="radiogroup"
         >
-          <label
-            aria-hidden="true"
+          <legend
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             For alarms by instructions
-          </label>
+          </legend>
           <div
             class="v-radio theme--light"
           >
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show alarms with selected instructions"
                 name="with"
                 role="radio"
                 type="radio"
@@ -500,15 +487,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -521,9 +501,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show alarms without selected instructions"
                 name="with"
                 role="radio"
                 type="radio"
@@ -532,15 +517,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -552,7 +530,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     </div>
   </div>
   <div
-    class="v-input v-input--selection-controls v-input--switch theme--light"
+    class="v-input theme--light v-input--selection-controls v-input--switch"
   >
     <div
       class="v-input__control"
@@ -565,8 +543,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         >
           <input
             aria-checked="false"
-            aria-label="Select all"
-            role="checkbox"
+            aria-disabled="false"
+            role="switch"
             type="checkbox"
             value=""
           />
@@ -586,7 +564,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           </div>
         </div>
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: relative;"
         >
@@ -605,13 +582,13 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     </div>
   </div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex md3 xs6"
     >
       <div
-        class="v-input v-input--selection-controls v-input--checkbox theme--light"
+        class="v-input theme--light v-input--selection-controls v-input--checkbox"
       >
         <div
           class="v-input__control"
@@ -622,9 +599,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                check_box_outline_blank
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Automatic"
                 role="checkbox"
                 type="checkbox"
                 value=""
@@ -632,15 +614,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check_box_outline_blank
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -660,7 +635,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
     <div
-      class="v-input v-input--selection-controls v-input--checkbox theme--light"
+      class="v-input theme--light v-input--selection-controls v-input--checkbox"
     >
       <div
         class="v-input__control"
@@ -671,9 +646,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
             <input
               aria-checked="false"
-              aria-label="Manual"
               role="checkbox"
               type="checkbox"
               value=""
@@ -681,15 +661,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -709,20 +682,21 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     </div>
   </div>
   <div
-    class="v-input v-text-field v-select theme--light"
-    role="combobox"
+    class="v-input theme--light v-text-field v-select v-select--is-multi"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -732,10 +706,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             class="v-select__selections"
           >
             <input
-              aria-label="Selected instructions"
               aria-readonly="false"
-              autocomplete="on"
-              name="instructions"
+              autocomplete="off"
               readonly="readonly"
               type="text"
             />
@@ -743,14 +715,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           <div
             class="v-input__append-inner"
           >
-            <div
-              class="v-input__icon v-input__icon--"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon v-icon--link material-icons theme--light"
-              />
-            </div>
+            <div />
           </div>
           <div
             class="v-input__append-inner"
@@ -760,16 +725,22 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            name="instructions"
+            type="hidden"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -777,8 +748,10 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -788,13 +761,13 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
     >
       <c-help-icon-stub
         icon="help"
-        left="left"
+        left=""
         text="Instructions of selected type are excluded from the list"
       />
     </div>
   </div>
   <div
-    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+    class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
     <div
       class="v-input__control"
@@ -807,22 +780,26 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
           class="v-input--radio-group__input"
           role="radiogroup"
         >
-          <label
-            aria-hidden="true"
+          <legend
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             Alarms list display
-          </label>
+          </legend>
           <div
             class="v-radio theme--light"
           >
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show all filtered alarms"
                 name="with"
                 role="radio"
                 type="radio"
@@ -831,15 +808,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -852,9 +822,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Show filtered alarms without instructions in progress"
                 name="with"
                 role="radio"
                 type="radio"
@@ -863,15 +838,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -884,9 +852,14 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Hide filtered alarms without instructions in progress"
                 name="with"
                 role="radio"
                 type="radio"
@@ -895,15 +868,8 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >

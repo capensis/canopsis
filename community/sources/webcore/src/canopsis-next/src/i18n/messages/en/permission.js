@@ -19,6 +19,8 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Rights for Line Chart',
     [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Rights for Pie Chart',
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Rights for Numbers',
+    [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Rights for User Statistics',
+    [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Rights for Alarm Statistics',
   },
   api: {
     general: 'General',
@@ -448,11 +450,63 @@ export default {
     },
 
     /**
+     * Business User Statistics
+     */
+    [USERS_PERMISSIONS.business.userStatistics.actions.interval]: {
+      name: 'User Statistics: interval',
+      description: 'Users with this permission can change time interval for the data displayed',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.listFilters]: {
+      name: 'User Statistics: view filters',
+      description: 'Users with this permission can see the list of filters available',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.editFilter]: {
+      name: 'User Statistics: edit filters',
+      description: 'Users with this permission can edit filters',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.addFilter]: {
+      name: 'User Statistics: add filters',
+      description: 'Users with this permission can add filters',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.userFilter]: {
+      name: 'User Statistics: show filters',
+      description: 'The filter is shown for users with this permission',
+    },
+
+    /**
+     * Business Alarm Statistics
+     */
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.interval]: {
+      name: 'Alarm Statistics: interval',
+      description: 'Users with this permission can change time interval for the data displayed',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.listFilters]: {
+      name: 'Alarm Statistics: view filters',
+      description: 'Users with this permission can see the list of filters available',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.editFilter]: {
+      name: 'Alarm Statistics: edit filters',
+      description: 'Users with this permission can edit filters',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.addFilter]: {
+      name: 'Alarm Statistics: add filters',
+      description: 'Users with this permission can add filters',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
+      name: 'Alarm Statistics: show filters',
+      description: 'The filter is shown for users with this permission',
+    },
+
+    /**
      * Technical General Permissions
      */
     [USERS_PERMISSIONS.technical.view]: {
       name: 'Views',
       description: 'This permission defines the access to the list of views',
+    },
+    [USERS_PERMISSIONS.technical.privateView]: {
+      name: 'Private views',
+      description: 'This permission defines the access to the list of private views',
     },
     [USERS_PERMISSIONS.technical.role]: {
       name: 'Roles',
@@ -677,6 +731,10 @@ export default {
     [USERS_PERMISSIONS.api.general.viewgroup]: {
       name: 'View groups',
       description: 'Access to API route to CRUD view groups',
+    },
+    [USERS_PERMISSIONS.api.general.privateViewGroups]: {
+      name: 'Private view groups',
+      description: 'Access to API route to CRUD private view groups',
     },
     [USERS_PERMISSIONS.api.general.userInterfaceUpdate]: {
       name: 'Update user interface',

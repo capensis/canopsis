@@ -1,5 +1,8 @@
-<template lang="pug">
-  span.caption.text--secondary(:class="{ 'error--text': error }") {{ message }}
+<template>
+  <span
+    :class="{ 'error--text': error }"
+    class="text-caption text--secondary"
+  >{{ message }}</span>
 </template>
 
 <script>

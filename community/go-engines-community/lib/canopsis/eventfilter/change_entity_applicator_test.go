@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
@@ -217,7 +218,7 @@ func TestChangeEntityApply(t *testing.T) {
 				ConnectorName: "connector name",
 			},
 			regexMatches: eventfilter.RegexMatch{
-				EventRegexMatches: pattern.EventRegexMatches{
+				EventRegexMatches: match.EventRegexMatches{
 					ExtraInfos: map[string]pattern.RegexMatches{
 						"data": map[string]string{
 							"match": "new value",
@@ -246,7 +247,7 @@ func TestChangeEntityApply(t *testing.T) {
 				ConnectorName: "connector name",
 			},
 			regexMatches: eventfilter.RegexMatch{
-				EventRegexMatches: pattern.EventRegexMatches{
+				EventRegexMatches: match.EventRegexMatches{
 					ExtraInfos: map[string]pattern.RegexMatches{
 						"data": map[string]string{
 							"match": "new value",
@@ -275,7 +276,7 @@ func TestChangeEntityApply(t *testing.T) {
 				ConnectorName: "connector name",
 			},
 			regexMatches: eventfilter.RegexMatch{
-				EventRegexMatches: pattern.EventRegexMatches{
+				EventRegexMatches: match.EventRegexMatches{
 					ExtraInfos: map[string]pattern.RegexMatches{
 						"data": map[string]string{
 							"match": "new value",
@@ -304,7 +305,7 @@ func TestChangeEntityApply(t *testing.T) {
 				ConnectorName: "new value",
 			},
 			regexMatches: eventfilter.RegexMatch{
-				EventRegexMatches: pattern.EventRegexMatches{
+				EventRegexMatches: match.EventRegexMatches{
 					ExtraInfos: map[string]pattern.RegexMatches{
 						"data": map[string]string{
 							"match": "new value",
@@ -317,11 +318,7 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, eventfilter.RegexMatchWrapper{
-				BackwardCompatibility: false,
-				RegexMatch:            dataSet.regexMatches,
-			})
-
+			outcome, _, err := applicator.Apply(context.Background(), dataSet.rule, &dataSet.event, dataSet.regexMatches)
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
@@ -330,8 +327,8 @@ func TestChangeEntityApply(t *testing.T) {
 				t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, outcome)
 			}
 
-			if !reflect.DeepEqual(dataSet.expectedEvent, resultEvent) {
-				t.Errorf("expected event %v, but got %v", dataSet.expectedEvent, resultEvent)
+			if !reflect.DeepEqual(dataSet.expectedEvent, dataSet.event) {
+				t.Errorf("expected event %v, but got %v", dataSet.expectedEvent, dataSet.event)
 			}
 		})
 	}
@@ -372,7 +369,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 		ConnectorName: "connector name",
 	}
 
-	outcome, resultEvent, err := applicator.Apply(
+	outcome, _, err := applicator.Apply(
 		context.Background(),
 		eventfilter.ParsedRule{
 			ExternalData: externalData,
@@ -380,8 +377,8 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 				Resource: tplExecutor.Parse("{{.ExternalData.test.ID}}"),
 			},
 		},
-		event,
-		eventfilter.RegexMatchWrapper{},
+		&event,
+		eventfilter.RegexMatch{},
 	)
 
 	if err != nil {
@@ -392,7 +389,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 		t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, outcome)
 	}
 
-	if !reflect.DeepEqual(expectedEvent, resultEvent) {
-		t.Errorf("expected event %v, but got %v", expectedEvent, resultEvent)
+	if !reflect.DeepEqual(expectedEvent, event) {
+		t.Errorf("expected event %v, but got %v", expectedEvent, event)
 	}
 }

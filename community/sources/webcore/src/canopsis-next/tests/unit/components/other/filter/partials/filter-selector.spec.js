@@ -63,14 +63,9 @@ describe('filter-selector', () => {
 
     const [, filter] = filters;
 
-    filterSelectField.vm.$emit('input', filter._id);
+    filterSelectField.triggerCustomEvent('input', filter._id);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(filter._id);
+    expect(wrapper).toEmitInput(filter._id);
   });
 
   it('Renders `filter-selector` with default props', () => {
@@ -78,7 +73,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -95,7 +90,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -112,7 +107,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -127,7 +122,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -141,7 +136,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

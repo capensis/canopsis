@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,11 +53,12 @@ func (m *alarmMatcher) Match(entity types.Entity, alarm types.Alarm) []string {
 
 	matchedTags := make([]string, 0)
 	for _, tag := range m.tags {
-		ok, err := tag.EntityPattern.Match(entity)
+		ok, err := match.MatchEntityPattern(tag.EntityPattern, &entity)
 		if err != nil || !ok {
 			continue
 		}
-		ok, err = tag.AlarmPattern.Match(alarm)
+
+		ok, err = match.MatchAlarmPattern(tag.AlarmPattern, &alarm)
 		if err != nil || !ok {
 			continue
 		}

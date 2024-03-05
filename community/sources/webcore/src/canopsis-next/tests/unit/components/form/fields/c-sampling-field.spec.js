@@ -1,7 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SAMPLINGS } from '@/constants';
+
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 
 const stubs = {
@@ -22,12 +23,7 @@ describe('c-sampling-field', () => {
 
     selectElement.setValue(SAMPLINGS.hour);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(SAMPLINGS.hour);
+    expect(wrapper).toEmitInput(SAMPLINGS.hour);
   });
 
   it('Renders `c-sampling-field` with default props', () => {
@@ -39,7 +35,7 @@ describe('c-sampling-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -55,7 +51,7 @@ describe('c-sampling-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

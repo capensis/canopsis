@@ -1,20 +1,30 @@
-<template lang="pug">
-  c-zoom-overlay(skip-alt, skip-shift)
-    panzoom.mermaid-preview(
-      ref="panzoom",
-      :style="containerStyles",
+<template>
+  <c-zoom-overlay
+    skip-alt
+    skip-shift
+  >
+    <panzoom
+      ref="panzoom"
+      :style="containerStyles"
       :help-text="$t('mermaid.panzoom.helpText')"
-    )
-      mermaid-code-preview.mermaid-preview__preview(:value="map.parameters.code")
-      mermaid-points-preview.mermaid-preview__points(
-        :points="map.parameters.points",
-        :popup-template="popupTemplate",
-        :popup-actions="popupActions",
-        :color-indicator="colorIndicator",
-        :pbehavior-enabled="pbehaviorEnabled",
-        @show:map="$emit('show:map', $event)",
+      class="mermaid-preview"
+    >
+      <mermaid-code-preview
+        :value="map.parameters.code"
+        class="mermaid-preview__preview"
+      />
+      <mermaid-points-preview
+        :points="map.parameters.points"
+        :popup-template="popupTemplate"
+        :popup-actions="popupActions"
+        :color-indicator="colorIndicator"
+        :pbehavior-enabled="pbehaviorEnabled"
+        class="mermaid-preview__points"
+        @show:map="$emit('show:map', $event)"
         @show:alarms="$emit('show:alarms', $event)"
-      )
+      />
+    </panzoom>
+  </c-zoom-overlay>
 </template>
 
 <script>

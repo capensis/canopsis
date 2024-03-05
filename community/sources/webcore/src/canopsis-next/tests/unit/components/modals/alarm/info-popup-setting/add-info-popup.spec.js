@@ -1,11 +1,11 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import ClickOutside from '@/services/click-outside';
 
 import AddInfoPopup from '@/components/modals/alarm/info-popup-setting/add-info-popup.vue';
@@ -131,9 +131,7 @@ describe('add-info-popup', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -169,14 +167,14 @@ describe('add-info-popup', () => {
       vm: infoPopupForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -193,9 +191,7 @@ describe('add-info-popup', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -229,9 +225,7 @@ describe('add-info-popup', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -269,9 +263,7 @@ describe('add-info-popup', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -312,11 +304,9 @@ describe('add-info-popup', () => {
       template: Faker.datatype.string(),
     };
 
-    infoPopupForm.vm.$emit('input', newForm);
+    infoPopupForm.triggerCustomEvent('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -338,9 +328,7 @@ describe('add-info-popup', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -361,7 +349,7 @@ describe('add-info-popup', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `add-info-popup` with popup', () => {
@@ -382,6 +370,6 @@ describe('add-info-popup', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

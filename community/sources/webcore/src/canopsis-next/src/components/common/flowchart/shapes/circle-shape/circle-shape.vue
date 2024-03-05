@@ -1,24 +1,25 @@
-<template lang="pug">
-  g(@dblclick.stop="enableEditingMode")
-    circle-figure(
-      v-bind="shape.properties",
-      v-on="$listeners",
-      :x="shape.x",
-      :y="shape.y",
-      :diameter="shape.diameter",
+<template>
+  <g @dblclick.stop="enableEditingMode">
+    <circle-figure
+      v-bind="shape.properties"
+      :x="shape.x"
+      :y="shape.y"
+      :diameter="shape.diameter"
       :cursor="readonly ? '' : 'move'"
-    )
-    text-editor(
-      ref="editor",
-      v-bind="shape.textProperties",
-      :value="shape.text",
-      :y="shape.y",
-      :x="shape.x",
-      :width="shape.diameter",
-      :height="shape.diameter",
-      :editable="editing",
+      v-on="$listeners"
+    />
+    <text-editor
+      ref="editor"
+      v-bind="shape.textProperties"
+      :value="shape.text"
+      :y="shape.y"
+      :x="shape.x"
+      :width="shape.diameter"
+      :height="shape.diameter"
+      :editable="editing"
       @blur="disableEditingMode"
-    )
+    />
+  </g>
 </template>
 
 <script>

@@ -7,7 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
@@ -168,7 +168,7 @@ func (s *store) RetrieveMaintenanceState(ctx context.Context) (bool, error) {
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
-	defaultInterval := types.NewDurationWithUnit(defaultPopupInterval, types.DurationUnitSecond)
+	defaultInterval := datetime.NewDurationWithUnit(defaultPopupInterval, datetime.DurationUnitSecond)
 
 	if model.PopupTimeout == nil {
 		model.PopupTimeout = &PopupTimeout{

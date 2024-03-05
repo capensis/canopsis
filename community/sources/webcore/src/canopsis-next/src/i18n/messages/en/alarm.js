@@ -215,6 +215,7 @@ export default {
     ticketInitiator: 'Ticket initiator',
     ticketCreatedAt: 'Ticket created at',
     ticketData: 'Ticket data',
+    alarmInfos: 'Alarm infos',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
@@ -230,5 +231,6 @@ export default {
     openedChildren: 'Opened consequences',
     closedChildren: 'Closed consequences',
     canceledInitiator: 'Canceled initiator',
+    changeState: 'Change state',
   },
 };

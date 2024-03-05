@@ -3,6 +3,7 @@ package saml
 import (
 	"bytes"
 	"compress/flate"
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
@@ -60,6 +61,7 @@ type serviceProvider struct {
 }
 
 func NewServiceProvider(
+	ctx context.Context,
 	userProvider security.UserProvider,
 	roleCollection mongo.DbCollection,
 	sessionStore libsession.Store,
@@ -88,14 +90,25 @@ func NewServiceProvider(
 
 	idpMetadata := &samltypes.EntityDescriptor{}
 	if config.Security.Saml.IdpMetadataUrl != "" {
-		tr := http.DefaultTransport.(*http.Transport).Clone()
-		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify}
+		dt, ok := http.DefaultTransport.(*http.Transport)
+		if !ok {
+			return nil, errors.New("unknown type of http.DefaultTransport")
+		}
+
+		tr := dt.Clone()
+		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify} //nolint:gosec
 
 		hc := &http.Client{Timeout: MetadataReqTimeout, Transport: tr}
-		res, err := hc.Get(config.Security.Saml.IdpMetadataUrl)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, config.Security.Saml.IdpMetadataUrl, nil)
 		if err != nil {
 			return nil, err
 		}
+
+		res, err := hc.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
 		defer res.Body.Close()
 
 		rawMetadata, err := io.ReadAll(res.Body)
@@ -543,7 +556,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 	err = sp.userProvider.Save(c, user)
 	if err != nil {
 		sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
-		panic(fmt.Errorf("cannot save user: %v", err))
+		panic(fmt.Errorf("cannot save user: %w", err))
 	}
 
 	return user, true

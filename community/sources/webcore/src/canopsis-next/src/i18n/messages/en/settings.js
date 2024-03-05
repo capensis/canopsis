@@ -41,6 +41,7 @@ export default {
   groupColumnNames: 'Column names for meta alarms',
   trackColumnNames: 'Track alarm source columns',
   treeOfDependenciesColumnNames: 'Column names for tree of dependencies',
+  treeOfDependenciesSettings: 'Tree of dependencies settings',
   orderBy: 'Order by',
   periodicRefresh: 'Periodic refresh',
   defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -69,7 +70,12 @@ export default {
   exportAsCsv: 'Export widget as csv file',
   criticityLevels: 'Criticity levels',
   isPriorityEnabled: 'Show priority',
+  isHideGrayEnabled: 'Show hide gray',
+  isSecondaryIconEnabled: 'Show secondary icon',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
+  showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
+  rootCauseSettings: 'Root cause diagram settings',
+  entitiesColorIndicator: 'Entities color indicator',
   alarmsColumns: 'Alarm list columns',
   resolvedAlarmsColumns: 'Column names for resolved alarms',
   activeAlarmsColumns: 'Column names for active alarms',
@@ -293,4 +299,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Split data by value path',
   },
+  entitiesActionsInQueue: 'Stack entities actions and apply simultaneously',
 };

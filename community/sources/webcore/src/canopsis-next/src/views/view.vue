@@ -1,22 +1,33 @@
-<template lang="pug">
-  div.view-wrapper
-    v-fade-transition
-      view-tabs-wrapper(
-        v-if="isViewTabsReady",
-        :editing="editing",
+<template>
+  <div class="view-wrapper">
+    <v-fade-transition>
+      <view-tabs-wrapper
+        v-if="isViewTabsReady"
+        :editing="editing"
         :updatable="hasUpdateAccess"
-      )
-    v-fade-transition
-      view-fab-btns(v-if="view", :active-tab="activeTab", :updatable="hasUpdateAccess")
+      />
+    </v-fade-transition>
+    <v-fade-transition>
+      <view-fab-btns
+        v-if="view"
+        :active-tab="activeTab"
+        :updatable="hasUpdateAccess"
+        :sharable="!view.is_private && hasCreateAnyShareTokenAccess"
+      />
+    </v-fade-transition>
+  </div>
 </template>
 
 <script>
+import { ROUTES_NAMES } from '@/constants';
+
 import Observer from '@/services/observer';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
+import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
 
 import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
@@ -36,6 +47,7 @@ export default {
     queryMixin,
     activeViewMixin,
     viewRouterMixin,
+    permissionsTechnicalShareTokenMixin,
   ],
   props: {
     id: {
@@ -45,7 +57,7 @@ export default {
   },
   computed: {
     hasUpdateAccess() {
-      return this.checkUpdateAccess(this.id);
+      return this.view.is_private || this.checkUpdateAccess(this.id);
     },
 
     activeTab() {
@@ -80,12 +92,16 @@ export default {
   async mounted() {
     const { tabId } = this.$route.query;
 
-    await this.fetchActiveView({ id: this.id });
+    try {
+      await this.fetchActiveView({ id: this.id });
 
-    if (!tabId) {
-      await this.redirectToFirstTab();
-    } else if (!this.activeTab) {
-      await this.redirectToViewRoot();
+      if (!tabId) {
+        await this.redirectToFirstTab();
+      } else if (!this.activeTab) {
+        await this.redirectToViewRoot();
+      }
+    } catch (err) {
+      this.$router.replace({ name: ROUTES_NAMES.home });
     }
   },
 

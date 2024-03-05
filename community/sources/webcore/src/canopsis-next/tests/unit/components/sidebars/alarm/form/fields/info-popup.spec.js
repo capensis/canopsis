@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
+
 import { MODALS } from '@/constants';
 
 import InfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
@@ -66,18 +67,13 @@ describe('info-popup', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Renders `info-popup` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `info-popup` with custom props', () => {
@@ -98,6 +94,6 @@ describe('info-popup', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

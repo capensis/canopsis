@@ -1,16 +1,21 @@
-<template lang="pug">
-  v-card.card-with-see-alarms-btn(
-    v-on="$listeners",
-    :class="itemClasses",
-    tile,
+<template>
+  <v-card
+    :class="itemClasses"
+    class="card-with-see-alarms-btn"
+    tile
     dark
-  )
-    slot
-    v-btn.card-with-see-alarms-btn__btn(
-      v-if="showButton",
-      flat,
+    v-on="$listeners"
+  >
+    <slot />
+    <v-btn
+      v-if="showButton"
+      class="card-with-see-alarms-btn__btn"
+      text
       @click.stop="$emit('show:alarms')"
-    ) {{ $t('common.seeAlarms') }}
+    >
+      {{ $t('common.seeAlarms') }}
+    </v-btn>
+  </v-card>
 </template>
 
 <script>
@@ -31,11 +36,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .card-with-see-alarms-btn {
   --see-alarms-btn-height: 18px;
 
   min-height: unset !important;
+
+  a {
+    color: white;
+  }
 
   &--with-btn {
     padding-bottom: var(--see-alarms-btn-height);
@@ -46,7 +55,7 @@ export default {
     bottom: 0;
     width: 100%;
     font-size: .6em;
-    height: var(--see-alarms-btn-height);
+    height: var(--see-alarms-btn-height) !important;
     margin: 0;
     background-color: rgba(0, 0, 0, .2);
 

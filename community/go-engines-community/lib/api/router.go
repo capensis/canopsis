@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -17,8 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
-	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
-	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
@@ -32,6 +31,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/icon"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -75,6 +75,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
+	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -89,6 +91,12 @@ import (
 
 const BaseUrl = "/api/v4"
 
+const mimeTypeSvg = "image/svg+xml"
+
+const cacheExpiration = time.Hour
+
+// RegisterRoutes
+// nolint: contextcheck
 func RegisterRoutes(
 	ctx context.Context,
 	conf config.CanopsisConf,
@@ -112,7 +120,6 @@ func RegisterRoutes(
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	filesRoot string,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
@@ -120,6 +127,9 @@ func RegisterRoutes(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	authorProvider author.Provider,
 	healthcheckStore healthcheck.Store,
+	tplExecutor libtemplate.Executor,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
+	enableSameServiceNames bool,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -178,7 +188,7 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient, authorProvider), widget.NewStore(dbClient, authorProvider), enforcer, actionLogger)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient, authorProvider), widget.NewStore(dbClient, authorProvider, enforcer), enforcer, actionLogger)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
@@ -203,6 +213,11 @@ func RegisterRoutes(
 			userRouter.PUT("/:id",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				userApi.Update,
+				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
+			userRouter.PATCH("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
+				userApi.Patch,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 			userRouter.DELETE("/:id",
@@ -265,7 +280,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
+		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
+			tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
@@ -366,6 +382,11 @@ func RegisterRoutes(
 			"/alarm-counters",
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.Count,
+		)
+		protected.GET(
+			"/alarm-display-names",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmAPI.GetDisplayNames,
 		)
 		exportExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
@@ -483,7 +504,6 @@ func RegisterRoutes(
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
 				dbClient,
-				libpbehavior.NewEntityMatcher(dbClient),
 				pbhEntityTypeResolver,
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
 				timezoneConfigProvider,
@@ -577,6 +597,18 @@ func RegisterRoutes(
 				entityAPI.GetContextGraph,
 			)
 
+			entityRouter.POST(
+				"/check-state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.CheckStateSetting,
+			)
+
+			entityRouter.GET(
+				"/state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.GetStateSetting,
+			)
+
 			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
@@ -613,7 +645,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, logger), entityPublChan,
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, enableSameServiceNames, logger), entityPublChan,
 			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
@@ -822,73 +854,151 @@ func RegisterRoutes(
 			)
 		}
 
-		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), authorProvider), enforcer, actionLogger)
+		viewAPI := view.NewApi(
+			view.NewStore(
+				dbClient,
+				viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider, enforcer), authorProvider, enforcer),
+				authorProvider,
+				enforcer,
+			),
+			enforcer,
+			actionLogger,
+		)
 		viewRouter := protected.Group("/views")
 		{
 			viewRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionCreate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				middleware.SetAuthor(),
 				viewAPI.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 			viewRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
-				viewAPI.List,
-			)
-			viewRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-				middleware.AuthorizeByID(model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionRead)),
 				viewAPI.Get,
 			)
 			viewRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-				middleware.AuthorizeByID(model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				middleware.SetAuthor(),
 				viewAPI.Update,
 			)
 			viewRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionDelete, enforcer),
-				middleware.AuthorizeByID(model.PermissionDelete, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionDelete,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionDelete)),
 				viewAPI.Delete,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 		}
 
-		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), enforcer, actionLogger)
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider, enforcer), authorProvider, enforcer), enforcer, actionLogger)
 		viewTabRouter := protected.Group("/view-tabs")
 		{
 			viewTabRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				middleware.SetAuthor(),
 				viewTabAPI.Create,
 			)
 			viewTabRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 				viewTabAPI.Get,
 			)
 			viewTabRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				middleware.SetAuthor(),
 				viewTabAPI.Update,
 			)
 			viewTabRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				viewTabAPI.Delete,
 			)
 		}
 
 		widgetAPI := widget.NewApi(
-			widget.NewStore(dbClient, authorProvider),
+			widget.NewStore(dbClient, authorProvider, enforcer),
 			enforcer,
 			widget.NewRequestTransformer(common.NewPatternFieldsTransformer(dbClient), dbClient),
 			actionLogger,
@@ -897,24 +1007,63 @@ func RegisterRoutes(
 		{
 			widgetRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				middleware.SetAuthor(),
 				widgetAPI.Create,
 			)
 			widgetRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 				widgetAPI.Get,
 			)
 			widgetRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				middleware.SetAuthor(),
 				widgetAPI.Update,
 			)
 			widgetRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionUpdate,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				widgetAPI.Delete,
 			)
 		}
@@ -924,36 +1073,90 @@ func RegisterRoutes(
 		{
 			widgetFilterRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				widgetFilterAPI.List,
 			)
 			widgetFilterRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer), // keep PermissionRead for private filters
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer), // keep PermissionRead for private filters
 				middleware.SetAuthor(),
 				widgetFilterAPI.Create,
 			)
 			widgetFilterRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				widgetFilterAPI.Get,
 			)
 			widgetFilterRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer), // keep PermissionRead for private filters
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer), // keep PermissionRead for private filters
 				middleware.SetAuthor(),
 				widgetFilterAPI.Update,
 			)
 			widgetFilterRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjView,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				widgetFilterAPI.Delete,
 			)
 		}
 
 		protected.PUT(
 			"/widget-filter-positions",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionRead,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer),
 			widgetFilterAPI.UpdatePositions,
 		)
 
@@ -1000,13 +1203,31 @@ func RegisterRoutes(
 			)
 			viewGroupRouter.GET(
 				"",
-				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
-				middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionRead, enforcer),
+				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, apisecurity.NewViewOwnedObjectsProvider(dbClient)),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjViewGroup,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				viewGroupAPI.List,
 			)
 			viewGroupRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjViewGroup,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.PermPrivateViewGroups,
+						Act: model.PermissionCan,
+					},
+				}, enforcer),
 				viewGroupAPI.Get,
 			)
 			viewGroupRouter.PUT(
@@ -1024,9 +1245,17 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/view-copy/:id",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
-			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-			middleware.AuthorizeByID(model.PermissionRead, enforcer),
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionUpdate,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer),
+			middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionRead)),
 			middleware.SetAuthor(),
 			viewAPI.Copy,
 			middleware.ReloadEnforcerPolicyOnChange(enforcer),
@@ -1056,29 +1285,65 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/view-tab-copy/:id",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionUpdate,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer),
+			middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 			middleware.SetAuthor(),
 			viewTabAPI.Copy,
 		)
 
 		protected.PUT(
 			"/view-tab-positions",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionUpdate,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer),
 			viewTabAPI.UpdatePositions,
 		)
 
 		protected.POST(
 			"/widget-copy/:id",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionUpdate,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer),
+			middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 			middleware.SetAuthor(),
 			widgetAPI.Copy,
 		)
 
 		protected.PUT(
 			"/widget-grid-positions",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionUpdate,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer),
 			widgetAPI.UpdateGridPositions,
 		)
 
@@ -1171,50 +1436,50 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
-		contextGraphRouter := protected.Group("/contextgraph")
-		{
-			contextGraphRouter.PUT(
-				"import",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportAll,
-			)
-			contextGraphRouter.PUT(
-				"import-partial",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportPartial,
-			)
-			contextGraphRouter.GET(
-				"import/status/:id",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
-				contextGraphAPIV1.Status,
-			)
-		}
-
-		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportAll,
+			contextGraphAPI.ImportAll,
 		)
 		protected.PUT(
 			"contextgraph-import-partial",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportPartial,
+			contextGraphAPI.ImportPartial,
+		)
+		protected.GET(
+			"contextgraph-import-status/:id",
+			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
+			contextGraphAPI.Status,
 		)
 
 		stateSettingsRouter := protected.Group("/state-settings")
 		{
-			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient), actionLogger)
-			stateSettingsRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
-				stateSettingsApi.Update,
+			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient, stateSettingsUpdatesChan), actionLogger)
+			stateSettingsRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionCreate, enforcer),
+				stateSettingsApi.Create,
 			)
 			stateSettingsRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
 				stateSettingsApi.List,
+			)
+			stateSettingsRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				stateSettingsApi.Get,
+			)
+			stateSettingsRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionUpdate, enforcer),
+				stateSettingsApi.Update,
+			)
+			stateSettingsRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionDelete, enforcer),
+				stateSettingsApi.Delete,
 			)
 		}
 
@@ -1235,7 +1500,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(dbClient, authorProvider), viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), enforcer, actionLogger)
+			playlistApi := playlist.NewApi(playlist.NewStore(dbClient, authorProvider), viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider, enforcer), authorProvider, enforcer), enforcer, actionLogger)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer),
@@ -1246,7 +1511,7 @@ func RegisterRoutes(
 			playlistRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionRead, enforcer),
-				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
+				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, nil),
 				playlistApi.List,
 			)
 			playlistRouter.GET(
@@ -1647,6 +1912,22 @@ func RegisterRoutes(
 				)
 			}
 
+			connectorPbehaviorRouter := bulkRouter.Group("/connector-pbehaviors")
+			{
+				connectorPbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorCreate,
+				)
+				connectorPbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorDelete,
+				)
+			}
+
 			entityRouter := bulkRouter.Group("/entities")
 			{
 				entityRouter.PUT(
@@ -1755,7 +2036,7 @@ func RegisterRoutes(
 
 		messageRateStatsRouter := protected.Group("/message-rate-stats")
 		{
-			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient))
+			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient, pgPoolProvider))
 			messageRateStatsRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermMessageRateStatsRead, model.PermissionCan, enforcer),
@@ -1766,7 +2047,7 @@ func RegisterRoutes(
 		fileRouter := protected.Group("/file")
 		{
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
-				filesRoot,
+				conf.File.Upload,
 				libfile.NewEtagEncoder(),
 			), conf.File.UploadMaxSize))
 			fileRouter.POST(
@@ -1787,6 +2068,52 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFile, model.PermissionDelete, enforcer),
 				fileAPI.Delete,
+			)
+		}
+
+		iconsCacheMiddlewareGetter := middleware.NewCacheMiddlewareGetter(cacheExpiration, nil)
+		iconsPath := "/icons"
+		iconRouter := protected.Group(iconsPath)
+		{
+			iconStore := icon.NewStore(
+				dbClient,
+				libfile.NewStorage(conf.File.Icon, libfile.NewEtagEncoder()),
+			)
+			iconApi := icon.NewApi(iconStore, websocketHub, actionLogger, conf.File.IconMaxSize, []string{mimeTypeSvg})
+			iconRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Create,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.GET(
+				"",
+				iconsCacheMiddlewareGetter.Cache(),
+				iconApi.List,
+			)
+			iconRouter.GET(
+				"/:id",
+				security.GetFileAuthMiddleware(),
+				iconsCacheMiddlewareGetter.Cache(),
+				iconApi.Get,
+			)
+			iconRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Delete,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Update,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.PATCH(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Patch,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
 		}
 

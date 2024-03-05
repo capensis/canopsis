@@ -1,16 +1,17 @@
-<template lang="pug">
-  widget-settings-item(:title="label")
-    c-columns-with-template-field(
-      v-field="columns",
-      :type="type",
-      :template="template",
-      :templates="templates",
-      :templates-pending="templatesPending",
-      :with-template="withTemplate",
-      :with-html="withHtml",
-      :with-color-indicator="withColorIndicator",
+<template>
+  <widget-settings-item :title="label">
+    <c-columns-with-template-field
+      v-field="columns"
+      :type="type"
+      :template="template"
+      :templates="templates"
+      :templates-pending="templatesPending"
+      :with-template="withTemplate"
+      :with-html="withHtml"
+      :with-color-indicator="withColorIndicator"
       @update:template="updateTemplate"
-    )
+    />
+  </widget-settings-item>
 </template>
 
 <script>

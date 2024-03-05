@@ -8,9 +8,9 @@ build_oci:
   script:
     - make -C ${OCI_PATH_1} docker-images VERSION=$CI_COMMIT_TAG
     - make -C ${OCI_PATH_2} docker-images VERSION=$CI_COMMIT_TAG
-    - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/community | grep $CI_COMMIT_TAG | xargs -I {} echo docker push {}
+    - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/community | grep $CI_COMMIT_TAG | xargs -I {} docker push {}
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
 build_oci_dev:
   extends: .common
@@ -32,92 +32,64 @@ build_oci_dev:
       grep $CI_COMMIT_TAG |
       xargs -I {} docker push {}
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
-build_rpm_dev:
+source_rpm:
   extends: .common
-  stage: build
-  variables:
-    RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis-develop
+  stage: source
+  tags:
+   - executor-docker
+  image: debian:latest
   before_script:
-    - docker login docker.capensis.fr -u oci_build -p $RPM_REGISTRY_AUTH
-  after_script:
-    - docker logout docker.capensis.fr
-    - rm -rf $RPM_PATH/build/el8
+    - apt update && apt install -y make git
+    - cd ${CANOPSIS_EDITION}
   script:
-    - make -C $RPM_PATH VERSION=$(printf $CI_COMMIT_TAG | sed 's/-/~/g') BUILD_TARGET=el8
-    - cd $RPM_PATH_OUTPUT
-    - >-
-      for rpm_file in $(find . -type f -name "*x86_64.rpm" -printf "%f\n") ;
-      do
-      echo $rpm_file;
-      curl -v -X "POST"
-      -u "ci-builder:$RPM_CI_BUILDER"
-      -H "accept: application/json"
-      -H "Content-Type: multipart/form-data"
-      -H "NX-ANTI-CSRF-TOKEN: $RPM_CSRF_TOKEN"
-      -F "yum.directory=el8/$CANOPSIS_EDITION/x86_64/Packages/"
-      -F "yum.asset=@${rpm_file};type=application/x-rpm"
-      -F "yum.asset.filename=${rpm_file}"
-      "$RPM_URL" ;
-      done
-    - >-
-      for src_rpm_file in $(find . -type f -name "*src.rpm" -printf "%f\n") ;
-      do
-      echo $src_rpm_file;
-      curl -v -X "POST"
-      -u "ci-builder:$RPM_CI_BUILDER"
-      -H "accept: application/json"
-      -H "Content-Type: multipart/form-data"
-      -H "NX-ANTI-CSRF-TOKEN: $RPM_CSRF_TOKEN"
-      -F "yum.directory=el8/$CANOPSIS_EDITION/src/x86_64/Packages/"
-      -F "yum.asset=@${src_rpm_file};type=application/x-rpm"
-      -F "yum.asset.filename=${src_rpm_file}"
-      "$RPM_URL" ;
-      done
+    - export DEFINE_Version="$(printf $CI_COMMIT_TAG)"
+    - make -C dist clean
+    - make -C dist prep-rpm VERSION=$DEFINE_Version
+    - chown -R 1000:1000 dist/build
+  artifacts:
+    paths:
+      - ${CANOPSIS_EDITION}/dist/build
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG && $CI_PROJECT_NAME == "canopsis-pro"
 
 build_rpm:
   extends: .common
   stage: build
+  tags:
+    - executor-docker
+  image: docker.capensis.fr/docker/images/mock-builder:latest
   variables:
-    RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis
-  before_script:
-    - docker login docker.capensis.fr -u oci_build -p $RPM_REGISTRY_AUTH
-  after_script:
-    - docker logout docker.capensis.fr
-    - rm -rf $RPM_PATH/build/el8
+    ENABLE_NETWORK: 1
   script:
-    - make -C $RPM_PATH VERSION=$(printf $CI_COMMIT_TAG | sed 's/-/~/g') BUILD_TARGET=el8
-    - cd $RPM_PATH_OUTPUT
-    - >-
-      for rpm_file in $(find . -type f -name "*x86_64.rpm" -printf "%f\n") ;
-      do
-      echo $rpm_file;
-      curl -v -X "POST"
-      -u "ci-builder:$RPM_CI_BUILDER"
-      -H "accept: application/json"
-      -H "Content-Type: multipart/form-data"
-      -H "NX-ANTI-CSRF-TOKEN: $RPM_CSRF_TOKEN"
-      -F "yum.directory=el8/$CANOPSIS_EDITION/x86_64/Packages/"
-      -F "yum.asset=@${rpm_file};type=application/x-rpm"
-      -F "yum.asset.filename=${rpm_file}"
-      "$RPM_URL" ;
+    - export DEFINE_Version="$(printf $CI_COMMIT_TAG)"
+    - export DEFINE_Version_safe="$(echo ${DEFINE_Version} | sed -e 's/\(.*\)-\([^g][^-]*\)/\1~\2/g' -e 's/-/_/g')"
+    - set -e; for dist in almalinux-8-x86_64 almalinux-9-x86_64; do
+          MOCK_CONFIG=dist/build/${dist}/canopsis.cfg RPMBUILD_DIR=dist/build/${dist} /build.sh;
       done
-    - >-
-      for src_rpm_file in $(find . -type f -name "*src.rpm" -printf "%f\n") ;
-      do
-      echo $src_rpm_file;
-      curl -v -X "POST"
-      -u "ci-builder:$RPM_CI_BUILDER"
-      -H "accept: application/json"
-      -H "Content-Type: multipart/form-data"
-      -H "NX-ANTI-CSRF-TOKEN: $RPM_CSRF_TOKEN"
-      -F "yum.directory=el8/$CANOPSIS_EDITION/src/x86_64/Packages/"
-      -F "yum.asset=@${src_rpm_file};type=application/x-rpm"
-      -F "yum.asset.filename=${src_rpm_file}"
-      "$RPM_URL" ;
-      done
+  artifacts:
+    when: always
+    paths:
+      - ${CANOPSIS_EDITION}/dist/build/*/output/*.rpm
+      - ${CANOPSIS_EDITION}/dist/build/*/output/*.log
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG && $CI_PROJECT_NAME == "canopsis-pro"
+
+release-rpm:
+  stage: release
+  tags:
+    - executor-docker
+  image: docker.capensis.fr/docker/images/publish-rpm:latest
+  variables:
+    RPM_ARCH: x86_64
+  script:
+    - publish-rpm -p el8/${CANOPSIS_EDITION} dist/build/almalinux-8-x86_64/output
+    - publish-rpm -p el9/${CANOPSIS_EDITION} dist/build/almalinux-9-x86_64/output
+  rules:
+    - if: $CI_COMMIT_TAG =~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+      variables:
+        RPM_REPO: ${RPM_REPO_DEVELOP}
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+      variables:
+        RPM_REPO: ${RPM_REPO_RELEASE}

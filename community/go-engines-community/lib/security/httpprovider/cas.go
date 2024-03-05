@@ -40,7 +40,7 @@ func NewCasProvider(
 	}
 }
 
-type casResponse struct {
+type casResponse struct { //nolint:musttag
 	XMLName xml.Name `xml:"http://www.yale.edu/tp/cas serviceResponse"`
 
 	Failure struct {
@@ -95,7 +95,7 @@ func (p *casProvider) validateTicket(
 	ctx context.Context,
 	ticket, service string,
 ) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", p.config.ValidateUrl, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.config.ValidateUrl, nil)
 	if err != nil {
 		return "", err
 	}
@@ -109,6 +109,7 @@ func (p *casProvider) validateTicket(
 		return "", err
 	}
 
+	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
 		return "", err
 	}
@@ -135,7 +136,7 @@ func (p *casProvider) validateTicket(
 func (p *casProvider) saveUser(ctx context.Context, username string) (*security.User, error) {
 	user, err := p.userProvider.FindByExternalSource(ctx, username, security.SourceCas)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find user: %v", err)
+		return nil, fmt.Errorf("cannot find user: %w", err)
 	}
 
 	if user == nil {
@@ -162,7 +163,7 @@ func (p *casProvider) saveUser(ctx context.Context, username string) (*security.
 
 		err = p.userProvider.Save(ctx, user)
 		if err != nil {
-			return nil, fmt.Errorf("cannot save user: %v", err)
+			return nil, fmt.Errorf("cannot save user: %w", err)
 		}
 	} else if !user.IsEnabled {
 		return nil, nil

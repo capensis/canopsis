@@ -1,18 +1,20 @@
-<template lang="pug">
-  v-radio-group.mt-0(
-    v-field="value",
-    :label="$t('remediation.instruction.type')",
-    :disabled="disabled",
-    hide-details,
+<template>
+  <v-radio-group
+    v-field="value"
+    :label="$t('remediation.instruction.type')"
+    :disabled="disabled"
+    class="mt-0"
+    hide-details
     mandatory
-  )
-    v-radio(
-      v-for="type in types",
-      :key="type.value",
-      :label="type.label",
-      :value="type.value",
+  >
+    <v-radio
+      v-for="type in types"
+      :key="type.value"
+      :label="type.label"
+      :value="type.value"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

@@ -1,29 +1,47 @@
-<template lang="pug">
-  v-layout(column)
-    c-alert(v-if="!webhooks.length", type="info") {{ $t('declareTicket.emptyWebhooks') }}
-    c-card-iterator-field.mb-2(
-      v-field="webhooks",
-      item-key="key",
-      :disabled="disabled",
+<template>
+  <v-layout column>
+    <c-alert
+      v-if="!webhooks.length"
+      type="info"
+    >
+      {{ $t('declareTicket.emptyWebhooks') }}
+    </c-alert>
+    <c-card-iterator-field
+      v-field="webhooks"
+      :disabled="disabled"
       :draggable-group="draggableGroup"
-    )
-      template(#item="{ index, item: webhook }")
-        declare-ticket-rule-webhook-field(
-          v-field="webhooks[index]",
-          :name="`${name}.${webhook.key}`",
-          :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled",
-          :has-previous="!!index",
-          :webhook-number="index + 1",
+      class="mb-2"
+      item-key="key"
+    >
+      <template #item="{ index, item: webhook }">
+        <declare-ticket-rule-webhook-field
+          v-field="webhooks[index]"
+          :name="`${name}.${webhook.key}`"
+          :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled"
+          :has-previous="!!index"
+          :webhook-number="index + 1"
           @remove="removeItemFromArray(index)"
-        )
-    v-layout(row, align-center)
-      v-btn.ml-0(
-        :color="hasWebhooksErrors ? 'error' : 'primary'",
-        :disabled="disabled",
-        outline,
+        />
+      </template>
+    </c-card-iterator-field>
+    <v-layout align-center>
+      <v-btn
+        :color="hasWebhooksErrors ? 'error' : 'primary'"
+        :disabled="disabled"
+        class="ml-0"
+        outlined
         @click="addWebhook"
-      ) {{ $t('declareTicket.addWebhook') }}
-      span.error--text(v-show="hasWebhooksErrors") {{ $t('declareTicket.errors.webhookRequired') }}
+      >
+        {{ $t('declareTicket.addWebhook') }}
+      </v-btn>
+      <span
+        v-show="hasWebhooksErrors"
+        class="error--text"
+      >
+        {{ $t('declareTicket.errors.webhookRequired') }}
+      </span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

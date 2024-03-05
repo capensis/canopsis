@@ -2,6 +2,26 @@
 
 Cette procédure décrit l'installation de Canopsis avec Docker Compose.
 
+!!! Warning
+    La présente documentation décrit un déploiement où tous les services
+    (*backends* et applicatifs) seront exécutés dans des conteneurs Docker, le
+    tout sur une seule machine.
+
+    Ce type d'installation permet de monter très facilement un environnement de
+    test reproductible et jetable.
+
+    Cependant, **cette architecture n'est pas adaptée pour de la production**.
+    En effet, en production, il serait recommandé d'installer les services
+    *backends* – bases de données en particulier – hors de Docker, puis de
+    mettre les conteneurs applicatifs sur *plusieurs* hôtes Docker afin d'avoir
+    une certaine haute disponibilité (tolérance de panne).
+
+    Le déploiement multi-nœuds fait l'objet d'un accompagnement spécifique par
+    [Capensis][capensis] dans le cadre d'une souscription à l'édition Pro de
+    Canopsis.
+
+[capensis]: https://www.capensis.fr/
+
 ## Prérequis
 
 ### Utilisation de Docker Compose
@@ -9,7 +29,7 @@ Cette procédure décrit l'installation de Canopsis avec Docker Compose.
 [Docker Compose](https://docs.docker.com/compose/) est actuellement l'orchestrateur Docker à utiliser pour Canopsis.
 
 !!! important
-    Les conteneurs Docker produits pour Canopsis ne sont pas garantis d'être compatibles avec un autre orchestrateur que Docker Compose. La compatibilité avec d'autres outils tels que Kubernetes, Docker Swarm, Consul, OpenShift, etc. n'est ainsi pas assurée.
+    Les conteneurs Docker et configurations Docker Compose fournies par Canopsis sont maintenues et testées seulement avec Docker Compose. La compatibilité directe avec d'autres outils d'orchestration tels que Kubernetes, Docker Swarm, Consul, OpenShift, etc. n'est à ce jour pas assurée.
 
 ### Prérequis de version du noyau Linux
 

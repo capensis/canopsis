@@ -1,6 +1,6 @@
 import { range } from 'lodash';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -9,6 +9,7 @@ import {
 } from '@unit/utils/table';
 
 import { PATTERN_TYPES } from '@/constants';
+
 import PatternsList from '@/components/other/pattern/patterns-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
@@ -16,7 +17,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
@@ -43,30 +43,24 @@ describe('patterns-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
     });
 
-    const firstCheckbox = selectRowCheckboxByIndex(wrapper, 0);
-    await firstCheckbox.vm.$emit('change', true);
+    await flushPromises();
 
-    const thirdCheckbox = selectRowCheckboxByIndex(wrapper, 2);
-    await thirdCheckbox.vm.$emit('change', true);
+    await selectRowCheckboxByIndex(wrapper, 0).trigger('click');
+    await selectRowCheckboxByIndex(wrapper, 2).trigger('click');
 
     const massRemoveButton = selectMassRemoveButton(wrapper);
+    await massRemoveButton.triggerCustomEvent('click');
 
-    await massRemoveButton.vm.$emit('click');
-
-    const removeSelectedEvent = wrapper.emitted('remove-selected');
-
-    expect(removeSelectedEvent).toHaveLength(1);
-
-    const [eventData] = removeSelectedEvent[0];
-    expect(eventData).toEqual(
+    expect(wrapper).toEmit(
+      'remove-selected',
       [patterns[0], patterns[2]],
     );
   });
@@ -75,73 +69,65 @@ describe('patterns-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
     });
 
+    await flushPromises();
+
     const removableRowIndex = 2;
 
-    const removeButton = selectRowRemoveButtonByIndex(wrapper, removableRowIndex);
-    await removeButton.vm.$emit('click');
+    await selectRowRemoveButtonByIndex(wrapper, removableRowIndex).triggerCustomEvent('click');
 
-    const editEvent = wrapper.emitted('remove');
-
-    expect(editEvent).toHaveLength(1);
-
-    const [eventData] = editEvent[0];
-    expect(eventData).toEqual(patterns[removableRowIndex]._id);
+    expect(wrapper).toEmit('remove', patterns[removableRowIndex]._id);
   });
 
   it('Update event emitted after trigger click on the remove button', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
     });
 
+    await flushPromises();
+
     const editableRowIndex = 5;
 
-    const editButton = selectRowEditButtonByIndex(wrapper, editableRowIndex);
-    await editButton.vm.$emit('click');
+    await selectRowEditButtonByIndex(wrapper, editableRowIndex).triggerCustomEvent('click');
 
-    const editEvent = wrapper.emitted('edit');
-
-    expect(editEvent).toHaveLength(1);
-
-    const [eventData] = editEvent[0];
-    expect(eventData).toEqual(patterns[editableRowIndex]);
+    expect(wrapper).toEmit('edit', patterns[editableRowIndex]);
   });
 
   it('Renders `patterns-list` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'updated',
-          descending: true,
+          sortBy: ['updated'],
+          sortDesc: [true],
         },
         totalItems,
         pending: true,
@@ -152,6 +138,6 @@ describe('patterns-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

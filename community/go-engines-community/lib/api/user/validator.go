@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
@@ -14,6 +15,7 @@ import (
 type Validator interface {
 	ValidateCreateRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
+	ValidatePatchRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel)
 }
 
@@ -71,6 +73,34 @@ func (v *baseValidator) ValidateUpdateRequest(ctx context.Context, sl validator.
 	v.validatePassword(sl, r.EditRequest, r.ID)
 }
 
+func (v *baseValidator) ValidatePatchRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(PatchRequest)
+
+	// to avoid code duplication, use validation functions for EditRequest
+	editReq := EditRequest{
+		Roles: r.Roles,
+	}
+
+	if r.Name != nil {
+		editReq.Name = *r.Name
+	}
+
+	if r.DefaultView != nil {
+		editReq.DefaultView = *r.DefaultView
+	}
+
+	if r.UITheme != nil {
+		editReq.UITheme = *r.UITheme
+	}
+
+	if r.Password != nil {
+		editReq.Password = *r.Password
+	}
+
+	v.validateEditRequest(ctx, sl, r.ID, editReq)
+	v.validatePassword(sl, editReq, r.ID)
+}
+
 func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
 	if r.Name != "" {
 		// Check unique by id
@@ -82,14 +112,14 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 			if res.ID != id {
 				sl.ReportError(r.Name, "Name", "Name", "unique", "")
 			}
-		} else if err == mongodriver.ErrNoDocuments {
+		} else if errors.Is(err, mongodriver.ErrNoDocuments) {
 			// Check unique by name
 			err := v.dbCollection.FindOne(ctx, bson.M{"name": r.Name}).Decode(&res)
 			if err == nil {
 				if res.ID != id {
 					sl.ReportError(r.Name, "Name", "Name", "unique", "")
 				}
-			} else if err != mongodriver.ErrNoDocuments {
+			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 				panic(err)
 			}
 		} else {
@@ -101,7 +131,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 	if r.DefaultView != "" {
 		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
 			} else {
 				panic(err)
@@ -122,7 +152,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 	if r.UITheme != "" {
 		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
 			} else {
 				panic(err)

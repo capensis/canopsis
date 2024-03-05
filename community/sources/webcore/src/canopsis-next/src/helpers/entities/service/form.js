@@ -1,6 +1,6 @@
 import { isNumber, omit } from 'lodash';
 
-import { ENTITIES_STATES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { ENTITIES_STATES, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 import { infosToArray } from '../shared/form';
@@ -32,6 +32,7 @@ import { infosToArray } from '../shared/form';
  * @returns {ServiceForm}
  */
 export const serviceToForm = (service = {}) => ({
+  _id: service._id ?? '',
   impact_level: service.impact_level ?? 1,
   name: service.name ?? '',
   category: service.category ?? '',
@@ -42,7 +43,6 @@ export const serviceToForm = (service = {}) => ({
   patterns: filterPatternsToForm(
     service,
     [PATTERNS_FIELDS.entity],
-    [OLD_PATTERNS_FIELDS.entity],
   ),
   coordinates: service.coordinates ?? {
     lat: undefined,
@@ -58,7 +58,7 @@ export const serviceToForm = (service = {}) => ({
  */
 export const formToService = (form = {}) => {
   const service = {
-    ...omit(form, ['patterns', 'coordinates']),
+    ...omit(form, ['patterns', 'coordinates', '_id']),
     ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.entity]),
     category: form.category._id,
   };

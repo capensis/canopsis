@@ -5,20 +5,21 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
   title="Export CSV"
 >
   <div
-    class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-    role="combobox"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -33,9 +34,8 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
               comma
             </div>
             <input
-              aria-label="Separator"
               aria-readonly="false"
-              autocomplete="on"
+              autocomplete="off"
               readonly="readonly"
               type="text"
             />
@@ -48,16 +48,22 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            type="hidden"
+            value="comma"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -65,28 +71,31 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
     </div>
   </div>
   <div
-    class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-    role="combobox"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -101,9 +110,8 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
               2021-01-02T15:04:05+0200
             </div>
             <input
-              aria-label="Datetime format"
               aria-readonly="false"
-              autocomplete="on"
+              autocomplete="off"
               readonly="readonly"
               type="text"
             />
@@ -116,16 +124,22 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            type="hidden"
+            value="YYYY-MM-DDThh:mm:ssZ"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -133,8 +147,10 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -144,7 +160,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
     class="layout column"
   >
     <h4
-      class="subheading my-4"
+      class="text-subtitle-1 my-4"
     >
       Export column names
     </h4>
@@ -153,199 +169,9 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
       templates=""
       type="alarm"
       value="[object Object]"
-      without-infos-attributes="without-infos-attributes"
     />
   </div>
 </widget-settings-item-stub>
-`;
-
-exports[`export-csv Renders \`export-csv\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              comma
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              semicolon
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              tab
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              space
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`export-csv Renders \`export-csv\` with custom props 3`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              2021-01-02T15:04:05
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              2021-01-02T15:04:05+0200
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              02 Jan 2021 15:04
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              02 Jan 2021 15:04 CEST
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Mon, 02 Jan 2021 15:04:05 CEST
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
 `;
 
 exports[`export-csv Renders \`export-csv\` with default props 1`] = `
@@ -353,20 +179,21 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
   title="Export CSV"
 >
   <div
-    class="v-input v-text-field v-select theme--light"
-    role="combobox"
+    class="v-input theme--light v-text-field v-select"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -376,9 +203,8 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
             class="v-select__selections"
           >
             <input
-              aria-label="Separator"
               aria-readonly="false"
-              autocomplete="on"
+              autocomplete="off"
               readonly="readonly"
               type="text"
             />
@@ -391,16 +217,21 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            type="hidden"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -408,8 +239,10 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -420,7 +253,7 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
     class="layout column"
   >
     <h4
-      class="subheading my-4"
+      class="text-subtitle-1 my-4"
     >
       Export column names
     </h4>
@@ -428,93 +261,7 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
       label="Export column names"
       templates=""
       type="alarm"
-      without-infos-attributes="without-infos-attributes"
     />
   </div>
 </widget-settings-item-stub>
-`;
-
-exports[`export-csv Renders \`export-csv\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              comma
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              semicolon
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              tab
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              space
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
 `;

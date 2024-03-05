@@ -1,150 +1,237 @@
-<template lang="pug">
-  v-tabs.expand-panel.secondary.lighten-2(
-    v-model="activeTab",
-    :key="tabsKey",
-    color="secondary lighten-1",
-    slider-color="primary",
-    dark,
+<template>
+  <v-tabs
+    v-model="activeTab"
+    :key="tabsKey"
+    class="expand-panel secondary lighten-2"
+    background-color="secondary lighten-1"
+    slider-color="primary"
+    dark
     centered
-  )
-    v-tab(
-      v-if="hasMoreInfos",
-      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos}`",
-      :class="moreInfosTabClass"
-      ) {{ $t('alarm.tabs.moreInfos') }}
-    v-tab(
-      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`",
-      :class="timeLineTabClass"
-    ) {{ $t('alarm.tabs.timeLine') }}
-    v-tab(
-      v-if="hasWidgetCharts",
+  >
+    <v-tab
+      v-if="hasMoreInfos"
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos}`"
+    >
+      {{ $t('alarm.tabs.moreInfos') }}
+    </v-tab>
+    <v-tab :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`">
+      {{ $t('alarm.tabs.timeLine') }}
+    </v-tab>
+    <v-tab
+      v-if="hasWidgetCharts"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.charts}`"
-    ) {{ $t('alarm.tabs.charts') }}
-    v-tab(
-      v-if="hasTickets",
+    >
+      {{ $t('alarm.tabs.charts') }}
+    </v-tab>
+    <v-tab
+      v-if="hasTickets"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared}`"
-    ) {{ $t('alarm.tabs.ticketsDeclared') }}
-    v-tab(:href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior}`") {{ $tc('common.pbehavior', 2) }}
-    v-tab(
-      v-if="hasChildren",
+    >
+      {{ $t('alarm.tabs.ticketsDeclared') }}
+    </v-tab>
+    <v-tab :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior}`">
+      {{ $tc('common.pbehavior', 2) }}
+    </v-tab>
+    <v-tab
+      v-if="hasChildren"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren}`"
-    ) {{ $t('alarm.tabs.alarmsChildren') }}
-    v-tab(
-      v-if="hasServiceDependencies",
+    >
+      {{ $t('alarm.tabs.alarmsChildren') }}
+    </v-tab>
+    <v-tab
+      v-if="hasServiceDependencies"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.trackSource}`"
-    ) {{ $t('alarm.tabs.trackSource') }}
-    v-tab(
-      v-if="hasImpactsDependencies",
+    >
+      {{ $t('alarm.tabs.trackSource') }}
+    </v-tab>
+    <v-tab
+      v-if="hasImpactsDependencies"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.impactChain}`"
-    ) {{ $t('alarm.tabs.impactChain') }}
-    v-tab(
-      v-if="hasEntityGantt",
+    >
+      {{ $t('alarm.tabs.impactChain') }}
+    </v-tab>
+    <v-tab
+      v-if="hasEntityGantt"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt}`"
-    ) {{ $t('alarm.tabs.entityGantt') }}
-
-    v-tabs-items(v-model="activeTab")
-      v-tab-item(v-if="hasMoreInfos", :value="$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos")
-        v-layout.pa-3(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                alarms-expand-panel-more-infos(
-                  :alarm="alarm",
-                  :template="widget.parameters.moreInfoTemplate",
+    >
+      {{ $t('alarm.tabs.entityGantt') }}
+    </v-tab>
+    <v-tabs-items
+      v-model="activeTab"
+      mandatory
+    >
+      <v-tab-item
+        v-if="hasMoreInfos"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos"
+      >
+        <v-layout class="pa-3">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <alarms-expand-panel-more-infos
+                  :alarm="alarm"
+                  :template="widget.parameters.moreInfoTemplate"
                   @select:tag="$emit('select:tag', $event)"
-                )
-      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
-        v-layout.pa-3(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-progress-linear(
-                :active="pending",
-                :height="3",
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine">
+        <v-layout class="pa-3">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-progress-linear
+                :active="pending"
+                :height="3"
                 indeterminate
-              )
-              v-card-text
-                alarms-time-line(
-                  :steps="steps",
-                  :is-html-enabled="isHtmlEnabled",
+              />
+              <v-card-text>
+                <alarms-time-line
+                  :steps="steps"
+                  :is-html-enabled="isHtmlEnabled"
                   @update:page="updateStepsQueryPage"
-                )
-      v-tab-item(v-if="hasTickets", :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared")
-        v-layout.pa-3(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                declared-tickets-list(:tickets="alarm.v.tickets", :parent-alarm-id="parentAlarmId")
-      v-tab-item(v-if="hasWidgetCharts", :value="$constants.ALARMS_EXPAND_PANEL_TABS.charts", lazy)
-        v-layout.pa-3(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                entity-charts(
-                  :charts="widget.parameters.charts",
-                  :entity="alarm.entity",
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item
+        v-if="hasTickets"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared"
+      >
+        <v-layout class="pa-3">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <declared-tickets-list
+                  :tickets="alarm.v.tickets"
+                  :parent-alarm-id="parentAlarmId"
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item
+        v-if="hasWidgetCharts"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.charts"
+      >
+        <v-layout class="pa-3">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <entity-charts
+                  :charts="widget.parameters.charts"
+                  :entity="alarm.entity"
                   :available-metrics="filteredPerfData"
-                )
-      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                pbehaviors-simple-list(
-                  :entity="alarm.entity",
-                  :removable="hasDeleteAnyPbehaviorAccess",
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior">
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <pbehaviors-simple-list
+                  :entity="alarm.entity"
+                  :removable="hasDeleteAnyPbehaviorAccess"
                   :updatable="hasUpdateAnyPbehaviorAccess"
-                )
-      v-tab-item(v-if="hasChildren", :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren")
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                alarms-expand-panel-children(
-                  :children="children",
-                  :alarm="alarm",
-                  :widget="widget",
-                  :pending="pending",
-                  :query.sync="childrenQuery",
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item
+        v-if="hasChildren"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren"
+      >
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <alarms-expand-panel-children
+                  :children="children"
+                  :alarm="alarm"
+                  :widget="widget"
+                  :pending="pending"
+                  :query.sync="childrenQuery"
                   :refresh-alarms-list="fetchList"
-                )
-      v-tab-item(v-if="hasServiceDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource")
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                service-dependencies(
-                  :root="dependency",
-                  :columns="widget.parameters.serviceDependenciesColumns",
-                  include-root,
-                  openable-root
-                )
-      v-tab-item(v-if="hasImpactsDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain")
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                service-dependencies(
-                  :root="dependency",
-                  :columns="widget.parameters.serviceDependenciesColumns",
-                  include-root,
-                  impact,
-                  openable-root
-                )
-      v-tab-item(v-if="hasEntityGantt", :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt", lazy)
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                entity-gantt(:alarm="alarm")
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item
+        v-if="hasServiceDependencies"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource"
+      >
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <service-dependencies
+                  :root="dependency"
+                  :columns="widget.parameters.serviceDependenciesColumns"
+                  include-root
+                  show-state-setting
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item
+        v-if="hasImpactsDependencies"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain"
+      >
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <service-dependencies
+                  :root="dependency"
+                  :columns="widget.parameters.serviceDependenciesColumns"
+                  include-root
+                  impact
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item
+        v-if="hasEntityGantt"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt"
+      >
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <entity-gantt :alarm="alarm" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-tabs>
 </template>
 
 <script>
 import { isEqual, map } from 'lodash';
 
-import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
-import { getStepClass } from '@/helpers/tour';
+import { setField } from '@/helpers/immutable';
 import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
@@ -154,7 +241,7 @@ import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alar
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
@@ -197,10 +284,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
     search: {
       type: String,
       default: '',
@@ -213,22 +296,6 @@ export default {
     };
   },
   computed: {
-    moreInfosTabClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 2);
-      }
-
-      return '';
-    },
-
-    timeLineTabClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 3);
-      }
-
-      return '';
-    },
-
     cardFlexClass() {
       const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
 
@@ -243,11 +310,16 @@ export default {
     },
 
     dependency() {
-      return alarmToServiceDependency(this.alarm);
+      const alarmWithDependenciesCounts = setField(this.alarm, 'entity', entity => ({
+        ...entity,
+        ...this.alarmDetails.entity,
+      }));
+
+      return alarmToServiceDependency(alarmWithDependenciesCounts);
     },
 
     hasMoreInfos() {
-      return this.widget.parameters.moreInfoTemplate ?? this.isTourEnabled;
+      return this.widget.parameters.moreInfoTemplate;
     },
 
     hasChildren() {
@@ -263,12 +335,9 @@ export default {
     },
 
     hasImpactsDependencies() {
-      const { impact } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.alarm.entity;
 
-      return this.hasServiceDependencies
-        ? impact?.length > 0
-        // resource and component types having one basic entity into impact
-        : impact?.length > 1;
+      return impactsCount > 0;
     },
 
     hasEntityGantt() {
@@ -319,10 +388,6 @@ export default {
           search_by: map(columns, 'value'),
         };
       },
-    },
-
-    isTourEnabled() {
-      this.refreshTabs();
     },
 
     query(query, oldQuery) {

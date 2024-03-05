@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ALARM_FIELDS, DATETIME_FORMATS } from '@/constants';
 
@@ -167,7 +165,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column status', async () => {
@@ -187,7 +185,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column impact state', async () => {
@@ -209,7 +207,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column links', async () => {
@@ -234,7 +232,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column links only icon', async () => {
@@ -259,7 +257,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column links with inline links count', async () => {
@@ -290,7 +288,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column links category', async () => {
@@ -314,7 +312,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with column extra details', async () => {
@@ -334,7 +332,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with invalid html', async () => {
@@ -360,7 +358,7 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-cell` with popups', async () => {
@@ -392,10 +390,9 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    const menu = wrapper.findMenu();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
-    expect(menu.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
   it('Renders `alarm-column-cell` with popups after hide', async () => {
@@ -429,14 +426,13 @@ describe('alarm-column-cell', () => {
 
     const popupBody = selectAlarmColumnPopupBody(wrapper);
 
-    popupBody.vm.$emit('close');
+    popupBody.triggerCustomEvent('close');
 
     await flushPromises();
 
-    const menu = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menu.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
   it('Renders `alarm-column-cell` with popups and html', async () => {
@@ -471,9 +467,8 @@ describe('alarm-column-cell', () => {
 
     await flushPromises();
 
-    const menu = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menu.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

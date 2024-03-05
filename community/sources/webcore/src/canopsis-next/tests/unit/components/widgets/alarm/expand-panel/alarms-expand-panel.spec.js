@@ -1,7 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
-
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
 import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USERS_PERMISSIONS } from '@/constants';
@@ -81,42 +79,25 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     infoModule,
   ]);
 
-  const factory = generateShallowRenderer(AlarmsExpandPanel, { stubs });
-  const snapshotFactory = generateRenderer(AlarmsExpandPanel, { stubs });
+  const factory = generateShallowRenderer(AlarmsExpandPanel, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmsExpandPanel, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('Tabs key updated after change tour enabled', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        alarm: {
-          _id: 'alarm-id',
-          entity: {
-            type: ENTITY_TYPES.connector,
-            impact: [],
-          },
-          v: {},
-        },
-        widget: {
-          parameters: {
-            moreInfoTemplate: 'template',
-            isHtmlEnabledOnTimeLine: false,
-            serviceDependenciesColumns: [],
-          },
-        },
-      },
-    });
-
-    const prevKey = selectTabs(wrapper).$vnode.key;
-
-    await wrapper.setProps({
-      isTourEnabled: true,
-    });
-
-    expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
   });
 
   it('Tab key updated after change moreInfoTemplate', async () => {
@@ -132,7 +113,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -153,7 +134,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
   });
 
-  it('Renders `alarms-expand-panel` with required props', () => {
+  it('Renders `alarms-expand-panel` with required props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -161,7 +142,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -175,10 +156,12 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-expand-panel` with custom props', () => {
+  it('Renders `alarms-expand-panel` with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -188,7 +171,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           consequences: {},
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -201,14 +184,15 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
         },
         hideChildren: true,
         editing: true,
-        isTourEnabled: true,
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-expand-panel` with full alarm', () => {
+  it('Renders `alarms-expand-panel` with full alarm', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -218,7 +202,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           consequences: {},
           entity: {
             type: ENTITY_TYPES.service,
-            impact: ['test'],
+            impacts_count: 1,
           },
           v: {
             tickets: [{}],
@@ -237,10 +221,12 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-expand-panel` with gantt', () => {
+  it('Renders `alarms-expand-panel` with gantt', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         alarmModule,
@@ -255,7 +241,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           },
           entity: {
             type: ENTITY_TYPES.resource,
-            impact: [],
+            impacts_count: 0,
           },
         },
         widget: {
@@ -268,6 +254,8 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

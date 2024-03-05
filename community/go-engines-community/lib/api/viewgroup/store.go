@@ -2,11 +2,12 @@ package viewgroup
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -15,7 +16,7 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequest, authorizedViewIds, ownedPrivateIds []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
 	Insert(ctx context.Context, r EditRequest) (*ViewGroup, error)
 	Update(ctx context.Context, r EditRequest) (*ViewGroup, error)
@@ -29,7 +30,6 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		dbViewCollection:      dbClient.Collection(mongo.ViewMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title"},
-		defaultSortBy:         "position",
 	}
 }
 
@@ -39,17 +39,25 @@ type store struct {
 	dbViewCollection      mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
-	defaultSortBy         string
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, ownedPrivateIds []string) (*AggregationResult, error) {
+	var pipeline []bson.M
+	if r.WithPrivate {
+		pipeline = []bson.M{{"$match": bson.M{"$or": bson.A{bson.M{"is_private": false}, bson.M{"author": r.UserID}}}}}
+		if r.WithViews {
+			authorizedViewIds = append(authorizedViewIds, ownedPrivateIds...)
+		}
+	} else {
+		pipeline = []bson.M{{"$match": bson.M{"is_private": false}}}
+	}
+
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(s.defaultSortBy, common.SortAsc)
+	sort := bson.M{"$sort": bson.D{{Key: "is_private", Value: 1}, {Key: "position", Value: 1}, {Key: "title", Value: 1}}}
 	project := s.authorProvider.Pipeline()
 
 	if r.WithFlags || r.WithViews {
@@ -117,8 +125,8 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 						"let":  bson.M{"widget": "$widgets._id"},
 						"pipeline": []bson.M{
 							{"$match": bson.M{
-								"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-								"is_private": false,
+								"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+								"is_user_preference": false,
 							}},
 						},
 						"as": "filters",
@@ -271,7 +279,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*ViewGroup, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	doc := view.Group{
 		ID:      utils.NewID(),
 		Title:   r.Title,
@@ -302,7 +310,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	var response *ViewGroup
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -330,7 +338,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		res = false
 		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
 		if err != nil {
-			if err != mongodriver.ErrNoDocuments {
+			if !errors.Is(err, mongodriver.ErrNoDocuments) {
 				return err
 			}
 		} else {

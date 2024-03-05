@@ -54,7 +54,7 @@ func NewRedisScenarioExecutionStorage(
 func (s *redisScenarioExecutionStorage) Get(ctx context.Context, key string) (*ScenarioExecution, error) {
 	res := s.redisClient.Get(ctx, s.getRedisKey(key))
 	if err := res.Err(); err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return nil, nil
 		}
 
@@ -178,6 +178,9 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 
 			for i, v := range resGet.Val() {
 				redisKey := unprocessedKeys[i]
+				if v == nil {
+					continue
+				}
 
 				if se, ok := v.(string); ok {
 					var execution ScenarioExecution
@@ -209,7 +212,7 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 						}
 					}
 				} else {
-					return nil, fmt.Errorf("unknown value type")
+					return nil, fmt.Errorf("unknown value type by key %q : expected string but got %+v", redisKey, v)
 				}
 			}
 		}

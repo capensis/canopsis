@@ -25,7 +25,7 @@ const (
 
 	PermShareToken = "api_share_token"
 
-	PermStateSettings = "api_state_settings"
+	ObjStateSettings = "api_state_settings"
 
 	PermDataStorageRead   = "api_datastorage_read"
 	PermDataStorageUpdate = "api_datastorage_update"
@@ -67,4 +67,14 @@ const (
 	PermMaintenance = "api_maintenance"
 
 	ObjColorTheme = "api_color_theme"
+
+	PermPrivateViewGroups = "api_private_view_groups"
+
+	PermIcon = "api_icon"
 )
+
+// PermCheck defines the permission check configuration where Obj is an object and Act is an action
+type PermCheck struct {
+	Obj string
+	Act string
+}

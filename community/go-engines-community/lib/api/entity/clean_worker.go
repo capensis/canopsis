@@ -6,8 +6,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/redis/go-redis/v9"
@@ -81,20 +81,20 @@ func (w *worker) processTask(ctx context.Context, task CleanTask) {
 		}
 	}()
 
-	lockCtx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
 	go func() {
 		w.doTask(ctx, task)
-		cancel()
+		close(done)
 	}()
 
 	ticker := time.NewTicker(lockTickInterval)
 	defer ticker.Stop()
 	for {
 		select {
-		case <-lockCtx.Done():
+		case <-done:
 			return
 		case <-ticker.C:
-			err := w.redisClient.SetEx(lockCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
+			err := w.redisClient.SetEx(ctx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
 			if err != nil {
 				w.logger.Err(err).Msg("cannot update redis lock")
 			}
@@ -127,7 +127,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 		}
 
 		err = w.dataStorageAdapter.UpdateHistoryEntityDisabled(ctx, datastorage.HistoryWithCount{
-			Time:     types.NewCpsTime(),
+			Time:     datetime.NewCpsTime(),
 			Archived: archived,
 		})
 		if err != nil {
@@ -145,7 +145,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 			return
 		}
 
-		before := task.ArchiveBefore.SubFrom(types.NewCpsTime())
+		before := task.ArchiveBefore.SubFrom(datetime.NewCpsTime())
 		totalArchived, err := arch.ArchiveUnlinkedResources(ctx, before)
 		if err != nil {
 			w.logger.Err(err).Msg("failed to archive unlinked resources")
@@ -164,7 +164,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 
 		totalArchived += archivedConnectors
 		err = w.dataStorageAdapter.UpdateHistoryEntityUnlinked(ctx, datastorage.HistoryWithCount{
-			Time:     types.NewCpsTime(),
+			Time:     datetime.NewCpsTime(),
 			Archived: totalArchived,
 		})
 		if err != nil {
@@ -185,7 +185,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 		}
 
 		err = w.dataStorageAdapter.UpdateHistoryEntityCleaned(ctx, datastorage.HistoryWithCount{
-			Time:    types.NewCpsTime(),
+			Time:    datetime.NewCpsTime(),
 			Deleted: deleted,
 		})
 		if err != nil {

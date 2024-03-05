@@ -1,7 +1,8 @@
 import Faker from 'faker';
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createNumberInputStub } from '@unit/stubs/input';
+
 import { TIME_UNITS } from '@/constants';
 
 import CDurationField from '@/components/forms/fields/duration/c-duration-field.vue';
@@ -59,7 +60,7 @@ describe('c-duration-field', () => {
 
     valueElement.setValue(newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       unit: duration.unit,
       value: newValue,
     });
@@ -79,9 +80,9 @@ describe('c-duration-field', () => {
 
     const valueElement = selectSelectField(wrapper);
 
-    valueElement.vm.$emit('change', TIME_UNITS.month);
+    valueElement.triggerCustomEvent('change', TIME_UNITS.month);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       unit: TIME_UNITS.month,
       value: duration.value,
     });
@@ -101,9 +102,9 @@ describe('c-duration-field', () => {
 
     const valueElement = selectSelectField(wrapper);
 
-    valueElement.vm.$emit('change');
+    valueElement.triggerCustomEvent('change');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       unit: undefined,
       value: undefined,
     });
@@ -114,7 +115,7 @@ describe('c-duration-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -127,7 +128,7 @@ describe('c-duration-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -157,7 +158,7 @@ describe('c-duration-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -192,7 +193,7 @@ describe('c-duration-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -211,7 +212,7 @@ describe('c-duration-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-duration-field` with duration value as undefined', async () => {
@@ -225,7 +226,7 @@ describe('c-duration-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-duration-field` with value is greater than the minimum', async () => {
@@ -244,6 +245,6 @@ describe('c-duration-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

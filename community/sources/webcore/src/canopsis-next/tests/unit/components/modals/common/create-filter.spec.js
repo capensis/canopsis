@@ -1,14 +1,14 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+
 import { ALARM_PATTERN_FIELDS, PATTERN_CONDITIONS, PATTERN_CUSTOM_ITEM_VALUE, PATTERN_OPERATORS } from '@/constants';
-import CreateFilter from '@/components/modals/common/create-filter.vue';
+
 import ClickOutside from '@/services/click-outside';
+
+import CreateFilter from '@/components/modals/common/create-filter.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -79,14 +79,12 @@ describe('create-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      is_private: false,
+      is_user_preference: false,
       title: '',
     });
     expect($modals.hide).toBeCalledWith();
@@ -112,14 +110,12 @@ describe('create-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      is_private: false,
+      is_user_preference: false,
       title: '',
       alarm_pattern: [],
       entity_pattern: [],
@@ -156,14 +152,14 @@ describe('create-filter', () => {
       vm: patternsForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -178,9 +174,7 @@ describe('create-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -190,7 +184,6 @@ describe('create-filter', () => {
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
       title: 'Title error',
-      old_mongo_query: 'Old mongo query error',
       alarm_pattern: 'Alarm pattern error',
       entity_pattern: 'Entity pattern error',
       pbehavior_pattern: 'PBehavior pattern error',
@@ -218,9 +211,7 @@ describe('create-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -228,7 +219,7 @@ describe('create-filter', () => {
 
     expect(addedErrors).toEqual(formErrors);
     expect(action).toBeCalledWith({
-      is_private: false,
+      is_user_preference: false,
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
@@ -248,7 +239,7 @@ describe('create-filter', () => {
     const action = jest.fn().mockRejectedValue(errors);
     const customFilter = {
       title: 'Title',
-      is_private: true,
+      is_user_preference: true,
       alarm_pattern: [
         [customPattern],
       ],
@@ -269,9 +260,7 @@ describe('create-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -289,7 +278,7 @@ describe('create-filter', () => {
     const action = jest.fn();
     const filter = {
       title: 'Title',
-      is_private: true,
+      is_user_preference: true,
       alarm_pattern: [
         [customPattern],
       ],
@@ -319,7 +308,7 @@ describe('create-filter', () => {
 
     const newForm = {
       title: filter.title,
-      is_private: filter.is_private,
+      is_user_preference: filter.is_user_preference,
       alarm_pattern: {
         id: PATTERN_CUSTOM_ITEM_VALUE,
         groups: [{
@@ -335,11 +324,9 @@ describe('create-filter', () => {
       },
     };
 
-    patternsForm.vm.$emit('input', newForm);
+    patternsForm.triggerCustomEvent('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -356,7 +343,7 @@ describe('create-filter', () => {
         ],
       ],
       entity_pattern: [],
-      is_private: filter.is_private,
+      is_user_preference: filter.is_user_preference,
       title: filter.title,
     });
     expect($modals.hide).toBeCalled();
@@ -374,9 +361,7 @@ describe('create-filter', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -395,7 +380,7 @@ describe('create-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-filter` with all parameters', () => {
@@ -417,6 +402,6 @@ describe('create-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

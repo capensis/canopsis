@@ -1,48 +1,80 @@
-<template lang="pug">
-  v-layout.c-alarm-actions-chips(
-    :key="wrapperKey",
-    :class="{ 'c-alarm-actions-chips--small': small }",
-    row,
-    wrap,
+<template>
+  <v-layout
+    :key="wrapperKey"
+    :class="{ 'c-alarm-actions-chips--small': small }"
+    class="c-alarm-actions-chips"
+    wrap
     align-center
-  )
-    c-alarm-action-chip.ma-0(
-      v-for="item in inlineItems",
-      :key="item[itemValue]",
-      :class="itemClass",
-      :color="item.color",
-      :small="small",
-      :closable="closable",
-      @click="selectItem(item)",
+  >
+    <c-alarm-action-chip
+      v-for="item in inlineItems"
+      :key="item[itemValue]"
+      :class="itemClass"
+      :color="item.color"
+      :small="small"
+      :closable="closable"
+      @click="selectItem(item)"
       @close="closeItem(item)"
-    )
-      slot(name="item", :item="item")
-        span {{ item[itemText] }}
-    v-menu(
-      v-if="dropDownItems.length",
-      key="more",
-      max-height="400px",
-      bottom,
-      left,
+    >
+      <slot
+        :item="item"
+        name="item"
+      >
+        <span>{{ item[itemText] }}</span>
+      </slot>
+    </c-alarm-action-chip>
+    <v-menu
+      v-if="dropDownItems.length"
+      key="more"
+      max-height="400px"
+      bottom
+      left
       @input="$emit('activate')"
-    )
-      template(#activator="{ on }")
-        v-btn.c-alarm-actions-chips__more-btn.ma-0(v-on="on", color="grey", icon)
-          v-icon(color="white", size="20") more_horiz
-      v-card
-        v-card-text
-          v-layout.c-alarm-actions-chips__more(:class="{ 'c-alarm-actions-chips--small': small }", wrap)
-            c-alarm-action-chip.mx-0(
-              v-for="item in dropDownItems",
-              :key="item[itemValue]",
-              :class="itemClass",
-              :color="item.color",
-              :closable="closable",
-              @click="selectItem(item)",
+    >
+      <template #activator="{ on }">
+        <v-btn
+          class="c-alarm-actions-chips__more-btn ma-0"
+          color="grey"
+          icon
+          v-on="on"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            more_horiz
+          </v-icon>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-text>
+          <v-layout
+            :class="{ 'c-alarm-actions-chips--small': small }"
+            class="c-alarm-actions-chips__more"
+            wrap
+          >
+            <c-alarm-action-chip
+              v-for="item in dropDownItems"
+              :key="item[itemValue]"
+              :class="itemClass"
+              :color="item.color"
+              :closable="closable"
+              class="mx-0"
+              @click="selectItem(item)"
               @close="closeItem(item)"
-            )
-              slot(name="item", :item="item")
-                span {{ item[itemText] }}
+            >
+              <slot
+                :item="item"
+                name="item"
+              >
+                <span>{{ item[itemText] }}</span>
+              </slot>
+            </c-alarm-action-chip>
+          </v-layout>
+        </v-card-text>
+      </v-card>
+    </v-menu>
+  </v-layout>
 </template>
 
 <script>
@@ -151,9 +183,17 @@ export default {
     column-gap: 4px;
   }
 
-  &__more-btn {
+  & &__more-btn {
     width: 24px;
     height: 24px;
+
+    .theme--light & {
+      background-color: var(--v-application-background-darken2);
+    }
+
+    .theme--dark & {
+      background-color: var(--v-application-background-lighten4);
+    }
   }
 }
 </style>

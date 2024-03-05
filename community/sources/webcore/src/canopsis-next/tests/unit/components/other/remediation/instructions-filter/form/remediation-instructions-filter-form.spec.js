@@ -1,7 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createCheckboxInputStub, createInputStub, createSelectInputStub } from '@unit/stubs/input';
+
 import { MAX_LIMIT, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/form/remediation-instructions-filter-form.vue';
@@ -76,9 +76,9 @@ describe('remediation-instructions-filter-form', () => {
     });
 
     const runningField = selectRunningField(wrapper);
-    runningField.vm.$emit('input', false);
+    runningField.triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', { running: false });
+    expect(wrapper).toEmitInput({ running: false });
   });
 
   test('With enabled after trigger with field', () => {
@@ -93,9 +93,9 @@ describe('remediation-instructions-filter-form', () => {
 
     const withField = selectWithField(wrapper);
 
-    withField.vm.$emit('input', false);
+    withField.triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', { with: false });
+    expect(wrapper).toEmitInput({ with: false });
   });
 
   test('All disabled after trigger all field', () => {
@@ -110,9 +110,9 @@ describe('remediation-instructions-filter-form', () => {
 
     const allField = selectAllField(wrapper);
 
-    allField.vm.$emit('change', false);
+    allField.triggerCustomEvent('change', false);
 
-    expect(wrapper).toEmit('input', { all: false });
+    expect(wrapper).toEmitInput({ all: false });
   });
 
   test('All enabled after trigger all field', () => {
@@ -127,9 +127,9 @@ describe('remediation-instructions-filter-form', () => {
 
     const allField = selectAllField(wrapper);
 
-    allField.vm.$emit('change', true);
+    allField.triggerCustomEvent('change', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       all: true,
       manual: true,
       auto: true,
@@ -155,8 +155,8 @@ describe('remediation-instructions-filter-form', () => {
 
     const autoField = selectAutoField(wrapper);
 
-    autoField.vm.$emit('change', false);
-    expect(wrapper).toEmit('input', {
+    autoField.triggerCustomEvent('change', false);
+    expect(wrapper).toEmitInput({
       auto: false,
       instructions: filter.instructions,
     });
@@ -180,8 +180,8 @@ describe('remediation-instructions-filter-form', () => {
 
     const manualField = selectManualField(wrapper);
 
-    manualField.vm.$emit('change', true);
-    expect(wrapper).toEmit('input', {
+    manualField.triggerCustomEvent('change', true);
+    expect(wrapper).toEmitInput({
       manual: true,
       instructions: [],
     });
@@ -205,8 +205,8 @@ describe('remediation-instructions-filter-form', () => {
       },
     ];
 
-    instructionsField.vm.$emit('change', instructions);
-    expect(wrapper).toEmit('input', {
+    instructionsField.triggerCustomEvent('change', instructions);
+    expect(wrapper).toEmitInput({
       manual: true,
       instructions,
     });
@@ -280,7 +280,7 @@ describe('remediation-instructions-filter-form', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `remediation-instructions-filter-form` with custom props', () => {
@@ -297,6 +297,6 @@ describe('remediation-instructions-filter-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

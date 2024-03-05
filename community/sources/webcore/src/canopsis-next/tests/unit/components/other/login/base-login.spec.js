@@ -1,11 +1,11 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createInfoModule, createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { mockRouter } from '@unit/utils/mock-hooks';
+
 import { ROUTES_NAMES } from '@/constants';
 
 import BaseLogin from '@/components/other/login/base-login.vue';
@@ -59,8 +59,8 @@ describe('base-login', () => {
     const username = Faker.datatype.string();
     const password = Faker.datatype.string();
 
-    selectLoginForm(wrapper).vm.$emit('input', username, ['username']);
-    selectLoginForm(wrapper).vm.$emit('input', password, ['password']);
+    selectLoginForm(wrapper).triggerCustomEvent('input', username, ['username']);
+    selectLoginForm(wrapper).triggerCustomEvent('input', password, ['password']);
 
     selectSubmitButton(wrapper).trigger('click');
 
@@ -170,7 +170,7 @@ describe('base-login', () => {
   it('Renders `base-login` with default state', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `base-login` with custom state', () => {
@@ -184,7 +184,7 @@ describe('base-login', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `base-login` with error', async () => {
@@ -198,6 +198,6 @@ describe('base-login', () => {
 
     await wrapper.setData({ serverErrorMessage: 'Server error message' });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

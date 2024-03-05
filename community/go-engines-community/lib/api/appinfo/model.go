@@ -2,33 +2,34 @@ package appinfo
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
 
-	Version        string         `json:"version" bson:"version"`
-	VersionUpdated *types.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
+	Version        string            `json:"version" bson:"version"`
+	VersionUpdated *datetime.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
 }
 
 type PopupTimeout struct {
-	Info  *types.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
-	Error *types.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
+	Info  *datetime.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
+	Error *datetime.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
 }
 
 type UserInterfaceConf struct {
-	AppTitle                  string        `json:"app_title,omitempty" bson:"app_title,omitempty"`
-	Footer                    string        `json:"footer,omitempty" bson:"footer,omitempty"`
-	LoginPageDescription      string        `json:"login_page_description,omitempty" bson:"login_page_description,omitempty"`
-	Logo                      string        `json:"logo,omitempty" bson:"logo,omitempty"`
-	Language                  string        `json:"language,omitempty" bson:"language,omitempty" binding:"oneoforempty=fr en"`
-	PopupTimeout              *PopupTimeout `json:"popup_timeout,omitempty" bson:"popup_timeout,omitempty"`
-	AllowChangeSeverityToInfo bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
-	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
-	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
-	ShowHeaderOnKioskMode     bool          `json:"show_header_on_kiosk_mode" bson:"show_header_on_kiosk_mode"`
+	AppTitle                   string        `json:"app_title,omitempty" bson:"app_title,omitempty"`
+	Footer                     string        `json:"footer,omitempty" bson:"footer,omitempty"`
+	LoginPageDescription       string        `json:"login_page_description,omitempty" bson:"login_page_description,omitempty"`
+	Logo                       string        `json:"logo,omitempty" bson:"logo,omitempty"`
+	Language                   string        `json:"language,omitempty" bson:"language,omitempty" binding:"oneoforempty=fr en"`
+	PopupTimeout               *PopupTimeout `json:"popup_timeout,omitempty" bson:"popup_timeout,omitempty"`
+	AllowChangeSeverityToInfo  bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
+	MaxMatchedItems            int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
+	CheckCountRequestTimeout   int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
+	ShowHeaderOnKioskMode      bool          `json:"show_header_on_kiosk_mode" bson:"show_header_on_kiosk_mode"`
+	RequiredInstructionApprove bool          `json:"required_instruction_approve" bson:"required_instruction_approve"`
 }
 
 type GlobalConf struct {

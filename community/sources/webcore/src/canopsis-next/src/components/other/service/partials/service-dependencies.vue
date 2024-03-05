@@ -1,60 +1,78 @@
-<template lang="pug">
-  c-treeview-data-table.service-dependencies(
-    :items="items",
-    :headers="headers",
-    :loading="hasActivePending",
-    :load-children="loadChildren",
-    item-key="key"
-  )
-    template(#expand="{ item }")
-      v-tooltip(v-if="item.loadMore", right)
-        template(#activator="{ on }")
-          v-btn(
-            v-on="on",
-            :loading="pendingByIds[item.parentId]",
-            icon,
-            @click="loadMore(item.parentId)"
-          )
-            v-icon more_horiz
-        span {{ $t('common.loadMore') }}
-      v-btn(
-        v-else,
-        :color="getEntityColor(item.entity)",
-        icon,
-        dark,
-        @click="showTreeOfDependenciesModal(item)"
-      )
-        v-icon {{ getIconByEntity(item.entity) }}
-      v-tooltip(v-if="item.cycle", top)
-        template(#activator="{ on }")
-          v-icon(v-on="on", color="error", size="14") autorenew
-        span {{ $t('common.cycleDependency') }}
-    template(#expand-append="{ item }")
-      div.expand-append(v-if="includeRoot && isInRootIds(item._id)")
-        v-icon arrow_right_alt
-        v-chip.ma-0(
-          :color="getEntityColor(item.entity)",
-          text-color="white"
-        )
-          span.px-2.body-2.font-weight-bold {{ item.entity.impact_state }}
-    template(#items="{ item }")
-      tr
-        td(v-for="(header, index) in headers", :key="header.value")
-          c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
-          service-dependencies-entity-cell(
-            v-else-if="item.entity",
-            :item="item",
-            :column="header"
-           )
+<template>
+  <v-layout column>
+    <service-dependencies-show-type-field
+      v-if="isCustomType"
+      v-model="showType"
+      class="mb-3"
+    />
+    <state-settings-summary
+      v-if="showStateSetting"
+      :pending="pendingStateSetting"
+      :state-setting="stateSetting"
+      :entity="root"
+    />
+    <c-treeview-data-table
+      ref="treeviewDataTable"
+      :items="items"
+      :headers="headers"
+      :loading="hasActivePending"
+      :load-children="loadChildren"
+      class="service-dependencies"
+      item-key="key"
+    >
+      <template #expand="{ item }">
+        <service-dependencies-expand
+          :item="item"
+          :pending="pendingByIds[item.parentId]"
+          @load="loadMore"
+          @show="showTreeOfDependenciesModal"
+        />
+      </template>
+      <template #expand-append="{ item }">
+        <div
+          v-if="includeRoot && isInRootIds(item._id)"
+          class="expand-append"
+        >
+          <v-icon>arrow_right_alt</v-icon>
+          <v-chip
+            :color="getEntityColor(item.entity)"
+            class="ma-0"
+            text-color="white"
+          >
+            <span class="px-2 text-body-2 font-weight-bold">{{ item.entity.impact_state }}</span>
+          </v-chip>
+        </div>
+      </template>
+      <template #items="{ item }">
+        <tr>
+          <td
+            v-for="(header, index) in headers"
+            :key="header.value"
+          >
+            <c-no-events-icon
+              v-if="!index"
+              :value="item.entity | get('idle_since')"
+              top
+            />
+            <service-dependencies-entity-cell
+              v-else-if="item.entity"
+              :item="item"
+              :column="header"
+            />
+          </td>
+        </tr>
+      </template>
+    </c-treeview-data-table>
+  </v-layout>
 </template>
 
 <script>
 import { get, uniq } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, ENTITY_TYPES, ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
+import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
-import { getIconByEntityType } from '@/helpers/entities/entity/icons';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
   dependencyToTreeviewDependency,
@@ -65,10 +83,22 @@ import {
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
+import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
+import ServiceDependenciesShowTypeField
+  from '@/components/other/service/form/fields/service-dependencies-show-type-field.vue';
+
+import ServiceDependenciesExpand from './service-dependencies-expand.vue';
 import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
 
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
+
 export default {
-  components: { ServiceDependenciesEntityCell },
+  components: {
+    ServiceDependenciesShowTypeField,
+    StateSettingsSummary,
+    ServiceDependenciesExpand,
+    ServiceDependenciesEntityCell,
+  },
   mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
@@ -87,31 +117,33 @@ export default {
       type: Boolean,
       default: false,
     },
-    openableRoot: {
+    showStateSetting: {
       type: Boolean,
       default: false,
     },
+    type: {
+      type: Number,
+      default: TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies,
+    },
   },
   data() {
-    const dependenciesByIds = {};
-    const rootIds = [];
-
-    if (this.includeRoot) {
-      const treeviewRoot = dependencyToTreeviewDependency(this.root, this.impact);
-
-      dependenciesByIds[treeviewRoot._id] = treeviewRoot;
-      rootIds.push(treeviewRoot._id);
-    }
-
     return {
-      rootIds,
-      dependenciesByIds,
+      rootIds: [],
+      dependenciesByIds: {},
 
       metaByIds: {},
       pendingByIds: {},
+      pendingStateSetting: true,
+      stateSetting: undefined,
+
+      showType: TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies,
     };
   },
   computed: {
+    isCustomType() {
+      return this.type === TREE_OF_DEPENDENCIES_SHOW_TYPES.custom;
+    },
+
     rootId() {
       return this.root._id;
     },
@@ -155,16 +187,68 @@ export default {
       return items;
     },
   },
-  async mounted() {
-    const ids = await this.fetchDependenciesById(this.rootId);
-
-    if (!this.includeRoot) {
-      this.rootIds = ids;
-    }
+  watch: {
+    type() {
+      this.setRootDependencies();
+      this.fetchRootDependencies();
+    },
+    showType() {
+      this.setRootDependencies();
+      this.fetchRootDependencies();
+    },
+    showStateSetting: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.fetchEntityStateSetting();
+        }
+      },
+    },
+  },
+  mounted() {
+    this.setRootDependencies();
+    this.fetchRootDependencies();
   },
   methods: {
-    getIconByEntity(entity) {
-      return getIconByEntityType(entity.type);
+    ...mapEntityActions({
+      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
+    }),
+
+    async fetchEntityStateSetting() {
+      this.pendingStateSetting = true;
+
+      try {
+        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.root._id } });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pendingStateSetting = false;
+      }
+    },
+
+    async fetchRootDependencies() {
+      const ids = await this.fetchDependenciesById(this.rootId);
+
+      if (!this.includeRoot) {
+        this.rootIds = ids;
+      }
+    },
+
+    setRootDependencies() {
+      this.$refs.treeviewDataTable.clearOpened();
+
+      const dependenciesByIds = {};
+      const rootIds = [];
+
+      if (this.includeRoot) {
+        const treeviewRoot = dependencyToTreeviewDependency(this.root, this.impact);
+
+        dependenciesByIds[treeviewRoot._id] = treeviewRoot;
+        rootIds.push(treeviewRoot._id);
+      }
+
+      this.rootIds = rootIds;
+      this.dependenciesByIds = dependenciesByIds;
     },
 
     getEntityColor(entity) {
@@ -178,10 +262,9 @@ export default {
     showTreeOfDependenciesModal(dependency) {
       const { entity } = dependency;
 
-      if (
-        (!this.openableRoot && this.rootId === entity._id)
-        || (!this.impact && entity.type !== ENTITY_TYPES.service)
-      ) {
+      const hasChildren = this.impact ? !!entity.impacts_count : !!entity.depends_count;
+
+      if (this.rootId === entity._id || !hasChildren) {
         return;
       }
 
@@ -195,15 +278,15 @@ export default {
       });
     },
 
-    async loadMore(id) {
-      const isRoot = this.rootId === id;
-      const meta = this.metaByIds[id] || {};
+    async loadMore({ parentId } = {}) {
+      const isRoot = this.rootId === parentId;
+      const meta = this.metaByIds[parentId] || {};
       const params = {
         page: meta.page + 1,
         limit: PAGINATION_LIMIT,
       };
 
-      const ids = await this.fetchDependenciesById(id, params);
+      const ids = await this.fetchDependenciesById(parentId, params);
 
       if (!this.includeRoot && isRoot) {
         this.rootIds.push(...ids);
@@ -221,11 +304,16 @@ export default {
     async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
       this.$set(this.pendingByIds, id, true);
 
+      const selectedType = this.isCustomType
+        ? this.showType
+        : this.type;
+
       const { data, meta } = await this.fetchDependenciesList({
         id,
         params: {
           ...params,
 
+          define_state: selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
           with_flags: true,
         },
       });
@@ -256,6 +344,8 @@ export default {
 
 <style lang="scss" scoped>
 .service-dependencies ::v-deep .v-treeview-node__label {
+  overflow: initial;
+
   &, .expand-append {
     display: inline-flex;
     align-items: center;
@@ -265,5 +355,4 @@ export default {
     }
   }
 }
-
 </style>

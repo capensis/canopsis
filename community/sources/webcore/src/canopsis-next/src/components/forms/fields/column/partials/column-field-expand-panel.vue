@@ -1,92 +1,130 @@
-<template lang="pug">
-  v-layout(justify-center, column)
-    template(v-if="!withoutInfosAttributes")
-      c-alarm-infos-attribute-field(
-        v-if="isAlarmInfos",
-        v-field="column",
-        :rules="alarmInfosRules",
-        :pending="infosPending",
+<template>
+  <v-layout
+    justify-center
+    column
+  >
+    <v-text-field
+      v-if="withField"
+      v-validate="'required'"
+      v-field="column.column"
+      :label="$t('common.field')"
+      :error-messages="columnValueErrorMessages"
+      :name="columnValueFieldName"
+    />
+    <template v-if="!withoutInfosAttributes">
+      <c-alarm-infos-attribute-field
+        v-if="isAlarmInfos"
+        v-field="column"
+        :rules="alarmInfosRules"
+        :pending="infosPending"
         :name="`${name}.column`"
-      )
-      c-infos-attribute-field(
-        v-else-if="isInfos",
-        v-field="column",
-        :items="infosItems",
-        :pending="infosPending",
-        :name="`${name}.column`",
-        combobox,
+        :required="!optionalInfosAttributes"
+      />
+      <c-infos-attribute-field
+        v-else-if="isInfos"
+        v-field="column"
+        :items="infosItems"
+        :pending="infosPending"
+        :name="`${name}.column`"
+        combobox
         column
-      )
-    template(v-if="isLinks")
-      column-links-category-field(v-field="column.field")
-      c-number-field(
-        v-field="column.inlineLinksCount",
+      />
+    </template>
+    <template v-if="isLinks">
+      <column-links-category-field v-field="column.field" />
+      <c-number-field
+        v-field="column.inlineLinksCount"
         :label="$t('settings.columns.inlineLinksCount')"
-      )
-      v-switch.pa-0.my-2(
-        v-field="column.onlyIcon",
-        :label="$t('settings.columns.onlyIcon')",
-        color="primary",
+      />
+      <v-switch
+        v-field="column.onlyIcon"
+        :label="$t('settings.columns.onlyIcon')"
+        class="pa-0 my-2"
+        color="primary"
         hide-details
-      )
-      c-number-field(
-        v-if="column.onlyIcon",
-        v-field="column.linksInRowCount",
+      />
+      <c-number-field
+        v-if="column.onlyIcon"
+        v-field="column.linksInRowCount"
         :label="$t('settings.columns.linksInRowCount')"
-      )
-        template(#append="")
-          c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
-    v-switch.pa-0.my-2(
-      v-model="customLabel",
-      :label="$t('settings.columns.customLabel')",
-      color="primary",
-      hide-details,
-      @change="updateCustomLabel"
-    )
-    v-text-field(
-      v-if="customLabel",
-      v-field="column.label",
-      v-validate="'required'",
-      :label="$t('common.label')",
-      :error-messages="errors.collect(`${name}.label`)",
-      :name="`${name}.label`"
-    )
-    v-layout(v-if="withTemplate", row, align-center)
-      v-switch.pa-0.my-2(
-        :label="$t('settings.columns.withTemplate')",
-        :input-value="!!column.template",
-        color="primary",
-        hide-details,
+      >
+        <template #append="">
+          <c-help-icon
+            :text="$t('settings.columns.linksInRowCountTooltip')"
+            left
+          />
+        </template>
+      </c-number-field>
+    </template>
+    <template v-if="withLabel">
+      <v-switch
+        v-model="customLabel"
+        :label="$t('settings.columns.customLabel')"
+        class="pa-0 my-2"
+        color="primary"
+        hide-details
+        @change="updateCustomLabel"
+      />
+      <v-text-field
+        v-if="customLabel"
+        v-field="column.label"
+        v-validate="'required'"
+        :label="$t('common.label')"
+        :error-messages="errors.collect(`${name}.label`)"
+        :name="`${name}.label`"
+      />
+    </template>
+    <v-layout
+      v-if="withTemplate || withSimpleTemplate"
+      align-center
+      justify-space-between
+    >
+      <v-switch
+        :label="$t('settings.columns.withTemplate')"
+        :input-value="!!column.template"
+        :true-value="true"
+        :false-value="false"
+        :value-comparator="isCustomTemplate"
+        class="pa-0 my-2"
+        color="primary"
+        hide-details
         @change="switchChangeTemplate($event)"
-      )
-      v-btn.primary(
-        v-if="column.template",
-        small,
+      />
+      <v-btn
+        v-if="column.template"
+        class="primary"
+        small
         @click="showEditTemplateModal"
-      )
-        span {{ $t('common.edit') }}
-    v-switch.pa-0.my-2(
-      v-if="withHtml",
-      v-field="column.isHtml",
-      :label="$t('settings.columns.isHtml')",
-      :disabled="!!column.template",
-      color="primary",
+      >
+        <span>{{ $t('common.edit') }}</span>
+      </v-btn>
+    </v-layout>
+    <v-switch
+      v-if="withHtml"
+      v-field="column.isHtml"
+      :label="$t('settings.columns.isHtml')"
+      :disabled="!!column.template"
+      class="pa-0 my-2"
+      color="primary"
       hide-details
-    )
-    v-switch.pa-0.my-2(
-      v-if="withColorIndicator",
-      :label="$t('settings.colorIndicator.title')",
-      :input-value="!!column.colorIndicator",
-      :disabled="!!column.template",
-      color="primary",
-      hide-details,
+    />
+    <v-switch
+      v-if="withColorIndicator"
+      :label="$t('settings.colorIndicator.title')"
+      :input-value="!!column.colorIndicator"
+      :disabled="!!column.template"
+      class="pa-0 my-2"
+      color="primary"
+      hide-details
       @change="switchChangeColorIndicator($event)"
-    )
-    v-layout(v-if="column.colorIndicator", row)
-      c-color-indicator-field(
-        v-field="column.colorIndicator",
+    />
+    <v-layout v-if="column.colorIndicator">
+      <c-color-indicator-field
+        v-field="column.colorIndicator"
         :disabled="!!column.template"
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -132,6 +170,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withSimpleTemplate: {
+      type: Boolean,
+      default: false,
+    },
     withHtml: {
       type: Boolean,
       default: false,
@@ -148,10 +190,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    optionalInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    variables: {
+      type: Array,
+      required: false,
+    },
+    withLabel: {
+      type: Boolean,
+      default: false,
+    },
+    withField: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      customLabel: !!this.column.label,
+      customLabel: false,
     };
   },
   computed: {
@@ -182,6 +240,38 @@ export default {
         CONTEXT_WIDGET_COLUMNS.componentInfos,
       ].includes(this.column?.column) ? this.entityInfos : this.alarmInfos;
     },
+
+    templateModalConfig() {
+      return {
+        text: this.column?.template ?? '',
+        title: this.$t('settings.columns.withTemplate'),
+        label: this.$t('common.template'),
+        variables: this.variables,
+        rules: {
+          required: true,
+        },
+      };
+    },
+
+    templateModalName() {
+      return this.withSimpleTemplate ? MODALS.payloadTextareaEditor : MODALS.textEditor;
+    },
+
+    columnValueFieldName() {
+      return `${this.name}.column`;
+    },
+
+    columnValueErrorMessages() {
+      return this.errors.collect(this.columnValueFieldName);
+    },
+  },
+  watch: {
+    withLabel: {
+      immediate: true,
+      handler() {
+        this.customLabel = !!this.column.label;
+      },
+    },
   },
   methods: {
     updateCustomLabel(checked) {
@@ -192,17 +282,30 @@ export default {
       this.updateField('label', '');
     },
 
-    switchChangeTemplate(checked) {
-      const template = checked
-        ? DEFAULT_COLUMN_TEMPLATE_VALUE
-        : null;
-
+    updateModelByTemplate(checked, template) {
       return this.updateModel({
         ...this.column,
 
         template,
         isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
-        colorIndicator: checked && this.column.isHtml ? null : this.column.isHtml,
+        colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
+      });
+    },
+
+    switchChangeTemplate(checked) {
+      if (!checked) {
+        this.updateModelByTemplate(checked, null);
+
+        return;
+      }
+
+      this.$modals.show({
+        name: this.templateModalName,
+        config: {
+          ...this.templateModalConfig,
+          text: this.withSimpleTemplate ? '' : DEFAULT_COLUMN_TEMPLATE_VALUE,
+          action: value => this.updateModelByTemplate(checked, value),
+        },
       });
     },
 
@@ -214,16 +317,15 @@ export default {
       return this.updateField('colorIndicator', value);
     },
 
+    isCustomTemplate() {
+      return !!this.column.template;
+    },
+
     showEditTemplateModal() {
       this.$modals.show({
-        name: MODALS.textEditor,
+        name: this.templateModalName,
         config: {
-          text: this.column?.template ?? '',
-          title: this.$t('settings.columns.withTemplate'),
-          label: this.$t('common.template'),
-          rules: {
-            required: true,
-          },
+          ...this.templateModalConfig,
           action: value => this.updateField('template', value),
         },
       });

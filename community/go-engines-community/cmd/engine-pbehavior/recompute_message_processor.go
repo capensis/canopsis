@@ -8,9 +8,11 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -21,6 +23,8 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+const maxLogIds = 20
 
 type recomputeMessageProcessor struct {
 	FeaturePrintEventOnError bool
@@ -71,9 +75,19 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, ids [
 		return err
 	}
 
+	if len(ids) == 0 {
+		p.Logger.Info().Msg("all pbehaviors recomputed")
+	} else if len(ids) <= maxLogIds {
+		p.Logger.Info().Strs("pbehaviors", ids).Msg("pbehaviors recomputed")
+	} else {
+		p.Logger.Info().
+			Strs("first_pbehaviors", ids[:maxLogIds]).
+			Int("pbehaviors", len(ids)).
+			Msg("pbehaviors recomputed")
+	}
+
 	excludeIds := make([]string, 0)
 	for _, id := range ids {
-		p.Logger.Debug().Str("pbehavior", id).Msg("pbehavior recomputed")
 		excludeIds, err = p.updateAlarms(ctx, id, excludeIds, resolver)
 		if err != nil {
 			return err
@@ -92,8 +106,7 @@ func (p *recomputeMessageProcessor) updateAlarms(
 	pbehavior := libpbehavior.PBehavior{}
 	err := p.PbehaviorCollection.FindOne(ctx, bson.M{"_id": id},
 		options.FindOne().SetProjection(bson.M{
-			"entity_pattern":  1,
-			"old_mongo_query": 1,
+			"entity_pattern": 1,
 		})).Decode(&pbehavior)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -103,23 +116,11 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		return excludeIds, err
 	}
 
-	var query interface{}
-	if len(pbehavior.EntityPattern) > 0 {
-		query, err = pbehavior.EntityPattern.ToMongoQuery("")
-		if err != nil {
-			return excludeIds, err
-		}
-	} else {
-		var oldMongoQuery map[string]interface{}
-		err = p.Decoder.Decode([]byte(pbehavior.OldMongoQuery), &oldMongoQuery)
-		if err != nil {
-			return excludeIds, err
-		}
-
-		query = oldMongoQuery
+	matchByPattern, err := db.EntityPatternToMongoQuery(pbehavior.EntityPattern, "")
+	if err != nil || len(matchByPattern) == 0 {
+		return excludeIds, err
 	}
 
-	matchByPattern := query
 	if len(excludeIds) > 0 {
 		matchByPattern = bson.M{"$and": bson.A{
 			bson.M{"_id": bson.M{"$nin": excludeIds}},
@@ -198,7 +199,7 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 
 		event.EventType = eventType
 		event.Output = output
-		event.PbehaviorInfo = libpbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult)
+		event.PbehaviorInfo = libpbehavior.NewPBehaviorInfo(datetime.CpsTime{Time: now}, resolveResult)
 		body, err := p.Encoder.Encode(event)
 		if err != nil {
 			return nil, fmt.Errorf("cannot encode event: %w", err)

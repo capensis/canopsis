@@ -1,56 +1,120 @@
-<template lang="pug">
-  v-layout(column)
-    c-enabled-field(v-if="!noEnabled", v-field="form.enabled", hide-details)
-    c-name-field(v-field="form.name", required)
-    v-flex.mt-3(xs12)
-      c-enabled-field.mt-0.mb-1(
-        v-if="withStartOnTrigger",
-        :value="form.start_on_trigger",
-        :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')",
-        hide-details,
+<template>
+  <v-layout column>
+    <c-enabled-field
+      v-if="!noEnabled"
+      v-field="form.enabled"
+      hide-details
+    />
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <v-flex
+      class="mt-3"
+      xs12
+    >
+      <c-enabled-field
+        v-if="withStartOnTrigger"
+        :value="form.start_on_trigger"
+        :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
+        class="mt-0 mb-1"
+        hide-details
         @input="updateStartOnTrigger"
-      )
-      c-duration-field(
-        v-if="form.start_on_trigger",
-        v-field="form.duration",
+      />
+      <c-duration-field
+        v-if="form.start_on_trigger"
+        v-field="form.duration"
         required
-      )
-      template(v-else)
-        v-layout(row, align-center)
-          v-flex(xs3)
-            v-checkbox.mt-0(
-              v-model="fullDay",
-              :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
-              color="primary",
+      />
+      <template v-else>
+        <v-layout align-center>
+          <v-flex xs3>
+            <v-checkbox
+              v-model="fullDay"
+              :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+              class="mt-0"
+              color="primary"
               hide-details
-            )
-          v-flex(v-if="hasPauseType", xs3)
-            v-checkbox.mt-0(
-              v-model="noEnding",
-              :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
-              color="primary",
+            />
+          </v-flex>
+          <v-flex
+            v-if="hasPauseType"
+            xs3
+          >
+            <v-checkbox
+              v-model="noEnding"
+              :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
+              class="mt-0"
+              color="primary"
               hide-details
-            )
-          v-flex(xs6)
-            date-time-splitted-range-picker-field(
-              :start="form.tstart",
-              :end="form.tstop",
-              :start-label="$t('modals.createPbehavior.steps.general.fields.start')",
-              :end-label="$t('modals.createPbehavior.steps.general.fields.stop')",
-              :start-rules="tstartRules",
-              :end-rules="tstopRules",
-              :end-min="tstopMin",
-              :end-max="tstopMax",
-              :no-ending="noEnding",
-              :full-day="fullDay",
-              @update:start="updateField('tstart', $event)",
-              @update:end="updateTStop"
-            )
-      v-layout(row)
-        v-flex(xs6)
-          c-pbehavior-reason-field.mr-2(v-field="form.reason", required, return-object)
-        v-flex(xs6)
-          c-pbehavior-type-field.ml-2(v-field="form.type", required, return-object)
+            />
+          </v-flex>
+          <v-flex xs6>
+            <date-time-splitted-range-picker-field
+              :start="form.tstart"
+              :end="form.tstop"
+              :start-label="$t('modals.createPbehavior.steps.general.fields.start')"
+              :end-label="$t('modals.createPbehavior.steps.general.fields.stop')"
+              :start-rules="tstartRules"
+              :end-rules="tstopRules"
+              :end-min="tstopMin"
+              :end-max="tstopMax"
+              :no-ending="noEnding"
+              :full-day="fullDay"
+              @update:start="updateField('tstart', $event)"
+              @update:end="updateField('tstop', $event)"
+            />
+          </v-flex>
+        </v-layout>
+      </template>
+      <v-layout>
+        <v-flex xs6>
+          <c-pbehavior-reason-field
+            v-field="form.reason"
+            class="mr-2"
+            required
+            return-object
+          />
+        </v-flex>
+        <v-flex xs6>
+          <c-pbehavior-type-field
+            v-field="form.type"
+            class="ml-2"
+            required
+            return-object
+          />
+        </v-flex>
+      </v-layout>
+    </v-flex>
+    <c-enabled-color-picker-field
+      v-field="form.color"
+      :label="$t('modals.createPbehavior.steps.color.label')"
+      row
+    />
+    <c-collapse-panel
+      :title="$t('recurrenceRule.title')"
+      class="mb-2"
+    >
+      <recurrence-rule-form
+        v-field="form.rrule"
+        :start="form.tstart"
+      />
+      <pbehavior-recurrence-rule-exceptions-field
+        v-field="form.exdates"
+        :exceptions="form.exceptions"
+        class="mt-2"
+        with-exdate-type
+        @update:exceptions="updateExceptions"
+      />
+    </c-collapse-panel>
+    <c-collapse-panel
+      v-if="!noComments"
+      :title="$tc('common.comment', 2)"
+      class="mt-2"
+    >
+      <pbehavior-comments-field v-field="form.comments" />
+    </c-collapse-panel>
+  </v-layout>
 </template>
 
 <script>
@@ -77,10 +141,17 @@ import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reason
 import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
+import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
+import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
+
+import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    RecurrenceRuleForm,
+    PbehaviorRecurrenceRuleExceptionsField,
+    PbehaviorCommentsField,
     DateTimeSplittedRangePickerField,
   },
   mixins: [
@@ -99,6 +170,10 @@ export default {
       required: true,
     },
     noEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    noComments: {
       type: Boolean,
       default: false,
     },
@@ -195,10 +270,6 @@ export default {
     this.fetchFieldPbehaviorTypesList();
   },
   methods: {
-    updateTStop(tstop) {
-      this.updateField('tstop', tstop ? convertDateToEndOfUnitDateObject(tstop, TIME_UNITS.minute) : tstop);
-    },
-
     updateStartOnTrigger(value) {
       if (value) {
         this.fullDay = false;
@@ -220,6 +291,10 @@ export default {
           start_on_trigger: false,
         });
       }
+    },
+
+    updateExceptions(exceptions) {
+      this.updateField('exceptions', exceptions);
     },
   },
 };

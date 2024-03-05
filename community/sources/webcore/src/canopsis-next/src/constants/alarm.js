@@ -47,6 +47,7 @@ export const ALARM_FIELDS = {
   ticketInitiator: 'v.ticket.initiator',
   ticketValue: 'v.ticket.ticket',
   ticketCreatedAt: 'v.ticket.t',
+  changeState: 'v.change_state',
   entityId: 'entity._id',
   entityName: 'entity.name',
   entityCategoryName: 'entity.category.name',
@@ -315,6 +316,7 @@ export const ALARM_PATTERN_FIELDS = {
   ticketMessage: ALARM_FIELDS.ticketMessage,
   ticketInitiator: ALARM_FIELDS.ticketInitiator,
   ticketData: ALARM_FIELDS.ticketData,
+  changeState: ALARM_FIELDS.changeState,
 };
 
 export const ALARM_EVENT_INITIATORS = {
@@ -463,6 +465,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityInfos]: 'alarm.fields.entityInfos',
   [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
   [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
+  [ALARM_FIELDS.changeState]: 'alarm.fields.changeState',
 
   /**
    * OBJECTS
@@ -508,6 +511,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
+  infosValue: '(index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%")',
 
   entityName: '.Entity.Name',
   entityInfosValue: '(index .Entity.Infos "%infos_name%").Value',

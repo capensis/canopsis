@@ -1,65 +1,95 @@
-<template lang="pug">
-  v-layout.pbehavior-exception-field(column)
-    v-layout(row, justify-space-between)
-      v-flex.pbehavior-exception-field__interval(xs6)
-        date-time-splitted-range-picker-field(
-          v-if="editing",
-          :start="value.begin",
-          :end="value.end",
-          :start-label="$t('common.begin')",
-          :end-label="$t('common.end')",
-          :start-rules="beginRules",
-          :end-rules="endRules",
-          :name="datesName",
-          :full-day="fullDay",
-          :disabled="disabled",
-          @update:start="updateField('begin', $event)",
-          @update:end="updateField('end', $event)"
-        )
-        date-time-splitted-range-picker-text(
-          v-else,
-          :start="value.begin",
-          :end="value.end",
-          :start-label="$t('common.begin')",
-          :end-label="$t('common.end')",
+<template>
+  <v-layout
+    class="pbehavior-exception-field"
+    column
+  >
+    <v-layout justify-space-between>
+      <v-flex
+        class="pbehavior-exception-field__interval"
+        xs6
+      >
+        <date-time-splitted-range-picker-field
+          v-if="editing"
+          :start="value.begin"
+          :end="value.end"
+          :start-label="$t('common.begin')"
+          :end-label="$t('common.end')"
+          :start-rules="beginRules"
+          :end-rules="endRules"
+          :name="datesName"
           :full-day="fullDay"
-        )
-      v-flex.pl-2(v-if="withType")
-        c-pbehavior-type-field(
-          v-if="editing",
-          v-field="value.type",
-          :required="!disabled",
-          :name="typeName",
-          :disabled="disabled",
+          :disabled="disabled"
+          @update:start="updateField('begin', $event)"
+          @update:end="updateField('end', $event)"
+        />
+        <date-time-splitted-range-picker-text
+          v-else
+          :start="value.begin"
+          :end="value.end"
+          :start-label="$t('common.begin')"
+          :end-label="$t('common.end')"
+          :full-day="fullDay"
+        />
+      </v-flex>
+      <v-flex
+        v-if="withType"
+        class="pl-2"
+      >
+        <c-pbehavior-type-field
+          v-if="editing"
+          v-field="value.type"
+          :required="!disabled"
+          :name="typeName"
+          :disabled="disabled"
           return-object
-        )
-        c-pbehavior-type-text(
-          v-else,
+        />
+        <c-pbehavior-type-text
+          v-else
           :value="value.type"
-        )
-      v-flex.pbehavior-exception-field__actions(v-if="!disabled")
-        v-btn.btn--editing(
-          :input-value="editing",
-          icon,
-          fab,
+        />
+      </v-flex>
+      <v-flex
+        v-if="!disabled"
+        class="pbehavior-exception-field__actions"
+      >
+        <v-btn
+          :input-value="editing"
+          class="btn--editing"
+          icon
+          fab
           @click="toggleEditing"
-        )
-          v-icon edit
-          v-icon(color="primary") check
-        v-btn.mx-0(
-          color="error",
-          icon,
+        >
+          <v-icon
+            v-if="editing"
+            color="primary"
+          >
+            check
+          </v-icon>
+          <v-icon v-else>
+            edit
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="v-btn-legacy-m--y"
+          color="error"
+          icon
           @click="$emit('delete')"
-        )
-          v-icon delete
-    v-layout(row)
-      v-checkbox.mt-0(
-        v-model="fullDay",
-        :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
-        :disabled="disabled || !editing",
-        color="primary",
+        >
+          <v-icon>delete</v-icon>
+        </v-btn>
+      </v-flex>
+    </v-layout>
+    <v-layout>
+      <v-checkbox
+        v-model="fullDay"
+        :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+        :disabled="disabled || !editing"
+        class="mt-0"
+        color="primary"
         hide-details
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

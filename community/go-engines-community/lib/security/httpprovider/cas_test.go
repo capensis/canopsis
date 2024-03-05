@@ -39,7 +39,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest("GET", "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -48,7 +48,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 	<cas:authenticationSuccess><cas:user>` + externalID + `</cas:user></cas:authenticationSuccess>
 </cas:serviceResponse>`
 	casResponse := &http.Response{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
 		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
@@ -125,7 +125,7 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest("GET", "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -134,7 +134,7 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 		<cas:authenticationFailure code="INVALID_TICKET"></cas:authenticationFailure>
 	</cas:serviceResponse>`
 	casResponse := &http.Response{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
 		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
@@ -188,7 +188,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest("GET", "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -197,7 +197,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 	<cas:authenticationSuccess><cas:user>` + externalID + `</cas:user></cas:authenticationSuccess>
 </cas:serviceResponse>`
 	casResponse := &http.Response{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
 		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
@@ -241,7 +241,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest("GET", "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -250,7 +250,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 	<cas:authenticationSuccess><cas:user>` + externalID + `</cas:user></cas:authenticationSuccess>
 </cas:serviceResponse>`
 	casResponse := &http.Response{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
 		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.

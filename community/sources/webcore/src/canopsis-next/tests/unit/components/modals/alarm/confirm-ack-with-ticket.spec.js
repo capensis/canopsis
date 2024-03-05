@@ -1,9 +1,8 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import ClickOutside from '@/services/click-outside';
 
 import ConfirmAckWithTicket from '@/components/modals/alarm/confirm-ack-with-ticket.vue';
@@ -143,9 +142,7 @@ describe('confirm-ack-with-ticket', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -164,6 +161,6 @@ describe('confirm-ack-with-ticket', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

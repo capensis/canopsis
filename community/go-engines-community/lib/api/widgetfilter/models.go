@@ -2,16 +2,13 @@ package widgetfilter
 
 import (
 	"encoding/json"
-	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type ListRequest struct {
@@ -22,10 +19,9 @@ type ListRequest struct {
 
 type EditRequest struct {
 	BaseEditRequest
-	ID        string `json:"-"`
-	Widget    string `json:"widget" binding:"required"`
-	IsPrivate *bool  `json:"is_private" binding:"required"`
-	Author    string `json:"author" swaggerignore:"true"`
+	IsUserPreference *bool  `json:"is_user_preference" binding:"required"`
+	Author           string `json:"author" swaggerignore:"true"`
+	IsPrivate        bool   `json:"-"`
 }
 
 type BaseEditRequest struct {
@@ -38,34 +34,32 @@ type BaseEditRequest struct {
 	WeatherServicePattern view.WeatherServicePattern `json:"weather_service_pattern"`
 }
 
-type Response struct {
-	ID        string         `bson:"_id" json:"_id"`
-	Widget    string         `bson:"widget" json:"-"`
-	Title     string         `bson:"title" json:"title"`
-	IsPrivate *bool          `bson:"is_private" json:"is_private,omitempty"`
-	Author    *author.Author `bson:"author" json:"author,omitempty"`
-	Created   *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated   *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+type CreateRequest struct {
+	EditRequest
+	Widget string `json:"widget" binding:"required"`
+}
 
-	OldMongoQuery OldMongoQuery `bson:"old_mongo_query" json:"old_mongo_query,omitempty"`
+type UpdateRequest struct {
+	EditRequest
+	ID string `json:"-"`
+}
+
+type Response struct {
+	ID               string            `bson:"_id" json:"_id"`
+	Widget           string            `bson:"widget" json:"-"`
+	Title            string            `bson:"title" json:"title"`
+	IsUserPreference bool              `bson:"is_user_preference" json:"is_user_preference"`
+	Author           *author.Author    `bson:"author" json:"author,omitempty"`
+	Created          *datetime.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated          *datetime.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
 	savedpattern.AlarmPatternFields     `bson:",inline"`
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
 
 	WeatherServicePattern view.WeatherServicePattern `bson:"weather_service_pattern" json:"weather_service_pattern,omitempty"`
-}
 
-type OldMongoQuery map[string]interface{}
-
-func (q *OldMongoQuery) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
-	v, _, ok := bsoncore.ReadString(b)
-	if !ok {
-		return errors.New("invalid value, expected string")
-	}
-
-	err := json.Unmarshal([]byte(v), &q)
-	return err
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
 type AggregationResult struct {

@@ -1,23 +1,24 @@
-<template lang="pug">
-  c-page(
-    :creatable="hasCreateAnyTagAccess",
-    :create-tooltip="$t('modals.createTag.create.title')",
-    @refresh="fetchList",
+<template>
+  <c-page
+    :creatable="hasCreateAnyTagAccess"
+    :create-tooltip="$t('modals.createTag.create.title')"
+    @refresh="fetchList"
     @create="showCreateTagModal"
-  )
-    tags-list(
-      :tags="alarmTags",
-      :pending="alarmTagsPending",
-      :pagination.sync="pagination",
-      :total-items="alarmTagsMeta.total_count",
-      :updatable="hasUpdateAnyTagAccess",
-      :removable="hasDeleteAnyTagAccess",
-      :duplicable="hasCreateAnyTagAccess",
-      @edit="showEditTagModal",
-      @duplicate="showDuplicateTagModal",
-      @remove="showRemoveTagModal",
+  >
+    <tags-list
+      :tags="alarmTags"
+      :pending="alarmTagsPending"
+      :options.sync="options"
+      :total-items="alarmTagsMeta.total_count"
+      :updatable="hasUpdateAnyTagAccess"
+      :removable="hasDeleteAnyTagAccess"
+      :duplicable="hasCreateAnyTagAccess"
+      @edit="showEditTagModal"
+      @duplicate="showDuplicateTagModal"
+      @remove="showRemoveTagModal"
       @remove-selected="showRemoveSelectedTagsModal"
-    )
+    />
+  </c-page>
 </template>
 
 <script>

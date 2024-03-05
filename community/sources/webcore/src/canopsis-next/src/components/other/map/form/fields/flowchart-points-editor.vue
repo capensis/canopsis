@@ -1,55 +1,68 @@
-<template lang="pug">
-  g.flowchart-points-editor
-    component.flowchart-points-editor__point(
-      v-for="{ point, x, y } in nonShapesIcons",
-      :key="point._id",
-      :x="x",
-      :y="y",
-      :width="iconSize",
-      :height="iconSize",
-      is="foreignObject",
-      @click.stop="",
-      @contextmenu.stop.prevent="handleEditContextmenu($event, point)",
-      @dblclick.stop="openEditPointByClick($event, point)",
-      @mousedown.stop="startMoving(point)"
-    )
-      point-icon(:size="iconSize", :entity="point.entity")
-
-    component.flowchart-points-editor__point(
-      v-for="{ point, x, y } in shapesIcons",
-      :key="point._id",
-      :height="iconSize",
-      :width="iconSize",
-      :x="x",
-      :y="y",
-      is="foreignObject",
-      @mouseup.prevent.stop="",
-      @mousedown.prevent.stop="",
-      @click.stop="",
-      @dblclick.stop="openEditPointByClick($event, point)",
+<template>
+  <g class="flowchart-points-editor">
+    <component
+      is="foreignObject"
+      v-for="{ point, x, y } in nonShapesIcons"
+      :key="point._id"
+      :x="x"
+      :y="y"
+      :width="iconSize"
+      :height="iconSize"
+      class="flowchart-points-editor__point"
+      @click.stop=""
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
-    )
-      point-icon(:size="iconSize", :entity="point.entity")
-
-    component(is="foreignObject", style="overflow: visible;")
-      point-form-dialog-menu(
-        :value="isDialogOpened",
-        :position-x="clientX",
-        :position-y="clientY",
-        :point="addingPoint || editingPoint",
-        :editing="!!editingPoint",
-        :exists-entities="existsEntities",
-        @cancel="cancelPointDialog",
-        @submit="submitPointDialog",
+      @dblclick.stop="openEditPointByClick($event, point)"
+      @mousedown.stop="startMoving(point)"
+    >
+      <point-icon
+        :size="iconSize"
+        :entity="point.entity"
+      />
+    </component>
+    <component
+      is="foreignObject"
+      v-for="{ point, x, y } in shapesIcons"
+      :key="point._id"
+      :height="iconSize"
+      :width="iconSize"
+      :x="x"
+      :y="y"
+      class="flowchart-points-editor__point"
+      @mouseup.prevent.stop=""
+      @mousedown.prevent.stop=""
+      @click.stop=""
+      @dblclick.stop="openEditPointByClick($event, point)"
+      @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
+    >
+      <point-icon
+        :size="iconSize"
+        :entity="point.entity"
+      />
+    </component>
+    <component
+      is="foreignObject"
+      style="overflow: visible;"
+    >
+      <point-form-dialog-menu
+        :value="isDialogOpened"
+        :position-x="clientX"
+        :position-y="clientY"
+        :point="addingPoint || editingPoint"
+        :editing="!!editingPoint"
+        :exists-entities="existsEntities"
+        @cancel="cancelPointDialog"
+        @submit="submitPointDialog"
         @remove="showRemovePointModal"
-      )
-      flowchart-point-contextmenu(
-        :value="shownMenu",
-        :position-x="clientX",
-        :position-y="clientY",
-        :items="contextmenuItems",
+      />
+      <flowchart-point-contextmenu
+        :value="shownMenu"
+        :position-x="clientX"
+        :position-y="clientY"
+        :items="contextmenuItems"
         @close="cancelPointDialog"
-      )
+      />
+    </component>
+  </g>
 </template>
 
 <script>
@@ -64,7 +77,6 @@ import { formMixin } from '@/mixins/form';
 import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
 
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
-import PointFormDialog from '@/components/other/map/form/fields/point-form-dialog.vue';
 
 import PointFormDialogMenu from './point-form-dialog-menu.vue';
 import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
@@ -74,7 +86,6 @@ export default {
   components: {
     PointFormDialogMenu,
     FlowchartPointContextmenu,
-    PointFormDialog,
     PointIcon,
   },
   mixins: [formMixin, mapFlowchartPointsMixin],

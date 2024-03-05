@@ -8,6 +8,7 @@ import (
 	context "context"
 	http "net/http"
 	reflect "reflect"
+	time "time"
 
 	security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	gomock "github.com/golang/mock/gomock"
@@ -128,15 +129,15 @@ func (mr *MockEnforcerMockRecorder) LoadPolicy() *gomock.Call {
 }
 
 // StartAutoLoadPolicy mocks base method.
-func (m *MockEnforcer) StartAutoLoadPolicy(arg0 context.Context) {
+func (m *MockEnforcer) StartAutoLoadPolicy(arg0 context.Context, arg1 time.Duration) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "StartAutoLoadPolicy", arg0)
+	m.ctrl.Call(m, "StartAutoLoadPolicy", arg0, arg1)
 }
 
 // StartAutoLoadPolicy indicates an expected call of StartAutoLoadPolicy.
-func (mr *MockEnforcerMockRecorder) StartAutoLoadPolicy(arg0 interface{}) *gomock.Call {
+func (mr *MockEnforcerMockRecorder) StartAutoLoadPolicy(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartAutoLoadPolicy", reflect.TypeOf((*MockEnforcer)(nil).StartAutoLoadPolicy), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartAutoLoadPolicy", reflect.TypeOf((*MockEnforcer)(nil).StartAutoLoadPolicy), arg0, arg1)
 }
 
 // MockProvider is a mock of Provider interface.

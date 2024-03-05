@@ -33,9 +33,9 @@ const (
 	WidgetTemplateMongoCollection = "widget_templates"
 	ViewGroupMongoCollection      = "viewgroups"
 
-	// Following collections are used for event statistics.
-	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
-	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
+	// MessageRateStatsHourCollectionName contains old stats
+	// deprecated
+	MessageRateStatsHourCollectionName = "message_rate_statistic_hour"
 
 	// Collection for ok/ko event statistics
 	EventStatistics = "event_statistics"
@@ -47,9 +47,7 @@ const (
 	JobConfigMongoCollection            = "job_config"
 	JobMongoCollection                  = "job"
 	JobHistoryMongoCollection           = "job_history"
-	// InstructionWeekStatsMongoCollection
-	// Deprecated : keep for backward compatibility, remove in the next release
-	InstructionWeekStatsMongoCollection = "instruction_week_stats"
+
 	// Data storage alarm collections
 	ResolvedAlarmMongoCollection = "resolved_alarms"
 	ArchivedAlarmMongoCollection = "archived_alarms"
@@ -94,9 +92,13 @@ const (
 	EventFilterRuleCollection    = "eventfilter"
 	EventFilterFailureCollection = "eventfilter_failure"
 
-	EntityServiceCountersCollection = "entity_service_counters"
+	EntityCountersCollection = "entity_counters"
 
 	MetaAlarmStatesCollection = "meta_alarm_states"
 
 	ColorThemeCollection = "color_theme"
+
+	EngineNotificationCollection = "engine_notification"
+
+	IconCollection = "icon"
 )
