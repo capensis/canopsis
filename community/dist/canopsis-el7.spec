@@ -20,8 +20,8 @@ Canopsis Community RPM Package
 %prep
 %setup -q
 echo "install golang"
-wget https://go.dev/dl/go1.20.11.linux-amd64.tar.gz
-tar -C ~ -xzf go1.20.11.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.20.14.linux-amd64.tar.gz
+tar -C ~ -xzf go1.20.14.linux-amd64.tar.gz
 
 %build
 export PATH=$PATH:~/go/bin
