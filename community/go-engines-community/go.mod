@@ -2,7 +2,7 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 
 // Needs to be synced with .env:GOLANG_VERSION and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
-go 1.18
+go 1.20
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
