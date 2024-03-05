@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
@@ -48,10 +47,6 @@ export const authMixin = {
       'fetchCurrentUser',
       'filesAccess',
     ]),
-
-    checkIsTourEnabled(tour) {
-      return !get(this.currentUser, ['ui_tours', tour]);
-    },
 
     checkAccess(permissionId, action = CRUD_ACTIONS.can) {
       return checkUserAccess(this.currentUserPermissionsById[permissionId], action);

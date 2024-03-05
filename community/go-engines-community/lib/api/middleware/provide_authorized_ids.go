@@ -1,20 +1,24 @@
 package middleware
 
 import (
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 const AuthorizedIds = "authorized_ids"
+const OwnedIds = "owned_ids"
 
 // ProvideAuthorizedIds determines on which objects current subject has been authorized to take
 // an action.
 func ProvideAuthorizedIds(
 	act string,
 	enforcer security.Enforcer,
+	provider apisecurity.OwnedObjectsProvider,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		subj, ok := c.Get(auth.UserKey)
@@ -41,6 +45,14 @@ func ProvideAuthorizedIds(
 					ids = append(ids, perm[1])
 				}
 			}
+		}
+
+		if provider != nil {
+			ownedIds, err := provider.GetOwnedIDs(c, subj.(string))
+			if err != nil {
+				panic(err)
+			}
+			c.Set(OwnedIds, ownedIds)
 		}
 
 		c.Set(AuthorizedIds, ids)

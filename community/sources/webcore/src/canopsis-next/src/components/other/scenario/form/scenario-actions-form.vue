@@ -1,26 +1,44 @@
-<template lang="pug">
-  v-layout(column)
-    c-alert(v-show="!actions.length", type="info") {{ $t('scenario.emptyActions') }}
-    c-card-iterator-field.mb-2(
-      v-field="actions",
-      item-key="key",
+<template>
+  <v-layout column>
+    <c-alert
+      v-show="!actions.length"
+      type="info"
+    >
+      {{ $t('scenario.emptyActions') }}
+    </c-alert>
+    <c-card-iterator-field
+      v-field="actions"
       :draggable-group="draggableGroup"
-    )
-      template(#item="{ item: action, index }")
-        scenario-action-field(
-          v-field="actions[index]",
-          :name="`${name}.${action.key}`",
-          :action-number="index + 1",
-          :has-previous-webhook="hasPreviousWebhook(index)",
+      class="mb-2"
+      item-key="key"
+    >
+      <template #item="{ item: action, index }">
+        <scenario-action-field
+          v-field="actions[index]"
+          :name="`${name}.${action.key}`"
+          :action-number="index + 1"
+          :has-previous-webhook="hasPreviousWebhook(index)"
           @remove="removeItemFromArray(index)"
-        )
-    v-layout(row, align-center)
-      v-btn.ml-0(
-        :color="hasActionsErrors ? 'error' : 'primary'",
-        outline,
+        />
+      </template>
+    </c-card-iterator-field>
+    <v-layout align-center>
+      <v-btn
+        :color="hasActionsErrors ? 'error' : 'primary'"
+        class="ml-0"
+        outlined
         @click="addAction"
-      ) {{ $t('scenario.addAction') }}
-      span.error--text(v-show="hasActionsErrors") {{ $t('scenario.errors.actionRequired') }}
+      >
+        {{ $t('scenario.addAction') }}
+      </v-btn>
+      <span
+        v-show="hasActionsErrors"
+        class="error--text"
+      >
+        {{ $t('scenario.errors.actionRequired') }}
+      </span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

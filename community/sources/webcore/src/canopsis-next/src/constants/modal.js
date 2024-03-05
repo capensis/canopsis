@@ -26,6 +26,7 @@ export const MODALS = {
   textEditor: 'text-editor',
   textEditorWithTemplate: 'text-editor-with-template',
   textFieldEditor: 'text-field-editor',
+  payloadTextareaEditor: 'payload-textarea-editor',
   selectView: 'select-view',
   createView: 'create-view',
   shareView: 'share-view',
@@ -77,7 +78,6 @@ export const MODALS = {
   imagesViewer: 'images-viewer',
   rate: 'rate',
   createScenario: 'create-scenario',
-  stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
   createAlarmStatusRule: 'create-alarm-status-rule',
@@ -106,9 +106,18 @@ export const MODALS = {
   createEntity: 'create-entity',
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
+  entitiesRootCauseDiagram: 'entities-root-cause-diagram',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
 
   createTheme: 'create-theme',
+
+  createStateSetting: 'create-state-setting',
+  createJunitStateSetting: 'create-junit-state-setting',
+  stateSettingInheritedEntityPattern: 'state-setting-inherited-entity-pattern',
+
+  archiveDisabledEntities: 'archive-disabled-entities',
+
+  createIcon: 'create-icon',
 };

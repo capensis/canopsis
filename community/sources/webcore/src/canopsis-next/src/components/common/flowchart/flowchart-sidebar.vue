@@ -1,51 +1,117 @@
-<template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(width="100%", permanent, touchless)
-    v-expansion-panel(color="grey", expand)
-      v-layout(column)
-        slot(name="prepend")
-        flowchart-color-field.flowchart-sidebar__additional-item.px-4(
-          :value="backgroundColor",
-          :label="$t('flowchart.backgroundColor')",
-          :palette="backgroundColors",
-          hide-checkbox,
-          @input="$emit('update:backgroundColor', $event)"
-        )
-      v-expansion-panel-content
-        template(#header="")
-          span.v-label {{ $tc('flowchart.shape', 2) }}
-        v-divider
-        v-layout(row, wrap)
-          v-tooltip(v-for="(button, index) in buttons", :key="index", z-index="230", top)
-            template(#activator="{ on }")
-              v-btn.ma-0.pa-0.flowchart-sidebar__button(
-                v-on="on",
-                flat,
-                large,
-                @click="button.action"
-              )
-                component.pa-1.text--disabled(:is="button.icon")
-            span {{ button.label }}
-          file-selector(ref="fileSelector", hide-details, @change="addImage")
-            template(#activator="{ on }")
-              v-tooltip(z-index="230", top)
-                template(#activator="{ on: tooltipOn }")
-                  v-btn.ma-0.pa-0.flowchart-sidebar__button(v-on="{ ...on, ...tooltipOn }", flat, large)
-                    image-shape-icon.grey--text.text--darken-3
-                span {{ $t('flowchart.shapes.image') }}
-      v-expansion-panel-content
-        template(#header="")
-          span.v-label {{ $t('flowchart.icons') }}
-        v-divider
-        v-layout(v-for="group in iconGroups", :key="group.name", row, wrap)
-          v-btn.flowchart-sidebar__button-icon.ma-0(
-            v-for="(icon, index) in group.icons",
-            :key="index",
-            flat,
-            @click="addIconAsset(icon)"
-          )
-            span.text--disabled.flowchart-sidebar__button-svg(v-html="icon")
-          v-flex(xs12)
-            v-divider
+<template>
+  <v-navigation-drawer
+    class="flowchart-sidebar"
+    width="100%"
+    permanent
+    touchless
+  >
+    <v-layout column>
+      <slot name="prepend" />
+      <flowchart-color-field
+        :value="backgroundColor"
+        :label="$t('flowchart.backgroundColor')"
+        :palette="backgroundColors"
+        class="flowchart-sidebar__additional-item px-6"
+        hide-checkbox
+        @input="$emit('update:backgroundColor', $event)"
+      />
+    </v-layout>
+    <v-divider />
+    <v-expansion-panels
+      color="grey"
+      multiple
+      accordion
+      flat
+    >
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <span class="v-label">{{ $tc('flowchart.shape', 2) }}</span>
+        </v-expansion-panel-header>
+        <v-divider />
+        <v-expansion-panel-content>
+          <v-layout wrap>
+            <v-tooltip
+              v-for="(button, index) in buttons"
+              :key="index"
+              z-index="230"
+              top
+            >
+              <template #activator="{ on }">
+                <v-btn
+                  class="ma-0 pa-0 flowchart-sidebar__button"
+                  text
+                  large
+                  v-on="on"
+                  @click="button.action"
+                >
+                  <component
+                    :is="button.icon"
+                    class="pa-1 text--disabled"
+                  />
+                </v-btn>
+              </template>
+              <span>{{ button.label }}</span>
+            </v-tooltip>
+            <file-selector
+              ref="fileSelector"
+              hide-details
+              @change="addImage"
+            >
+              <template #activator="{ on }">
+                <v-tooltip
+                  z-index="230"
+                  top
+                >
+                  <template #activator="{ on: tooltipOn }">
+                    <v-btn
+                      class="ma-0 pa-0 flowchart-sidebar__button"
+                      text
+                      large
+                      v-on="{ ...on, ...tooltipOn }"
+                    >
+                      <image-shape-icon class="grey--text text--darken-3" />
+                    </v-btn>
+                  </template>
+                  <span>{{ $t('flowchart.shapes.image') }}</span>
+                </v-tooltip>
+              </template>
+            </file-selector>
+          </v-layout>
+          <v-divider />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <span class="v-label">{{ $t('flowchart.icons') }}</span>
+        </v-expansion-panel-header>
+        <v-divider />
+        <v-expansion-panel-content>
+          <v-layout
+            v-for="group in iconGroups"
+            :key="group.name"
+            wrap
+          >
+            <v-btn
+              v-for="(icon, index) in group.icons"
+              :key="index"
+              class="flowchart-sidebar__button-icon ma-0"
+              text
+              @click="addIconAsset(icon)"
+            >
+              <span
+                v-html="icon"
+                class="text--disabled flowchart-sidebar__button-svg"
+              />
+            </v-btn>
+            <v-flex xs12>
+              <v-divider />
+            </v-flex>
+          </v-layout>
+          <v-divider />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </v-navigation-drawer>
 </template>
 
 <script>
@@ -630,6 +696,10 @@ export default {
 
 <style lang="scss">
 .flowchart-sidebar {
+  .v-navigation-drawer__border {
+    z-index: 1;
+  }
+
   &__button {
     min-width: 75px !important;
   }

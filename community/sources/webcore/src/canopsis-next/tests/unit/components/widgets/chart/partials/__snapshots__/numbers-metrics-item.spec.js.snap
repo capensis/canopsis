@@ -6,7 +6,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with avg aggregat
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -29,7 +29,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with max aggregat
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -52,7 +52,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with metric 1`] =
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -75,7 +75,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with min aggregat
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -98,7 +98,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with sum aggregat
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -121,7 +121,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend down 1
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -134,7 +134,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend down 1
       size="0.75em"
       text="35 for the period
 07/11/2013 - 07/11/2013"
-      top="top"
+      top=""
     />
   </div>
   <div
@@ -151,7 +151,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend up 1`]
   style="font-size: 110px;"
 >
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
       class="numbers-metrics-item__value"
@@ -164,7 +164,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend up 1`]
       size="0.75em"
       text="25 for the period
 07/11/2013 - 07/11/2013"
-      top="top"
+      top=""
     />
   </div>
   <div

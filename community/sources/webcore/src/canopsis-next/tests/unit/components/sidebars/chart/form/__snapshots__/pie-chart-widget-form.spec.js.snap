@@ -35,7 +35,7 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
   >
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value="Chart title"
     />
@@ -88,7 +88,7 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
   >
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value=""
     />

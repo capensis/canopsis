@@ -1,15 +1,17 @@
 import Faker from 'faker';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import { API_ROUTES } from '@/config';
 import { MODALS } from '@/constants';
-import store from '@/store';
+
 import ClickOutside from '@/services/click-outside';
 import request from '@/services/request';
+
+import store from '@/store';
 
 import FiltersList from '@/components/modals/common/filters-list.vue';
 
@@ -76,7 +78,6 @@ describe('filters-list', () => {
     .reply(400);
 
   const factory = generateShallowRenderer(FiltersList, {
-
     stubs,
     store,
     mocks: { $popups, $modals },
@@ -87,7 +88,6 @@ describe('filters-list', () => {
     },
   });
   const snapshotFactory = generateRenderer(FiltersList, {
-
     stubs,
     store,
     mocks: { $popups, $modals },
@@ -124,7 +124,7 @@ describe('filters-list', () => {
       },
     });
 
-    selectFiltersList(wrapper).vm.$emit('add');
+    selectFiltersList(wrapper).triggerCustomEvent('add');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createFilter,
@@ -146,7 +146,7 @@ describe('filters-list', () => {
     expect(JSON.parse(filterPostRequest.data)).toEqual({
       ...newFilter,
       widget: widgetId,
-      is_private: true,
+      is_user_preference: true,
     });
   });
 
@@ -165,7 +165,7 @@ describe('filters-list', () => {
       author: Faker.datatype.string(),
     };
 
-    selectFiltersList(wrapper).vm.$emit('edit', editingFilter);
+    selectFiltersList(wrapper).triggerCustomEvent('edit', editingFilter);
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createFilter,
@@ -206,7 +206,7 @@ describe('filters-list', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectFiltersList(wrapper).vm.$emit('delete', removingFilter);
+    selectFiltersList(wrapper).triggerCustomEvent('delete', removingFilter);
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.confirmation,
@@ -246,7 +246,7 @@ describe('filters-list', () => {
 
     mockPutWidgetFilterPositionsRequest();
 
-    selectFiltersList(wrapper).vm.$emit('input', newSortedFilters);
+    selectFiltersList(wrapper).triggerCustomEvent('input', newSortedFilters);
 
     await flushPromises();
 
@@ -258,6 +258,10 @@ describe('filters-list', () => {
   });
 
   test('Filters priority didn\'t change after trigger filters list with error', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
     mockGetUserPreferenceRequest({
       filters,
       widget: widgetId,
@@ -278,7 +282,7 @@ describe('filters-list', () => {
 
     mockPutWidgetFilterPositionsRequestWithError();
 
-    selectFiltersList(wrapper).vm.$emit('input', newSortedFilters);
+    selectFiltersList(wrapper).triggerCustomEvent('input', newSortedFilters);
 
     await flushPromises();
 
@@ -289,6 +293,8 @@ describe('filters-list', () => {
     );
 
     expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
+
+    consoleErrorSpy.mockClear();
   });
 
   test('Renders `filters-list` with empty modal', async () => {
@@ -307,7 +313,7 @@ describe('filters-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `filters-list` with all parameters', async () => {
@@ -324,6 +330,6 @@ describe('filters-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

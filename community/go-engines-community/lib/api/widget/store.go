@@ -5,9 +5,13 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -15,18 +19,18 @@ import (
 )
 
 type Store interface {
-	FindViewIds(ctx context.Context, ids []string) (map[string]string, error)
+	FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error)
 	FindViewIdByTab(ctx context.Context, tabId string) (string, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
-	Insert(ctx context.Context, r EditRequest) (*Response, error)
-	Update(ctx context.Context, r EditRequest) (*Response, error)
+	Insert(ctx context.Context, r CreateRequest) (*Response, error)
+	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error)
-	CopyForTab(ctx context.Context, tabID, newTabID, author string) error
+	Copy(ctx context.Context, widgetID string, r CreateRequest) (*Response, error)
+	CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, enforcer security.Enforcer) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
@@ -34,6 +38,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		authorProvider:     authorProvider,
+		enforcer:           enforcer,
 	}
 }
 
@@ -44,12 +49,14 @@ type store struct {
 	filterCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
 	authorProvider     author.Provider
+
+	enforcer security.Enforcer
 }
 
-func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]string, error) {
+func (s *store) FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error) {
 	results := make([]struct {
-		ID   string `bson:"_id"`
-		View string `bson:"view"`
+		ID                                 string `bson:"_id"`
+		apisecurity.ViewTabPrivacySettings `bson:"inline"`
 	}, 0)
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
@@ -61,7 +68,9 @@ func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]strin
 		}},
 		{"$unwind": bson.M{"path": "$tab"}},
 		{"$project": bson.M{
-			"view": "$tab.view",
+			"view":       "$tab.view",
+			"is_private": "$tab.is_private",
+			"author":     "$tab.author",
 		}},
 	})
 	if err != nil {
@@ -72,14 +81,14 @@ func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]strin
 		return nil, err
 	}
 
-	viewIds := make(map[string]string)
+	tabInfos := make(map[string]apisecurity.ViewTabPrivacySettings)
 	for _, result := range results {
 		if result.View != "" {
-			viewIds[result.ID] = result.View
+			tabInfos[result.ID] = result.ViewTabPrivacySettings
 		}
 	}
 
-	return viewIds, nil
+	return tabInfos, nil
 }
 
 func (s *store) FindViewIdByTab(ctx context.Context, tabId string) (string, error) {
@@ -105,8 +114,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"let":  bson.M{"widget": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-					"is_private": false,
+					"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_user_preference": false,
 				}},
 			},
 			"as": "filters",
@@ -151,12 +160,34 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
-	widget := transformEditRequestToModel(r)
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
+	tabInfo, err := s.getTabPrivacySettings(ctx, r.Tab)
+	if err != nil {
+		return nil, err
+	}
+
+	if tabInfo.IsPrivate && tabInfo.Author != r.Author {
+		return nil, common.NewValidationError("tab", "Tab is private.")
+	}
+
+	if !tabInfo.IsPrivate {
+		ok, err := s.enforcer.Enforce(r.Author, tabInfo.View, model.PermissionUpdate)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			return nil, common.NewValidationError("tab", "Can't modify a tab.")
+		}
+	}
+
+	now := datetime.NewCpsTime()
+	widget := transformEditRequestToModel(r.EditRequest)
 	widget.ID = utils.NewID()
+	widget.Tab = r.Tab
 	widget.Created = now
 	widget.Updated = now
+	widget.IsPrivate = tabInfo.IsPrivate
 
 	filters := make([]interface{}, len(r.Filters))
 	for i, filter := range r.Filters {
@@ -167,6 +198,8 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		doc.Position = int64(i)
 		doc.Created = now
 		doc.Updated = now
+		doc.IsPrivate = tabInfo.IsPrivate
+
 		if widget.Parameters.MainFilter == filter.ID {
 			widget.Parameters.MainFilter = doc.ID
 		}
@@ -175,7 +208,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	}
 
 	var response *Response
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		_, err := s.collection.InsertOne(ctx, widget)
 		if err != nil {
@@ -196,22 +229,24 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, err
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	oldWidget, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || oldWidget == nil {
 		return nil, err
 	}
 
-	now := types.NewCpsTime()
-	widget := transformEditRequestToModel(r)
+	now := datetime.NewCpsTime()
+	widget := transformEditRequestToModel(r.EditRequest)
 	widget.ID = oldWidget.ID
 	widget.Updated = now
+	widget.IsPrivate = oldWidget.IsPrivate
 
 	filters := make(map[string]view.WidgetFilter, len(r.Filters))
 	for i, filter := range r.Filters {
 		doc := transformFilterRequestToModel(filter)
 		doc.Widget = widget.ID
 		doc.Author = widget.Author
+		doc.IsPrivate = widget.IsPrivate
 		doc.Position = int64(i)
 		doc.Updated = now
 
@@ -222,7 +257,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_private": false})
+		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_user_preference": false})
 		if err != nil {
 			return err
 		}
@@ -239,13 +274,9 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			}
 			if doc, ok := filters[idModel.ID]; ok {
 				updateFilterIds = append(updateFilterIds, idModel.ID)
-				filterUpdate := bson.M{"$set": doc}
-				if len(doc.EntityPattern) > 0 || len(doc.AlarmPattern) > 0 || len(doc.PbehaviorPattern) > 0 {
-					filterUpdate["$unset"] = bson.M{"old_mongo_query": ""}
-				}
 				filterWriteModels = append(filterWriteModels, mongodriver.NewUpdateOneModel().
 					SetFilter(bson.M{"_id": idModel.ID}).
-					SetUpdate(filterUpdate))
+					SetUpdate(bson.M{"$set": doc}))
 				delete(filters, idModel.ID)
 			}
 		}
@@ -283,9 +314,9 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		_, err = s.filterCollection.DeleteMany(ctx, bson.M{
-			"widget":     widget.ID,
-			"is_private": false,
-			"_id":        bson.M{"$nin": updateFilterIds},
+			"widget":             widget.ID,
+			"is_user_preference": false,
+			"_id":                bson.M{"$nin": updateFilterIds},
 		})
 		if err != nil {
 			return err
@@ -324,19 +355,39 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return res, err
 }
 
-func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
+func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		var err error
-		response, err = s.copy(ctx, widget.ID, r)
+
+		tabInfo, err := s.getTabPrivacySettings(ctx, r.Tab)
+		if err != nil {
+			return err
+		}
+
+		if tabInfo.IsPrivate && tabInfo.Author != r.Author {
+			return common.NewValidationError("tab", "Tab is private.")
+		}
+
+		if !tabInfo.IsPrivate {
+			ok, err := s.enforcer.Enforce(r.Author, tabInfo.View, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				return common.NewValidationError("tab", "Can't modify a tab.")
+			}
+		}
+
+		response, err = s.copy(ctx, widgetID, tabInfo.IsPrivate, r)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) error {
+func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error {
 	cursor, err := s.collection.Find(ctx, bson.M{"tab": tabID}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return err
@@ -350,13 +401,15 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) 
 			return err
 		}
 
-		_, err = s.copy(ctx, w.ID, EditRequest{
-			Tab:            newTabID,
-			Title:          w.Title,
-			Type:           w.Type,
-			GridParameters: w.GridParameters,
-			Parameters:     w.Parameters,
-			Author:         author,
+		_, err = s.copy(ctx, w.ID, isPrivate, CreateRequest{
+			Tab: newTabID,
+			EditRequest: EditRequest{
+				Title:          w.Title,
+				Type:           w.Type,
+				GridParameters: w.GridParameters,
+				Parameters:     w.Parameters,
+				Author:         author,
+			},
 		})
 		if err != nil {
 			return err
@@ -366,8 +419,8 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) 
 	return nil
 }
 
-func (s *store) copy(ctx context.Context, widgetID string, r EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r CreateRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
 		Tab:            r.Tab,
@@ -376,14 +429,14 @@ func (s *store) copy(ctx context.Context, widgetID string, r EditRequest) (*Resp
 		GridParameters: r.GridParameters,
 		Parameters:     r.Parameters,
 		Author:         r.Author,
+		IsPrivate:      isPrivate,
 		Created:        now,
 		Updated:        now,
 	}
 
 	cursor, err := s.filterCollection.Find(ctx, bson.M{
-		"widget":          widgetID,
-		"is_private":      false,
-		"old_mongo_query": nil, //do not copy old filters
+		"widget":             widgetID,
+		"is_user_preference": false,
 	}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return nil, err
@@ -410,6 +463,7 @@ func (s *store) copy(ctx context.Context, widgetID string, r EditRequest) (*Resp
 		filter.Author = r.Author
 		filter.Created = now
 		filter.Updated = now
+		filter.IsPrivate = isPrivate
 		filters = append(filters, filter)
 	}
 
@@ -454,7 +508,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			if tabId == "" {
 				tabId = w.Tab
 			} else if tabId != w.Tab {
-				return ValidationErr{error: errors.New("widgets are related to different view tabs")}
+				return ValidationError{error: errors.New("widgets are related to different view tabs")}
 			}
 		}
 
@@ -463,7 +517,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			return err
 		}
 		if count != int64(len(items)) {
-			return ValidationErr{error: errors.New("widgets are missing")}
+			return ValidationError{error: errors.New("widgets are missing")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(widgets))
@@ -485,6 +539,17 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 	return res, err
 }
 
+func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisecurity.ViewTabPrivacySettings, error) {
+	var tabInfo apisecurity.ViewTabPrivacySettings
+
+	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabID}).Decode(&tabInfo)
+	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
+		return tabInfo, common.NewValidationError("tab", "Tab doesn't exist.")
+	}
+
+	return tabInfo, err
+}
+
 func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) error {
 	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
 		"widget": widgetID,
@@ -503,7 +568,6 @@ func (s *store) deleteFilters(ctx context.Context, widgetID string) error {
 
 func transformEditRequestToModel(r EditRequest) view.Widget {
 	return view.Widget{
-		Tab:            r.Tab,
 		Title:          r.Title,
 		Type:           r.Type,
 		GridParameters: r.GridParameters,
@@ -515,7 +579,7 @@ func transformEditRequestToModel(r EditRequest) view.Widget {
 func transformFilterRequestToModel(r FilterRequest) view.WidgetFilter {
 	return view.WidgetFilter{
 		Title:                  r.Title,
-		IsPrivate:              false,
+		IsUserPreference:       false,
 		AlarmPatternFields:     r.AlarmPatternFieldsRequest.ToModel(),
 		EntityPatternFields:    r.EntityPatternFieldsRequest.ToModel(),
 		PbehaviorPatternFields: r.PbehaviorPatternFieldsRequest.ToModel(),

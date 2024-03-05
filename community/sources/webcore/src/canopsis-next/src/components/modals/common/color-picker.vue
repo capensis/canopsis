@@ -1,26 +1,38 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      v-layout
-        v-flex
-          c-color-chrome-picker-field(v-model="color")
-        v-flex
-          c-color-compact-picker-field(v-model="color")
-    template(#actions="")
-      v-btn(
-        data-test="colorPickerCancelButton",
-        depressed,
-        flat,
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <v-layout>
+        <v-flex>
+          <c-color-chrome-picker-field v-model="color" />
+        </v-flex>
+        <v-flex>
+          <c-color-compact-picker-field v-model="color" />
+        </v-flex>
+      </v-layout>
+    </template>
+    <template #actions="">
+      <v-btn
+        data-test="colorPickerCancelButton"
+        depressed
+        text
         @click="$modals.hide"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-        :disabled="isDisabled",
-        :loading="submitting",
-        data-test="colorPickerSubmitButton",
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        :disabled="isDisabled"
+        :loading="submitting"
+        class="primary"
+        data-test="colorPickerSubmitButton"
         @click="submit"
-      ) {{ $t('common.submit') }}
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

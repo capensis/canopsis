@@ -115,13 +115,17 @@ func (a api) Update(c *gin.Context) {
 }
 
 func (a *api) checkAccess(ctx context.Context, widgetId, userId string) (bool, error) {
-	viewIds, err := a.widgetStore.FindViewIds(ctx, []string{widgetId})
-	if err != nil || len(viewIds) == 0 {
+	tabInfos, err := a.widgetStore.FindTabPrivacySettings(ctx, []string{widgetId})
+	if err != nil || len(tabInfos) == 0 {
 		return false, err
 	}
 
-	for _, viewId := range viewIds {
-		ok, err := a.enforcer.Enforce(userId, viewId, model.PermissionRead)
+	for _, tabInfo := range tabInfos {
+		if tabInfo.IsPrivate && tabInfo.Author == userId {
+			continue
+		}
+
+		ok, err := a.enforcer.Enforce(userId, tabInfo.View, model.PermissionRead)
 		if err != nil || !ok {
 			return false, err
 		}

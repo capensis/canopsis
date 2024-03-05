@@ -1,13 +1,14 @@
 import Faker from 'faker';
 import { LatLngBounds } from 'leaflet';
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { geomapPointToForm } from '@/helpers/entities/map/form';
+
 import { MODALS } from '@/constants';
+
+import { geomapPointToForm } from '@/helpers/entities/map/form';
 
 import GeomapEditor from '@/components/other/map/form/fields/geomap-editor.vue';
 
@@ -82,7 +83,7 @@ const getEvent = event => ({
 const triggerPointEvent = (wrapper, index, event) => {
   const pointMarker = selectPointMarkerByIndex(wrapper, index);
 
-  return pointMarker.vm.$emit(event, new Event(event));
+  return pointMarker.triggerCustomEvent(event, new Event(event));
 };
 
 const checkDialogMenuPosition = (wrapper, { x, y }) => {
@@ -99,7 +100,7 @@ const fillPointDialog = (
 ) => {
   const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-  pointFormDialog.vm.$emit('submit', point);
+  pointFormDialog.triggerCustomEvent('submit', point);
 
   return point;
 };
@@ -168,7 +169,7 @@ describe('geomap-editor', () => {
 
     const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await addLocationBtn.vm.$emit('click');
+    await addLocationBtn.triggerCustomEvent('click');
 
     await geomap.trigger('click', event);
 
@@ -243,7 +244,7 @@ describe('geomap-editor', () => {
 
     const newPoint = fillPointDialog(wrapper);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       points: [newPoint],
     });
 
@@ -294,7 +295,7 @@ describe('geomap-editor', () => {
     await triggerItemContextMenuEvent(wrapper, 0, 'edit');
     const newPoint = fillPointDialog(wrapper, { ...point, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', { points: [newPoint] });
+    expect(wrapper).toEmitInput({ points: [newPoint] });
 
     await flushPromises();
     await checkMenuIsClosed(wrapper);
@@ -314,7 +315,7 @@ describe('geomap-editor', () => {
     await triggerContextMenuEvent(wrapper, 'add', { latlng });
     const newPoint = fillPointDialog(wrapper, { ...point, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', { points: [point, newPoint] });
+    expect(wrapper).toEmitInput({ points: [point, newPoint] });
 
     await flushPromises();
     await checkMenuIsClosed(wrapper);
@@ -337,7 +338,7 @@ describe('geomap-editor', () => {
 
     const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-    pointFormDialog.vm.$emit('remove');
+    pointFormDialog.triggerCustomEvent('remove');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -352,7 +353,7 @@ describe('geomap-editor', () => {
 
     modalArguments.config.action();
 
-    expect(wrapper).toEmit('input', { points: [] });
+    expect(wrapper).toEmitInput({ points: [] });
 
     await flushPromises();
     await checkMenuIsClosed(wrapper);
@@ -372,7 +373,7 @@ describe('geomap-editor', () => {
     await triggerPointEvent(wrapper, 1, 'dblclick');
     const newPoint = fillPointDialog(wrapper, { ...secondPoint, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       points: [point, newPoint],
     });
 
@@ -409,7 +410,7 @@ describe('geomap-editor', () => {
 
     modalArguments.config.action();
 
-    expect(wrapper).toEmit('input', { points: [point] });
+    expect(wrapper).toEmitInput({ points: [point] });
   });
 
   test('Coordinates changed after change coordinates by point dialog', async () => {
@@ -430,7 +431,7 @@ describe('geomap-editor', () => {
 
     const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-    await pointFormDialog.vm.$emit('fly:coordinates', coordinates);
+    await pointFormDialog.triggerCustomEvent('fly:coordinates', coordinates);
 
     expect(pointFormDialog.vm.point.coordinates).toBe(coordinates);
   });
@@ -453,7 +454,7 @@ describe('geomap-editor', () => {
 
     const pointMarker = selectPointMarkerByIndex(wrapper, 0);
 
-    pointMarker.vm.$emit('dragend', {
+    pointMarker.triggerCustomEvent('dragend', {
       target: {
         getLatLng,
         options: {
@@ -462,7 +463,7 @@ describe('geomap-editor', () => {
       },
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       points: [{ ...point, coordinates }, secondPoint],
     });
   });
@@ -474,7 +475,7 @@ describe('geomap-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-editor` with custom props', () => {
@@ -491,7 +492,7 @@ describe('geomap-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-editor` with validation errors ', async () => {
@@ -506,6 +507,6 @@ describe('geomap-editor', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

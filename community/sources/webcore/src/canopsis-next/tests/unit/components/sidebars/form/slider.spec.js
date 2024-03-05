@@ -31,9 +31,9 @@ describe('field-slider', () => {
 
     const newValue = Faker.datatype.number({ min: value });
 
-    selectSliderField(wrapper).vm.$emit('input', newValue);
+    selectSliderField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `field-slider` with default props', () => {
@@ -44,7 +44,7 @@ describe('field-slider', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-slider` with custom props', () => {
@@ -57,6 +57,6 @@ describe('field-slider', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

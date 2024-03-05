@@ -1,8 +1,9 @@
 package statesetting
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 func TestGetJunitState(t *testing.T) {
@@ -18,19 +19,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage simple critical",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -46,19 +47,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage simple major",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -74,19 +75,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage simple minor",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -102,19 +103,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage simple ok",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -130,19 +131,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage always ok",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -158,19 +159,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage always minor",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    0,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -186,19 +187,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage shouldn't be minor if 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    0,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -214,19 +215,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage always major",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    0,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -242,19 +243,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage shouldn't be major if 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -270,19 +271,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage always critical",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 0,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -298,19 +299,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "percentage shouldn't be major if 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 0,
 					Type:     TypePercentage,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -326,19 +327,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number simple critical",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -354,19 +355,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number simple major",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -382,19 +383,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number simple minor",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -410,19 +411,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number simple ok",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -438,19 +439,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number always ok",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -466,19 +467,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number always minor",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    0,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -494,19 +495,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number shouldn't be minor if 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    0,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -522,19 +523,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number always major",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    0,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -550,19 +551,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number shouldn't be major if 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -578,19 +579,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number always critical",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 0,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -606,19 +607,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "number shouldn't be major if 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 0,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
 					Type:     TypeNumber,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    100,
 					Major:    100,
 					Critical: 100,
@@ -634,19 +635,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "mixed critical",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -662,19 +663,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "mixed major",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -690,19 +691,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "mixed minor",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -718,19 +719,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "mixed ok",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
@@ -746,19 +747,19 @@ func TestGetJunitState(t *testing.T) {
 		{
 			testName: "ok if total = 0",
 			thresholds: JUnitThresholds{
-				Skipped: StateThresholds{
+				Skipped: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypeNumber,
 				},
-				Errors: StateThresholds{
+				Errors: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,
 					Type:     TypePercentage,
 				},
-				Failures: StateThresholds{
+				Failures: JUnitThreshold{
 					Minor:    10,
 					Major:    20,
 					Critical: 30,

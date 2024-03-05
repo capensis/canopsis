@@ -7,10 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
 
@@ -32,24 +31,21 @@ type worker struct {
 	filePattern         string
 	thdWarnMinPerImport time.Duration
 	thdCritMinPerImport time.Duration
-	workerV1            importcontextgraph.Worker
-	workerV2            importcontextgraph.Worker
+	worker              importcontextgraph.Worker
 }
 
 func NewImportWorker(
 	conf config.CanopsisConf,
 	publisher EventPublisher,
 	reporter StatusReporter,
-	workerV1 importcontextgraph.Worker,
-	workerV2 importcontextgraph.Worker,
+	importWorker importcontextgraph.Worker,
 	logger zerolog.Logger,
 ) ImportWorker {
 	w := &worker{
 		publisher:   publisher,
 		reporter:    reporter,
 		filePattern: conf.ImportCtx.FilePattern,
-		workerV1:    workerV1,
-		workerV2:    workerV2,
+		worker:      importWorker,
 		logger:      logger,
 	}
 
@@ -124,20 +120,20 @@ func (w *worker) processFirstJob(ctx context.Context) {
 		return
 	}
 
-	reportCtx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
 	go func() {
 		w.processJob(ctx, job)
-		cancel()
+		close(done)
 	}()
 
 	ticket := time.NewTicker(abandonedTickInterval)
 	defer ticket.Stop()
 	for {
 		select {
-		case <-reportCtx.Done():
+		case <-done:
 			return
 		case <-ticket.C:
-			err := w.reporter.ReportOngoing(reportCtx, job)
+			err := w.reporter.ReportOngoing(ctx, job)
 			if err != nil {
 				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 			}
@@ -204,17 +200,9 @@ func (w *worker) doJob(ctx context.Context, job ImportJob) (importcontextgraph.S
 	w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: Processing import")
 	filename := fmt.Sprintf(w.filePattern, job.ID)
 
-	if job.IsOld {
-		if job.IsPartial {
-			return w.workerV1.WorkPartial(ctx, filename, job.Source)
-		}
-
-		return w.workerV1.Work(ctx, filename, job.Source)
-	}
-
 	if job.IsPartial {
-		return w.workerV2.WorkPartial(ctx, filename, job.Source)
+		return w.worker.WorkPartial(ctx, filename, job.Source)
 	}
 
-	return w.workerV2.Work(ctx, filename, job.Source)
+	return w.worker.Work(ctx, filename, job.Source)
 }

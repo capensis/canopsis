@@ -1,6 +1,7 @@
-<template lang="pug">
-  v-layout
-    test-suite-screenshots(:screenshots="testSuite.screenshots")
+<template>
+  <v-layout>
+    <test-suite-screenshots :screenshots="testSuite.screenshots" />
+  </v-layout>
 </template>
 
 <script>

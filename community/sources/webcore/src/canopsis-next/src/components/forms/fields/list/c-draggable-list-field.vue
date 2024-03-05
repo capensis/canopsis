@@ -1,20 +1,26 @@
-<template lang="pug">
-  draggable(
-    :value="value",
-    :group="group",
-    :tag="component",
-    :animation="animation",
-    :disabled="disabled",
-    :handle="handle",
-    :ghost-class="ghostClass",
-    :drag-class="dragClass",
-    :chosen-class="dragClass",
-    :component-data="componentData",
-    @change="updateOrdering",
-    @start="$emit('start', $event)",
+<template>
+  <draggable
+    v-bind="$attrs"
+    :value="value"
+    :group="group"
+    :tag="component"
+    :animation="animation"
+    :disabled="disabled"
+    :handle="handle"
+    :ghost-class="ghostClass"
+    :drag-class="dragClass"
+    :chosen-class="dragClass"
+    :component-data="componentData"
+    :move="itemMove"
+    @change="updateOrdering"
+    @start="$emit('start', $event)"
     @end="$emit('end', $event)"
-  )
-    slot
+  >
+    <slot />
+    <template #footer="">
+      <slot name="footer" />
+    </template>
+  </draggable>
 </template>
 
 <script>
@@ -29,6 +35,7 @@ import { formMixin } from '@/mixins/form';
 export default {
   components: { Draggable },
   mixins: [formMixin],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
@@ -72,6 +79,10 @@ export default {
     },
     group: {
       type: [Object, String],
+      required: false,
+    },
+    itemMove: {
+      type: Function,
       required: false,
     },
   },

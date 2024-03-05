@@ -1,8 +1,7 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -214,7 +213,7 @@ describe('numbers', () => {
 
     const form = selectWidgetForm(wrapper);
 
-    form.vm.$emit('input', updatedWidget);
+    form.triggerCustomEvent('input', updatedWidget);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -237,7 +236,7 @@ describe('numbers', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers` widget settings with custom props and permissions', async () => {
@@ -278,6 +277,6 @@ describe('numbers', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -6,7 +6,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
   required="required"
 >
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -18,7 +18,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         inputtypes="[object Object],[object Object],[object Object],[object Object]"
         intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         name="key 1"
-        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
+        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
         rule="[object Object]"
         type="string"
       />
@@ -30,7 +30,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -42,7 +42,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         inputtypes="[object Object],[object Object],[object Object],[object Object]"
         intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         name="key 2"
-        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
+        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
         rule="[object Object]"
         type="string"
       />
@@ -54,7 +54,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -66,7 +66,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         inputtypes="[object Object],[object Object],[object Object],[object Object]"
         intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         name="key 3"
-        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
+        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp,is_one_of,is_not_one_of"
         rule="[object Object]"
         type="string"
       />
@@ -78,7 +78,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -103,18 +103,18 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      class="mr-2 v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add rule
-      </div>
+      Add rule
+      </span>
     </button>
     <span
       class="error--text"
@@ -131,17 +131,17 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with default props 
   class="layout column"
 >
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      class="mr-2 v-btn v-btn--outlined theme--light v-size--default primary--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add rule
-      </div>
+      Add rule
+      </span>
     </button>
     <span
       class="error--text"

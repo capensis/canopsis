@@ -1,9 +1,23 @@
-<template lang="pug">
-  v-sheet.px-3.py-2(color="grey lighten-3")
-    div(v-if="isFailedJob") {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
-      c-compiled-template.pre-wrap(:template="job.fail_reason", parent-element="span")
-    div {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
-      c-compiled-template.pre-line(:template="output", parent-element="span")
+<template>
+  <v-sheet
+    class="px-3 py-2"
+    color="grey lighten-3"
+  >
+    <div v-if="isFailedJob">
+      {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
+      <span
+        v-html="job.fail_reason"
+        class="pre-wrap"
+      />
+    </div>
+    <div>
+      {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
+      <span
+        v-html="output"
+        class="pre-wrap"
+      />
+    </div>
+  </v-sheet>
 </template>
 
 <script>

@@ -11,17 +11,17 @@ exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with cust
     max="255"
   />
   <div
-    class="layout row"
+    class="layout"
   >
     <button
-      class="ml-0 primary v-btn theme--light"
+      class="ml-0 primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add comment
-      </div>
+      Add comment
+      </span>
     </button>
   </div>
 </div>
@@ -30,17 +30,17 @@ exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with cust
 exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with default props 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <button
-      class="ml-0 primary v-btn theme--light"
+      class="ml-0 primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add comment
-      </div>
+      Add comment
+      </span>
     </button>
   </div>
 </div>

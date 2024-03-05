@@ -1,12 +1,12 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateAssociateTicketEvent from '@/components/modals/declare-ticket/create-associate-ticket-event.vue';
@@ -190,6 +190,8 @@ describe('create-associate-ticket-event', () => {
 
     expect(createEvent).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -302,9 +304,7 @@ describe('create-associate-ticket-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -323,7 +323,7 @@ describe('create-associate-ticket-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-associate-ticket-event` with config data', () => {
@@ -342,6 +342,6 @@ describe('create-associate-ticket-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

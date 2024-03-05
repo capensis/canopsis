@@ -5,6 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
@@ -34,5 +35,29 @@ func Authorize(
 		}
 
 		c.Next()
+	}
+}
+
+// AuthorizeAtLeastOnePerm allows access if at least one PermCheck pair is permitted for the user
+func AuthorizeAtLeastOnePerm(
+	permChecks []apisecurity.PermCheck,
+	enforcer security.Enforcer,
+) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		subj := c.MustGet(auth.UserKey)
+
+		for _, permCheck := range permChecks {
+			ok, err := enforcer.Enforce(subj.(string), permCheck.Obj, permCheck.Act)
+			if err != nil {
+				panic(err)
+			}
+
+			if ok {
+				c.Next()
+				return
+			}
+		}
+
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 	}
 }

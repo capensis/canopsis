@@ -42,6 +42,7 @@ describe('pattern-rule-field', () => {
     operator: '',
     value: '',
     field: '',
+    fieldType: PATTERN_FIELD_TYPES.string,
     dictionary: '',
     range: {
       type: '',
@@ -66,9 +67,9 @@ describe('pattern-rule-field', () => {
 
     const patternAttributeField = selectPatternAttributeField(wrapper);
 
-    patternAttributeField.vm.$emit('input', ALARM_PATTERN_FIELDS.displayName);
+    patternAttributeField.triggerCustomEvent('input', ALARM_PATTERN_FIELDS.displayName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...emptyRule,
       attribute: ALARM_PATTERN_FIELDS.displayName,
     });
@@ -87,9 +88,9 @@ describe('pattern-rule-field', () => {
 
     const patternOperatorField = selectPatternOperatorField(wrapper);
 
-    patternOperatorField.vm.$emit('input', PATTERN_OPERATORS.beginsWith);
+    patternOperatorField.triggerCustomEvent('input', PATTERN_OPERATORS.beginsWith);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       operator: PATTERN_OPERATORS.beginsWith,
     });
@@ -111,9 +112,9 @@ describe('pattern-rule-field', () => {
 
     const mixedInputField = selectMixedInputField(wrapper);
 
-    mixedInputField.vm.$emit('input', value);
+    mixedInputField.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       value,
     });
@@ -126,6 +127,7 @@ describe('pattern-rule-field', () => {
       operator: PATTERN_OPERATORS.equal,
       value: Faker.datatype.number(),
       field: PATTERN_RULE_INFOS_FIELDS.value,
+      fieldType: PATTERN_FIELD_TYPES.string,
     };
     const wrapper = factory({
       propsData: {
@@ -136,9 +138,9 @@ describe('pattern-rule-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.string);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.string);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       value: `${rule.value}`,
     });
@@ -157,13 +159,13 @@ describe('pattern-rule-field', () => {
 
     const patternInfosAttributeField = selectInfosAttributeField(wrapper);
 
-    patternInfosAttributeField.vm.$emit('input', {
+    patternInfosAttributeField.triggerCustomEvent('input', {
       ...emptyRule,
       field,
       dictionary,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...emptyRule,
       field,
       dictionary,
@@ -182,12 +184,12 @@ describe('pattern-rule-field', () => {
 
     const patternExtraInfosAttributeField = selectInfosAttributeField(wrapper);
 
-    patternExtraInfosAttributeField.vm.$emit('input', {
+    patternExtraInfosAttributeField.triggerCustomEvent('input', {
       ...emptyRule,
       field,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...emptyRule,
       field,
     });
@@ -207,9 +209,9 @@ describe('pattern-rule-field', () => {
 
     const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.last15Minutes.value);
+    quickDateIntervalTypeField.triggerCustomEvent('input', QUICK_RANGES.last15Minutes.value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       range: {
         ...rule.range,
@@ -242,9 +244,9 @@ describe('pattern-rule-field', () => {
       to: Faker.datatype.number(),
     };
 
-    dateTimeIntervalField.vm.$emit('input', newRange);
+    dateTimeIntervalField.triggerCustomEvent('input', newRange);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       range: newRange,
     });
@@ -270,9 +272,9 @@ describe('pattern-rule-field', () => {
       value: Faker.datatype.number(),
     };
 
-    durationField.vm.$emit('input', duration);
+    durationField.triggerCustomEvent('input', duration);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       duration,
     });
@@ -289,7 +291,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with custom props', () => {
@@ -323,7 +325,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with infos type and field is name', () => {
@@ -339,7 +341,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with extra infos type', () => {
@@ -355,7 +357,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with duration type', () => {
@@ -373,7 +375,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with date type', () => {
@@ -392,6 +394,6 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

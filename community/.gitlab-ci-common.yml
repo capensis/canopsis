@@ -22,7 +22,7 @@ build_docker_archive:
   artifacts:
     paths:
       - ${CANOPSIS_EDITION}/${DOCKER_ARCHIVE_BUILD}/
-    
+
 publish_docker_archive:
   extends: .common
   stage: publish

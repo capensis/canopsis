@@ -39,6 +39,21 @@ type EditRequest struct {
 	DefaultView            string   `json:"defaultview"`
 }
 
+type PatchRequest struct {
+	ID                     string   `json:"-"`
+	Password               *string  `json:"password"`
+	Name                   *string  `json:"name" binding:"omitempty,max=255"`
+	Firstname              *string  `json:"firstname" binding:"omitempty,max=255"`
+	Lastname               *string  `json:"lastname" binding:"omitempty,max=255"`
+	Email                  *string  `json:"email" binding:"omitempty,email"`
+	Roles                  []string `json:"roles" binding:"omitempty,notblank"`
+	UILanguage             *string  `json:"ui_language" binding:"omitempty,max=255"`
+	UIGroupsNavigationType *string  `json:"ui_groups_navigation_type" binding:"omitempty,max=255"`
+	UITheme                *string  `json:"ui_theme" binding:"omitempty,max=255"`
+	IsEnabled              *bool    `json:"enable"`
+	DefaultView            *string  `json:"defaultview"`
+}
+
 func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
 		"_id":                       r.Name,
@@ -76,6 +91,56 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	}
 	if r.Password != "" {
 		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
+	}
+
+	return bsonModel
+}
+
+func (r PatchRequest) getBson(passwordEncoder password.Encoder) bson.M {
+	bsonModel := bson.M{}
+
+	if r.Name != nil {
+		bsonModel["name"] = r.Name
+	}
+
+	if r.Firstname != nil {
+		bsonModel["firstname"] = r.Firstname
+	}
+
+	if r.Lastname != nil {
+		bsonModel["lastname"] = r.Lastname
+	}
+
+	if r.Email != nil {
+		bsonModel["email"] = r.Email
+	}
+
+	if len(r.Roles) != 0 {
+		bsonModel["roles"] = r.Roles
+	}
+
+	if r.UITheme != nil {
+		bsonModel["ui_theme"] = r.UITheme
+	}
+
+	if r.UILanguage != nil {
+		bsonModel["ui_language"] = r.UILanguage
+	}
+
+	if r.UIGroupsNavigationType != nil {
+		bsonModel["ui_groups_navigation_type"] = r.UIGroupsNavigationType
+	}
+
+	if r.IsEnabled != nil {
+		bsonModel["enable"] = r.IsEnabled
+	}
+
+	if r.DefaultView != nil {
+		bsonModel["defaultview"] = r.DefaultView
+	}
+
+	if r.Password != nil {
+		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(*r.Password)))
 	}
 
 	return bsonModel

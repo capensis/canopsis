@@ -1,16 +1,14 @@
-<template lang="pug">
-  c-expand-btn.alarms-expand-panel-btn(
-    :class="expandButtonClass",
-    :expanded="expanded",
-    :loading="pending",
+<template>
+  <c-expand-btn
+    :class="expandButtonClass"
+    :expanded="expanded"
+    :loading="pending"
+    class="alarms-expand-panel-btn"
     @expand="showExpandPanel"
-  )
+  />
 </template>
 
 <script>
-import { TOURS } from '@/constants';
-
-import { getStepClass } from '@/helpers/tour';
 import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -35,10 +33,6 @@ export default {
       type: Object,
       required: true,
     },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
     small: {
       type: Boolean,
       default: false,
@@ -51,7 +45,6 @@ export default {
   computed: {
     expandButtonClass() {
       return {
-        [getStepClass(TOURS.alarmsExpandPanel, 1)]: this.isTourEnabled,
         'alarms-expand-panel-btn--small': this.small,
       };
     },
@@ -78,8 +71,9 @@ export default {
 .alarms-expand-panel-btn {
   &--small {
     width: 22px;
-    max-width: 22px;
     height: 22px;
+    max-width: 22px;
+    max-height: 22px;
   }
 }
 </style>

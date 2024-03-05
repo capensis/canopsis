@@ -1,17 +1,19 @@
-<template lang="pug">
-  v-text-field(
-    v-field="value",
-    :label="$t('declareTicket.ticketURL')",
-    :name="name",
+<template>
+  <v-text-field
+    v-field="value"
+    :label="$t('declareTicket.ticketURL')"
+    :name="name"
     :disabled="disabled"
-  )
-    template(#append="")
-      c-help-icon(
-        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })",
-        icon="help",
-        color="grey darken-1",
+  >
+    <template #append="">
+      <c-help-icon
+        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })"
+        icon="help"
+        color="grey darken-1"
         left
-      )
+      />
+    </template>
+  </v-text-field>
 </template>
 
 <script>

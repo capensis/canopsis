@@ -2,13 +2,14 @@ package viewtab
 
 import (
 	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type API interface {
@@ -41,23 +42,13 @@ func NewApi(
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	tab, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	tab, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
+
 	if tab == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionRead)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 		return
 	}
 
@@ -69,24 +60,20 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	request := EditRequest{}
+	request := CreateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.enforcer.Enforce(userId, request.View, model.PermissionUpdate)
+	tab, err := a.store.Insert(c, request)
 	if err != nil {
-		panic(err)
-	}
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
 
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	tab, err := a.store.Insert(c.Request.Context(), request)
-	if err != nil {
 		panic(err)
 	}
 
@@ -107,7 +94,7 @@ func (a *api) Create(c *gin.Context) {
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	request := EditRequest{
+	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
 
@@ -116,42 +103,12 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.enforcer.Enforce(userId, request.View, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	tab, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+	tab, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
 
 	if tab == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	ok, err = a.enforcer.Enforce(userId, tab.View, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	newTab, err := a.store.Update(c.Request.Context(), *tab, request)
-	if err != nil {
-		panic(err)
-	}
-
-	if newTab == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
@@ -159,42 +116,22 @@ func (a *api) Update(c *gin.Context) {
 	err = a.actionLogger.Action(c, userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeViewTab,
-		ValueID:   newTab.ID,
+		ValueID:   tab.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusOK, newTab)
+	c.JSON(http.StatusOK, tab)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	tab, err := a.store.GetOneBy(c.Request.Context(), id)
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
-		panic(err)
-	}
-
-	if tab == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	ok, err = a.store.Delete(c.Request.Context(), id)
-	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return
@@ -225,15 +162,21 @@ func (a *api) Delete(c *gin.Context) {
 func (a *api) Copy(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
-	request := EditRequest{}
+	request := CreateRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	tab, err := a.store.GetOneBy(c.Request.Context(), id)
+	tab, err := a.store.Copy(c, id, request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -242,46 +185,16 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionRead)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	ok, err = a.enforcer.Enforce(userId, request.View, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	newTab, err := a.store.Copy(c.Request.Context(), *tab, request)
-	if err != nil {
-		panic(err)
-	}
-
-	if newTab == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
 	err = a.actionLogger.Action(c, userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeViewTab,
-		ValueID:   newTab.ID,
+		ValueID:   tab.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusCreated, newTab)
+	c.JSON(http.StatusCreated, tab)
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
@@ -293,7 +206,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		return
 	}
 
-	tabs, err := a.store.Find(c.Request.Context(), request.Items)
+	tabs, err := a.store.Find(c, request.Items)
 	if err != nil {
 		panic(err)
 	}
@@ -303,6 +216,10 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	for _, tab := range tabs {
+		if tab.Author != nil && tab.IsPrivate && tab.Author.ID == userId {
+			continue
+		}
+
 		ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
@@ -314,9 +231,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.UpdatePositions(c.Request.Context(), tabs)
+	ok, err := a.store.UpdatePositions(c, tabs)
 	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return

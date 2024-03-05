@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
+import { PATTERN_FIELD_TYPES, PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import PatternRulesField from '@/components/forms/fields/pattern/pattern-rules-field.vue';
 
@@ -22,18 +22,21 @@ describe('pattern-rules-field', () => {
       attribute: 'attribute 1',
       operator: PATTERN_OPERATORS.equal,
       value: 'attribute value',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 1',
     },
     {
       attribute: 'attribute 2',
       operator: PATTERN_OPERATORS.notEqual,
       value: 'attribute value 2',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 2',
     },
     {
       attribute: 'attribute 3',
       operator: PATTERN_OPERATORS.contains,
       value: 'attribute contains',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 3',
     },
   ];
@@ -51,14 +54,9 @@ describe('pattern-rules-field', () => {
 
     const removeSecondRuleButton = selectPatternRemoveRuleButtonByIndex(wrapper, 1);
 
-    removeSecondRuleButton.vm.$emit('click');
+    removeSecondRuleButton.triggerCustomEvent('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       rules[2],
     ]);
@@ -81,14 +79,9 @@ describe('pattern-rules-field', () => {
       key: 'new key',
     };
 
-    lastRule.vm.$emit('input', updatedRule);
+    lastRule.triggerCustomEvent('input', updatedRule);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       rules[1],
       {
@@ -115,14 +108,9 @@ describe('pattern-rules-field', () => {
       attribute: 'new attribute',
     };
 
-    lastRule.vm.$emit('input', updatedRule);
+    lastRule.triggerCustomEvent('input', updatedRule);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
@@ -136,10 +124,18 @@ describe('pattern-rules-field', () => {
   });
 
   test('Value changed to array after update rule with array operator', () => {
+    const attribute = {
+      text: 'Attribute text',
+      value: rules[1].attribute,
+      options: {
+        operators: [PATTERN_OPERATORS.notEqual, PATTERN_OPERATORS.hasNot],
+      },
+    };
+
     const wrapper = factory({
       propsData: {
         rules,
-        attributes: [],
+        attributes: [attribute],
       },
     });
 
@@ -150,14 +146,9 @@ describe('pattern-rules-field', () => {
       operator: PATTERN_OPERATORS.hasNot,
     };
 
-    lastRule.vm.$emit('input', updatedRule);
+    lastRule.triggerCustomEvent('input', updatedRule);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
@@ -182,19 +173,15 @@ describe('pattern-rules-field', () => {
 
     const addButton = selectAddButton(wrapper);
 
-    addButton.vm.$emit('click');
+    addButton.triggerCustomEvent('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       ...rules,
       {
         attribute: attribute.value,
         dictionary: '',
         field: '',
+        fieldType: PATTERN_FIELD_TYPES.string,
         operator: '',
         value: '',
         range: {
@@ -219,7 +206,7 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rules-field` with custom props', () => {
@@ -237,6 +224,7 @@ describe('pattern-rules-field', () => {
           ...rules,
           {
             attribute: attribute.value,
+            fieldType: PATTERN_FIELD_TYPES.string,
           },
         ],
         attributes: [
@@ -248,6 +236,6 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

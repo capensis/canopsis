@@ -42,7 +42,7 @@ describe('alarm-header-tag', () => {
 
     chip.trigger('close');
 
-    expect(wrapper).toEmit('clear');
+    expect(wrapper).toHaveBeenEmit('clear');
   });
 
   it('Renders `alarm-header-tag` with selected tag', () => {
@@ -53,7 +53,7 @@ describe('alarm-header-tag', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-header-tag` without selected tag', () => {
@@ -61,7 +61,7 @@ describe('alarm-header-tag', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-header-tag` with selected tag and default slot', () => {
@@ -75,6 +75,6 @@ describe('alarm-header-tag', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

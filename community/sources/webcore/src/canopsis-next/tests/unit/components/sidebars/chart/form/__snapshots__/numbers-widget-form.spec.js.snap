@@ -34,7 +34,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
     />
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value="Chart title"
     />
@@ -87,7 +87,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
     />
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value=""
     />

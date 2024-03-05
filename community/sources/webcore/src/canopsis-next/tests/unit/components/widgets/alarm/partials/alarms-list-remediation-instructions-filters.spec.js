@@ -1,10 +1,8 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
+
 import { MODALS } from '@/constants';
 
 import AlarmsListRemediationInstructionsFilters from '@/components/widgets/alarm/partials/alarms-list-remediation-instructions-filters.vue';
@@ -85,7 +83,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     const lockedRemediationInstructionsFiltersList = selectLockedRemediationInstructionsFiltersList(wrapper);
 
-    lockedRemediationInstructionsFiltersList.vm.$emit('input', lockedFilters);
+    lockedRemediationInstructionsFiltersList.triggerCustomEvent('input', lockedFilters);
 
     expect(updateLockedFilters).toHaveBeenCalledTimes(1);
     expect(updateLockedFilters).toHaveBeenCalledWith(lockedFilters);
@@ -100,7 +98,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     const remediationInstructionsFiltersList = selectRemediationInstructionsFiltersList(wrapper);
 
-    remediationInstructionsFiltersList.vm.$emit('input', filters);
+    remediationInstructionsFiltersList.triggerCustomEvent('input', filters);
 
     expect(updateFilters).toHaveBeenCalledTimes(1);
     expect(updateFilters).toHaveBeenCalledWith(filters);
@@ -141,12 +139,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     modalArguments.config.action(actionValue);
 
-    const updateFiltersEvents = wrapper.emitted('update:filters');
-
-    expect(updateFiltersEvents).toHaveLength(1);
-
-    const [eventData] = updateFiltersEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmit('update:filters', [
       ...filters,
       {
         ...actionValue,
@@ -158,7 +151,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
   it('Renders `alarms-list-remediation-instructions-filters` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-remediation-instructions-filters` with custom props', async () => {
@@ -173,7 +166,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-remediation-instructions-filters` with locked filters props', async () => {
@@ -186,7 +179,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-remediation-instructions-filters` with access, but without filters filters props', async () => {
@@ -199,6 +192,6 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

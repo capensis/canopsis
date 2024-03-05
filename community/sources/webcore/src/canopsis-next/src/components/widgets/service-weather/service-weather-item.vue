@@ -1,43 +1,91 @@
-<template lang="pug">
-  card-with-see-alarms-btn.cursor-pointer.service-weather-item(
-    :class="itemClasses",
-    :show-button="showAlarmsButton",
-    :style="itemStyle",
-    @click.native="handleCardClick",
+<template>
+  <card-with-see-alarms-btn
+    :class="itemClasses"
+    :show-button="showAlarmsButton"
+    :style="itemStyle"
+    class="cursor-pointer service-weather-item"
+    @click.native="handleCardClick"
     @show:alarms="$emit('show:alarms')"
-  )
-    v-layout.fill-height.service-weather-item__content(row, justify-space-between)
-      v-flex.position-relative.fill-height
-        v-layout(:class="{ 'blinking': isBlinking }", justify-start)
-          c-compiled-template.service-weather-item__template.pa-3(
-            :template="template",
+  >
+    <v-layout
+      class="fill-height service-weather-item__content"
+      justify-space-between
+    >
+      <v-flex class="position-relative fill-height">
+        <v-layout
+          :class="{ 'blinking': isBlinking }"
+          justify-start
+        >
+          <c-compiled-template
+            :template="template"
             :context="templateContext"
-          )
-        v-layout.service-weather-item__toolbar.pt-1.pr-1(row, align-center)
-          c-no-events-icon(:value="service.idle_since", :color="color", top)
-          impact-state-indicator.mr-1(v-if="priorityEnabled", :value="service.impact_state")
-        v-icon.service-weather-item__background(size="5em", :color="color") {{ backgroundIcon }}
-        v-icon.service-weather-item__secondary-icon.mb-1.mr-1(
-          v-if="service.secondary_icon",
+            class="service-weather-item__template pa-3"
+          />
+        </v-layout>
+        <v-layout
+          class="service-weather-item__toolbar pt-1 pr-1"
+          align-center
+        >
+          <c-no-events-icon
+            :value="service.idle_since"
+            :color="color"
+            top
+          />
+          <impact-state-indicator
+            v-if="priorityEnabled"
+            :value="service.impact_state"
+            class="mr-1"
+          />
+          <v-btn
+            v-if="showVariablesHelpButton"
+            class="ma-0"
+            icon
+            small
+            @click.stop="showVariablesHelpModal(service)"
+          >
+            <v-icon
+              color="white"
+              small
+            >
+              help
+            </v-icon>
+          </v-btn>
+        </v-layout>
+        <v-icon
           :color="color"
-        ) {{ service.secondary_icon }}
-      alarm-pbehavior-counters(
-        v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters",
-        :counters="pbehaviorCounters",
+          class="service-weather-item__background"
+          size="5em"
+        >
+          {{ backgroundIcon }}
+        </v-icon>
+        <v-icon
+          v-if="secondaryIconEnabled && service.secondary_icon"
+          :color="color"
+          class="service-weather-item__secondary-icon mb-1 mr-1"
+        >
+          {{ service.secondary_icon }}
+        </v-icon>
+      </v-flex>
+      <alarm-pbehavior-counters
+        v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters"
+        :counters="pbehaviorCounters"
         :types="pbehaviorCountersTypes"
-      )
-      alarm-state-counters(
-        v-if="isStateCountersEnabled",
-        :counters="counters",
+      />
+      <alarm-state-counters
+        v-if="isStateCountersEnabled"
+        :counters="counters"
         :types="stateCountersTypes"
-      )
+      />
+    </v-layout>
+  </card-with-see-alarms-btn>
 </template>
 
 <script>
-import { SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
+import { MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
@@ -94,7 +142,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    showVariablesHelpButton: {
+      type: Boolean,
+      default: false,
+    },
     priorityEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    secondaryIconEnabled: {
       type: Boolean,
       default: true,
     },
@@ -195,12 +251,26 @@ export default {
         this.$emit('show:service');
       }
     },
+
+    showVariablesHelpModal() {
+      const entityFields = convertObjectToTreeview(this.service, 'entity');
+      const variables = [entityFields];
+
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
+        },
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .service-weather-item {
+  overflow: hidden;
+
   &__content > * {
     margin-right: 2px;
 

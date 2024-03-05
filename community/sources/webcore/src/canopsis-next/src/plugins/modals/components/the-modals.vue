@@ -1,10 +1,14 @@
-<template lang="pug">
-  div.modals-wrapper(:class="{ 'modals-wrapper--active': modals.length > 0 }")
-    modal-base(
-      v-for="modal in modals",
-      :key="modal.id",
+<template>
+  <div
+    :class="{ 'modals-wrapper--active': modals.length > 0 }"
+    class="modals-wrapper"
+  >
+    <modal-base
+      v-for="modal in modals"
+      :key="modal.id"
       :modal="modal"
-    )
+    />
+  </div>
 </template>
 
 <script>
@@ -37,7 +41,7 @@ $minimizedDialogMaxWidth: 360px;
   display: none;
 
   &--active {
-    position: absolute;
+    position: fixed;
     display: flex;
     bottom: 0;
     width: 100%;
@@ -47,31 +51,38 @@ $minimizedDialogMaxWidth: 360px;
     justify-content: center;
     align-items: flex-end;
     align-content: flex-start;
+    z-index: 300;
 
-    & ::v-deep .v-dialog__content {
-      &--minimized {
-        margin: 8px 8px 0 8px;
-        position: relative;
-        height: auto;
-        max-width: $minimizedDialogMaxWidth;
-        pointer-events: all;
-        z-index: inherit !important;
+    & ::v-deep {
+      .v-menu__content {
+        pointer-events: auto;
+      }
 
-        .v-dialog {
-          margin: 0;
-          box-shadow: none;
-          transition: none;
+      .v-dialog__content {
+        &--minimized {
+          margin: 8px 8px 0 8px;
+          position: relative;
+          height: auto;
+          max-width: $minimizedDialogMaxWidth;
+          pointer-events: all;
+          z-index: inherit !important;
 
-          .v-card {
-            &.fill-min-height {
-              min-height: auto;
-            }
+          .v-dialog {
+            margin: 0;
+            box-shadow: none;
+            transition: none;
 
-            &__title {
-              padding: 0 10px;
+            .v-card {
+              &.fill-min-height {
+                min-height: auto;
+              }
 
-              .headline {
-                font-size: 16px !important;
+              &__title {
+                padding: 0 10px;
+
+                .headline {
+                  font-size: 16px !important;
+                }
               }
             }
           }

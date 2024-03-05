@@ -36,17 +36,17 @@ func TestProcessEventSuccess(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
 			event.Resource = "apply 1"
 
-			return eventfilter.OutcomePass, event, nil
+			return eventfilter.OutcomePass, false, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
 			event.Component = "apply 2"
 
-			return eventfilter.OutcomePass, event, nil
+			return eventfilter.OutcomePass, false, nil
 		})
 
 	container := mock_eventfilter.NewMockRuleApplicatorContainer(ctrl)
@@ -77,13 +77,18 @@ func TestProcessEventSuccess(t *testing.T) {
 		Component: "apply 2",
 	}
 
-	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{Resource: "test resource", Component: "test component"})
+	event := types.Event{
+		Resource:  "test resource",
+		Component: "test component",
+	}
+
+	_, err = ruleService.ProcessEvent(ctx, &event)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if !reflect.DeepEqual(expectedEvent, resultEvent) {
-		t.Errorf("expected event %v, but got %v", expectedEvent, resultEvent)
+	if !reflect.DeepEqual(expectedEvent, event) {
+		t.Errorf("expected event %v, but got %v", expectedEvent, event)
 	}
 }
 
@@ -107,17 +112,17 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
 			event.Resource = "apply 1"
 
-			return eventfilter.OutcomeBreak, event, nil
+			return eventfilter.OutcomeBreak, false, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
 			event.Component = "apply 2"
 
-			return eventfilter.OutcomePass, event, nil
+			return eventfilter.OutcomePass, false, nil
 		})
 
 	container := mock_eventfilter.NewMockRuleApplicatorContainer(ctrl)
@@ -147,13 +152,18 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 		Component: "test component",
 	}
 
-	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{Resource: "test resource", Component: "test component"})
+	event := types.Event{
+		Resource:  "test resource",
+		Component: "test component",
+	}
+
+	_, err = ruleService.ProcessEvent(ctx, &event)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if !reflect.DeepEqual(expectedEvent, resultEvent) {
-		t.Errorf("expected event %v, but got %v", expectedEvent, resultEvent)
+	if !reflect.DeepEqual(expectedEvent, event) {
+		t.Errorf("expected event %v, but got %v", expectedEvent, event)
 	}
 }
 
@@ -177,17 +187,17 @@ func TestProcessEventDropOutcome(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
 			event.Resource = "apply 1"
 
-			return eventfilter.OutcomeDrop, event, nil
+			return eventfilter.OutcomeDrop, false, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
 			event.Component = "apply 2"
 
-			return eventfilter.OutcomePass, event, nil
+			return eventfilter.OutcomePass, false, nil
 		})
 
 	container := mock_eventfilter.NewMockRuleApplicatorContainer(ctrl)
@@ -217,12 +227,17 @@ func TestProcessEventDropOutcome(t *testing.T) {
 		Component: "test component",
 	}
 
-	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{Resource: "test resource", Component: "test component"})
+	event := types.Event{
+		Resource:  "test resource",
+		Component: "test component",
+	}
+
+	_, err = ruleService.ProcessEvent(ctx, &event)
 	if !errors.Is(err, eventfilter.ErrDropOutcome) {
 		t.Errorf("expected error %v, but got %v", eventfilter.ErrDropOutcome, err)
 	}
 
-	if !reflect.DeepEqual(expectedEvent, resultEvent) {
-		t.Errorf("expected event %v, but got %v", expectedEvent, resultEvent)
+	if !reflect.DeepEqual(expectedEvent, event) {
+		t.Errorf("expected event %v, but got %v", expectedEvent, event)
 	}
 }

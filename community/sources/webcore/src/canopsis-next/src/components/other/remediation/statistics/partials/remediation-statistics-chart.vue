@@ -1,7 +1,18 @@
-<template lang="pug">
-  bar-chart(:datasets="datasets", :options="chartOptions", :dark="$system.dark")
-    template(#actions="{ chart }")
-      kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
+<template>
+  <bar-chart
+    :datasets="datasets"
+    :options="chartOptions"
+    :dark="$system.dark"
+  >
+    <template #actions="{ chart }">
+      <kpi-chart-export-actions
+        :downloading="downloading"
+        :chart="chart"
+        class="mt-4"
+        v-on="$listeners"
+      />
+    </template>
+  </bar-chart>
 </template>
 
 <script>
@@ -97,7 +108,7 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediation.statistic.labels.notRemediated'),
+        label: this.$t('remediation.statistic.labels.withAssignedRemediations'),
         order: 2,
         data: assigned,
       }, {

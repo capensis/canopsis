@@ -7,8 +7,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -47,7 +47,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 }
 
 func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformRequestToModel(request)
 	model.ID = utils.NewID()
 	model.Created = now
@@ -125,7 +125,7 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformRequestToModel(request)
 	model.ID = request.ID
 	model.Updated = now

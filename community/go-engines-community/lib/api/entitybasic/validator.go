@@ -2,6 +2,7 @@ package entitybasic
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -29,7 +30,7 @@ func (v *basicValidator) ValidateEditRequest(ctx context.Context, sl validator.S
 		err := v.dbClient.Collection(mongo.EntityCategoryMongoCollection).
 			FindOne(ctx, bson.M{"_id": r.Category}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.Category, "Category", "Category", "not_exist", "")
 			} else {
 				panic(err)

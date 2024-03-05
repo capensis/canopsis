@@ -75,6 +75,8 @@ const (
 	ValueTypeAlarmTag = "alarmtag"
 
 	ValueTypeColorTheme = "colortheme"
+
+	ValueTypeIcon = "icon"
 )
 
 type ActionLogger interface {

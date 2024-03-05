@@ -30,3 +30,5 @@ export * from './link-rule';
 export * from './external-data';
 export * from './tag';
 export * from './counter';
+export * from './calendar';
+export * from './icon';

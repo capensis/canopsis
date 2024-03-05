@@ -1,36 +1,56 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.criticityLevels')")
-    v-layout(wrap)
-      v-flex(xs12)
-        v-layout(align-center, justify-space-around)
-          div {{ $t('settings.colorsSelector.statsCriticity.minor') }} :
-          v-flex(xs3)
-            c-number-field(
-              v-field="levels.minor",
-              :min="0",
-              name="minor",
+<template>
+  <widget-settings-item :title="$t('settings.criticityLevels')">
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-layout
+          align-center
+          justify-space-around
+        >
+          <div>{{ $t('settings.colorsSelector.statsCriticity.minor') }} :</div>
+          <v-flex xs3>
+            <c-number-field
+              v-field="levels.minor"
+              :min="0"
+              name="minor"
               required
-            )
-      v-flex(xs12)
-        v-layout(align-center, justify-space-around)
-          div {{ $t('settings.colorsSelector.statsCriticity.major') }} :
-          v-flex(xs3)
-            c-number-field(
-              v-field="levels.major",
-              :min="levels.minor + 1",
-              name="major",
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex xs12>
+        <v-layout
+          align-center
+          justify-space-around
+        >
+          <div>{{ $t('settings.colorsSelector.statsCriticity.major') }} :</div>
+          <v-flex xs3>
+            <c-number-field
+              v-field="levels.major"
+              :min="levels.minor + 1"
+              name="major"
               required
-            )
-      v-flex(xs12)
-        v-layout(align-center, justify-space-around)
-          div {{ $t('settings.colorsSelector.statsCriticity.critical') }} :
-          v-flex(xs3)
-            c-number-field(
-              v-field="levels.critical",
-              :min="levels.major + 1",
-              name="critical",
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex xs12>
+        <v-layout
+          align-center
+          justify-space-around
+        >
+          <div>{{ $t('settings.colorsSelector.statsCriticity.critical') }} :</div>
+          <v-flex xs3>
+            <c-number-field
+              v-field="levels.critical"
+              :min="levels.major + 1"
+              name="critical"
               required
-            )
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>

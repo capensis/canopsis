@@ -1,17 +1,29 @@
-<template lang="pug">
-  component(is="foreignObject", pointer-events="none", style="overflow: visible;")
-    div.text-shape-editor(:class="editorClasses", :style="editorStyle")
-      div.text-shape-editor__wrapper
-        div.text-shape-editor__field(
-          ref="textEditor",
-          v-html="value",
-          :contenteditable="editable",
-          :style="fieldStyle",
-          @mousedown.stop="",
-          @mouseup.stop="",
-          @keydown.stop="",
+<template>
+  <component
+    :is="'foreignObject'"
+    pointer-events="none"
+    style="overflow: visible;"
+  >
+    <div
+      :class="editorClasses"
+      :style="editorStyle"
+      class="text-shape-editor"
+    >
+      <div class="text-shape-editor__wrapper">
+        <div
+          v-html="value"
+          ref="textEditor"
+          :contenteditable="editable"
+          :style="fieldStyle"
+          class="text-shape-editor__field"
+          @mousedown.stop=""
+          @mouseup.stop=""
+          @keydown.stop=""
           @blur="$emit('blur', $event)"
-        )
+        />
+      </div>
+    </div>
+  </component>
 </template>
 
 <script>

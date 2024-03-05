@@ -1,25 +1,57 @@
-<template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        h3 {{ $t('common.login') }}
-        img.secondaryLogo(src="@/assets/canopsis.png")
-    v-card-text
-      v-form.pa-2(@submit.prevent.stop="submit")
-        ldap-login-information(v-if="isLDAPAuthEnabled")
-        login-form(v-field.model="form")
-        v-flex
-          v-layout.mb-1(justify-space-between, align-center)
-            v-btn.ma-0(
-              type="submit",
+<template>
+  <v-card>
+    <v-card-title class="primary white--text">
+      <v-layout
+        justify-space-between
+        align-center
+      >
+        <h3>{{ $t('common.login') }}</h3>
+        <img
+          class="secondaryLogo"
+          src="@/assets/canopsis.png"
+          alt=""
+        >
+      </v-layout>
+    </v-card-title>
+    <v-card-text>
+      <v-form
+        class="pa-2"
+        @submit.prevent.stop="submit"
+      >
+        <ldap-login-information v-if="isLDAPAuthEnabled" />
+        <login-form v-field.model="form" />
+        <v-flex>
+          <v-layout
+            class="mb-1"
+            justify-space-between
+            align-center
+          >
+            <v-btn
+              type="submit"
               color="primary"
-            ) {{ $t('common.connect') }}
-            v-flex(xs9)
-              c-alert.py-1.my-0.font-weight-bold(:value="!!serverErrorMessage", type="error") {{ serverErrorMessage }}
-          template(v-if="footer")
-            v-divider.my-2
-            v-layout
-              c-compiled-template(:template="footer")
+            >
+              {{ $t('common.connect') }}
+            </v-btn>
+            <v-flex xs9>
+              <c-alert
+                :value="!!serverErrorMessage"
+                class="py-1 my-0 font-weight-bold"
+                type="error"
+              >
+                {{ serverErrorMessage }}
+              </c-alert>
+            </v-flex>
+          </v-layout>
+          <template v-if="footer">
+            <v-divider class="my-2" />
+            <v-layout>
+              <c-compiled-template :template="footer" />
+            </v-layout>
+          </template>
+        </v-flex>
+      </v-form>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

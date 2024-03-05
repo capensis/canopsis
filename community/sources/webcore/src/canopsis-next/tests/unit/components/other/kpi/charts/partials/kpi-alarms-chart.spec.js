@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 
 import KpiAlarmsChart from '@/components/other/kpi/charts/partials/kpi-alarms-chart';
@@ -196,7 +195,7 @@ describe('kpi-alarms-chart', () => {
 
     const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
 
-    kpiChartExportActions.vm.$emit('export:csv');
+    kpiChartExportActions.triggerCustomEvent('export:csv');
 
     expect(exportCsv).toHaveBeenCalledTimes(1);
   });
@@ -214,7 +213,7 @@ describe('kpi-alarms-chart', () => {
 
     const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
 
-    kpiChartExportActions.vm.$emit('export:png');
+    kpiChartExportActions.triggerCustomEvent('export:png');
 
     expect(exportPng).toHaveBeenCalledTimes(1);
   });
@@ -635,7 +634,7 @@ describe('kpi-alarms-chart', () => {
     const canvas = wrapper.find('canvas');
 
     expect(canvas.element).toMatchCanvasSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-alarms-chart` with downloading true', async () => {
@@ -649,6 +648,6 @@ describe('kpi-alarms-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

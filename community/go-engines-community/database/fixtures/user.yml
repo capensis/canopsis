@@ -4,6 +4,7 @@ template:
     created: <NowUnix()>,
     updated: <Current().created>,
     position: <Index()>,
+    is_private: false,
     author: root
   }
   - &view {
@@ -11,6 +12,7 @@ template:
     created: <NowUnix()>,
     updated: <Current().created>,
     position: <Index()>,
+    is_private: false,
     enabled: true,
     author: root
   }
@@ -19,13 +21,15 @@ template:
     created: <NowUnix()>,
     updated: <Current().created>,
     position: 0,
+    is_private: false,
     author: root
   }
   - &widget {
     _id: <UUID()>,
     created: <NowUnix()>,
     updated: <Current().created>,
-    author: root
+    author: root,
+    is_private: false
   }
   - &widget_alarm_columns [
     { value: v.connector },
@@ -49,6 +53,7 @@ template:
   }
   - &filter {
     _id: <UUID()>,
+    is_user_preference: false,
     is_private: false,
     created: <NowUnix()>,
     updated: <Current().created>,
@@ -633,6 +638,21 @@ permission:
     _id: listalarm_userFilter
     name: <Current()._id>
     description: "Rights on listalarm: User filter"
+  permission_listalarm_addBookmark:
+    <<: *permission
+    _id: listalarm_addBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Add bookmark' action"
+  permission_listalarm_filterByBookmark:
+    <<: *permission
+    _id: listalarm_filterByBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Filter by bookmark' action"
+  permission_listalarm_removeBookmark:
+    <<: *permission
+    _id: listalarm_removeBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Remove bookmark' action"
   permission_listalarm_listRemediationInstructionsFilters:
     <<: *permission
     _id: listalarm_listRemediationInstructionsFilters
@@ -1068,21 +1088,21 @@ permission:
     _id: numbers_userFilter
     name: <Current()._id>
     description: Numbers user filter
-  permission_listalarm_addBookmark:
+  permission_models_maintenance:
     <<: *permission
-    _id: listalarm_addBookmark
+    _id: models_maintenance
     name: <Current()._id>
-    description: "List alarm add bookmark"
-  permission_listalarm_removeBookmark:
-    <<: *permission
-    _id: listalarm_removeBookmark
+    description: Maintenance
+  permission_models_profile_color_theme:
+    <<: *permission_crud
+    _id: models_profile_color_theme
     name: <Current()._id>
-    description: "List alarm remove bookmark"
-  permission_listalarm_filterByBookmark:
-    <<: *permission
-    _id: listalarm_filterByBookmark
+    description: Color theme
+  permission_models_stateSetting:
+    <<: *permission_crud
+    _id: models_stateSetting
     name: <Current()._id>
-    description: "List alarm filter by bookmark"
+    description: State settings
 
   # API permissions
   permission_api_alarm_read:
@@ -1226,7 +1246,7 @@ permission:
     name: <Current()._id>
     description: Roles, permissions, users
   permission_api_state_settings:
-    <<: *permission
+    <<: *permission_crud
     _id: api_state_settings
     name: <Current()._id>
     description: State settings
@@ -1360,6 +1380,26 @@ permission:
     _id: api_alarm_tag
     name: <Current()._id>
     description: Alarm tags
+  permission_api_maintenance:
+    <<: *permission
+    _id: api_maintenance
+    name: <Current()._id>
+    description: Trigger maintenance mode
+  permission_api_color_theme:
+    <<: *permission_crud
+    _id: api_color_theme
+    name: <Current()._id>
+    description: Color theme
+  permission_api_private_view_groups:
+    <<: *permission
+    _id: api_private_view_groups
+    name: <Current()._id>
+    description: Create private view groups
+  permission_api_icon:
+    <<: *permission
+    _id: api_icon
+    name: <Current()._id>
+    description: Create icons
 
   # Views permissions
   permission_view_open_alarms:
@@ -1426,6 +1466,8 @@ role:
       "@permission_models_techmetrics": 1
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
+      "@permission_models_profile_color_theme": 15
+      "@permission_models_stateSetting": 15
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -1537,6 +1579,7 @@ role:
       "@permission_numbers_editFilter": 1
       "@permission_numbers_addFilter": 1
       "@permission_numbers_userFilter": 1
+      "@permission_models_maintenance": 1
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -1566,7 +1609,7 @@ role:
       "@permission_api_entity": 15
       "@permission_api_contextgraph": 15
       "@permission_api_acl": 15
-      "@permission_api_state_settings": 1
+      "@permission_api_state_settings": 15
       "@permission_api_broadcast_message": 15
       "@permission_api_associative_table": 15
       "@permission_api_user_interface_update": 1
@@ -1593,6 +1636,10 @@ role:
       "@permission_api_declare_ticket_execution": 1
       "@permission_api_link_rule": 15
       "@permission_api_alarm_tag": 15
+      "@permission_api_color_theme": 15
+      "@permission_api_maintenance": 1
+      "@permission_api_private_view_groups": 1
+      "@permission_api_icon": 1
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
@@ -1601,8 +1648,8 @@ role:
 role_template:
   tpl_pilot:
     <<: *role_tpl
-    name: pilot
-    description: Pilots of the operations centers
+    name: Pilotes
+    description: Profil de pilotage
     permissions:
       # UI permissions
       "@permission_listalarm_ack": 1
@@ -1625,6 +1672,9 @@ role_template:
       "@permission_listalarm_listFilters": 1
       "@permission_listalarm_editFilter": 1
       "@permission_listalarm_addFilter": 1
+      "@permission_listalarm_addBookmark": 1
+      "@permission_listalarm_filterByBookmark": 1
+      "@permission_listalarm_removeBookmark": 1
       "@permission_listalarm_userFilter": 1
       "@permission_listalarm_listRemediationInstructionsFilters": 1
       "@permission_listalarm_editRemediationInstructionsFilter": 1
@@ -1635,9 +1685,6 @@ role_template:
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
-      "@permission_listalarm_addBookmark": 1
-      "@permission_listalarm_removeBookmark": 1
-      "@permission_listalarm_filterByBookmark": 1
       "@permission_serviceweather_entityAck": 1
       "@permission_serviceweather_entityAssocTicket": 1
       "@permission_serviceweather_entityValidate": 1
@@ -1719,26 +1766,27 @@ role_template:
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
-      "@permission_api_playlist": 1
-      "@permission_api_entitycategory": 1
-      "@permission_api_viewgroup": 1
-      "@permission_api_view": 1
+      "@permission_api_broadcast_message": 4
+      "@permission_api_color_theme": 4
+      "@permission_api_playlist": 4
+      "@permission_api_entitycategory": 4
+      "@permission_api_entityservice": 4
+      "@permission_api_viewgroup": 4
+      "@permission_api_view": 4
       "@permission_api_pbehavior": 15
-      "@permission_api_pbehaviortype": 1
-      "@permission_api_pbehaviorreason": 1
-      "@permission_api_pbehaviorexception": 1
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
+      "@permission_api_pbehaviorexception": 4
       "@permission_api_event": 1
       "@permission_api_execution": 1
-      "@permission_api_file": 1
-      "@permission_api_entity": 1
-      "@permission_api_associative_table": 1
-      "@permission_api_junit": 1
-      "@permission_api_map": 1
+      "@permission_api_file": 4
+      "@permission_api_entity": 4
+      "@permission_api_associative_table": 4
+      "@permission_api_junit": 4
+      "@permission_api_map": 2
       "@permission_api_declare_ticket_execution": 1
-      # Views permissions
-      "@permission_view_open_alarms": 1
-      "@permission_view_resolved_alarms": 1
-      "@permission_view_context_explorer": 1
+      "@permission_api_alarm_tag": 4
+      "@permission_api_share_token": 4
 
 user:
   user_admin:

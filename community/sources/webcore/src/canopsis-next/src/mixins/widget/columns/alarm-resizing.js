@@ -132,20 +132,32 @@ export const widgetColumnResizingAlarmMixin = {
       this.throttledResizeColumnByDiff(this.resizingColumnIndex);
     },
 
+    startColumnResize(columnName) {
+      const body = document.querySelector('body');
+
+      this.resizingColumnIndex = this.headers.findIndex(({ value }) => value === columnName);
+
+      if (!body) {
+        return;
+      }
+
+      body.addEventListener('mousemove', this.handleColumnResize);
+      body.addEventListener('mouseup', this.finishColumnResize);
+      body.addEventListener('mouseleave', this.finishColumnResize);
+    },
+
     finishColumnResize() {
       this.aggregatedMovementDiff = 0;
 
-      document.body.removeEventListener('mousemove', this.handleColumnResize);
-      document.body.removeEventListener('mouseup', this.finishColumnResize);
-      document.body.removeEventListener('mouseleave', this.finishColumnResize);
-    },
+      const body = document.querySelector('body');
 
-    startColumnResize(columnName) {
-      this.resizingColumnIndex = this.headers.findIndex(({ value }) => value === columnName);
+      if (!body) {
+        return;
+      }
 
-      document.body.addEventListener('mousemove', this.handleColumnResize);
-      document.body.addEventListener('mouseup', this.finishColumnResize);
-      document.body.addEventListener('mouseleave', this.finishColumnResize);
+      body.removeEventListener('mousemove', this.handleColumnResize);
+      body.removeEventListener('mouseup', this.finishColumnResize);
+      body.removeEventListener('mouseleave', this.finishColumnResize);
     },
   },
 };

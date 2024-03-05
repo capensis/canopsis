@@ -1,24 +1,53 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.selectView.title') }}
-    template(#text="")
-      v-fade-transition
-        v-layout(v-if="pending", justify-center)
-          v-progress-circular(color="primary", indeterminate)
-        v-layout(v-else)
-          v-expansion-panel(dark)
-            v-expansion-panel-content.secondary(v-for="group in groups", :key="group._id", ripple)
-              template(#header="")
-                div {{ group.title }}
-              v-list.py-0.px-2.secondary
-                v-list-tile.secondary.lighten-1(
-                  v-for="view in group.views",
-                  :key="view._id",
-                  ripple,
-                  @click="selectView(view._id)"
-                )
-                  v-list-tile-title.body-1 {{ view.title }}
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.selectView.title') }}</span>
+    </template>
+    <template #text="">
+      <v-fade-transition>
+        <v-layout
+          v-if="pending"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <v-layout v-else>
+          <v-expansion-panels
+            accordion
+            dark
+          >
+            <v-expansion-panel
+              v-for="group in groups"
+              :key="group._id"
+              class="secondary"
+            >
+              <v-expansion-panel-header>
+                {{ group.title }}
+              </v-expansion-panel-header>
+              <v-expansion-panel-content ripple>
+                <v-list class="py-0 px-2 secondary">
+                  <v-list-item
+                    v-for="view in group.views"
+                    :key="view._id"
+                    class="secondary lighten-1"
+                    ripple
+                    @click="selectView(view._id)"
+                  >
+                    <v-list-item-title class="text-body-1">
+                      {{ view.title }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-layout>
+      </v-fade-transition>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

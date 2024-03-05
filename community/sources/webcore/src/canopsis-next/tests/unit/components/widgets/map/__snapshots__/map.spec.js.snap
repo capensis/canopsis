@@ -14,7 +14,7 @@ exports[`map Renders \`map\` with default props 1`] = `
   <!---->
   <geomap-preview-stub
     map="[object Object]"
-    popup-actions="popup-actions"
+    popup-actions=""
   />
 </div>
 `;
@@ -37,7 +37,7 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -64,7 +64,7 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>
@@ -88,7 +88,7 @@ exports[`map Renders geo \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -115,7 +115,7 @@ exports[`map Renders geo \`map\` with state 1`] = `
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>
@@ -139,7 +139,7 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -166,7 +166,7 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>
@@ -190,7 +190,7 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -217,7 +217,7 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>

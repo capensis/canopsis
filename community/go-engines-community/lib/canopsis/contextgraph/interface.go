@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
 
 type EntityServiceStorage interface {
@@ -16,20 +17,28 @@ type EntityServiceStorage interface {
 }
 
 type Manager interface {
-	//HandleEvent processes canopsis contextable events, upserts new entities,
-	//returns event entity as first arguments, and slice of linked entities if they're new as a second argument
-	HandleEvent(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error)
-	//CheckServices processes slice of entities to check if they're belonged to an entity service and add this information to the impact/depends slices,
-	//returns slice of the same entities, which were passed to a function plus entity service entities, which were affected.
-	CheckServices(ctx context.Context, entities []types.Entity) ([]types.Entity, error)
-	//UpdateImpactedServicesFromDependencies updates impacted services from dependencies info for connector entity
+	// HandleResource processes resource event.
+	HandleResource(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
+	// HandleComponent processes component event.
+	HandleComponent(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
+	// HandleConnector processes connector event.
+	HandleConnector(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
+	// HandleService processes service event.
+	HandleService(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
+	// LoadServices refreshes slice of available services. Should be used before AssignServices calls until the service cache is implemented.
+	LoadServices(ctx context.Context) error
+	// AssignServices processes an entity to check if it's belonged to an entity service and modifies it.
+	AssignServices(eventEntity *types.Entity, commRegister mongo.CommandsRegister)
+	// AssignStateSetting assigns a state setting for a component or a service, returns true if new state setting is assigned.
+	AssignStateSetting(ctx context.Context, entity *types.Entity, commRegister mongo.CommandsRegister) (bool, error)
+	// UpdateImpactedServicesFromDependencies updates impacted services from dependencies info for connector entity
 	UpdateImpactedServicesFromDependencies(ctx context.Context) error
-	//RecomputeService recomputes context graph for an entity service
-	RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error)
-	//UpdateEntities updates entities in the db, eventEntityID is needed to retrieve event entity from entities slice
-	UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity, updateServicesData bool) (types.Entity, error)
-	//FillResourcesWithInfos fills all dependent component's resources with component_infos
-	FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error)
-	//UpdateLastEventDate updates last event date field in the entity document
-	UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp types.CpsTime) error
+	// RecomputeService recomputes context graph for an entity service
+	RecomputeService(ctx context.Context, serviceID string, commRegister mongo.CommandsRegister) (types.Entity, error)
+	// ProcessComponentDependencies processes component's dependencies to update component infos or state setting parameters.
+	ProcessComponentDependencies(ctx context.Context, component *types.Entity, commRegister mongo.CommandsRegister) ([]string, error)
+	// UpdateLastEventDate updates last event date field in the entity document
+	UpdateLastEventDate(ctx context.Context, event *types.Event, updateConnectorLastEventDate bool) error
+	// InheritComponentFields fills resource with component infos and check if resource is matched by component state setting.
+	InheritComponentFields(resource, component *types.Entity, commRegister mongo.CommandsRegister) error
 }

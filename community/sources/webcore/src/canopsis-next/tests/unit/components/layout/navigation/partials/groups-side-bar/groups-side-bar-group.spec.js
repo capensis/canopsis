@@ -1,8 +1,9 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createNavigationModule } from '@unit/utils/store';
+import { createAuthModule, createMockedStoreModules, createNavigationModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import GroupsSideBarGroup from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
@@ -20,8 +21,10 @@ describe('groups-side-bar-group', () => {
   const $modals = mockModals();
 
   const { navigationModule } = createNavigationModule();
+  const { authModule } = createAuthModule();
   const store = createMockedStoreModules([
     navigationModule,
+    authModule,
   ]);
 
   const group = {
@@ -49,6 +52,9 @@ describe('groups-side-bar-group', () => {
       config: {
         title: 'Edit group',
         group,
+        deletable: false,
+        action: expect.any(Function),
+        remove: expect.any(Function),
       },
     });
   });
@@ -72,7 +78,7 @@ describe('groups-side-bar-group', () => {
 
     const updatedViews = [...views].reverse();
 
-    selectDraggableField(wrapper).vm.$emit('input', updatedViews);
+    selectDraggableField(wrapper).triggerCustomEvent('input', updatedViews);
 
     expect(wrapper).toEmit('update:group', {
       ...groupWithViews,
@@ -88,7 +94,7 @@ describe('groups-side-bar-group', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar-group` with custom data', () => {
@@ -100,7 +106,7 @@ describe('groups-side-bar-group', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar-group` with empty groups', () => {
@@ -115,6 +121,6 @@ describe('groups-side-bar-group', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

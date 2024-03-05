@@ -9,6 +9,7 @@ import (
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -85,12 +86,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 }
 
 func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest, userId string) (*EntityAggregationResult, error) {
-	var service libtypes.Entity
 	err := s.dbCollection.FindOne(ctx, bson.M{
 		"_id":     id,
 		"type":    libtypes.EntityTypeService,
 		"enabled": true,
-	}).Decode(&service)
+	}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
@@ -99,7 +99,7 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	now := libtypes.CpsTime{Time: time.Now().In(location)}
+	now := datetime.CpsTime{Time: time.Now().In(location)}
 	pipeline, err := s.getQueryBuilder().CreateListDependenciesAggregationPipeline(id, r, now)
 	if err != nil {
 		return nil, err

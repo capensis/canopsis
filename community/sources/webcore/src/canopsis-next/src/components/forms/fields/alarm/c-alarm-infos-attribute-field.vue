@@ -1,31 +1,34 @@
-<template lang="pug">
-  v-layout(column)
-    v-combobox(
-      v-model="rule",
-      v-validate="'required'",
-      :items="rules",
-      :disabled="disabled",
-      :label="label || $tc('common.rule')",
-      :name="ruleName",
-      :error-messages="errors.collect(ruleName)",
-      :loading="pending",
-      item-text="name",
-      item-value="_id",
+<template>
+  <v-layout column>
+    <v-combobox
+      v-model="rule"
+      v-validate="ruleRules"
+      :items="rules"
+      :disabled="disabled"
+      :label="label || $tc('common.rule')"
+      :name="ruleName"
+      :error-messages="errors.collect(ruleName)"
+      :loading="pending"
+      :clearable="!required"
+      item-text="name"
+      item-value="_id"
       return-object
-    )
-    v-combobox(
-      v-field="value.dictionary",
-      v-validate="'required'",
-      :items="infosName",
-      :disabled="disabled",
-      :label="label || $t('common.dictionary')",
-      :return-object="false",
-      :name="dictionaryName",
-      :error-messages="errors.collect(dictionaryName)",
-      :loading="pending",
-      item-text="value",
+    />
+    <v-combobox
+      v-field="value.dictionary"
+      v-validate="dictionaryRules"
+      :items="infosName"
+      :disabled="disabled"
+      :label="label || $t('common.dictionary')"
+      :return-object="false"
+      :name="dictionaryName"
+      :error-messages="errors.collect(dictionaryName)"
+      :loading="pending"
+      :clearable="!required"
+      item-text="value"
       item-value="value"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -65,6 +68,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    required: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
     rulesById() {
@@ -77,7 +84,7 @@ export default {
       },
 
       set(rule) {
-        this.updateField('rule', rule._id);
+        this.updateField('rule', rule?._id);
       },
     },
 
@@ -87,6 +94,18 @@ export default {
 
     dictionaryName() {
       return `${this.name}.dictionary`;
+    },
+
+    ruleRules() {
+      return {
+        required: this.required || Boolean(this.value.dictionary),
+      };
+    },
+
+    dictionaryRules() {
+      return {
+        required: this.required || Boolean(this.rule),
+      };
     },
 
     infosName() {

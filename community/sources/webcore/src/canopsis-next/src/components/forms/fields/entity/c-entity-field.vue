@@ -1,29 +1,29 @@
-<template lang="pug">
-  c-lazy-search-field(
-    v-field="value",
-    :label="selectLabel",
-    :loading="pending",
-    :limit="limit",
-    :items="entities",
-    :name="name",
-    :has-more="hasMoreEntities",
-    :item-text="itemText",
-    :item-value="itemValue",
-    :item-disabled="itemDisabled",
-    :disabled="disabled",
-    :required="required",
-    :clearable="clearable",
-    :autocomplete="autocomplete",
-    :return-object="returnObject",
-    @fetch="fetchEntities",
-    @fetch:more="fetchMoreEntities",
+<template>
+  <c-lazy-search-field
+    v-field="value"
+    :label="selectLabel"
+    :loading="pending"
+    :limit="limit"
+    :items="entities"
+    :name="name"
+    :has-more="hasMoreEntities"
+    :item-text="itemText"
+    :item-value="itemValue"
+    :item-disabled="itemDisabled"
+    :disabled="disabled"
+    :required="required"
+    :clearable="clearable"
+    :autocomplete="autocomplete"
+    :return-object="returnObject"
+    @fetch="fetchEntities"
+    @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"
-  )
+  />
 </template>
 
 <script>
+import { isArray, keyBy, pick, isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { isArray, keyBy, pick } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
@@ -119,11 +119,21 @@ export default {
         return this.label;
       }
 
-      if (this.isMultiply) {
+      if (isArray(this.value)) {
         return this.$tc('common.entity', this.value.length);
       }
 
       return this.$tc('common.entity');
+    },
+  },
+  watch: {
+    entityTypes(entityTypes, oldEntityTypes) {
+      if (!isEqual(entityTypes, oldEntityTypes)) {
+        this.query.page = 1;
+
+        this.updateModel(isArray(this.value) ? [] : '');
+        this.fetchEntities();
+      }
     },
   },
   methods: {

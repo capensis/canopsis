@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, createVueInstance, generateRenderer } from '@unit/utils/vue';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
@@ -97,7 +95,7 @@ describe('c-runtime-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-runtime-template` updated props', async () => {
@@ -111,6 +109,6 @@ describe('c-runtime-template', () => {
       propThree: 'prop-three-updated',
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

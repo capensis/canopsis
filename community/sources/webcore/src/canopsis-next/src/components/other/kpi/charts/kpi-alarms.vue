@@ -1,19 +1,23 @@
-<template lang="pug">
-  div.position-relative
-    c-progress-overlay(:pending="pending")
-    kpi-alarms-filters(v-model="pagination", :min-date="minDate")
-    kpi-alarms-chart(
-      :metrics="alarmsMetrics",
-      :sampling="pagination.sampling",
-      :downloading="downloading",
-      :min-date="minDate",
-      :interval="interval",
-      responsive,
-      @export:csv="exportMetricsAsCsv",
-      @export:png="exportMetricsAsPng",
+<template>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+    <kpi-alarms-filters
+      v-model="query"
+      :min-date="minDate"
+    />
+    <kpi-alarms-chart
+      :metrics="alarmsMetrics"
+      :sampling="query.sampling"
+      :downloading="downloading"
+      :min-date="minDate"
+      :interval="interval"
+      responsive
+      @export:csv="exportMetricsAsCsv"
+      @export:png="exportMetricsAsPng"
       @zoom="updateQueryField('interval', $event)"
-    )
-    kpi-error-overlay(v-if="unavailable || fetchError")
+    />
+    <kpi-error-overlay v-if="unavailable || fetchError" />
+  </div>
 </template>
 
 <script>

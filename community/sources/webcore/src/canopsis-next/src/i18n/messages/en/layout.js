@@ -2,7 +2,8 @@ export default {
   sideBar: {
     buttons: {
       edit: 'Toggle editing mode',
-      create: 'Create view',
+      createView: 'Create view',
+      createPrivateView: 'Create private view',
       settings: 'Settings',
     },
     loggedUsersCount: 'Active sessions',

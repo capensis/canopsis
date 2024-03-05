@@ -27,6 +27,8 @@ const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/v
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/maps.vue');
 const AdminTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/tags.vue');
+const AdminStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/storage-settings.vue');
+const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/state-settings.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -69,9 +71,6 @@ const routes = [
     component: View,
     meta: {
       requiresLogin: true,
-      requiresPermission: {
-        id: route => route.params.id,
-      },
     },
     props: route => ({ id: route.params.id }),
   },
@@ -231,6 +230,28 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.tag,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminStorageSettings,
+    name: ROUTES_NAMES.adminStorageSettings,
+    component: AdminStorageSettings,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.storageSettings,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminStateSettings,
+    name: ROUTES_NAMES.adminStateSettings,
+    component: AdminStateSettings,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.stateSetting,
       },
     },
   },

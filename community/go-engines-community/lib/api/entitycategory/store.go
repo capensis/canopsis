@@ -2,12 +2,12 @@ package entitycategory
 
 import (
 	"context"
-	"time"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -101,7 +101,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	category := Category{
 		ID:      utils.NewID(),
 		Name:    r.Name,
@@ -124,7 +124,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	var result *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -155,7 +155,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	entityCollection := s.dbClient.Collection(mongo.EntityMongoCollection)
 	res := entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}})
 	if err := res.Err(); err != nil {
-		if err != mongodriver.ErrNoDocuments {
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, err
 		}
 	} else {

@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
@@ -45,9 +44,9 @@ describe('ack-event-form', () => {
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', comment);
+    descriptionField.triggerCustomEvent('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Ack resources changed after trigger checkbox field', async () => {
@@ -65,15 +64,15 @@ describe('ack-event-form', () => {
 
     const ackResources = !form.ack_resources;
 
-    selectCheckboxField(wrapper).vm.$emit('change', ackResources);
+    selectCheckboxField(wrapper).triggerCustomEvent('change', ackResources);
 
-    expect(wrapper).toEmit('input', { ...form, ack_resources: ackResources });
+    expect(wrapper).toEmitInput({ ...form, ack_resources: ackResources });
   });
 
   test('Renders `ack-event-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `ack-event-form` with custom props', () => {
@@ -87,6 +86,6 @@ describe('ack-event-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

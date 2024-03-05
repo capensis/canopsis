@@ -1,9 +1,27 @@
-<template lang="pug">
-  v-flex.pa-4(v-else, md10, offset-md1, lg8, offset-lg2)
-    c-information-block.mb-5(:title="$t('healthcheck.messagesLastHour')")
-      healthcheck-last-hour-graph.mt-4(:max-messages-per-minute="maxMessagesPerMinute")
-    c-information-block(:title="$t('healthcheck.messagesHistory')")
-      healthcheck-history-graph.mt-4(:max-messages-per-minute="maxMessagesPerMinute")
+<template>
+  <v-flex
+    class="pa-4"
+    md10
+    offset-md1
+    lg8
+    offset-lg2
+  >
+    <c-information-block
+      :title="$t('healthcheck.messagesLastHour')"
+      class="mb-5"
+    >
+      <healthcheck-last-hour-graph
+        :max-messages-per-minute="maxMessagesPerMinute"
+        class="mt-4"
+      />
+    </c-information-block>
+    <c-information-block :title="$t('healthcheck.messagesHistory')">
+      <healthcheck-history-graph
+        :max-messages-per-minute="maxMessagesPerMinute"
+        class="mt-4"
+      />
+    </c-information-block>
+  </v-flex>
 </template>
 
 <script>

@@ -1,19 +1,46 @@
-<template lang="pug">
-  modal-wrapper.fill-height(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      div.pre-wrap {{ $t('healthcheck.chainConfigurationInvalid') }}
-      v-fade-transition
-        v-layout(v-if="pending", justify-center)
-          v-progress-circular(color="primary", indeterminate)
-        div.healthcheck-engine-chain-reference(v-else)
-          healthcheck-network-graph(
-            :engines-graph="enginesGraph",
+<template>
+  <modal-wrapper
+    class="fill-height"
+    close
+  >
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <div class="pre-wrap">
+        {{ $t('healthcheck.chainConfigurationInvalid') }}
+      </div>
+      <v-fade-transition>
+        <v-layout
+          v-if="pending"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <div
+          v-else
+          class="healthcheck-engine-chain-reference"
+        >
+          <healthcheck-network-graph
+            :engines-graph="enginesGraph"
             :engines-parameters="enginesParameters"
-          )
-    template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
+          />
+        </div>
+      </v-fade-transition>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.ok') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

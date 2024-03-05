@@ -14,26 +14,27 @@ describe('group-view-panel', () => {
     const wrapper = factory({
       propsData: {
         view: {},
-        allowEditing: true,
+        editable: true,
       },
     });
 
-    selectEditButton(wrapper).vm.$emit('click', new Event('click'));
+    selectEditButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('change');
+    expect(wrapper).toHaveBeenEmit('change');
   });
 
   it('Duplicate event emitted after trigger duplicate button', () => {
     const wrapper = factory({
       propsData: {
         view: {},
-        allowEditing: true,
+        editable: true,
+        duplicable: true,
       },
     });
 
-    selectDuplicateButton(wrapper).vm.$emit('click', new Event('click'));
+    selectDuplicateButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('duplicate');
+    expect(wrapper).toHaveBeenEmit('duplicate');
   });
 
   it('Renders `group-view-panel` with required props', () => {
@@ -45,7 +46,7 @@ describe('group-view-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `group-view-panel` with custom props', () => {
@@ -54,9 +55,8 @@ describe('group-view-panel', () => {
         view: {
           title: 'Custom view title',
         },
-        allowEditing: true,
-        hasEditAccess: true,
-        isEditing: true,
+        editable: true,
+        duplicable: true,
         isOrderChanged: true,
         isViewActive: true,
       },
@@ -65,6 +65,6 @@ describe('group-view-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

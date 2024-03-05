@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
-
 import { generateRenderer } from '@unit/utils/vue';
+
 import { SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
 
 import AlarmStateCounters from '@/components/widgets/service-weather/alarm-state-counters.vue';
@@ -29,13 +28,12 @@ describe('alarm-state-counters', () => {
   test('Renders `alarm-state-counters` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    await flushPromises();
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  test('Renders `alarm-state-counters` with custom props', () => {
+  test('Renders `alarm-state-counters` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         types: Object.values(SERVICE_WEATHER_STATE_COUNTERS),
@@ -43,7 +41,8 @@ describe('alarm-state-counters', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 });

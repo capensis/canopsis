@@ -1,7 +1,9 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 import { randomDurationValue } from '@unit/utils/duration';
+
+import { TIME_UNITS } from '@/constants';
+
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import StorageSettingsAlarmForm from '@/components/other/storage-setting/form/storage-settings-alarm-form.vue';
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
@@ -44,9 +46,9 @@ describe('storage-settings-alarm-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectAlarmArchiveAfterField(wrapper).vm.$emit('input', newValue);
+    selectAlarmArchiveAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, archive_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, archive_after: newValue });
   });
 
   test('Alarm delete after changed after trigger enabled duration field', () => {
@@ -59,9 +61,9 @@ describe('storage-settings-alarm-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectAlarmDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectAlarmDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-alarm-form` with default form', () => {
@@ -71,7 +73,7 @@ describe('storage-settings-alarm-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-alarm-form` with custom form and history', () => {
@@ -86,6 +88,6 @@ describe('storage-settings-alarm-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

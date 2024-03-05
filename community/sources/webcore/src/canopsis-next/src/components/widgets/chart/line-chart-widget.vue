@@ -1,36 +1,48 @@
-<template lang="pug">
-  v-layout.py-2(column)
-    kpi-widget-filters.mx-3(
-      :widget-id="widget._id",
-      :user-filters="userPreference.filters",
-      :widget-filters="widget.filters",
-      :locked-value="lockedFilter",
-      :filters="mainFilter",
-      :interval="query.interval",
-      :min-interval-date="minAvailableDate",
-      :sampling="query.sampling",
-      :show-filter="hasAccessToUserFilter",
-      :show-interval="hasAccessToInterval",
-      :show-sampling="hasAccessToSampling",
-      :filter-disabled="!hasAccessToListFilters",
-      :filter-addable="hasAccessToAddFilter",
-      :filter-editable="hasAccessToEditFilter",
-      @update:filters="updateSelectedFilter",
-      @update:sampling="updateSampling",
+<template>
+  <v-layout
+    class="py-2"
+    column
+  >
+    <kpi-widget-filters
+      :widget-id="widget._id"
+      :user-filters="userPreference.filters"
+      :widget-filters="widget.filters"
+      :locked-value="lockedFilter"
+      :filters="mainFilter"
+      :interval="query.interval"
+      :min-interval-date="minAvailableDate"
+      :sampling="query.sampling"
+      :show-filter="hasAccessToUserFilter"
+      :show-interval="hasAccessToInterval"
+      :show-sampling="hasAccessToSampling"
+      :filter-disabled="!hasAccessToListFilters"
+      :filter-addable="hasAccessToAddFilter"
+      :filter-editable="hasAccessToEditFilter"
+      class="mx-3"
+      @update:filters="updateSelectedFilter"
+      @update:sampling="updateSampling"
       @update:interval="updateInterval"
-    )
-    v-layout.pa-3(column)
-      chart-loader(v-if="vectorMetricsPending", :has-metrics="hasMetrics")
-      line-chart-metrics(
-        v-if="hasMetrics",
-        :chart-id="widget._id",
-        :metrics="preparedMetrics",
-        :title="widget.parameters.chart_title",
-        :sampling="query.sampling",
-        :downloading="downloading",
-        @export:png="exportMetricsAsPng",
+    />
+    <v-layout
+      class="pa-3"
+      column
+    >
+      <chart-loader
+        v-if="vectorMetricsPending"
+        :has-metrics="hasMetrics"
+      />
+      <line-chart-metrics
+        v-if="hasMetrics"
+        :chart-id="widget._id"
+        :metrics="preparedMetrics"
+        :title="widget.parameters.chart_title"
+        :sampling="query.sampling"
+        :downloading="downloading"
+        @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

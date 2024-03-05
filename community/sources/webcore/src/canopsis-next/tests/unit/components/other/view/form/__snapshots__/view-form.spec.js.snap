@@ -4,14 +4,15 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
 <div
   class="layout column"
 >
+  <!---->
   <c-name-field-stub
     label="Title"
     name="title"
-    required="required"
+    required=""
     value="View title"
   />
   <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -23,14 +24,12 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
           class="v-text-field__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
             Description
           </label>
           <input
-            aria-label="Description"
             name="description"
             type="text"
           />
@@ -42,8 +41,10 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -57,150 +58,13 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
     name="periodic_refresh"
     periodicrefresh="[object Object]"
   />
-  <div
-    class="v-input v-text-field v-select v-select--chips v-autocomplete v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Group tags
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <span
-              class="v-chip v-chip--select-multi v-chip--removable theme--light"
-              tabindex="-1"
-            >
-              <span
-                class="v-chip__content"
-              >
-                View tag
-                <div
-                  class="v-chip__close"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                  >
-                    cancel
-                  </i>
-                </div>
-              </span>
-            </span>
-            <input
-              aria-label="Group tags"
-              autocomplete="off"
-              role="combobox"
-              tags="tags"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--clear"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon v-icon--link material-icons theme--light"
-              >
-                clear
-              </i>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-menu"
-        />
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Choose a group, or create a new one
-          </label>
-          <input
-            aria-label="Choose a group, or create a new one"
-            autocomplete="off"
-            name="group"
-            role="combobox"
-            type="text"
-          />
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-menu"
-        />
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <view-tags-field-stub
+    value="View tag"
+  />
+  <view-group-field-stub
+    groups="[object Object]"
+    value="[object Object]"
+  />
 </div>
 `;
 
@@ -208,13 +72,14 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
 <div
   class="layout column"
 >
+  <!---->
   <c-name-field-stub
     label="Title"
     name="title"
-    required="required"
+    required=""
   />
   <div
-    class="v-input v-text-field theme--light"
+    class="v-input theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -226,14 +91,12 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
           class="v-text-field__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
             Description
           </label>
           <input
-            aria-label="Description"
             name="description"
             type="text"
           />
@@ -245,8 +108,10 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -258,127 +123,11 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
     name="periodic_refresh"
     periodicrefresh="[object Object]"
   />
-  <div
-    class="v-input v-text-field v-select v-select--chips v-autocomplete theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Group tags
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <input
-              aria-label="Group tags"
-              autocomplete="off"
-              role="combobox"
-              tags="tags"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon v-icon--link material-icons theme--light"
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-menu"
-        />
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="v-input v-text-field v-select v-autocomplete theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Choose a group, or create a new one
-          </label>
-          <input
-            aria-label="Choose a group, or create a new one"
-            autocomplete="off"
-            name="group"
-            role="combobox"
-            type="text"
-          />
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-menu"
-        />
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <view-tags-field-stub
+    value=""
+  />
+  <view-group-field-stub
+    groups=""
+  />
 </div>
 `;

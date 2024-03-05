@@ -1,17 +1,18 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createInputStub } from '@unit/stubs/input';
 
 import FastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
 
 const stubs = {
+  'widget-settings-item': true,
   'c-enabled-field': true,
   'v-text-field': createInputStub('v-text-field'),
 };
 
 const snapshotStubs = {
+  'widget-settings-item': true,
   'c-enabled-field': true,
 };
 
@@ -43,16 +44,9 @@ describe('fast-action-output', () => {
       },
     });
 
-    const enabledField = selectEnabledField(wrapper);
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
 
-    enabledField.vm.$emit('input', false);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       enabled: false,
     });
@@ -69,18 +63,11 @@ describe('fast-action-output', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textField.setValue(newValue);
+    selectTextField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       value: newValue,
     });
@@ -89,7 +76,7 @@ describe('fast-action-output', () => {
   it('Renders `fast-action-output` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `fast-action-output` with custom props', () => {
@@ -103,6 +90,6 @@ describe('fast-action-output', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

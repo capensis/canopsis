@@ -2,15 +2,16 @@ package pbehaviorics
 
 import (
 	"fmt"
+	"net/http"
+	"regexp"
+	"strings"
+	"unicode"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
-	"net/http"
-	"regexp"
-	"strings"
-	"unicode"
 )
 
 func GetICS(store Store, service Service) gin.HandlerFunc {

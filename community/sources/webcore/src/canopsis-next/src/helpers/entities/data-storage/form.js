@@ -21,11 +21,6 @@ import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/durati
  */
 
 /**
- * @typedef {Object} DataStorageEntityConfig
- * @property {boolean} with_dependencies
- */
-
-/**
  * @typedef {Object} DataStorageUnlinkedEntityConfig
  * @property {DurationWithEnabled} archive_before
  */
@@ -61,7 +56,6 @@ import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/durati
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
- * @property {DataStorageEntityConfig} [entity_disabled]
  * @property {DataStorageUnlinkedEntityConfig} [entity_unlinked]
  * @property {DataStoragePbehaviorConfig} pbehavior
  * @property {DataStorageHealthCheckConfig} health_check
@@ -157,16 +151,6 @@ export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
 });
 
 /**
- * Convert data storage entity config to entity form object
- *
- * @param {DataStorageEntityConfig} entityConfig
- * @return {DataStorageEntityConfig}
- */
-export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
-  with_dependencies: entityConfig.with_dependencies || false,
-});
-
-/**
  * Convert data storage unlinked entity config to unlinked entity form object
  *
  * @param {DataStorageUnlinkedEntityConfig} unlinkedEntityConfig
@@ -249,7 +233,6 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
-  entity_disabled: dataStorageEntitySettingsToForm(dataStorage.entity_disabled),
   entity_unlinked: dataStorageEntityUnlinkedSettingsToForm(dataStorage.entity_unlinked),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),

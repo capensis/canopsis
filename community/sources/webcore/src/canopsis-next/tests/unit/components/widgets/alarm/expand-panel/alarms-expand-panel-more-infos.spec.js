@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
@@ -12,12 +10,19 @@ const stubs = {
 };
 
 describe('alarms-expand-panel-more-infos', () => {
-  const snapshotFactory = generateRenderer(AlarmsExpandPanelMoreInfos, { stubs });
+  const snapshotFactory = generateRenderer(AlarmsExpandPanelMoreInfos, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Renders `alarms-expand-panel-more-infos` without template', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-more-infos` with template', async () => {
@@ -35,6 +40,6 @@ describe('alarms-expand-panel-more-infos', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

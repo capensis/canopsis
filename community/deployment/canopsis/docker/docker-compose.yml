@@ -36,6 +36,8 @@ x-inital_config_base: &inital_config_base
       condition: service_healthy
     rabbitmq:
       condition: service_healthy
+    mongodb-rs-init:
+      condition: service_completed_successfully
 
 x-app_service_base: &app_service_base
   <<: *service_base
@@ -85,13 +87,30 @@ services:
     #mem_limit: 3g
     #mem_reservation: 3g
     oom_score_adj: -1000
-    command: '--wiredTigerCacheSizeGB 2560'
+    # keyFile will be created during initdb (script in /docker-entrypoint-initdb.d)
+    command: ['--wiredTigerCacheSizeGB', '2.5', '--replSet', 'rs0', '--keyFile', '/data/db/.keyFile']
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
       interval: 10s
       timeout: 10s
       retries: 5
       start_period: 40s
+
+  mongodb-rs-init:
+    # This job performs rs.initiate() to configure replicaset, once MongoDB is
+    # fully started and listens on the network.
+    # This would have been done in mongodb container's initdb if its entrypoint
+    # script did not restrict the tmp instance with "--bind-ip 127.0.0.1".
+    image: mongo:${MONGO_TAG}
+    env_file:
+      - compose.env
+    volumes:
+      - "./files/mongo-rs-init/rs-initiate.js:/tmp/rs-initiate.js"
+    command: ['sh', '-c', 'mongosh "mongodb://$$MONGO_INITDB_ROOT_USERNAME:$$MONGO_INITDB_ROOT_PASSWORD@mongodb/" /tmp/rs-initiate.js']
+    restart: "no"
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
   redis:
     image: redis:${REDIS_TAG}
@@ -141,11 +160,11 @@ services:
 
   axe:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-axe:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-axe:${CANOPSIS_IMAGE_TAG}
 
   che:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-che:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
 
   fifo:
     <<: *app_service_base
@@ -166,7 +185,7 @@ services:
 
   api:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
       - junitsharedata:/tmp/canopsis/junit
       - uploadfiles:/opt/canopsis/var/lib/upload-files

@@ -3,13 +3,16 @@ package viewtab
 import (
 	"context"
 	"errors"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -19,22 +22,24 @@ import (
 type Store interface {
 	Find(ctx context.Context, ids []string) ([]Response, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
-	Insert(ctx context.Context, r EditRequest) (*Response, error)
-	Update(ctx context.Context, oldTab Response, r EditRequest) (*Response, error)
+	Insert(ctx context.Context, r CreateRequest) (*Response, error)
+	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, tab Response, r EditRequest) (*Response, error)
-	CopyForView(ctx context.Context, viewID, newViewID, author string) error
+	Copy(ctx context.Context, tabID string, r CreateRequest) (*Response, error)
+	CopyForView(ctx context.Context, viewID, newViewID, author string, isPrivate bool) error
 	UpdatePositions(ctx context.Context, tabs []Response) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, widgetStore widget.Store, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient, widgetStore widget.Store, authorProvider author.Provider, enforcer security.Enforcer) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.ViewTabMongoCollection),
+		viewCollection:     dbClient.Collection(mongo.ViewMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		playlistCollection: dbClient.Collection(mongo.PlaylistMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		enforcer:           enforcer,
 		authorProvider:     authorProvider,
 
 		widgetStore: widgetStore,
@@ -44,11 +49,13 @@ func NewStore(dbClient mongo.DbClient, widgetStore widget.Store, authorProvider 
 type store struct {
 	client             mongo.DbClient
 	collection         mongo.DbCollection
+	viewCollection     mongo.DbCollection
 	widgetCollection   mongo.DbCollection
 	filterCollection   mongo.DbCollection
 	playlistCollection mongo.DbCollection
 	userPrefCollection mongo.DbCollection
 	authorProvider     author.Provider
+	enforcer           security.Enforcer
 
 	widgetStore widget.Store
 }
@@ -101,8 +108,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"let":  bson.M{"widget": "$widgets._id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-					"is_private": false,
+					"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_user_preference": false,
 				}},
 			},
 			"as": "filters",
@@ -164,23 +171,46 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
 		position, err := s.getNextPosition(ctx, r.View)
 		if err != nil {
 			return err
 		}
-		now := types.CpsTime{Time: time.Now()}
+
+		viewInfo, err := s.getViewPrivacySettings(ctx, r.View)
+		if err != nil {
+			return err
+		}
+
+		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
+			return common.NewValidationError("view", "View is private.")
+		}
+
+		if !viewInfo.IsPrivate {
+			ok, err := s.enforcer.Enforce(r.Author, r.View, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				return common.NewValidationError("view", "Can't modify a view.")
+			}
+		}
+
+		now := datetime.NewCpsTime()
 		tab := view.Tab{
-			ID:       utils.NewID(),
-			Title:    r.Title,
-			View:     r.View,
-			Author:   r.Author,
-			Position: position,
-			Created:  now,
-			Updated:  now,
+			ID:        utils.NewID(),
+			Title:     r.Title,
+			View:      r.View,
+			Author:    r.Author,
+			Position:  position,
+			IsPrivate: viewInfo.IsPrivate,
+			Created:   now,
+			Updated:   now,
 		}
 
 		_, err = s.collection.InsertOne(ctx, tab)
@@ -195,27 +225,37 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, err
 }
 
-func (s *store) Update(ctx context.Context, oldTab Response, r EditRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
-	tab := view.Tab{
-		ID:       oldTab.ID,
-		Title:    r.Title,
-		View:     r.View,
-		Author:   r.Author,
-		Position: oldTab.Position,
-		Created:  *oldTab.Created,
-		Updated:  now,
-	}
-
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	var response *Response
+
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": tab.ID}, bson.M{"$set": tab})
+
+		oldTab := view.Tab{}
+		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldTab)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": oldTab.ID}, bson.M{"$set": view.Tab{
+			ID:        oldTab.ID,
+			Title:     r.Title,
+			Author:    r.Author,
+			View:      oldTab.View,
+			IsPrivate: oldTab.IsPrivate,
+			Position:  oldTab.Position,
+			Created:   oldTab.Created,
+			Updated:   datetime.NewCpsTime(),
+		}})
 		if err != nil {
 			return err
 		}
 
-		response, err = s.GetOneBy(ctx, tab.ID)
+		response, err = s.GetOneBy(ctx, oldTab.ID)
 		return err
 	})
 
@@ -231,7 +271,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 		if isLinked {
-			return ValidationErr{error: errors.New("view tab is linked to playlist")}
+			return ValidationError{err: errors.New("view tab is linked to playlist")}
 		}
 
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
@@ -251,19 +291,39 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return res, err
 }
 
-func (s *store) Copy(ctx context.Context, tab Response, r EditRequest) (*Response, error) {
+func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		var err error
-		response, err = s.copy(ctx, tab.ID, r)
+
+		viewInfo, err := s.getViewPrivacySettings(ctx, r.View)
+		if err != nil {
+			return err
+		}
+
+		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
+			return common.NewValidationError("view", "View is private.")
+		}
+
+		if !viewInfo.IsPrivate {
+			ok, err := s.enforcer.Enforce(r.Author, r.View, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				return common.NewValidationError("view", "Can't modify a view.")
+			}
+		}
+
+		response, err = s.copy(ctx, tabID, viewInfo.IsPrivate, r)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author string) error {
+func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author string, isPrivate bool) error {
 	cursor, err := s.collection.Find(ctx, bson.M{"view": viewID}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return err
@@ -277,10 +337,12 @@ func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author strin
 			return err
 		}
 
-		_, err = s.copy(ctx, t.ID, EditRequest{
-			Title:  t.Title,
-			View:   newViewID,
-			Author: author,
+		_, err = s.copy(ctx, t.ID, isPrivate, CreateRequest{
+			EditRequest: EditRequest{
+				Title:  t.Title,
+				Author: author,
+			},
+			View: newViewID,
 		})
 		if err != nil {
 			return err
@@ -290,20 +352,22 @@ func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author strin
 	return nil
 }
 
-func (s *store) copy(ctx context.Context, tabID string, r EditRequest) (*Response, error) {
+func (s *store) copy(ctx context.Context, tabID string, isPrivate bool, r CreateRequest) (*Response, error) {
 	position, err := s.getNextPosition(ctx, r.View)
 	if err != nil {
 		return nil, err
 	}
-	now := types.NewCpsTime()
+
+	now := datetime.NewCpsTime()
 	newTab := view.Tab{
-		ID:       utils.NewID(),
-		Title:    r.Title,
-		View:     r.View,
-		Author:   r.Author,
-		Position: position,
-		Created:  now,
-		Updated:  now,
+		ID:        utils.NewID(),
+		Title:     r.Title,
+		View:      r.View,
+		Author:    r.Author,
+		Position:  position,
+		IsPrivate: isPrivate,
+		Created:   now,
+		Updated:   now,
 	}
 
 	_, err = s.collection.InsertOne(ctx, newTab)
@@ -311,7 +375,7 @@ func (s *store) copy(ctx context.Context, tabID string, r EditRequest) (*Respons
 		return nil, err
 	}
 
-	err = s.widgetStore.CopyForTab(ctx, tabID, newTab.ID, r.Author)
+	err = s.widgetStore.CopyForTab(ctx, tabID, newTab.ID, r.Author, isPrivate)
 	if err != nil {
 		return nil, err
 	}
@@ -325,7 +389,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		if viewId == "" {
 			viewId = tab.View
 		} else if viewId != tab.View {
-			return false, ValidationErr{error: errors.New("view tabs are related to different views")}
+			return false, ValidationError{err: errors.New("view tabs are related to different views")}
 		}
 	}
 
@@ -337,7 +401,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 			return err
 		}
 		if count != int64(len(tabs)) {
-			return ValidationErr{error: errors.New("view tabs are missing")}
+			return ValidationError{err: errors.New("view tabs are missing")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(tabs))
@@ -427,4 +491,15 @@ func (s *store) getNextPosition(ctx context.Context, view string) (int64, error)
 	}
 
 	return 0, nil
+}
+
+func (s *store) getViewPrivacySettings(ctx context.Context, viewID string) (apisecurity.PrivacySettings, error) {
+	var viewInfo apisecurity.PrivacySettings
+
+	err := s.viewCollection.FindOne(ctx, bson.M{"_id": viewID}).Decode(&viewInfo)
+	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
+		return viewInfo, common.NewValidationError("view", "View doesn't exist.")
+	}
+
+	return viewInfo, err
 }

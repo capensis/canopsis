@@ -1,7 +1,6 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import PbehaviorComments from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-comments.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -23,14 +22,21 @@ describe('pbehavior-comments', () => {
     message: `message-pbehavior-comment-${index}`,
   }));
 
-  const snapshotFactory = generateRenderer(PbehaviorComments, { stubs });
+  const snapshotFactory = generateRenderer(PbehaviorComments, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `pbehavior-comments` without comments', async () => {
     const wrapper = snapshotFactory();
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-comments` with comments', async () => {
@@ -42,6 +48,6 @@ describe('pbehavior-comments', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

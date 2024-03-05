@@ -2,80 +2,56 @@
 
 exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected tag and dropdown 1`] = `
 <div
-  class="layout c-alarm-actions-chips row wrap align-center"
+  class="layout c-alarm-actions-chips wrap align-center"
 >
   <span
-    class="c-alarm-action-chip ma-0"
+    class="c-alarm-action-chip"
     color="color3"
   />
   <span
-    class="c-alarm-action-chip ma-0"
+    class="c-alarm-action-chip"
     color="color1"
   />
   <div
     class="v-menu"
   >
     <button
-      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon theme--light grey"
+      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default grey--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 20px;"
         >
           more_horiz
         </i>
-      </div>
+      </span>
     </button>
-    <transition-stub
-      name="v-menu-transition"
-    />
+    <!---->
   </div>
 </div>
 `;
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected tag and dropdown 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 400px; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-card v-sheet theme--light"
-  >
-    <div
-      class="v-card__text"
-    >
-      <div
-        class="layout c-alarm-actions-chips__more wrap"
-      >
-        <span
-          class="c-alarm-action-chip mx-0"
-          color="color2"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected tag and dropdown 2`] = `undefined`;
 
 exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and dropdown 1`] = `
 <div
-  class="layout c-alarm-actions-chips row wrap align-center"
+  class="layout c-alarm-actions-chips wrap align-center"
 >
   <span
-    class="c-alarm-action-chip ma-0"
+    class="c-alarm-action-chip"
     color="color1"
   />
   <span
-    class="c-alarm-action-chip ma-0"
+    class="c-alarm-action-chip"
     color="color2"
   />
   <span
-    class="c-alarm-action-chip ma-0"
+    class="c-alarm-action-chip"
     color="color3"
   />
   <!---->
@@ -84,62 +60,34 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
 
 exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and with dropdown 1`] = `
 <div
-  class="layout c-alarm-actions-chips row wrap align-center"
+  class="layout c-alarm-actions-chips wrap align-center"
 >
   <span
-    class="c-alarm-action-chip ma-0"
+    class="c-alarm-action-chip"
     color="color1"
   />
   <div
     class="v-menu"
   >
     <button
-      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon theme--light grey"
+      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default grey--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 20px;"
         >
           more_horiz
         </i>
-      </div>
+      </span>
     </button>
-    <transition-stub
-      name="v-menu-transition"
-    />
+    <!---->
   </div>
 </div>
 `;
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and with dropdown 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 400px; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-card v-sheet theme--light"
-  >
-    <div
-      class="v-card__text"
-    >
-      <div
-        class="layout c-alarm-actions-chips__more wrap"
-      >
-        <span
-          class="c-alarm-action-chip mx-0"
-          color="color2"
-        />
-        <span
-          class="c-alarm-action-chip mx-0"
-          color="color3"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and with dropdown 2`] = `undefined`;

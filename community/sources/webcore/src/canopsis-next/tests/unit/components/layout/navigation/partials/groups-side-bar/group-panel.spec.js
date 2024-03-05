@@ -19,7 +19,7 @@ describe('group-panel', () => {
   const snapshotFactory = generateRenderer(GroupsPanel, {
     parentComponent: {
       provide: {
-        expansionPanel: {
+        expansionPanels: {
           register: jest.fn(),
           unregister: jest.fn(),
         },
@@ -31,14 +31,14 @@ describe('group-panel', () => {
   it('Change event emitted after trigger button', () => {
     const wrapper = factory({
       propsData: {
-        isEditing: true,
+        editable: true,
         group: {},
       },
     });
 
-    selectButton(wrapper).vm.$emit('click', new Event('click'));
+    selectButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('change');
+    expect(wrapper).toHaveBeenEmit('change');
   });
 
   it('Renders `group-panel` with required props', () => {
@@ -50,7 +50,7 @@ describe('group-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `group-panel` with custom props', () => {
@@ -59,8 +59,8 @@ describe('group-panel', () => {
         group: {
           title: 'Custom group title',
         },
+        editable: true,
         isEditing: true,
-        isGroupsOrderChanged: true,
         orderChanged: true,
         hideActions: true,
       },
@@ -69,6 +69,6 @@ describe('group-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

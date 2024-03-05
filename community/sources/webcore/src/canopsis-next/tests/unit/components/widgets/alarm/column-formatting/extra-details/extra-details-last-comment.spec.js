@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
@@ -44,7 +42,7 @@ describe('extra-details-last-comment', () => {
 
     const tooltipContent = wrapper.findTooltip();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
   });
 
@@ -62,7 +60,7 @@ describe('extra-details-last-comment', () => {
 
     const tooltipContent = wrapper.findTooltip();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
   });
 });

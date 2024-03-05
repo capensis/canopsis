@@ -1,16 +1,17 @@
-<template lang="pug">
-  v-autocomplete(
-    v-field="value",
-    v-validate="rules",
-    :items="items",
-    :label="label",
-    :loading="pending",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :return-object="returnObject",
-    item-text="name",
+<template>
+  <v-autocomplete
+    v-field="value"
+    v-validate="rules"
+    v-bind="$attrs"
+    :items="items"
+    :label="label"
+    :loading="pending"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :return-object="returnObject"
+    item-text="name"
     item-value="_id"
-  )
+  />
 </template>
 
 <script>
@@ -22,9 +23,10 @@ const { mapActions } = createNamespacedHelpers('user');
 
 export default {
   inject: ['$validator'],
+  inheritAttrs: false,
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, Array, String],
       required: false,
     },
     label: {
@@ -42,6 +44,10 @@ export default {
     returnObject: {
       type: Boolean,
       default: false,
+    },
+    permission: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -68,7 +74,13 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await this.fetchUsersListWithoutStore({ params: { limit: MAX_LIMIT } });
+      const params = { limit: MAX_LIMIT };
+
+      if (this.permission) {
+        params.permission = this.permission;
+      }
+
+      const { data: items } = await this.fetchUsersListWithoutStore({ params });
 
       this.items = items;
       this.pending = false;

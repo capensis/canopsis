@@ -1,8 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { KPI_SLI_GRAPH_DATA_TYPE, QUICK_RANGES, SAMPLINGS } from '@/constants';
@@ -48,21 +46,14 @@ describe('kpi-sli-filters', () => {
       to: stop,
     };
 
-    quickIntervalField.vm.$emit('input', {
+    quickIntervalField.triggerCustomEvent('input', {
       from: start,
       to: stop,
     });
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.interval).toEqual(expectedInterval);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -75,20 +66,11 @@ describe('kpi-sli-filters', () => {
       },
     });
 
-    const samplingField = wrapper.find('c-sampling-field-stub');
-
-    samplingField.vm.$emit('input', SAMPLINGS.month);
+    wrapper.find('c-sampling-field-stub').triggerCustomEvent('input', SAMPLINGS.month);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.sampling).toEqual(SAMPLINGS.month);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       sampling: SAMPLINGS.month,
     });
@@ -101,20 +83,11 @@ describe('kpi-sli-filters', () => {
       },
     });
 
-    const showModeField = wrapper.find('kpi-sli-show-mode-field-stub');
-
-    showModeField.vm.$emit('input', KPI_SLI_GRAPH_DATA_TYPE.time);
+    wrapper.find('kpi-sli-show-mode-field-stub').triggerCustomEvent('input', KPI_SLI_GRAPH_DATA_TYPE.time);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.type).toEqual(KPI_SLI_GRAPH_DATA_TYPE.time);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       type: KPI_SLI_GRAPH_DATA_TYPE.time,
     });
@@ -130,18 +103,11 @@ describe('kpi-sli-filters', () => {
 
     const filtersField = wrapper.find('c-filter-field-stub');
 
-    filtersField.vm.$emit('input', expectedFilter);
+    filtersField.triggerCustomEvent('input', expectedFilter);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.filter).toEqual(expectedFilter);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       filter: expectedFilter,
     });
@@ -164,6 +130,6 @@ describe('kpi-sli-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

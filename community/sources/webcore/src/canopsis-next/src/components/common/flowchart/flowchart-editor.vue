@@ -1,48 +1,53 @@
-<template lang="pug">
-  svg(
-    ref="svg",
-    v-on="svgHandlers",
-    :viewBox="viewBoxString",
-    :style="svgStyles",
-    width="100%",
-    height="100%",
+<template>
+  <svg
+    ref="svg"
+    :viewBox="viewBoxString"
+    :style="svgStyles"
+    width="100%"
+    height="100%"
     xmlns="http://www.w3.org/2000/svg"
-  )
-    component(
-      v-for="shape in data",
-      :key="`${shape._id}-shape`",
-      :shape="shape",
-      :is="`${shape.type}-shape`",
-      :readonly="readonly",
-      @click.stop="",
-      @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)",
-      @mousedown.left="onShapeMouseDown(shape, $event)",
-      @mouseup="onShapeMouseUp(shape, $event)",
+    v-on="svgHandlers"
+  >
+    <component
+      :is="`${shape.type}-shape`"
+      v-for="shape in data"
+      :key="`${shape._id}-shape`"
+      :shape="shape"
+      :readonly="readonly"
+      @click.stop=""
+      @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)"
+      @mousedown.left="onShapeMouseDown(shape, $event)"
+      @mouseup="onShapeMouseUp(shape, $event)"
       @update="updateShape(shape, $event)"
-    )
-    template(v-if="!readonly")
-      component(
-        v-for="selection in selectionComponents",
-        :key="selection.key",
-        :is="selection.is",
-        :shape="selection.shape",
-        :selected="isSelected(selection.shape._id)",
-        :connecting="editing",
-        :color="selectionColor",
-        :padding="selectionPadding",
-        @connecting="onConnectMove($event)",
-        @connected="onConnectFinish(selection.shape, $event)",
-        @unconnect="onUnconnect(selection.shape)",
-        @edit:point="startEditLinePoint(selection.shape, $event)",
-        @update="updateShape(selection.shape, $event)"
-      )
-      flowchart-selection(
-        v-if="selecting",
-        :start="selectionStart",
-        :end="cursor",
+    />
+    <template v-if="!readonly">
+      <component
+        :is="selection.is"
+        v-for="selection in selectionComponents"
+        :key="selection.key"
+        :shape="selection.shape"
+        :selected="isSelected(selection.shape._id)"
+        :connecting="editing"
         :color="selectionColor"
-      )
-    slot(name="layers", :data="data")
+        :padding="selectionPadding"
+        @connecting="onConnectMove($event)"
+        @connected="onConnectFinish(selection.shape, $event)"
+        @unconnect="onUnconnect(selection.shape)"
+        @edit:point="startEditLinePoint(selection.shape, $event)"
+        @update="updateShape(selection.shape, $event)"
+      />
+      <flowchart-selection
+        v-if="selecting"
+        :start="selectionStart"
+        :end="cursor"
+        :color="selectionColor"
+      />
+    </template>
+    <slot
+      :data="data"
+      name="layers"
+    />
+  </svg>
 </template>
 
 <script>

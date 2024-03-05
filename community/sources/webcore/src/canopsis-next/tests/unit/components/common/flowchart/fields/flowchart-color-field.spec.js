@@ -1,10 +1,11 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { mockModals } from '@unit/utils/mock-hooks';
-import FlowchartColorField from '@/components/common/flowchart/fields/flowchart-color-field.vue';
+
 import { MODALS } from '@/constants';
+
+import FlowchartColorField from '@/components/common/flowchart/fields/flowchart-color-field.vue';
 
 const selectCheckboxField = wrapper => wrapper.find('v-checkbox-stub');
 const selectButton = wrapper => wrapper.find('v-btn-stub');
@@ -25,9 +26,9 @@ describe('flowchart-color-field', () => {
 
     const checkboxField = selectCheckboxField(wrapper);
 
-    checkboxField.vm.$emit('change', true);
+    checkboxField.triggerCustomEvent('change', true);
 
-    expect(wrapper).toEmit('input', firstColor);
+    expect(wrapper).toEmitInput(firstColor);
   });
 
   test('Value changed to transparent after trigger select field with false', () => {
@@ -39,9 +40,9 @@ describe('flowchart-color-field', () => {
 
     const checkboxField = selectCheckboxField(wrapper);
 
-    checkboxField.vm.$emit('change', false);
+    checkboxField.triggerCustomEvent('change', false);
 
-    expect(wrapper).toEmit('input', 'transparent');
+    expect(wrapper).toEmitInput('transparent');
   });
 
   test('Color picker modal showed after trigger button', () => {
@@ -59,7 +60,7 @@ describe('flowchart-color-field', () => {
 
     const button = selectButton(wrapper);
 
-    button.vm.$emit('click');
+    button.triggerCustomEvent('click');
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.colorPicker,
@@ -77,13 +78,13 @@ describe('flowchart-color-field', () => {
 
     modalArguments.config.action(newColor);
 
-    expect(wrapper).toEmit('input', newColor);
+    expect(wrapper).toEmitInput(newColor);
   });
 
   test('Renders `flowchart-color-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-color-field` with custom props', () => {
@@ -96,6 +97,6 @@ describe('flowchart-color-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

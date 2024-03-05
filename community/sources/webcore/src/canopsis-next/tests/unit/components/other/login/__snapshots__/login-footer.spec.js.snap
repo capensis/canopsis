@@ -27,7 +27,6 @@ exports[`login-footer Renders \`login-footer\` without version 1`] = `
     href="https://doc.canopsis.net"
     target="_blank"
   >
-    
   </a>
 </div>
 `;

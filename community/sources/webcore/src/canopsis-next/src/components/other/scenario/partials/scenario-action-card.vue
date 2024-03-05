@@ -1,42 +1,66 @@
-<template lang="pug">
-  v-card.subheading
-    v-card-text
-      v-layout(row, wrap)
-        v-flex(xs1)
-          v-avatar.white--text.mr-2(color="primary", size="32") {{ actionNumber }}
-          c-expand-btn(v-model="expanded")
-        v-flex(xs11)
-          scenario-info-item.scenario-info-type.px-2(
-            :label="$t('common.type')",
-            :value="action.type",
+<template>
+  <v-card class="text-subtitle-1">
+    <v-card-text>
+      <v-layout wrap>
+        <v-flex xs1>
+          <v-avatar
+            class="white--text mr-2"
+            color="primary"
+            size="32"
+          >
+            {{ actionNumber }}
+          </v-avatar>
+          <c-expand-btn v-model="expanded" />
+        </v-flex>
+        <v-flex xs11>
+          <scenario-info-item
+            :label="$t('common.type')"
+            :value="action.type"
+            class="scenario-info-type px-2"
             hide-icon
-          )
-          v-expand-transition(mode="out-in")
-            v-layout.px-2(v-if="expanded", column)
-              v-tabs(
-                v-model="activeTab",
-                slider-color="primary",
-                color="transparent",
-                centered,
+          />
+          <v-expand-transition mode="out-in">
+            <v-layout
+              v-if="expanded"
+              class="px-2"
+              column
+            >
+              <v-tabs
+                v-model="activeTab"
+                slider-color="primary"
+                centered
                 fixed-tabs
-              )
-                v-tab {{ $t('common.general') }}
-                v-tab {{ $t('scenario.tabs.pattern') }}
-              v-divider
-              v-tabs-items.pt-2(v-model="activeTab")
-                v-tab-item
-                  scenario-action-card-general-tab(:action="action")
-                v-tab-item
-                  c-patterns-field(
-                    :value="patterns",
-                    with-alarm,
-                    with-entity,
+              >
+                <v-tab>{{ $t('common.general') }}</v-tab>
+                <v-tab>{{ $t('scenario.tabs.pattern') }}</v-tab>
+              </v-tabs>
+              <v-divider />
+              <v-tabs-items
+                v-model="activeTab"
+                class="pt-2"
+              >
+                <v-tab-item>
+                  <scenario-action-card-general-tab :action="action" />
+                </v-tab-item>
+                <v-tab-item>
+                  <c-patterns-field
+                    :value="patterns"
+                    with-alarm
+                    with-entity
                     readonly
-                  )
+                  />
+                </v-tab-item>
+              </v-tabs-items>
+            </v-layout>
+          </v-expand-transition>
+        </v-flex>
+      </v-layout>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
@@ -63,18 +87,14 @@ export default {
   },
   computed: {
     patterns() {
-      return filterPatternsToForm(
-        this.action,
-        [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-        [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
-      );
+      return filterPatternsToForm(this.action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.scenario-info-type ::v-deep .v-list__tile {
+.scenario-info-type ::v-deep .v-list-item {
   height: 30px;
 }
 </style>

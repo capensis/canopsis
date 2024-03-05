@@ -17,6 +17,8 @@ export const ROUTES_NAMES = {
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
   adminTags: 'admin-tags',
+  adminStorageSettings: 'admin-storage-settings',
+  adminStateSettings: 'admin-state-settings',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -53,6 +55,8 @@ export const ROUTES = {
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
   adminTags: '/admin/tags',
+  adminStorageSettings: '/admin/storage-settings',
+  adminStateSettings: '/admin/state-settings',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -118,10 +122,6 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
-
-export const TOURS = {
-  alarmsExpandPanel: 'alarmsExpandPanel',
-};
 
 export const QUICK_RANGES = {
   last15Minutes: {

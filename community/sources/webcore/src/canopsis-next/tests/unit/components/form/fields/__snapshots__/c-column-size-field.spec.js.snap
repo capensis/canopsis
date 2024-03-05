@@ -2,7 +2,7 @@
 
 exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1`] = `
 <div
-  class="v-input c-column-size-field v-input--selection-controls v-input--radio-group v-input--radio-group--row v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light c-column-size-field--mobile"
+  class="v-input c-column-size-field v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--row c-column-size-field--mobile"
 >
   <div
     class="v-input__control"
@@ -16,11 +16,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1
         role="radiogroup"
       >
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="custom_name"
@@ -31,20 +37,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -62,11 +61,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="custom_name"
@@ -77,20 +82,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -115,7 +113,7 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1
 
 exports[`c-column-size-field Renders \`c-column-size-field\` with required props 1`] = `
 <div
-  class="v-input c-column-size-field v-input--selection-controls v-input--radio-group v-input--radio-group--row v-input--hide-details theme--light"
+  class="v-input c-column-size-field v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--row"
 >
   <div
     class="v-input__control"
@@ -129,35 +127,34 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
         role="radiogroup"
       >
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light v-item--active"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
             <input
-              aria-checked="false"
+              aria-checked="true"
               name="size"
               role="radio"
               type="radio"
               value="1"
             />
             <div
-              class="v-input--selection-controls__ripple"
+              class="v-input--selection-controls__ripple primary--text"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -175,11 +172,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -190,20 +193,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -221,11 +217,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -236,20 +238,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -267,11 +262,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -282,20 +283,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -313,11 +307,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -328,20 +328,58 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
+            >
+              <transition-stub
+                mode="in-out"
+                name="fade-transition"
+              >
+                <div
+                  class="v-image__image v-image__image--preload v-image__image--cover"
+                  style="background-position: center center;"
+                />
+              </transition-stub>
+              <div
+                class="v-responsive__content"
+              />
+            </div>
+          </label>
+        </div>
+        <div
+          class="v-radio theme--light"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
+            <input
+              aria-checked="false"
+              name="size"
+              role="radio"
+              type="radio"
+              value="12"
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            <div
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -366,7 +404,7 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
 
 exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`] = `
 <div
-  class="v-input c-column-size-field v-input--selection-controls v-input--radio-group v-input--radio-group--row v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input c-column-size-field v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--row"
 >
   <div
     class="v-input__control"
@@ -380,11 +418,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
         role="radiogroup"
       >
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -395,20 +439,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -426,11 +463,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -441,20 +484,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -472,11 +508,17 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
               name="size"
@@ -487,20 +529,13 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"
@@ -518,35 +553,34 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
           </label>
         </div>
         <div
-          class="v-radio ma-0 theme--light"
+          class="v-radio theme--light v-item--active"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
             <input
-              aria-checked="false"
+              aria-checked="true"
               name="size"
               role="radio"
               type="radio"
               value="4"
             />
             <div
-              class="v-input--selection-controls__ripple"
+              class="v-input--selection-controls__ripple primary--text"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
             <div
-              class="v-responsive v-image my-2"
+              class="v-image v-responsive my-2 theme--light"
             >
               <transition-stub
                 mode="in-out"

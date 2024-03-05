@@ -167,7 +167,7 @@ export const PATTERN_NULL_OPERATORS = [
   PATTERN_OPERATORS.notEqual,
 ];
 
-export const PATTERN_INFOS_NAME_OPERATORS = [
+export const PATTERN_EXISTS_OPERATORS = [
   PATTERN_OPERATORS.exist,
   PATTERN_OPERATORS.notExist,
 ];
@@ -207,22 +207,4 @@ export const PATTERNS_FIELDS = {
   event: 'event_pattern',
   totalEntity: 'total_entity_pattern',
   serviceWeather: 'weather_service_pattern',
-};
-
-export const OLD_PATTERNS_FIELDS = {
-  alarm: 'old_alarm_patterns',
-  entity: 'old_entity_patterns',
-  event: 'old_event_patterns',
-  totalEntity: 'old_total_entity_patterns',
-  patterns: 'old_patterns',
-  mongoQuery: 'old_mongo_query',
-};
-
-export const OLD_PATTERN_FIELDS_TO_NEW_FIELDS = {
-  [OLD_PATTERNS_FIELDS.mongoQuery]: [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-  [OLD_PATTERNS_FIELDS.alarm]: [PATTERNS_FIELDS.alarm],
-  [OLD_PATTERNS_FIELDS.entity]: [PATTERNS_FIELDS.entity],
-  [OLD_PATTERNS_FIELDS.event]: [PATTERNS_FIELDS.event],
-  [OLD_PATTERNS_FIELDS.totalEntity]: [PATTERNS_FIELDS.totalEntity],
-  [OLD_PATTERNS_FIELDS.patterns]: [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
 };

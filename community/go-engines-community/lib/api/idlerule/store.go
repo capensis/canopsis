@@ -2,14 +2,13 @@ package idlerule
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -101,7 +100,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 	if r.ID == "" {
 		r.ID = utils.NewID()
@@ -137,29 +136,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
-	model.Updated = types.CpsTime{Time: time.Now()}
-
-	update := bson.M{"$set": model}
-
-	unset := bson.M{}
-	// check for type entity in case if we update an old alarm idle rule with old alarm patterns
-	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 || model.Type == idlerule.RuleTypeEntity {
-		unset["old_alarm_patterns"] = 1
-	}
-
-	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
-		unset["old_entity_patterns"] = 1
-	}
-
-	if len(unset) > 0 {
-		update["$unset"] = unset
-	}
-
+	model.Updated = datetime.NewCpsTime()
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
+		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
 		if err != nil {
 			return err
 		}

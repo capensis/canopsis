@@ -2,8 +2,11 @@ package statesetting
 
 import (
 	"context"
+	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type mongoAdapter struct {
@@ -16,13 +19,17 @@ func NewMongoAdapter(client mongo.DbClient) Adapter {
 	}
 }
 
-func (a *mongoAdapter) Get(ctx context.Context, settingType string) (StateSetting, error) {
+func (a *mongoAdapter) Get(ctx context.Context, settingID string) (*StateSetting, error) {
 	var stateSettings StateSetting
-	res := a.collection.FindOne(ctx, bson.M{"type": settingType})
-	if res.Err() != nil {
-		return stateSettings, res.Err()
+
+	err := a.collection.FindOne(ctx, bson.M{"_id": settingID}).Decode(&stateSettings)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		return nil, err
 	}
 
-	err := res.Decode(&stateSettings)
-	return stateSettings, err
+	return &stateSettings, err
 }

@@ -58,6 +58,8 @@ func setProxyAuth(c *gin.Context) {
 	// Add proxy auth credentials
 	apiKey, ok := c.Get(auth.ApiKey)
 	if ok {
-		c.Request.Header.Add(libsecurity.HeaderApiKey, apiKey.(string))
+		if s, ok := apiKey.(string); ok {
+			c.Request.Header.Add(libsecurity.HeaderApiKey, s)
+		}
 	}
 }

@@ -1,13 +1,19 @@
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { viewRouterMixin } from '@/mixins/view/router';
 
-import layoutNavigationEditingModeMixin from './editing-mode';
+import { layoutNavigationEditingModeMixin } from './editing-mode';
 
 export default {
   mixins: [
     permissionsTechnicalViewMixin,
     layoutNavigationEditingModeMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
+    viewRouterMixin,
   ],
   props: {
     view: {
@@ -39,7 +45,7 @@ export default {
     },
 
     hasViewEditButtonAccess() {
-      return (this.hasUpdateViewAccess || this.hasDeleteViewAccess) && this.isNavigationEditingMode;
+      return this.hasUpdateViewAccess || this.hasDeleteViewAccess;
     },
   },
   methods: {
@@ -49,6 +55,20 @@ export default {
         config: {
           title: this.$t('modals.view.edit.title'),
           view: this.view,
+          deletable: this.view.is_private || this.hasDeleteViewAccess,
+          submittable: this.view.is_private || this.hasUpdateViewAccess,
+          action: async (data) => {
+            await this.updateViewWithPopup({ id: this.view._id, data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+          },
+          remove: async () => {
+            await this.removeViewWithPopup({ id: this.view._id });
+
+            await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+
+            this.redirectToHomeIfCurrentRoute();
+          },
         },
       });
     },
@@ -59,11 +79,18 @@ export default {
         config: {
           title: this.$t('modals.view.duplicate.title', { viewTitle: this.view.title }),
           duplicate: true,
+          duplicableToAll: this.hasCreateAnyViewAccess,
           view: {
             ...this.view,
 
             name: '',
             title: '',
+          },
+          submittable: this.view.is_private || this.hasCreateAnyViewAccess,
+          action: async (data) => {
+            await this.copyViewWithPopup({ id: this.view._id, data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
           },
         },
       });

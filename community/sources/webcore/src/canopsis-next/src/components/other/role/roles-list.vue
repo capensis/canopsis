@@ -1,43 +1,50 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="roles",
-    :loading="pending",
-    :pagination="pagination",
-    :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-    :total-items="totalItems",
-    :select-all="removable",
-    advanced-pagination,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="roles"
+    :loading="pending"
+    :options="options"
+    :total-items="totalItems"
+    :select-all="removable"
+    advanced-pagination
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#auth_config.inactivity_interval="{ item }") {{ durationToString(item.auth_config.inactivity_interval) }}
-    template(#auth_config.expiration_interval="{ item }") {{ durationToString(item.auth_config.expiration_interval) }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :disabled="!item.editable",
-          type="edit",
+      />
+    </template>
+    <template #auth_config.inactivity_interval="{ item }">
+      {{ durationToString(item.auth_config.inactivity_interval) }}
+    </template>
+    <template #auth_config.expiration_interval="{ item }">
+      {{ durationToString(item.auth_config.expiration_interval) }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          :disabled="!item.editable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          :disabled="!item.deletable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          :disabled="!item.deletable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -51,7 +58,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: false,
     },

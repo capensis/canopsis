@@ -2,27 +2,36 @@
 
 exports[`button-field Renders \`button-field\` with custom props 1`] = `
 <div
-  class="container pa-3 fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
+  >
+    <div
+      class="v-list-item__title"
+    >
+      Title
+    </div>
+  </div>
+  <div
+    class="v-list-item__action mr-3"
   >
     <div
       class="layout justify-end"
     >
       <button
-        class="primary v-btn v-btn--small theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <span>
-            Edit
+            Create
           </span>
-        </div>
+        </span>
       </button>
-      <!---->
     </div>
   </div>
 </div>
@@ -30,25 +39,35 @@ exports[`button-field Renders \`button-field\` with custom props 1`] = `
 
 exports[`button-field Renders \`button-field\` with default props 1`] = `
 <div
-  class="container pa-3 fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
+  >
+    <div
+      class="v-list-item__title"
+    >
+      Custom title
+    </div>
+  </div>
+  <div
+    class="v-list-item__action mr-3"
   >
     <div
       class="layout justify-end"
     >
       <button
-        class="primary v-btn v-btn--small theme--light"
+        class="primary mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <span>
             Edit
           </span>
-        </div>
+        </span>
       </button>
       <!---->
     </div>

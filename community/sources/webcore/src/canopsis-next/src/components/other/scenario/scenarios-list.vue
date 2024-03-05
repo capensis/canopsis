@@ -1,65 +1,77 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="scenarios",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    expand,
-    search,
-    advanced-pagination,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="scenarios"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    expand
+    search
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#headerCell="{ header }")
-      span.pre-line.header-text {{ header.text }}
-    template(#delay="{ item }")
-      span {{ item.delay | duration }}
-    template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#enabled="{ item }")
-      c-help-icon(
-        v-if="hasDeprecatedTrigger(item)",
-        :text="$t('scenario.errors.deprecatedTriggerExist')",
-        color="error",
-        icon="error",
+      />
+    </template>
+    <template #headerCell="{ header }">
+      <span class="pre-line header-text">{{ header.text }}</span>
+    </template>
+    <template #delay="{ item }">
+      <span>{{ item.delay | duration }}</span>
+    </template>
+    <template #priority="{ item }">
+      {{ item.priority || '-' }}
+    </template>
+    <template #enabled="{ item }">
+      <c-help-icon
+        v-if="hasDeprecatedTrigger(item)"
+        :text="$t('scenario.errors.deprecatedTriggerExist')"
+        color="error"
+        icon="error"
         top
-      )
-      c-enabled(v-else, :value="item.enabled")
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :badge-value="isOldPattern(item)",
-          :badge-tooltip="$t('pattern.oldPatternTooltip')",
-          type="edit",
+      />
+      <c-enabled
+        v-else
+        :value="item.enabled"
+      />
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      scenarios-list-expand-item(:scenario="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <scenarios-list-expand-item :scenario="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
 import { permissionsTechnicalExploitationScenarioMixin } from '@/mixins/permissions/technical/exploitation/scenario';
@@ -82,7 +94,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -146,10 +158,6 @@ export default {
   methods: {
     hasDeprecatedTrigger(item) {
       return item.triggers.some(({ type }) => isDeprecatedTrigger(type));
-    },
-
-    isOldPattern({ actions = [] }) {
-      return actions.some(action => isOldPattern(action, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]));
     },
   },
 };

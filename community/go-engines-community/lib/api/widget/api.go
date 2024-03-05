@@ -47,23 +47,13 @@ func NewApi(
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	widget, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
+
 	if widget == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	ok, err := a.checkAccessByTab(c, widget.Tab, userId, model.PermissionRead)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
 		return
 	}
 
@@ -75,23 +65,14 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	request := EditRequest{}
+
+	request := CreateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.checkAccessByTab(c, request.Tab, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	err = a.transformer.Transform(c, &request)
+	err := a.transformer.Transform(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -103,6 +84,12 @@ func (a *api) Create(c *gin.Context) {
 
 	widget, err := a.store.Insert(c, request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -123,7 +110,7 @@ func (a *api) Create(c *gin.Context) {
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	request := EditRequest{
+	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
 
@@ -132,27 +119,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccess(c, []string{request.ID}, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	ok, err = a.checkAccessByTab(c, request.Tab, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	err = a.transformer.Transform(c, &request)
+	err := a.transformer.Transform(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -188,17 +155,7 @@ func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	ok, err := a.checkAccess(c, []string{id}, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	ok, err = a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -225,49 +182,25 @@ func (a *api) Delete(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-	request := EditRequest{}
+	request := CreateRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	widget, err := a.store.GetOneBy(c, id)
+	widget, err := a.store.Copy(c, c.Param("id"), request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
+
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	ok, err := a.checkAccessByTab(c, widget.Tab, userId, model.PermissionRead)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	ok, err = a.checkAccessByTab(c, request.Tab, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	newWidget, err := a.store.Copy(c, *widget, request)
-	if err != nil {
-		panic(err)
-	}
-
-	if newWidget == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
@@ -275,13 +208,13 @@ func (a *api) Copy(c *gin.Context) {
 	err = a.actionLogger.Action(c, userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeWidget,
-		ValueID:   newWidget.ID,
+		ValueID:   widget.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusCreated, newWidget)
+	c.JSON(http.StatusCreated, widget)
 }
 
 // UpdateGridPositions
@@ -311,7 +244,7 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 
 	ok, err = a.store.UpdateGridPositions(c, request.Items)
 	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return
@@ -328,26 +261,21 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 }
 
 func (a *api) checkAccess(ctx context.Context, ids []string, userId, perm string) (bool, error) {
-	viewIds, err := a.store.FindViewIds(ctx, ids)
-	if err != nil || len(viewIds) != len(ids) {
+	tabInfos, err := a.store.FindTabPrivacySettings(ctx, ids)
+	if err != nil || len(tabInfos) != len(ids) {
 		return false, err
 	}
 
-	for _, viewId := range viewIds {
-		ok, err := a.enforcer.Enforce(userId, viewId, perm)
+	for _, tabInfo := range tabInfos {
+		if tabInfo.IsPrivate && tabInfo.Author == userId {
+			continue
+		}
+
+		ok, err := a.enforcer.Enforce(userId, tabInfo.View, perm)
 		if err != nil || !ok {
 			return false, err
 		}
 	}
 
 	return true, nil
-}
-
-func (a *api) checkAccessByTab(ctx context.Context, tabId string, userId, perm string) (bool, error) {
-	viewId, err := a.store.FindViewIdByTab(ctx, tabId)
-	if err != nil || viewId == "" {
-		return false, err
-	}
-
-	return a.enforcer.Enforce(userId, viewId, perm)
 }

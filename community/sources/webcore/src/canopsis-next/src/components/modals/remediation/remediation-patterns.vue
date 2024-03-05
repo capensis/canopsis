@@ -1,31 +1,45 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        c-patterns-field(
-          v-model="form",
-          :alarm-attributes="alarmAttributes",
-          :entity-attributes="entityAttributes",
-          with-alarm,
-          with-entity,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <c-patterns-field
+          v-model="form"
+          :alarm-attributes="alarmAttributes"
+          :entity-attributes="entityAttributes"
+          with-alarm
+          with-entity
           both-counters
-        )
-        c-collapse-panel.mt-3(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
-          remediation-patterns-pbehavior-types-form(v-model="form")
-      template(#actions="")
-        v-btn(
-          :disabled="submitting",
-          depressed,
-          flat,
+        />
+        <c-collapse-panel
+          :title="$t('remediation.pattern.tabs.pbehaviorTypes.title')"
+          class="mt-3"
+        >
+          <remediation-patterns-pbehavior-types-form v-model="form" />
+        </c-collapse-panel>
+      </template>
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -33,7 +47,6 @@ import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   MODALS,
-  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   QUICK_RANGES,
   VALIDATION_DELAY,
@@ -72,7 +85,6 @@ export default {
         ...filterPatternsToForm(
           instruction,
           [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-          [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
         ),
         active_on_pbh: instruction?.active_on_pbh ?? [],
         disabled_on_pbh: instruction?.disabled_on_pbh ?? [],

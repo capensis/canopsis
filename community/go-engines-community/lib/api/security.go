@@ -28,7 +28,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const JwtSecretEnv = "CPS_JWT_SECRET"
+const JwtSecretEnv = "CPS_JWT_SECRET" //nolint:gosec
 const sessionStoreSessionMaxAge = 24 * time.Hour
 
 // Security is used to init auth methods by config.
@@ -153,9 +153,9 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			)
 
 			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
-			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter))
+			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter)) //nolint: contextcheck
 		case libsecurity.AuthMethodSaml:
-			p, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
+			p, err := saml.NewServiceProvider(ctx, s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
 				s.enforcer, s.config, s.GetTokenService(), s.maintenanceAdapter, s.logger)
 			if err != nil {
 				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")

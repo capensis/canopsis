@@ -16,12 +16,12 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(ctx context.Context, ruleID string, action ParsedAction, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error)
+	Process(ctx context.Context, ruleID string, action ParsedAction, event *types.Event, regexMatch RegexMatch, externalData map[string]interface{}) (bool, error)
 }
 
 type RuleApplicator interface {
 	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
-	Apply(context.Context, ParsedRule, types.Event, RegexMatchWrapper) (string, types.Event, error)
+	Apply(context.Context, ParsedRule, *types.Event, RegexMatch) (string, bool, error)
 }
 
 type RuleAdapter interface {
@@ -30,7 +30,7 @@ type RuleAdapter interface {
 }
 
 type Service interface {
-	ProcessEvent(context.Context, types.Event) (types.Event, error)
+	ProcessEvent(context.Context, *types.Event) (bool, error)
 	LoadRules(context.Context, []string) error
 }
 
@@ -40,9 +40,5 @@ type RuleApplicatorContainer interface {
 }
 
 type ExternalDataGetter interface {
-	Get(ctx context.Context, ruleID, name string, event types.Event, parameters ParsedExternalDataParameters, templateParameters TemplateGetter) (interface{}, error)
-}
-
-type TemplateGetter interface {
-	GetTemplate() interface{}
+	Get(ctx context.Context, ruleID, name string, event *types.Event, parameters ParsedExternalDataParameters, templateParameters Template) (interface{}, error)
 }

@@ -1,9 +1,12 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      pbehaviors-calendar-component(:entity-id="config.entityId")
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <pbehaviors-calendar-component :entity-id="config.entityId" />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

@@ -1,24 +1,24 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        div {{ title }}
-    v-container
-      v-range-slider(
-        v-field="value",
-        :min="min",
-        :max="max",
-        :step="step",
-        ticks="always",
-        always-dirty,
-        thumb-label
-      )
+<template>
+  <widget-settings-item :title="title">
+    <v-range-slider
+      v-field="value"
+      :min="min"
+      :max="max"
+      :step="step"
+      ticks="always"
+      always-dirty
+      thumb-label
+    />
+  </widget-settings-item>
 </template>
 
 <script>
 import { GRID_SIZES } from '@/constants';
 
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Array,

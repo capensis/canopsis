@@ -59,6 +59,7 @@ type Hub interface {
 
 type GroupParameters struct {
 	CheckExists GroupCheckExists
+	OnNotExist  GroupOnNotExist
 	OnJoin      GroupOnJoin
 	OnLeave     GroupOnLeave
 }
@@ -68,6 +69,7 @@ func (p GroupParameters) IsZero() bool {
 }
 
 type GroupCheckExists func(ctx context.Context, id string) (bool, error)
+type GroupOnNotExist func(ctx context.Context, id string) (any, error)
 type GroupOnJoin func(ctx context.Context, connId, userId, id string, data any) error
 type GroupOnLeave func(ctx context.Context, connId, id string) error
 
@@ -152,7 +154,7 @@ loop:
 
 	stopCtx, stopCancel := context.WithTimeout(context.Background(), stopTimeout)
 	defer stopCancel()
-	h.stop(stopCtx)
+	h.stop(stopCtx) //nolint:contextcheck
 }
 
 func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
@@ -335,16 +337,17 @@ func (h *hub) GetConnections() []UserConnection {
 	return conns
 }
 
-func (h *hub) join(ctx context.Context, connId, room string, data any) (closed bool, _ error) {
+func (h *hub) join(ctx context.Context, connId, room string, data any) bool {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
 	c := h.conns[connId]
 	userId := c.userId
 	conn := c.conn
-	ok, err := h.authorizer.Authorize(ctx, userId, room)
+	closed := false
+	granted, msg, err := h.authorizeOnJoin(ctx, userId, room)
 	if err != nil {
-		if errors.Is(err, ErrNotFoundRoom) {
+		if errors.Is(err, ErrNotFoundRoom) || errors.Is(err, ErrNotFoundRoomInGroup) {
 			err := conn.WriteJSON(WMessage{
 				Type:  WMessageFail,
 				Room:  room,
@@ -356,12 +359,12 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) (closed b
 					Str("addr", conn.RemoteAddr().String()).
 					Msg("cannot write message to connection, connection will be closed")
 			}
-			return
+
+			return closed
 		}
 
 		h.logger.Err(err).Msg("cannot authorize user")
-
-		err := conn.WriteJSON(WMessage{
+		err = conn.WriteJSON(WMessage{
 			Type:  WMessageFail,
 			Room:  room,
 			Error: http.StatusInternalServerError,
@@ -372,14 +375,32 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) (closed b
 				Str("addr", conn.RemoteAddr().String()).
 				Msg("cannot write message to connection, connection will be closed")
 		}
-		return
+
+		return closed
 	}
 
-	if !ok {
+	if msg != nil {
+		err = conn.WriteJSON(WMessage{
+			Type: WMessageSuccess,
+			Room: room,
+			Msg:  msg,
+		})
+		if err != nil {
+			closed = true
+			h.logger.Err(err).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
+		}
+
+		return closed
+	}
+
+	if !granted {
 		code := http.StatusForbidden
 		if userId == "" {
 			code = http.StatusUnauthorized
 		}
+
 		err := conn.WriteJSON(WMessage{
 			Type:  WMessageFail,
 			Room:  room,
@@ -391,7 +412,8 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) (closed b
 				Str("addr", conn.RemoteAddr().String()).
 				Msg("cannot write message to connection, connection will be closed")
 		}
-		return
+
+		return closed
 	}
 
 	onJoin, id := h.getOnJoin(room)
@@ -399,19 +421,62 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) (closed b
 	defer h.roomsMx.Unlock()
 	for _, v := range h.rooms[room] {
 		if v == connId {
-			return
+			return false
 		}
 	}
 
 	if onJoin != nil {
 		err := onJoin(ctx, connId, userId, id, data)
 		if err != nil {
-			return closed, err
+			err = conn.WriteJSON(WMessage{
+				Type:  WMessageFail,
+				Room:  room,
+				Error: http.StatusInternalServerError,
+			})
+			if err != nil {
+				closed = true
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("cannot join to room, connection will be closed")
+			}
+
+			return closed
 		}
 	}
 
 	h.rooms[room] = append(h.rooms[room], connId)
-	return
+	return false
+}
+
+func (h *hub) authorizeOnJoin(ctx context.Context, userId, room string) (bool, any, error) {
+	ok, err := h.authorizer.Authorize(ctx, userId, room)
+	if err == nil {
+		return ok, nil, nil
+	}
+
+	if errors.Is(err, ErrNotFoundRoom) {
+		return false, nil, err
+	}
+
+	if errors.Is(err, ErrNotFoundRoomInGroup) {
+		onNotExist, id := h.getOnNotExist(room)
+		if onNotExist == nil {
+			return false, nil, err
+		}
+
+		msg, notExistErr := onNotExist(ctx, id)
+		if notExistErr != nil {
+			return false, nil, notExistErr
+		}
+
+		if msg == nil {
+			return false, nil, err
+		}
+
+		return false, msg, nil
+	}
+
+	return false, nil, err
 }
 
 func (h *hub) leave(ctx context.Context, connId, room string) {
@@ -723,8 +788,9 @@ func (h *hub) listen(connId string, conn Connection) {
 
 			closeErr := &websocket.CloseError{}
 			if errors.As(err, &closeErr) {
-				if closeErr.Code != websocket.CloseNormalClosure {
+				if closeErr.Code != websocket.CloseNormalClosure && closeErr.Code != websocket.CloseGoingAway {
 					h.logger.
+						Warn().
 						Err(err).
 						Str("addr", conn.RemoteAddr().String()).
 						Msg("connection closed unexpectedly")
@@ -783,16 +849,8 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 				continue
 			}
-			closed, err = h.join(ctx, connId, msg.Room, msg.Data)
-			if err != nil {
-				if h.sendToConn(connId, WMessage{
-					Type:  WMessageFail,
-					Error: http.StatusBadRequest,
-					Msg:   err.Error(),
-				}) {
-					closed = true
-				}
-			}
+
+			closed = h.join(ctx, connId, msg.Room, msg.Data)
 		case RMessageLeave:
 			if msg.Room == "" {
 				closed = h.sendToConn(connId, WMessage{
@@ -962,6 +1020,18 @@ func (h *hub) removeConnsFromRooms(ctx context.Context, connIds []string) {
 
 		h.rooms[room] = filteredConns
 	}
+}
+
+func (h *hub) getOnNotExist(room string) (GroupOnNotExist, string) {
+	h.groupsMx.RLock()
+	defer h.groupsMx.RUnlock()
+	for group, params := range h.groups {
+		if strings.HasPrefix(room, group) {
+			return params.OnNotExist, room[len(group):]
+		}
+	}
+
+	return nil, ""
 }
 
 func (h *hub) getOnJoin(room string) (GroupOnJoin, string) {

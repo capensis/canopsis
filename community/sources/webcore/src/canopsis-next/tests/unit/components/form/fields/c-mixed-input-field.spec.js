@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
@@ -44,15 +45,10 @@ describe('c-mixed-input-field', () => {
         inputType: PATTERN_FIELD_TYPES.string,
       },
     });
-    const textField = selectTextField(wrapper);
 
-    textField.setValue(null);
+    selectTextField(wrapper).setValue(null);
 
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual('');
+    expect(wrapper).toEmitInput('');
   });
 
   it('Value changed after trigger the input with number value', () => {
@@ -63,15 +59,9 @@ describe('c-mixed-input-field', () => {
         inputType: PATTERN_FIELD_TYPES.number,
       },
     });
-    const textField = selectTextField(wrapper);
+    selectTextField(wrapper).setValue(`${newNumber}`);
 
-    textField.setValue(`${newNumber}`);
-
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(newNumber);
+    expect(wrapper).toEmitInput(newNumber);
   });
 
   it('Value changed after trigger the select with items', () => {
@@ -90,17 +80,13 @@ describe('c-mixed-input-field', () => {
 
     combobox.setValue(item.value);
 
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(item.value);
+    expect(wrapper).toEmitInput(item.value);
   });
 
   it('Renders `c-mixed-input-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -111,7 +97,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -134,7 +120,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -156,7 +142,7 @@ describe('c-mixed-input-field', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });
@@ -172,7 +158,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -186,7 +172,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -200,7 +186,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -214,7 +200,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

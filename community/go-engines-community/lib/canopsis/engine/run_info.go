@@ -84,12 +84,12 @@ func (m *runInfoManager) GetEngines(ctx context.Context) ([]RunInfo, error) {
 			}
 
 			for i, v := range resGet.Val() {
+				if v == nil {
+					continue
+				}
+
 				s, ok := v.(string)
 				if !ok {
-					if v == nil {
-						continue
-					}
-
 					return nil, fmt.Errorf("expect string for key=%q but got type=%T", unprocessedKeys[i], v)
 				}
 

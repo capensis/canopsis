@@ -1,5 +1,5 @@
-<template lang="pug">
-  flowchart-preview(:map="map")
+<template>
+  <flowchart-preview :map="map" />
 </template>
 
 <script>

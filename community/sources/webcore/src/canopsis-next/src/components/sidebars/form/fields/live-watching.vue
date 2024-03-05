@@ -1,16 +1,18 @@
-<template lang="pug">
-  c-enabled-field(
-    v-field="value",
-    :label="$t('settings.liveWatching')",
+<template>
+  <c-enabled-field
+    v-field="value"
     hide-details
-  )
-    template(#append="")
-      c-help-icon(
-        :text="$t('settings.liveWatchingTooltip')",
-        icon-class="mt-1",
-        color="info",
+  >
+    <template #label="">
+      {{ $t('settings.liveWatching') }}
+      <c-help-icon
+        :text="$t('settings.liveWatchingTooltip')"
+        icon-class="mt-1 ml-2"
+        color="info"
         top
-      )
+      />
+    </template>
+  </c-enabled-field>
 </template>
 
 <script>

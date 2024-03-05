@@ -1,22 +1,32 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        entity-form(v-model="form")
-      template(#actions="")
-        v-btn(
-          :disabled="submitting",
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <entity-form v-model="form" :prepare-state-setting-form="prepareStateSettingForm" />
+      </template>
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -58,6 +68,14 @@ export default {
     },
   },
   methods: {
+    prepareStateSettingForm(entity) {
+      return {
+        ...formToEntity(entity),
+        connector: this.config.entity.connector,
+        _id: entity._id,
+      };
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

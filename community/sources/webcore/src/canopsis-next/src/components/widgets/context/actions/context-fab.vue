@@ -1,28 +1,45 @@
-<template lang="pug">
-  v-speed-dial.d-inline-block(
-    v-model="isVSpeedDialOpen",
-    direction="bottom",
+<template>
+  <c-speed-dial
+    class="d-inline-block"
+    direction="bottom"
     transition="scale-transition"
-  )
-    template(#activator="")
-      v-tooltip(top)
-        template(#activator="{ on }")
-          v-btn.primary(v-on="on", :input-value="isVSpeedDialOpen", dark, fab, small)
-            v-icon add
-            v-icon close
-        span {{ $t('context.fab.common') }}
-    v-tooltip(bottom)
-      template(#activator="{ on }")
-        v-btn(
-          v-on="on",
-          color="indigo",
-          fab,
-          dark,
-          small,
+  >
+    <template #activator="{ bind: speedDialBind }">
+      <v-tooltip top>
+        <template #activator="{ on: tooltipOn }">
+          <v-btn
+            v-bind="speedDialBind"
+            class="primary"
+            dark
+            fab
+            small
+            v-on="tooltipOn"
+          >
+            <v-icon>add</v-icon>
+            <v-icon>close</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('context.fab.common') }}</span>
+      </v-tooltip>
+    </template>
+    <v-tooltip bottom>
+      <template #activator="{ on }">
+        <v-btn
+          color="indigo"
+          fab
+          dark
+          small
+          v-on="on"
           @click.prevent.stop="showCreateServiceModal"
-        )
-          v-icon(size="24") $vuetify.icons.engineering
-      span {{ $t('context.fab.addService') }}
+        >
+          <v-icon size="24">
+            $vuetify.icons.engineering
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('context.fab.addService') }}</span>
+    </v-tooltip>
+  </c-speed-dial>
 </template>
 
 <script>

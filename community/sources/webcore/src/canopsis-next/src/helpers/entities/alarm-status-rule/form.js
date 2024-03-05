@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS, TIME_UNITS } from '@/constants';
+import { PATTERNS_FIELDS, TIME_UNITS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
@@ -38,11 +38,7 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
       : { value: 1, unit: TIME_UNITS.minute },
     priority: rule.priority,
     description: rule.description ?? '',
-    patterns: filterPatternsToForm(
-      rule,
-      [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-      [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
-    ),
+    patterns: filterPatternsToForm(rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 
   if (flapping) {

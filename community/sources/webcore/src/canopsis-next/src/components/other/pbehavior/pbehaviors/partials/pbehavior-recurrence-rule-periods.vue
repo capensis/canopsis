@@ -1,41 +1,62 @@
-<template lang="pug">
-  div
-    v-layout(justify-space-between, align-center)
-      v-layout(justify-center)
-        span.title {{ $t('common.periods') }}
-      c-action-btn(
-        :tooltip="$t('pbehavior.periodsCalendar')",
-        icon="event_note",
+<template>
+  <div>
+    <v-layout
+      justify-space-between
+      align-center
+    >
+      <v-layout justify-center>
+        <span class="text-h6">{{ $t('common.periods') }}</span>
+      </v-layout>
+      <c-action-btn
+        :tooltip="$t('pbehavior.periodsCalendar')"
+        icon="event_note"
         @click="showPbehaviorRecurrenceRuleModal"
-      )
-    v-layout.mt-2
-      v-select(
-        v-model="selectedRange",
-        :items="availableRanges",
-        :label="$t('common.range')",
+      />
+    </v-layout>
+    <v-layout class="mt-2">
+      <v-select
+        v-model="selectedRange"
+        :items="availableRanges"
+        :label="$t('common.range')"
         @change="fetchList"
-      )
-    v-layout
-      v-data-iterator.data-iterator(
-        :items="timespans",
+      />
+    </v-layout>
+    <v-layout>
+      <v-data-iterator
+        :items="timespans"
         :loading="pending"
-      )
-        template(#header="")
-          v-flex
-            v-fade-transition
-              v-progress-linear.progress.ma-0(
-                v-show="pending",
-                :height="3",
-                color="primary",
+        class="data-iterator"
+      >
+        <template #header="">
+          <v-flex>
+            <v-fade-transition>
+              <v-progress-linear
+                v-show="pending"
+                :height="3"
+                class="progress ma-0"
+                color="primary"
                 indeterminate
-              )
-        template(#item="{ item }")
-          v-flex
-            v-card
-              v-card-title {{ item.from | date }} — {{ item.to | date }}
-        v-flex(#no-data="")
-          v-card
-            v-card-title {{ $t('common.noData') }}
+              />
+            </v-fade-transition>
+          </v-flex>
+        </template>
+        <template #item="{ item }">
+          <v-flex>
+            <v-card>
+              <v-card-title>{{ item.from | date }} — {{ item.to | date }}</v-card-title>
+            </v-card>
+          </v-flex>
+        </template>
+        <template #no-data="">
+          <v-flex>
+            <v-card>
+              <v-card-title>{{ $t('common.noData') }}</v-card-title>
+            </v-card>
+          </v-flex>
+        </template>
+      </v-data-iterator>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -172,6 +193,8 @@ export default {
           data,
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       } finally {
         this.pending = false;

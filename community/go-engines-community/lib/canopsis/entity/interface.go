@@ -5,6 +5,7 @@ package entity
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -20,8 +21,6 @@ type Adapter interface {
 
 	GetIDs(ctx context.Context, filter map[string]interface{}, ids *[]interface{}) error
 
-	GetEntityByID(ctx context.Context, id string) (types.Entity, error)
-
 	Count(ctx context.Context) (int, error)
 
 	UpsertMany(ctx context.Context, entities []types.Entity) (map[string]bool, error)
@@ -32,12 +31,12 @@ type Adapter interface {
 
 	UpdateComponentInfosByComponent(ctx context.Context, componentID string) ([]string, error)
 
-	UpdateLastEventDate(ctx context.Context, ids []string, time types.CpsTime) error
-	UpdateIdleFields(ctx context.Context, id string, idleSince *types.CpsTime, lastIdleRuleApply string) error
+	UpdateLastEventDate(ctx context.Context, ids []string, time datetime.CpsTime) error
+	UpdateIdleFields(ctx context.Context, id string, idleSince *datetime.CpsTime, lastIdleRuleApply string) error
 
 	FindByIDs(ctx context.Context, ids []string) ([]types.Entity, error)
 
-	GetAllWithLastUpdateDateBefore(ctx context.Context, time types.CpsTime, exclude []string) (mongo.Cursor, error)
+	GetAllWithLastUpdateDateBefore(ctx context.Context, time datetime.CpsTime, exclude []string) (mongo.Cursor, error)
 
 	GetWithIdleSince(ctx context.Context) (mongo.Cursor, error)
 

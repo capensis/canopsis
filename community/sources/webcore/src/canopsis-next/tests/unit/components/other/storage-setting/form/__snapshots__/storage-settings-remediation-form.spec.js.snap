@@ -5,17 +5,17 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       Instructions data storage
     </div>
     <!---->
   </div>
   <div
-    class="layout mt-2 row"
+    class="layout mt-2"
   >
     <span
       class="text--secondary"
@@ -32,12 +32,14 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
+    after="[object Object]"
     help-text="When switched on, the instruction statistics will be deleted after the defined time period."
     label="Delete instruction statistics data after"
     name="remediation.delete_stats_after"
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
+    after="[object Object]"
     help-text="When switched on, the instructions summary data will be deleted after the defined time period."
     label="Delete instructions summary data after"
     name="remediation.delete_mod_stats_after"
@@ -51,10 +53,10 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       Instructions data storage
     </div>
@@ -68,12 +70,14 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
+    after="[object Object]"
     help-text="When switched on, the instruction statistics will be deleted after the defined time period."
     label="Delete instruction statistics data after"
     name="remediation.delete_stats_after"
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
+    after="[object Object]"
     help-text="When switched on, the instructions summary data will be deleted after the defined time period."
     label="Delete instructions summary data after"
     name="remediation.delete_mod_stats_after"

@@ -8,54 +8,61 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
     value="true"
   />
   <div
-    class="v-tabs"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-tabs__bar theme--light transparent"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
-      <transition-stub
-        name="fade-transition"
-      />
       <div
-        class="v-tabs__wrapper"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs__slider-wrapper"
+            class="v-tabs-slider-wrapper"
             style="transition: none;"
           >
             <div
-              class="v-tabs__slider primary"
+              class="v-tabs-slider primary"
             />
           </div>
           <div
-            class="v-tabs__div"
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item v-tabs__item--active"
-            >
-              General
-            </a>
+      General
           </div>
           <div
-            class="v-tabs__div"
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item"
-            >
-              Pattern
-            </a>
+      Pattern
           </div>
         </div>
       </div>
-      <transition-stub
-        name="fade-transition"
-      />
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
     </div>
     <div
-      class="v-window"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
       <div
         class="v-window__container"
@@ -65,6 +72,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
         >
           <div
             class="v-window-item"
+            style="display: none;"
           >
             <idle-rule-general-form-stub
               form="[object Object]"
@@ -98,54 +106,61 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
 >
   <c-enabled-field-stub />
   <div
-    class="v-tabs"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-tabs__bar theme--light transparent"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
-      <transition-stub
-        name="fade-transition"
-      />
       <div
-        class="v-tabs__wrapper"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs__slider-wrapper"
+            class="v-tabs-slider-wrapper"
             style="transition: none;"
           >
             <div
-              class="v-tabs__slider primary"
+              class="v-tabs-slider primary"
             />
           </div>
           <div
-            class="v-tabs__div"
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item v-tabs__item--active"
-            >
-              General
-            </a>
+      General
           </div>
           <div
-            class="v-tabs__div"
+            aria-selected="false"
+            class="v-tab"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item"
-            >
-              Pattern
-            </a>
+      Pattern
           </div>
         </div>
       </div>
-      <transition-stub
-        name="fade-transition"
-      />
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
     </div>
     <div
-      class="v-window"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
       <div
         class="v-window__container"
@@ -155,6 +170,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
         >
           <div
             class="v-window-item"
+            style="display: none;"
           >
             <idle-rule-general-form-stub
               form="[object Object]"
@@ -186,63 +202,71 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
 >
   <c-enabled-field-stub />
   <div
-    class="v-tabs"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-tabs__bar theme--light transparent"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
-      <transition-stub
-        name="fade-transition"
-      />
       <div
-        class="v-tabs__wrapper"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs__slider-wrapper"
+            class="v-tabs-slider-wrapper"
             style="transition: none;"
           >
             <div
-              class="v-tabs__slider primary"
+              class="v-tabs-slider primary"
             />
           </div>
           <div
-            class="v-tabs__div error--text"
+            aria-selected="true"
+            class="v-tab v-tab--active error--text"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item v-tabs__item--active"
-            >
-              General
-            </a>
+      General
           </div>
           <div
-            class="v-tabs__div error--text"
+            aria-selected="false"
+            class="v-tab error--text"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item"
-            >
-              Pattern
-            </a>
+      Pattern
           </div>
         </div>
       </div>
-      <transition-stub
-        name="fade-transition"
-      />
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
     </div>
     <div
-      class="v-window"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
       <div
         class="v-window__container"
       >
         <transition-stub
-          name="v-window-x-transition"
+          name=""
         >
           <div
             class="v-window-item"
+            style="display: none;"
           >
             <idle-rule-general-form-stub
               form="[object Object]"
@@ -250,7 +274,7 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
           </div>
         </transition-stub>
         <transition-stub
-          name="v-window-x-transition"
+          name=""
         >
           <div
             class="v-window-item"

@@ -32,7 +32,7 @@ func NewLdapDialer() LdapDialer {
 
 func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 	tc := &tls.Config{
-		InsecureSkipVerify: config.InsecureSkipVerify,
+		InsecureSkipVerify: config.InsecureSkipVerify, //nolint:gosec
 	}
 	tc.MinVersion = strToTlsVersion(config.MinTLSVersion)
 	tc.MaxVersion = strToTlsVersion(config.MaxTLSVersion)

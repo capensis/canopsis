@@ -80,7 +80,7 @@ describe('c-search-field', () => {
     input.setValue(newSearch);
     input.trigger('keyup');
 
-    expect(wrapper).not.toEmit('submit');
+    expect(wrapper).not.toHaveBeenEmit('submit');
   });
 
   it('Keyup with enter key on input element', async () => {
@@ -118,7 +118,7 @@ describe('c-search-field', () => {
     const wrapper = factory({ propsData: { value: search } });
     const submitButton = selectSubmitButton(wrapper);
 
-    submitButton.vm.$emit('click');
+    submitButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('submit', search);
   });
@@ -129,9 +129,9 @@ describe('c-search-field', () => {
     const wrapper = factory({ propsData: { value: search } });
     const clearButton = selectClearButton(wrapper);
 
-    clearButton.vm.$emit('click');
+    clearButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('clear');
+    expect(wrapper).toHaveBeenEmit('clear');
   });
 
   it('Set value into combobox element', () => {
@@ -159,7 +159,7 @@ describe('c-search-field', () => {
       propsData: { value: 'c-search-field' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-search-field` correctly with combobox and items', () => {
@@ -176,7 +176,7 @@ describe('c-search-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

@@ -1,4 +1,4 @@
-import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
@@ -34,11 +34,7 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => ({
   description: dynamicInfo.description ?? '',
   disable_during_periods: dynamicInfo.disable_during_periods ?? [],
   infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],
-  patterns: filterPatternsToForm(
-    dynamicInfo,
-    [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-    [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
-  ),
+  patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
 });
 
 /**

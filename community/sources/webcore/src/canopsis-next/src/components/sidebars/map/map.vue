@@ -1,62 +1,68 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    field-periodic-refresh(v-model="form.parameters")
-    v-divider
-    field-map(v-model="form.parameters.map")
-    v-divider
-    widget-settings-group(:title="$t('settings.entityDisplaySettings')")
-      field-color-indicator(v-model="form.parameters.color_indicator")
-      v-divider
-      field-switcher(
-        v-model="form.parameters.entities_under_pbehavior_enabled",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <field-periodic-refresh v-model="form.parameters" />
+    <v-divider />
+    <field-map v-model="form.parameters.map" />
+    <v-divider />
+    <widget-settings-group :title="$t('settings.entityDisplaySettings')">
+      <field-color-indicator v-model="form.parameters.color_indicator" />
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.entities_under_pbehavior_enabled"
         :title="$t('settings.entitiesUnderPbehaviorEnabled')"
-      )
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      template(v-if="hasAccessToListFilters")
-        field-filters(
-          v-model="form.parameters.mainFilter",
-          :filters.sync="form.filters",
-          :widget-id="widget._id",
-          :addable="hasAccessToAddFilter",
-          :editable="hasAccessToEditFilter",
-          with-alarm,
-          with-entity,
+      />
+    </widget-settings-group>
+    <v-divider />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <template v-if="hasAccessToListFilters">
+        <field-filters
+          v-model="form.parameters.mainFilter"
+          :filters.sync="form.filters"
+          :widget-id="widget._id"
+          :addable="hasAccessToAddFilter"
+          :editable="hasAccessToEditFilter"
+          with-alarm
+          with-entity
           with-pbehavior
-        )
-        v-divider
-      field-text-editor(
-        v-model="form.parameters.entity_info_template",
-        :title="$t('settings.entityInfoPopup')",
+        />
+        <v-divider />
+      </template>
+      <field-text-editor
+        v-model="form.parameters.entity_info_template"
+        :title="$t('settings.entityInfoPopup')"
         :variables="entityVariables"
-      )
-      v-divider
-
-      field-columns(
-        v-model="form.parameters.alarmsColumns",
-        :template="form.parameters.alarmsColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.alarmsColumns')",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        with-template,
-        with-html,
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.alarmsColumns"
+        :template="form.parameters.alarmsColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.alarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        with-template
+        with-html
         @update:template="updateAlarmsColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.entitiesColumns",
-        :template="form.parameters.entitiesColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.entitiesColumns')",
-        :type="$constants.ENTITIES_TYPES.entity",
-        with-color-indicator,
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.entitiesColumns"
+        :template="form.parameters.entitiesColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.entitiesColumns')"
+        :type="$constants.ENTITIES_TYPES.entity"
+        with-color-indicator
         @update:template="updateEntitiesColumnsTemplate"
-      )
-    v-divider
+      />
+    </widget-settings-group>
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>

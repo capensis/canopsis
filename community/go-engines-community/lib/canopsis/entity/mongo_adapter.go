@@ -3,6 +3,8 @@ package entity
 import (
 	"context"
 	"errors"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,7 +48,7 @@ func (a *mongoAdapter) Bulk(ctx context.Context, models []mongodriver.WriteModel
 // Get is the same as GetEntityByID
 // Return True if the document has been found
 func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) {
-	entity, err := a.GetEntityByID(ctx, id)
+	entity, err := a.getEntityByID(ctx, id)
 	entity.EnsureInitialized()
 
 	if errors.Is(err, ErrNotFound) {
@@ -59,12 +61,12 @@ func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) 
 }
 
 // GetEntityByID finds an Entity from is eid
-func (a *mongoAdapter) GetEntityByID(ctx context.Context, id string) (types.Entity, error) {
+func (a *mongoAdapter) getEntityByID(ctx context.Context, id string) (types.Entity, error) {
 	var ent types.Entity
 
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return ent, ErrNotFound
 		}
 
@@ -135,7 +137,9 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 
 	upsertedIDs := make(map[string]bool, len(res.UpsertedIDs))
 	for _, v := range res.UpsertedIDs {
-		upsertedIDs[v.(string)] = true
+		if s, ok := v.(string); ok {
+			upsertedIDs[s] = true
+		}
 	}
 	// Update only enabled entities.
 	updateModels := make([]mongodriver.WriteModel, 0)
@@ -202,7 +206,7 @@ func (a *mongoAdapter) UpdateComponentInfos(ctx context.Context, id, componentID
 		options.FindOne().SetProjection(bson.M{"infos": 1}),
 	)
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
@@ -284,7 +288,7 @@ func (a *mongoAdapter) UpdateComponentInfosByComponent(ctx context.Context, comp
 	return nil, nil
 }
 
-func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, time types.CpsTime) error {
+func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, time datetime.CpsTime) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -299,7 +303,7 @@ func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, ti
 }
 
 func (a *mongoAdapter) UpdateIdleFields(ctx context.Context, id string,
-	idleSince *types.CpsTime, lastIdleRuleApply string) error {
+	idleSince *datetime.CpsTime, lastIdleRuleApply string) error {
 	set := bson.M{}
 	unset := bson.M{}
 
@@ -345,7 +349,7 @@ func (a *mongoAdapter) FindByIDs(ctx context.Context, ids []string) ([]types.Ent
 
 func (a *mongoAdapter) GetAllWithLastUpdateDateBefore(
 	ctx context.Context,
-	time types.CpsTime,
+	time datetime.CpsTime,
 	exclude []string,
 ) (mongo.Cursor, error) {
 	return a.dbCollection.Aggregate(ctx, []bson.M{

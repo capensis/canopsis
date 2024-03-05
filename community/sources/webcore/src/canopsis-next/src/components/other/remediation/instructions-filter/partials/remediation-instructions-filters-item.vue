@@ -1,18 +1,44 @@
-<template lang="pug">
-  div.instruction-filter
-    v-chip.white--text(
-      v-on="chipListeners",
-      :color="chipColor",
-      :close-icon="chipCloseIcon",
-      :close="closable",
+<template>
+  <div class="instruction-filter">
+    <v-chip
+      :color="chipColor"
+      :close-icon="chipCloseIcon"
+      :close="closable"
+      class="white--text"
       label
-    )
-      span.instruction-filter__text
-        v-icon(color="white", small) assignment
-        v-icon.pl-1(v-if="filter.locked", color="white", small) lock
-        strong.pl-2.text-uppercase {{ conditionTypeMessage }}
-        span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
-        strong.pl-1.text-uppercase(v-if="hasRunning") {{ $t('remediation.instructionsFilter.inProgress') }}
+      v-on="chipListeners"
+    >
+      <span class="instruction-filter__text">
+        <v-icon
+          color="white"
+          small
+        >
+          assignment
+        </v-icon>
+        <v-icon
+          v-if="filter.locked"
+          class="pl-1"
+          color="white"
+          small
+        >
+          lock
+        </v-icon>
+        <strong class="pl-2 text-uppercase">{{ conditionTypeMessage }}</strong>
+        <span
+          v-if="!isAll"
+          class="pl-1"
+        >
+          {{ typesAndInstructionsMessage }}
+        </span>
+        <strong
+          v-if="hasRunning"
+          class="pl-1 text-uppercase"
+        >
+          {{ $t('remediation.instructionsFilter.inProgress') }}
+        </strong>
+      </span>
+    </v-chip>
+  </div>
 </template>
 
 <script>
@@ -52,7 +78,7 @@ export default {
     },
 
     chipListeners() {
-      const listeners = { input: this.close };
+      const listeners = { 'click:close': this.close };
 
       if (this.editable) {
         listeners.click = this.showEditFilterModal;

@@ -19,17 +19,17 @@ type ComputedEntityTypeResolver interface {
 }
 
 func NewComputedEntityTypeResolver(
-	matcher ComputedEntityMatcher,
+	getter ComputedEntityGetter,
 	resolver TypeResolver,
 ) ComputedEntityTypeResolver {
 	return &computedEntityTypeResolver{
-		matcher:  matcher,
+		getter:   getter,
 		resolver: resolver,
 	}
 }
 
 type computedEntityTypeResolver struct {
-	matcher  ComputedEntityMatcher
+	getter   ComputedEntityGetter
 	resolver TypeResolver
 }
 
@@ -38,16 +38,11 @@ func (r *computedEntityTypeResolver) Resolve(
 	entity types.Entity,
 	t time.Time,
 ) (ResolveResult, error) {
-	pbhIDs, err := r.matcher.Match(entity.ID)
-	if err != nil {
-		return ResolveResult{}, err
-	}
-
-	return r.resolver.Resolve(ctx, t, entity, pbhIDs)
+	return r.resolver.Resolve(ctx, t, entity)
 }
 
 func (r *computedEntityTypeResolver) GetComputedEntityIDs() ([]string, error) {
-	return r.matcher.GetComputedEntityIDs()
+	return r.getter.GetComputedEntityIDs()
 }
 
 func (r *computedEntityTypeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error) {

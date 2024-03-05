@@ -28,6 +28,7 @@ export default {
     requestApproval: 'Demande d\'approbation',
     type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
+    approvalDismissed: 'L\'instruction est rejetée',
     needApprove: 'Une approbation est nécessaire',
     executeInstruction: 'Exécuter la consigne "{instructionName}"',
     resumeInstruction: 'Reprendre la consigne "{instructionName}"',
@@ -152,8 +153,7 @@ export default {
     usingJob: 'La tâche ne peut être supprimée, car elle est en cours d\'utilisation',
     query: 'Requête',
     multipleExecutions: 'Autoriser l\'exécution parallèle',
-    retryAmount: 'Nombre de tentatives',
-    retryInterval: 'Intervalle de relance',
+    jobWaitInterval: 'Intervalle d\'attente des tâches',
     addPayload: 'Ajouter un payload',
     deletePayload: 'Supprimer le payload',
     payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
@@ -171,7 +171,7 @@ export default {
     autoInstructions: 'Instructions automatique',
     labels: {
       remediated: 'Remédié',
-      notRemediated: 'Non remédié',
+      withAssignedRemediations: 'Remédiables (Avec instructions assignées)',
     },
     tooltips: {
       remediated: '{value} alarmes remédiées',

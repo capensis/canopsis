@@ -1,24 +1,30 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex.pr-3(xs4)
-      c-number-field(
-        v-field="value.retry_count",
-        :label="$t('common.retryCount')",
-        :min="0",
-        :name="countFieldName",
-        :required="isRequired",
+<template>
+  <v-layout>
+    <v-flex
+      class="pr-3"
+      xs4
+    >
+      <c-number-field
+        v-field="value.retry_count"
+        :label="$t('common.retryCount')"
+        :min="0"
+        :name="countFieldName"
+        :required="isRequired"
         :disabled="disabled"
-      )
-    v-flex(xs8)
-      c-duration-field(
-        :duration="value.retry_delay",
-        :units-label="$t('common.unit')",
-        :required="isRequired",
-        :name="name",
-        :disabled="isDurationDisabled",
-        clearable,
+      />
+    </v-flex>
+    <v-flex xs8>
+      <c-duration-field
+        :duration="value.retry_delay"
+        :units-label="$t('common.unit')"
+        :required="isRequired"
+        :name="name"
+        :disabled="isDurationDisabled"
+        clearable
         @input="updateDelay"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -64,7 +70,7 @@ export default {
       const { retry_delay: retryDelay, retry_count: retryCount } = this.value;
 
       return this.required
-        || isNumber(retryCount)
+        || (isNumber(retryCount) && retryCount > 0)
         || isNumber(retryDelay?.value)
         || Boolean(retryDelay?.unit);
     },

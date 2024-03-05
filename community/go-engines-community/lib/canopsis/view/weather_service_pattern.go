@@ -60,9 +60,9 @@ func (p WeatherServicePattern) ToMongoQuery(prefix string) (bson.M, error) {
 			case "is_grey":
 				condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
 			case "icon", "secondary_icon":
-				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, false)
 			case "state.val":
-				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, false)
 			default:
 				err = pattern.ErrUnsupportedField
 			}

@@ -1,16 +1,27 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name", required)
-    v-text-field(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('modals.createPbehaviorException.fields.description')",
-      :error-messages="errors.collect('description')",
+<template>
+  <v-layout column>
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <v-text-field
+      v-field="form.description"
+      v-validate="'required'"
+      :label="$t('modals.createPbehaviorException.fields.description')"
+      :error-messages="errors.collect('description')"
       name="description"
-    )
-    pbehavior-exceptions-field(v-model="form.exdates", with-exdate-type)
-      template(#no-data="")
-        c-alert(:value="true", type="info") {{ $t('modals.createPbehaviorException.emptyExdates') }}
+    />
+    <pbehavior-exceptions-field
+      v-field="form.exdates"
+      with-exdate-type
+    >
+      <template #no-data="">
+        <c-alert type="info">
+          {{ $t('modals.createPbehaviorException.emptyExdates') }}
+        </c-alert>
+      </template>
+    </pbehavior-exceptions-field>
+  </v-layout>
 </template>
 
 <script>

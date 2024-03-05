@@ -30,6 +30,7 @@ export default {
     checkCountRequestTimeout: state => state.appInfo.check_count_request_timeout,
     allowChangeSeverityToInfo: state => state.appInfo.allow_change_severity_to_info,
     showHeaderOnKioskMode: state => state.appInfo.show_header_on_kiosk_mode,
+    requiredInstructionApprove: state => state.appInfo.required_instruction_approve,
     footer: state => state.appInfo.footer,
     edition: state => state.appInfo.edition,
     stack: state => state.appInfo.stack,

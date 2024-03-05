@@ -23,11 +23,9 @@ func (modelTransformer) TransformEditRequestToModel(r EditRequest) libaction.Sce
 	actions := make([]libaction.Action, len(r.Actions))
 	for i := range actions {
 		actions[i] = libaction.Action{
-			Type:              r.Actions[i].Type,
-			Comment:           r.Actions[i].Comment,
-			Parameters:        r.Actions[i].Parameters,
-			OldAlarmPatterns:  r.Actions[i].OldAlarmPatterns,
-			OldEntityPatterns: r.Actions[i].OldEntityPatterns,
+			Type:       r.Actions[i].Type,
+			Comment:    r.Actions[i].Comment,
+			Parameters: r.Actions[i].Parameters,
 			EntityPatternFields: r.Actions[i].EntityPatternFieldsRequest.ToModelWithoutFields(
 				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioMongoCollection),
 			),

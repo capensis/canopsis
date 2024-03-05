@@ -3,7 +3,7 @@ package eventfilter
 import (
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/teambition/rrule-go"
 )
 
@@ -13,11 +13,11 @@ func ResolveIntervals(ef *Rule, rrule *rrule.RRule, now time.Time, location *tim
 	}
 
 	if ef.ResolvedStart == nil || ef.ResolvedStart.IsZero() {
-		ef.ResolvedStart = &types.CpsTime{Time: ef.Start.Time}
+		ef.ResolvedStart = &datetime.CpsTime{Time: ef.Start.Time}
 	}
 
 	if ef.ResolvedStop == nil || ef.ResolvedStop.IsZero() {
-		ef.ResolvedStop = &types.CpsTime{Time: ef.Stop.Time}
+		ef.ResolvedStop = &datetime.CpsTime{Time: ef.Stop.Time}
 	}
 
 	interval := ef.Stop.Sub(ef.Start.Time)
@@ -25,8 +25,8 @@ func ResolveIntervals(ef *Rule, rrule *rrule.RRule, now time.Time, location *tim
 	if ef.NextResolvedStart == nil || ef.NextResolvedStop == nil || ef.NextResolvedStart.IsZero() || ef.NextResolvedStop.IsZero() {
 		v := rrule.After(ef.ResolvedStop.Add(-interval).In(location), false)
 		if !v.IsZero() {
-			ef.NextResolvedStart = &types.CpsTime{Time: v}
-			ef.NextResolvedStop = &types.CpsTime{Time: v.Add(interval)}
+			ef.NextResolvedStart = &datetime.CpsTime{Time: v}
+			ef.NextResolvedStop = &datetime.CpsTime{Time: v.Add(interval)}
 		}
 	}
 
@@ -36,8 +36,8 @@ func ResolveIntervals(ef *Rule, rrule *rrule.RRule, now time.Time, location *tim
 
 		v := rrule.After(ef.ResolvedStop.Add(-interval).In(location), false)
 		if !v.IsZero() {
-			ef.NextResolvedStart = &types.CpsTime{Time: v}
-			ef.NextResolvedStop = &types.CpsTime{Time: v.Add(interval)}
+			ef.NextResolvedStart = &datetime.CpsTime{Time: v}
+			ef.NextResolvedStop = &datetime.CpsTime{Time: v.Add(interval)}
 		} else {
 			ef.NextResolvedStart = nil
 			ef.NextResolvedStop = nil

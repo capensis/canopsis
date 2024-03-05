@@ -3,9 +3,11 @@ package types_test
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +15,6 @@ import (
 
 func TestInterfaceToString(t *testing.T) {
 	Convey("Given some values to convert", t, func() {
-
 		Convey("I don't know how to convert a list", func() {
 			vlstring := make([]string, 1)
 			vlstring[0] = "bla"
@@ -127,11 +128,11 @@ func TestAsInteger(t *testing.T) {
 	})
 
 	Convey("Given a CpsTime, AsInteger returns its value", t, func() {
-		value, err := types.AsInteger(types.CpsTime{Time: time.Unix(3, 0)})
+		value, err := types.AsInteger(datetime.CpsTime{Time: time.Unix(3, 0)})
 		So(err, ShouldNotBeNil)
 		So(value, ShouldEqual, 3)
 
-		value, err = types.AsInteger(types.CpsTime{Time: time.Unix(-728, 0)})
+		value, err = types.AsInteger(datetime.CpsTime{Time: time.Unix(-728, 0)})
 		So(err, ShouldNotBeNil)
 		So(value, ShouldEqual, -728)
 	})
@@ -140,13 +141,13 @@ func TestAsInteger(t *testing.T) {
 func TestCpsTime(t *testing.T) {
 	Convey("Given a type struct with CpsTime", t, func() {
 		type MyTime struct {
-			TheTime types.CpsTime `json:"thetime" bson:"thetime"`
+			TheTime datetime.CpsTime `json:"thetime" bson:"thetime"`
 		}
 
 		tnow := time.Now()
-		stsnow := fmt.Sprint(tnow.Unix())
+		stsnow := strconv.FormatInt(tnow.Unix(), 10)
 		mt := MyTime{
-			TheTime: types.CpsTime{Time: tnow},
+			TheTime: datetime.CpsTime{Time: tnow},
 		}
 
 		Convey("I can marshal to JSON", func() {
@@ -187,7 +188,6 @@ func TestCpsTime(t *testing.T) {
 
 func TestCpsNumber(t *testing.T) {
 	Convey("Setup", t, func() {
-
 		type MyEvent struct {
 			State types.CpsNumber `json:"state" bson:"state"`
 		}
@@ -239,8 +239,8 @@ func TestCpsNumber(t *testing.T) {
 
 func TestBinaryCpsTime(t *testing.T) {
 	Convey("Given time.Now()", t, func() {
-		t := types.CpsTime{Time: time.Now()}
-		out := types.CpsTime{Time: time.Time{}}
+		t := datetime.NewCpsTime()
+		out := datetime.CpsTime{Time: time.Time{}}
 
 		So(out.Equal(t.Time), ShouldBeFalse)
 

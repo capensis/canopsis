@@ -30,6 +30,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {string} title
  * @property {string} description
  * @property {boolean} enabled
+ * @property {boolean} is_private
  * @property {string[]} tags
  * @property {ViewGroup} [group]
  * @property {DurationWithEnabled} periodic_refresh
@@ -86,6 +87,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 export const viewToForm = (view = {}) => ({
   title: view.title ?? '',
   description: view.description ?? '',
+  is_private: view.is_private ?? false,
   enabled: view.enabled ?? true,
   tags: view.tags ? [...view.tags] : [],
   group: view.group ? { ...view.group } : null,

@@ -23,8 +23,11 @@ export const entitiesViewGroupMixin = {
       fetchGroupsList: 'fetchList',
       fetchGroupsListWithoutStore: 'fetchListWithoutStore',
       createGroup: 'create',
+      createPrivateGroup: 'createPrivateGroup',
       updateGroup: 'update',
+      updatePrivateGroup: 'updatePrivateGroup',
       removeGroup: 'remove',
+      removePrivateGroup: 'removePrivateGroup',
     }),
 
     ...mapAuthActions(['fetchCurrentUser']),
@@ -38,6 +41,7 @@ export const entitiesViewGroupMixin = {
           with_tabs: true,
           with_widgets: true,
           with_flags: true,
+          with_private: true,
         },
       });
     },

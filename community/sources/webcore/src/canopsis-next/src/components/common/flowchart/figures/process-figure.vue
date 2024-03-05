@@ -1,18 +1,24 @@
-<template lang="pug">
-  g
-    rect(
-      v-on="$listeners",
-      v-bind="$attrs",
-      :x="x",
-      :y="y",
-      :rx="offset",
-      :ry="offset",
-      :width="width",
-      :height="height",
-      :stroke="stroke",
+<template>
+  <g>
+    <rect
+      v-bind="$attrs"
+      :x="x"
+      :y="y"
+      :rx="offset"
+      :ry="offset"
+      :width="width"
+      :height="height"
+      :stroke="stroke"
       :stroke-width="strokeWidth"
-    )
-    path(:stroke="stroke", :stroke-width="strokeWidth", :d="linesPath", pointer-events="none")
+      v-on="$listeners"
+    />
+    <path
+      :stroke="stroke"
+      :stroke-width="strokeWidth"
+      :d="linesPath"
+      pointer-events="none"
+    />
+  </g>
 </template>
 
 <script>

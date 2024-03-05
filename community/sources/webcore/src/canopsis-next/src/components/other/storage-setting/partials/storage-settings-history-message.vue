@@ -1,5 +1,5 @@
-<template lang="pug">
-  span {{ timeString }}
+<template>
+  <span>{{ timeString }}</span>
 </template>
 
 <script>

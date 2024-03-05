@@ -11,6 +11,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {string} icon_name
  * @property {string} label
  * @property {string} url
+ * @property {boolean} [single]
  * @property {string} [rule_id]
  * @property {LinkRuleAction} [action]
  */
@@ -211,8 +212,10 @@ export const isResolvedAlarm = alarm => !!alarm.v.resolved;
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isActionAvailableForAlarm = alarm => !isClosedAlarmStatus(alarm)
-  && !(isCancelledAlarmStatus(alarm) && isResolvedAlarm(alarm));
+export const isActionAvailableForAlarm = alarm => !isAlarmStateOk(alarm)
+  && !isResolvedAlarm(alarm)
+  && !isClosedAlarmStatus(alarm)
+  && !isCancelledAlarmStatus(alarm);
 
 /**
  * Checks if alarm have critical state

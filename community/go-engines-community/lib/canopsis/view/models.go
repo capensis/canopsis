@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const (
@@ -34,49 +34,55 @@ const (
 )
 
 type Group struct {
-	ID       string        `bson:"_id"`
-	Title    string        `bson:"title"`
-	Author   string        `bson:"author"`
-	Position int64         `bson:"position"`
-	Created  types.CpsTime `bson:"created"`
-	Updated  types.CpsTime `bson:"updated"`
+	ID       string           `bson:"_id"`
+	Title    string           `bson:"title"`
+	Author   string           `bson:"author"`
+	Position int64            `bson:"position,omitempty"`
+	Created  datetime.CpsTime `bson:"created"`
+	Updated  datetime.CpsTime `bson:"updated"`
+
+	IsPrivate bool `bson:"is_private"`
 }
 
 type View struct {
-	ID              string                     `bson:"_id"`
-	Enabled         bool                       `bson:"enabled"`
-	Title           string                     `bson:"title"`
-	Description     string                     `bson:"description"`
-	Group           string                     `bson:"group_id"`
-	Tags            []string                   `bson:"tags"`
-	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh"`
-	Author          string                     `bson:"author"`
-	Position        int64                      `bson:"position"`
-	Created         types.CpsTime              `bson:"created"`
-	Updated         types.CpsTime              `bson:"updated"`
+	ID              string                        `bson:"_id"`
+	Enabled         bool                          `bson:"enabled"`
+	Title           string                        `bson:"title"`
+	Description     string                        `bson:"description"`
+	Group           string                        `bson:"group_id"`
+	Tags            []string                      `bson:"tags"`
+	PeriodicRefresh *datetime.DurationWithEnabled `bson:"periodic_refresh"`
+	Author          string                        `bson:"author"`
+	Position        int64                         `bson:"position,omitempty"`
+	IsPrivate       bool                          `bson:"is_private"`
+	Created         datetime.CpsTime              `bson:"created"`
+	Updated         datetime.CpsTime              `bson:"updated"`
 }
 
 type Tab struct {
-	ID       string        `bson:"_id" json:"_id"`
-	Title    string        `bson:"title" json:"title"`
-	View     string        `bson:"view" json:"-"`
-	Author   string        `bson:"author" json:"author"`
-	Position int64         `bson:"position" json:"-"`
-	Created  types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated  types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID        string           `bson:"_id" json:"_id"`
+	Title     string           `bson:"title" json:"title"`
+	View      string           `bson:"view,omitempty" json:"-"`
+	Author    string           `bson:"author" json:"author"`
+	Position  int64            `bson:"position" json:"-"`
+	IsPrivate bool             `bson:"is_private" json:"-"`
+	Created   datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Updated   datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type Widget struct {
 	ID                 string             `bson:"_id" json:"_id,omitempty"`
-	Tab                string             `bson:"tab" json:"-"`
+	Tab                string             `bson:"tab,omitempty" json:"-"`
 	Title              string             `bson:"title" json:"title"`
 	Type               string             `bson:"type" json:"type"`
 	GridParameters     map[string]any     `bson:"grid_parameters" json:"grid_parameters"`
 	Parameters         Parameters         `bson:"parameters" json:"parameters"`
 	InternalParameters InternalParameters `bson:"internal_parameters,omitempty" json:"-"`
 	Author             string             `bson:"author" json:"author,omitempty"`
-	Created            types.CpsTime      `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated            types.CpsTime      `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created            datetime.CpsTime   `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated            datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
 type Parameters struct {
@@ -157,34 +163,33 @@ func (p InternalParameters) IsZero() bool {
 }
 
 type WidgetFilter struct {
-	ID        string        `bson:"_id,omitempty"`
-	Title     string        `bson:"title"`
-	Widget    string        `bson:"widget"`
-	IsPrivate bool          `bson:"is_private"`
-	Author    string        `bson:"author"`
-	Position  int64         `bson:"position"`
-	Created   types.CpsTime `bson:"created,omitempty"`
-	Updated   types.CpsTime `bson:"updated,omitempty"`
+	ID        string           `bson:"_id,omitempty"`
+	Title     string           `bson:"title"`
+	Widget    string           `bson:"widget,omitempty"`
+	IsPrivate bool             `bson:"is_private"`
+	Author    string           `bson:"author"`
+	Position  int64            `bson:"position"`
+	Created   datetime.CpsTime `bson:"created,omitempty"`
+	Updated   datetime.CpsTime `bson:"updated,omitempty"`
 
 	savedpattern.AlarmPatternFields     `bson:",inline"`
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
 
-	// Deprecated : contains old mongo query which cannot be migrated to pattern.
-	OldMongoQuery string `bson:"old_mongo_query,omitempty"`
-
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
+
+	IsUserPreference bool `bson:"is_user_preference"`
 }
 
 type WidgetTemplate struct {
-	ID      string         `bson:"_id,omitempty"`
-	Title   string         `bson:"title"`
-	Type    string         `bson:"type"`
-	Columns []WidgetColumn `bson:"columns,omitempty"`
-	Content string         `bson:"content,omitempty"`
-	Author  string         `bson:"author"`
-	Created types.CpsTime  `bson:"created,omitempty"`
-	Updated types.CpsTime  `bson:"updated,omitempty"`
+	ID      string           `bson:"_id,omitempty"`
+	Title   string           `bson:"title"`
+	Type    string           `bson:"type"`
+	Columns []WidgetColumn   `bson:"columns,omitempty"`
+	Content string           `bson:"content,omitempty"`
+	Author  string           `bson:"author"`
+	Created datetime.CpsTime `bson:"created,omitempty"`
+	Updated datetime.CpsTime `bson:"updated,omitempty"`
 }
 
 type WidgetColumn struct {

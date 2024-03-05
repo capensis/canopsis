@@ -1,28 +1,23 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 import { omit } from 'lodash';
 
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules, createViewModule } from '@unit/utils/store';
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockRouter } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 
+import { CRUD_ACTIONS, DEFAULT_PERIODIC_REFRESH, MODALS, USERS_PERMISSIONS } from '@/constants';
+
 import ClickOutside from '@/services/click-outside';
-import {
-  CRUD_ACTIONS,
-  DEFAULT_PERIODIC_REFRESH,
-  MODALS,
-  ROUTES_NAMES,
-  USERS_PERMISSIONS,
-} from '@/constants';
 
 import CreateView from '@/components/modals/view/create-view.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'view-form': true,
+  'c-alert': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -43,8 +38,10 @@ describe('create-view', () => {
     description: Faker.datatype.string(),
     enabled: Faker.datatype.boolean(),
     tags: [Faker.datatype.string()],
+    is_private: false,
     group: {
       _id: Faker.datatype.string(),
+      is_private: false,
     },
     periodic_refresh: DEFAULT_PERIODIC_REFRESH,
   };
@@ -68,10 +65,6 @@ describe('create-view', () => {
   const {
     viewModule,
     createGroup,
-    updateView,
-    createView,
-    copyView,
-    removeView,
   } = createViewModule();
   const store = createMockedStoreModules([
     authModule,
@@ -118,10 +111,13 @@ describe('create-view', () => {
   });
 
   test('View created after trigger submit button', async () => {
+    const action = jest.fn();
     const wrapper = factory({
       propsData: {
         modal: {
-          config: {},
+          config: {
+            action,
+          },
         },
       },
       store,
@@ -140,31 +136,26 @@ describe('create-view', () => {
 
     createGroup.mockReturnValueOnce(newGroup);
 
-    selectViewForm(wrapper).vm.$emit('input', newView);
+    selectViewForm(wrapper).triggerCustomEvent('input', newView);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(createView).toBeDispatchedWith(
-      {
-        data: {
-          ...newView,
-          group: newGroup._id,
-        },
-      },
-    );
-    expect($popups.success).toBeCalledWith({ text: 'New view created!' });
+    expect(action).toBeCalledWith({
+      ...newView,
+      group: newGroup._id,
+    });
     expect($modals.hide).toBeCalled();
   });
 
   test('Create error popup showed after trigger submit button with error', async () => {
-    createView.mockRejectedValueOnce({
+    const action = jest.fn().mockRejectedValueOnce({
       title: 'Title error',
     });
     const wrapper = factory({
       propsData: {
         modal: {
-          config: {},
+          config: { action },
         },
       },
       store,
@@ -172,22 +163,23 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(createView).toBeCalled();
-    expect($popups.error).toBeCalledWith({ text: 'View creation failed...' });
+    expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
   });
 
   test('View updated after trigger submit button', async () => {
+    const action = jest.fn();
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
             view: fakedView,
+            action,
           },
         },
       },
@@ -198,21 +190,15 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(updateView).toBeDispatchedWith(
-      {
-        data: {
-          ...fakedViewWithoutId,
-          group: fakedView.group._id,
-        },
-        id: fakedView._id,
-      },
-    );
+    expect(action).toBeCalledWith({
+      ...fakedViewWithoutId,
+      group: fakedView.group._id,
+    });
     expect($modals.hide).toBeCalled();
-    expect($popups.success).toBeCalledWith({ text: 'View successfully edited!' });
   });
 
   test('Update error popup showed after trigger submit button with error', async () => {
-    updateView.mockRejectedValueOnce({
+    const action = jest.fn().mockRejectedValueOnce({
       description: 'Description error',
     });
     const wrapper = factory({
@@ -220,6 +206,7 @@ describe('create-view', () => {
         modal: {
           config: {
             view: fakedView,
+            action,
           },
         },
       },
@@ -230,16 +217,17 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(updateView).toBeCalled();
-    expect($popups.error).toBeCalledWith({ text: 'View edition failed...' });
+    expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
   });
 
   test('View duplicated after trigger submit button', async () => {
+    const action = jest.fn();
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
+            action,
             duplicate: true,
             view: fakedViewWithoutId,
           },
@@ -250,31 +238,27 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(copyView).toBeDispatchedWith(
-      {
-        data: {
-          ...fakedViewWithoutId,
-          group: fakedView.group._id,
-        },
-      },
-    );
+    expect(action).toBeCalledWith({
+      ...fakedViewWithoutId,
+      group: fakedView.group._id,
+    });
     expect($modals.hide).toBeCalled();
-    expect($popups.success).toBeCalledWith({ text: 'View successfully duplicated!' });
   });
 
   test('Duplicate error popup showed after trigger submit button with error', async () => {
-    copyView.mockRejectedValueOnce({
+    const action = jest.fn().mockRejectedValueOnce({
       tags: 'Tags error',
     });
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
+            action,
             duplicate: true,
             view: fakedViewWithoutId,
           },
@@ -285,13 +269,12 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(copyView).toBeCalled();
-    expect($popups.error).toBeCalledWith({ text: 'View duplication failed...' });
+    expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
   });
 
@@ -321,10 +304,13 @@ describe('create-view', () => {
   });
 
   test('View removed after trigger remove button with action', async () => {
+    const remove = jest.fn();
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
+            remove,
+            deletable: true,
             view: fakedView,
           },
         },
@@ -349,55 +335,18 @@ describe('create-view', () => {
 
     await config.action();
 
-    expect(removeView).toBeDispatchedWith({ id: fakedView._id });
-    expect($modals.hide).toBeCalled();
-  });
-
-  test('Page redirected after trigger remove button with action on the view page', async () => {
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            view: fakedView,
-          },
-        },
-      },
-      mocks: {
-        $route: {
-          name: ROUTES_NAMES.view,
-          params: {
-            id: fakedView._id,
-          },
-        },
-      },
-      store,
-    });
-
-    selectRemoveButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect($modals.show).toBeCalledWith({
-      name: MODALS.confirmation,
-      config: {
-        action: expect.any(Function),
-      },
-    });
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    await config.action();
-
-    expect(removeView).toBeCalled();
-    expect($router.push).toBeCalledWith({ name: ROUTES_NAMES.home });
+    expect(remove).toBeCalled();
     expect($modals.hide).toBeCalled();
   });
 
   test('Remove error popup showed after trigger remove button with error', async () => {
-    removeView.mockRejectedValueOnce({});
+    const remove = jest.fn().mockRejectedValueOnce({});
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
+            remove,
+            deletable: true,
             view: fakedView,
           },
         },
@@ -422,7 +371,7 @@ describe('create-view', () => {
 
     await config.action();
 
-    expect(removeView).toBeDispatchedWith({ id: fakedView._id });
+    expect(remove).toBeCalled();
     expect($popups.error).toBeCalledWith({
       text: 'View deletion failed...',
     });
@@ -453,7 +402,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-view` with title', async () => {
@@ -463,6 +412,8 @@ describe('create-view', () => {
         modal: {
           config: {
             title: 'Create view custom title',
+            deletable: true,
+            submittable: true,
           },
         },
       },
@@ -470,7 +421,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-view` without rights', async () => {
@@ -490,6 +441,6 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

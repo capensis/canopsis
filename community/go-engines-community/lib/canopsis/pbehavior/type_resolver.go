@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/rs/zerolog"
@@ -18,7 +19,7 @@ type TypeResolver interface {
 	// Resolve returns current type for entity if there is corresponding periodical behavior.
 	// Otherwise it returns default active type.
 	// An entity is matched to a pbehavior by an entity pattern or by cachedMatchedPbehaviorIds for old pbehaviors' queries.
-	Resolve(ctx context.Context, t time.Time, entity types.Entity, cachedMatchedPbehaviorIds []string) (ResolveResult, error)
+	Resolve(ctx context.Context, t time.Time, entity types.Entity) (ResolveResult, error)
 	GetPbehaviors(ctx context.Context, t time.Time, pbehaviorIDs []string) ([]ResolveResult, error)
 	GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error)
 }
@@ -72,28 +73,23 @@ func (r *typeResolver) Resolve(
 	ctx context.Context,
 	t time.Time,
 	entity types.Entity,
-	cachedMatchedPbehaviorIds []string,
 ) (ResolveResult, error) {
 	if !r.Span.In(t) {
 		return ResolveResult{}, ErrRecomputeNeed
 	}
 
-	cachedPbehaviorIds := make(map[string]bool, len(cachedMatchedPbehaviorIds))
-	for _, id := range cachedMatchedPbehaviorIds {
-		cachedPbehaviorIds[id] = true
-	}
 	pbhRes, err := r.getPbehaviorIntervals(ctx, t, func(id string, computed ComputedPbehavior) bool {
-		if len(computed.Pattern) > 0 {
-			matched, err := computed.Pattern.Match(entity)
-			if err != nil {
-				r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
-				return false
-			}
-
-			return matched
+		if len(computed.EntityPattern) == 0 {
+			return false
 		}
 
-		return cachedPbehaviorIds[id]
+		matched, err := match.MatchEntityPattern(computed.EntityPattern, &entity)
+		if err != nil {
+			r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
+			return false
+		}
+
+		return matched
 	})
 	if err != nil {
 		return ResolveResult{}, err

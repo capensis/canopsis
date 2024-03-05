@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // Some default values related to configuration
@@ -31,6 +31,7 @@ type SectionAlarm struct {
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
 	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
 }
 
 // SectionGlobal ...
@@ -67,6 +68,8 @@ type SectionFile struct {
 	Junit         string   `toml:"Junit"`
 	JunitApi      string   `toml:"JunitApi"`
 	SnmpMib       []string `toml:"SnmpMib"`
+	Icon          string   `toml:"Icon"`
+	IconMaxSize   int64    `toml:"IconMaxSize"`
 }
 
 type SectionDataStorage struct {
@@ -96,6 +99,7 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
+	Enabled                bool   `toml:"Enabled"`
 	FlushInterval          string `toml:"FlushInterval"`
 	SliInterval            string `toml:"SliInterval"`
 	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
@@ -133,14 +137,15 @@ type CanopsisConf struct {
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
-	MaxMatchedItems          int `bson:"max_matched_items"`
-	CheckCountRequestTimeout int `bson:"check_count_request_timeout"`
+	MaxMatchedItems            int  `bson:"max_matched_items"`
+	CheckCountRequestTimeout   int  `bson:"check_count_request_timeout"`
+	RequiredInstructionApprove bool `bson:"required_instruction_approve"`
 }
 
 type VersionConf struct {
 	Edition string `bson:"edition"`
 	Stack   string `bson:"stack"`
 
-	Version        string         `bson:"version"`
-	VersionUpdated *types.CpsTime `bson:"version_updated,omitempty"`
+	Version        string            `bson:"version"`
+	VersionUpdated *datetime.CpsTime `bson:"version_updated,omitempty"`
 }

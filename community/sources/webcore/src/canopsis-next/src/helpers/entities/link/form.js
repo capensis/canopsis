@@ -2,7 +2,6 @@ import { omit } from 'lodash';
 
 import {
   LINK_RULE_TYPES,
-  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
   LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE,
@@ -88,11 +87,7 @@ export const linkRuleToForm = (linkRule = {}) => ({
   source_code: linkRule.source_code ?? LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
   links: (linkRule.links ?? []).map(linkRuleLinkToForm),
   external_data: externalDataToForm(linkRule.external_data),
-  patterns: filterPatternsToForm(
-    linkRule,
-    [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-    [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
-  ),
+  patterns: filterPatternsToForm(linkRule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
 });
 
 /**

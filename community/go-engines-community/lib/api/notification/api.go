@@ -1,11 +1,13 @@
 package notification
 
 import (
+	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
 )
 
 type API interface {
@@ -32,7 +34,7 @@ func NewApi(
 // @Success 200 {object} common.PaginatedListResponse{data=[]Notification}
 func (a *api) Get(c *gin.Context) {
 	notification, err := a.store.Get(c.Request.Context())
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	} else if err != nil {
@@ -53,7 +55,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	notification, err := a.store.Update(c.Request.Context(), request)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	} else if err != nil {

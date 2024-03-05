@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
@@ -42,7 +43,7 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 	if r.DefaultView != "" {
 		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
 			} else {
 				panic(err)
@@ -53,7 +54,7 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 	if r.UITheme != "" {
 		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
 			} else {
 				panic(err)
