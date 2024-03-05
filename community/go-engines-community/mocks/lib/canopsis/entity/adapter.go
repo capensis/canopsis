@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
@@ -157,7 +158,7 @@ func (mr *MockAdapterMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // GetAllWithLastUpdateDateBefore mocks base method.
-func (m *MockAdapter) GetAllWithLastUpdateDateBefore(arg0 context.Context, arg1 types.CpsTime, arg2 []string) (mongo.Cursor, error) {
+func (m *MockAdapter) GetAllWithLastUpdateDateBefore(arg0 context.Context, arg1 datetime.CpsTime, arg2 []string) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllWithLastUpdateDateBefore", arg0, arg1, arg2)
 	ret0, _ := ret[0].(mongo.Cursor)
@@ -169,21 +170,6 @@ func (m *MockAdapter) GetAllWithLastUpdateDateBefore(arg0 context.Context, arg1 
 func (mr *MockAdapterMockRecorder) GetAllWithLastUpdateDateBefore(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllWithLastUpdateDateBefore", reflect.TypeOf((*MockAdapter)(nil).GetAllWithLastUpdateDateBefore), arg0, arg1, arg2)
-}
-
-// GetEntityByID mocks base method.
-func (m *MockAdapter) GetEntityByID(arg0 context.Context, arg1 string) (types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEntityByID", arg0, arg1)
-	ret0, _ := ret[0].(types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetEntityByID indicates an expected call of GetEntityByID.
-func (mr *MockAdapterMockRecorder) GetEntityByID(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntityByID", reflect.TypeOf((*MockAdapter)(nil).GetEntityByID), arg0, arg1)
 }
 
 // GetIDs mocks base method.
@@ -274,7 +260,7 @@ func (mr *MockAdapterMockRecorder) UpdateComponentInfosByComponent(arg0, arg1 in
 }
 
 // UpdateIdleFields mocks base method.
-func (m *MockAdapter) UpdateIdleFields(arg0 context.Context, arg1 string, arg2 *types.CpsTime, arg3 string) error {
+func (m *MockAdapter) UpdateIdleFields(arg0 context.Context, arg1 string, arg2 *datetime.CpsTime, arg3 string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateIdleFields", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
@@ -288,7 +274,7 @@ func (mr *MockAdapterMockRecorder) UpdateIdleFields(arg0, arg1, arg2, arg3 inter
 }
 
 // UpdateLastEventDate mocks base method.
-func (m *MockAdapter) UpdateLastEventDate(arg0 context.Context, arg1 []string, arg2 types.CpsTime) error {
+func (m *MockAdapter) UpdateLastEventDate(arg0 context.Context, arg1 []string, arg2 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)

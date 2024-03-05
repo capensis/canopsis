@@ -2,60 +2,64 @@
 
 exports[`default-sort-column Renders \`default-sort-column\` with custom props 1`] = `
 <div
-  class="v-list__group"
+  class="v-list-group"
 >
   <div
-    class="v-list__group__header"
+    aria-expanded="false"
+    class="v-list-group__header v-list-item v-list-item--link theme--light"
+    role="button"
+    tabindex="0"
   >
     <div
-      role="listitem"
+      class="v-list-item__content widget-settings-item-title"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-list-item__title validation-header"
       >
-        Default sort column
+          Default sort column
+        <!---->
       </div>
     </div>
     <div
-      class="v-list__group__header__append-icon"
+      class="v-list-item__icon v-list-group__header__append-icon"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
       >
         keyboard_arrow_down
       </i>
     </div>
   </div>
   <transition-stub
-    mode="in-out"
     name="expand-transition"
   >
     <div
-      class="v-list__group__items"
+      class="v-list-group__items"
       style="display: none;"
     >
       <div
         class="container"
       >
         <div
-          class="layout row"
+          class="layout"
         >
           <div
-            class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
           >
             <div
               class="v-input__control"
             >
               <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
                 class="v-input__slot"
+                role="button"
               >
                 <div
                   class="v-select__slot"
                 >
                   <label
-                    aria-hidden="true"
                     class="v-label v-label--active theme--light"
                     style="left: 0px; position: absolute;"
                   >
@@ -70,9 +74,8 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                       Created at
                     </div>
                     <input
-                      aria-label="Columns label"
                       aria-readonly="false"
-                      autocomplete="on"
+                      autocomplete="off"
                       readonly="readonly"
                       type="text"
                     />
@@ -85,16 +88,22 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                     >
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon notranslate material-icons theme--light"
                       >
                         arrow_drop_down
                       </i>
                     </div>
                   </div>
+                  <input
+                    type="hidden"
+                    value="createdAt"
+                  />
                 </div>
                 <div
                   class="v-menu"
-                />
+                >
+                  <!---->
+                </div>
               </div>
               <div
                 class="v-text-field__details"
@@ -102,8 +111,10 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
@@ -111,17 +122,19 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
           </div>
         </div>
         <div
-          class="layout row"
+          class="layout"
         >
           <div
-            class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
           >
             <div
               class="v-input__control"
             >
               <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
                 class="v-input__slot"
+                role="button"
               >
                 <div
                   class="v-select__slot"
@@ -136,7 +149,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                     </div>
                     <input
                       aria-readonly="false"
-                      autocomplete="on"
+                      autocomplete="off"
                       readonly="readonly"
                       type="text"
                     />
@@ -149,16 +162,22 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                     >
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon notranslate material-icons theme--light"
                       >
                         arrow_drop_down
                       </i>
                     </div>
                   </div>
+                  <input
+                    type="hidden"
+                    value="DESC"
+                  />
                 </div>
                 <div
                   class="v-menu"
-                />
+                >
+                  <!---->
+                </div>
               </div>
               <div
                 class="v-text-field__details"
@@ -166,8 +185,10 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
@@ -180,143 +201,61 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
 </div>
 `;
 
-exports[`default-sort-column Renders \`default-sort-column\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Created at
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`default-sort-column Renders \`default-sort-column\` with custom props 3`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              ASC
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              DESC
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`default-sort-column Renders \`default-sort-column\` with default props 1`] = `
 <div
-  class="v-list__group"
+  class="v-list-group"
 >
   <div
-    class="v-list__group__header"
+    aria-expanded="false"
+    class="v-list-group__header v-list-item v-list-item--link theme--light"
+    role="button"
+    tabindex="0"
   >
     <div
-      role="listitem"
+      class="v-list-item__content widget-settings-item-title"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-list-item__title validation-header"
       >
-        Default sort column
+          Default sort column
+        <!---->
       </div>
     </div>
     <div
-      class="v-list__group__header__append-icon"
+      class="v-list-item__icon v-list-group__header__append-icon"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
       >
         keyboard_arrow_down
       </i>
     </div>
   </div>
   <transition-stub
-    mode="in-out"
     name="expand-transition"
   >
     <div
-      class="v-list__group__items"
+      class="v-list-group__items"
       style="display: none;"
     >
       <div
         class="container"
       >
         <div
-          class="layout row"
+          class="layout"
         >
           <div
-            class="v-input v-text-field v-select theme--light"
-            role="combobox"
+            class="v-input theme--light v-text-field v-select"
           >
             <div
               class="v-input__control"
             >
               <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
                 class="v-input__slot"
+                role="button"
               >
                 <div
                   class="v-select__slot"
@@ -326,7 +265,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                   >
                     <input
                       aria-readonly="false"
-                      autocomplete="on"
+                      autocomplete="off"
                       readonly="readonly"
                       type="text"
                     />
@@ -339,16 +278,21 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                     >
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon notranslate material-icons theme--light"
                       >
                         arrow_drop_down
                       </i>
                     </div>
                   </div>
+                  <input
+                    type="hidden"
+                  />
                 </div>
                 <div
                   class="v-menu"
-                />
+                >
+                  <!---->
+                </div>
               </div>
               <div
                 class="v-text-field__details"
@@ -356,8 +300,10 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
@@ -365,17 +311,19 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
           </div>
         </div>
         <div
-          class="layout row"
+          class="layout"
         >
           <div
-            class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
           >
             <div
               class="v-input__control"
             >
               <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
                 class="v-input__slot"
+                role="button"
               >
                 <div
                   class="v-select__slot"
@@ -390,7 +338,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                     </div>
                     <input
                       aria-readonly="false"
-                      autocomplete="on"
+                      autocomplete="off"
                       readonly="readonly"
                       type="text"
                     />
@@ -403,16 +351,22 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                     >
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon notranslate material-icons theme--light"
                       >
                         arrow_drop_down
                       </i>
                     </div>
                   </div>
+                  <input
+                    type="hidden"
+                    value="ASC"
+                  />
                 </div>
                 <div
                   class="v-menu"
-                />
+                >
+                  <!---->
+                </div>
               </div>
               <div
                 class="v-text-field__details"
@@ -420,8 +374,10 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
@@ -431,91 +387,5 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
       </div>
     </div>
   </transition-stub>
-</div>
-`;
-
-exports[`default-sort-column Renders \`default-sort-column\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <div
-          class="v-list__tile theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No data available
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`default-sort-column Renders \`default-sort-column\` with default props 3`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              ASC
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              DESC
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
 </div>
 `;

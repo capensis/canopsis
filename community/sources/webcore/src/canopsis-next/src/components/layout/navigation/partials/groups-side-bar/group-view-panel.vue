@@ -1,32 +1,49 @@
-<template lang="pug">
-  v-card(:color="cardColor")
-    v-card-text.panel-item-content
-      v-layout(align-center, justify-space-between)
-        v-flex(:class="{ 'panel-view-title--editing': isEditing }")
-          v-layout(align-center)
-            span.pl-2(:class="{ ellipsis: ellipsis }")
-              slot(name="title") {{ view.title }}
-        v-flex
-          v-layout(v-if="allowEditing", justify-end)
-            v-btn.ma-0(
-              v-show="hasEditAccess",
-              :disabled="isOrderChanged",
-              depressed,
-              small,
-              icon,
-              @click.prevent="$emit('change')"
-            )
-              v-icon(small) edit
-            v-btn.ma-0(
-              v-show="isEditing",
-              :disabled="isOrderChanged",
-              depressed,
-              small,
-              icon,
-              @click.prevent="$emit('duplicate')"
-            )
-              v-icon(small) file_copy
-    v-divider
+<template>
+  <v-card :color="cardColor">
+    <v-card-text class="panel-item-content">
+      <div :class="['panel-item-content__title pl-2', { 'text-truncate': ellipsis }]">
+        <slot name="title">
+          {{ view.title }}
+        </slot>
+      </div>
+
+      <div class="panel-item-content__actions">
+        <v-icon
+          v-if="view.is_private"
+          small
+        >
+          lock
+        </v-icon>
+        <template v-if="editable || duplicable">
+          <v-btn
+            v-if="editable"
+            :disabled="isOrderChanged"
+            depressed
+            small
+            icon
+            @click.prevent="$emit('change')"
+          >
+            <v-icon small>
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+            v-if="duplicable"
+            :disabled="isOrderChanged"
+            depressed
+            small
+            icon
+            @click.prevent="$emit('duplicate')"
+          >
+            <v-icon small>
+              file_copy
+            </v-icon>
+          </v-btn>
+        </template>
+      </div>
+    </v-card-text>
+    <v-divider />
+  </v-card>
 </template>
 
 <script>
@@ -36,15 +53,11 @@ export default {
       type: Object,
       required: true,
     },
-    allowEditing: {
+    editable: {
       type: Boolean,
       default: false,
     },
-    hasEditAccess: {
-      type: Boolean,
-      default: false,
-    },
-    isEditing: {
+    duplicable: {
       type: Boolean,
       default: false,
     },
@@ -70,30 +83,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .panel-item-content {
-    display: -webkit-box;
-    display: -ms-flexbox;
+.panel-item-content {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 12px 24px;
+  height: 48px;
+
+  &__title {
+    width: 100%;
+  }
+
+  &__actions {
+    flex-shrink: 0;
+
     display: flex;
-    cursor: pointer;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
-    position: relative;
-    padding: 12px 24px;
-    height: 48px;
-
-    & > div {
-      max-width: 100%;
-    }
-
-    & ::v-deep .v-btn:not(:last-child) {
-      margin-right: 0;
-    }
   }
 
-  .panel-view-title {
-    &--editing {
-      max-width: 73%;
-    }
+  & ::v-deep .v-btn:not(:last-child) {
+    margin-right: 0;
   }
+}
 </style>

@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,7 +23,8 @@ func SetAuthor() func(c *gin.Context) {
 		encodedBody := json.NewDecoder(c.Request.Body)
 		err := encodedBody.Decode(&body)
 		if err != nil {
-			if err == io.EOF {
+			var syntaxError *json.SyntaxError
+			if errors.Is(err, io.EOF) || errors.As(err, &syntaxError) {
 				c.Next()
 				return
 			}
@@ -72,9 +74,13 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) fun
 		}
 
 		if addAuthor {
-			userId := c.MustGet(auth.UserKey)
+			userId, ok := c.MustGet(auth.UserKey).(string)
+			if !ok {
+				panic(fmt.Errorf("unknown type of %s", auth.UserKey))
+			}
+
 			for _, object := range rawObjects {
-				object.Set("author", ar.NewString(userId.(string)))
+				object.Set("author", ar.NewString(userId))
 			}
 		}
 

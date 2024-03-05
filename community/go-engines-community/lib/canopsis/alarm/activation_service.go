@@ -4,6 +4,7 @@ import (
 	"context"
 
 	amqplib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -13,7 +14,7 @@ import (
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
-	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp types.MicroTime) (bool, error)
+	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime, entityType string) (bool, error)
 }
 
 type baseActivationService struct {
@@ -37,9 +38,9 @@ func NewActivationService(
 	}
 }
 
-func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp types.MicroTime) (bool, error) {
+func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp datetime.MicroTime, entityType string) (bool, error) {
 	if alarm.CanActivate() {
-		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp)
+		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp, entityType)
 
 		if err != nil {
 			return false, err
@@ -51,18 +52,19 @@ func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, 
 	return false, nil
 }
 
-func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp types.MicroTime) error {
+func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime, entityType string) error {
 	event := types.Event{
 		Connector:         alarm.Value.Connector,
 		ConnectorName:     alarm.Value.ConnectorName,
 		Component:         alarm.Value.Component,
 		Resource:          alarm.Value.Resource,
-		Timestamp:         types.NewCpsTime(),
+		Timestamp:         datetime.NewCpsTime(),
 		ReceivedTimestamp: eventReceivedTimestamp,
+		SourceType:        entityType,
 		EventType:         types.EventTypeActivate,
 		Initiator:         types.InitiatorSystem,
 	}
-	event.SourceType = event.DetectSourceType()
+
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("fail encode activation event")

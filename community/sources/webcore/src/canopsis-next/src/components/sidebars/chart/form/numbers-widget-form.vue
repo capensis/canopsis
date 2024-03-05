@@ -1,35 +1,52 @@
-<template lang="pug">
-  v-layout(column)
-    field-title(v-field="form.title", :required="requiredTitle")
-    field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters")
-    field-preset(v-if="withPreset", v-field="form.parameters", :type="form.type")
-    widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
-      field-alarm-metric-presets(
-        v-field="form.parameters.metrics",
-        :parameters="availableParameters",
-        :only-external="onlyExternal",
-        with-external,
+<template>
+  <v-layout column>
+    <field-title
+      v-field="form.title"
+      :required="requiredTitle"
+    />
+    <field-periodic-refresh
+      v-if="withPeriodicRefresh"
+      v-field="form.parameters"
+    />
+    <field-preset
+      v-if="withPreset"
+      v-field="form.parameters"
+      :type="form.type"
+    />
+    <widget-settings-group :title="$t('settings.chart.metricsDisplay')">
+      <field-alarm-metric-presets
+        v-field="form.parameters.metrics"
+        :parameters="availableParameters"
+        :only-external="onlyExternal"
+        with-external
         with-aggregate-function
-      )
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-font-size(v-field="form.parameters.font_size")
-      field-title(
-        v-field="form.parameters.chart_title",
-        :label="$tc('common.header')",
+      />
+    </widget-settings-group>
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-font-size v-field="form.parameters.font_size" />
+      <field-title
+        v-field="form.parameters.chart_title"
+        :label="$tc('common.header')"
         :placeholder="$t('settings.headerTitle')"
-      )
-      field-quick-date-interval-type(v-field="form.parameters.default_time_range")
-      field-sampling(v-field="form.parameters.default_sampling")
-      field-filters(
-        v-if="withFilters",
-        :filters="form.filters",
-        addable,
-        editable,
-        with-entity,
-        hide-selector,
+        name="chart_title"
+      />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-sampling v-field="form.parameters.default_sampling" />
+      <field-filters
+        v-if="withFilters"
+        :filters="form.filters"
+        addable
+        editable
+        with-entity
+        hide-selector
         @update:filters="updateFilters"
-      )
-      field-switcher(v-field="form.parameters.show_trend", :title="$t('settings.chart.showTrend')")
+      />
+      <field-switcher
+        v-field="form.parameters.show_trend"
+        :title="$t('settings.chart.showTrend')"
+      />
+    </widget-settings-group>
+  </v-layout>
 </template>
 
 <script>
@@ -43,7 +60,6 @@ import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-ref
 import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
 import FieldPreset from '@/components/sidebars/chart/form/fields/preset.vue';
 import FieldAlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';
-import FieldBarGraphType from '@/components/sidebars/chart/form/fields/bar-graph-type.vue';
 import FieldSampling from '@/components/sidebars/chart/form/fields/sampling.vue';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
@@ -57,7 +73,6 @@ export default {
     FieldQuickDateIntervalType,
     FieldPreset,
     FieldAlarmMetricPresets,
-    FieldBarGraphType,
     FieldSampling,
     FieldFilters,
     FieldSwitcher,

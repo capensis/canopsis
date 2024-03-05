@@ -1,29 +1,44 @@
-<template lang="pug">
-  div.view(:id="`view-tab-${tab._id}`")
-    portal(v-if="editing", :to="$constants.PORTALS_NAMES.additionalTopBarItems")
-      window-size-field(v-model="size", color="white", light)
-    grid-layout(
-      v-model="layouts[size]",
-      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
-      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
-      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
-      :style="layoutStyle",
+<template>
+  <div
+    :id="`view-tab-${tab._id}`"
+    class="view"
+  >
+    <portal
+      v-if="editing"
+      :to="$constants.PORTALS_NAMES.additionalTopBarItems"
+    >
+      <window-size-field
+        v-model="size"
+        color="white"
+        light
+      />
+    </portal>
+    <grid-layout
+      v-model="layouts[size]"
+      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]"
+      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT"
+      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT"
+      :style="layoutStyle"
       :disabled="!editing"
-    )
-      template(#item="{ on, item }")
-        widget-edit-drag-handler(
-          v-if="editing",
-          v-on="on",
-          :widget="item.widget",
-          :auto-height="item.autoHeight",
+    >
+      <template #item="{ on, item }">
+        <widget-edit-drag-handler
+          v-if="editing"
+          :widget="item.widget"
+          :auto-height="item.autoHeight"
           :tab="tab"
-        )
-        widget-wrapper(
-          :widget="item.widget",
-          :tab="tab",
-          :kiosk="kiosk",
+          v-on="on"
+        />
+        <widget-wrapper
+          :widget="item.widget"
+          :tab="tab"
+          :kiosk="kiosk"
           :editing="editing"
-        )
+          :visible="visible"
+        />
+      </template>
+    </grid-layout>
+  </div>
 </template>
 
 <script>
@@ -31,7 +46,7 @@ import { isEqual } from 'lodash';
 
 import { WIDGET_GRID_SIZES_KEYS, MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_LAYOUT_MAX_WIDTHS } from '@/constants';
 
-import { widgetsToLayouts, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
+import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
 
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
@@ -63,9 +78,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
-    const layouts = widgetsToLayouts(this.tab.widgets);
+    const layouts = widgetsToLayoutsWithCompact(this.tab.widgets);
 
     return {
       layouts,
@@ -83,7 +102,7 @@ export default {
   },
   watch: {
     'tab.widgets': function tabWidgets(widgets) {
-      this.layouts = widgetsToLayouts(widgets, this.layouts);
+      this.layouts = widgetsToLayoutsWithCompact(widgets, this.layouts);
     },
 
     $mq: {
@@ -96,13 +115,21 @@ export default {
     editing() {
       this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
     },
-  },
-  created() {
-    this.registerEditingOffHandler(this.updatePositions);
+
+    visible: {
+      immediate: true,
+      handler(visible) {
+        if (visible) {
+          this.registerEditingOffHandler(this.updatePositions);
+        } else {
+          this.unregisterEditingOffHandler(this.updatePositions);
+        }
+      },
+    },
   },
   beforeDestroy() {
-    this.unregisterEditingOffHandler(this.updatePositions);
     this.removeWidgetsQueries();
+    this.unregisterEditingOffHandler(this.updatePositions);
   },
   methods: {
     async updatePositions() {
@@ -118,6 +145,8 @@ export default {
         await this.updateWidgetGridPositions({ data: newWidgetsGrid });
         await this.fetchActiveView();
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       }
     },

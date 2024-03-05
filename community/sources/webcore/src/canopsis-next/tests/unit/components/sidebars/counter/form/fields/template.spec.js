@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import FieldTemplate from '@/components/sidebars/counter/form/fields/template.vue';
@@ -36,7 +37,7 @@ describe('field-template', () => {
       },
     });
 
-    selectButton(wrapper).vm.$emit('click');
+    selectButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.textEditor,
@@ -54,7 +55,7 @@ describe('field-template', () => {
 
     modalArguments.config.action(newTemplate);
 
-    expect(wrapper).toEmit('input', newTemplate);
+    expect(wrapper).toEmitInput(newTemplate);
   });
 
   test('Renders `field-template` with required props', () => {
@@ -65,7 +66,7 @@ describe('field-template', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-template` with custom props', () => {
@@ -77,6 +78,6 @@ describe('field-template', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

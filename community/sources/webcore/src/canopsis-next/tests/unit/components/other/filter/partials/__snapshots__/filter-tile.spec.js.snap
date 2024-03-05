@@ -2,49 +2,40 @@
 
 exports[`filter-tile Renders \`filter-tile\` with custom props 1`] = `
 <div
-  class="pa-0"
-  role="listitem"
+  class="pa-0 v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="v-list__tile theme--light"
+    class="layout align-center"
   >
     <div
-      class="layout row align-center"
+      class="layout align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate draggable ml-0 mr-3 action-drag-handler material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        drag_indicator
+      </i>
+      <div
+        class="v-list-item__content"
+      >
+        Filter title
+      </div>
+    </div>
+    <div
+      class="v-list-item__action"
     >
       <div
-        class="flex xs12"
+        class="layout align-center"
       >
-        <div
-          class="layout row align-center"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon draggable ml-0 mr-3 action-drag-handler material-icons theme--light"
-            style="font-size: 16px;"
-          >
-            drag_indicator
-          </i>
-          <div
-            class="v-list__tile__content"
-          >
-            Filter title
-          </div>
-        </div>
-      </div>
-      <div
-        class="v-list__tile__action"
-      >
-        <div
-          class="layout row align-center"
-        >
-          <c-action-btn-stub
-            badge-tooltip="Filter patterns are not migrated"
-            type="edit"
-          />
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
+        <c-action-btn-stub
+          type="edit"
+        />
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
     </div>
   </div>
@@ -53,81 +44,61 @@ exports[`filter-tile Renders \`filter-tile\` with custom props 1`] = `
 
 exports[`filter-tile Renders \`filter-tile\` with default props 1`] = `
 <div
-  class="pa-0"
-  role="listitem"
+  class="pa-0 v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="v-list__tile theme--light"
+    class="layout align-center"
   >
     <div
-      class="layout row align-center"
+      class="layout align-center"
     >
-      <div
-        class="flex xs12"
-      >
-        <div
-          class="layout row align-center"
-        >
-          <!---->
-          <div
-            class="v-list__tile__content"
-          >
-            
-          </div>
-        </div>
-      </div>
       <!---->
+      <div
+        class="v-list-item__content"
+      />
     </div>
+    <!---->
   </div>
 </div>
 `;
 
 exports[`filter-tile Renders \`filter-tile\` with old pattern 1`] = `
 <div
-  class="pa-0"
-  role="listitem"
+  class="pa-0 v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="v-list__tile theme--light"
+    class="layout align-center"
   >
     <div
-      class="layout row align-center"
+      class="layout align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate draggable ml-0 mr-3 action-drag-handler material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        drag_indicator
+      </i>
+      <div
+        class="v-list-item__content"
+      >
+        Filter title
+      </div>
+    </div>
+    <div
+      class="v-list-item__action"
     >
       <div
-        class="flex xs12"
+        class="layout align-center"
       >
-        <div
-          class="layout row align-center"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon draggable ml-0 mr-3 action-drag-handler material-icons theme--light"
-            style="font-size: 16px;"
-          >
-            drag_indicator
-          </i>
-          <div
-            class="v-list__tile__content"
-          >
-            Filter title
-          </div>
-        </div>
-      </div>
-      <div
-        class="v-list__tile__action"
-      >
-        <div
-          class="layout row align-center"
-        >
-          <c-action-btn-stub
-            badge-tooltip="Filter patterns are not migrated"
-            badge-value="true"
-            type="edit"
-          />
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
+        <c-action-btn-stub
+          type="edit"
+        />
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
     </div>
   </div>

@@ -8,10 +8,10 @@ package idlealarm
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -56,7 +56,7 @@ type baseService struct {
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	eventGenerator := libevent.NewGenerator("engine", "axe")
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
@@ -68,7 +68,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 	}
 	s.logger.Debug().Strs("rules", ids).Msg("load idle rules")
 
-	var allMinDuration, entityMinDuration types.DurationWithUnit
+	var allMinDuration, entityMinDuration datetime.DurationWithUnit
 	for _, rule := range rules {
 		if allMinDuration.Value == 0 || allMinDuration.AddTo(now).After(rule.Duration.AddTo(now)) {
 			allMinDuration = rule.Duration
@@ -164,7 +164,7 @@ func (s *baseService) applyRules(
 	entity types.Entity,
 	alarm *types.Alarm,
 	eventGenerator libevent.Generator,
-	now types.CpsTime,
+	now datetime.CpsTime,
 ) (*types.Event, error) {
 	lastAlarm := alarm
 
@@ -212,7 +212,7 @@ func (s *baseService) applyRules(
 				}
 			}
 
-			return s.applyEntityRule(ctx, rule, entity, lastAlarm, eventGenerator)
+			return s.applyEntityRule(rule, entity, lastAlarm, eventGenerator)
 		}
 	}
 
@@ -224,7 +224,7 @@ func (s *baseService) applyAlarmRule(
 	rule idlerule.Rule,
 	alarm types.Alarm,
 	entity types.Entity,
-	now types.CpsTime,
+	now datetime.CpsTime,
 ) (*types.Event, error) {
 	idleRuleApply := fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition)
 	event := types.Event{
@@ -316,7 +316,6 @@ func (s *baseService) applyAlarmRule(
 // It uses alarm arg to fill event field.
 // It uses entity type and connector arg to fill event field if alarm arg is nil.
 func (s *baseService) applyEntityRule(
-	ctx context.Context,
 	rule idlerule.Rule,
 	entity types.Entity,
 	alarm *types.Alarm,
@@ -338,7 +337,7 @@ func (s *baseService) applyEntityRule(
 	}
 
 	event.EventType = types.EventTypeNoEvents
-	event.Timestamp = types.CpsTime{Time: time.Now()}
+	event.Timestamp = datetime.NewCpsTime()
 	event.State = types.AlarmStateCritical
 	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
@@ -363,7 +362,7 @@ func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, 
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     datetime.NewCpsTime(),
 			Initiator:     types.InitiatorSystem,
 			Output:        alarm.Value.State.Message,
 			Author:        alarm.Value.State.Author,

@@ -1,13 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-children Renders \`extra-details-children\` with full children and rule 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
-  <div class="text-md-center"><strong>Meta alarm</strong>
-    <div>Title : rule-name</div>
-    <div>Consequences : 3</div>
-    <div>Opened consequences : 2</div>
-    <div>Closed consequences : 1</div>
+<div>
+  <span
+    class="c-extra-details__badge brown darken-1"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light white--text"
+      style="font-size: 16px;"
+    >
+      center_focus_strong
+    </i>
+  </span>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <!---->
+  </span>
+</div>
+`;
+
+exports[`extra-details-children Renders \`extra-details-children\` with full children and rule 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      Meta alarm
+    </strong>
+    <div>
+      Title : rule-name
+    </div>
+    <div>
+      Consequences : 3
+    </div>
+    <div>
+      Opened consequences : 2
+    </div>
+    <div>
+      Closed consequences : 1
+    </div>
   </div>
 </div>
-<div><span class="c-extra-details__badge brown darken-1"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">center_focus_strong</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;

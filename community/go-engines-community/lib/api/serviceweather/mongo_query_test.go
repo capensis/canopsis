@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -40,10 +41,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		{"$skip": 10},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -103,10 +104,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -167,9 +168,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -233,7 +234,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -246,75 +247,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, getPbehaviorInfoTypeLookup()...)
+	expected = append(expected, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"icon": bson.M{"$eq": "pause"}},
 		}}}}},
-		{"$facet": bson.M{
-			"data":        expectedDataPipeline,
-			"total_count": []bson.M{{"$count": "count"}},
-		}},
-		{"$addFields": bson.M{
-			"total_count": bson.M{"$sum": "$total_count.count"},
-		}},
-	}...)
-
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
-	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
-		t.Errorf("unexpected result: %s", diff)
-	}
-}
-
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithOldMongoQuery_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := view.WidgetFilter{
-		ID: "test-filter",
-		OldMongoQuery: `{"$and": [
-			{"type": "resource"},
-			{"category": "test-category"}
-		]}`,
-	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
-	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	request := ListRequest{
-		Query:   pagination.GetDefaultQuery(),
-		Filters: []string{filter.ID},
-	}
-	expectedDataPipeline := []bson.M{
-		{"$sort": bson.D{{Key: "name", Value: 1}}},
-		{"$skip": 0},
-		{"$limit": 10},
-	}
-	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
-	}})
-	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
-	expected := []bson.M{
-		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
-		}},
-	}
-	expected = append(expected, getCategoryLookup()...)
-	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, getPbehaviorLookup(authorProvider)...)
-	expected = append(expected, getPbehaviorInfoTypeLookup()...)
-	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
-	expected = append(expected, []bson.M{
-		{"$match": bson.M{"$and": []bson.M{
-			{"type": "resource"},
-			{"category": "test-category"},
-		}}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -352,9 +290,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -436,7 +374,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -452,7 +390,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}}}}},
 	}
 	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, getPbehaviorInfoTypeLookup()...)
+	expected = append(expected, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{

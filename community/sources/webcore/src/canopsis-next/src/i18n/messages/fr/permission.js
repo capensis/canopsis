@@ -19,6 +19,8 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Droits pour le widget : Graphique en ligne',
     [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Droits pour le widget : Diagramme circulaire',
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Droits pour le widget : Nombres',
+    [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Droits pour le widget : Statistiques des utilisateurs',
+    [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Droits pour le widget : Statistiques des alarmes',
   },
   api: {
     general: 'Général',
@@ -448,11 +450,63 @@ export default {
     },
 
     /**
+     * Business User Statistics
+     */
+    [USERS_PERMISSIONS.business.userStatistics.actions.interval]: {
+      name: 'Droits sur les statistiques des utilisateurs : Intervalle',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'intervalle de temps pour les données affichées',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.listFilters]: {
+      name: 'Droits sur les statistiques des utilisateurs : Afficher les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.editFilter]: {
+      name: 'Droits sur les statistiques des utilisateurs : Modifier les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.addFilter]: {
+      name: 'Droits sur les statistiques des utilisateurs : Ajouter des filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
+    },
+    [USERS_PERMISSIONS.business.userStatistics.actions.userFilter]: {
+      name: 'Droits sur les statistiques des utilisateurs : Afficher les filtres',
+      description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
+    },
+
+    /**
+     * Business Alarm Statistics
+     */
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.interval]: {
+      name: 'Droits sur les statistiques des alarmes : Intervalle',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'intervalle de temps pour les données affichées',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.listFilters]: {
+      name: 'Droits sur les statistiques des alarmes : Afficher les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.editFilter]: {
+      name: 'Droits sur les statistiques des alarmes : Modifier les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.addFilter]: {
+      name: 'Droits sur les statistiques des alarmes : Ajouter des filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
+    },
+    [USERS_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
+      name: 'Droits sur les statistiques des alarmes : Afficher les filtres',
+      description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
+    },
+
+    /**
      * Technical General Permissions
      */
     [USERS_PERMISSIONS.technical.view]: {
       name: 'Vues',
       description: 'Cette permission définit l\'accès à la liste des vues',
+    },
+    [USERS_PERMISSIONS.technical.privateView]: {
+      name: 'Vues privées',
+      description: 'Cette autorisation définit l\'accès à la liste des vues privées',
     },
     [USERS_PERMISSIONS.technical.role]: {
       name: 'Rôles',
@@ -677,6 +731,10 @@ export default {
     [USERS_PERMISSIONS.api.general.viewgroup]: {
       name: 'Afficher les groupes',
       description: 'Accès à la route de l\'API vers les groupes de vues CRUD',
+    },
+    [USERS_PERMISSIONS.api.general.privateViewGroups]: {
+      name: 'Groupes de vue privée',
+      description: 'Accès à la route API vers les groupes de vues privées CRUD',
     },
     [USERS_PERMISSIONS.api.general.userInterfaceUpdate]: {
       name: 'Mettre à jour les paramètres de l\'interface utilisateur',

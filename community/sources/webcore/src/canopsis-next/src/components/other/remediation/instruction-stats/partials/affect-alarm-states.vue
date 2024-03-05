@@ -1,8 +1,20 @@
-<template lang="pug">
-  div.d-flex
-    c-state-count-changes-chips(:affect="alarmStates.minor", :color="minorColor")
-    c-state-count-changes-chips.ml-2(:affect="alarmStates.major", :color="majorColor")
-    c-state-count-changes-chips.ml-2(:affect="alarmStates.critical", :color="criticalColor")
+<template>
+  <div class="d-flex">
+    <c-state-count-changes-chips
+      :affect="alarmStates.minor"
+      :color="minorColor"
+    />
+    <c-state-count-changes-chips
+      :affect="alarmStates.major"
+      :color="majorColor"
+      class="ml-2"
+    />
+    <c-state-count-changes-chips
+      :affect="alarmStates.critical"
+      :color="criticalColor"
+      class="ml-2"
+    />
+  </div>
 </template>
 
 <script>

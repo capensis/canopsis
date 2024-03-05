@@ -1,13 +1,26 @@
-<template lang="pug">
-  c-no-events-icon(v-if="isNoEventsStatus", :value="idleSince", :size="iconSize", color="error", top)
-  v-tooltip(v-else, top)
-    template(#activator="{ on }")
-      v-icon.d-block(
-        v-on="on",
-        :size="iconSize",
-        :style="{ color: statusColor, caretColor: statusColor}"
-      ) {{ status.icon }}
-    span {{ $t(`common.statusTypes.${statusValue}`) }}
+<template>
+  <c-no-events-icon
+    v-if="isNoEventsStatus"
+    :value="idleSince"
+    :size="iconSize"
+    color="error"
+    top
+  />
+  <v-tooltip
+    v-else
+    top
+  >
+    <template #activator="{ on }">
+      <v-icon
+        :size="iconSize"
+        :style="{ color: statusColor, caretColor: statusColor }"
+        v-on="on"
+      >
+        {{ status.icon }}
+      </v-icon>
+    </template>
+    <span>{{ $t(`common.statusTypes.${statusValue}`) }}</span>
+  </v-tooltip>
 </template>
 
 <script>

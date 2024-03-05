@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -31,7 +30,6 @@ type rpcPBehaviorClientMessageProcessor struct {
 	EntityAdapter            libentity.Adapter
 	AlarmAdapter             alarm.Adapter
 	PbehaviorAdapter         pbehavior.Adapter
-	StateCountersService     statecounters.StateCountersService
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -75,7 +73,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			}
 
 			p.logError(err, "RPC PBehavior Client: cannot update alarm", msg.Body)
-			return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err)))
+			return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %w", err)))
 		}
 
 		alarmChangeType = result.AlarmChange.Type

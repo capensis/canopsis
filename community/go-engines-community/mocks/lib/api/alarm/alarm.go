@@ -37,21 +37,6 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
-// AddBookmark mocks base method.
-func (m *MockStore) AddBookmark(arg0 context.Context, arg1, arg2 string) (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddBookmark", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// AddBookmark indicates an expected call of AddBookmark.
-func (mr *MockStoreMockRecorder) AddBookmark(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBookmark", reflect.TypeOf((*MockStore)(nil).AddBookmark), arg0, arg1, arg2)
-}
-
 // Count mocks base method.
 func (m *MockStore) Count(arg0 context.Context, arg1 alarm.FilterRequest, arg2 string) (*alarm.Count, error) {
 	m.ctrl.T.Helper()
@@ -202,6 +187,21 @@ func (mr *MockStoreMockRecorder) GetDetails(arg0, arg1, arg2 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDetails", reflect.TypeOf((*MockStore)(nil).GetDetails), arg0, arg1, arg2)
 }
 
+// GetDisplayNames mocks base method.
+func (m *MockStore) GetDisplayNames(arg0 context.Context, arg1 alarm.GetDisplayNamesRequest) (*alarm.GetDisplayNamesResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDisplayNames", arg0, arg1)
+	ret0, _ := ret[0].(*alarm.GetDisplayNamesResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDisplayNames indicates an expected call of GetDisplayNames.
+func (mr *MockStoreMockRecorder) GetDisplayNames(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDisplayNames", reflect.TypeOf((*MockStore)(nil).GetDisplayNames), arg0, arg1)
+}
+
 // GetInstructionExecutionStatuses mocks base method.
 func (m *MockStore) GetInstructionExecutionStatuses(arg0 context.Context, arg1 []string, arg2 map[string][]alarm.AssignedInstruction) (map[string]alarm.ExecutionStatus, error) {
 	m.ctrl.T.Helper()
@@ -247,19 +247,4 @@ func (m *MockStore) GetOpenByEntityID(arg0 context.Context, arg1, arg2 string) (
 func (mr *MockStoreMockRecorder) GetOpenByEntityID(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenByEntityID", reflect.TypeOf((*MockStore)(nil).GetOpenByEntityID), arg0, arg1, arg2)
-}
-
-// RemoveBookmark mocks base method.
-func (m *MockStore) RemoveBookmark(arg0 context.Context, arg1, arg2 string) (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveBookmark", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RemoveBookmark indicates an expected call of RemoveBookmark.
-func (mr *MockStoreMockRecorder) RemoveBookmark(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveBookmark", reflect.TypeOf((*MockStore)(nil).RemoveBookmark), arg0, arg1, arg2)
 }

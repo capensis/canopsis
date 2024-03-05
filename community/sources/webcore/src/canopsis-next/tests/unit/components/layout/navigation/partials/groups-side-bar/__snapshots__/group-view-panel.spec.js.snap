@@ -8,71 +8,58 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
     class="v-card__text panel-item-content"
   >
     <div
-      class="layout align-center justify-space-between"
+      class="panel-item-content__title pl-2"
     >
       <div
-        class="flex panel-view-title--editing"
+        class="title-slot"
       >
-        <div
-          class="layout align-center"
-        >
-          <span
-            class="pl-2"
-          >
-            <div
-              class="title-slot"
-            >
-              TITLE
-            </div>
-          </span>
-        </div>
+        TITLE
       </div>
-      <div
-        class="flex"
+    </div>
+    <div
+      class="panel-item-content__actions"
+    >
+      <!---->
+      <button
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
+        disabled="disabled"
+        type="button"
       >
-        <div
-          class="layout justify-end"
+        <span
+          class="v-btn__content"
         >
-          <button
-            class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
-            disabled="disabled"
-            type="button"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+            style="font-size: 16px;"
           >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                edit
-              </i>
-            </div>
-          </button>
-          <button
-            class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
-            disabled="disabled"
-            type="button"
+            edit
+          </i>
+        </span>
+      </button>
+      <button
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+            style="font-size: 16px;"
           >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                file_copy
-              </i>
-            </div>
-          </button>
-        </div>
-      </div>
+            file_copy
+          </i>
+        </span>
+      </button>
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </div>
 `;
@@ -85,30 +72,21 @@ exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] =
     class="v-card__text panel-item-content"
   >
     <div
-      class="layout align-center justify-space-between"
+      class="panel-item-content__title pl-2 text-truncate"
     >
-      <div
-        class="flex"
-      >
-        <div
-          class="layout align-center"
-        >
-          <span
-            class="pl-2 ellipsis"
-          >
-            View title
-          </span>
-        </div>
-      </div>
-      <div
-        class="flex"
-      >
-        <!---->
-      </div>
+        View title
+    </div>
+    <div
+      class="panel-item-content__actions"
+    >
+      <!---->
+      <!---->
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </div>
 `;

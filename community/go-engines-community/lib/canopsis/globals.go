@@ -14,12 +14,13 @@ const (
 	ActionConsumerName          = "action"
 	ActionRPCConsumerName       = "action_rpc"
 
-	AxeEngineName                  = "engine-axe"
-	AxeQueueName                   = "Engine_axe"
-	AxePbehaviorRPCClientQueueName = "Engine_axe_pbehavior_rpc_client"
-	AxeRPCQueueServerName          = "Engine_axe_rpc_server"
-	AxeConsumerName                = "axe"
-	AxeRPCConsumerName             = "axe_rpc"
+	AxeEngineName                     = "engine-axe"
+	AxeQueueName                      = "Engine_axe"
+	AxePbehaviorRPCClientQueueName    = "Engine_axe_pbehavior_rpc_client"
+	AxeDynamicInfosRPCClientQueueName = "Engine_axe_dynamic_infos_rpc_client"
+	AxeRPCQueueServerName             = "Engine_axe_rpc_server"
+	AxeConsumerName                   = "axe"
+	AxeRPCConsumerName                = "axe_rpc"
 
 	CheExchangeName = ""
 	CheEngineName   = "engine-che"
@@ -77,4 +78,6 @@ const (
 	FacetLimit = 1000
 
 	ApiName = "api"
+
+	DefaultEventWorkers = 10
 )

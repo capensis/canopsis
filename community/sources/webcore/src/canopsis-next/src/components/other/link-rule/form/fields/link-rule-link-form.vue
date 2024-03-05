@@ -1,52 +1,75 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      v-layout(column)
-        v-layout(row, align-center)
-          c-name-field.mr-2(
-            v-field="form.label",
-            :label="$t('common.label')",
-            :name="labelFieldName",
+<template>
+  <v-card>
+    <v-card-text>
+      <v-layout column>
+        <v-layout align-center>
+          <c-name-field
+            v-field="form.label"
+            :label="$t('common.label')"
+            :name="labelFieldName"
+            class="mr-2"
             required
-          )
-          c-action-btn(type="delete", @click="remove")
-        v-layout(row, align-center)
-          v-flex.pr-2(xs8)
-            v-text-field(
-              v-field="form.category",
+          />
+          <c-action-btn
+            type="delete"
+            @click="remove"
+          />
+        </v-layout>
+        <v-layout align-center>
+          <v-flex
+            class="pr-2"
+            xs8
+          >
+            <v-text-field
+              v-field="form.category"
               :label="$t('common.category')"
-            )
-          v-flex(xs4)
-            c-icon-field(
-              v-field="form.icon_name",
-              :label="$t('common.icon')",
-              :name="iconFieldName",
+            />
+          </v-flex>
+          <v-flex xs4>
+            <c-icon-field
+              v-field="form.icon_name"
+              :label="$tc('common.icon', 1)"
+              :name="iconFieldName"
               required
-            )
-        template(v-if="isAlarmType")
-          c-enabled-field(v-field="form.single", :label="$t('linkRule.single')", hide-details)
-          c-enabled-field(v-field="form.hide_in_menu", :label="$t('linkRule.hideInMenu')")
-        c-payload-text-field(
-          v-field="form.url",
-          :label="$t('common.url')",
-          :variables="urlVariables",
-          :name="form.key",
+            />
+          </v-flex>
+        </v-layout>
+        <template v-if="isAlarmType">
+          <c-enabled-field
+            v-field="form.single"
+            :label="$t('linkRule.single')"
+            hide-details
+          />
+          <c-enabled-field
+            v-field="form.hide_in_menu"
+            :label="$t('linkRule.hideInMenu')"
+          />
+        </template>
+        <c-payload-text-field
+          v-field="form.url"
+          :label="$t('common.url')"
+          :variables="urlVariables"
+          :name="form.key"
           required
-        )
-        v-radio-group(
-          v-field="form.action",
+        />
+        <v-radio-group
+          v-field="form.action"
           :label="$t('linkRule.actionType')"
-        )
-          v-radio(
-            :value="$constants.LINK_RULE_ACTIONS.open",
-            :label="$t('linkRule.actionTypes.open')",
+        >
+          <v-radio
+            :value="$constants.LINK_RULE_ACTIONS.open"
+            :label="$t('linkRule.actionTypes.open')"
             color="primary"
-          )
-          v-radio(
-            :value="$constants.LINK_RULE_ACTIONS.copy",
-            :label="$t('linkRule.actionTypes.copy')",
+          />
+          <v-radio
+            :value="$constants.LINK_RULE_ACTIONS.copy"
+            :label="$t('linkRule.actionTypes.copy')"
             color="primary"
-          )
+          />
+        </v-radio-group>
+      </v-layout>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

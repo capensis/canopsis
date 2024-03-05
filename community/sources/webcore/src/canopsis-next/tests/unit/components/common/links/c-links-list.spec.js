@@ -1,7 +1,8 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import CLinksList from '@/components/common/links/c-links-list.vue';
 import { LINK_RULE_ACTIONS } from '@/constants';
+
+import CLinksList from '@/components/common/links/c-links-list.vue';
 
 const snapshotStubs = {
   'c-copy-wrapper': true,
@@ -31,7 +32,7 @@ describe('c-links-list', () => {
   test('Renders `c-links-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-links-list` with links', () => {
@@ -41,7 +42,7 @@ describe('c-links-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-links-list` with links and category', () => {
@@ -52,7 +53,7 @@ describe('c-links-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-links-list` with links with copy action', () => {
@@ -69,6 +70,6 @@ describe('c-links-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

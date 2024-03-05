@@ -1,12 +1,12 @@
-<template lang="pug">
-  c-select-field(
-    v-field="value",
-    :items="availableMetrics",
-    :label="label || $t('kpi.metrics.parameter')",
-    :name="name",
-    :required="required",
+<template>
+  <c-select-field
+    v-field="value"
+    :items="availableMetrics"
+    :label="label || $t('kpi.metrics.parameter')"
+    :name="name"
+    :required="required"
     :hide-details="hideDetails"
-  )
+  />
 </template>
 
 <script>

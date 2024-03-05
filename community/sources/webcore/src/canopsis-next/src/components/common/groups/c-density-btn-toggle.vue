@@ -1,21 +1,59 @@
-<template lang="pug">
-  v-radio-group.density__radio-group(v-if="column", v-field="value", :name="name")
-    v-layout.mb-3(v-for="type in types", :key="type.value", row)
-      v-flex(xs6)
-        v-radio(
-          :value="type.value",
-          :label="type.text",
+<template>
+  <v-radio-group
+    v-if="column"
+    v-field="value"
+    :name="name"
+    class="density__radio-group"
+  >
+    <v-layout
+      v-for="type in types"
+      :key="type.value"
+      class="mb-3"
+    >
+      <v-flex xs6>
+        <v-radio
+          :value="type.value"
+          :label="type.text"
           color="primary"
-        )
-      v-flex(xs6)
-        v-icon.density__icon {{ type.icon }}
-
-  v-btn-toggle.density__btn-toggle(v-else, v-field="value", :name="name", mandatory)
-    v-tooltip(v-for="type in types", :key="type.value", top)
-      template(#activator="{ on }")
-        v-btn(v-on="on", :value="type.value", small, flat)
-          v-icon(small) {{ type.icon }}
-      span {{ type.text }}
+        />
+      </v-flex>
+      <v-flex xs6>
+        <v-icon class="density__icon">
+          {{ type.icon }}
+        </v-icon>
+      </v-flex>
+    </v-layout>
+  </v-radio-group>
+  <v-btn-toggle
+    v-else
+    v-field="value"
+    :name="name"
+    class="density__btn-toggle"
+    tile
+    group
+    mandatory
+  >
+    <v-tooltip
+      v-for="type in types"
+      :key="type.value"
+      top
+    >
+      <template #activator="{ on }">
+        <v-btn
+          :value="type.value"
+          class="ma-0"
+          small
+          text
+          v-on="on"
+        >
+          <v-icon small>
+            {{ type.icon }}
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ type.text }}</span>
+    </v-tooltip>
+  </v-btn-toggle>
 </template>
 
 <script>

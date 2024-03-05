@@ -1,10 +1,10 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :items="showingTypes",
-    :label="$t('common.show')",
+<template>
+  <v-select
+    v-field="value"
+    :items="showingTypes"
+    :label="$t('common.show')"
     hide-details
-  )
+  />
 </template>
 
 <script>

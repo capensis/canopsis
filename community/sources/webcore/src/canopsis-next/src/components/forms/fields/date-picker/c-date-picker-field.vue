@@ -1,41 +1,45 @@
-<template lang="pug">
-  v-menu(
-    v-model="opened",
-    :close-on-content-click="false",
-    :disabled="disabled",
-    content-class="date-picker",
-    transition="slide-y-transition",
-    max-width="290px",
-    right,
-    lazy
-  )
-    template(#activator="{ on }")
-      v-text-field(
-        v-on="on",
-        :class="contentClass",
-        :value="value | date(format)",
-        :label="label",
-        :placeholder="placeholder",
-        :error="error",
-        :error-messages="errorMessages",
-        :name="name",
-        :disabled="disabled",
-        :hide-details="hideDetails",
-        :append-icon="clearable ? 'close' : ''",
-        :readonly="!disabled",
+<template>
+  <v-menu
+    v-model="opened"
+    :close-on-content-click="false"
+    :disabled="disabled"
+    content-class="date-picker"
+    transition="slide-y-transition"
+    max-width="290px"
+    right
+  >
+    <template #activator="{ on }">
+      <v-text-field
+        :class="contentClass"
+        :value="value | date(format)"
+        :label="label"
+        :placeholder="placeholder"
+        :error="error"
+        :error-messages="errorMessages"
+        :name="name"
+        :disabled="disabled"
+        :hide-details="hideDetails"
+        :append-icon="clearable ? 'close' : ''"
+        :readonly="!disabled"
+        v-on="on"
         @click:append="clear"
-      )
-        template(#append="")
-          slot(name="append")
-    v-date-picker.date-picker(
-      v-field="value",
-      :opened="opened",
-      :color="color",
-      :min="min",
-      :max="max",
-      :allowed-dates="allowedDates",
+      >
+        <template #append="">
+          <slot name="append" />
+        </template>
+      </v-text-field>
+    </template>
+    <v-date-picker
+      v-field="value"
+      :opened="opened"
+      :color="color"
+      :min="min"
+      :max="max"
+      :allowed-dates="allowedDates"
+      class="date-picker"
       @change="change"
-    )
+    />
+  </v-menu>
 </template>
 
 <script>

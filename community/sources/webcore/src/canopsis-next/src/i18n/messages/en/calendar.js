@@ -1,4 +1,5 @@
 export default {
+  noTitle: '(no title)',
   today: 'Today',
   month: 'Month',
   week: 'Week',

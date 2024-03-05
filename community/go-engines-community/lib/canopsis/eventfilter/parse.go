@@ -3,7 +3,7 @@ package eventfilter
 import (
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -16,17 +16,16 @@ type ParsedRule struct {
 	Type         string
 	Config       ParsedRuleConfig
 	ExternalData map[string]ParsedExternalDataParameters
-	Created      *types.CpsTime
-	Updated      *types.CpsTime
+	Created      *datetime.CpsTime
+	Updated      *datetime.CpsTime
 
-	OldPatterns  oldpattern.EventPatternList
 	EventPattern pattern.Event
 	savedpattern.EntityPatternFields
 
-	ResolvedStart     *types.CpsTime
-	ResolvedStop      *types.CpsTime
-	NextResolvedStart *types.CpsTime
-	NextResolvedStop  *types.CpsTime
+	ResolvedStart     *datetime.CpsTime
+	ResolvedStop      *datetime.CpsTime
+	NextResolvedStart *datetime.CpsTime
+	NextResolvedStop  *datetime.CpsTime
 	ResolvedExdates   []types.Exdate
 }
 
@@ -67,7 +66,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 	for i, action := range rule.Config.Actions {
 		var parsedValue libtemplate.ParsedTemplate
 		switch action.Type {
-		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate:
+		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate, ActionSetTagsFromTemplate:
 			if str, ok := action.Value.(string); ok {
 				parsedValue = tplExecutor.Parse(str)
 			}
@@ -136,7 +135,6 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 		ExternalData:        parsedExternalData,
 		Created:             rule.Created,
 		Updated:             rule.Updated,
-		OldPatterns:         rule.OldPatterns,
 		EventPattern:        rule.EventPattern,
 		EntityPatternFields: rule.EntityPatternFields,
 		ResolvedStart:       rule.ResolvedStart,
@@ -152,7 +150,7 @@ func ExecuteParsedTemplate(
 	tplName string,
 	parsedTpl libtemplate.ParsedTemplate,
 	tplData any,
-	event types.Event,
+	event *types.Event,
 	failureService FailureService,
 	templateExecutor libtemplate.Executor,
 ) (string, error) {
@@ -166,7 +164,7 @@ func ExecuteParsedTemplate(
 		res, err := templateExecutor.ExecuteByTpl(parsedTpl.Tpl, tplData)
 		if err != nil {
 			failReason := fmt.Sprintf("cannot execute template %q for event: %s", tplName, err)
-			failureService.Add(ruleID, FailureTypeInvalidTemplate, failReason, &event)
+			failureService.Add(ruleID, FailureTypeInvalidTemplate, failReason, event)
 			return "", err
 		}
 

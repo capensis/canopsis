@@ -1,28 +1,61 @@
-<template lang="pug">
-  div.healthcheck-history(@touchend.stop)
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        :min="deletedBefore",
+<template>
+  <div
+    class="healthcheck-history"
+    @touchend.stop=""
+  >
+    <v-layout
+      class="ml-4 mb-4"
+      align-center
+    >
+      <c-quick-date-interval-field
+        :interval="query.interval"
+        :min="deletedBefore"
         @input="updateInterval"
-      )
-    div.healthcheck-history__graph
-      limited-time-line-chart.text--primary(
-        ref="chart",
-        :datasets="datasets",
-        :options="historyChartOptions",
+      />
+    </v-layout>
+    <div class="healthcheck-history__graph">
+      <limited-time-line-chart
+        ref="chart"
+        :datasets="datasets"
+        :options="historyChartOptions"
         :dark="$system.dark"
-      )
-        template(#actions="{ chart }")
-          v-layout.mt-4(justify-end)
-            v-btn.ma-0(color="primary", @click="exportChart(chart)")
-              v-icon(left) file_download
-              span {{ $t('common.downloadAsPng') }}
-            div.healthcheck-history__zoom
-              v-btn(fab, small, @click="zoomIn(chart)")
-                v-icon add
-              v-btn(fab, small, @click="zoomOut(chart)")
-                v-icon remove
+        class="text--primary"
+      >
+        <template #actions="{ chart }">
+          <v-layout
+            class="mt-4"
+            justify-end
+          >
+            <v-btn
+              color="primary"
+              @click="exportChart(chart)"
+            >
+              <v-icon left>
+                file_download
+              </v-icon>
+              <span>{{ $t('common.downloadAsPng') }}</span>
+            </v-btn>
+            <div class="healthcheck-history__zoom">
+              <v-btn
+                fab
+                small
+                @click="zoomIn(chart)"
+              >
+                <v-icon>add</v-icon>
+              </v-btn>
+              <v-btn
+                fab
+                small
+                @click="zoomOut(chart)"
+              >
+                <v-icon>remove</v-icon>
+              </v-btn>
+            </div>
+          </v-layout>
+        </template>
+      </limited-time-line-chart>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -79,8 +112,8 @@ export default {
   computed: {
     interval() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
+        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
       };
     },
 
@@ -220,6 +253,8 @@ export default {
 
         await saveFile(chartBlob, `${HEALTHCHECK_HISTORY_FILENAME_PREFIX}${fromTime}-${toTime}`);
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       }
     },
@@ -277,6 +312,8 @@ export default {
   }
 
   &__zoom {
+    display: flex;
+    gap: 8px;
     position: absolute;
     top: 10px;
     right: 10px;

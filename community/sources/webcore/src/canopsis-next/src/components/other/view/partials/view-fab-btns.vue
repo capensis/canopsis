@@ -1,53 +1,78 @@
-<template lang="pug">
-  div.view-fab-btns.fab
-    v-layout(row)
-      view-scroll-top-btn
-      view-periodic-refresh-btn
-      v-speed-dial(
-        v-model="opened",
-        direction="top",
+<template>
+  <div class="view-fab-btns fab ma-2">
+    <v-layout>
+      <v-flex class="mr-3">
+        <view-scroll-top-btn />
+      </v-flex>
+      <v-flex class="mr-3">
+        <view-periodic-refresh-btn />
+      </v-flex>
+      <c-speed-dial
+        direction="top"
         transition="slide-y-reverse-transition"
-      )
-        template(#activator="")
-          v-btn(
-            :input-value="opened",
-            color="primary",
-            dark,
+      >
+        <template #activator="{ bind }">
+          <v-btn
+            v-bind="bind"
+            color="primary"
+            dark
             fab
-          )
-            v-icon menu
-            v-icon close
-        view-share-link-btn(v-if="hasCreateAnyShareTokenAccess", :view="view", :tab="activeTab")
-        view-fullscreen-btn(
-          :value="fullscreen",
-          :toggle-full-screen="toggleFullScreen",
-          left-tooltip,
+          >
+            <v-icon>menu</v-icon>
+            <v-icon>close</v-icon>
+          </v-btn>
+        </template>
+        <view-share-link-btn
+          v-if="sharable"
+          :view="view"
+          :tab="activeTab"
+        />
+        <view-fullscreen-btn
+          :value="fullscreen"
+          :toggle-full-screen="toggleFullScreen"
+          left-tooltip
           small
-        )
-        view-editing-btn(v-if="updatable")
-        v-tooltip(left)
-          v-btn.view-fab-btns__add-widget-btn(
-            slot="activator",
-            v-if="updatable",
-            fab,
-            dark,
-            small,
-            @click.stop="showCreateWidgetModal"
-          )
-            v-icon add
-          span {{ $t('common.addWidget') }}
-        v-tooltip(left)
-          v-btn(
-            slot="activator",
-            v-if="updatable",
-            color="green",
-            fab,
-            dark,
-            small,
-            @click.stop="showCreateTabModal"
-          )
-            v-icon add
-          span {{ $t('common.addTab') }}
+        />
+        <view-editing-btn v-if="updatable" />
+        <v-tooltip left>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="updatable"
+              class="view-fab-btns__add-widget-btn"
+              fab
+              dark
+              small
+              v-on="on"
+              @click.stop="showCreateWidgetModal"
+            >
+              <v-icon small>
+                add
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('common.addWidget') }}</span>
+        </v-tooltip>
+        <v-tooltip left>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="updatable"
+              color="green"
+              fab
+              dark
+              small
+              v-on="on"
+              @click.stop="showCreateTabModal"
+            >
+              <v-icon small>
+                add
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('common.addTab') }}</span>
+        </v-tooltip>
+      </c-speed-dial>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -56,7 +81,6 @@ import { MODALS } from '@/constants';
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
-import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
 
 import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewEditingBtn from './view-editing-btn.vue';
@@ -76,7 +100,6 @@ export default {
     activeViewMixin,
     viewRouterMixin,
     entitiesViewTabMixin,
-    permissionsTechnicalShareTokenMixin,
   ],
   props: {
     activeTab: {
@@ -84,6 +107,10 @@ export default {
       required: false,
     },
     updatable: {
+      type: Boolean,
+      default: false,
+    },
+    sharable: {
       type: Boolean,
       default: false,
     },

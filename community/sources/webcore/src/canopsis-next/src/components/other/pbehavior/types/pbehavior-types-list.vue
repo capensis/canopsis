@@ -1,43 +1,61 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="pbehaviorTypes",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :is-disabled-item="isDisabledType",
-    :select-all="removable",
-    expand,
-    search,
-    advanced-pagination,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="pbehaviorTypes"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :is-disabled-item="isDisabledType"
+    :select-all="removable"
+    expand
+    search
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#icon_name="{ item }")
-      v-chip.pbehavior-type-icon(:color="item.color")
-        v-icon(:color="getIconColor(item.color)", size="18") {{ item.icon_name }}
-    template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#hidden="{ item }")
-      c-enabled(:value="item.hidden")
-    template(#actions="{ item }")
-      v-layout
-        c-action-btn(
-          type="edit",
+      />
+    </template>
+    <template #icon_name="{ item }">
+      <v-chip
+        :color="item.color"
+        class="pbehavior-type-icon"
+      >
+        <v-icon
+          :color="getIconColor(item.color)"
+          size="18"
+        >
+          {{ item.icon_name }}
+        </v-icon>
+      </v-chip>
+    </template>
+    <template #priority="{ item }">
+      {{ item.priority || '-' }}
+    </template>
+    <template #hidden="{ item }">
+      <c-enabled :value="item.hidden" />
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          :disabled="!item.deletable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.types.usingType')",
-          type="delete",
+        />
+        <c-action-btn
+          :disabled="!item.deletable"
+          :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.types.usingType')"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      pbehavior-types-list-expand-panel(:pbehavior-type="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <pbehavior-types-list-expand-panel :pbehavior-type="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -62,7 +80,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -79,7 +97,7 @@ export default {
           value: 'name',
         },
         {
-          text: this.$t('common.icon'),
+          text: this.$tc('common.icon', 1),
           value: 'icon_name',
           sortable: false,
         },

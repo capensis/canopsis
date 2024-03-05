@@ -5,13 +5,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
 
 type EditRequest struct {
-	ID             string                 `json:"-"`
-	Tab            string                 `json:"tab" binding:"required"`
 	Title          string                 `json:"title" binding:"max=255"`
 	Type           string                 `json:"type" binding:"required,max=255"`
 	GridParameters map[string]interface{} `json:"grid_parameters"`
@@ -19,6 +17,16 @@ type EditRequest struct {
 	Author         string                 `json:"author" swaggerignore:"true"`
 
 	Filters []FilterRequest `json:"filters" binding:"dive"`
+}
+
+type CreateRequest struct {
+	EditRequest
+	Tab string `json:"tab" binding:"required"`
+}
+
+type UpdateRequest struct {
+	EditRequest
+	ID string `json:"-"`
 }
 
 type FilterRequest struct {
@@ -51,8 +59,10 @@ type Response struct {
 	GridParameters map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
 	Parameters     view.Parameters        `bson:"parameters" json:"parameters"`
 	Author         *author.Author         `bson:"author" json:"author,omitempty"`
-	Created        *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated        *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Created        *datetime.CpsTime      `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated        *datetime.CpsTime      `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
 	Filters []widgetfilter.Response `bson:"filters" json:"filters"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }

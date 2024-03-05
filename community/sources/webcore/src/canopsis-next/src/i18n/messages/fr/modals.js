@@ -52,6 +52,7 @@ export default {
   view: {
     create: {
       title: 'Créer une vue',
+      privateTitle: 'Créer une vue privée',
     },
     edit: {
       title: 'Éditer une vue',
@@ -59,12 +60,6 @@ export default {
     duplicate: {
       title: 'Dupliquer une vue - {viewTitle}',
       infoMessage: 'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
-    },
-    noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
-    fields: {
-      periodicRefresh: 'Rafraichissement périodique',
-      groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
-      groupTags: 'Étiquettes de groupe',
     },
     success: {
       create: 'Nouvelle vue créée !',
@@ -77,11 +72,6 @@ export default {
       edit: 'Erreur lors de l\'édition de la vue...',
       duplicate: 'Échec de la duplication de la vue...',
       delete: 'Erreur lors de la suppression de la vue...',
-    },
-  },
-  createEvent: {
-    fields: {
-      output: 'Note',
     },
   },
   confirmAckWithTicket: {
@@ -209,6 +199,8 @@ export default {
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
+    massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
+    actionInQueue: 'action en file d\'attente|actions en file d\'attente',
     entity: {
       tabs: {
         info: 'Info',
@@ -656,8 +648,28 @@ export default {
       title: 'Dépendances pour {name}',
     },
   },
-  stateSetting: {
-    title: 'Configuration d\'état du test JUnit',
+  createStateSetting: {
+    create: {
+      title: 'Créer une méthode de calcul d\'état',
+      success: 'Méthode de calcul d\'état créée !',
+    },
+    edit: {
+      title: 'Modifier la méthode de calcul de l\'état',
+      success: 'Méthode de calcul d\'état modifiée !',
+    },
+    duplicate: {
+      title: 'Méthode de calcul d\'état en double',
+      success: 'Méthode de calcul d\'état dupliquée !',
+    },
+    remove: {
+      success: 'Méthode de calcul d\'état supprimée !',
+    },
+  },
+  createJunitStateSetting: {
+    edit: {
+      title: 'Paramètres d\'état de la suite de tests JUnit',
+      success: 'Paramètre d\'état de la suite de tests JUnit modifié !',
+    },
   },
   defineStorage: {
     title: 'Définir le stockage des résultats',
@@ -685,7 +697,8 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Approbation des consignes',
-    requested: 'demandé pour approbation',
+    dismissed: 'a rejeté vos mises à jour',
+    requested: 'vous a sollicité pour une pour approbation',
     tabs: {
       updated: 'Mise à jour',
       original: 'Original',
@@ -991,6 +1004,18 @@ export default {
     },
     duplicate: {
       title: 'Thème en double',
+    },
+  },
+  archiveDisabledEntities: {
+    text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
+  },
+  createIcon: {
+    create: {
+      title: 'Icône de téléchargement',
+      success: 'L\'icône a été téléchargée',
+    },
+    remove: {
+      success: 'L\'icône a été supprimée',
     },
   },
 };

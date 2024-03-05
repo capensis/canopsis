@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import TimeLineFlag from '@/components/widgets/alarm/time-line/alarms-time-line-flag.vue';
@@ -22,7 +23,7 @@ describe('alarms-time-line-flag', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(
@@ -37,7 +38,7 @@ describe('alarms-time-line-flag', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(
@@ -51,6 +52,6 @@ describe('alarms-time-line-flag', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

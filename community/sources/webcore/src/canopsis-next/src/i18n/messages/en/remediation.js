@@ -28,6 +28,7 @@ export default {
     requestApproval: 'Request for approval',
     type: 'Instruction type',
     approvalPending: 'Approval pending',
+    approvalDismissed: 'Instruction is dismissed',
     needApprove: 'Approval is needed',
     executeInstruction: 'Execute {instructionName}',
     resumeInstruction: 'Resume {instructionName}',
@@ -152,8 +153,7 @@ export default {
     usingJob: 'Cannot be deleted since it is in use',
     query: 'Query',
     multipleExecutions: 'Allow parallel execution',
-    retryAmount: 'Retry amount',
-    retryInterval: 'Retry interval',
+    jobWaitInterval: 'Job wait interval',
     addPayload: 'Add payload',
     deletePayload: 'Delete payload',
     payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
@@ -171,7 +171,7 @@ export default {
     autoInstructions: 'Automatic instructions',
     labels: {
       remediated: 'Remediated',
-      notRemediated: 'Not remediated',
+      withAssignedRemediations: 'Remediable (With assigned instructions)',
     },
     tooltips: {
       remediated: '{value} alarms remediated',

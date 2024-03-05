@@ -4,6 +4,7 @@ import {
   omit,
   map,
   uniq,
+  isArray,
 } from 'lodash';
 
 import { ALARMS_OPENED_VALUES, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, QUICK_RANGES, SORT_ORDERS } from '@/constants';
@@ -11,8 +12,8 @@ import { PAGINATION_LIMIT } from '@/config';
 
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
-import { convertMultiSortToRequest } from '@/helpers/entities/shared/query';
-import { getTemplateVariables } from '@/helpers/handlebars';
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import { getTemplateVariables } from '@/helpers/handlebars/variables';
 
 /**
  *  This function converts widget.parameters.opened to query Object
@@ -52,9 +53,14 @@ export const getAlarmVariablesByTemplate = template => getTemplateVariables(temp
  * @param {WidgetColumn[]} widgetColumns
  * @param {string} moreInfoTemplate
  * @param {WidgetInfoPopup[]} infoPopups
+ * @param {string[]} usedAlarmProperties
  * @returns {string[]}
  */
-export const convertAlarmWidgetParametersToActiveColumns = ({ widgetColumns, moreInfoTemplate, infoPopups }) => {
+export const convertAlarmWidgetParametersToActiveColumns = ({
+  widgetColumns,
+  moreInfoTemplate,
+  infoPopups,
+}) => {
   const activeColumns = [];
 
   widgetColumns.forEach(({ template, value }) => {
@@ -87,20 +93,23 @@ export const convertAlarmWidgetParametersToActiveColumns = ({ widgetColumns, mor
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    itemsPerPage,
+    itemsPerPage = PAGINATION_LIMIT,
+    opened = ALARMS_OPENED_VALUES.opened,
     sort,
     mainFilter,
-    opened = ALARMS_OPENED_VALUES.opened,
+    usedAlarmProperties,
   } = widget.parameters;
 
   const query = {
     opened,
+    itemsPerPage,
+
     page: 1,
-    limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
-    multiSortBy: [],
+    sortBy: [],
+    sortDesc: [],
     lockedFilter: mainFilter,
   };
 
@@ -113,17 +122,17 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  const activeColumns = convertAlarmWidgetParametersToActiveColumns(widget.parameters);
+  const activeColumns = isArray(usedAlarmProperties)
+    ? usedAlarmProperties
+    : convertAlarmWidgetParametersToActiveColumns(widget.parameters);
 
   if (activeColumns.length) {
     query.active_columns = activeColumns;
   }
 
-  if (sort && sort.column && sort.order) {
-    query.multiSortBy.push({
-      sortBy: sort.column,
-      descending: sort.order === SORT_ORDERS.desc,
-    });
+  if (sort?.column && sort?.order) {
+    query.sortBy = [sort.column];
+    query.sortDesc = [sort.order === SORT_ORDERS.desc];
   }
 
   return query;
@@ -152,7 +161,7 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
   };
 
   if (itemsPerPage) {
-    query.limit = itemsPerPage;
+    query.itemsPerPage = itemsPerPage;
   }
 
   return query;
@@ -179,6 +188,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
+    with_dependencies: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {
@@ -210,8 +220,7 @@ export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
 
   children: {
-    ...omit(query.children, ['multiSortBy']),
-
-    multi_sort: convertMultiSortToRequest(query.children?.multiSortBy),
+    ...omit(query.children, ['sortBy', 'sortDesc']),
+    ...convertSortToRequest(query.children?.sortBy, query.children?.sortDesc),
   },
 });

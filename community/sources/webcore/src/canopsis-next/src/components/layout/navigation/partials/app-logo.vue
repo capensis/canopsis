@@ -1,5 +1,8 @@
-<template lang="pug">
-  img(:src="appLogo")
+<template>
+  <img
+    :src="appLogo"
+    alt=""
+  >
 </template>
 
 <script>

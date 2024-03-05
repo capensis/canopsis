@@ -1,18 +1,42 @@
-<template lang="pug">
-  div
-    v-tabs(v-model="activeTab", color="secondary lighten-1", slider-color="primary", dark, centered)
-      v-tab {{ $tc('common.pattern', 2) }}
-    v-layout.pa-3
-      v-flex(xs12)
-        v-card.pa-3
-          v-tabs-items.pt-2(v-model="activeTab")
-            v-tab-item(lazy)
-              v-flex(xs12, lg10, offset-lg1)
-                kpi-filter-patterns-form(:form="patterns", readonly)
+<template>
+  <div>
+    <v-tabs
+      v-model="activeTab"
+      background-color="secondary lighten-1"
+      slider-color="primary"
+      dark
+      centered
+    >
+      <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    </v-tabs>
+    <v-layout class="pa-3">
+      <v-flex xs12>
+        <v-card class="pa-3">
+          <v-tabs-items
+            v-model="activeTab"
+            class="pt-2"
+          >
+            <v-tab-item>
+              <v-flex
+                xs12
+                lg10
+                offset-lg1
+              >
+                <kpi-filter-patterns-form
+                  :form="patterns"
+                  readonly
+                />
+              </v-flex>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
@@ -33,7 +57,7 @@ export default {
   },
   computed: {
     patterns() {
-      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity], [OLD_PATTERNS_FIELDS.entity]);
+      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity]);
     },
   },
 };

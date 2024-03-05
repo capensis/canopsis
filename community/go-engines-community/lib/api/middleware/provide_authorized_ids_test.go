@@ -2,13 +2,14 @@ package middleware
 
 import (
 	"encoding/json"
+	"net/http"
+	"reflect"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
-	"net/http"
-	"reflect"
-	"testing"
 )
 
 func TestProvideAuthorizedIds_GivenAuthorizedUser_ShouldReturnIds(t *testing.T) {
@@ -39,7 +40,7 @@ func TestProvideAuthorizedIds_GivenAuthorizedUser_ShouldReturnIds(t *testing.T) 
 	})
 	router.GET(
 		okURL,
-		ProvideAuthorizedIds(act, mockEnforcer),
+		ProvideAuthorizedIds(act, mockEnforcer, nil),
 		func(c *gin.Context) {
 			ids, _ := c.Get(AuthorizedIds)
 			c.JSON(http.StatusOK, ids)
@@ -75,7 +76,7 @@ func TestProvideAuthorizedIds_GivenNoUser_ShouldReturnUnauthorizedError(t *testi
 	router := gin.New()
 	router.GET(
 		okURL,
-		ProvideAuthorizedIds(act, mockEnforcer),
+		ProvideAuthorizedIds(act, mockEnforcer, nil),
 		okHandler,
 	)
 
@@ -106,7 +107,7 @@ func TestProvideAuthorizedIds_GivenNotAuthorizedUser_ShouldReturnEmpty(t *testin
 	})
 	router.GET(
 		okURL,
-		ProvideAuthorizedIds(act, mockEnforcer),
+		ProvideAuthorizedIds(act, mockEnforcer, nil),
 		func(c *gin.Context) {
 			ids, _ := c.Get(AuthorizedIds)
 			c.JSON(http.StatusOK, ids)

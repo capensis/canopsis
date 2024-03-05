@@ -1,38 +1,55 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        v-fade-transition
-          v-layout(v-if="pending", justify-center)
-            v-progress-circular(color="primary", indeterminate)
-          v-layout(v-else)
-            v-flex(xs12)
-              v-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-              view-form(
-                v-model="form",
-                :groups="groups"
-              )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          v-if="hasUpdateViewAccess",
-          :disabled="isDisabled",
-          :loading="submitting",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <c-alert
+          :value="duplicate"
+          type="info"
+        >
+          {{ $t('modals.view.duplicate.infoMessage') }}
+        </c-alert>
+        <view-form
+          v-model="form"
+          :groups="availableGroups"
+          :duplicate-private="isInitialViewPrivate && config.duplicableToAll"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          v-if="submittable"
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
-        v-btn(
-          v-if="view && hasDeleteViewAccess && !duplicate",
-          :disabled="submitting",
-          :outline="$system.dark",
-          color="error",
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn
+          v-if="deletable"
+          :disabled="submitting"
+          :outlined="$system.dark"
+          color="error"
           @click="remove"
-        ) {{ $t('common.delete') }}
+        >
+          {{ $t('common.delete') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
-import { find, isString } from 'lodash';
+import { find, isObject, isString } from 'lodash';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -40,7 +57,6 @@ import { viewToForm, viewToRequest } from '@/helpers/entities/view/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { viewRouterMixin } from '@/mixins/view/router';
-import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -64,7 +80,6 @@ export default {
   mixins: [
     modalInnerMixin,
     viewRouterMixin,
-    entitiesViewMixin,
     entitiesViewGroupMixin,
     permissionsTechnicalViewMixin,
     submittableMixinCreator(),
@@ -72,7 +87,6 @@ export default {
   ],
   data() {
     return {
-      pending: true,
       form: viewToForm(this.modal.config.view),
     };
   },
@@ -86,31 +100,47 @@ export default {
     },
 
     duplicate() {
-      return this.config.duplicate;
+      return !!this.config.duplicate;
     },
 
-    hasUpdateViewAccess() {
-      if (this.view && !this.duplicate) {
-        return this.checkUpdateAccess(this.view._id) && this.hasUpdateAnyViewAccess;
-      }
-
-      return this.hasUpdateAnyViewAccess;
+    deletable() {
+      return this.config.deletable;
     },
 
-    hasDeleteViewAccess() {
-      if (this.view && !this.duplicate) {
-        return this.checkDeleteAccess(this.view._id) && this.hasDeleteAnyViewAccess;
+    submittable() {
+      return this.config.submittable ?? true;
+    },
+
+    isInitialViewPrivate() {
+      return this.modal.config.view?.is_private ?? false;
+    },
+
+    availableGroups() {
+      if (this.duplicableToAll) {
+        return this.groups;
       }
 
-      return this.hasDeleteAnyViewAccess;
+      return this.groups.filter(group => group.is_private === this.form.is_private);
     },
   },
-  async mounted() {
-    this.pending = true;
-
-    await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
-
-    this.pending = false;
+  watch: {
+    'form.is_private': {
+      handler(isPrivate) {
+        if (isObject(this.form.group) && this.form.group.is_private !== isPrivate) {
+          this.form.group = undefined;
+        }
+      },
+    },
+    'form.group': {
+      handler(group) {
+        if (isObject(group)) {
+          this.form.is_private = group.is_private;
+        }
+      },
+    },
+  },
+  mounted() {
+    this.fetchAllGroupsListWithWidgetsWithCurrentUser();
   },
   methods: {
     /**
@@ -122,10 +152,7 @@ export default {
         config: {
           action: async () => {
             try {
-              await this.removeViewWithPopup({ id: this.view._id });
-              await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
-
-              this.redirectToHomeIfCurrentRoute();
+              await this.config.remove?.();
 
               this.$modals.hide();
             } catch (err) {
@@ -143,25 +170,15 @@ export default {
      * @return {ViewGroup | Promise<ViewGroup>}
      */
     prepareGroup(title) {
-      return find(this.groups, { title }) ?? this.createGroup({ data: { title } });
-    },
+      const group = find(this.groups, { title });
 
-    /**
-     * Convert view form to request object with group and user preference creation if needed
-     *
-     * @return {Promise}
-     */
-    async formToRequest() {
-      const group = isString(this.form.group)
-        ? await this.prepareGroup(this.form.group)
-        : this.form.group;
+      if (group) {
+        return group;
+      }
 
-      return viewToRequest({
-        ...this.view,
-        ...this.form,
+      const createFunc = this.form.is_private ? this.createPrivateGroup : this.createGroup;
 
-        group,
-      });
+      return createFunc({ data: { title } });
     },
 
     async submit() {
@@ -171,21 +188,18 @@ export default {
         return;
       }
 
-      const data = await this.formToRequest();
+      const group = isString(this.form.group)
+        ? await this.prepareGroup(this.form.group)
+        : this.form.group;
 
       if (this.config.action) {
-        await this.config.action(data);
-      }
+        await this.config.action(viewToRequest({
+          ...this.view,
+          ...this.form,
 
-      if (this.duplicate) {
-        await this.copyViewWithPopup({ id: this.view._id, data });
-      } else if (this.view?._id) {
-        await this.updateViewWithPopup({ id: this.view._id, data });
-      } else {
-        await this.createViewWithPopup({ data });
+          group,
+        }));
       }
-
-      await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
       this.$modals.hide();
     },

@@ -2,6 +2,7 @@ import { isUndefined, omit, pick, cloneDeep } from 'lodash';
 
 import {
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
+  REMEDIATION_INSTRUCTION_STATUSES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
   WORKFLOW_TYPES,
@@ -9,6 +10,7 @@ import {
 
 import { uuid } from '@/helpers/uuid';
 import { durationToForm } from '@/helpers/date/duration';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {
@@ -55,14 +57,22 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} RemediationInstructionApprovalRequestedBy
+ * @property {string} _id
+ * @property {string} name
+ * @property {string} display_name
+ */
+
+/**
  * @typedef {RemediationInstructionApprovalUser | RemediationInstructionApprovalRole} RemediationInstructionApproval
  * @property {string} comment
- * @property {string} requested_by
+ * @property {RemediationInstructionApprovalRequestedBy} requested_by
+ * @property {string} [dismissed_comment]
+ * @property {RemediationInstructionApprovalRequestedBy} [dismissed_by]
  */
 
 /**
  * @typedef {RemediationInstructionApproval} RemediationInstructionApprovalForm
- * @property {boolean} need_approve
  * @property {number} type
  */
 
@@ -92,6 +102,7 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {RemediationInstructionManual | RemediationInstructionAuto} RemediationInstruction
  * @property {number} type
+ * @property {number} status
  * @property {string} name
  * @property {boolean} enabled
  * @property {string} description
@@ -116,6 +127,36 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} [role]
  * @property {string} comment
  */
+
+/**
+ * Check instruction status is requested approve
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isApproveRequested = instruction => [
+  REMEDIATION_INSTRUCTION_STATUSES.createdAndApproveRequested,
+  REMEDIATION_INSTRUCTION_STATUSES.updatedAndApproveRequested,
+].includes(instruction.status);
+
+/**
+ * Check instruction status is approved
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionApproved = instruction => instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
+
+/**
+ * Check instruction status is dismissed
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionDismissed = instruction => [
+  REMEDIATION_INSTRUCTION_STATUSES.createdAndDismissed,
+  REMEDIATION_INSTRUCTION_STATUSES.updatedAndDismissed,
+].includes(instruction.status);
 
 /**
  * Check instruction type is auto
@@ -193,13 +234,12 @@ const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(rem
  * @return {RemediationInstructionApprovalForm}
  */
 const remediationInstructionApprovalToForm = (approval = {}) => ({
-  need_approve: !!approval.comment,
-  type: approval.user && approval.user._id
+  type: approval?.user?._id
     ? REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user
     : REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
-  user: approval.user,
-  role: approval.role,
-  comment: approval.comment || '',
+  user: approval?.user,
+  role: approval?.role,
+  comment: approval?.comment ?? '',
 });
 
 /**
@@ -301,7 +341,7 @@ const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
  * @returns {RemediationInstructionApprovalRequest | undefined}
  */
 const formApprovalToRemediationInstructionApproval = (approval) => {
-  if (!approval.need_approve) {
+  if (!approval.comment) {
     return undefined;
   }
 
@@ -353,7 +393,7 @@ export const formToRemediationInstruction = (form) => {
  * @param {RemediationInstructionForm} form
  * @return {FlattenErrors}
  */
-export const remediationInstructionErrorsToForm = (errors, form) => form(errors, (errorsObject) => {
+export const remediationInstructionErrorsToForm = (errors, form) => flattenErrorMap(errors, (errorsObject) => {
   const { jobs, ...errorMessages } = errorsObject;
 
   if (jobs) {

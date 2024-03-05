@@ -26,8 +26,6 @@ describe('columns', () => {
       },
     });
 
-    const columnsField = selectColumnsField(wrapper);
-
     const columns = [{
       ...widgetColumnToForm(),
 
@@ -36,14 +34,9 @@ describe('columns', () => {
       isHtml: false,
     }];
 
-    columnsField.vm.$emit('input', columns);
+    selectColumnsField(wrapper).triggerCustomEvent('input', columns);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(columns);
+    expect(wrapper).toEmitInput(columns);
   });
 
   it('Renders `columns` with default and required props', () => {
@@ -54,7 +47,7 @@ describe('columns', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `columns` with custom props', () => {
@@ -68,6 +61,6 @@ describe('columns', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,17 +1,23 @@
-<template lang="pug">
-  div(@contextmenu.prevent="handleClickContextMenu")
-    slot
-    v-menu(
-      v-model="shown",
-      :position-x="position.x",
-      :position-y="position.y",
-      :close-on-content-click="false",
-      ignore-click-upper-outside,
-      offset-overflow,
-      offset-x,
+<template>
+  <div @contextmenu.prevent="handleClickContextMenu">
+    <slot />
+    <v-menu
+      v-model="shown"
+      :position-x="position.x"
+      :position-y="position.y"
+      :close-on-content-click="false"
+      ignore-click-upper-outside
+      offset-overflow
+      offset-x
       absolute
-    )
-      slot(name="menu", :position="position", :data="data")
+    >
+      <slot
+        :position="position"
+        :data="data"
+        name="menu"
+      />
+    </v-menu>
+  </div>
 </template>
 
 <script>

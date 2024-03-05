@@ -11,9 +11,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -34,69 +36,80 @@ func NewCheckProcessor(
 	alarmStatusService alarmstatus.Service,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
-	stateCountersService statecounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
 	remediationRpcClient engine.RPCClient,
 	externalTagUpdater alarmtag.ExternalUpdater,
 	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	componentCountersCalculator calculator.ComponentCountersCalculator,
+	eventsSender entitycounters.EventsSender,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &checkProcessor{
-		client:                  client,
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:        client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:     client.Collection(mongo.PbehaviorMongoCollection),
-		alarmConfigProvider:     alarmConfigProvider,
-		alarmStatusService:      alarmStatusService,
-		pbhTypeResolver:         pbhTypeResolver,
-		autoInstructionMatcher:  autoInstructionMatcher,
-		stateCountersService:    stateCountersService,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		metricsSender:           metricsSender,
-		eventStatisticsSender:   eventStatisticsSender,
-		remediationRpcClient:    remediationRpcClient,
-		externalTagUpdater:      externalTagUpdater,
-		internalTagAlarmMatcher: internalTagAlarmMatcher,
-		encoder:                 encoder,
-		logger:                  logger,
+		client:                          client,
+		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:                client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
+		alarmConfigProvider:             alarmConfigProvider,
+		alarmStatusService:              alarmStatusService,
+		pbhTypeResolver:                 pbhTypeResolver,
+		autoInstructionMatcher:          autoInstructionMatcher,
+		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metricsSender:                   metricsSender,
+		eventStatisticsSender:           eventStatisticsSender,
+		remediationRpcClient:            remediationRpcClient,
+		externalTagUpdater:              externalTagUpdater,
+		internalTagAlarmMatcher:         internalTagAlarmMatcher,
+		entityServiceCountersCalculator: entityServiceCountersCalculator,
+		componentCountersCalculator:     componentCountersCalculator,
+		eventsSender:                    eventsSender,
+		encoder:                         encoder,
+		logger:                          logger,
 	}
 }
 
 type checkProcessor struct {
-	client                  mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	entityCollection        mongo.DbCollection
-	pbehaviorCollection     mongo.DbCollection
-	alarmConfigProvider     config.AlarmConfigProvider
-	alarmStatusService      alarmstatus.Service
-	pbhTypeResolver         pbehavior.EntityTypeResolver
-	autoInstructionMatcher  AutoInstructionMatcher
-	stateCountersService    statecounters.StateCountersService
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	metricsSender           metrics.Sender
-	eventStatisticsSender   statistics.EventStatisticsSender
-	remediationRpcClient    engine.RPCClient
-	externalTagUpdater      alarmtag.ExternalUpdater
-	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
-	encoder                 encoding.Encoder
-	logger                  zerolog.Logger
+	client                          mongo.DbClient
+	alarmCollection                 mongo.DbCollection
+	entityCollection                mongo.DbCollection
+	pbehaviorCollection             mongo.DbCollection
+	alarmConfigProvider             config.AlarmConfigProvider
+	alarmStatusService              alarmstatus.Service
+	pbhTypeResolver                 pbehavior.EntityTypeResolver
+	autoInstructionMatcher          AutoInstructionMatcher
+	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metricsSender                   metrics.Sender
+	eventStatisticsSender           statistics.EventStatisticsSender
+	remediationRpcClient            engine.RPCClient
+	externalTagUpdater              alarmtag.ExternalUpdater
+	internalTagAlarmMatcher         alarmtag.InternalTagAlarmMatcher
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
+	componentCountersCalculator     calculator.ComponentCountersCalculator
+	eventsSender                    entitycounters.EventsSender
+	encoder                         encoding.Encoder
+	logger                          zerolog.Logger
 }
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil || !event.Entity.Enabled || event.Parameters.State == nil {
+	if event.Entity == nil || !event.Entity.Enabled || event.Parameters.State == nil || event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
 		return result, nil
 	}
 
 	entity := *event.Entity
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+
+	var componentStateChanged bool
+	var newComponentState int
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
+		componentStateChanged = false
+		newComponentState = 0
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, bson.M{
@@ -118,14 +131,20 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if !event.Healthcheck {
-			if result.Alarm.ID == "" {
-				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
-			} else {
-				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+			updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+				ctx,
+				p.entityServiceCountersCalculator,
+				p.componentCountersCalculator,
+				&result.Alarm,
+				&entity,
+				result.AlarmChange,
+			)
+			if err != nil {
+				return err
 			}
 		}
 
-		return err
+		return nil
 	})
 
 	if err != nil {
@@ -138,7 +157,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	if !event.Healthcheck {
-		go p.postProcess(context.Background(), event, result, updatedServiceStates)
+		go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
 	}
 
 	return result, nil
@@ -146,10 +165,20 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, event rpc.AxeEvent) (Result, error) {
 	params := event.Parameters
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	result := Result{
 		Forward: true,
 	}
+
+	if event.Parameters.StateSettingUpdated {
+		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
+		if err != nil {
+			return Result{}, err
+		}
+
+		*params.State = types.CpsNumber(componentState)
+	}
+
 	if *params.State == types.AlarmStateOK {
 		return result, nil
 	}
@@ -208,7 +237,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		if pbehaviorInfo.IsActive() {
 			alarm.NotAckedSince = &alarm.Time
 		} else {
-			alarm.Value.InactiveStart = &params.Timestamp
+			alarm.Value.InactiveStart = &now
 		}
 
 		pbhOutput := fmt.Sprintf(
@@ -239,7 +268,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
-	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.InternalTagsUpdated = datetime.NewMicroTime()
 	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
 	alarm.Healthcheck = event.Healthcheck
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
@@ -274,7 +303,20 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	result := Result{
 		Forward: true,
 	}
-	newState := *params.State
+
+	var newState types.CpsNumber
+
+	if params.StateSettingUpdated {
+		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
+		if err != nil {
+			return Result{}, err
+		}
+
+		newState = types.CpsNumber(componentState)
+	} else {
+		newState = *params.State
+	}
+
 	alarmChange := p.newAlarmChange(alarm)
 	previousState := alarm.Value.State.Value
 	previousStatus := alarm.Value.Status.Value
@@ -288,6 +330,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	inc := bson.M{
 		"v.events_count": 1,
 	}
+	unset := bson.M{}
 	author := ""
 	if entity.Type != types.EntityTypeService {
 		author = strings.Replace(entity.Connector, "/", ".", 1)
@@ -305,7 +348,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	var stateStep types.AlarmStep
-	if newState != previousState && (alarm.Value.State.Type != types.AlarmStepChangeState || newState == types.AlarmStateOK) {
+	if newState != previousState && (!alarm.IsStateLocked() || newState == types.AlarmStateOK) {
 		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
 			params.Output, params.User, params.Role, params.Initiator)
 		stateStep.Value = newState
@@ -323,6 +366,11 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		set["v.state"] = stateStep
 		set["v.last_update_date"] = params.Timestamp
 		inc["v.total_state_changes"] = 1
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
@@ -362,6 +410,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		"$push":     push,
 		"$inc":      inc,
 		"$addToSet": addToSet,
+		"$unset":    unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -413,7 +462,7 @@ func (p *checkProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange {
 func (p *checkProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
-	timestamp types.CpsTime,
+	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
 	tags := types.TransformEventTags(params.Tags)
@@ -483,7 +532,9 @@ func (p *checkProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
+	componentStateChanged bool,
+	newComponentState int,
 ) {
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
@@ -499,9 +550,16 @@ func (p *checkProcessor) postProcess(
 	p.externalTagUpdater.Add(event.Parameters.Tags)
 
 	for servID, servInfo := range updatedServiceStates {
-		err := p.stateCountersService.UpdateServiceState(ctx, servID, servInfo)
+		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update service state")
+		}
+	}
+
+	if componentStateChanged {
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		if err != nil {
+			p.logger.Err(err).Msg("failed to update component state")
 		}
 	}
 
@@ -541,7 +599,7 @@ func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeE
 	p.eventStatisticsSender.Send(ctx, event.Entity.ID, stats)
 }
 
-func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now types.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
+func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now datetime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
 	result, err := pbhTypeResolver.Resolve(ctx, entity, now.Time)
 	if err != nil {
 		return types.PbehaviorInfo{}, err
@@ -587,7 +645,7 @@ func sendRemediationEvent(
 		entity = &result.Entity
 	}
 
-	body, err := encoder.Encode(types.RPCRemediationEvent{
+	body, err := encoder.Encode(rpc.RemediationEvent{
 		Alarm:       &result.Alarm,
 		Entity:      entity,
 		AlarmChange: result.AlarmChange,
@@ -617,7 +675,7 @@ func updatePbhLastAlarmDate(ctx context.Context, result Result, pbehaviorCollect
 	}
 
 	pbhId := ""
-	var lastAlarmDate *types.CpsTime
+	var lastAlarmDate *datetime.CpsTime
 	if result.Alarm.ID == "" {
 		pbhId = result.Entity.PbehaviorInfo.ID
 		lastAlarmDate = result.Entity.PbehaviorInfo.Timestamp
