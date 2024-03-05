@@ -84,4 +84,6 @@ const (
 	ApiConnector = "api"
 
 	DefaultEventWorkers = 10
+
+	DefaultSystemAlarmConnector = "system"
 )
