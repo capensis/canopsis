@@ -55,7 +55,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		).
 		Times(1)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
+	_, err := service.Process(ctx, alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -76,36 +76,38 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 		logger,
 	)
 	alarm := types.Alarm{
-		Value: types.AlarmValue{
-			Component:     "testcomp",
-			Connector:     "testconn",
-			ConnectorName: "testconnname",
-			Resource:      "testres",
-		},
+		Value: types.AlarmValue{},
+	}
+	event := types.Event{
+		Component:     "testcomp",
+		Connector:     "testconn",
+		ConnectorName: "testconnname",
+		Resource:      "testres",
+		SourceType:    types.SourceTypeResource,
 	}
 
 	eventBody := make([]byte, 1)
 	encoderMock.
 		EXPECT().
 		Encode(gomock.Any()).
-		Do(func(event types.Event) {
-			if event.EventType != types.EventTypeActivate {
-				t.Errorf("expected event type: %v but go %v", types.EventTypeActivate, event.EventType)
+		Do(func(resEvent types.Event) {
+			if resEvent.EventType != types.EventTypeActivate {
+				t.Errorf("expected event type: %v but go %v", types.EventTypeActivate, resEvent.EventType)
 			}
-			if event.SourceType != types.SourceTypeResource {
-				t.Errorf("expected event source type: %v but go %v", types.SourceTypeResource, event.SourceType)
+			if resEvent.SourceType != types.SourceTypeResource {
+				t.Errorf("expected event source type: %v but go %v", types.SourceTypeResource, resEvent.SourceType)
 			}
-			if event.Connector != alarm.Value.Connector {
-				t.Errorf("expected event connector: %v but go %v", alarm.Value.Connector, event.Connector)
+			if resEvent.Connector != event.Connector {
+				t.Errorf("expected event connector: %v but go %v", event.Connector, resEvent.Connector)
 			}
-			if event.ConnectorName != alarm.Value.ConnectorName {
-				t.Errorf("expected event connector name: %v but go %v", alarm.Value.ConnectorName, event.ConnectorName)
+			if resEvent.ConnectorName != event.ConnectorName {
+				t.Errorf("expected event connector name: %v but go %v", event.ConnectorName, resEvent.ConnectorName)
 			}
-			if event.Component != alarm.Value.Component {
-				t.Errorf("expected event component: %v but go %v", alarm.Value.Component, event.Component)
+			if resEvent.Component != event.Component {
+				t.Errorf("expected event component: %v but go %v", event.Component, resEvent.Component)
 			}
-			if event.Resource != alarm.Value.Resource {
-				t.Errorf("expected event resource: %v but go %v", alarm.Value.Resource, event.Resource)
+			if resEvent.Resource != event.Resource {
+				t.Errorf("expected event resource: %v but go %v", event.Resource, resEvent.Resource)
 			}
 		}).
 		Return(eventBody, nil)
@@ -121,7 +123,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 			gomock.Any(),
 		)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
+	_, err := service.Process(ctx, alarm, event)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -165,7 +167,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
+	_, err := service.Process(ctx, alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -208,7 +210,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
+	_, err := service.Process(ctx, alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -252,7 +254,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
+	_, err := service.Process(ctx, alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
