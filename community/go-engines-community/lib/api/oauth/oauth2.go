@@ -202,7 +202,7 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 	}
 
 	if c.Query("state") != state {
-		p.logger.Err(errors.New("state did not match")).Str("provider", p.name).Str("session_state", state).Str("query_state", c.Query("state"))
+		p.logger.Err(errors.New("state did not match")).Str("provider", p.name).Str("session_state", state).Str("query_state", c.Query("state")).Msg("oauth2 callback error")
 		errorRedirect(c, redirectUrl, "state did not match")
 
 		return
@@ -235,7 +235,7 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 
 	code, ok := c.GetQuery("code")
 	if !ok {
-		p.logger.Err(errors.New("code is empty")).Str("provider", p.name)
+		p.logger.Err(errors.New("code is empty")).Str("provider", p.name).Msg("oauth2 callback error")
 		errorRedirect(c, redirectUrl, "code is empty")
 
 		return
@@ -267,7 +267,7 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 
 		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 		if !ok {
-			p.logger.Err(errors.New("id_token is not a string")).Str("provider", p.name).Interface("id_token", oauth2Token.Extra("id_token"))
+			p.logger.Err(errors.New("id_token is not a string")).Str("provider", p.name).Interface("id_token", oauth2Token.Extra("id_token")).Msg("oauth2 callback error")
 			errorRedirect(c, redirectUrl, "id_token is not a string")
 
 			return
@@ -275,14 +275,14 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 
 		idToken, err := p.oidcVerifier.Verify(c, rawIDToken)
 		if err != nil {
-			p.logger.Err(fmt.Errorf("id_token is not valid: %w", err)).Str("provider", p.name).Str("id_token", rawIDToken)
+			p.logger.Err(fmt.Errorf("id_token is not valid: %w", err)).Str("provider", p.name).Str("id_token", rawIDToken).Msg("oauth2 callback error")
 			errorRedirect(c, redirectUrl, "id_token is not valid")
 
 			return
 		}
 
 		if idToken.Nonce != nonce {
-			p.logger.Err(errors.New("nonce did not match")).Str("provider", p.name).Str("session_nonce", nonce).Str("token_nonce", idToken.Nonce)
+			p.logger.Err(errors.New("nonce did not match")).Str("provider", p.name).Str("session_nonce", nonce).Str("token_nonce", idToken.Nonce).Msg("oauth2 callback error")
 			errorRedirect(c, redirectUrl, "nonce did not match")
 
 			return
@@ -295,7 +295,7 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 	}
 
 	if userID == "" {
-		p.logger.Err(errors.New("userID cannot be empty")).Str("provider", p.name)
+		p.logger.Err(errors.New("userID cannot be empty")).Str("provider", p.name).Msg("oauth2 callback error")
 		errorRedirect(c, redirectUrl, "userID cannot be empty")
 
 		return
@@ -382,7 +382,7 @@ func (p *oauth2Provider) createUser(c *gin.Context, subj string, userInfo map[st
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		return nil, fmt.Errorf("cannot save user: %v", err)
+		return nil, fmt.Errorf("cannot save user: %w", err)
 	}
 
 	return user, nil
@@ -401,7 +401,7 @@ func (p *oauth2Provider) getAssocAttribute(userInfo map[string]any, name, defaul
 }
 
 func (p *oauth2Provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (string, map[string]any, error) {
-	resp, err := p.oauth2Config.Client(c, token).Get(p.config.UserURL)
+	resp, err := p.oauth2Config.Client(c, token).Get(p.config.UserURL) //nolint:noctx
 	if err != nil {
 		return "", nil, errors.New("failed to get user request")
 	}
