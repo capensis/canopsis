@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -104,7 +103,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 			return fmt.Errorf("meta alarm rule id=%q not found", event.Parameters.MetaAlarmRuleID)
 		}
 
-		metaAlarm = p.newAlarm(event.Parameters, *event.Entity, p.alarmConfigProvider.Get())
+		metaAlarm = p.newMetaAlarm(event.Parameters, *event.Entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 		metaAlarm.Value.LastEventDate = datetime.CpsTime{} // should be empty
@@ -954,7 +953,7 @@ func (p *metaAlarmEventProcessor) executeOutputTpl(data correlation.EventExtraIn
 	return res, nil
 }
 
-func (p *metaAlarmEventProcessor) newAlarm(
+func (p *metaAlarmEventProcessor) newMetaAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
 	alarmConfig config.AlarmConfig,
@@ -965,6 +964,10 @@ func (p *metaAlarmEventProcessor) newAlarm(
 		ID:       utils.NewID(),
 		Time:     now,
 		Value: types.AlarmValue{
+			Connector:         canopsis.DefaultSystemAlarmConnector,
+			ConnectorName:     canopsis.DefaultSystemAlarmConnector,
+			Component:         entity.Component,
+			Resource:          entity.Name,
 			CreationDate:      now,
 			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
 			InitialOutput:     params.Output,
@@ -980,18 +983,6 @@ func (p *metaAlarmEventProcessor) newAlarm(
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},
-	}
-
-	switch entity.Type {
-	case types.EntityTypeResource:
-		alarm.Value.Resource = entity.Name
-		alarm.Value.Component = entity.Component
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
-	case types.EntityTypeComponent, types.EntityTypeService:
-		alarm.Value.Component = entity.Name
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
-	case types.EntityTypeConnector:
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
 	}
 
 	return alarm

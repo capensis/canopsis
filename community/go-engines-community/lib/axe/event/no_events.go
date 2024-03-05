@@ -164,7 +164,11 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, now, alarmConfig)
+	alarm, err := p.newAlarm(params, entity, now, alarmConfig)
+	if err != nil {
+		return result, err
+	}
+
 	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
 		params.Output, params.User, params.Role, params.Initiator, false)
 	stateStep.Value = *params.State
@@ -375,7 +379,7 @@ func (p *noEventsProcessor) newAlarm(
 	entity types.Entity,
 	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
-) types.Alarm {
+) (types.Alarm, error) {
 	alarm := types.Alarm{
 		EntityID: entity.ID,
 		ID:       utils.NewID(),
@@ -398,19 +402,36 @@ func (p *noEventsProcessor) newAlarm(
 		},
 	}
 
+	if params.Initiator != types.InitiatorSystem {
+		return types.Alarm{}, fmt.Errorf("unknown initiator %q", params.Initiator)
+	}
+
+	connector := ""
+	connectorName := ""
+	if entity.Connector == "" {
+		connector = canopsis.DefaultSystemAlarmConnector
+		connectorName = canopsis.DefaultSystemAlarmConnector
+	} else {
+		connector, connectorName, _ = strings.Cut(entity.Connector, "/")
+	}
+
 	switch entity.Type {
 	case types.EntityTypeResource:
 		alarm.Value.Resource = entity.Name
 		alarm.Value.Component = entity.Component
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeComponent, types.EntityTypeService:
 		alarm.Value.Component = entity.Name
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeConnector:
 		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
+	default:
+		return types.Alarm{}, fmt.Errorf("unknown entity type %q", entity.Type)
 	}
 
-	return alarm
+	return alarm, nil
 }
 
 func (p *noEventsProcessor) postProcess(
