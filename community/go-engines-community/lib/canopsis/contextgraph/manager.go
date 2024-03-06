@@ -521,7 +521,7 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	connectorName := event.ConnectorName
 	connectorID := event.Connector + "/" + connectorName
 
-	if !event.IsContextable() || event.IsOnlyServiceUpdate() {
+	if !event.IsContextable() || event.IsOnlyServiceUpdate() || event.Initiator == types.InitiatorSystem {
 		component, err = m.getEntity(ctx, componentID)
 		if err != nil {
 			return report, err

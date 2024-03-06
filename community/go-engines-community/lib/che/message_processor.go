@@ -148,11 +148,12 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 			updateCountersEvent = types.Event{
 				EventType:     types.EventTypeUpdateCounters,
 				SourceType:    types.SourceTypeComponent,
-				Connector:     event.Connector,
-				ConnectorName: event.ConnectorName,
+				Connector:     canopsis.CheConnector,
+				ConnectorName: canopsis.CheConnector,
 				Component:     ent.Component,
 				Timestamp:     now,
 				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
 				Initiator:     types.InitiatorSystem,
 			}
 		case types.EntityTypeConnector:
@@ -163,6 +164,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 				ConnectorName: event.ConnectorName,
 				Timestamp:     now,
 				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
 				Initiator:     types.InitiatorSystem,
 			}
 		}

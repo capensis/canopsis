@@ -231,9 +231,9 @@ func TestGetEvent(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			manager := pbehavior.NewEventManager()
+			manager := pbehavior.NewEventManager("")
 
-			event := manager.GetEvent(dataset.resolveResult, dataset.alarm, time.Now())
+			event := manager.GetEvent(dataset.resolveResult, dataset.alarm, types.Entity{}, time.Now())
 
 			if event.EventType != dataset.expectedEventType {
 				t.Errorf("expected %s event type, got %s", dataset.expectedEventType, event.EventType)

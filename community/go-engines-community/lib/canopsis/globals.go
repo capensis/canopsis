@@ -13,6 +13,7 @@ const (
 	ActionAxeRPCClientQueueName = "Engine_action_axe_rpc_client"
 	ActionConsumerName          = "action"
 	ActionRPCConsumerName       = "action_rpc"
+	ActionConnector             = "action"
 
 	AxeEngineName                     = "engine-axe"
 	AxeQueueName                      = "Engine_axe"
@@ -21,11 +22,13 @@ const (
 	AxeRPCQueueServerName             = "Engine_axe_rpc_server"
 	AxeConsumerName                   = "axe"
 	AxeRPCConsumerName                = "axe_rpc"
+	AxeConnector                      = "axe"
 
 	CheExchangeName = ""
 	CheEngineName   = "engine-che"
 	CheQueueName    = "Engine_che"
 	CheConsumerName = "che"
+	CheConnector    = "che"
 
 	DefaultBulkSize      = 1000
 	DefaultBulkBytesSize = 16000000 // < MongoDB limit (16 megabytes)
@@ -42,6 +45,7 @@ const (
 	PBehaviorQueueRecomputeName = "Engine_pbehavior_recompute"
 	PBehaviorRPCConsumerName    = "pbehavior_rpc"
 	PBehaviorConsumerName       = "pbehavior"
+	PBehaviorConnector          = "pbehavior"
 
 	WebhookEngineName         = "engine-webhook"
 	WebhookRPCQueueServerName = "Engine_webhook_rpc_server"
@@ -58,6 +62,7 @@ const (
 	CorrelationEngineName   = "engine-correlation"
 	CorrelationQueueName    = "Engine_correlation"
 	CorrelationConsumerName = "correlation"
+	CorrelationConnector    = "correlation"
 
 	PeriodicalWaitTime     = time.Minute
 	JsonContentType        = "application/json"
@@ -68,16 +73,15 @@ const (
 	RemediationRPCConsumerName       = "remediation_rpc"
 	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
+	RemediationConnector             = "remediation"
 
 	TechMetricsFlushInterval = time.Second * 10
 
 	DefaultFlushInterval = time.Second * 5
 
-	EngineConnector = "engine"
-
 	FacetLimit = 1000
 
-	ApiName = "api"
+	ApiConnector = "api"
 
 	DefaultEventWorkers = 10
 )
