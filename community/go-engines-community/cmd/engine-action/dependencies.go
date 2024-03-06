@@ -60,7 +60,8 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger),
+		logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)

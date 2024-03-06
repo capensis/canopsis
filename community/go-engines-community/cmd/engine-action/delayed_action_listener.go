@@ -6,6 +6,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -54,18 +55,20 @@ func (l *delayedScenarioListener) publishRunDelayedScenarioEvent(
 	}
 	event := types.Event{
 		EventType:     types.EventTypeRunDelayedScenario,
-		Connector:     task.Alarm.Value.Connector,
-		ConnectorName: task.Alarm.Value.ConnectorName,
+		Connector:     canopsis.ActionConnector,
+		ConnectorName: canopsis.ActionConnector,
 		Component:     task.Alarm.Value.Component,
 		Resource:      task.Alarm.Value.Resource,
+		SourceType:    task.Entity.Type,
 		Timestamp:     datetime.NewCpsTime(),
 		Output:        "run delayed scenario",
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 
 		DelayedScenarioID:   task.Scenario.ID,
 		DelayedScenarioData: string(b),
 	}
-	event.SourceType = event.DetectSourceType()
+
 	body, err := l.Encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("cannot encode event: %w", err)

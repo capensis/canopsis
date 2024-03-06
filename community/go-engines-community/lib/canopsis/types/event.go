@@ -110,12 +110,6 @@ const (
 	EventTypeAutoInstructionActivate = "autoinstructionactivate"
 )
 
-const (
-	ConnectorEngineService = "service"
-	ConnectorJunit         = "junit"
-	ConnectorApi           = "api"
-)
-
 const MaxEventTimestampVariation = 24 * time.Hour
 
 // Event represents a canopsis event.
@@ -335,18 +329,6 @@ func (e *Event) IsValid() error {
 	}
 
 	return nil
-}
-
-func (e *Event) DetectSourceType() string {
-	if e.Resource != "" {
-		return SourceTypeResource
-	}
-
-	if e.Component != "" {
-		return SourceTypeComponent
-	}
-
-	return SourceTypeConnector
 }
 
 // GenericEvent contains an interface so you can do this:

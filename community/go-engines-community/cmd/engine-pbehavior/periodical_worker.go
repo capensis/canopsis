@@ -31,6 +31,7 @@ type periodicalWorker struct {
 	EntityAdapter          libentity.Adapter
 	EventManager           pbehavior.EventManager
 	FrameDuration          time.Duration
+	EventGenerator         libevent.Generator
 	TimezoneConfigProvider config.TimezoneConfigProvider
 	Encoder                encoding.Encoder
 	Logger                 zerolog.Logger
@@ -134,7 +135,7 @@ func (w *periodicalWorker) processAlarms(
 			return processedEntityIds, eventsCount
 		}
 
-		event := w.EventManager.GetEvent(resolveResult, alarm, now)
+		event := w.EventManager.GetEvent(resolveResult, alarm, entity, now)
 		if event.EventType != "" {
 			eventsCount++
 			ech <- PublishEventMsg{
@@ -164,8 +165,6 @@ func (w *periodicalWorker) processEntities(
 	}
 
 	defer cursor.Close(ctx)
-
-	eventGenerator := libevent.NewGenerator("engine", "pbehavior")
 
 	ech := make(chan PublishEventMsg, 1)
 	defer close(ech)
@@ -197,27 +196,10 @@ func (w *periodicalWorker) processEntities(
 			continue
 		}
 
-		event := types.Event{
-			Initiator: types.InitiatorSystem,
-		}
-		lastAlarm, err := w.AlarmAdapter.GetLastAlarmByEntityID(ctx, entity.ID)
+		event, err := w.EventGenerator.Generate(entity)
 		if err != nil {
-			w.Logger.Err(err).Msg("cannot fetch last alarm")
+			w.Logger.Err(err).Msg("cannot generate event")
 			return eventsCount
-		}
-
-		if lastAlarm == nil {
-			event, err = eventGenerator.Generate(entity)
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot generate event")
-				return eventsCount
-			}
-		} else {
-			event.Connector = lastAlarm.Value.Connector
-			event.ConnectorName = lastAlarm.Value.ConnectorName
-			event.Component = lastAlarm.Value.Component
-			event.Resource = lastAlarm.Value.Resource
-			event.SourceType = event.DetectSourceType()
 		}
 
 		event.EventType = eventType
