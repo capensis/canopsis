@@ -60,7 +60,6 @@ func (p *uncancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			return err
 		}
 
-		uncancelStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepUncancel, event.Parameters.Output, event.Parameters)
 		alarm.Value.Canceled = nil
 		newStatus := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
 		alarmStepType := types.AlarmStepStatusIncrease
@@ -77,7 +76,7 @@ func (p *uncancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 				"v.status":                            newStepStatusQuery,
 				"v.state_changes_since_status_update": 0,
 				"v.last_update_date":                  event.Parameters.Timestamp,
-				"v.steps":                             addStepUpdateQuery(uncancelStepQuery, newStepStatusQuery),
+				"v.steps":                             addStepUpdateQuery(newStepStatusQuery),
 			}},
 		}
 		opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

@@ -565,8 +565,6 @@ definitions:
         type: string
       m:
         type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
       steps:
         items:
           $ref: '#/definitions/common.AlarmStep'
@@ -1195,8 +1193,6 @@ definitions:
         type: string
       m:
         type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
       t:
         type: integer
       ticket:
@@ -5253,23 +5249,6 @@ definitions:
     required:
     - lat
     - lng
-    type: object
-  types.CropCounter:
-    properties:
-      state:0:
-        type: integer
-      state:1:
-        type: integer
-      state:2:
-        type: integer
-      state:3:
-        type: integer
-      statechanges:
-        type: integer
-      statedec:
-        type: integer
-      stateinc:
-        type: integer
     type: object
   types.Exdate:
     properties:

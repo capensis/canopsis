@@ -1225,6 +1225,7 @@ func resolveMetaAlarm(metaAlarm *types.Alarm, timestamp datetime.CpsTime) bson.M
 		metaAlarm.Value.SnoozeDuration += snoozeDuration
 		incUpdate["v.snooze_duration"] = snoozeDuration
 	}
+
 	if !metaAlarm.Value.PbehaviorInfo.IsActive() {
 		enterTimestamp := datetime.CpsTime{}
 		for i := len(metaAlarm.Value.Steps) - 2; i >= 0; i-- {
@@ -1248,6 +1249,8 @@ func resolveMetaAlarm(metaAlarm *types.Alarm, timestamp datetime.CpsTime) bson.M
 	}
 
 	metaAlarm.Value.ActiveDuration = metaAlarm.Value.Duration - metaAlarm.Value.InactiveDuration
+	newStep := types.NewAlarmStep(types.AlarmStepResolve, timestamp, canopsis.DefaultEventAuthor, "", "", "",
+		types.InitiatorSystem, false)
 	update := bson.M{
 		"$set": bson.M{
 			"v.resolved":               metaAlarm.Value.Resolved,
@@ -1259,6 +1262,9 @@ func resolveMetaAlarm(metaAlarm *types.Alarm, timestamp datetime.CpsTime) bson.M
 			"not_acked_metric_type":      "",
 			"not_acked_metric_send_time": "",
 			"not_acked_since":            "",
+		},
+		"$push": bson.M{
+			"v.steps": newStep,
 		},
 	}
 	if len(incUpdate) > 0 {
