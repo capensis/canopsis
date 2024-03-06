@@ -510,7 +510,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
 			case types.EntityTypeResource:
-				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.ID, ci.Component, now))
+				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.Name, ci.Component, now))
 			case types.EntityTypeComponent:
 				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(eventType, ci.ID, now))
 			}

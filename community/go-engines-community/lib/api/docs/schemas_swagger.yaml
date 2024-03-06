@@ -2781,6 +2781,8 @@ definitions:
     properties:
       _id:
         type: string
+      content:
+        type: string
       created:
         type: integer
       title:
