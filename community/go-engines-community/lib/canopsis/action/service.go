@@ -129,17 +129,18 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 	}
 
 	fifoAckEvent := types.Event{
-		EventType:         event.EventType,
-		Connector:         event.Connector,
-		ConnectorName:     event.ConnectorName,
-		Component:         event.Component,
-		Resource:          event.Resource,
-		SourceType:        event.SourceType,
-		Timestamp:         event.Timestamp,
-		ReceivedTimestamp: event.ReceivedTimestamp,
-		Author:            event.Author,
-		UserID:            event.UserID,
-		Initiator:         event.Initiator,
+		EventType:          event.EventType,
+		Connector:          event.Connector,
+		ConnectorName:      event.ConnectorName,
+		Component:          event.Component,
+		Resource:           event.Resource,
+		SourceType:         event.SourceType,
+		Timestamp:          event.Timestamp,
+		ReceivedTimestamp:  event.ReceivedTimestamp,
+		Author:             event.Author,
+		UserID:             event.UserID,
+		Initiator:          event.Initiator,
+		IsMetaAlarmUpdated: event.IsMetaAlarmUpdated,
 	}
 
 	alarm := *event.Alarm

@@ -2,6 +2,7 @@ package alarm
 
 import (
 	"context"
+	"fmt"
 
 	amqplib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -9,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/rs/zerolog"
 )
 
 // ActivationService checks alarm and sends activation event
@@ -26,20 +26,17 @@ type baseActivationService struct {
 	encoder   encoding.Encoder
 	publisher amqplib.Publisher
 	queueName string
-	logger    zerolog.Logger
 }
 
 func NewActivationService(
 	encoder encoding.Encoder,
 	publisher amqplib.Publisher,
 	queueName string,
-	logger zerolog.Logger,
 ) ActivationService {
 	return &baseActivationService{
 		encoder:   encoder,
 		publisher: publisher,
 		queueName: queueName,
-		logger:    logger,
 	}
 }
 
@@ -66,22 +63,22 @@ func (s *baseActivationService) sendActivationEvent(
 	fifoAckEvent types.Event,
 ) error {
 	event := types.Event{
-		Connector:         fifoAckEvent.Connector,
-		ConnectorName:     fifoAckEvent.ConnectorName,
-		Component:         fifoAckEvent.Component,
-		Resource:          fifoAckEvent.Resource,
-		Timestamp:         datetime.NewCpsTime(),
-		ReceivedTimestamp: fifoAckEvent.ReceivedTimestamp,
-		SourceType:        fifoAckEvent.SourceType,
-		EventType:         types.EventTypeActivate,
-		Author:            canopsis.DefaultEventAuthor,
-		Initiator:         types.InitiatorSystem,
+		Connector:          fifoAckEvent.Connector,
+		ConnectorName:      fifoAckEvent.ConnectorName,
+		Component:          fifoAckEvent.Component,
+		Resource:           fifoAckEvent.Resource,
+		Timestamp:          datetime.NewCpsTime(),
+		ReceivedTimestamp:  fifoAckEvent.ReceivedTimestamp,
+		SourceType:         fifoAckEvent.SourceType,
+		IsMetaAlarmUpdated: fifoAckEvent.IsMetaAlarmUpdated,
+		EventType:          types.EventTypeActivate,
+		Author:             canopsis.DefaultEventAuthor,
+		Initiator:          types.InitiatorSystem,
 	}
 
 	body, err := s.encoder.Encode(event)
 	if err != nil {
-		s.logger.Error().Err(err).Msg("fail encode activation event")
-		return err
+		return fmt.Errorf("fail encode activation event: %w", err)
 	}
 
 	err = s.publisher.PublishWithContext(
@@ -91,15 +88,13 @@ func (s *baseActivationService) sendActivationEvent(
 		false,
 		false,
 		amqp.Publishing{
-			ContentType:  "application/json",
+			ContentType:  canopsis.JsonContentType,
 			Body:         body,
 			DeliveryMode: amqp.Persistent,
 		},
 	)
-
 	if err != nil {
-		s.logger.Error().Err(err).Msg("fail publish activation event to FIFO")
-		return err
+		return fmt.Errorf("fail publish activation event to FIFO: %w", err)
 	}
 
 	return nil

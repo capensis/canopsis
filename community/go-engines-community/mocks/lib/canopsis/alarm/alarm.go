@@ -113,21 +113,6 @@ func (mr *MockAdapterMockRecorder) GetAlarmByAlarmId(arg0, arg1 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmByAlarmId", reflect.TypeOf((*MockAdapter)(nil).GetAlarmByAlarmId), arg0, arg1)
 }
 
-// GetAlarmsByID mocks base method.
-func (m *MockAdapter) GetAlarmsByID(arg0 context.Context, arg1 string) ([]types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAlarmsByID", arg0, arg1)
-	ret0, _ := ret[0].([]types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAlarmsByID indicates an expected call of GetAlarmsByID.
-func (mr *MockAdapterMockRecorder) GetAlarmsByID(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmsByID", reflect.TypeOf((*MockAdapter)(nil).GetAlarmsByID), arg0, arg1)
-}
-
 // GetAlarmsWithCancelMark mocks base method.
 func (m *MockAdapter) GetAlarmsWithCancelMark(arg0 context.Context) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
@@ -188,21 +173,6 @@ func (mr *MockAdapterMockRecorder) GetAlarmsWithoutTicketByComponent(arg0, arg1 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmsWithoutTicketByComponent", reflect.TypeOf((*MockAdapter)(nil).GetAlarmsWithoutTicketByComponent), arg0, arg1)
 }
 
-// GetAllOpenedResourceAlarmsByComponent mocks base method.
-func (m *MockAdapter) GetAllOpenedResourceAlarmsByComponent(arg0 context.Context, arg1 string) ([]types.AlarmWithEntity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllOpenedResourceAlarmsByComponent", arg0, arg1)
-	ret0, _ := ret[0].([]types.AlarmWithEntity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAllOpenedResourceAlarmsByComponent indicates an expected call of GetAllOpenedResourceAlarmsByComponent.
-func (mr *MockAdapterMockRecorder) GetAllOpenedResourceAlarmsByComponent(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllOpenedResourceAlarmsByComponent", reflect.TypeOf((*MockAdapter)(nil).GetAllOpenedResourceAlarmsByComponent), arg0, arg1)
-}
-
 // GetCountOpenedAlarmsByIDs mocks base method.
 func (m *MockAdapter) GetCountOpenedAlarmsByIDs(arg0 context.Context, arg1 []string) (int64, error) {
 	m.ctrl.T.Helper()
@@ -218,21 +188,6 @@ func (mr *MockAdapterMockRecorder) GetCountOpenedAlarmsByIDs(arg0, arg1 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCountOpenedAlarmsByIDs", reflect.TypeOf((*MockAdapter)(nil).GetCountOpenedAlarmsByIDs), arg0, arg1)
 }
 
-// GetLastAlarm mocks base method.
-func (m *MockAdapter) GetLastAlarm(arg0 context.Context, arg1, arg2, arg3 string) (types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetLastAlarm", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetLastAlarm indicates an expected call of GetLastAlarm.
-func (mr *MockAdapterMockRecorder) GetLastAlarm(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastAlarm", reflect.TypeOf((*MockAdapter)(nil).GetLastAlarm), arg0, arg1, arg2, arg3)
-}
-
 // GetLastAlarmByEntityID mocks base method.
 func (m *MockAdapter) GetLastAlarmByEntityID(arg0 context.Context, arg1 string) (*types.Alarm, error) {
 	m.ctrl.T.Helper()
@@ -246,36 +201,6 @@ func (m *MockAdapter) GetLastAlarmByEntityID(arg0 context.Context, arg1 string) 
 func (mr *MockAdapterMockRecorder) GetLastAlarmByEntityID(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastAlarmByEntityID", reflect.TypeOf((*MockAdapter)(nil).GetLastAlarmByEntityID), arg0, arg1)
-}
-
-// GetLastAlarmWithEntity mocks base method.
-func (m *MockAdapter) GetLastAlarmWithEntity(arg0 context.Context, arg1, arg2, arg3 string) (types.AlarmWithEntity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetLastAlarmWithEntity", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(types.AlarmWithEntity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetLastAlarmWithEntity indicates an expected call of GetLastAlarmWithEntity.
-func (mr *MockAdapterMockRecorder) GetLastAlarmWithEntity(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastAlarmWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetLastAlarmWithEntity), arg0, arg1, arg2, arg3)
-}
-
-// GetOpenedAlarm mocks base method.
-func (m *MockAdapter) GetOpenedAlarm(arg0 context.Context, arg1 string) (types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedAlarm", arg0, arg1)
-	ret0, _ := ret[0].(types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOpenedAlarm indicates an expected call of GetOpenedAlarm.
-func (mr *MockAdapterMockRecorder) GetOpenedAlarm(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarm", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarm), arg0, arg1)
 }
 
 // GetOpenedAlarmByAlarmId mocks base method.
@@ -351,35 +276,6 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntity(arg0 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntity), arg0)
 }
 
-// GetOpenedAlarmsWithEntityAfter mocks base method.
-func (m *MockAdapter) GetOpenedAlarmsWithEntityAfter(arg0 context.Context, arg1 datetime.CpsTime) (mongo.Cursor, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedAlarmsWithEntityAfter", arg0, arg1)
-	ret0, _ := ret[0].(mongo.Cursor)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOpenedAlarmsWithEntityAfter indicates an expected call of GetOpenedAlarmsWithEntityAfter.
-func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntityAfter(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntityAfter", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntityAfter), arg0, arg1)
-}
-
-// GetOpenedAlarmsWithEntityByAlarmIDs mocks base method.
-func (m *MockAdapter) GetOpenedAlarmsWithEntityByAlarmIDs(arg0 context.Context, arg1 []string, arg2 *[]types.AlarmWithEntity) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedAlarmsWithEntityByAlarmIDs", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// GetOpenedAlarmsWithEntityByAlarmIDs indicates an expected call of GetOpenedAlarmsWithEntityByAlarmIDs.
-func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntityByAlarmIDs(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntityByAlarmIDs", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntityByAlarmIDs), arg0, arg1, arg2)
-}
-
 // GetOpenedAlarmsWithEntityByIDs mocks base method.
 func (m *MockAdapter) GetOpenedAlarmsWithEntityByIDs(arg0 context.Context, arg1 []string, arg2 *[]types.AlarmWithEntity) error {
 	m.ctrl.T.Helper()
@@ -409,36 +305,6 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithLastDatesBefore(arg0, arg1
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithLastDatesBefore", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithLastDatesBefore), arg0, arg1)
 }
 
-// GetOpenedMetaAlarm mocks base method.
-func (m *MockAdapter) GetOpenedMetaAlarm(arg0 context.Context, arg1, arg2 string) (types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedMetaAlarm", arg0, arg1, arg2)
-	ret0, _ := ret[0].(types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOpenedMetaAlarm indicates an expected call of GetOpenedMetaAlarm.
-func (mr *MockAdapterMockRecorder) GetOpenedMetaAlarm(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedMetaAlarm", reflect.TypeOf((*MockAdapter)(nil).GetOpenedMetaAlarm), arg0, arg1, arg2)
-}
-
-// GetOpenedMetaAlarmWithEntity mocks base method.
-func (m *MockAdapter) GetOpenedMetaAlarmWithEntity(arg0 context.Context, arg1, arg2 string) (types.AlarmWithEntity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedMetaAlarmWithEntity", arg0, arg1, arg2)
-	ret0, _ := ret[0].(types.AlarmWithEntity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOpenedMetaAlarmWithEntity indicates an expected call of GetOpenedMetaAlarmWithEntity.
-func (mr *MockAdapterMockRecorder) GetOpenedMetaAlarmWithEntity(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedMetaAlarmWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedMetaAlarmWithEntity), arg0, arg1, arg2)
-}
-
 // GetWorstAlarmStateAndMaxLastEventDate mocks base method.
 func (m *MockAdapter) GetWorstAlarmStateAndMaxLastEventDate(arg0 context.Context, arg1 []string) (int64, int64, error) {
 	m.ctrl.T.Helper()
@@ -453,76 +319,6 @@ func (m *MockAdapter) GetWorstAlarmStateAndMaxLastEventDate(arg0 context.Context
 func (mr *MockAdapterMockRecorder) GetWorstAlarmStateAndMaxLastEventDate(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorstAlarmStateAndMaxLastEventDate", reflect.TypeOf((*MockAdapter)(nil).GetWorstAlarmStateAndMaxLastEventDate), arg0, arg1)
-}
-
-// Insert mocks base method.
-func (m *MockAdapter) Insert(arg0 context.Context, arg1 types.Alarm) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Insert", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Insert indicates an expected call of Insert.
-func (mr *MockAdapterMockRecorder) Insert(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockAdapter)(nil).Insert), arg0, arg1)
-}
-
-// MassPartialUpdateOpen mocks base method.
-func (m *MockAdapter) MassPartialUpdateOpen(arg0 context.Context, arg1 *types.Alarm, arg2 []string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MassPartialUpdateOpen", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// MassPartialUpdateOpen indicates an expected call of MassPartialUpdateOpen.
-func (mr *MockAdapterMockRecorder) MassPartialUpdateOpen(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MassPartialUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).MassPartialUpdateOpen), arg0, arg1, arg2)
-}
-
-// PartialMassUpdateOpen mocks base method.
-func (m *MockAdapter) PartialMassUpdateOpen(arg0 context.Context, arg1 []types.Alarm) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PartialMassUpdateOpen", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// PartialMassUpdateOpen indicates an expected call of PartialMassUpdateOpen.
-func (mr *MockAdapterMockRecorder) PartialMassUpdateOpen(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PartialMassUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).PartialMassUpdateOpen), arg0, arg1)
-}
-
-// PartialUpdateOpen mocks base method.
-func (m *MockAdapter) PartialUpdateOpen(arg0 context.Context, arg1 *types.Alarm) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PartialUpdateOpen", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// PartialUpdateOpen indicates an expected call of PartialUpdateOpen.
-func (mr *MockAdapterMockRecorder) PartialUpdateOpen(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PartialUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).PartialUpdateOpen), arg0, arg1)
-}
-
-// Update mocks base method.
-func (m *MockAdapter) Update(arg0 context.Context, arg1 types.Alarm) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Update indicates an expected call of Update.
-func (mr *MockAdapterMockRecorder) Update(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockAdapter)(nil).Update), arg0, arg1)
 }
 
 // UpdateLastEventDate mocks base method.

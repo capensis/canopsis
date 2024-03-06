@@ -20,6 +20,9 @@ type AxeEvent struct {
 	AlarmID     string        `json:"alarm_id,omitempty"`
 	Entity      *types.Entity `json:"entity,omitempty"`
 	Healthcheck bool          `json:"healthcheck,omitempty"`
+
+	// Origin will be sent back after RPC is done.
+	Origin *types.Event `json:"origin,omitempty"`
 }
 
 type AxeParameters struct {
@@ -84,6 +87,8 @@ type AxeResultEvent struct {
 	WebhookHeader   map[string]string     `json:"webhook_header,omitempty"`
 	WebhookResponse map[string]any        `json:"webhook_response,omitempty"`
 	Error           *Error                `json:"error"`
+
+	Origin *types.Event `json:"origin,omitempty"`
 }
 
 // WebhookEvent
