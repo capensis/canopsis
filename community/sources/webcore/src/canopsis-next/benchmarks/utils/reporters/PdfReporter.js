@@ -4,6 +4,7 @@ const path = require('path');
 const { jsPDF: JsPDF } = require('jspdf');
 
 const { getMetricsGroupedData } = require('../metrics-files');
+const { logInfo } = require('../logger');
 
 class PdfReporter {
   constructor({ outputPath } = {}) {
@@ -71,9 +72,13 @@ class PdfReporter {
 
         if (!fs.existsSync(this.outputPath)) {
           fs.mkdirSync(this.outputPath);
+          logInfo(`Create folder: ${this.outputPath}`);
         }
 
-        doc.save(path.resolve(this.outputPath, `${name}.pdf`));
+        const filePath = path.resolve(this.outputPath, `${name}.pdf`);
+
+        doc.save(filePath);
+        logInfo(`Save file: ${filePath}`);
       });
     });
   }
