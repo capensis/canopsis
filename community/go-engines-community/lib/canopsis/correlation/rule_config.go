@@ -20,3 +20,20 @@ type RuleConfig struct {
 	// CorelChild is the correlation relation value, which mark alarm as a child.
 	CorelChild string `bson:"corel_child,omitempty" json:"corel_child,omitempty"`
 }
+
+func (c *RuleConfig) GetTimeIntervalInSeconds() int64 {
+	var timeInterval int64
+
+	if c.TimeInterval != nil {
+		v, err := c.TimeInterval.To("s")
+		if err == nil {
+			timeInterval = v.Value
+		}
+	}
+
+	if timeInterval == 0 {
+		timeInterval = DefaultConfigTimeInterval
+	}
+
+	return timeInterval
+}
