@@ -165,7 +165,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -175,16 +177,22 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Name
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
@@ -194,16 +202,22 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -213,16 +227,22 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Sorted descending. Activate to remove sorting."
@@ -232,16 +252,22 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified on
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
@@ -251,16 +277,22 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified by
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified by
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -269,7 +301,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -1301,7 +1335,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -1311,16 +1347,22 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Name
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
@@ -1330,16 +1372,22 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -1349,16 +1397,22 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -1368,16 +1422,22 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified on
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
@@ -1387,16 +1447,22 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified by
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified by
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -1405,7 +1471,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>

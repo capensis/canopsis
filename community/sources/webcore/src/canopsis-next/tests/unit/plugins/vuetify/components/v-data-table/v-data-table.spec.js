@@ -481,7 +481,7 @@ describe('v-data-table', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with data and headers', () => {
+  it('Renders `v-data-table` with items and headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [{ property1: 'Property 1', property2: 'Property 2' }],
@@ -489,6 +489,26 @@ describe('v-data-table', () => {
           { value: 'property1', text: 'Header 1' },
           { value: 'property2', text: 'Header 2', sortable: true },
         ],
+      },
+      scopedSlots: {
+        items(props) {
+          return this.$createElement('tr', `Row${JSON.stringify(props)}`);
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `v-data-table` with items, headers and ellipsis headers', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: [{ property1: 'Property 1', property2: 'Property 2' }],
+        headers: [
+          { value: 'property1', text: 'Header 1' },
+          { value: 'property2', text: 'Header 2', sortable: true },
+        ],
+        ellipsisHeaders: true,
       },
       scopedSlots: {
         items(props) {
