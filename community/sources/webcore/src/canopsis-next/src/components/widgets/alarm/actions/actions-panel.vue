@@ -1,6 +1,7 @@
 <template>
   <shared-actions-panel
     :actions="preparedActions"
+    :medium="medium"
     :small="small"
     :wrap="wrap"
   />
@@ -74,6 +75,10 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
+    },
+    medium: {
+      type: Boolean,
+      default: false,
     },
     small: {
       type: Boolean,

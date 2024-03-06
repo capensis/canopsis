@@ -46,7 +46,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Id
               </span>
             </th>
@@ -57,7 +59,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Name
               </span>
             </th>
@@ -68,7 +72,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Type
               </span>
             </th>
@@ -432,7 +438,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Id
               </span>
             </th>
@@ -443,7 +451,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Name
               </span>
             </th>
@@ -454,7 +464,9 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Type
               </span>
             </th>

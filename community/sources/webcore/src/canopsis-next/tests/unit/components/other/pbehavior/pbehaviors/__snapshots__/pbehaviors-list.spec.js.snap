@@ -200,7 +200,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -210,16 +212,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Name
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -229,16 +237,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Is enabled: Not sorted. Activate to sort ascending."
@@ -248,16 +262,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Is enabled
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Is enabled
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Begins: Not sorted. Activate to sort ascending."
@@ -267,16 +287,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Begins
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Begins
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ends: Not sorted. Activate to sort ascending."
@@ -286,16 +312,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Ends
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ends
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="End of recurrence: Not sorted. Activate to sort ascending."
@@ -305,16 +337,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                End of recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  End of recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Recurrence: Not sorted. Activate to sort ascending."
@@ -324,16 +362,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
@@ -343,16 +387,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Reason: Not sorted. Activate to sort ascending."
@@ -362,16 +412,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Reason
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Reason
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
@@ -381,16 +437,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -400,16 +462,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last alarm date: Not sorted. Activate to sort ascending."
@@ -419,16 +487,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last alarm date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last alarm date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
@@ -438,16 +512,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Icon
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Icon
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status"
@@ -456,7 +536,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Status
               </span>
             </th>
@@ -467,7 +549,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -2464,7 +2548,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -2474,16 +2560,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Name
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -2493,16 +2585,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Is enabled: Not sorted. Activate to sort ascending."
@@ -2512,16 +2610,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Is enabled
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Is enabled
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Begins: Not sorted. Activate to sort ascending."
@@ -2531,16 +2635,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Begins
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Begins
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ends: Not sorted. Activate to sort ascending."
@@ -2550,16 +2660,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Ends
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ends
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="End of recurrence: Not sorted. Activate to sort ascending."
@@ -2569,16 +2685,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                End of recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  End of recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Recurrence: Not sorted. Activate to sort ascending."
@@ -2588,16 +2710,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
@@ -2607,16 +2735,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Reason: Not sorted. Activate to sort ascending."
@@ -2626,16 +2760,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Reason
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Reason
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -2645,16 +2785,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -2664,16 +2810,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last alarm date: Not sorted. Activate to sort ascending."
@@ -2683,16 +2835,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last alarm date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last alarm date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
@@ -2702,16 +2860,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Icon
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Icon
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status"
@@ -2720,7 +2884,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Status
               </span>
             </th>
@@ -2731,7 +2897,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -2923,7 +3091,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -2933,16 +3103,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Name
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -2952,16 +3128,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Is enabled: Not sorted. Activate to sort ascending."
@@ -2971,16 +3153,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Is enabled
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Is enabled
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Begins: Not sorted. Activate to sort ascending."
@@ -2990,16 +3178,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Begins
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Begins
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ends: Not sorted. Activate to sort ascending."
@@ -3009,16 +3203,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Ends
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ends
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="End of recurrence: Not sorted. Activate to sort ascending."
@@ -3028,16 +3228,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                End of recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  End of recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Recurrence: Not sorted. Activate to sort ascending."
@@ -3047,16 +3253,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
@@ -3066,16 +3278,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Reason: Not sorted. Activate to sort ascending."
@@ -3085,16 +3303,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Reason
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Reason
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -3104,16 +3328,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -3123,16 +3353,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last alarm date: Not sorted. Activate to sort ascending."
@@ -3142,16 +3378,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last alarm date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last alarm date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
@@ -3161,16 +3403,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Icon
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Icon
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status"
@@ -3179,7 +3427,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Status
               </span>
             </th>
@@ -3190,7 +3440,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -4957,7 +5209,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -4967,16 +5221,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Name
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -4986,16 +5246,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Is enabled: Not sorted. Activate to sort ascending."
@@ -5005,16 +5271,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Is enabled
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Is enabled
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Begins: Not sorted. Activate to sort ascending."
@@ -5024,16 +5296,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Begins
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Begins
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ends: Not sorted. Activate to sort ascending."
@@ -5043,16 +5321,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Ends
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ends
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="End of recurrence: Not sorted. Activate to sort ascending."
@@ -5062,16 +5346,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                End of recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  End of recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Recurrence: Not sorted. Activate to sort ascending."
@@ -5081,16 +5371,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Recurrence
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Recurrence
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
@@ -5100,16 +5396,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Reason: Not sorted. Activate to sort ascending."
@@ -5119,16 +5421,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Reason
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Reason
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -5138,16 +5446,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -5157,16 +5471,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last alarm date: Not sorted. Activate to sort ascending."
@@ -5176,16 +5496,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last alarm date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last alarm date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
@@ -5195,16 +5521,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
-                Icon
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Icon
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status"
@@ -5213,7 +5545,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Status
               </span>
             </th>
@@ -5224,7 +5558,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>

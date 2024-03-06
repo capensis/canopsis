@@ -73,6 +73,7 @@ export default {
   isHideGrayEnabled: 'Show hide gray',
   isSecondaryIconEnabled: 'Show secondary icon',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
+  isEllipsisHeaders: 'Ellipsis columns headers',
   showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
   rootCauseSettings: 'Root cause diagram settings',
   entitiesColorIndicator: 'Entities color indicator',

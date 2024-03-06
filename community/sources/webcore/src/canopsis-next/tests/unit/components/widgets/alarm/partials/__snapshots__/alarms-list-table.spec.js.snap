@@ -168,19 +168,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag="tag"
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
+                <div
+                  class="layout"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag="tag"
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
               </th>
             </tr>
           </thead>
@@ -299,19 +303,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
+                <div
+                  class="layout"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
               </th>
               <th
                 aria-label="Actions"
@@ -321,6 +329,95 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
               >
                 <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <!---->
+                <!---->
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              class="v-data-table__empty-wrapper"
+            >
+              <td
+                colspan="2"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub />
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with ellipsis headers 1`] = `
+<div
+  class="flex"
+>
+  <div>
+    <!---->
+    <div
+      class="v-data-table alarms-list-table theme--light columns-sm"
+    >
+      <div
+        class="v-data-table__wrapper"
+      >
+        <table>
+          <colgroup>
+            <col
+              class=""
+            />
+            <col
+              class=""
+            />
+          </colgroup>
+          <thead
+            class="v-data-table-header"
+          >
+            <tr>
+              <th
+                aria-label="Not sorted. Activate to sort ascending."
+                aria-sort="none"
+                class="text-start alarms-list-table__draggable-column sortable"
+                data-value="label"
+                role="columnheader"
+                scope="col"
+              >
+                <div
+                  class="layout"
+                >
+                  <alarm-header-cell-stub
+                    ellipsisheaders="true"
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
+              </th>
+              <th
+                aria-label="Actions"
+                class="text-start alarms-list-table__draggable-column"
+                data-value="actions"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  ellipsisheaders="true"
                   header="[object Object]"
                   selectedtag=""
                 />
@@ -383,19 +480,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
                 style="width: 40px; min-width: 40px;"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
+                <div
+                  class="layout"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
               </th>
               <th
                 aria-label="Actions"
@@ -492,19 +593,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
+                <div
+                  class="layout"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
               </th>
               <th
                 aria-label="Actions"
@@ -603,19 +708,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
+                <div
+                  class="layout"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
               </th>
               <th
                 aria-label="Actions"
@@ -815,19 +924,23 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
+                <div
+                  class="layout"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                    style="font-size: 18px;"
+                  >
+                    arrow_upward
+                  </i>
+                </div>
               </th>
               <th
                 aria-label="Actions"

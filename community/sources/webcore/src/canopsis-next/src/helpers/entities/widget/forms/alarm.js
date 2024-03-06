@@ -170,6 +170,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} isActionsAllowWithOkState
+ * @property {boolean} isEllipsisHeaders
  * @property {boolean} sticky_header
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
@@ -350,6 +351,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
+  isEllipsisHeaders: !!parameters.isEllipsisHeaders,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput

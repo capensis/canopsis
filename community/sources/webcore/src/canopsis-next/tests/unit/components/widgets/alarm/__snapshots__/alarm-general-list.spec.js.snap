@@ -38,7 +38,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Author
               </span>
             </th>
@@ -48,7 +50,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Connector
               </span>
             </th>
@@ -58,7 +62,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Component
               </span>
             </th>
@@ -68,7 +74,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Resource
               </span>
             </th>
@@ -184,7 +192,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Author
               </span>
             </th>
@@ -194,7 +204,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Connector
               </span>
             </th>
@@ -204,7 +216,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Component
               </span>
             </th>
@@ -214,7 +228,9 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Resource
               </span>
             </th>

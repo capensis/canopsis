@@ -65,6 +65,7 @@
       :table-class="tableClass"
       :dense="dense"
       :loader-height="loaderHeight"
+      :ellipsis-headers="ellipsisHeaders"
       checkbox-color="primary"
       @update:options="updateOptions"
     >
@@ -228,6 +229,10 @@ export default {
       required: false,
     },
     dense: {
+      type: Boolean,
+      default: false,
+    },
+    ellipsisHeaders: {
       type: Boolean,
       default: false,
     },

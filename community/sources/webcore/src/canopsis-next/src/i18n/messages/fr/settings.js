@@ -73,6 +73,7 @@ export default {
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
+  isEllipsisHeaders: 'En-têtes de colonnes avec points de suspension',
   showRootCauseByStateClick: 'Afficher le diagramme de cause première appelé à partir de la colonne Criticité',
   rootCauseSettings: 'Paramètres du diagramme des causes profondes',
   entitiesColorIndicator: 'Indicateur de couleur des entités',

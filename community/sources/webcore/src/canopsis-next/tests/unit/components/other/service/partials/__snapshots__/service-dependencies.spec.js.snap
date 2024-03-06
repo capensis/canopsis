@@ -109,7 +109,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <span
+                      class=""
+                    />
                   </th>
                   <th
                     aria-label="Custom name label"
@@ -118,7 +120,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Custom name label
                     </span>
                   </th>
@@ -129,7 +133,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Custom type label
                     </span>
                   </th>
@@ -336,7 +342,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <span
+                      class=""
+                    />
                   </th>
                   <th
                     aria-label="Name"
@@ -345,7 +353,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Name
                     </span>
                   </th>
@@ -356,7 +366,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Type
                     </span>
                   </th>
@@ -596,7 +608,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <span
+                      class=""
+                    />
                   </th>
                   <th
                     aria-label="Name"
@@ -605,7 +619,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Name
                     </span>
                   </th>
@@ -616,7 +632,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Type
                     </span>
                   </th>
@@ -729,7 +747,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <span
+                      class=""
+                    />
                   </th>
                   <th
                     aria-label="Name"
@@ -738,7 +758,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Name
                     </span>
                   </th>
@@ -749,7 +771,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
+                    <span
+                      class=""
+                    >
                       Type
                     </span>
                   </th>

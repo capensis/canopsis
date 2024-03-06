@@ -52,25 +52,23 @@
       <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
       <field-density v-model="form.parameters.dense" />
       <field-opened-resolved-filter v-model="form.parameters.opened" />
-      <template v-if="hasAccessToListFilters">
-        <field-filters
-          v-model="form.parameters.mainFilter"
-          :filters.sync="form.filters"
-          :widget-id="widget._id"
-          :addable="hasAccessToAddFilter"
-          :editable="hasAccessToEditFilter"
-          with-alarm
-          with-entity
-          with-pbehavior
-        />
-      </template>
-      <template v-if="hasAccessToListRemediationInstructionsFilters">
-        <field-remediation-instructions-filters
-          v-model="form.parameters.remediationInstructionsFilters"
-          :addable="hasAccessToAddRemediationInstructionsFilter"
-          :editable="hasAccessToEditRemediationInstructionsFilter"
-        />
-      </template>
+      <field-filters
+        v-if="hasAccessToListFilters"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        :addable="hasAccessToAddFilter"
+        :editable="hasAccessToEditFilter"
+        with-alarm
+        with-entity
+        with-pbehavior
+      />
+      <field-remediation-instructions-filters
+        v-if="hasAccessToListRemediationInstructionsFilters"
+        v-model="form.parameters.remediationInstructionsFilters"
+        :addable="hasAccessToAddRemediationInstructionsFilter"
+        :editable="hasAccessToEditRemediationInstructionsFilter"
+      />
       <field-switcher
         v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
@@ -161,6 +159,10 @@
       <field-switcher
         v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
+      />
+      <field-switcher
+        v-model="form.parameters.isEllipsisHeaders"
+        :title="$t('settings.isEllipsisHeaders')"
       />
       <widget-settings-group :title="$t('settings.kioskMode')">
         <field-switcher

@@ -1,12 +1,17 @@
 <script>
 import VDataTableHeaderDesktop from 'vuetify/lib/components/VDataTable/VDataTableHeaderDesktop';
 import VSimpleCheckbox from 'vuetify/lib/components/VCheckbox/VSimpleCheckbox';
+import VLayout from 'vuetify/lib/components/VGrid/VLayout';
 import { convertToUnit, wrapInArray } from 'vuetify/lib/util/helpers';
 
 export default {
   extends: VDataTableHeaderDesktop,
   props: {
     disableSelect: {
+      type: Boolean,
+      default: false,
+    },
+    ellipsisHeaders: {
       type: Boolean,
       default: false,
     },
@@ -66,7 +71,10 @@ export default {
 
       children.push(this.$scopedSlots[header.value] ? this.$scopedSlots[header.value]({
         header,
-      }) : this.$createElement('span', [header.text]));
+      }) : this.$createElement('span', {
+        class: { 'v-data-table-header-span--ellipsis': this.ellipsisHeaders },
+        attrs: this.ellipsisHeaders ? { title: header.text } : {},
+      }, [header.text]));
 
       if (!this.disableSort && (header.sortable || !('sortable' in header))) {
         data.on.click = () => this.$emit('sort', header.value);
@@ -102,6 +110,10 @@ export default {
 
       if (this.showGroupBy && header.groupable !== false) {
         children.push(this.genGroupByToggle(header));
+      }
+
+      if (children.length > 1) {
+        return this.$createElement('th', data, [this.$createElement(VLayout, children)]);
       }
 
       return this.$createElement('th', data, children);
