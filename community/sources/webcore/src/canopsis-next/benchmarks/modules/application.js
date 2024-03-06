@@ -36,7 +36,6 @@ class Application {
       width: 1920,
       height: 1040,
     });
-    this.page.setDefaultTimeout(120_000);
   }
 
   closePage() {
