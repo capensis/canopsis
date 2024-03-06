@@ -141,6 +141,7 @@ export default {
     this.$resizeObserver.observe(this.$el);
   },
   beforeDestroy() {
+    this.$resizeObserver.disconnect();
   },
   methods: {
     resizeObserverHandler([entry]) {
