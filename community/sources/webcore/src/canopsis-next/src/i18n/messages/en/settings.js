@@ -72,6 +72,7 @@ export default {
   isHideGrayEnabled: 'Show hide gray',
   isSecondaryIconEnabled: 'Show secondary icon',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
+  isEllipsisHeaders: 'Ellipsis columns headers',
   alarmsColumns: 'Alarm list columns',
   resolvedAlarmsColumns: 'Column names for resolved alarms',
   activeAlarmsColumns: 'Column names for active alarms',

@@ -76,14 +76,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
               tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
@@ -94,14 +100,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
               tabindex="0"
             >
-              System name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                System name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Enabled: Not sorted. Activate to sort ascending."
@@ -112,14 +124,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
               tabindex="0"
             >
-              Enabled
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Enabled
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
@@ -130,14 +148,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
               tabindex="0"
             >
-              Creation date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Creation date
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -148,14 +172,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
@@ -166,14 +196,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
               tabindex="0"
             >
-              Last modified by
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified by
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."
@@ -763,14 +799,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
               tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
@@ -781,14 +823,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
               tabindex="0"
             >
-              System name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                System name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Enabled: Not sorted. Activate to sort ascending."
@@ -799,14 +847,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
               tabindex="0"
             >
-              Enabled
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Enabled
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -817,14 +871,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
               tabindex="0"
             >
-              Creation date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Creation date
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -835,14 +895,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
@@ -853,14 +919,20 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
               tabindex="0"
             >
-              Last modified by
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified by
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."

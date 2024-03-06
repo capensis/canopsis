@@ -34,6 +34,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ellipsisHeaders: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     component() {
@@ -55,10 +59,14 @@ export default {
       };
 
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];
+      const bind = this.ellipsisHeaders
+        ? { class: 'v-datatable-header-span--ellipsis', title: this.header.text }
+        : {};
 
       return {
         is: component || 'span',
         text: this.header.text,
+        bind,
       };
     },
   },

@@ -70,6 +70,7 @@
             :header="header",
             :selected-tag="selectedTag",
             :resizing="resizingMode",
+            :ellipsis-headers="widget.parameters.isEllipsisHeaders",
             @clear:tag="$emit('clear:tag')"
           )
           template

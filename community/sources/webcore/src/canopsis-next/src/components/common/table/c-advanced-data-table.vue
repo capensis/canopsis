@@ -49,6 +49,7 @@
       :table-class="tableClass",
       :disable-initial-sort="disableInitialSort",
       :dense="dense",
+      :ellipsis-headers="ellipsisHeaders",
       @update:pagination="updatePagination"
     )
       template(#items="props")
@@ -194,6 +195,10 @@ export default {
       default: false,
     },
     dense: {
+      type: Boolean,
+      default: false,
+    },
+    ellipsisHeaders: {
       type: Boolean,
       default: false,
     },
