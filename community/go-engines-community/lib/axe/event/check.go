@@ -95,7 +95,10 @@ type checkProcessor struct {
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil || !event.Entity.Enabled || event.Parameters.State == nil || event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
+	if event.Entity == nil ||
+		!event.Entity.Enabled ||
+		event.Parameters.State == nil ||
+		event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
 		return result, nil
 	}
 
@@ -209,7 +212,11 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, now, alarmConfig)
+	alarm, err := p.newAlarm(params, entity, now, alarmConfig)
+	if err != nil {
+		return result, err
+	}
+
 	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
 		params.Output, params.User, params.Role, params.Initiator, false)
 	stateStep.Value = *params.State
@@ -465,7 +472,7 @@ func (p *checkProcessor) newAlarm(
 	entity types.Entity,
 	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
-) types.Alarm {
+) (types.Alarm, error) {
 	tags := types.TransformEventTags(params.Tags)
 	alarm := types.Alarm{
 		EntityID:     entity.ID,
@@ -491,21 +498,40 @@ func (p *checkProcessor) newAlarm(
 		},
 	}
 
+	connector := ""
+	connectorName := ""
+	switch params.Initiator {
+	case types.InitiatorExternal, types.InitiatorUser:
+		connector = params.Connector
+		connectorName = params.ConnectorName
+	case types.InitiatorSystem:
+		if entity.Connector == "" {
+			connector = canopsis.DefaultSystemAlarmConnector
+			connectorName = canopsis.DefaultSystemAlarmConnector
+		} else {
+			connector, connectorName, _ = strings.Cut(entity.Connector, "/")
+		}
+	default:
+		return types.Alarm{}, fmt.Errorf("unknown initiator %q", params.Initiator)
+	}
+
 	switch entity.Type {
 	case types.EntityTypeResource:
 		alarm.Value.Resource = entity.Name
 		alarm.Value.Component = entity.Component
-		alarm.Value.Connector = params.Connector
-		alarm.Value.ConnectorName = params.ConnectorName
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeComponent, types.EntityTypeService:
 		alarm.Value.Component = entity.ID
-		alarm.Value.Connector = params.Connector
-		alarm.Value.ConnectorName = params.ConnectorName
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeConnector:
 		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
+	default:
+		return types.Alarm{}, fmt.Errorf("unknown entity type %q", entity.Type)
 	}
 
-	return alarm
+	return alarm, nil
 }
 
 func (p *checkProcessor) getNewExternalTags(alarmTags []string, eventTags map[string]string) []string {
