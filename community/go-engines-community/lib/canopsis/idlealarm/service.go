@@ -8,6 +8,7 @@ package idlealarm
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -240,9 +241,9 @@ func (s *baseService) applyAlarmRule(
 		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: idleRuleApply,
+		Output:        s.getEventOutput(rule),
 	}
 
-	event.Output = rule.Operation.Parameters.Output
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}
@@ -259,7 +260,7 @@ func (s *baseService) applyAlarmRule(
 		event.TicketInfo = types.TicketInfo{
 			Ticket:           rule.Operation.Parameters.Ticket,
 			TicketRuleID:     rule.ID,
-			TicketRuleName:   types.TicketRuleNameIdleRulePrefix + rule.Name,
+			TicketRuleName:   types.RuleNameIdleRulePrefix + rule.Name,
 			TicketURL:        rule.Operation.Parameters.TicketURL,
 			TicketSystemName: rule.Operation.Parameters.TicketSystemName,
 			TicketData:       rule.Operation.Parameters.TicketData,
@@ -333,7 +334,7 @@ func (s *baseService) applyEntityRule(
 	event.State = types.AlarmStateCritical
 	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
-	event.Output = fmt.Sprintf("Idle rule %s", rule.Name)
+	event.Output = s.getEventOutput(rule)
 	event.IdleRuleApply = rule.Type
 
 	return &event, nil
@@ -361,4 +362,17 @@ func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, 
 	}
 
 	return events, nil
+}
+
+func (s *baseService) getEventOutput(rule idlerule.Rule) string {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(types.RuleNameIdleRulePrefix)
+	outputBuilder.WriteString(rule.Name)
+	if rule.Operation != nil && rule.Operation.Parameters.Output != "" {
+		outputBuilder.WriteString(". Comment: ")
+		outputBuilder.WriteString(rule.Operation.Parameters.Output)
+		outputBuilder.WriteRune('.')
+	}
+
+	return outputBuilder.String()
 }

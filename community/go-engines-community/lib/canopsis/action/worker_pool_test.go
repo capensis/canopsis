@@ -98,6 +98,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	}{
 		{
 			task: action.Task{
+				ScenarioName: "test-scenario-name",
 				Action: action.Action{
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: p,
@@ -123,7 +124,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				ExecutionCacheKey: "execution_1",
 				Step:              2,
 			},
-			expectedOutput: "output 1",
+			expectedOutput: "Scenario: test-scenario-name. Comment: output 1.",
 			expectedAuthor: "author 1",
 		},
 		{
@@ -148,6 +149,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		},
 		{
 			task: action.Task{
+				ScenarioName: "test-scenario-name",
 				Action: action.Action{
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: p,
@@ -173,12 +175,13 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				ExecutionCacheKey: "execution_3",
 				Step:              4,
 			},
-			expectedOutput: "output 3",
+			expectedOutput: "Scenario: test-scenario-name. Comment: output 3.",
 			expectedAuthor: "author 3",
 		},
 		{
 			testName: "should render templates",
 			task: action.Task{
+				ScenarioName: "test-scenario-name",
 				Action: action.Action{
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: p,
@@ -205,7 +208,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				ExecutionCacheKey: "execution_1",
 				Step:              2,
 			},
-			expectedOutput: "rendered output: test",
+			expectedOutput: "Scenario: test-scenario-name. Comment: rendered output: test.",
 			expectedAuthor: "rendered author: 9",
 		},
 	}
