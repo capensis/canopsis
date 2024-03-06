@@ -98,7 +98,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span
+                    class=""
+                  >
+                    
+                  </span>
+                </th>
                 <th
                   aria-label="Custom name label: Not sorted."
                   aria-sort="none"
@@ -107,7 +113,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   role="columnheader"
                   scope="col"
                 >
-                  Custom name label
+                  <span
+                    class=""
+                  >
+                    Custom name label
+                  </span>
                 </th>
                 <th
                   aria-label="Custom type label: Not sorted."
@@ -117,7 +127,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   role="columnheader"
                   scope="col"
                 >
-                  Custom type label
+                  <span
+                    class=""
+                  >
+                    Custom type label
+                  </span>
                 </th>
               </tr>
               <tr
@@ -495,7 +509,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span
+                    class=""
+                  >
+                    
+                  </span>
+                </th>
                 <th
                   aria-label="Name: Not sorted."
                   aria-sort="none"
@@ -504,7 +524,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span
+                    class=""
+                  >
+                    Name
+                  </span>
                 </th>
                 <th
                   aria-label="Type: Not sorted."
@@ -514,7 +538,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span
+                    class=""
+                  >
+                    Type
+                  </span>
                 </th>
               </tr>
               <tr
@@ -865,7 +893,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span
+                    class=""
+                  >
+                    
+                  </span>
+                </th>
                 <th
                   aria-label="Name: Not sorted."
                   aria-sort="none"
@@ -874,7 +908,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span
+                    class=""
+                  >
+                    Name
+                  </span>
                 </th>
                 <th
                   aria-label="Type: Not sorted."
@@ -884,7 +922,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span
+                    class=""
+                  >
+                    Type
+                  </span>
                 </th>
               </tr>
               <tr
@@ -977,7 +1019,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span
+                    class=""
+                  >
+                    
+                  </span>
+                </th>
                 <th
                   aria-label="Name: Not sorted."
                   aria-sort="none"
@@ -986,7 +1034,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span
+                    class=""
+                  >
+                    Name
+                  </span>
                 </th>
                 <th
                   aria-label="Type: Not sorted."
@@ -996,7 +1048,11 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span
+                    class=""
+                  >
+                    Type
+                  </span>
                 </th>
               </tr>
               <tr

@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { ALARM_ACTION_BUTTON_MARGINS, ALARM_ACTION_BUTTON_WIDTHS, ALARM_DENSE_TYPES } from '@/constants';
+
 export default {
   props: {
     actions: {
@@ -62,6 +64,10 @@ export default {
       type: Number,
       default: 3,
     },
+    medium: {
+      type: Boolean,
+      default: false,
+    },
     small: {
       type: Boolean,
       default: false,
@@ -71,19 +77,55 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      width: 0,
+    };
+  },
   computed: {
+    denseType() {
+      if (this.small) {
+        return ALARM_DENSE_TYPES.small;
+      }
+
+      return this.medium
+        ? ALARM_DENSE_TYPES.medium
+        : ALARM_DENSE_TYPES.large;
+    },
+
     preparedActions() {
-      if (this.$mq === 'xl') {
+      const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[this.denseType] + ALARM_ACTION_BUTTON_MARGINS[this.denseType];
+      const maxActionsCount = Math.floor(this.width / actionWidth) - 1;
+      const countForSlice = Math.min(maxActionsCount, this.inlineCount);
+      const countForSliceWithMenu = countForSlice + 1;
+
+      if (countForSliceWithMenu < this.actions.length) {
         return {
-          inline: this.actions.slice(0, this.inlineCount),
-          dropDown: this.actions.slice(this.inlineCount),
+          inline: this.actions.slice(0, countForSlice),
+          dropDown: this.actions.slice(countForSlice),
         };
       }
 
       return {
-        inline: [],
-        dropDown: this.actions,
+        inline: this.actions,
+        dropDown: [],
       };
+    },
+  },
+  mounted() {
+    this.$resizeObserver = new ResizeObserver(this.resizeObserverHandler);
+    this.$resizeObserver.observe(this.$el);
+  },
+  beforeDestroy() {
+    this.$resizeObserver.disconnect();
+  },
+  methods: {
+    resizeObserverHandler([entry]) {
+      const { target: { offsetWidth } } = entry ?? {};
+
+      if (this.width !== offsetWidth) {
+        this.width = offsetWidth;
+      }
     },
   },
 };

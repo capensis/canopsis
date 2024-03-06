@@ -24,7 +24,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Author
+              <span
+                class=""
+              >
+                Author
+              </span>
             </th>
             <th
               aria-label="Connector: Not sorted."
@@ -34,7 +38,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Connector
+              <span
+                class=""
+              >
+                Connector
+              </span>
             </th>
             <th
               aria-label="Component: Not sorted."
@@ -44,7 +52,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Component
+              <span
+                class=""
+              >
+                Component
+              </span>
             </th>
             <th
               aria-label="Resource: Not sorted."
@@ -54,7 +66,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Resource
+              <span
+                class=""
+              >
+                Resource
+              </span>
             </th>
           </tr>
           <tr
@@ -186,7 +202,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Author
+              <span
+                class=""
+              >
+                Author
+              </span>
             </th>
             <th
               aria-label="Connector: Not sorted."
@@ -196,7 +216,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Connector
+              <span
+                class=""
+              >
+                Connector
+              </span>
             </th>
             <th
               aria-label="Component: Not sorted."
@@ -206,7 +230,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Component
+              <span
+                class=""
+              >
+                Component
+              </span>
             </th>
             <th
               aria-label="Resource: Not sorted."
@@ -216,7 +244,11 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Resource
+              <span
+                class=""
+              >
+                Resource
+              </span>
             </th>
           </tr>
           <tr

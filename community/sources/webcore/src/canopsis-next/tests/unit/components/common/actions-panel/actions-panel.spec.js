@@ -1,8 +1,11 @@
 import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
+import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { createButtonStub } from '@unit/stubs/button';
+
+import { ALARM_ACTION_BUTTON_MARGINS, ALARM_ACTION_BUTTON_WIDTHS, ALARM_DENSE_TYPES } from '@/constants';
+
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 const stubs = {
@@ -16,9 +19,18 @@ const snapshotStubs = {
 
 describe('actions-panel', () => {
   const factory = generateShallowRenderer(ActionsPanel, { stubs });
-  const snapshotFactory = generateRenderer(ActionsPanel, { stubs: snapshotStubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, { stubs: snapshotStubs, attachTo: document.body });
 
-  it('Method into list called after trigger click on action item button. On the extra large size.', async () => {
+  const ACTION_WIDTHS = {
+    large: ALARM_ACTION_BUTTON_WIDTHS[ALARM_DENSE_TYPES.large]
+      + ALARM_ACTION_BUTTON_MARGINS[ALARM_DENSE_TYPES.large],
+    medium: ALARM_ACTION_BUTTON_WIDTHS[ALARM_DENSE_TYPES.medium]
+      + ALARM_ACTION_BUTTON_MARGINS[ALARM_DENSE_TYPES.medium],
+    small: ALARM_ACTION_BUTTON_WIDTHS[ALARM_DENSE_TYPES.small]
+      + ALARM_ACTION_BUTTON_MARGINS[ALARM_DENSE_TYPES.small],
+  };
+
+  test('Method into list called after trigger click on action item button. With width for two items. For large dense.', async () => {
     const actions = [
       fakeAction(),
       fakeAction(),
@@ -28,10 +40,9 @@ describe('actions-panel', () => {
       propsData: {
         actions,
       },
-      mocks: {
-        $mq: 'xl',
-      },
     });
+
+    wrapper.setData({ width: ACTION_WIDTHS.large * 2 });
 
     await flushPromises();
     const actionElements = wrapper.findAll('.c-action-btn');
@@ -46,9 +57,10 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Method into dropdown called after trigger click on action item button. On the extra large size.', async () => {
+  test('Method into dropdown called after trigger click on action item button. With width for three items. For large dense.', async () => {
     const inlineCount = 1;
     const actions = [
+      fakeAction(),
       fakeAction(),
       fakeAction(),
     ];
@@ -57,10 +69,9 @@ describe('actions-panel', () => {
         actions,
         inlineCount,
       },
-      mocks: {
-        $mq: 'xl',
-      },
     });
+
+    wrapper.setData({ width: ACTION_WIDTHS.large * 2 });
 
     await flushPromises();
 
@@ -76,123 +87,111 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Renders `actions-panel` with default props correctly on the extra large size', async () => {
-    const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'xl',
-      },
-    });
+  test('Renders `actions-panel` with default props correctly. With zero width.', async () => {
+    const wrapper = snapshotFactory();
 
     await flushPromises();
 
-    const dropdownContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with default props correctly on the large size', async () => {
-    const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'l',
-      },
-    });
-
-    await flushPromises();
-
-    const dropdownContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `actions-panel` with actions correctly on the extra large size', async () => {
+  test('Renders `actions-panel` with three actions correctly. With width for two items. For large dense.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        actions: [editAction, deleteAction],
-      },
-      mocks: {
-        $mq: 'xl',
+        actions: [editAction, deleteAction, ackAction],
       },
     });
 
+    wrapper.setData({ width: ACTION_WIDTHS.large * 2 });
+
     await flushPromises();
 
-    const dropdownContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with actions correctly on the large size', async () => {
+  test('Renders `actions-panel` with three actions correctly. With width for two items. For medium dense.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        actions: [editAction, deleteAction],
-      },
-      mocks: {
-        $mq: 'l',
+        actions: [editAction, deleteAction, ackAction],
+        medium: true,
       },
     });
 
+    wrapper.setData({ width: ACTION_WIDTHS.medium * 2 });
+
     await flushPromises();
 
-    const dropdownContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the large size', async () => {
+  test('Renders `actions-panel` with three actions correctly. With width for two items. For small dense.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        actions: [editAction, deleteAction],
-      },
-      mocks: {
-        $mq: 'l',
+        actions: [editAction, deleteAction, ackAction],
+        small: true,
       },
     });
 
-    const dropdownContent = wrapper.findMenu();
+    wrapper.setData({ width: ACTION_WIDTHS.small * 2 });
 
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the tablet size', async () => {
+  test('Renders `actions-panel` with three actions correctly. With width for one item.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        actions: [editAction, deleteAction],
-      },
-      mocks: {
-        $mq: 't',
+        actions: [editAction, deleteAction, ackAction],
       },
     });
 
+    wrapper.setData({ width: ACTION_WIDTHS.large });
+
     await flushPromises();
 
-    const dropdownContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the mobile size', async () => {
+  test('Renders `actions-panel` with three actions correctly. With width for three items.', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        actions: [editAction, deleteAction],
-      },
-      mocks: {
-        $mq: 'm',
+        actions: [editAction, deleteAction, ackAction],
       },
     });
 
+    wrapper.setData({ width: ACTION_WIDTHS.large * 3 });
+
     await flushPromises();
 
-    const dropdownContent = wrapper.findMenu();
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
+  });
+
+  test('Renders `actions-panel` with three actions correctly. With width for three items and changing to one item.', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        actions: [editAction, deleteAction, ackAction],
+      },
+    });
+
+    wrapper.setData({ width: ACTION_WIDTHS.large * 3 });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
+
+    wrapper.setData({ width: ACTION_WIDTHS.large });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

@@ -79,14 +79,20 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Title
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Title
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted."
@@ -107,14 +113,20 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
@@ -125,14 +137,20 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Last modified by
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified by
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."
@@ -695,14 +713,20 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Title
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Title
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted."
@@ -723,14 +747,20 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."

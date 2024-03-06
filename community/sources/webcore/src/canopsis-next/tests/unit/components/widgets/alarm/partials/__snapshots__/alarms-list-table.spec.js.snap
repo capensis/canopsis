@@ -79,19 +79,25 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 scope="col"
                 tabindex="0"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag="tag"
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag="tag"
+                  />
+                  <!---->
+                  <!---->
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
             </tr>
             <tr
@@ -300,19 +306,25 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
                 tabindex="0"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."
@@ -358,6 +370,46 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 </div>
 `;
 
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with ellipsis headers 1`] = `
+<div class="flex" options="[object Object]">
+  <div>
+    <!---->
+    <div class="alarms-list-table columns-sm">
+      <div class="v-table__overflow">
+        <table class="v-datatable v-table theme--light">
+          <thead>
+            <tr>
+              <th role="columnheader" scope="col" aria-label="" data-value="label" aria-sort="none" tabindex="0" class="column sortable text-xs-left alarms-list-table__draggable-column">
+                <div class="layout align-center">
+                  <alarm-header-cell-stub header="[object Object]" selectedtag="" ellipsisheaders="true"></alarm-header-cell-stub>
+                  <!---->
+                  <!----><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span>
+                </div>
+              </th>
+              <th role="columnheader" scope="col" aria-label="Actions: Not sorted." data-value="actions" aria-sort="none" class="column text-xs-left alarms-list-table__draggable-column">
+                <alarm-header-cell-stub header="[object Object]" selectedtag="" ellipsisheaders="true"></alarm-header-cell-stub>
+                <!---->
+                <!---->
+              </th>
+            </tr>
+            <tr class="v-datatable__progress">
+              <th colspan="2" class="column"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="2" class="text-xs-center">No data available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub></c-table-pagination-stub>
+  <!---->
+</div>
+`;
+
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with links column with links in row count 1`] = `
 <div
   class="flex"
@@ -385,19 +437,25 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 tabindex="0"
                 width="40px"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."
@@ -503,19 +561,25 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
                 tabindex="0"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."
@@ -623,19 +687,25 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
                 tabindex="0"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."
@@ -760,19 +830,25 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 scope="col"
                 tabindex="0"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."

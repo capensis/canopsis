@@ -26,6 +26,7 @@
         :widget="widget",
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
+        :medium="medium",
         :small="small",
         :wrap="wrapActions"
       )
