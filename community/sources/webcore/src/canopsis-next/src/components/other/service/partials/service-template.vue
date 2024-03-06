@@ -34,6 +34,10 @@ export default {
       type: Number,
       required: false,
     },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
   },
   asyncComputed: {
     compiledTemplate: {
@@ -61,6 +65,7 @@ export default {
           :widget-parameters="widgetParameters"
           :pagination="pagination"
           :total-items="totalItems"
+          :actions-requests="actionsRequests"
           entity-name-field="${entityNameField}"
           @refresh="refreshEntities"
           @apply:action="applyAction"

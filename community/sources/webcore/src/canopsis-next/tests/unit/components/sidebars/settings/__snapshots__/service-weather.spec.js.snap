@@ -151,6 +151,12 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       name="modalType"
       value="both"
     />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
+    />
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"
@@ -313,6 +319,12 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <field-modal-type-stub
       name="modalType"
       value="both"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
     />
   </widget-settings-group-stub>
   <hr

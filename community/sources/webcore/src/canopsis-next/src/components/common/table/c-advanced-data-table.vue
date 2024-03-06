@@ -89,6 +89,8 @@
 <script>
 import { omit } from 'lodash';
 
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
+
 export default {
   model: {
     prop: 'selected',
@@ -252,7 +254,12 @@ export default {
     },
 
     updateRecordsPerPage(rowsPerPage) {
-      this.updatePagination({ ...this.pagination, rowsPerPage });
+      this.updatePagination({
+        ...this.pagination,
+
+        rowsPerPage,
+        page: getPageForNewRecordsPerPage(rowsPerPage, this.pagination.rowsPerPage, this.pagination.page),
+      });
     },
 
     updatePage(page) {

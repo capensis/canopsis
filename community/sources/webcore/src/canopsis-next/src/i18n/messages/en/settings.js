@@ -259,4 +259,5 @@ export default {
     hideMassSelection: 'Hide mass selection',
     hideToolbar: 'Hide toolbar',
   },
+  entitiesActionsInQueue: 'Stack entities actions and apply simultaneously',
 };
