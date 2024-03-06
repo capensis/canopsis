@@ -202,10 +202,10 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	author := ""
-	if entity.Type != types.EntityTypeService {
-		author = strings.Replace(entity.Connector, "/", ".", 1)
-	} else {
+	if params.Initiator == types.InitiatorExternal {
 		author = params.Connector + "." + params.ConnectorName
+	} else {
+		author = params.Author
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
@@ -332,10 +332,10 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 	unset := bson.M{}
 	author := ""
-	if entity.Type != types.EntityTypeService {
-		author = strings.Replace(entity.Connector, "/", ".", 1)
-	} else {
+	if params.Initiator == types.InitiatorExternal {
 		author = params.Connector + "." + params.ConnectorName
+	} else {
+		author = params.Author
 	}
 
 	if alarm.Value.LongOutputHistory[len(alarm.Value.LongOutputHistory)-1] != params.LongOutput {
