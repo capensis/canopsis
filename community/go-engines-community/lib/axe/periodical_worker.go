@@ -15,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
@@ -188,7 +187,7 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 	if err != nil {
 		return fmt.Errorf("cannot encode event : %w", err)
 	}
-	return errt.NewIOError(w.ChannelPub.PublishWithContext(
+	return w.ChannelPub.PublishWithContext(
 		ctx,
 		"",
 		canopsis.FIFOQueueName,
@@ -199,5 +198,5 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 			Body:         bevent,
 			DeliveryMode: amqp.Persistent,
 		},
-	))
+	)
 }
