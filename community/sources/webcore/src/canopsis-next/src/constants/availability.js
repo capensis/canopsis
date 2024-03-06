@@ -32,3 +32,8 @@ export const AVAILABILITY_LINE_CHART_Y_AXES_IDS = {
 export const AVAILABILITY_LINE_CHART_X_AXES_IDS = {
   default: 'x',
 };
+
+export const AVAILABILITY_VALUE_FILTER_METHODS = {
+  greater: 'gt',
+  less: 'lt',
+};

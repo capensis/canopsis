@@ -49,7 +49,7 @@
     <availability-show-type-field
       :value="type"
       :label="$t('common.show')"
-      class="availability-filters__show-type"
+      class="availability-widget-filters__show-type"
       @input="$emit('update:type', $event)"
     />
     <c-enabled-field
@@ -58,9 +58,13 @@
       hide-details
       @input="$emit('update:trend', $event)"
     />
-
-    <!-- TODO: Should be added filter by value here    -->
-
+    <availability-value-filter-field
+      :value="valueFilter"
+      :show-type="type"
+      :max-value="intervalSecondsDiff"
+      class="availability-widget-filters__value-filter"
+      @input="debouncedUpdateValueFilter"
+    />
     <c-action-btn
       :loading="exporting"
       :tooltip="$t('settings.exportAsCsv')"
@@ -71,17 +75,20 @@
 </template>
 
 <script>
+import { debounce } from 'lodash';
+
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import AvailabilityDisplayParameterField from '@/components/other/availability/form/fields/availability-display-parameter-field.vue';
 import AvailabilityShowTypeField from '@/components/other/availability/form/fields/availability-show-type-field.vue';
-import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
+import AvailabilityValueFilterField
+  from '@/components/widgets/availability/form/fields/availability-value-filter-field.vue';
 
 export default {
   components: {
-    CEnabledField,
+    AvailabilityValueFilterField,
     AvailabilityShowTypeField,
     AvailabilityDisplayParameterField,
     FilterSelector,
@@ -152,10 +159,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    valueFilter: {
+      type: Object,
+      required: false,
+    },
+    intervalSecondsDiff: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     quickRanges() {
       return Object.values(AVAILABILITY_QUICK_RANGES);
+    },
+  },
+  created() {
+    this.debouncedUpdateValueFilter = debounce(this.updateValueFilter, 1000);
+  },
+  methods: {
+    updateValueFilter(value) {
+      this.$emit('update:value-filter', value);
     },
   },
 };
@@ -167,8 +190,12 @@ export default {
     flex-grow: 0;
   }
 
-  &__filter-selector, &__interval {
+  &__show-type, &__filter-selector, &__interval {
     max-width: 200px;
+  }
+
+  &__value-filter {
+    max-width: 400px;
   }
 
   &__parameter, &__value {

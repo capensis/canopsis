@@ -5,6 +5,7 @@
     :name="name"
     :max="max"
     :min="min"
+    :hide-details="hideDetails"
     prefix="%"
     required
   />
@@ -37,6 +38,10 @@ export default {
     min: {
       type: Number,
       default: 0,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
   },
 };
