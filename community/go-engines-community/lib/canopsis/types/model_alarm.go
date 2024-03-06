@@ -93,10 +93,6 @@ const (
 	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
 )
 
-const (
-	StepEngineCorrelationAuthor = "engine.correlation"
-)
-
 // Alarm represents an alarm document.
 type Alarm struct {
 	ID       string           `bson:"_id" json:"_id"`

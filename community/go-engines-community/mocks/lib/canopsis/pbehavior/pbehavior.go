@@ -206,17 +206,17 @@ func (m *MockEventManager) EXPECT() *MockEventManagerMockRecorder {
 }
 
 // GetEvent mocks base method.
-func (m *MockEventManager) GetEvent(arg0 pbehavior.ResolveResult, arg1 types.Alarm, arg2 time.Time) types.Event {
+func (m *MockEventManager) GetEvent(arg0 pbehavior.ResolveResult, arg1 types.Alarm, arg2 types.Entity, arg3 time.Time) types.Event {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEvent", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "GetEvent", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(types.Event)
 	return ret0
 }
 
 // GetEvent indicates an expected call of GetEvent.
-func (mr *MockEventManagerMockRecorder) GetEvent(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockEventManagerMockRecorder) GetEvent(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvent", reflect.TypeOf((*MockEventManager)(nil).GetEvent), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvent", reflect.TypeOf((*MockEventManager)(nil).GetEvent), arg0, arg1, arg2, arg3)
 }
 
 // GetEventType mocks base method.

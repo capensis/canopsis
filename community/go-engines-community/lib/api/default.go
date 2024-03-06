@@ -168,7 +168,7 @@ func Default(
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
-		canopsis.JsonContentType, canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger)
+		canopsis.JsonContentType, canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, canopsis.ApiConnector, logger)
 
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
@@ -178,6 +178,7 @@ func Default(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
+			canopsis.ApiConnector,
 			logger,
 		),
 		logger,
@@ -391,7 +392,7 @@ func Default(
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 
-	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, json.NewEncoder(), logger)
+	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
 	})

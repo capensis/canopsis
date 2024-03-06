@@ -23,11 +23,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const (
-	defaultConnector     = "taskhandler"
-	defaultConnectorName = "task_importctx"
-)
-
 type parseResult struct {
 	writeModels []mongo.WriteModel
 
@@ -61,6 +56,8 @@ type worker struct {
 	publisher         EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
 
+	connector string
+
 	logger zerolog.Logger
 }
 
@@ -68,6 +65,7 @@ func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
+	connector string,
 	logger zerolog.Logger,
 ) Worker {
 	return &worker{
@@ -78,6 +76,8 @@ func NewWorker(
 
 		publisher:         publisher,
 		metricMetaUpdater: metricMetaUpdater,
+
+		connector: connector,
 
 		logger: logger,
 	}
@@ -593,8 +593,8 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 
 		err = w.publisher.SendEvent(ctx, types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
-			Connector:     defaultConnector,
-			ConnectorName: defaultConnectorName,
+			Connector:     w.connector,
+			ConnectorName: w.connector,
 			Component:     service.ID,
 			Timestamp:     datetime.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
@@ -787,8 +787,8 @@ func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, no
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
-		Connector:     defaultConnector,
-		ConnectorName: defaultConnectorName,
+		Connector:     w.connector,
+		ConnectorName: w.connector,
 		Component:     ci.ID,
 		SourceType:    types.SourceTypeService,
 		Initiator:     types.InitiatorSystem,
@@ -797,8 +797,8 @@ func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, no
 
 func (w *worker) createResourceEvent(eventType, name, component string, now datetime.CpsTime) types.Event {
 	return types.Event{
-		Connector:     defaultConnector,
-		ConnectorName: defaultConnectorName,
+		Connector:     w.connector,
+		ConnectorName: w.connector,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
@@ -811,8 +811,8 @@ func (w *worker) createResourceEvent(eventType, name, component string, now date
 
 func (w *worker) createComponentEvent(eventType, name string, now datetime.CpsTime) types.Event {
 	return types.Event{
-		Connector:     defaultConnector,
-		ConnectorName: defaultConnectorName,
+		Connector:     w.connector,
+		ConnectorName: w.connector,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,

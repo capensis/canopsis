@@ -212,13 +212,14 @@ func sendTriggerEvent(
 
 	body, err := encoder.Encode(types.Event{
 		EventType:     types.EventTypeTrigger,
-		Connector:     result.Alarm.Value.Connector,
-		ConnectorName: result.Alarm.Value.ConnectorName,
+		Connector:     canopsis.AxeConnector,
+		ConnectorName: canopsis.AxeConnector,
 		Component:     result.Alarm.Value.Component,
 		Resource:      result.Alarm.Value.Resource,
 		SourceType:    event.Entity.Type,
 		AlarmChange:   &result.AlarmChange,
 		AlarmID:       result.Alarm.ID,
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	})
 	if err != nil {
@@ -422,7 +423,7 @@ func postProcessResolve(
 	}
 
 	if componentChanged {
-		err := eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			logger.Err(err).Msg("failed to update component state")
 		}

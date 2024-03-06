@@ -41,6 +41,7 @@ func NewMetaAlarmEventProcessor(
 	metricsSender metrics.Sender,
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	templateExecutor template.Executor,
+	connector string,
 	logger zerolog.Logger,
 ) libalarm.MetaAlarmEventProcessor {
 	return &metaAlarmEventProcessor{
@@ -56,6 +57,7 @@ func NewMetaAlarmEventProcessor(
 		amqpPublisher:             amqpPublisher,
 		metricsSender:             metricsSender,
 		templateExecutor:          templateExecutor,
+		connector:                 connector,
 		logger:                    logger,
 	}
 }
@@ -75,6 +77,8 @@ type metaAlarmEventProcessor struct {
 	amqpPublisher libamqp.Publisher
 
 	metricsSender metrics.Sender
+
+	connector string
 
 	logger zerolog.Logger
 
@@ -236,11 +240,13 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 	}
 
 	var updatedChildrenAlarms []types.Alarm
+	var updatedChildrenAlarmsWithEntity []types.AlarmWithEntity
 	var metaAlarm types.Alarm
 	var err error
 
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedChildrenAlarms = make([]types.Alarm, 0)
+		updatedChildrenAlarms = updatedChildrenAlarms[:0]
+		updatedChildrenAlarmsWithEntity = updatedChildrenAlarmsWithEntity[:0]
 		var lastChild types.AlarmWithEntity
 
 		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
@@ -290,6 +296,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			}
 
 			updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
+			updatedChildrenAlarmsWithEntity = append(updatedChildrenAlarmsWithEntity, childAlarm)
 			lastChild = childAlarm
 		}
 
@@ -345,7 +352,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		return nil, nil, nil, nil
 	}
 
-	childrenEvents := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarms)
+	childrenEvents := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarmsWithEntity)
 
 	return &metaAlarm, updatedChildrenAlarms, childrenEvents, nil
 }
@@ -452,20 +459,20 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 	return &metaAlarm, nil
 }
 
-func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, childrenAlarms []types.Alarm) []types.Event {
+func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, childrenAlarms []types.AlarmWithEntity) []types.Event {
 	var events []types.Event
 
 	steps := metaAlarm.GetAppliedActions()
 
 	for _, childAlarm := range childrenAlarms {
 		childEvent := types.Event{
-			Connector:     childAlarm.Value.Connector,
-			ConnectorName: childAlarm.Value.ConnectorName,
-			Resource:      childAlarm.Value.Resource,
-			Component:     childAlarm.Value.Component,
+			Connector:     p.connector,
+			ConnectorName: p.connector,
+			Resource:      childAlarm.Alarm.Value.Resource,
+			Component:     childAlarm.Alarm.Value.Component,
+			SourceType:    childAlarm.Entity.Type,
 			Timestamp:     datetime.NewCpsTime(),
 		}
-		childEvent.SourceType = childEvent.DetectSourceType()
 
 		for _, step := range steps {
 			childEvent.Output = step.Message
@@ -592,18 +599,18 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 
 		resourceEvent := types.Event{
 			EventType:     types.EventTypeDeclareTicketWebhook,
-			Connector:     resource.Alarm.Value.Connector,
-			ConnectorName: resource.Alarm.Value.ConnectorName,
+			Connector:     p.connector,
+			ConnectorName: p.connector,
 			Resource:      resource.Alarm.Value.Resource,
 			Component:     resource.Alarm.Value.Component,
 			Timestamp:     datetime.NewCpsTime(),
 			Output:        componentAlarm.Value.Ticket.Message,
 			TicketInfo:    componentAlarm.Value.Ticket.TicketInfo,
+			SourceType:    types.SourceTypeResource,
 			Author:        event.Parameters.Author,
 			UserID:        event.Parameters.User,
 			Initiator:     event.Parameters.Initiator,
 		}
-		resourceEvent.SourceType = resourceEvent.DetectSourceType()
 
 		err = p.sendToFifo(ctx, resourceEvent)
 		if err != nil {
@@ -669,18 +676,18 @@ func (p *metaAlarmEventProcessor) incrementParentEventsCount(ctx context.Context
 }
 
 func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childrenIds []string, childEvent types.Event) error {
-	var alarms []types.Alarm
-	err := p.adapter.GetOpenedAlarmsByIDs(ctx, childrenIds, &alarms)
+	var alarms []types.AlarmWithEntity
+	err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, childrenIds, &alarms)
 	if err != nil {
 		return fmt.Errorf("cannot fetch children alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {
-		childEvent.Connector = alarm.Value.Connector
-		childEvent.ConnectorName = alarm.Value.ConnectorName
-		childEvent.Resource = alarm.Value.Resource
-		childEvent.Component = alarm.Value.Component
-		childEvent.SourceType = childEvent.DetectSourceType()
+		childEvent.Connector = p.connector
+		childEvent.ConnectorName = p.connector
+		childEvent.Resource = alarm.Alarm.Value.Resource
+		childEvent.Component = alarm.Alarm.Value.Component
+		childEvent.SourceType = alarm.Entity.Type
 
 		err = p.sendToFifo(ctx, childEvent)
 		if err != nil {

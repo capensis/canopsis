@@ -46,6 +46,7 @@ type delayedScenarioManager struct {
 
 type DelayedScenarioTask struct {
 	Alarm    types.Alarm
+	Entity   types.Entity
 	Scenario Scenario
 
 	AdditionalData AdditionalData
@@ -297,7 +298,8 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		}
 
 		tasks[i] = DelayedScenarioTask{
-			Alarm:    alarm,
+			Alarm:    alarm.Alarm,
+			Entity:   alarm.Entity,
 			Scenario: scenario,
 
 			AdditionalData: delayedScenario.AdditionalData,
@@ -321,16 +323,16 @@ func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string
 	return scenariosByID, nil
 }
 
-func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]types.Alarm, error) {
-	alarms := make([]types.Alarm, 0)
-	err := m.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, ids, &alarms)
+func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]types.AlarmWithEntity, error) {
+	alarms := make([]types.AlarmWithEntity, 0)
+	err := m.alarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, ids, &alarms)
 	if err != nil {
 		return nil, err
 	}
 
-	alarmsByID := make(map[string]types.Alarm)
+	alarmsByID := make(map[string]types.AlarmWithEntity)
 	for _, alarm := range alarms {
-		alarmsByID[alarm.ID] = alarm
+		alarmsByID[alarm.Alarm.ID] = alarm
 	}
 
 	return alarmsByID, nil
