@@ -89,6 +89,7 @@
       :dense="dense",
       :refresh-alarms-list="fetchList",
       :selected-tag="query.tag",
+      :search="query.search",
       :selectable="!hideMassSelection",
       :hide-actions="hideActions",
       expandable,
@@ -110,6 +111,7 @@ import { API_HOST, API_ROUTES } from '@/config';
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -124,7 +126,7 @@ import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/wi
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
@@ -297,6 +299,7 @@ export default {
         ...this.query,
 
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       };
     },
 

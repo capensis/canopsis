@@ -155,10 +155,9 @@ definitions:
         items:
           type: string
         type: array
-      filtered_children:
-        items:
-          type: string
-        type: array
+      filtered:
+        description: Only for details request
+        type: boolean
       impact_state:
         type: integer
       infos:
@@ -379,6 +378,12 @@ definitions:
         $ref: '#/definitions/alarm.ChildDetailsRequest'
       opened:
         type: boolean
+      search:
+        type: string
+      search_by:
+        items:
+          type: string
+        type: array
       steps:
         $ref: '#/definitions/alarm.StepsRequest'
       with_declare_tickets:
