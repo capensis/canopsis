@@ -539,6 +539,8 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeInstructionJobCompleted, instructionProcessor)
 	container.Set(types.EventTypeInstructionJobFailed, instructionProcessor)
 	container.Set(types.EventTypeAutoInstructionActivate, event.NewAutoInstructionActivateProcessor(dbClient))
+	container.Set(types.EventTypeMetaAlarmChildActivate, event.NewMetaAlarmChildActivateProcessor(dbClient))
+	container.Set(types.EventTypeMetaAlarmChildDeactivate, event.NewMetaAlarmChildDeactivateProcessor(dbClient))
 	container.Set(types.EventTypeJunitTestSuiteUpdated, event.NewJunitProcessor(dbClient))
 	container.Set(types.EventTypeJunitTestCaseUpdated, event.NewJunitProcessor(dbClient))
 	container.Set(types.EventTypeRunDelayedScenario, event.NewForwardWithAlarmProcessor(dbClient))

@@ -14,19 +14,6 @@ import (
 )
 
 type Adapter interface {
-	// Insert inserts an alarm
-	Insert(ctx context.Context, alarm types.Alarm) error
-
-	// Update update an alarm
-	Update(ctx context.Context, alarm types.Alarm) error
-
-	PartialUpdateOpen(ctx context.Context, alarm *types.Alarm) error
-
-	PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error
-
-	// GetAlarmsByID finds all alarms with an entity id.
-	GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error)
-
 	// GetAlarmsWithCancelMark returns all alarms where v.cancel is not null
 	GetAlarmsWithCancelMark(ctx context.Context) ([]types.AlarmWithEntity, error)
 
@@ -36,26 +23,12 @@ type Adapter interface {
 	// GetAlarmsWithFlappingStatus returns all alarms whose status is flapping
 	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.AlarmWithEntity, error)
 
-	// GetAllOpenedResourceAlarmsByComponent returns all ongoing alarms for component
-	GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
-
 	// GetAlarmsWithoutTicketByComponent returns all ongoing alarms which do
 	// not have a ticket, given a component's name.
 	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	GetOpenedAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
 	GetAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
-
-	// GetOpenedAlarm find one opened alarm with his entity id.
-	// Note : a control is added to prevent fetching future alarms.
-	GetOpenedAlarm(ctx context.Context, entityId string) (types.Alarm, error)
-
-	GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error)
-	GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error)
-
-	// GetLastAlarm find the last alarm with an id
-	GetLastAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
-	GetLastAlarmWithEntity(ctx context.Context, connector, connectorName, id string) (types.AlarmWithEntity, error)
 
 	// GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
 	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
@@ -65,16 +38,10 @@ type Adapter interface {
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
-	GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
-
-	// MassPartialUpdateOpen updates opened alarms matching by list of IDs, applying partial update from alarm
-	MassPartialUpdateOpen(context.Context, *types.Alarm, []string) error
 
 	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time datetime.CpsTime) (mongo.Cursor, error)
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
-
-	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter datetime.CpsTime) (mongo.Cursor, error)
 
 	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
 
