@@ -435,6 +435,7 @@ var cpsTimeType = reflect.TypeOf(CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
+var mapStringStringType = reflect.TypeOf(map[string]string{})
 
 // SetField sets the value of a field of an event given its name.
 func (e *Event) SetField(name string, value interface{}) (err error) {
@@ -505,6 +506,21 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 			return fmt.Errorf("value cannot be assigned to a bool: %+v", value)
 		}
 		field.Set(reflect.ValueOf(boolValue))
+
+	case mapStringStringType:
+		mapValue, success := value.(map[string]any)
+		if !success {
+			return fmt.Errorf("value cannot be assigned to a map[string]string: %+v", value)
+		}
+		m := make(map[string]string, len(mapValue))
+		for key, value := range mapValue {
+			stringValue, success := utils.AsString(value)
+			if !success {
+				return fmt.Errorf("value cannot be assigned to a map[string]string under key %q: %+v", key, value)
+			}
+			m[key] = stringValue
+		}
+		field.Set(reflect.ValueOf(m))
 
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())

@@ -17,7 +17,7 @@ export const widgetFetchQueryMixin = {
   },
   watch: {
     query(value, oldValue) {
-      if (!this.editing && !isEqual(value, oldValue) && !isEmpty(value)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
         this.fetchList();
       }
     },

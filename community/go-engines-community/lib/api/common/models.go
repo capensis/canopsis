@@ -66,10 +66,6 @@ func NewPaginatedMeta(q pagination.Query, total int64) (PaginatedMeta, error) {
 		pageCount = 1
 	}
 
-	if q.Page > pageCount {
-		return PaginatedMeta{}, errors.New("page is out of range")
-	}
-
 	return PaginatedMeta{
 		Page:       q.Page,
 		PerPage:    q.Limit,

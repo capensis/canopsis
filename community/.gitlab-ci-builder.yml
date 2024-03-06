@@ -10,7 +10,7 @@ build_oci:
     - make -C ${OCI_PATH_2} docker-images VERSION=$CI_COMMIT_TAG
     - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/community | grep $CI_COMMIT_TAG | xargs -I {} docker push {}
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
 build_oci_dev:
   extends: .common
@@ -32,7 +32,7 @@ build_oci_dev:
       grep $CI_COMMIT_TAG |
       xargs -I {} docker push {}
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
 build_rpm_dev:
   extends: .common
@@ -76,7 +76,7 @@ build_rpm_dev:
       "$RPM_URL" ;
       done
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
 build_rpm:
   extends: .common
@@ -120,4 +120,4 @@ build_rpm:
       "$RPM_URL" ;
       done
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"

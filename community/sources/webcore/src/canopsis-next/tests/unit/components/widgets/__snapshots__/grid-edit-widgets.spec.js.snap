@@ -79,7 +79,33 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with default props 1`] 
     <div
       class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
       style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
-    />
+    >
+      <div
+        class="erd_scroll_detection_container"
+        dir="ltr"
+        style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;"
+      >
+        <div
+          class="erd_scroll_detection_container"
+          style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; left: -501px; top: -501px; right: -500px; bottom: -500px;"
+        >
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; left: 0px; top: 0px; width: 1011px; height: 1011px;"
+            />
+          </div>
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; width: 200%; height: 200%;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -304,7 +330,33 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
     <div
       class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
       style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
-    />
+    >
+      <div
+        class="erd_scroll_detection_container"
+        dir="ltr"
+        style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;"
+      >
+        <div
+          class="erd_scroll_detection_container"
+          style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; left: -501px; top: -501px; right: -500px; bottom: -500px;"
+        >
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; left: 0px; top: 0px; width: 1011px; height: 1011px;"
+            />
+          </div>
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; width: 200%; height: 200%;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -529,7 +581,33 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
     <div
       class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
       style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
-    />
+    >
+      <div
+        class="erd_scroll_detection_container"
+        dir="ltr"
+        style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;"
+      >
+        <div
+          class="erd_scroll_detection_container"
+          style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; left: -501px; top: -501px; right: -500px; bottom: -500px;"
+        >
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; left: 0px; top: 0px; width: 1011px; height: 1011px;"
+            />
+          </div>
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; width: 200%; height: 200%;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -604,7 +682,7 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
   >
     <div
       class="vue-grid-item vue-resizable cssTransforms"
-      style="transform: translate3d(20px,280px, 0); width: -25px; height: 240px; position: absolute;"
+      style="transform: translate3d(20px,20px, 0); width: -25px; height: 240px; position: absolute;"
     >
       <div
         class="wrapper"
@@ -651,7 +729,7 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
     </div>
     <div
       class="vue-grid-item vue-resizable cssTransforms"
-      style="transform: translate3d(20px,20px, 0); width: -25px; height: 240px; position: absolute;"
+      style="transform: translate3d(20px,280px, 0); width: -25px; height: 240px; position: absolute;"
     >
       <div
         class="wrapper"
@@ -754,7 +832,33 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
     <div
       class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
       style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
-    />
+    >
+      <div
+        class="erd_scroll_detection_container"
+        dir="ltr"
+        style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;"
+      >
+        <div
+          class="erd_scroll_detection_container"
+          style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; left: -501px; top: -501px; right: -500px; bottom: -500px;"
+        >
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; left: 0px; top: 0px; width: 1011px; height: 1011px;"
+            />
+          </div>
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; width: 200%; height: 200%;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -829,7 +933,7 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
   >
     <div
       class="vue-grid-item vue-resizable cssTransforms"
-      style="transform: translate3d(20px,60px, 0); width: -40px; height: 20px; position: absolute;"
+      style="transform: translate3d(20px,20px, 0); width: -40px; height: 20px; position: absolute;"
     >
       <div
         class="wrapper"
@@ -876,7 +980,7 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
     </div>
     <div
       class="vue-grid-item vue-resizable cssTransforms"
-      style="transform: translate3d(20px,20px, 0); width: -40px; height: 20px; position: absolute;"
+      style="transform: translate3d(20px,60px, 0); width: -40px; height: 20px; position: absolute;"
     >
       <div
         class="wrapper"
@@ -979,7 +1083,33 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
     <div
       class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
       style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
-    />
+    >
+      <div
+        class="erd_scroll_detection_container"
+        dir="ltr"
+        style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;"
+      >
+        <div
+          class="erd_scroll_detection_container"
+          style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; left: -501px; top: -501px; right: -500px; bottom: -500px;"
+        >
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; left: 0px; top: 0px; width: 1011px; height: 1011px;"
+            />
+          </div>
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; width: 200%; height: 200%;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -1204,7 +1334,33 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
     <div
       class="erd_scroll_detection_container erd_scroll_detection_container_animation_active"
       style="visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0px; padding: 0px;"
-    />
+    >
+      <div
+        class="erd_scroll_detection_container"
+        dir="ltr"
+        style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;"
+      >
+        <div
+          class="erd_scroll_detection_container"
+          style="position: absolute; flex: 0 0 auto; overflow: hidden; z-index: -1; visibility: hidden; left: -501px; top: -501px; right: -500px; bottom: -500px;"
+        >
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; left: 0px; top: 0px; width: 1011px; height: 1011px;"
+            />
+          </div>
+          <div
+            style="position: absolute; flex: 0 0 auto; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;"
+          >
+            <div
+              style="position: absolute; width: 200%; height: 200%;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;

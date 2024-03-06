@@ -27,7 +27,7 @@
           c-pagination(
             v-if="!hidePagination",
             :page="pagination.page",
-            :limit="pagination.limit",
+            :limit="pagination.rowsPerPage",
             :total="totalItems",
             type="top",
             @input="updateQueryPage"
@@ -78,6 +78,7 @@
             :hide-actions="hideActions",
             :medium="isMediumHeight",
             :small="isSmallHeight",
+            :search="search",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -85,13 +86,14 @@
             :alarm="item",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
+            :search="search",
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
     c-table-pagination(
       v-if="!hidePagination",
       :total-items="totalItems",
-      :rows-per-page="pagination.limit",
+      :rows-per-page="pagination.rowsPerPage",
       :page="pagination.page",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
@@ -212,6 +214,10 @@ export default {
     densable: {
       type: Boolean,
       default: false,
+    },
+    search: {
+      type: String,
+      default: '',
     },
   },
   data() {
