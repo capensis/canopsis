@@ -608,6 +608,26 @@ describe('alarms-list-table', () => {
 
     expect(wrapper).toMatchSnapshot();
   });
+  it('Renders `alarms-list-table` with default and required props with ellipsis headers', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+
+            isEllipsisHeaders: true,
+          },
+        },
+        alarms: [],
+        columns,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
 
   it('Renders `alarms-list-table` with default and required props with links column with links in row count', () => {
     const wrapper = snapshotFactory({

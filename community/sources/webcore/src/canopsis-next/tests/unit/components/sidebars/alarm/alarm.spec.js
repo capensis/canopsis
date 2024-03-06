@@ -123,6 +123,7 @@ const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => selectSwi
 );
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => selectSwitcherFieldByTitle(wrapper, 'Sticky header');
+const selectFieldEllipsisHeaders = wrapper => selectSwitcherFieldByTitle(wrapper, 'Ellipsis columns headers');
 const selectFieldKioskHideActions = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide actions');
 const selectFieldKioskHideMassSelection = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide mass selection');
 const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide toolbar');
@@ -1219,6 +1220,34 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'sticky_header', stickyHeader),
+      },
+    });
+  });
+
+  test('Ellipsis columns headers changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldEllipsisHeaders = selectFieldEllipsisHeaders(wrapper);
+
+    const isEllipsisHeaders = Faker.datatype.boolean();
+
+    fieldEllipsisHeaders.triggerCustomEvent('input', isEllipsisHeaders);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isEllipsisHeaders', isEllipsisHeaders),
       },
     });
   });

@@ -170,7 +170,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -180,16 +182,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
-                Id
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Id
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -198,7 +206,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Type
               </span>
             </th>
@@ -210,16 +220,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
-                Priority
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Priority
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Enabled"
@@ -228,7 +244,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Enabled
               </span>
             </th>
@@ -240,16 +258,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
-                Errors
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Errors
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -259,16 +283,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
@@ -278,16 +308,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -297,16 +333,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Calendar"
@@ -315,7 +357,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Calendar
               </span>
             </th>
@@ -326,7 +370,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -1695,7 +1741,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -1705,16 +1753,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
-                Id
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Id
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -1723,7 +1777,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Type
               </span>
             </th>
@@ -1735,16 +1791,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
-                Priority
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Priority
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Enabled"
@@ -1753,7 +1815,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Enabled
               </span>
             </th>
@@ -1765,16 +1829,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
-                Errors
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Errors
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -1784,16 +1854,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -1803,16 +1879,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -1822,16 +1904,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Calendar"
@@ -1840,7 +1928,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Calendar
               </span>
             </th>
@@ -1851,7 +1941,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -2047,7 +2139,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -2057,16 +2151,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
-                Id
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Id
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -2075,7 +2175,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Type
               </span>
             </th>
@@ -2087,16 +2189,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
-                Priority
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Priority
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Enabled"
@@ -2105,7 +2213,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Enabled
               </span>
             </th>
@@ -2117,16 +2227,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
-                Errors
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Errors
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -2136,16 +2252,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -2155,16 +2277,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -2174,16 +2302,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Calendar"
@@ -2192,7 +2326,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Calendar
               </span>
             </th>
@@ -2203,7 +2339,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>
@@ -3244,7 +3382,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <span
+                class=""
+              />
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -3254,16 +3394,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
-                Id
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Id
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -3272,7 +3418,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Type
               </span>
             </th>
@@ -3284,16 +3432,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
-                Priority
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Priority
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Enabled"
@@ -3302,7 +3456,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Enabled
               </span>
             </th>
@@ -3314,16 +3470,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
-                Errors
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Errors
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -3333,16 +3495,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -3352,16 +3520,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
-                Creation date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Creation date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
@@ -3371,16 +3545,22 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last update date
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last update date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Calendar"
@@ -3389,7 +3569,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Calendar
               </span>
             </th>
@@ -3400,7 +3582,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span>
+              <span
+                class=""
+              >
                 Actions
               </span>
             </th>

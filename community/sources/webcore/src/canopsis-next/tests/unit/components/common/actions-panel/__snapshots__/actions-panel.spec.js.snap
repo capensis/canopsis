@@ -1,6 +1,142 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with default props correctly. With zero width. 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout align-center"
+  >
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with default props correctly. With zero width. 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for one item. 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout align-center"
+  >
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
+        >
+          more_vert
+        </i>
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for one item. 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
+          >
+            edit
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Edit title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 1`] = `
 <div
   class="actions-panel"
 >
@@ -17,177 +153,468 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the e
       icon="delete"
       tooltip="Delete title"
     />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
     <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 3`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout align-center"
   >
-    <span>
-      <button
-        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-        type="button"
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
       >
-        <span
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </span>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <!---->
-      </div>
-    </span>
+          more_vert
+        </i>
+      </span>
+    </button>
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 4`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
+          >
+            edit
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Edit title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items. 1`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout align-center"
   >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
     <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items. 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For large dense. 1`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout align-center"
   >
-    <!---->
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
+        >
+          more_vert
+        </i>
+      </span>
+    </button>
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 2`] = `undefined`;
-
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For large dense. 2`] = `
 <div
-  class="actions-panel"
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="layout align-center"
+    class="v-list v-sheet theme--light"
   >
-    <span>
-      <button
-        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-        type="button"
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
       >
         <span
-          class="v-btn__content"
+          class="mr-4"
         >
           <i
             aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            more_vert
+            delete
           </i>
         </span>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <!---->
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
       </div>
-    </span>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 2`] = `undefined`;
-
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For medium dense. 1`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout align-center"
   >
-    <span>
-      <button
-        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-        type="button"
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
       >
-        <span
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </span>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <!---->
-      </div>
-    </span>
+          more_vert
+        </i>
+      </span>
+    </button>
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 2`] = `undefined`;
-
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For medium dense. 2`] = `
 <div
-  class="actions-panel"
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For small dense. 1`] = `
+<div
+  class="actions-panel actions-panel--small"
 >
   <div
     class="layout align-center"
   >
-    <span>
-      <button
-        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-        type="button"
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
       >
-        <span
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </span>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <!---->
-      </div>
-    </span>
+          more_vert
+        </i>
+      </span>
+    </button>
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For small dense. 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

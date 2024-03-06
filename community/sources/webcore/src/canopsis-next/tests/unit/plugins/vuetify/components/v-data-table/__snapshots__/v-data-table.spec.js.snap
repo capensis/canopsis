@@ -144,7 +144,152 @@ exports[`v-data-table Renders \`v-data-table\` with custom headers 1`] = `
 </div>
 `;
 
-exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
+exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+  hideheaders="true"
+>
+  <div
+    class="v-data-table__wrapper"
+  >
+    <table>
+      <colgroup />
+      <thead
+        class="v-data-table-header"
+      >
+        <tr />
+      </thead>
+      <tbody>
+        <tr
+          class="v-data-table__empty-wrapper"
+        >
+          <td
+            colspan="0"
+          >
+            No data available
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="v-data-footer"
+  >
+    <div
+      class="v-data-footer__select"
+    >
+      Rows per page:
+      <div
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
+          >
+            <div
+              class="v-select__slot"
+            >
+              <div
+                class="v-select__selections"
+              >
+                <div
+                  class="v-select__selection v-select__selection--comma"
+                >
+                  10
+                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
+              </div>
+              <div
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
+              />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-data-footer__pagination"
+    >
+      –
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
 <div
   class="v-data-table v-data-table--has-bottom theme--light"
 >
@@ -172,16 +317,22 @@ exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
             role="columnheader"
             scope="col"
           >
-            <span>
-              Header 1
-            </span>
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-              style="font-size: 18px;"
+            <div
+              class="layout"
             >
-              arrow_upward
-            </i>
+              <span
+                class=""
+              >
+                Header 1
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
           </th>
           <th
             aria-label="Header 2: Not sorted. Activate to sort ascending."
@@ -191,16 +342,22 @@ exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
             role="columnheader"
             scope="col"
           >
-            <span>
-              Header 2
-            </span>
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-              style="font-size: 18px;"
+            <div
+              class="layout"
             >
-              arrow_upward
-            </i>
+              <span
+                class=""
+              >
+                Header 2
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
           </th>
         </tr>
       </thead>
@@ -339,29 +496,93 @@ exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
 </div>
 `;
 
-exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
+exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis headers 1`] = `
 <div
   class="v-data-table v-data-table--has-bottom theme--light"
-  hideheaders="true"
 >
   <div
     class="v-data-table__wrapper"
   >
     <table>
-      <colgroup />
+      <colgroup>
+        <col
+          class=""
+        />
+        <col
+          class=""
+        />
+      </colgroup>
       <thead
         class="v-data-table-header"
       >
-        <tr />
+        <tr>
+          <th
+            aria-label="Header 1: Not sorted. Activate to sort ascending."
+            aria-sort="none"
+            class="text-start sortable"
+            data-value="property1"
+            role="columnheader"
+            scope="col"
+          >
+            <div
+              class="layout"
+            >
+              <span
+                class="v-data-table-header-span--ellipsis"
+                title="Header 1"
+              >
+                Header 1
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </th>
+          <th
+            aria-label="Header 2: Not sorted. Activate to sort ascending."
+            aria-sort="none"
+            class="text-start sortable"
+            data-value="property2"
+            role="columnheader"
+            scope="col"
+          >
+            <div
+              class="layout"
+            >
+              <span
+                class="v-data-table-header-span--ellipsis"
+                title="Header 2"
+              >
+                Header 2
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </th>
+        </tr>
       </thead>
       <tbody>
         <tr
-          class="v-data-table__empty-wrapper"
+          class=""
         >
           <td
-            colspan="0"
+            class="text-start"
           >
-            No data available
+            Property 1
+          </td>
+          <td
+            class="text-start"
+          >
+            Property 2
           </td>
         </tr>
       </tbody>
@@ -436,7 +657,7 @@ exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
     <div
       class="v-data-footer__pagination"
     >
-      –
+      1-1 of 1
     </div>
     <div
       class="v-data-footer__icons-before"
