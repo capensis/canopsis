@@ -8,6 +8,7 @@
       :display-parameter="query.displayParameter"
       :trend="query.showTrend"
       :interval="query.interval"
+      :value-filter="query.valueFilter"
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
@@ -19,6 +20,7 @@
       :filter-editable="hasAccessToEditFilter"
       :min-interval-date="minAvailableDate"
       :exporting="exporting"
+      :interval-seconds-diff="intervalSecondsDiff"
       class="px-3 pt-3"
       @export="exportAvailabilityList"
       @update:filters="updateSelectedFilter"
@@ -26,6 +28,7 @@
       @update:trend="updateTrend"
       @update:type="updateShowType"
       @update:display-parameter="updateDisplayParameter"
+      @update:value-filter="updateValueFilter"
     />
 
     <availability-list
@@ -103,6 +106,10 @@ export default {
     interval() {
       return this.getIntervalQuery();
     },
+
+    intervalSecondsDiff() {
+      return this.interval.to - this.interval.from;
+    },
   },
   methods: {
     customQueryCondition(query, oldQuery) {
@@ -130,20 +137,32 @@ export default {
       this.updateQueryField('displayParameter', value);
     },
 
+    updateValueFilter(value) {
+      this.updateQueryField('valueFilter', value);
+    },
+
     getQuery() {
       const {
         sortBy = [],
         sortDesc = [],
         showTrend,
         filter,
+        valueFilter,
       } = this.query;
 
       return {
         ...this.interval,
         ...pick(this.query, ['page', 'itemsPerPage']),
         ...convertSortToRequest(sortBy, sortDesc),
-        with_history: showTrend,
+        with_trends: showTrend,
         widget_filters: convertFiltersToQuery(filter, this.lockedFilter),
+        value_filter: valueFilter && {
+          /**
+           * TODO: should be replaced on parameter
+           */
+          parameter: 'uptime_share',
+          ...valueFilter,
+        },
       };
     },
 
