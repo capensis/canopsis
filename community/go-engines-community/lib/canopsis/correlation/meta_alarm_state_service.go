@@ -5,6 +5,8 @@ import (
 	"errors"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -26,6 +28,9 @@ type MetaAlarmStateService interface {
 	PushChild(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, entityID string, alarmLastUpdate int64) (bool, error)
 	// RefreshMetaAlarmStateGroup removes resolved alarms and current event entity from the group.
 	RefreshMetaAlarmStateGroup(ctx context.Context, state *MetaAlarmState, entityID string, timeInterval int64) error
+	RemoveInactiveDelay(ctx context.Context, ruleId string, entityIds []string) error
+	AddInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error
+	UpdateInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error
 }
 
 type metaAlarmStateService struct {
@@ -51,7 +56,13 @@ func (a *metaAlarmStateService) GetMetaAlarmState(ctx context.Context, ruleID st
 	return metaAlarmState, nil
 }
 
-func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error) {
+func (a *metaAlarmStateService) UpdateOpenedState(
+	ctx context.Context,
+	state MetaAlarmState,
+	previousVersion int64,
+	previousState int,
+	upsert bool,
+) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -64,12 +75,14 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 				"version": 1,
 			},
 			"$set": bson.M{
-				"children_entity_ids": state.ChildrenEntityIDs,
-				"children_timestamps": state.ChildrenTimestamps,
-				"parents_entity_ids":  state.ParentsEntityIDs,
-				"parents_timestamps":  state.ParentsTimestamps,
-				"meta_alarm_name":     state.MetaAlarmName,
-				"state":               Opened,
+				"expired_at":               state.ExpiredAt,
+				"children_entity_ids":      state.ChildrenEntityIDs,
+				"children_timestamps":      state.ChildrenTimestamps,
+				"parents_entity_ids":       state.ParentsEntityIDs,
+				"parents_timestamps":       state.ParentsTimestamps,
+				"meta_alarm_name":          state.MetaAlarmName,
+				"state":                    Opened,
+				"child_inactive_expire_at": state.ChildInactiveExpireAt,
 			},
 		},
 		options.Update().SetUpsert(upsert),
@@ -87,8 +100,6 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 
 func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error) {
 	state.ID = state.ID + "-" + state.MetaAlarmName
-	state.CreatedAt = time.Now()
-
 	_, err := a.metaAlarmStatesCollection.InsertOne(ctx, state)
 	if err != nil {
 		if mongodriver.IsDuplicateKeyError(err) {
@@ -101,7 +112,13 @@ func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlar
 	return true, nil
 }
 
-func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error) {
+func (a *metaAlarmStateService) SwitchStateToReady(
+	ctx context.Context,
+	state MetaAlarmState,
+	previousVersion int64,
+	previousState int,
+	upsert bool,
+) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -111,6 +128,7 @@ func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state Me
 		},
 		bson.M{
 			"$set": bson.M{
+				"expired_at":          state.ExpiredAt,
 				"state":               Ready,
 				"children_entity_ids": state.ChildrenEntityIDs,
 				"children_timestamps": state.ChildrenTimestamps,
@@ -133,7 +151,14 @@ func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state Me
 	return true, nil
 }
 
-func (a *metaAlarmStateService) PushChild(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, entityID string, alarmLastUpdate int64) (bool, error) {
+func (a *metaAlarmStateService) PushChild(
+	ctx context.Context,
+	state MetaAlarmState,
+	previousVersion int64,
+	previousState int,
+	entityID string,
+	alarmLastUpdate int64,
+) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -142,6 +167,9 @@ func (a *metaAlarmStateService) PushChild(ctx context.Context, state MetaAlarmSt
 			"state":   previousState,
 		},
 		bson.M{
+			"$set": bson.M{
+				"expired_at": state.ExpiredAt,
+			},
 			"$push": bson.M{
 				"children_entity_ids": entityID,
 				"children_timestamps": alarmLastUpdate,
@@ -239,7 +267,8 @@ func (a *metaAlarmStateService) RefreshMetaAlarmStateGroup(ctx context.Context, 
 func (a *metaAlarmStateService) SwitchStateToCreated(ctx context.Context, stateID string) (bool, error) {
 	res, err := a.metaAlarmStatesCollection.UpdateOne(ctx, bson.M{"_id": stateID, "state": Ready}, bson.M{
 		"$set": bson.M{
-			"state": Created,
+			"expired_at": time.Now(),
+			"state":      Created,
 		},
 	})
 	if err != nil || res.MatchedCount == 0 {
@@ -247,4 +276,54 @@ func (a *metaAlarmStateService) SwitchStateToCreated(ctx context.Context, stateI
 	}
 
 	return true, nil
+}
+
+func (a *metaAlarmStateService) RemoveInactiveDelay(ctx context.Context, ruleId string, entityIds []string) error {
+	_, err := a.alarmCollection.UpdateMany(ctx, bson.M{
+		"d":          bson.M{"$in": entityIds},
+		"v.resolved": nil,
+	}, bson.M{
+		"$pull": bson.M{
+			"meta_alarm_inactive_delay": bson.M{"_id": ruleId},
+		},
+	})
+
+	return err
+}
+
+func (a *metaAlarmStateService) AddInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error {
+	_, err := a.alarmCollection.UpdateOne(ctx, bson.M{
+		"d":          entityId,
+		"v.resolved": nil,
+	}, bson.M{
+		"$push": bson.M{
+			"meta_alarm_inactive_delay": types.MetaAlarmInactiveDelay{
+				ID:      ruleId,
+				Expired: d,
+			},
+		},
+	})
+
+	return err
+}
+
+func (a *metaAlarmStateService) UpdateInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error {
+	_, err := a.alarmCollection.UpdateOne(ctx,
+		bson.M{
+			"d":          entityId,
+			"v.resolved": nil,
+		},
+		bson.M{
+			"$set": bson.M{
+				"meta_alarm_inactive_delay.$[delay].expired": d,
+			},
+		},
+		options.Update().SetArrayFilters(options.ArrayFilters{
+			Filters: []any{bson.M{
+				"delay._id": ruleId,
+			}},
+		}),
+	)
+
+	return err
 }
