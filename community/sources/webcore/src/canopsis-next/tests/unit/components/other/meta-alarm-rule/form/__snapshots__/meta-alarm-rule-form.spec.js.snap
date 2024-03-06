@@ -207,6 +207,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` 
   />
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
+    withchildinactivedelay="true"
   />
   <!---->
   <meta-alarm-rule-patterns-form-stub
@@ -317,6 +318,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` ty
   <!---->
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
+    withchildinactivedelay="true"
   />
   <!---->
   <meta-alarm-rule-patterns-form-stub
@@ -738,6 +740,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`valuegroup
   />
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
+    withchildinactivedelay="true"
   />
   <meta-alarm-rule-value-paths-form-stub
     class="mb-2"
@@ -851,6 +854,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
   />
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
+    withchildinactivedelay="true"
   />
   <!---->
   <meta-alarm-rule-patterns-form-stub
