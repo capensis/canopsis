@@ -635,6 +635,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Sticky header"
     />
+    <field-switcher-stub
+      title="Ellipsis columns headers"
+    />
     <hr
       class="v-divider theme--light"
     />
@@ -1297,6 +1300,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       title="Sticky header"
       value="true"
     />
+    <field-switcher-stub
+      title="Ellipsis columns headers"
+    />
     <hr
       class="v-divider theme--light"
     />
@@ -1954,6 +1960,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Sticky header"
+    />
+    <field-switcher-stub
+      title="Ellipsis columns headers"
     />
     <hr
       class="v-divider theme--light"

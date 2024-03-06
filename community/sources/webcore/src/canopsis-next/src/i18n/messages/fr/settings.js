@@ -72,6 +72,7 @@ export default {
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
+  isEllipsisHeaders: 'En-têtes de colonnes avec points de suspension',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
   activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',

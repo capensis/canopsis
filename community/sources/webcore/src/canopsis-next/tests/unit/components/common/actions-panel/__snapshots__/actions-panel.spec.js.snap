@@ -1,6 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with default props correctly. With zero width. 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with default props correctly. With zero width. 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for one item. 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <span>
+      <button
+        class="ma-0 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            more_vert
+          </i>
+        </div>
+      </button>
+      <div
+        class="v-menu"
+      >
+        <transition-stub
+          name="v-menu-transition"
+        >
+          <div
+            class="v-menu__content theme--light "
+            style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+          />
+        </transition-stub>
+      </div>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for one item. 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+/>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 1`] = `
 <div
   class="actions-panel"
 >
@@ -19,14 +80,20 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the e
       lazy="lazy"
       tooltip="Delete title"
     />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      lazy="lazy"
+      tooltip="Ack title"
+    />
     <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 3`] = `
 <div
   class="actions-panel"
 >
@@ -66,48 +133,58 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 4`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 />
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items. 1`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout row align-center"
   >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      lazy="lazy"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      lazy="lazy"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      lazy="lazy"
+      tooltip="Ack title"
+    />
     <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items. 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For large dense. 1`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout row align-center"
   >
-    <!---->
-  </div>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 2`] = `undefined`;
-
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 1`] = `
-<div
-  class="actions-panel"
->
-  <div
-    class="layout row align-center"
-  >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      lazy="lazy"
+      tooltip="Edit title"
+    />
     <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
@@ -141,20 +218,26 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For large dense. 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 />
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For medium dense. 1`] = `
 <div
   class="actions-panel"
 >
   <div
     class="layout row align-center"
   >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      lazy="lazy"
+      tooltip="Edit title"
+    />
     <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
@@ -188,20 +271,26 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For medium dense. 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 />
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For small dense. 1`] = `
 <div
-  class="actions-panel"
+  class="actions-panel actions-panel--small"
 >
   <div
     class="layout row align-center"
   >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      lazy="lazy"
+      tooltip="Edit title"
+    />
     <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
@@ -235,7 +324,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For small dense. 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"

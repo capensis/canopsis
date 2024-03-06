@@ -142,7 +142,136 @@ exports[`v-data-table Renders \`v-data-table\` with custom headers 1`] = `
 </div>
 `;
 
-exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
+exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
+<div>
+  <div
+    class="v-table__overflow"
+  >
+    <table
+      class="v-datatable v-table theme--light"
+    >
+      <tbody>
+        <tr>
+          <td
+            class="text-xs-center"
+            colspan="0"
+          >
+            No data available
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="v-datatable v-table theme--light"
+  >
+    <div
+      class="v-datatable__actions"
+    >
+      <div
+        class="v-datatable__actions__select"
+      >
+        Rows per page:
+        <div
+          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-select__slot"
+              >
+                <div
+                  class="v-select__selections"
+                >
+                  <div
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    5
+                  </div>
+                  <input
+                    aria-label="Rows per page:"
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
+                  />
+                </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-datatable__actions__range-controls"
+      >
+        <div
+          class="v-datatable__actions__pagination"
+        >
+          –
+        </div>
+        <button
+          aria-label="Previous page"
+          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+          disabled="disabled"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              chevron_left
+            </i>
+          </div>
+        </button>
+        <button
+          aria-label="Next page"
+          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+          disabled="disabled"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              chevron_right
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
 <div>
   <div
     class="v-table__overflow"
@@ -161,14 +290,24 @@ exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
             scope="col"
             tabindex="0"
           >
-            Header 1
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
+            <div
+              class="layout align-center"
             >
-              arrow_upward
-            </i>
+              <span
+                class=""
+              >
+                Header 1
+              </span>
+              <span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </span>
+            </div>
           </th>
           <th
             aria-label="Header 2: Not sorted. Activate to sort ascending."
@@ -179,14 +318,24 @@ exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
             scope="col"
             tabindex="0"
           >
-            Header 2
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
+            <div
+              class="layout align-center"
             >
-              arrow_upward
-            </i>
+              <span
+                class=""
+              >
+                Header 2
+              </span>
+              <span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </span>
+            </div>
           </th>
         </tr>
         <tr
@@ -314,128 +463,51 @@ exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
 </div>
 `;
 
-exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
+exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis headers 1`] = `
 <div>
-  <div
-    class="v-table__overflow"
-  >
-    <table
-      class="v-datatable v-table theme--light"
-    >
-      <tbody>
+  <div class="v-table__overflow">
+    <table class="v-datatable v-table theme--light">
+      <thead>
         <tr>
-          <td
-            class="text-xs-center"
-            colspan="0"
-          >
-            No data available
-          </td>
+          <th role="columnheader" scope="col" aria-label="Header 1: Sorted ascending. Activate to sort descending." data-value="property1" aria-sort="ascending" tabindex="0" class="column active asc sortable text-xs-left">
+            <div class="layout align-center"><span title="Header 1" class="v-datatable-header-span--ellipsis">Header 1</span><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span></div>
+          </th>
+          <th role="columnheader" scope="col" aria-label="Header 2: Not sorted. Activate to sort ascending." data-value="property2" aria-sort="none" tabindex="0" class="column sortable text-xs-left">
+            <div class="layout align-center"><span title="Header 2" class="v-datatable-header-span--ellipsis">Header 2</span><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span></div>
+          </th>
         </tr>
+        <tr class="v-datatable__progress">
+          <th colspan="2" class="column"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>Row{"item":{"property1":"Property 1","property2":"Property 2"},"index":0}</tr>
       </tbody>
     </table>
   </div>
-  <div
-    class="v-datatable v-table theme--light"
-  >
-    <div
-      class="v-datatable__actions"
-    >
-      <div
-        class="v-datatable__actions__select"
-      >
-        Rows per page:
-        <div
-          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    5
-                  </div>
-                  <input
-                    aria-label="Rows per page:"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
+  <div class="v-datatable v-table theme--light">
+    <div class="v-datatable__actions">
+      <div class="v-datatable__actions__select">Rows per page:<div role="combobox" class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light">
+          <div class="v-input__control">
+            <div class="v-input__slot">
+              <div class="v-select__slot">
+                <div class="v-select__selections">
+                  <div class="v-select__selection v-select__selection--comma">5</div><input aria-label="Rows per page:" readonly="readonly" type="text" autocomplete="on" aria-readonly="false">
                 </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
+                <div class="v-input__append-inner">
+                  <div class="v-input__icon v-input__icon--append"><i aria-hidden="true" class="v-icon material-icons theme--light">arrow_drop_down</i></div>
                 </div>
               </div>
-              <div
-                class="v-menu"
-              />
+              <div class="v-menu"></div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        class="v-datatable__actions__range-controls"
-      >
-        <div
-          class="v-datatable__actions__pagination"
-        >
-          –
-        </div>
-        <button
-          aria-label="Previous page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_left
-            </i>
-          </div>
-        </button>
-        <button
-          aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_right
-            </i>
-          </div>
+      <div class="v-datatable__actions__range-controls">
+        <div class="v-datatable__actions__pagination">1-1 of 1</div><button disabled="disabled" type="button" class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light" aria-label="Previous page">
+          <div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">chevron_left</i></div>
+        </button><button disabled="disabled" type="button" class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light" aria-label="Next page">
+          <div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">chevron_right</i></div>
         </button>
       </div>
     </div>

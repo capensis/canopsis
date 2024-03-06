@@ -178,6 +178,10 @@
         v-model="form.parameters.sticky_header",
         :title="$t('settings.stickyHeader')"
       )
+      field-switcher(
+        v-model="form.parameters.isEllipsisHeaders",
+        :title="$t('settings.isEllipsisHeaders')"
+      )
       v-divider
       widget-settings-group(:title="$t('settings.kioskMode')")
         field-switcher(

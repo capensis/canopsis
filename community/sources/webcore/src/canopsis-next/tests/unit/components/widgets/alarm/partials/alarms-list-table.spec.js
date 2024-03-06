@@ -121,7 +121,7 @@ describe('alarms-list-table', () => {
     jest.clearAllMocks();
   });
 
-  it('Alarms selected after trigger table', () => {
+  test('Alarms selected after trigger table', () => {
     const selectedAlarms = alarms.slice(0, -1);
     const wrapper = factory({
       store,
@@ -138,7 +138,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.vm.selected).toEqual(selectedAlarms);
   });
 
-  it('Pagination update event emitted after trigger update pagination', () => {
+  test('Pagination update event emitted after trigger update pagination', () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -168,7 +168,7 @@ describe('alarms-list-table', () => {
     expect(eventData).toEqual(pagination);
   });
 
-  it('Resize listener added after mount and removed after destroy', async () => {
+  test('Resize listener added after mount and removed after destroy', async () => {
     const addEventListener = jest.spyOn(window, 'addEventListener');
     const removeEventListener = jest.spyOn(window, 'removeEventListener');
 
@@ -252,7 +252,7 @@ describe('alarms-list-table', () => {
     );
   });
 
-  it('Timer cleared after disable sticky', async () => {
+  test('Timer cleared after disable sticky', async () => {
     const clearTimeout = jest.spyOn(window, 'clearTimeout');
 
     const wrapper = snapshotFactory({
@@ -291,7 +291,7 @@ describe('alarms-list-table', () => {
     bodyGetBoundingClientRect.mockClear();
   });
 
-  it('Component adds and removes the same count listeners', async () => {
+  test('Component adds and removes the same count listeners', async () => {
     const addEventListener = jest.spyOn(window, 'addEventListener');
     const removeEventListener = jest.spyOn(window, 'removeEventListener');
 
@@ -362,7 +362,7 @@ describe('alarms-list-table', () => {
     );
   });
 
-  it('Header position changed after trigger scroll', async () => {
+  test('Header position changed after trigger scroll', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -393,7 +393,7 @@ describe('alarms-list-table', () => {
     bodyGetBoundingClientRect.mockClear();
   });
 
-  it('Header hidden after trigger start scroll', async () => {
+  test('Header hidden after trigger start scroll', async () => {
     jest.useFakeTimers();
 
     const wrapper = snapshotFactory({
@@ -430,7 +430,7 @@ describe('alarms-list-table', () => {
     jest.useRealTimers();
   });
 
-  it('Expanded elements works correctly', async () => {
+  test('Expanded elements works correctly', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -461,7 +461,7 @@ describe('alarms-list-table', () => {
     });
   });
 
-  it('Renders `alarms-list-table` with default and required props', () => {
+  test('Renders `alarms-list-table` with default and required props', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -476,7 +476,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with custom props', async () => {
+  test('Renders `alarms-list-table` with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -508,7 +508,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with expandable, but without selectable', async () => {
+  test('Renders `alarms-list-table` with expandable, but without selectable', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -527,7 +527,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with default and required props with compact mode', () => {
+  test('Renders `alarms-list-table` with default and required props with compact mode', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -548,7 +548,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with default and required props with links column with links in row count', () => {
+  test('Renders `alarms-list-table` with default and required props with links column with links in row count', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -573,7 +573,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = false', async () => {
+  test('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = false', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -593,7 +593,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = true', async () => {
+  test('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = true', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -611,5 +611,26 @@ describe('alarms-list-table', () => {
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `alarms-list-table` with default and required props with ellipsis headers', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+
+            isEllipsisHeaders: true,
+          },
+        },
+        alarms: [],
+        columns,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
   });
 });
