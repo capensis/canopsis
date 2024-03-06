@@ -276,6 +276,20 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntity(arg0 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntity), arg0)
 }
 
+// GetOpenedAlarmsWithEntityByAlarmIDs mocks base method.
+func (m *MockAdapter) GetOpenedAlarmsWithEntityByAlarmIDs(arg0 context.Context, arg1 []string, arg2 *[]types.AlarmWithEntity) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOpenedAlarmsWithEntityByAlarmIDs", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetOpenedAlarmsWithEntityByAlarmIDs indicates an expected call of GetOpenedAlarmsWithEntityByAlarmIDs.
+func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntityByAlarmIDs(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithEntityByAlarmIDs", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithEntityByAlarmIDs), arg0, arg1, arg2)
+}
+
 // GetOpenedAlarmsWithEntityByIDs mocks base method.
 func (m *MockAdapter) GetOpenedAlarmsWithEntityByIDs(arg0 context.Context, arg1 []string, arg2 *[]types.AlarmWithEntity) error {
 	m.ctrl.T.Helper()

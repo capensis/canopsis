@@ -38,6 +38,7 @@ type Adapter interface {
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
+	GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 
 	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time datetime.CpsTime) (mongo.Cursor, error)
 
