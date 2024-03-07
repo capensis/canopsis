@@ -45,6 +45,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       subtitle="(Modal)"
       value="11"
     />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
@@ -173,6 +176,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <field-default-elements-per-page-stub
       subtitle="(Modal)"
       value="10"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""

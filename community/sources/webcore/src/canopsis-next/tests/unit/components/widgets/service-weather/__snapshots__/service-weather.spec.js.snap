@@ -210,6 +210,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
         priorityenabled="true"
         secondaryiconenabled="true"
         service="[object Object]"
+        showrootcausebystateclick="true"
         template=""
       />
     </div>
