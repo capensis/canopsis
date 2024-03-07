@@ -1,5 +1,20 @@
 <template>
-  <span>{{ value }}</span>
+  <span class="availability-list-column-value">
+    {{ value }}
+
+    <c-help-icon
+      v-if="isTrendEnabled"
+      :text="trendTooltipText"
+      :icon-class="{
+        'availability-list-column-value__trend': true,
+        'availability-list-column-value__trend--up': trendUp
+      }"
+      :color="trendUp ? 'success' : 'error'"
+      icon="arrow_downward"
+      size="16"
+      top
+    />
+  </span>
 </template>
 
 <script>
@@ -7,8 +22,11 @@ import { computed } from 'vue';
 
 import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_SHOW_TYPE } from '@/constants';
 
-import { convertNumberToRoundedPercentString } from '@/helpers/string';
 import { convertDurationToString } from '@/helpers/date/duration';
+import {
+  getAvailabilityFieldByDisplayParameterAndShowType,
+  getAvailabilityTrendFieldByDisplayParameter,
+} from '@/helpers/entities/availability/entity';
 
 export default {
   props: {
@@ -24,23 +42,63 @@ export default {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.percent,
     },
+    showTrend: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
-    const isUptimeParameter = computed(() => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime);
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
-
-    const targetValue = computed(() => (
-      isUptimeParameter.value ? props.availability.uptime : props.availability.downtime
+    const valueField = computed(() => getAvailabilityFieldByDisplayParameterAndShowType(
+      props.displayParameter,
+      props.showType,
     ));
+    const trendValueField = computed(() => getAvailabilityTrendFieldByDisplayParameter(props.displayParameter));
 
-    const totalTime = computed(() => props.availability.uptime + props.availability.downtime);
-    const percent = computed(() => convertNumberToRoundedPercentString(targetValue.value / totalTime.value, 2));
-    const duration = computed(() => convertDurationToString(targetValue.value));
-    const value = computed(() => (isPercentType.value ? percent.value : duration.value));
+    const targetValue = computed(() => props.availability[valueField.value]);
+    const targetTrendValue = computed(() => props.availability[trendValueField.value]);
+
+    const trendUp = computed(
+      () => targetValue.value > targetTrendValue.value,
+    );
+    const isTrendEnabled = computed(
+      () => props.showTrend
+        && isPercentType.value
+        && targetTrendValue.value
+        && targetValue.value !== targetTrendValue.value,
+    );
+
+    const trendTooltipText = computed(
+      () => (isPercentType.value
+        ? `${targetTrendValue.value}%`
+        : convertDurationToString(targetTrendValue.value)),
+    );
+    const value = computed(
+      () => (isPercentType.value
+        ? `${targetValue.value}%`
+        : convertDurationToString(targetValue.value)),
+    );
 
     return {
       value,
+      isPercentType,
+      isTrendEnabled,
+      trendUp,
+      trendTooltipText,
     };
   },
 };
 </script>
+
+<style lang="scss">
+.availability-list-column-value {
+  &__trend {
+    transform: rotate(0deg);
+    transition: transform linear .3s;
+
+    &--up {
+      transform: rotate(180deg);
+    }
+  }
+}
+</style>
