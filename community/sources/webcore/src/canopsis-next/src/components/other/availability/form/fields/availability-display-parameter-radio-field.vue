@@ -17,7 +17,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_DISPLAY_PARAMETERS } from '@/constants';
+
+import { useI18n } from '@/i18n';
 
 export default {
   props: {
@@ -34,16 +38,20 @@ export default {
       required: false,
     },
   },
-  computed: {
-    types() {
-      return [{
-        value: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
-        label: this.$tc('common.uptime'),
-      }, {
-        value: AVAILABILITY_DISPLAY_PARAMETERS.downtime,
-        label: this.$t('common.downtime'),
-      }];
-    },
+  setup() {
+    const { t, tc } = useI18n();
+
+    const types = computed(() => [{
+      value: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
+      label: tc('common.uptime'),
+    }, {
+      value: AVAILABILITY_DISPLAY_PARAMETERS.downtime,
+      label: t('common.downtime'),
+    }]);
+
+    return {
+      types,
+    };
   },
 };
 </script>
