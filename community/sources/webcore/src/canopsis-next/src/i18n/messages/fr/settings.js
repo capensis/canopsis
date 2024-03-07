@@ -73,8 +73,8 @@ export default {
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
-  showRootCauseByStateClick: 'Afficher le diagramme de cause première appelé à partir de la colonne Criticité',
-  rootCauseSettings: 'Paramètres du diagramme des causes profondes',
+  showRootCauseByStateClick: 'Afficher le diagramme de cause racine à partir de la colonne Criticité',
+  rootCauseSettings: 'Paramètres du diagramme de cause racine',
   entitiesColorIndicator: 'Indicateur de couleur des entités',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
@@ -181,8 +181,8 @@ export default {
   colorIndicator: {
     title: 'Indicateur de couleur',
     fields: {
-      displayAsSeverity: 'Afficher comme gravité',
-      displayAsPriority: 'Afficher en priorité',
+      displayAsSeverity: 'Afficher comme sévérité',
+      displayAsPriority: 'Afficher comme priorité',
     },
   },
   receiveByApi: 'Réponse de l\'API',
