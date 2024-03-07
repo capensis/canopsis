@@ -17,6 +17,13 @@
         :show-type="showType"
       />
     </template>
+    <template v-for="column of columns" #[column.value]="{ item }">
+      <entity-column-cell
+        :key="column.value"
+        :entity="item.entity"
+        :column="column"
+      />
+    </template>
     <template #expand="{ item }">
       <availability-list-expand-panel
         :availability="item"
@@ -38,11 +45,12 @@ import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_SHOW_TYPE } from '@/const
 import { useI18n } from '@/i18n';
 
 import AvailabilityListColumnValue from '@/components/other/availability/partials/availability-list-column-value.vue';
+import EntityColumnCell from '@/components/widgets/context/columns-formatting/entity-column-cell.vue';
 
 import AvailabilityListExpandPanel from './partials/availability-list-expand-panel.vue';
 
 export default {
-  components: { AvailabilityListColumnValue, AvailabilityListExpandPanel },
+  components: { EntityColumnCell, AvailabilityListColumnValue, AvailabilityListExpandPanel },
   props: {
     availabilities: {
       type: Array,
@@ -93,22 +101,14 @@ export default {
     const { t } = useI18n();
 
     const isUptimeParameter = computed(() => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime);
-    const headers = computed(() => {
-      const items = [];
-
-      items.push({
+    const headers = computed(() => [
+      {
         text: t(`common.${isUptimeParameter.value ? 'uptime' : 'downtime'}`),
         value: 'value',
         sortable: false,
-      });
-
-      items.push(...props.columns.map(column => ({
-        ...column,
-        value: `entity.${column.value}`,
-      })));
-
-      return items;
-    });
+      },
+      ...props.columns,
+    ]);
 
     return {
       headers,
