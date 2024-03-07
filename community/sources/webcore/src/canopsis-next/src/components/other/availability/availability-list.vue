@@ -13,6 +13,7 @@
       <availability-list-column-value
         :availability="item"
         :display-parameter="displayParameter"
+        :show-trend="showTrend"
         :show-type="showType"
       />
     </template>
@@ -30,7 +31,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_SHOW_TYPE } from '@/constants';
+
+import { useI18n } from '@/i18n';
 
 import AvailabilityListColumnValue from '@/components/other/availability/partials/availability-list-column-value.vue';
 
@@ -75,32 +80,39 @@ export default {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.percent,
     },
+    showTrend: {
+      type: Boolean,
+      default: false,
+    },
     interval: {
       type: Object,
       required: true,
     },
   },
-  computed: {
-    isUptimeParameter() {
-      return this.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime;
-    },
+  setup(props) {
+    const { t } = useI18n();
 
-    headers() {
-      const headers = [];
+    const isUptimeParameter = computed(() => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime);
+    const headers = computed(() => {
+      const items = [];
 
-      headers.push({
-        text: this.$t(`common.${this.isUptimeParameter ? 'uptime' : 'downtime'}`),
+      items.push({
+        text: t(`common.${isUptimeParameter.value ? 'uptime' : 'downtime'}`),
         value: 'value',
         sortable: false,
       });
 
-      headers.push(...this.columns.map(column => ({
+      items.push(...props.columns.map(column => ({
         ...column,
         value: `entity.${column.value}`,
       })));
 
-      return headers;
-    },
+      return items;
+    });
+
+    return {
+      headers,
+    };
   },
 };
 </script>

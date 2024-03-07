@@ -9,7 +9,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
+
+import { useI18n } from '@/i18n';
 
 export default {
   props: {
@@ -26,16 +30,20 @@ export default {
       required: false,
     },
   },
-  computed: {
-    types() {
-      return [{
-        value: AVAILABILITY_SHOW_TYPE.percent,
-        text: this.$tc('common.percent'),
-      }, {
-        value: AVAILABILITY_SHOW_TYPE.duration,
-        text: this.$t('common.duration'),
-      }];
-    },
+  setup() {
+    const { t, tc } = useI18n();
+
+    const types = computed(() => [{
+      value: AVAILABILITY_SHOW_TYPE.percent,
+      text: tc('common.percent'),
+    }, {
+      value: AVAILABILITY_SHOW_TYPE.duration,
+      text: t('common.duration'),
+    }]);
+
+    return {
+      types,
+    };
   },
 };
 </script>

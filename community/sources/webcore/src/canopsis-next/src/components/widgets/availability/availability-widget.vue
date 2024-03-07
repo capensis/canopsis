@@ -14,7 +14,7 @@
       :widget-filters="widget.filters"
       :locked-filter="lockedFilter"
       :filters="mainFilter"
-      :show-interval="true"
+      :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToListFilters"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
@@ -42,6 +42,7 @@
       :show-type="query.showType"
       :options.sync="options"
       :interval="interval"
+      :show-trend="query.showTrend"
     />
   </v-layout>
 </template>

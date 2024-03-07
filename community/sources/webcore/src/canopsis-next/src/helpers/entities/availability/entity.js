@@ -16,3 +16,15 @@ export const getAvailabilityFieldByDisplayParameterAndShowType = (displayParamet
 
   return isPercentType ? AVAILABILITY_FIELDS.downtimeShare : AVAILABILITY_FIELDS.downtimeDuration;
 };
+
+/**
+ * Return trend field name by parameter and show type
+ *
+ * @param {number} displayParameter
+ * @return {string}
+ */
+export const getAvailabilityTrendFieldByDisplayParameter = displayParameter => (
+  displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime
+    ? AVAILABILITY_FIELDS.uptimeShareHistory
+    : AVAILABILITY_FIELDS.downtimeShareHistory
+);

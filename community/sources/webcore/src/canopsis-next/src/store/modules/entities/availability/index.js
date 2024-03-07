@@ -41,38 +41,26 @@ export default createWidgetModule({ route: API_ROUTES.availability.list }, {
       minDate.setDate(minDate.getDate() - 3);
 
       return {
-        data: [
-          {
-            timestamp: new Date(2024, 2, 4, 8).getTime() / 1000,
-            uptime: Math.round(Math.random() * 10000),
-            downtime: Math.round(Math.random() * 10000),
-            inactive_time: Math.round(Math.random() * 1000),
-          },
-          {
-            timestamp: new Date(2024, 2, 4, 9).getTime() / 1000,
-            uptime: Math.round(Math.random() * 10000),
-            downtime: Math.round(Math.random() * 10000),
-            inactive_time: Math.round(Math.random() * 1000),
-          },
-          {
-            timestamp: new Date(2024, 2, 4, 10).getTime() / 1000,
-            uptime: Math.round(Math.random() * 10000),
-            downtime: Math.round(Math.random() * 10000),
-            inactive_time: Math.round(Math.random() * 1000),
-          },
-          {
-            timestamp: new Date(2024, 2, 4, 11).getTime() / 1000,
-            uptime: Math.round(Math.random() * 10000),
-            downtime: Math.round(Math.random() * 10000),
-            inactive_time: Math.round(Math.random() * 1000),
-          },
-          {
-            timestamp: new Date(2024, 2, 4, 12).getTime() / 1000,
-            uptime: Math.round(Math.random() * 10000),
-            downtime: Math.round(Math.random() * 10000),
-            inactive_time: Math.round(Math.random() * 1000),
-          },
-        ],
+        data: Array.from({ length: 5 }, (_, index) => {
+          const uptime = Math.round(Math.random() * 10000);
+          const downtime = Math.round(Math.random() * 10000);
+          const totalTime = uptime + downtime;
+          const uptimeShare = (uptime / totalTime).toFixed(2);
+          const downtimeShare = 100 - uptimeShare;
+
+          return ({
+            timestamp: new Date(2024, 2, 4, 8 + index).getTime() / 1000,
+
+            uptime_duration: uptime,
+            downtime_duration: downtime,
+
+            uptime_share: uptimeShare,
+            downtime_share: downtimeShare,
+
+            uptime_share_history: uptimeShare + Math.round(Math.random() * 20) - 10,
+            downtime_share_history: downtimeShare + Math.round(Math.random() * 20) - 10,
+          });
+        }),
       };
     },
 
