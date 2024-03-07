@@ -37,3 +37,12 @@ export const AVAILABILITY_VALUE_FILTER_METHODS = {
   greater: 'gt',
   less: 'lt',
 };
+
+export const AVAILABILITY_FIELDS = {
+  uptimeDuration: 'uptime_duration',
+  downtimeDuration: 'downtime_duration',
+  uptimeShare: 'uptime_share',
+  downtimeShare: 'downtime_share',
+  uptimeShareHistory: 'uptime_share_history',
+  downtimeShareHistory: 'downtime_share_history',
+};
