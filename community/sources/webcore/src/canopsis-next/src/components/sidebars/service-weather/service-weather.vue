@@ -49,6 +49,7 @@
         v-model="form.parameters.modalItemsPerPage"
         :sub-title="$t('settings.modal')"
       />
+      <field-root-cause-settings v-model="form.parameters" />
       <field-text-editor-with-template
         :value="form.parameters.blockTemplate"
         :template="form.parameters.blockTemplateTemplate"
@@ -146,6 +147,7 @@ import AlarmsListModalForm from '../alarm/form/alarms-list-modal.vue';
 import MarginsForm from '../form/margins.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
 import FieldCountersSelector from './form/fields/counters-selector.vue';
 import FieldSortColumn from './form/fields/sort-column.vue';
@@ -175,6 +177,7 @@ export default {
     FieldActionRequiredSettings,
     WidgetSettings,
     WidgetSettingsGroup,
+    FieldRootCauseSettings,
   },
   mixins: [
     widgetSettingsMixin,
