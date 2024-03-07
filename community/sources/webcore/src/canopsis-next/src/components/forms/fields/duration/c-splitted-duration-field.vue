@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="gap-3" align-end>
+  <v-layout class="c-splitted-duration-field gap-3" align-end>
     <c-number-field
       v-for="{ unit, label } of availableItems"
       :key="unit"
@@ -63,41 +63,55 @@ export default {
       return items;
     },
 
-    maxValuesByUnit() {
-      return this.availableItems.reduce((acc, { unit }) => {
-        acc[unit] = Math.floor(fromSeconds(this.maxValue, unit));
-
-        return acc;
-      }, {});
-    },
-
     valuesByUnit() {
-      return this.convertValueToMaxValueByUnit(this.value);
-    },
-  },
-  methods: {
-    convertValueToMaxValueByUnit(value = 0) {
       const { values } = this.availableItems.reduce((acc, { unit }) => {
-        const unitValue = Math.floor(fromSeconds(acc.restSeconds, unit));
+        const unitValue = this.convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
 
         acc.values[unit] = unitValue;
         acc.restSeconds -= toSeconds(unitValue, unit);
 
         return acc;
       }, {
-        restSeconds: value,
+        restSeconds: this.value,
         values: {},
       });
 
       return values;
     },
 
+    maxValuesByUnit() {
+      const { values } = this.availableItems.reduce((acc, { unit }) => {
+        acc.values[unit] = this.convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
+        acc.restSeconds -= toSeconds(this.valuesByUnit[unit], unit);
+
+        return acc;
+      }, {
+        restSeconds: this.maxValue,
+        values: {},
+      });
+
+      return values;
+    },
+  },
+  methods: {
     updateValueByUnit(value, unit) {
       const preparedValue = Math.max(value || 0, 0);
       const newValue = this.value + toSeconds(preparedValue - this.valuesByUnit[unit], unit);
 
       this.updateModel(this.maxValue ? Math.min(this.maxValue, newValue) : newValue);
     },
+
+    convertSecondsToRoundedUnitValue(value, unit) {
+      return Math.floor(fromSeconds(value, unit));
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.c-splitted-duration-field {
+  > * {
+    flex: 1;
+  }
+}
+</style>

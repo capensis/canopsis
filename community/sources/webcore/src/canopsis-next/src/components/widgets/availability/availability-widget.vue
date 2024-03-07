@@ -14,13 +14,13 @@
       :widget-filters="widget.filters"
       :locked-filter="lockedFilter"
       :filters="mainFilter"
-      :show-interval="hasAccessToInterval"
+      :show-interval="true"
       :show-filter="hasAccessToListFilters"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
       :min-interval-date="minAvailableDate"
       :exporting="exporting"
-      :interval-seconds-diff="intervalSecondsDiff"
+      :max-value-filter-seconds="maxValueFilterSeconds"
       class="px-3 pt-3"
       @export="exportAvailabilityList"
       @update:filters="updateSelectedFilter"
@@ -49,10 +49,14 @@
 <script>
 import { omit, pick } from 'lodash';
 
+import { AVAILABILITY_VALUE_FILTER_METHODS, TIME_UNITS } from '@/constants';
+
 import { getAvailabilityDownloadFileUrl } from '@/helpers/entities/availability/url';
 import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
+import { toSeconds } from '@/helpers/date/duration';
+import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -107,19 +111,41 @@ export default {
       return this.getIntervalQuery();
     },
 
-    intervalSecondsDiff() {
+    maxValueFilterSeconds() {
+      if (this.interval.to === this.interval.from) {
+        return toSeconds(1, TIME_UNITS.day);
+      }
+
       return this.interval.to - this.interval.from;
     },
   },
   methods: {
     customQueryCondition(query, oldQuery) {
-      const omitFields = ['showType', 'displayParameter'];
+      const omitFields = ['showType'];
+
+      if (!query.valueFilter) {
+        omitFields.push('displayParameter');
+      }
 
       return isMetricsQueryChanged(
         omit(query, omitFields),
         omit(oldQuery, omitFields),
         this.minAvailableDate,
       );
+    },
+
+    updateInterval(interval) {
+      this.updateQueryField('interval', interval);
+
+      if (this.query.valueFilter) {
+        const { valueFilter } = this.query;
+        const { from, to } = this.getIntervalQuery();
+
+        this.updateQueryField('valueFilter', {
+          ...valueFilter,
+          value: Math.min(valueFilter.value, to - from),
+        });
+      }
     },
 
     updateTrend(value) {
@@ -130,6 +156,14 @@ export default {
     updateShowType(value) {
       this.updateContentInUserPreference({ show_type: value });
       this.updateQueryField('showType', value);
+
+      if (this.query.valueFilter) {
+        this.updateQueryField('valueFilter', {
+          ...this.query.valueFilter,
+          method: AVAILABILITY_VALUE_FILTER_METHODS.greater,
+          value: 0,
+        });
+      }
     },
 
     updateDisplayParameter(value) {
@@ -146,6 +180,8 @@ export default {
         sortBy = [],
         sortDesc = [],
         showTrend,
+        showType,
+        displayParameter,
         filter,
         valueFilter,
       } = this.query;
@@ -157,10 +193,7 @@ export default {
         with_trends: showTrend,
         widget_filters: convertFiltersToQuery(filter, this.lockedFilter),
         value_filter: valueFilter && {
-          /**
-           * TODO: should be replaced on parameter
-           */
-          parameter: 'uptime_share',
+          parameter: getAvailabilityFieldByDisplayParameterAndShowType(displayParameter, showType),
           ...valueFilter,
         },
       };
