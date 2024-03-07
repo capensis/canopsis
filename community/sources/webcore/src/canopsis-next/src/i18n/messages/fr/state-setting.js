@@ -29,18 +29,18 @@ export default {
   methods: {
     [STATE_SETTING_METHODS.inherited]: {
       label: 'L\'État est hérité des dépendances',
-      tooltip: 'L\'état est défini par une ou plusieurs dépendances.\n'
-          + 'Lorsque plusieurs entités sont définies, le pire état d’entre elles est retenu.',
+      tooltip: 'L\'État est défini par une ou plusieurs dépendances.\n'
+          + 'Lorsque plusieurs dépendances sont définies, le pire état d’entre elles est retenu.',
       stepTitle: 'L\'état de l\'entité cible est hérité d\'une ou plusieurs dépendances. Lorsque plusieurs dépendances correspondent au modèle, le pire état est retenu.',
     },
     [STATE_SETTING_METHODS.dependencies]: {
-      label: 'L\'État est défini par une part ou un nombre de dépendances d\'un État spécifique',
-      tooltip: 'Les états d\'entité peuvent être remplacés par une règle personnalisée définie par le nombre ou la part de dépendances d\'états spécifiques.',
-      stepTitle: 'Les états de l\'entité cible peuvent être remplacés par des conditions basées sur un nombre ou une part de dépendances d\'un état spécifique.',
+      label: 'L\'État est défini par un calcul (pourcentage ou nombre) appliqué sur les états des dépendances.',
+      tooltip: 'Il est possible de définir chaque état cible à partir d\'un calcul sur les états des dépendances.',
+      stepTitle: 'Les états de l\'entité cible peuvent être remplacés par des conditions basées sur les états des dépendances en nombre ou en pourcentage.',
     },
   },
   thresholdMethods: {
-    [STATE_SETTING_THRESHOLDS_METHODS.share]: 'Partager',
+    [STATE_SETTING_THRESHOLDS_METHODS.share]: 'Pourcentage',
     [STATE_SETTING_THRESHOLDS_METHODS.number]: 'Nombre',
   },
   thresholdConditions: {
