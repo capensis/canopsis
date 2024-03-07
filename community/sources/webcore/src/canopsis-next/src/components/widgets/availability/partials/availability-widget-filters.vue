@@ -59,11 +59,11 @@
       @input="$emit('update:trend', $event)"
     />
     <availability-value-filter-field
-      :value="valueFilter"
+      v-model="localValueFilter"
       :show-type="type"
-      :max-value="intervalSecondsDiff"
+      :max-seconds="maxValueFilterSeconds"
       class="availability-widget-filters__value-filter"
-      @input="debouncedUpdateValueFilter"
+      @input="debouncedEmitUpdateValueFilter"
     />
     <c-action-btn
       :loading="exporting"
@@ -163,21 +163,34 @@ export default {
       type: Object,
       required: false,
     },
-    intervalSecondsDiff: {
+    maxValueFilterSeconds: {
       type: Number,
       required: false,
     },
+  },
+  data() {
+    return {
+      localValueFilter: undefined,
+    };
   },
   computed: {
     quickRanges() {
       return Object.values(AVAILABILITY_QUICK_RANGES);
     },
   },
+  watch: {
+    valueFilter: {
+      immediate: true,
+      handler() {
+        this.localValueFilter = this.valueFilter && { ...this.valueFilter };
+      },
+    },
+  },
   created() {
-    this.debouncedUpdateValueFilter = debounce(this.updateValueFilter, 1000);
+    this.debouncedEmitUpdateValueFilter = debounce(this.emitUpdateValueFilter, 1000);
   },
   methods: {
-    updateValueFilter(value) {
+    emitUpdateValueFilter(value) {
       this.$emit('update:value-filter', value);
     },
   },

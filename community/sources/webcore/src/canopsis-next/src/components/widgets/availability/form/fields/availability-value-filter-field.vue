@@ -11,12 +11,14 @@
       <c-percents-field
         v-if="isPercentType"
         v-field="value.value"
+        class="availability-value-filter-field__value"
         hide-details
       />
-      <availability-time-field
+      <c-splitted-duration-field
         v-else
         v-field="value.value"
-        :max-value="maxValue"
+        :max-value="maxSeconds"
+        class="availability-value-filter-field__value"
         hide-details
       />
       <c-action-btn
@@ -36,11 +38,7 @@ import { AVAILABILITY_SHOW_TYPE, AVAILABILITY_VALUE_FILTER_METHODS } from '@/con
 
 import { formMixin } from '@/mixins/form';
 
-import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
-import AvailabilityTimeField from '@/components/widgets/availability/form/fields/availability-time-field.vue';
-
 export default {
-  components: { AvailabilityTimeField, CActionBtn },
   mixins: [formMixin],
   props: {
     value: {
@@ -51,7 +49,7 @@ export default {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.percent,
     },
-    maxValue: {
+    maxSeconds: {
       type: Number,
       required: false,
     },
@@ -93,6 +91,10 @@ export default {
     width: 140px;
     flex-grow: 0;
     flex-shrink: 0;
+  }
+
+  &__value {
+    width: 160px;
   }
 }
 </style>
