@@ -295,9 +295,6 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 		if err == nil {
 			query := expr.ExprQuery()
 			resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
-			if err != nil {
-				return nil, err
-			}
 
 			b, err := json.Marshal(resolvedQuery)
 			if err != nil {
@@ -893,10 +890,10 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 				continue
 			}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"type": bson.M{"$in": instructionFilter.ExcludeTypes}},
-			)
+			filters, err := q.getInstructionsFilters(ctx, bson.M{
+				"type":    bson.M{"$in": instructionFilter.ExcludeTypes},
+				"enabled": true,
+			})
 			if err != nil {
 				return err
 			}
@@ -955,10 +952,10 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 				continue
 			}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"type": bson.M{"$in": instructionFilter.IncludeTypes}},
-			)
+			filters, err := q.getInstructionsFilters(ctx, bson.M{
+				"type":    bson.M{"$in": instructionFilter.IncludeTypes},
+				"enabled": true,
+			})
 			if err != nil {
 				return err
 			}
