@@ -4,6 +4,8 @@ export default {
   thresholdRate: 'Taux de déclenchement',
   thresholdCount: 'Seuil de déclenchement',
   timeInterval: 'Intervalle de temps',
+  childInactiveDelay: 'Délai d\'inactivité de l\'enfant',
+  childInactiveDelayTooltip: 'L\'alarme correspondant à cette règle n\'est activée qu\'après le délai d\'inactivité',
   valuePath: 'Chemin de valeur | Chemins de valeur',
   autoResolve: 'Résolution automatique',
   idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
