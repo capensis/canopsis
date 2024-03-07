@@ -949,10 +949,10 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 				continue
 			}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"type": bson.M{"$in": instructionFilter.ExcludeTypes}},
-			)
+			filters, err := q.getInstructionsFilters(ctx, bson.M{
+				"type":    bson.M{"$in": instructionFilter.ExcludeTypes},
+				"enabled": true,
+			})
 			if err != nil {
 				return err
 			}
@@ -1011,10 +1011,10 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 				continue
 			}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"type": bson.M{"$in": instructionFilter.IncludeTypes}},
-			)
+			filters, err := q.getInstructionsFilters(ctx, bson.M{
+				"type":    bson.M{"$in": instructionFilter.IncludeTypes},
+				"enabled": true,
+			})
 			if err != nil {
 				return err
 			}
