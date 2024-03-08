@@ -2,10 +2,12 @@
 
 ## Définition
 
-Un `service` est un type d'entité du référentiel interne de Canopsis au même titre que les `connecteurs`, les `composants`, ou encore les `ressources`.  
+Un *service* est un type d'entité du référentiel interne de Canopsis au même
+titre que les *connecteurs*, les *composants*, ou encore les *ressources*.
+
 Il permet de regrouper d'autres entités à partir d'un [filtre/pattern]() et ainsi de créer des arbres de dépendances entre entités.  
 
-Le schéma ci-après propose un exemple d'arbre de dépendance pouvant être porté par les `Services` Canopsis.
+Le schéma ci-après propose un exemple d'arbre de dépendances, pouvant être porté par les `Services` Canopsis.
 
 Un [cas d'usage complet](./cas-d-usage-complet.md) est disponible.
 
@@ -87,13 +89,13 @@ Lorsqu’aucune règle ne s'applique, l'état du service vaut le pire état de s
 
 |                             | Description                                                  |
 | --------------------------- | ------------------------------------------------------------ |
-| **Modèles des dépendances** | Quelle(s) dépendance(s) de l'entité ciblée sera(ont) responsable(s) de l'état final ?<br />Si plusieurs dépendances sont sélectionnées par me modèle alors le pire état de celles-ci sera utilisé. |
+| **Modèles des dépendances** | Quelle(s) dépendance(s) de l'entité ciblée sera(ont) responsable(s) de l'état final ?<br />Si plusieurs dépendances sont sélectionnées par le modèle alors le pire état de celles-ci sera utilisé. |
 
 #### L'État est défini par un calcul (pourcentage ou nombre) appliqué sur les états des dépendances
 
 Dans ce mode, il est possible de définir l'état d'un service à partir de conditions basées sur un pourcentage ou un nombre d'états des dépendances du service.
 
-Nous pourrions par exemple exprimer le fait que le service sera en état 
+Nous pourrions par exemple exprimer le fait que le service sera en état :
 
 * Critique si plus de 50% de ses dépendances sont en état critique ou
 
@@ -105,7 +107,8 @@ Nous pourrions par exemple exprimer le fait que le service sera en état
 
   
 
-Pour cela, des conditions peuvent être définies pour chaque état final du service
+Pour cela, des conditions peuvent être définies pour chaque état final du
+service, comme dans l'illustration ci-dessous :
 
 ![services-calcul-etat2](./img/services-calcul-etat2.png)
 
