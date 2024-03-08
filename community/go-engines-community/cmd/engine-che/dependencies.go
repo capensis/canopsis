@@ -34,6 +34,8 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 		if err != nil {
 			logger.Err(err).Msg("failed to close mongo connection")
 		}
+
+		pgPoolProvider.Close()
 	})
 
 	return e
