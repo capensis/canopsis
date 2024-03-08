@@ -16,9 +16,9 @@ const (
 )
 
 const (
-	TicketRuleNameScenarioPrefix          = "Scenario: "
-	TicketRuleNameIdleRulePrefix          = "Idle rule: "
-	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+	RuleNameScenarioPrefix          = "Scenario: "
+	RuleNameIdleRulePrefix          = "Idle rule: "
+	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
