@@ -64,6 +64,11 @@ type entityWithData struct {
 	ExternalData map[string]map[string]any `bson:"-"`
 }
 
+type entityWithAlarm struct {
+	types.Entity `bson:",inline"`
+	Alarm        *types.Alarm `bson:"alarm"`
+}
+
 type parsedRule struct {
 	ID              string
 	Type            string
@@ -397,13 +402,26 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 	return append(openAlarms, resolvedAlarms...), nil
 }
 
-func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWithData, error) {
-	cursor, err := g.entityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}}, options.Find().SetSort(bson.M{"_id": 1}))
+func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWithAlarm, error) {
+	cursor, err := g.entityCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"v.resolved": nil}},
+			},
+			"as": "alarm",
+		}},
+		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"_id": 1}},
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	var entities []entityWithData
+	var entities []entityWithAlarm
 	err = cursor.All(ctx, &entities)
 	return entities, err
 }
@@ -475,13 +493,23 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 	return res, nil
 }
 
-func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithData) (map[string][]linkWithCategory, error) {
-	if rule.Type != liblink.TypeEntity {
-		return nil, nil
-	}
-
+func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithAlarm) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(entities))
 	for _, entity := range entities {
+		if entity.Alarm == nil && rule.Type == liblink.TypeAlarm {
+			continue
+		}
+
+		if entity.Alarm != nil {
+			ok, err := rule.AlarmPattern.Match(*entity.Alarm)
+			if err != nil {
+				return nil, fmt.Errorf("invalid alarm pattern linkrule=%s: %w", rule.ID, err)
+			}
+			if !ok {
+				continue
+			}
+		}
+
 		ok, err := rule.EntityPattern.Match(entity.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
@@ -490,25 +518,46 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		arg := []entityWithData{entity}
-		err = g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, arg)
-		if err != nil {
-			return nil, err
+		var arg any
+		switch rule.Type {
+		case liblink.TypeAlarm:
+			v := []alarmWithData{{Entity: entity.Entity, Alarm: *entity.Alarm}}
+			err := g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, v)
+			if err != nil {
+				return nil, err
+			}
+			arg = v
+		case liblink.TypeEntity:
+			v := []entityWithData{{Entity: entity.Entity}}
+			err := g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, v)
+			if err != nil {
+				return nil, err
+			}
+			arg = v
 		}
 
 		if rule.CodeExecutor != nil {
 			res[entity.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, arg)
 			if err != nil {
-				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
-				continue
+				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 			}
 
 			continue
 		}
 
-		res[entity.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, map[string]any{
-			"Entities": arg,
-		})
+		var data map[string]any
+		switch rule.Type {
+		case liblink.TypeAlarm:
+			data = map[string]any{
+				"Alarms": arg,
+			}
+		case liblink.TypeEntity:
+			data = map[string]any{
+				"Entities": arg,
+			}
+		}
+
+		res[entity.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 		}
