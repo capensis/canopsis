@@ -32,6 +32,9 @@ func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger)
 	engine := fifo.Default(ctx, options, dbClient, cfg, eventfilter.NewExternalDataGetterContainer(),
 		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg, logger), metricsConfigProvider,
 		eventFilterEventCounter, eventFilterFailureService, metricsSender, logger)
+	engine.AddDeferFunc(func(ctx context.Context) {
+		pgPoolProvider.Close()
+	})
 	engine.AddRoutine(func(ctx context.Context) error {
 		metricsSender.Run(ctx)
 		return nil
