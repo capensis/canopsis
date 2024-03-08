@@ -1,10 +1,6 @@
 # Cas d'usage de méthode de calcul d'état
 
-
-
 Pour ce cas d'usage, nous considérons le schéma suivant : 
-
-
 
 ```mermaid
 flowchart TD
@@ -21,15 +17,12 @@ flowchart TD
     Ping2([check_ping]) --> ESX2
 ```
 
-
-
 4 étages de dépendances sont visibles :
 
 1. Des ressources dont l'état est piloté par des événements entrants dans Canopsis
 2. Des composants `VM[1-3]`
 3. Des Services `ESX[1-2]` hébergeant des VM
 4. D'un Service `Cluster` composé de 2 ESX
-
 
 
 Voici les règles de gestions que nous souhaitons implémenter :
@@ -90,7 +83,7 @@ Nous créons une règle de calcul d'état dont les caractéristiques sont :
 
 * Appliquée sur le type d'entité `Service`
 
-* L'état est hérité des dépendances
+* L'état est défini par un calcul
 
   ![services-calcul-etat8](./img/services-calcul-etat8.png)
 
