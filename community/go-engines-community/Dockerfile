@@ -59,7 +59,7 @@ CMD ["/bin/sh", "-c", "/${CMD}"]
 # canopsis-reconfigure override
 #
 
-FROM debian:bullseye-20240130-slim AS canopsis-reconfigure
+FROM debian:bullseye-20240211-slim AS canopsis-reconfigure
 
 USER root
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
