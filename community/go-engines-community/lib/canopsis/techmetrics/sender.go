@@ -15,6 +15,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const maxUrlLength = 255
+
 type Sender interface {
 	Run(ctx context.Context)
 
@@ -144,12 +146,17 @@ func (s *sender) SendCheEntityInfo(timestamp time.Time, name string) {
 func (s *sender) SendApiRequest(metric ApiRequestMetric) {
 	metricName := ApiRequests
 	query := fmt.Sprintf("INSERT INTO %s (time, method, url, interval) VALUES($1, $2, $3, $4);", metricName)
+	url := metric.Url
+	if len(url) > maxUrlLength {
+		url = url[:maxUrlLength]
+	}
+
 	s.addBatch(metricName, batchItem{
 		query: query,
 		arguments: []interface{}{
 			metric.Timestamp.UTC(),
 			metric.Method,
-			metric.Url,
+			url,
 			metric.Interval.Microseconds(),
 		},
 	})
