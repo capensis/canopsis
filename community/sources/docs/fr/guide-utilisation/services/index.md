@@ -83,13 +83,13 @@ Lorsqu’aucune règle ne s'applique, l'état du service vaut le pire état de s
 
 ### Ajouter des conditions
 
-#### L'état est hérité des dépendances
+#### L'État est hérité des dépendances
 
 |                             | Description                                                  |
 | --------------------------- | ------------------------------------------------------------ |
 | **Modèles des dépendances** | Quelle(s) dépendance(s) de l'entité ciblée sera(ont) responsable(s) de l'état final ?<br />Si plusieurs dépendances sont sélectionnées par me modèle alors le pire état de celles-ci sera utilisé. |
 
-#### L'état est défini par une part ou un nombre de dépendances d'un état spécifique
+#### L'État est défini par un calcul (pourcentage ou nombre) appliqué sur les états des dépendances
 
 Dans ce mode, il est possible de définir l'état d'un service à partir de conditions basées sur un pourcentage ou un nombre d'états des dépendances du service.
 
