@@ -26,7 +26,7 @@ flowchart TD
     Ping2([check_ping]) --> ESX2
 ```
 
-[L'état du service]() est dépendant d'un ensemble de règles qui définissent une méthode de calcul :
+[L'état du service](#calcul-detat-severite) est dépendant d'un ensemble de règles qui définissent une méthode de calcul :
 
 * Pire état des dépendances
 * Un pourcentage de dépendances considérées comme KO
@@ -34,7 +34,7 @@ flowchart TD
 
 ## Explorateur de contexte
 
-C'est [l'explorateur de contexte]() qui permet de manipuler les services.
+C'est [l'explorateur de contexte](../interface/widgets/contexte/) qui permet de manipuler les services.
 
 ![services-explorateur-contexte1](./img/services-explorateur-contexte1.png)
 
@@ -42,24 +42,25 @@ C'est [l'explorateur de contexte]() qui permet de manipuler les services.
 
 ![](./img/services-explorateur-contexte2.png)
 
-| Paramètre                  | Description                                                  |
-| -------------------------- | ------------------------------------------------------------ |
-| **Nom**                    | Nom du Service à créer                                       |
-| **Catégorie**              | Catégorie du Service. Sera utile pour filtrer les Services   |
-| **État de disponibilité**  | Sévérité à partir de laquelle on considère le Service comme indisponible. |
-| **Niveau d'impact**        | Impact du service permettant de calculer la priorité des alarmes qui seront créées. |
-| **Latitude/Longitude**     | Coordonnées géographiques du Service                         |
-| **Modèle de message**      | Template qui définit le message des alarmes qui seront créées pour ce Service. La liste des variables disponibles est accessible grâce à l'icône ![services-explorateur-contexte3](./img/services-explorateur-contexte3.png) |
-| **Activée**                | Le Service est-il activé ou non ?                            |
-| **Paramétrage de l'état**  | Règle de calcul d'état qui s'applique                        |
-| **Modèles des entités**    | La règle ne s'applique que sur les événements dont l'entité correspond au modèle |
-| **Gérer les informations** | Panneau de gestion des informations enrichies sur le Service |
+| Paramètre                    | Description                                                  |
+| ---------------------------- | ------------------------------------------------------------ |
+| **Nom**(*)                   | Nom du service à créer                                       |
+| **Catégorie**(*)             | Catégorie du service. Sera utile pour filtrer les services   |
+| **État de disponibilité**(*) | Sévérité à partir de laquelle on considère le service comme indisponible. |
+| **Niveau d'impact**(*)       | Impact du service permettant de calculer la priorité des alarmes qui seront créées (de 1, peu impactant, à 10, très impactant). |
+| **Latitude/Longitude**       | Coordonnées géographiques du service                         |
+| **Modèle de message**(*)     | Template qui définit le message des alarmes qui seront créées pour ce service. La liste des variables disponibles est accessible grâce à l'icône (x) |
+| **Activée**(*)               | Le service est-il activé ou non ?                            |
+| **Paramétrage de l'état**    | Règle de calcul d'état qui s'applique                        |
+| **Modèles des entités**(*)   | La règle ne s'applique que sur les événements dont l'entité correspond au modèle |
+| **Gérer les informations**   | Panneau de gestion des informations enrichies sur le service |
 
 
 
 ## Calcul d'état / sévérité
 
-L'état ou la sévérité d'un Service est dépendant de règles de calcul d'état qui s'appliquent sur les dépendances de celui-ci.
+L'état ou la sévérité d'un Service est dépendant de règles de calcul d'état qui s'appliquent sur les dépendances de celui-ci.  
+Ces règles, qui sont personnalisables, peuvent être définies dans « Administration » > « Paramètres de calcul d'état/sévérité » :
 
 ![services-calcul-etat1](./img/services-calcul-etat1.png)
 
@@ -117,11 +118,11 @@ service, comme dans l'illustration ci-dessous :
 
 ## Représentation dans l'interface graphique
 
-Les services sont représentés par l'intermédiaire du [widget Météo des Services]() sous forme de tuile.  
+Les services sont représentés par l'intermédiaire du [widget Météo des Services](../interface/widgets/meteo-des-services/) sous forme de tuile.  
 
 Une tuile représente un Service. Elle est accompagnée d'un jeu de couleurs et d'icônes qui correspondent à l'état courant du Service :
 
-* Basé sur la sévérité : liée à la [règle de calcul de sévérité]()
+* Basé sur la sévérité : liée à la [règle de calcul de d'état/sévérité](#calcul-detat-severite)
 * Basé sur la priorité : produit de la sévérité par l'impact de l'entité
 
 
