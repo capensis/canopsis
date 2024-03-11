@@ -82,8 +82,10 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	}()
 
 	alarmConfig := p.AlarmConfigProvider.Get()
-	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
-	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
+	if event.Initiator == types.InitiatorExternal {
+		event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
+		event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
+	}
 
 	var updatedEntitiesForEvent []types.Entity
 	var updatedEntityIdsForMetrics []string

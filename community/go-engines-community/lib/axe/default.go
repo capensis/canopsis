@@ -169,7 +169,7 @@ func NewEngine(
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
 	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
 	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
 
@@ -497,13 +497,13 @@ func (m DependencyMaker) EventProcessor(
 		pbhTypeResolver, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender,
 		remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAck, event.NewAckProcessor(dbClient, alarmConfigProvider, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
-	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, alarmConfigProvider, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
+	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeActivate, event.NewActivateProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAssocTicket, event.NewAssocTicketProcessor(dbClient, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeCancel, event.NewCancelProcessor(dbClient, metaAlarmEventProcessor, logger))
-	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, userInterfaceConfigProvider,
 		alarmStatusService, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeComment, event.NewCommentProcessor(dbClient, alarmConfigProvider, metaAlarmEventProcessor, logger))
+	container.Set(types.EventTypeComment, event.NewCommentProcessor(dbClient, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypePbhEnter, event.NewPbhEnterProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypePbhLeave, event.NewPbhLeaveProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypePbhLeaveAndEnter, event.NewPbhLeaveAndEnterProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
@@ -518,7 +518,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeSnooze, event.NewSnoozeProcessor(dbClient, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeUncancel, event.NewUncancelProcessor(dbClient, alarmStatusService, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeUnsnooze, event.NewUnsnoozeProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeUpdateStatus, event.NewUpdateStatusProcessor(dbClient, alarmStatusService, alarmConfigProvider, metaAlarmEventProcessor, logger))
+	container.Set(types.EventTypeUpdateStatus, event.NewUpdateStatusProcessor(dbClient, alarmStatusService, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeWebhookStarted, event.NewWebhookStartProcessor(dbClient))
 	container.Set(types.EventTypeWebhookCompleted, event.NewWebhookCompleteProcessor(dbClient, metaAlarmEventProcessor, metricsSender, amqpPublisher, json.NewEncoder(), logger))
 	container.Set(types.EventTypeWebhookFailed, event.NewWebhookFailProcessor(dbClient))
