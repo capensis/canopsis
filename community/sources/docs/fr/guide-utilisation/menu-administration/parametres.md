@@ -156,10 +156,36 @@ Cet onglet vous permet d'éditer les notifications relatifs aux consignes.
 
 ## Icônes
 
-Dans Canopsis, le jeu d'icône [untel](somelink) est mis à disposition.  
+Dans Canopsis, le jeu d'icône [material Design](https://fonts.google.com/icons) est mis à disposition.  
 Vous avez également la possibilité d'ajouter vos propres icônes au format **svg**.  
 
 Vous pourrez ensuite en bénéficier dans les modules compatibles 
 
 * Générateur de liens
+
+![icones-generateur-liens](./img/icones-generateur-liens.png)
+
+* Comportements périodiques
+
+![icones-comportements-periodiques](./img/icones-comportements-periodiques.png)
+
+
 * Modèles (Fenêtre plus d'infos, colonnes, etc)
+
+Il est possible d'utiliser la balise `v-icon` avec les propriétés des composants décrites sur [vuefity v-icon](https://v2.vuetifyjs.com/en/api/v-icon/#props).
+
+Pour les icônes [Material de base](https://fonts.google.com/icons) :
+
+```html
+<p>
+  <v-icon color="red" large>help</v-icon>
+</p>
+```
+
+Pour les icônes personnalisées, on préfixe avec `$vuetify.icons.` :
+
+```html
+<p>
+  <v-icon small>$vuetify.icons.icône-perso</v-icon>
+</p>
+```
