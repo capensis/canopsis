@@ -45,7 +45,7 @@ export default createWidgetModule({ route: API_ROUTES.availability.list }, {
           const uptime = Math.round(Math.random() * 10000);
           const downtime = Math.round(Math.random() * 10000);
           const totalTime = uptime + downtime;
-          const uptimeShare = (uptime / totalTime).toFixed(2);
+          const uptimeShare = ((uptime / totalTime) * 100).toFixed(2);
           const downtimeShare = 100 - uptimeShare;
 
           return ({

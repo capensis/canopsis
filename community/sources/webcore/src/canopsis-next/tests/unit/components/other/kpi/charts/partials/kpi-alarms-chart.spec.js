@@ -5,7 +5,7 @@ import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 import KpiAlarmsChart from '@/components/other/kpi/charts/partials/kpi-alarms-chart';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
 
 describe('kpi-alarms-chart', () => {
@@ -193,7 +193,7 @@ describe('kpi-alarms-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
 
     kpiChartExportActions.triggerCustomEvent('export:csv');
 
@@ -211,7 +211,7 @@ describe('kpi-alarms-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
 
     kpiChartExportActions.triggerCustomEvent('export:png');
 

@@ -5,7 +5,7 @@ import { ALARM_METRIC_PARAMETERS } from '@/constants';
 import KpiRatingChart from '@/components/other/kpi/charts/partials/kpi-rating-chart';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
 
 describe('kpi-rating-chart', () => {
@@ -85,7 +85,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
 
     kpiChartExportActions.triggerCustomEvent('export:csv');
 
@@ -103,7 +103,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
 
     kpiChartExportActions.triggerCustomEvent('export:png');
 

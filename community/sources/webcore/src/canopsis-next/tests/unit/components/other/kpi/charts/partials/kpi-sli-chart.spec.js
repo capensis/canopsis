@@ -5,7 +5,7 @@ import { KPI_SLI_GRAPH_DATA_TYPE, SAMPLINGS } from '@/constants';
 import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
 
 describe('kpi-sli-chart', () => {
@@ -149,7 +149,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
 
     kpiChartExportActions.triggerCustomEvent('export:csv');
 
@@ -167,7 +167,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
+    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
 
     kpiChartExportActions.triggerCustomEvent('export:png');
 
