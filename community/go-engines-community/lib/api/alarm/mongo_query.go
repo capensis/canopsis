@@ -89,6 +89,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 			"v.resource":       {},
 			"v.display_name":   {},
 			"v.output":         {},
+			"v.ticket.ticket":  {},
 		},
 		availableSearchByEntityFields: map[string]struct{}{
 			"entity.name":        {},
