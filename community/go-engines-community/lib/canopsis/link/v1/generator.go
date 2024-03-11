@@ -168,11 +168,46 @@ func (g *generator) createRequestByEntities(ctx context.Context, ids []string) (
 		return nil, nil
 	}
 
-	items := make([]fetchLinksRequestItem, len(ids))
-	for i, id := range ids {
-		items[i] = fetchLinksRequestItem{
-			Entity: id,
+	cursor, err := g.entityCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"v.resolved": nil}},
+				{"$project": bson.M{
+					"_id": 1,
+				}},
+			},
+			"as": "alarm",
+		}},
+		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+		{"$project": bson.M{
+			"alarm":  "$alarm._id",
+			"entity": "$_id",
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	items := make([]fetchLinksRequestItem, 0, len(ids))
+	for cursor.Next(ctx) {
+		res := struct {
+			AlarmID  string `bson:"alarm"`
+			EntityID string `bson:"entity"`
+		}{}
+		err = cursor.Decode(&res)
+		if err != nil {
+			return nil, err
 		}
+
+		items = append(items, fetchLinksRequestItem{
+			Alarm:  res.AlarmID,
+			Entity: res.EntityID,
+		})
 	}
 
 	return g.createRequest(ctx, items)
