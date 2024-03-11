@@ -266,6 +266,7 @@ func (s *baseService) applyAlarmRule(
 			TicketData:       rule.Operation.Parameters.TicketData,
 			TicketComment:    rule.Comment,
 		}
+		event.Output = event.TicketInfo.GetStepMessage()
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
@@ -369,7 +370,8 @@ func (s *baseService) getEventOutput(rule idlerule.Rule) string {
 	outputBuilder.WriteString(types.RuleNameIdleRulePrefix)
 	outputBuilder.WriteString(rule.Name)
 	if rule.Operation != nil && rule.Operation.Parameters.Output != "" {
-		outputBuilder.WriteString(". Comment: ")
+		outputBuilder.WriteString(". ")
+		outputBuilder.WriteString(types.OutputCommentPrefix)
 		outputBuilder.WriteString(rule.Operation.Parameters.Output)
 		outputBuilder.WriteRune('.')
 	}
