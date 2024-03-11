@@ -9,7 +9,7 @@
     class="kpi-widget__chart"
   >
     <template #actions="{ chart }">
-      <kpi-chart-export-actions
+      <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
@@ -34,14 +34,15 @@ import { COLORS } from '@/config';
 import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 import { convertNumberToFixedString } from '@/helpers/string';
 import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
+import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 
-import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const LineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/line-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { KpiChartExportActions, LineChart },
+  components: { ChartExportActions, LineChart },
   props: {
     chartId: {
       type: String,
@@ -196,12 +197,14 @@ export default {
   },
   methods: {
     convertValueByShowType(availability) {
-      const { uptime, downtime } = availability;
-
-      const value = this.isUptimeParameter ? uptime : downtime;
+      const valueField = getAvailabilityFieldByDisplayParameterAndShowType(
+        this.displayParameter,
+        this.showType,
+      );
+      const value = availability[valueField];
 
       if (this.isPercentType) {
-        return (value / (uptime + downtime)) * 100;
+        return value;
       }
 
       return fromSeconds(value, this.samplingUnit);

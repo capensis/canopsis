@@ -5,7 +5,7 @@ import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
 
 describe('line-chart-metrics', () => {
