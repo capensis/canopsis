@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -253,20 +254,20 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		return nil, err
 	}
 
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(types.RuleNameScenarioPrefix)
+	outputBuilder.WriteString(task.ScenarioName)
+	if params.Output != "" {
+		outputBuilder.WriteString(". Comment: ")
+		outputBuilder.WriteString(params.Output)
+		outputBuilder.WriteRune('.')
+	}
+
 	axeParams := rpc.AxeParameters{
-		Output: params.Output,
-		Author: additionalData.Author,
-		User:   additionalData.User,
-		State:  params.State,
-		TicketInfo: types.TicketInfo{
-			Ticket:           params.Ticket,
-			TicketURL:        params.TicketURL,
-			TicketSystemName: params.TicketSystemName,
-			TicketRuleName:   types.TicketRuleNameScenarioPrefix + task.ScenarioName,
-			TicketRuleID:     task.ScenarioID,
-			TicketData:       params.TicketData,
-			TicketComment:    task.Action.Comment,
-		},
+		Output:         outputBuilder.String(),
+		Author:         additionalData.Author,
+		User:           additionalData.User,
+		State:          params.State,
 		Duration:       params.Duration,
 		Name:           params.Name,
 		Reason:         params.Reason,
@@ -275,6 +276,18 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		Tstart:         params.Tstart,
 		Tstop:          params.Tstop,
 		StartOnTrigger: params.StartOnTrigger,
+	}
+
+	if task.Action.Type == types.ActionTypeAssocTicket {
+		axeParams.TicketInfo = types.TicketInfo{
+			Ticket:           params.Ticket,
+			TicketURL:        params.TicketURL,
+			TicketSystemName: params.TicketSystemName,
+			TicketRuleName:   types.RuleNameScenarioPrefix + task.ScenarioName,
+			TicketRuleID:     task.ScenarioID,
+			TicketData:       params.TicketData,
+			TicketComment:    task.Action.Comment,
+		}
 	}
 
 	return &rpc.AxeEvent{
@@ -362,7 +375,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		Scenario:  task.ScenarioID,
 		Index:     int64(task.Step),
 		Execution: task.ExecutionID,
-		Name:      types.TicketRuleNameScenarioPrefix + task.ScenarioName,
+		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		SystemName:    task.Action.Parameters.TicketSystemName,
 		Status:        libwebhook.StatusCreated,
