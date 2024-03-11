@@ -252,7 +252,7 @@ func newCancelAlarm(time datetime.CpsTime) types.AlarmWithEntity {
 		Alarm: types.Alarm{
 			Value: types.AlarmValue{
 				Canceled: &types.AlarmStep{
-					Type:      types.AlarmStepCancel,
+					Type:      types.AlarmStepStatusIncrease,
 					Timestamp: time,
 				},
 			},

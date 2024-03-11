@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -15,9 +16,9 @@ const (
 )
 
 const (
-	TicketRuleNameScenarioPrefix          = "Scenario: "
-	TicketRuleNameIdleRulePrefix          = "Idle rule: "
-	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+	RuleNameScenarioPrefix          = "Scenario: "
+	RuleNameIdleRulePrefix          = "Idle rule: "
+	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -201,6 +202,43 @@ func (counter CropCounter) IsZero() bool {
 	return counter == CropCounter{}
 }
 
+func (counter *CropCounter) getMsg() string {
+	msgBuilder := strings.Builder{}
+	msgBuilder.WriteString("State increased: ")
+	msgBuilder.WriteString(strconv.Itoa(counter.Stateinc))
+	msgBuilder.WriteString("\n")
+	msgBuilder.WriteString("State decreased: ")
+	msgBuilder.WriteString(strconv.Itoa(counter.Statedec))
+	msgBuilder.WriteString("\n")
+	msgBuilder.WriteString("State changes: ")
+	msgBuilder.WriteString(strconv.Itoa(counter.StateChanges))
+	if counter.StateInfo > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to ok: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateInfo))
+	}
+
+	if counter.StateMinor > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to minor: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateMinor))
+	}
+
+	if counter.StateMajor > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to major: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateMajor))
+	}
+
+	if counter.StateCritical > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to critical: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateCritical))
+	}
+
+	return msgBuilder.String()
+}
+
 // AlarmSteps is a sortable implementation of []*AlarmStep. Used for sorting
 // steps in some functions. Implements sort.Interface
 type AlarmSteps []AlarmStep
@@ -209,9 +247,9 @@ type AlarmSteps []AlarmStep
 func (s *AlarmSteps) Add(step AlarmStep) error {
 	if len(*s) < AlarmStepsHardLimit ||
 		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
-		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
-		step.Type == AlarmStepCancel ||
-		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStatusOff ||
+		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled ||
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStatusCancelled {
 		*s = append(*s, step)
 		return nil
 	}
@@ -284,8 +322,8 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// create and append new statecounter
 		newStep := AlarmStep{
 			Author:              currentStatus.Author,
+			UserID:              currentStatus.UserID,
 			Initiator:           currentStatus.Initiator,
-			Message:             currentStatus.Message,
 			Value:               currentStatus.Value,
 			InPbehaviorInterval: currentStatus.InPbehaviorInterval,
 			Timestamp:           datetime.NewCpsTime(),
@@ -299,8 +337,8 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// create and insert new statecounter right after status
 		newStep := AlarmStep{
 			Author:              currentStatus.Author,
+			UserID:              currentStatus.UserID,
 			Initiator:           currentStatus.Initiator,
-			Message:             currentStatus.Message,
 			Value:               currentStatus.Value,
 			InPbehaviorInterval: currentStatus.InPbehaviorInterval,
 			Timestamp:           datetime.NewCpsTime(),
@@ -318,6 +356,7 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 
 	// update the existing statecounter
 	s[counterIdx].StateCounter.MergeCounter(counter)
+	s[counterIdx].Message = s[counterIdx].StateCounter.getMsg()
 
 	return s
 }

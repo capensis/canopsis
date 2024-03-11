@@ -295,7 +295,7 @@ func processResolve(
 	dbClient mongo.DbClient,
 	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
 ) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
-	update := getResolveAlarmUpdate(datetime.NewCpsTime())
+	update := getResolveAlarmUpdate(datetime.NewCpsTime(), event.Parameters)
 	result := Result{}
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
@@ -443,7 +443,10 @@ func postProcessResolve(
 	}
 }
 
-func getResolveAlarmUpdate(t datetime.CpsTime) []bson.M {
+func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.M {
+	newStep := types.NewAlarmStep(types.AlarmStepResolve, t, params.Author,
+		params.Output, params.User, params.Role, params.Initiator, false)
+
 	return []bson.M{
 		{"$set": bson.M{
 			"v.duration": bson.M{"$subtract": bson.A{
@@ -470,6 +473,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime) []bson.M {
 		}},
 		{"$set": bson.M{
 			"v.resolved": t,
+			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
 			"v.current_state_duration": bson.M{"$subtract": bson.A{
 				t,
 				"$v.state.t",

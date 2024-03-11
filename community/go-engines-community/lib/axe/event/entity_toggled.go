@@ -110,7 +110,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	match := getOpenAlarmMatch(event)
-	update := getResolveAlarmUpdate(datetime.NewCpsTime())
+	update := getResolveAlarmUpdate(datetime.NewCpsTime(), event.Parameters)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
