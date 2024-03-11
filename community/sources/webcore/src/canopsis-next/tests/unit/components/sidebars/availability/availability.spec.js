@@ -26,7 +26,7 @@ import AvailabilitySettings from '@/components/sidebars/availability/availabilit
 
 const stubs = {
   'widget-settings': true,
-  'AvailabilitySettings-form': true,
+  'availability-settings-form': true,
   'v-btn': createButtonStub('v-btn'),
 };
 
