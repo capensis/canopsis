@@ -468,23 +468,20 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 			lastStepFunc = "$last"
 		}
 
+		var cond bson.M
 		if r.Steps.Type == "" {
 			// Remove deprecated steps
-			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-				"v.steps": bson.M{"$filter": bson.M{
-					"input": "$v.steps",
-					"cond":  bson.M{"$in": bson.A{"$$this._t", s.alarmStepTypes}},
-				}},
-			}})
+			cond = bson.M{"$in": bson.A{"$$this._t", s.alarmStepTypes}}
 		} else {
-			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-				"v.steps": bson.M{"$filter": bson.M{
-					"input": "$v.steps",
-					"cond":  bson.M{"$eq": bson.A{"$$this._t", r.Steps.Type}},
-				}},
-			}})
+			cond = bson.M{"$eq": bson.A{"$$this._t", r.Steps.Type}}
 		}
 
+		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+			"v.steps": bson.M{"$filter": bson.M{
+				"input": "$v.steps",
+				"cond":  cond,
+			}},
+		}})
 		if r.Steps.Group {
 			pipeline = append(pipeline,
 				bson.M{"$unwind": bson.M{
