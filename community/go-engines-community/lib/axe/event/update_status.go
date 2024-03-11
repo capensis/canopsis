@@ -6,11 +6,9 @@ import (
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +18,6 @@ import (
 func NewUpdateStatusProcessor(
 	dbClient mongo.DbClient,
 	alarmStatusService alarmstatus.Service,
-	configProvider config.AlarmConfigProvider,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	logger zerolog.Logger,
 ) Processor {
@@ -28,7 +25,6 @@ func NewUpdateStatusProcessor(
 		dbClient:                dbClient,
 		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
 		alarmStatusService:      alarmStatusService,
-		configProvider:          configProvider,
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
 		logger:                  logger,
 	}
@@ -38,7 +34,6 @@ type updateStatusProcessor struct {
 	dbClient                mongo.DbClient
 	alarmCollection         mongo.DbCollection
 	alarmStatusService      alarmstatus.Service
-	configProvider          config.AlarmConfigProvider
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	logger                  zerolog.Logger
 }
@@ -69,14 +64,12 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 			return nil
 		}
 
-		conf := p.configProvider.Get()
-		output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
 		alarmStepType := types.AlarmStepStatusIncrease
 		if alarm.Value.Status.Value > newStatus {
 			alarmStepType = types.AlarmStepStatusDecrease
 		}
 
-		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, output, event.Parameters)
+		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, event.Parameters.Output, event.Parameters)
 		matchUpdate := getOpenAlarmMatchWithStepsLimit(event)
 		update := []bson.M{
 			{"$set": bson.M{
