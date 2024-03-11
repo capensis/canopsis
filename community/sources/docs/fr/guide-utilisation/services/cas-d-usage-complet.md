@@ -47,7 +47,7 @@ Le service `Cluster` est défini avec ses 2 dépendances `ESX1` et `ESX2`.
 
 ![services-calcul-etat6](./img/services-calcul-etat6.png)
 
-#### Règle de calcul d'état
+#### Règle de calcul d'état
 
 Nous créons une règle de calcul d'état dont les caractéristiques sont :
 
@@ -69,7 +69,7 @@ Nous créons une règle de calcul d'état dont les caractéristiques sont :
 
 ### Paramètres de ESX[1-2]
 
-#### Définition des services
+#### Définition des services
 
 Le service `ESX1`est défini avec ses dépendances `VM[1-3]`ET son ping de rattachement
 
