@@ -210,23 +210,27 @@ export const generateRenderer = (
     }
   });
 
-  return ({ propsData, ...options } = {}) => testUtilsMount(
-    component,
-    {
-      vuetify,
-      ...merge(
-        {},
-        { mocks, stubs },
-        baseOptions,
-        options,
-        { i18n },
-      ),
-      propsData: {
-        ...basePropsData,
-        ...propsData,
+  return ({ propsData, ...options } = {}) => {
+    wrapper = testUtilsMount(
+      component,
+      {
+        vuetify,
+        ...merge(
+          {},
+          { mocks, stubs },
+          baseOptions,
+          options,
+          { i18n },
+        ),
+        propsData: {
+          ...basePropsData,
+          ...propsData,
+        },
       },
-    },
-  );
+    );
+
+    return wrapper;
+  };
 };
 
 /**
@@ -248,22 +252,26 @@ export const generateShallowRenderer = (
     wrapper?.destroy?.();
   });
 
-  return ({ propsData, ...options } = {}) => testUtilsShallowMount(
-    component,
-    {
-      vuetify,
-      ...merge(
-        {},
-        baseOptions,
-        options,
-        { mocks, i18n, stubs },
-      ),
-      propsData: {
-        ...basePropsData,
-        ...propsData,
+  return ({ propsData, ...options } = {}) => {
+    wrapper = testUtilsShallowMount(
+      component,
+      {
+        vuetify,
+        ...merge(
+          {},
+          baseOptions,
+          options,
+          { mocks, i18n, stubs },
+        ),
+        propsData: {
+          ...basePropsData,
+          ...propsData,
+        },
       },
-    },
-  );
+    );
+
+    return wrapper;
+  };
 };
 
 export { flushPromises };

@@ -33,6 +33,17 @@ exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` w
 </div>
 `;
 
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: inactive 3`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    pbehavior-inactive-name
+  </span>
+</div>
+`;
+
 exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: maintenance 1`] = `
 <span
   class="v-tooltip v-tooltip--top"

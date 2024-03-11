@@ -50,35 +50,6 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
 </div>
 `;
 
-exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous month 3`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Ack
-    </strong>
-    <div>
-      By : ack-author
-    </div>
-    <div>
-      Date : 07/08/2013 19:00:00
-    </div>
-    <div>
-        Initiator : ack-initiator
-    </div>
-    <div
-      class="c-extra-details__message"
-    >
-        Comment : ack-message
-    </div>
-  </div>
-</div>
-`;
-
 exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `
 <div>
   <span

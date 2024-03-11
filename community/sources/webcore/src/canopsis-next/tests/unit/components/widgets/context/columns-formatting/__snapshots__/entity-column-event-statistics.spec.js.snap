@@ -77,3 +77,17 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
   </span>
 </div>
 `;
+
+exports[`entity-column-event-statistics Renders \`entity-column-event-statistics\` with pbehavior 3`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span
+    class="pre-wrap"
+  >
+    30 OK events
+45 KO Events
+  </span>
+</div>
+`;
