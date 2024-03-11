@@ -5,7 +5,7 @@ import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
 
 describe('bar-chart-metrics', () => {

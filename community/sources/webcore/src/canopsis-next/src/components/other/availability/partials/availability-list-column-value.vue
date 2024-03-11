@@ -2,18 +2,17 @@
   <span class="availability-list-column-value">
     {{ value }}
 
-    <c-help-icon
+    <v-icon
       v-if="isTrendEnabled"
-      :text="trendTooltipText"
-      :icon-class="{
+      :class="{
         'availability-list-column-value__trend': true,
         'availability-list-column-value__trend--up': trendUp
       }"
       :color="trendUp ? 'success' : 'error'"
-      icon="arrow_downward"
       size="16"
-      top
-    />
+    >
+      arrow_downward
+    </v-icon>
   </span>
 </template>
 
@@ -68,11 +67,6 @@ export default {
         && targetValue.value !== targetTrendValue.value,
     );
 
-    const trendTooltipText = computed(
-      () => (isPercentType.value
-        ? `${targetTrendValue.value}%`
-        : convertDurationToString(targetTrendValue.value)),
-    );
     const value = computed(
       () => (isPercentType.value
         ? `${targetValue.value}%`
@@ -81,10 +75,8 @@ export default {
 
     return {
       value,
-      isPercentType,
       isTrendEnabled,
       trendUp,
-      trendTooltipText,
     };
   },
 };

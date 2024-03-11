@@ -5,7 +5,7 @@
     :dark="$system.dark"
   >
     <template #actions="{ chart }">
-      <kpi-chart-export-actions
+      <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
@@ -28,11 +28,11 @@ import { colorToRgba } from '@/helpers/color';
 import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
-import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],
-  components: { KpiChartExportActions, BarChart },
+  components: { ChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
