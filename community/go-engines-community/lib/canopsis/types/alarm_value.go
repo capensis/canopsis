@@ -19,6 +19,9 @@ const (
 	RuleNameScenarioPrefix          = "Scenario: "
 	RuleNameIdleRulePrefix          = "Idle rule: "
 	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+
+	OutputCommentPrefix   = "Comment: "
+	OutputComponentPrefix = "Component: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -131,24 +134,6 @@ func NewAlarmStep(
 		Initiator:           initiator,
 		InPbehaviorInterval: inPbehaviorInterval,
 	}
-}
-
-func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string, inPbehaviorInterval bool) AlarmStep {
-	newStep := NewAlarmStep(
-		AlarmStepMetaAlarmAttach,
-		datetime.NewCpsTime(),
-		cps.DefaultEventAuthor,
-		fmt.Sprintf("Rule: {%s}\n Displayname: {%s}\n Entity: {%s}",
-			ruleName,
-			metaAlarm.Value.DisplayName,
-			metaAlarm.EntityID),
-		"",
-		"",
-		InitiatorSystem,
-		inPbehaviorInterval,
-	)
-
-	return newStep
 }
 
 // CropCounter provides an explicit way of counting the steps that were cropped.
