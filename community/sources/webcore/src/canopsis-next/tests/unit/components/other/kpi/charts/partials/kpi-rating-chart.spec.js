@@ -8,6 +8,8 @@ const stubs = {
   'chart-export-actions': true,
 };
 
+const selectChartExportActions = wrapper => wrapper.find('chart-export-actions-stub');
+
 describe('kpi-rating-chart', () => {
   const metricsInPercent = [
     {
@@ -85,9 +87,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
-
-    kpiChartExportActions.triggerCustomEvent('export:csv');
+    selectChartExportActions(wrapper).triggerCustomEvent('export:csv');
 
     expect(exportCsv).toHaveBeenCalledTimes(1);
   });
@@ -103,9 +103,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('chart-export-actions-stub');
-
-    kpiChartExportActions.triggerCustomEvent('export:png');
+    selectChartExportActions(wrapper).triggerCustomEvent('export:png');
 
     expect(exportPng).toHaveBeenCalledTimes(1);
   });

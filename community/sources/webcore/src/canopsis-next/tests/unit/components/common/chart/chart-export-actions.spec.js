@@ -3,15 +3,15 @@ import Vue from 'vue';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 
-import KpiChartExportActions from '@/components/common/chart/chart-export-actions.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
 describe('chart-export-actions', () => {
-  const factory = generateShallowRenderer(KpiChartExportActions, { stubs });
-  const snapshotFactory = generateRenderer(KpiChartExportActions);
+  const factory = generateShallowRenderer(ChartExportActions, { stubs });
+  const snapshotFactory = generateRenderer(ChartExportActions);
 
   it('Export csv event emitted', () => {
     const wrapper = factory({

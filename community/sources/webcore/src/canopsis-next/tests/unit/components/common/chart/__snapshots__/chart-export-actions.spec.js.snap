@@ -2,7 +2,7 @@
 
 exports[`chart-export-actions Renders \`chart-export-actions\` with custom props 1`] = `
 <div
-  class="layout chart-export-actions justify-end wrap"
+  class="layout col-gap-6 row-gap-3 justify-end wrap"
 >
   <button
     class="v-btn v-btn--is-elevated v-btn--has-bg v-btn--loading theme--light v-size--small primary"
@@ -80,7 +80,7 @@ exports[`chart-export-actions Renders \`chart-export-actions\` with custom props
 
 exports[`chart-export-actions Renders \`chart-export-actions\` without props 1`] = `
 <div
-  class="layout chart-export-actions justify-end wrap"
+  class="layout col-gap-6 row-gap-3 justify-end wrap"
 >
   <button
     class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
