@@ -7,11 +7,7 @@ exports[`availability-settings Renders \`availability-settings\` widget settings
   <availability-form-stub
     alarmcolumnswidgettemplates=""
     entitycolumnswidgettemplates=""
-    filteraddable="true"
-    filtereditable="true"
     form="[object Object]"
-    showfilter="true"
-    showinterval="true"
     widgetid="_id"
   />
 </widget-settings-stub>
@@ -24,11 +20,7 @@ exports[`availability-settings Renders \`availability-settings\` widget settings
   <availability-form-stub
     alarmcolumnswidgettemplates=""
     entitycolumnswidgettemplates=""
-    filteraddable="true"
-    filtereditable="true"
     form="[object Object]"
-    showfilter="true"
-    showinterval="true"
     widgetid="Availability_id"
   />
 </widget-settings-stub>
