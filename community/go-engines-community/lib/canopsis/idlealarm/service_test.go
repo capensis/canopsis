@@ -48,8 +48,8 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 			Resource:      "test-resource",
 		},
 	}
-	output := "test-output"
 	rule := idlerule.Rule{
+		Name:           "test-rule-name",
 		Type:           idlerule.RuleTypeAlarm,
 		AlarmCondition: idlerule.RuleAlarmConditionLastEvent,
 		Duration: datetime.DurationWithUnit{
@@ -59,7 +59,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
 			Parameters: idlerule.Parameters{
-				Output: output,
+				Output: "test-output",
 			},
 		},
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
@@ -112,7 +112,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
 		Author:        canopsis.DefaultEventAuthor,
-		Output:        output,
+		Output:        "Idle rule: test-rule-name. Comment: test-output.",
 		SourceType:    types.SourceTypeResource,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: "alarm_last_event",
@@ -149,8 +149,8 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 			Resource:       "test-resource",
 		},
 	}
-	output := "test-output"
 	rule := idlerule.Rule{
+		Name:           "test-rule-name",
 		Type:           idlerule.RuleTypeAlarm,
 		AlarmCondition: idlerule.RuleAlarmConditionLastUpdate,
 		Duration: datetime.DurationWithUnit{
@@ -160,7 +160,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
 			Parameters: idlerule.Parameters{
-				Output: output,
+				Output: "test-output",
 			},
 		},
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
@@ -212,7 +212,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
 		Author:        canopsis.DefaultEventAuthor,
-		Output:        output,
+		Output:        "Idle rule: test-rule-name. Comment: test-output.",
 		SourceType:    types.SourceTypeResource,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: "alarm_last_update",
@@ -249,7 +249,6 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		LastEventDate: &datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 	}
 	state := types.CpsNumber(types.AlarmStateCritical)
-	output := "Idle rule test-rule-name"
 	rule := idlerule.Rule{
 		ID:     "test-rule",
 		Type:   idlerule.RuleTypeEntity,
@@ -319,7 +318,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Resource:      resource,
 		SourceType:    types.SourceTypeResource,
 		Author:        canopsis.DefaultEventAuthor,
-		Output:        output,
+		Output:        "Idle rule: test-rule-name",
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: "entity",
 	}

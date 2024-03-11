@@ -52,8 +52,6 @@ const (
 	AlarmStepStatusDecrease  = "statusdec"
 	AlarmStepAck             = "ack"
 	AlarmStepAckRemove       = "ackremove"
-	AlarmStepCancel          = "cancel"
-	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
 	AlarmStepSnooze          = "snooze"
 	AlarmStepUnsnooze        = "unsnooze"
@@ -62,6 +60,8 @@ const (
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+	AlarmStepActivate        = "activate"
+	AlarmStepResolve         = "resolve"
 
 	AlarmStepAssocTicket       = "assocticket"
 	AlarmStepDeclareTicket     = "declareticket"
@@ -91,6 +91,47 @@ const (
 	AlarmStepJunitTestSuiteUpdate = "junittestsuiteupdate"
 	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
 )
+
+func GetAlarmStepTypes() []string {
+	return []string{
+		AlarmStepStateIncrease,
+		AlarmStepStateDecrease,
+		AlarmStepStatusIncrease,
+		AlarmStepStatusDecrease,
+		AlarmStepAck,
+		AlarmStepAckRemove,
+		AlarmStepComment,
+		AlarmStepSnooze,
+		AlarmStepUnsnooze,
+		AlarmStepStateCounter,
+		AlarmStepChangeState,
+		AlarmStepPbhEnter,
+		AlarmStepPbhLeave,
+		AlarmStepMetaAlarmAttach,
+		AlarmStepActivate,
+		AlarmStepResolve,
+		AlarmStepAssocTicket,
+		AlarmStepDeclareTicket,
+		AlarmStepDeclareTicketFail,
+		AlarmStepWebhookStart,
+		AlarmStepWebhookComplete,
+		AlarmStepWebhookFail,
+		AlarmStepInstructionStart,
+		AlarmStepInstructionPause,
+		AlarmStepInstructionResume,
+		AlarmStepInstructionComplete,
+		AlarmStepInstructionFail,
+		AlarmStepInstructionAbort,
+		AlarmStepAutoInstructionStart,
+		AlarmStepAutoInstructionComplete,
+		AlarmStepAutoInstructionFail,
+		AlarmStepInstructionJobStart,
+		AlarmStepInstructionJobComplete,
+		AlarmStepInstructionJobFail,
+		AlarmStepJunitTestSuiteUpdate,
+		AlarmStepJunitTestCaseUpdate,
+	}
+}
 
 // Alarm represents an alarm document.
 type Alarm struct {
