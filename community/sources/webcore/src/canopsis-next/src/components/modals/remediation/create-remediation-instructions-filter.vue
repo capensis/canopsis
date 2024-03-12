@@ -67,9 +67,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
-        }
+        await this.config.action?.(this.form);
 
         this.$modals.hide();
       }

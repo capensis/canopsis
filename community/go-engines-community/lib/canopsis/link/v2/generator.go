@@ -65,6 +65,11 @@ type entityWithData struct {
 	ExternalData map[string]map[string]any `bson:"-"`
 }
 
+type entityWithAlarm struct {
+	types.Entity `bson:",inline"`
+	Alarm        *types.Alarm `bson:"alarm"`
+}
+
 type parsedRule struct {
 	ID              string
 	Type            string
@@ -410,13 +415,26 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 	return append(openAlarms, resolvedAlarms...), nil
 }
 
-func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWithData, error) {
-	cursor, err := g.entityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}}, options.Find().SetSort(bson.M{"_id": 1}))
+func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWithAlarm, error) {
+	cursor, err := g.entityCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"v.resolved": nil}},
+			},
+			"as": "alarm",
+		}},
+		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"_id": 1}},
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	var entities []entityWithData
+	var entities []entityWithAlarm
 	err = cursor.All(ctx, &entities)
 	return entities, err
 }
@@ -470,13 +488,24 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 	return res, nil
 }
 
-func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithData, user liblink.User) (map[string][]linkWithCategory, error) {
-	if rule.Type != liblink.TypeEntity {
-		return nil, nil
-	}
-
+func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithAlarm, user liblink.User) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(entities))
 	for i := range entities {
+		if entities[i].Alarm == nil && rule.Type == liblink.TypeAlarm {
+			continue
+		}
+
+		if entities[i].Alarm != nil {
+			ok, err := match.MatchAlarmPattern(rule.AlarmPattern, entities[i].Alarm)
+			if err != nil {
+				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid alarm pattern in link rule")
+				continue
+			}
+			if !ok {
+				continue
+			}
+		}
+
 		ok, err := match.MatchEntityPattern(rule.EntityPattern, &entities[i].Entity)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
@@ -486,15 +515,23 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		argsEntities := []entityWithData{entities[i]}
-		err = g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, argsEntities)
+		var argAlarms []alarmWithData
+		if entities[i].Alarm != nil {
+			argAlarms = []alarmWithData{{
+				Alarm:  *entities[i].Alarm,
+				Entity: entities[i].Entity,
+			}}
+		}
+
+		argEntities := []entityWithData{{Entity: entities[i].Entity}}
+		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
 			continue
 		}
 
 		if rule.CodeExecutor != nil {
-			args := g.getCodeArgs(rule, nil, argsEntities, user)
+			args := g.getCodeArgs(rule, argAlarms, argEntities, user)
 			res[entities[i].ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
@@ -503,7 +540,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		data := g.getTplData(rule, nil, argsEntities, user)
+		data := g.getTplData(rule, argAlarms, argEntities, user)
 		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
