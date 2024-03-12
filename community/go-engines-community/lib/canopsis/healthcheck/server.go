@@ -14,6 +14,7 @@ import (
 const (
 	envPORT                = "CPS_HEALTHCHECK_PORT"
 	serverShutdownInterval = 5 * time.Second
+	readHeaderTimeout      = 5 * time.Second
 )
 
 func Start(
@@ -58,8 +59,9 @@ func runHttpServer(
 	mux.Handle("/", NewHandler(checker, logger))
 
 	server := &http.Server{
-		Addr:    ":" + strconv.Itoa(port),
-		Handler: mux,
+		Addr:              ":" + strconv.Itoa(port),
+		Handler:           mux,
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
 	go func() {

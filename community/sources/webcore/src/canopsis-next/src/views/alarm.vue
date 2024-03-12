@@ -1,14 +1,14 @@
-<template lang="pug">
-  alarms-list-table(
-    :widget="widget",
-    :alarms="alarmItems",
-    :columns="columns",
-    :loading="pending",
-    :total-items="alarmItems.length",
-    expandable,
-    hide-pagination,
+<template>
+  <alarms-list-table
+    :widget="widget"
+    :alarms="alarmItems"
+    :columns="columns"
+    :loading="pending"
+    :total-items="alarmItems.length"
+    expandable
+    hide-pagination
     has-columns
-  )
+  />
 </template>
 
 <script>
@@ -80,6 +80,8 @@ export default {
           this.widget = prepareAlarmListWidget(widget);
         }
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
         this.pending = false;

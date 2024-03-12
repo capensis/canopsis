@@ -1,8 +1,18 @@
-<template lang="pug">
-  v-layout(row, justify-space-between, align-center)
-    v-label {{ label }}
-    v-flex(xs3)
-      v-select.mt-0.pt-0(v-field="value", :items="numbers", hide-details)
+<template>
+  <v-layout
+    justify-space-between
+    align-center
+  >
+    <v-label>{{ label }}</v-label>
+    <v-flex xs3>
+      <v-select
+        v-field="value"
+        :items="numbers"
+        class="mt-0 pt-0"
+        hide-details
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

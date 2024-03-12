@@ -1,9 +1,26 @@
-<template lang="pug">
-  v-layout.remediation-statistics-filters.my-4(wrap)
-    c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
-    c-sampling-field.remediation-statistics-filters__sampling.mr-4(v-field="query.sampling")
-    remediation-statistics-show-mode-field.remediation-statistics-filters__type.mr-4(v-field="query.type")
-    remediation-statistics-instructions-field.remediation-statistics-filters__instruction(v-field="query.instruction")
+<template>
+  <v-layout
+    class="remediation-statistics-filters my-4"
+    wrap
+  >
+    <c-quick-date-interval-field
+      v-field="query.interval"
+      :min="minDate"
+      class="mr-4"
+    />
+    <c-sampling-field
+      v-field="query.sampling"
+      class="remediation-statistics-filters__sampling mr-4"
+    />
+    <remediation-statistics-show-mode-field
+      v-field="query.type"
+      class="remediation-statistics-filters__type mr-4"
+    />
+    <remediation-statistics-instructions-field
+      v-field="query.instruction"
+      class="remediation-statistics-filters__instruction"
+    />
+  </v-layout>
 </template>
 
 <script>

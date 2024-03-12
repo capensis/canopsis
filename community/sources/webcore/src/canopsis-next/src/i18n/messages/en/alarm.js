@@ -231,5 +231,6 @@ export default {
     openedChildren: 'Opened consequences',
     closedChildren: 'Closed consequences',
     canceledInitiator: 'Canceled initiator',
+    changeState: 'Change state',
   },
 };

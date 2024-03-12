@@ -1,14 +1,14 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :label="$t('eventFilter.filterByType')",
-    :items="types",
-    :error-messages="errors.collect(name)",
-    :name="name",
-    item-text="text",
-    item-value="value",
+<template>
+  <v-select
+    v-field="value"
+    :label="$t('eventFilter.filterByType')"
+    :items="types"
+    :error-messages="errors.collect(name)"
+    :name="name"
+    item-text="text"
+    item-value="value"
     clearable
-  )
+  />
 </template>
 
 <script>

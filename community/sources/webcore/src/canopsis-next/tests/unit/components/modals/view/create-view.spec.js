@@ -1,16 +1,16 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 import { omit } from 'lodash';
 
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules, createViewModule } from '@unit/utils/store';
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockRouter } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 
-import ClickOutside from '@/services/click-outside';
 import { CRUD_ACTIONS, DEFAULT_PERIODIC_REFRESH, MODALS, USERS_PERMISSIONS } from '@/constants';
+
+import ClickOutside from '@/services/click-outside';
 
 import CreateView from '@/components/modals/view/create-view.vue';
 
@@ -136,7 +136,7 @@ describe('create-view', () => {
 
     createGroup.mockReturnValueOnce(newGroup);
 
-    selectViewForm(wrapper).vm.$emit('input', newView);
+    selectViewForm(wrapper).triggerCustomEvent('input', newView);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -163,7 +163,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -238,7 +238,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -269,7 +269,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -402,7 +402,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-view` with title', async () => {
@@ -421,7 +421,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-view` without rights', async () => {
@@ -441,6 +441,6 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,7 +1,14 @@
-<template lang="pug">
-  div.network-graph
-    div.network-graph__canvas-wrapper(ref="canvasWrapper")
-    div.v-tooltip__content.menuable__content__active.network-graph__tooltip(ref="tooltip")
+<template>
+  <div class="network-graph">
+    <div
+      ref="canvasWrapper"
+      class="network-graph__canvas-wrapper"
+    />
+    <div
+      ref="tooltip"
+      class="v-tooltip__content menuable__content__active network-graph__tooltip"
+    />
+  </div>
 </template>
 
 <script>

@@ -54,7 +54,7 @@ func NewRedisScenarioExecutionStorage(
 func (s *redisScenarioExecutionStorage) Get(ctx context.Context, key string) (*ScenarioExecution, error) {
 	res := s.redisClient.Get(ctx, s.getRedisKey(key))
 	if err := res.Err(); err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return nil, nil
 		}
 

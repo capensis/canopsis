@@ -17,19 +17,19 @@ import (
 )
 
 type Config struct {
-	Api       ApiConfig
+	Api       ApiConfig `yaml:"api"`
 	Pbehavior struct {
-		Type   string
-		Reason string
-	}
-	Timezone string
-	Inactive []InactiveConfig
+		Type   string `yaml:"type"`
+		Reason string `yaml:"reason"`
+	} `yaml:"pbehavior"`
+	Timezone string           `yaml:"timezone"`
+	Inactive []InactiveConfig `yaml:"inactive"`
 	location *time.Location
 }
 
 type ApiConfig struct {
-	Host               string
-	InsecureSkipverify bool `yaml:"insecure_skip_verify"`
+	Host               string `yaml:"host"`
+	InsecureSkipverify bool   `yaml:"insecure_skip_verify"`
 
 	Username string `yaml:"-"`
 	Password string `yaml:"-"`
@@ -133,7 +133,7 @@ func (c ApiConfig) CreateRequest(ctx context.Context, method, path string, b []b
 	return request, nil
 }
 
-// ParseHours transaltes Hours rules. Each rule can be as "19:30-5;TU,TH-MO" with local start-end times range
+// ParseHours translates Hours rules. Each rule can be as "19:30-5;TU,TH-MO" with local start-end times range
 // and weekdays separated by comma as list or range(s)
 func (inactive *InactiveConfig) ParseHours() error {
 	const weekLength = 7

@@ -8,88 +8,27 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
       class="v-menu"
     >
       <button
-        class="ma-0 v-btn v-btn--icon theme--light"
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             more_vert
           </i>
-        </div>
+        </span>
       </button>
-      <transition-stub
-        name="v-menu-transition"
-      />
+      <!---->
     </div>
   </div>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list theme--light"
-    role="list"
-  >
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-            style="font-size: 16px;"
-          >
-            edit
-          </i>
-          <span
-            class="body-1"
-          >
-            Edit title
-          </span>
-        </div>
-      </a>
-    </div>
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
-          >
-            delete
-          </i>
-          <span
-            class="body-1"
-          >
-            Delete title
-          </span>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `undefined`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
 <div>
@@ -99,88 +38,27 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
       class="v-menu"
     >
       <button
-        class="ma-0 v-btn v-btn--icon theme--light"
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             more_vert
           </i>
-        </div>
+        </span>
       </button>
-      <transition-stub
-        name="v-menu-transition"
-      />
+      <!---->
     </div>
   </div>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list theme--light"
-    role="list"
-  >
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-            style="font-size: 16px;"
-          >
-            edit
-          </i>
-          <span
-            class="body-1"
-          >
-            Edit title
-          </span>
-        </div>
-      </a>
-    </div>
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
-          >
-            delete
-          </i>
-          <span
-            class="body-1"
-          >
-            Delete title
-          </span>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `undefined`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
 <div>

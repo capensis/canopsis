@@ -10,8 +10,12 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -62,7 +66,7 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 	}
 }
 
-func (q *MongoQueryBuilder) clear(now types.CpsTime) {
+func (q *MongoQueryBuilder) clear(now datetime.CpsTime) {
 	q.entityMatch = []bson.M{{"$match": bson.M{
 		"soft_deleted": bson.M{"$exists": false},
 		"healthcheck":  bson.M{"$in": bson.A{nil, false}},
@@ -74,8 +78,8 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{
 		{key: "alarm", pipeline: getAlarmLookup()},
-		{key: "category", pipeline: getCategoryLookup()},
-		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "category", pipeline: dbquery.GetCategoryLookup()},
+		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "event_stats", pipeline: getEventStatsLookup(now)},
 	}
 
@@ -87,7 +91,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.excludedFields = []string{"services", "alarm", "event_stats", "pbehavior_info_type"}
 }
 
-func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.ListRequest, now)
@@ -98,16 +102,13 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r.ListRequest)
-	if err != nil {
-		return nil, err
-	}
+	q.handleFilter(r.ListRequest)
 	q.handleSort(r.SortRequest)
 
 	if r.WithFlags {
 		q.addFlags()
-		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: getDependsCountPipeline()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -126,14 +127,15 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	sortRequest SortRequest,
 	category, search string,
 	withFlags bool,
-	now types.CpsTime,
+	withStateDependsCount bool,
+	now datetime.CpsTime,
 ) []bson.M {
 	q.clear(now)
-
 	and := []bson.M{match}
 	if category != "" {
 		and = append(and, bson.M{"category": bson.M{"$eq": category}})
 	}
+
 	if search != "" {
 		and = append(and, common.GetSearchQuery(search, q.defaultSearchByFields))
 	}
@@ -142,9 +144,12 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	q.handleSort(sortRequest)
 
 	if withFlags {
-		q.addFlags()
-		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: getDependsCountPipeline()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
+		if withStateDependsCount {
+			q.lookups = append(q.lookups, lookupWithKey{key: "state_setting", pipeline: dbquery.GetStateSettingPipeline()})
+			q.lookups = append(q.lookups, lookupWithKey{key: "state_depends_count", pipeline: getStateDependsCountPipeline()})
+		}
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -157,34 +162,27 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	)
 }
 
-func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.ListRequest, now)
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r.ListRequest)
-	if err != nil {
-		return nil, err
-	}
-
+	q.handleFilter(r.ListRequest)
 	beforeLimit, _ := q.createAggregationPipeline()
 
 	return beforeLimit, nil
 }
 
-func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Context, r ListRequest, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Context, r ListRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r)
-	if err != nil {
-		return nil, err
-	}
+	q.handleFilter(r)
 	q.handleSort(r.SortRequest)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -273,7 +271,7 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 	*pipeline = append(*pipeline, bson.M{"$addFields": query})
 }
 
-func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
+func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	entityMatch := make([]bson.M, 0)
 	q.addSearchFilter(r, &entityMatch)
 	q.addCategoryFilter(r, &entityMatch)
@@ -283,11 +281,9 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
 	if len(entityMatch) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
-
-	return nil
 }
 
-func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now types.CpsTime) error {
+func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now datetime.CpsTime) error {
 	for i, id := range r.Filters {
 		filter := view.WidgetFilter{}
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
@@ -304,7 +300,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			return common.NewValidationError("filters."+strconv.Itoa(i), "Filter cannot be applied.")
 		}
 
-		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
+		entityPatternQuery, err := db.EntityPatternToMongoQuery(filter.EntityPattern, "")
 		if err != nil {
 			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
 		}
@@ -313,7 +309,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
 		}
 
-		pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("")
+		pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(filter.PbehaviorPattern, "")
 		if err != nil {
 			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
 		}
@@ -322,7 +318,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			q.entityMatch = append(q.entityMatch, bson.M{"$match": pbhPatternQuery})
 		}
 
-		alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("alarm")
+		alarmPatternQuery, err := db.AlarmPatternToMongoQuery(filter.AlarmPattern, "alarm")
 		if err != nil {
 			return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
 		}
@@ -357,7 +353,7 @@ func (q *MongoQueryBuilder) handleEntityPattern(r ListRequest) error {
 		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 	}
 
-	entityPatternQuery, err := entityPattern.ToMongoQuery("")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
 	if err != nil {
 		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 	}
@@ -484,43 +480,9 @@ func getAlarmLookup() []bson.M {
 	}
 }
 
-func getCategoryLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "category",
-			"foreignField": "_id",
-			"as":           "category",
-		}},
-		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-	}
-}
-
-func getPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior_info.type",
-			"as":           "pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-	}
-}
-
-func getEventStatsLookup(now types.CpsTime) []bson.M {
+func getEventStatsLookup(now datetime.CpsTime) []bson.M {
 	year, month, day := now.Date()
-	truncatedInLocation := types.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, now.Location())}
+	truncatedInLocation := datetime.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, now.Location())}
 
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -567,42 +529,6 @@ func getDeletablePipeline() []bson.M {
 	}
 }
 
-func getDependsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "services",
-			"as":           "depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$addFields": bson.M{
-			"depends_count": bson.M{"$size": "$depends"},
-		}},
-		{"$project": bson.M{"depends": 0}},
-	}
-}
-
-func getImpactsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "services",
-			"foreignField": "_id",
-			"as":           "service_impacts",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$addFields": bson.M{
-			"impacts_count": bson.M{"$size": "$service_impacts"},
-		}},
-		{"$project": bson.M{"service_impacts": 0}},
-	}
-}
-
 func getComputedFields() bson.M {
 	return bson.M{
 		"ok_events": bson.M{"$ifNull": bson.A{
@@ -632,7 +558,7 @@ func getComputedFields() bson.M {
 	}
 }
 
-func getDurationField(now types.CpsTime) bson.M {
+func getDurationField(now datetime.CpsTime) bson.M {
 	return bson.M{"$ifNull": bson.A{
 		"$alarm.v.duration",
 		bson.M{"$subtract": bson.A{
@@ -644,4 +570,48 @@ func getDurationField(now types.CpsTime) bson.M {
 			"$alarm.v.creation_date",
 		}},
 	}}
+}
+
+func getStateDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityCountersCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "counters",
+		}},
+		{"$unwind": bson.M{"path": "$counters", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"state_depends_count": bson.M{"$switch": bson.M{
+				"branches": []bson.M{
+					{
+						"case": bson.M{"$and": []bson.M{
+							{"$eq": bson.A{"$state_setting.method", statesetting.MethodInherited}},
+							{"$eq": bson.A{"$type", types.EntityTypeService}},
+						}},
+						"then": bson.M{"$sum": bson.A{
+							"$counters.inherited_state.ok",
+							"$counters.inherited_state.minor",
+							"$counters.inherited_state.major",
+							"$counters.inherited_state.critical",
+						}},
+					},
+					{
+						"case": bson.M{"$and": []bson.M{
+							{"$eq": bson.A{"$state_setting.method", statesetting.MethodInherited}},
+							{"$eq": bson.A{"$type", types.EntityTypeComponent}},
+						}},
+						"then": bson.M{"$sum": bson.A{
+							"$counters.state.ok",
+							"$counters.state.minor",
+							"$counters.state.major",
+							"$counters.state.critical",
+						}},
+					},
+				},
+				"default": "$depends_count",
+			}},
+		}},
+		{"$project": bson.M{"counters": 0}},
+	}
 }

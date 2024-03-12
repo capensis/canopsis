@@ -1,32 +1,37 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ config.title }}
-      template(#text="")
-        v-layout(row)
-          v-flex.text-xs-center
-            alarm-general-table(:items="config.items")
-        v-layout(row)
-          v-divider.my-3
-        v-layout(row)
-          c-name-field(
-            v-model="form.comment",
-            :label="$t('common.note')",
-            :required="isCommentRequired",
-            name="comment"
-          )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ config.title }}</span>
+      </template>
+      <template #text="">
+        <alarm-general-table :items="config.items" class="mb-4" />
+        <c-name-field
+          v-model="form.comment"
+          :label="$t('common.note')"
+          :required="isCommentRequired"
+          name="comment"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

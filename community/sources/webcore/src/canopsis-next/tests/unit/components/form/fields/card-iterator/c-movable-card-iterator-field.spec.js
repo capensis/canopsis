@@ -1,6 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
 import { createButtonStub } from '@unit/stubs/button';
+
 import CMovableCardIteratorField from '@/components/forms/fields/card-iterator/c-movable-card-iterator-field.vue';
 import MovableCardIteratorItem from '@/components/forms/fields/card-iterator/movable-card-iterator-item.vue';
 
@@ -38,7 +38,7 @@ describe('c-movable-card-iterator-field', () => {
 
     selectCardDownButton(movingCard).trigger('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       items[0],
       items[2],
       items[1],
@@ -57,7 +57,7 @@ describe('c-movable-card-iterator-field', () => {
 
     selectCardDownButton(movingCard).trigger('click');
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('Card moved above after click on up button', async () => {
@@ -71,7 +71,7 @@ describe('c-movable-card-iterator-field', () => {
 
     selectCardUpButton(movingCard).trigger('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       items[0],
       items[1],
       items[3],
@@ -90,7 +90,7 @@ describe('c-movable-card-iterator-field', () => {
 
     selectCardUpButton(movingCard).trigger('click');
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('Card removed above after click on remove button', async () => {
@@ -104,7 +104,7 @@ describe('c-movable-card-iterator-field', () => {
 
     selectCardRemoveButton(removingCard).trigger('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       items[0],
       items[1],
       items[3],
@@ -114,7 +114,7 @@ describe('c-movable-card-iterator-field', () => {
   test('Renders `c-movable-card-iterator-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-movable-card-iterator-field` with custom props', async () => {
@@ -129,7 +129,7 @@ describe('c-movable-card-iterator-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-movable-card-iterator-field` with slots props', async () => {
@@ -157,6 +157,6 @@ describe('c-movable-card-iterator-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -3,6 +3,8 @@ node_modules
 /dist
 /build
 /coverage
+/benchmarks/__metrics__
+/benchmarks/__reports__
 /__diff_output__
 
 # testing data

@@ -1,10 +1,10 @@
-<template lang="pug">
-  c-action-btn(
-    v-if="hasReadAnyPbehaviorAccess",
-    :tooltip="$t('common.pbehaviorList')",
-    icon="list",
+<template>
+  <c-action-btn
+    v-if="hasReadAnyPbehaviorAccess"
+    :tooltip="$t('common.pbehaviorList')"
+    icon="list"
     @click="showPbehaviorsListModal"
-  )
+  />
 </template>
 
 <script>

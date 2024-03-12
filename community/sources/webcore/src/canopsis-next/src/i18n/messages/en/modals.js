@@ -199,6 +199,8 @@ export default {
   service: {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
+    massActionsDescription: 'You can choose entities to perform actions',
+    actionInQueue: 'action in queue|actions in queue',
     entity: {
       tabs: {
         info: 'Info',
@@ -646,8 +648,28 @@ export default {
       title: 'Dependencies for {name}',
     },
   },
-  stateSetting: {
-    title: 'JUnit test suite state settings',
+  createStateSetting: {
+    create: {
+      title: 'Create state compute method',
+      success: 'State compute method created!',
+    },
+    edit: {
+      title: 'Edit state compute method',
+      success: 'State compute method edited!',
+    },
+    duplicate: {
+      title: 'Duplicate state compute method',
+      success: 'State compute method duplicated!',
+    },
+    remove: {
+      success: 'State compute method deleted!',
+    },
+  },
+  createJunitStateSetting: {
+    edit: {
+      title: 'JUnit test suite state settings',
+      success: 'JUnit test suite state setting edited!',
+    },
   },
   defineStorage: {
     title: 'Define result storage',
@@ -675,6 +697,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Instruction approval',
+    dismissed: 'has dismissed your updates',
     requested: 'requested for approval',
     tabs: {
       updated: 'Updated',
@@ -886,7 +909,7 @@ export default {
     title: 'Select widget template type',
   },
   entityDependenciesList: {
-    title: 'Centreon impacted entities',
+    title: '{name} impacted entities',
   },
   createDeclareTicketRule: {
     create: {
@@ -981,6 +1004,18 @@ export default {
     },
     duplicate: {
       title: 'Duplicate theme',
+    },
+  },
+  archiveDisabledEntities: {
+    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
+  },
+  createIcon: {
+    create: {
+      title: 'Upload icon',
+      success: 'Icon was uploaded',
+    },
+    remove: {
+      success: 'Icon was removed',
     },
   },
 };

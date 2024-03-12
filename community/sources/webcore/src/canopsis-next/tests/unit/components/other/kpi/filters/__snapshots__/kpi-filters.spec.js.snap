@@ -11,7 +11,7 @@ exports[`kpi-filters Renders \`kpi-filters\` with default props 1`] = `
   </span>
   <kpi-filters-list-stub
     filters=""
-    pagination="[object Object]"
+    options="[object Object]"
     totalitems="0"
   />
 </div>
@@ -29,7 +29,7 @@ exports[`kpi-filters Renders \`kpi-filters\` with full permissions 1`] = `
   <kpi-filters-list-stub
     duplicable="true"
     filters=""
-    pagination="[object Object]"
+    options="[object Object]"
     removable="true"
     totalitems="10"
     updatable="true"

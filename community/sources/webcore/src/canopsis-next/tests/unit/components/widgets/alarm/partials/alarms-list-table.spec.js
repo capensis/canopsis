@@ -1,11 +1,12 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
+import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ALARM_DENSE_TYPES, ALARM_FIELDS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -23,12 +24,13 @@ const stubs = {
   'c-density-btn-toggle': true,
 };
 
-const selectTable = wrapper => wrapper.find('v-data-table-stub');
+const selectTable = wrapper => wrapper.findComponent({ name: 'VDataTable' });
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
 
 describe('alarms-list-table', () => {
+  const $modals = mockModals();
   const timestamp = 1386435600;
   const totalItems = 5;
   const alarms = range(totalItems).map(value => ({
@@ -108,10 +110,6 @@ describe('alarms-list-table', () => {
     value: 'label',
   }];
 
-  const factory = generateShallowRenderer(AlarmsListTable, {
-    stubs,
-    attachTo: document.body,
-  });
   const snapshotFactory = generateRenderer(AlarmsListTable, {
     stubs,
     attachTo: document.body,
@@ -123,49 +121,43 @@ describe('alarms-list-table', () => {
 
   it('Alarms selected after trigger table', () => {
     const selectedAlarms = alarms.slice(0, -1);
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         alarms,
         columns,
         widget: defaultWidget,
       },
     });
 
-    selectTable(wrapper).vm.$emit('input', selectedAlarms);
+    selectTable(wrapper).triggerCustomEvent('input', selectedAlarms);
 
     expect(wrapper.vm.selected).toEqual(selectedAlarms);
   });
 
-  it('Pagination update event emitted after trigger update pagination', () => {
-    const wrapper = factory({
+  it('Pagination update event emitted after trigger update pagination', async () => {
+    const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
       },
     });
 
-    const pagination = {
-      descending: Faker.datatype.boolean(),
-      multiSortBy: [],
+    const options = {
       page: Faker.datatype.number(),
-      rowsPerPage: Faker.datatype.number(),
-      sortBy: Faker.datatype.string(),
+      itemsPerPage: Faker.datatype.number(),
+      sortBy: [Faker.datatype.string()],
+      sortDesc: [Faker.datatype.boolean()],
       totalItems: Faker.datatype.number(),
     };
 
-    const table = selectTable(wrapper);
-    table.vm.$emit('update:pagination', pagination);
+    selectTable(wrapper).triggerCustomEvent('update:options', options);
 
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    expect(updatePaginationEvents).toHaveLength(1);
-
-    const [eventData] = updatePaginationEvents[0];
-    expect(eventData).toEqual(pagination);
+    expect(wrapper).toEmit('update:options', expect.any(Object), options);
   });
 
   it('Resize listener added after mount and removed after destroy', async () => {
@@ -175,7 +167,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -193,8 +185,9 @@ describe('alarms-list-table', () => {
 
     expect(addEventListener).toHaveBeenNthCalledWith(
       2,
-      'scroll',
+      'resize',
       expect.any(Function),
+      { passive: true },
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
@@ -207,48 +200,96 @@ describe('alarms-list-table', () => {
       4,
       'keyup',
       expect.any(Function),
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      5,
+      'resize',
+      wrapper.vm.changeHeaderPositionOnResize,
+      { passive: true },
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      6,
+      'scroll',
+      wrapper.vm.changeHeaderPosition,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      7,
+      'keydown',
+      wrapper.vm.enableSelecting,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      8,
+      'keyup',
+      wrapper.vm.disableSelecting,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      9,
+      'mousedown',
+      wrapper.vm.mousedownHandler,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      10,
+      'mouseup',
+      wrapper.vm.mouseupHandler,
     );
 
     await wrapper.setProps({
       stickyHeader: false,
     });
 
-    expect(removeEventListener).toHaveBeenCalledTimes(1);
+    expect(removeEventListener).toHaveBeenNthCalledWith(1, 'scroll', wrapper.vm.changeHeaderPosition);
     removeEventListener.mockClear();
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(6);
+    expect(removeEventListener).toHaveBeenCalledTimes(8);
+
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
-      expect.any(Function),
+      wrapper.vm.changeHeaderPosition,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       2,
       'keydown',
-      expect.any(Function),
+      wrapper.vm.enableSelecting,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       3,
       'keyup',
-      expect.any(Function),
+      wrapper.vm.disableSelecting,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
       'mousedown',
-      expect.any(Function),
+      wrapper.vm.mousedownHandler,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       5,
       'mouseup',
-      expect.any(Function),
+      wrapper.vm.mouseupHandler,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
       'resize',
-      expect.any(Function),
+      wrapper.vm.changeHeaderPositionOnResize,
       { passive: true },
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
+      'keydown',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      8,
+      'keyup',
+      expect.any(Function),
     );
   });
 
@@ -258,7 +299,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -298,7 +339,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -328,7 +369,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(6);
+    expect(removeEventListener).toHaveBeenCalledTimes(8);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -366,7 +407,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -399,7 +440,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -434,7 +475,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -446,7 +487,7 @@ describe('alarms-list-table', () => {
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
-    alarmsListRow.vm.row.expanded = true;
+    alarmsListRow.triggerCustomEvent('expand', true);
 
     const [firstAlarm] = alarms;
 
@@ -454,18 +495,38 @@ describe('alarms-list-table', () => {
       [firstAlarm._id]: true,
     });
 
-    alarmsListRow.vm.row.expanded = false;
+    alarmsListRow.triggerCustomEvent('expand', false);
 
-    expect(wrapper.vm.expanded).toEqual({
-      [firstAlarm._id]: false,
+    expect(wrapper.vm.expanded).toEqual({});
+  });
+
+  it('Root cause diagram opened after trigger click state event', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+        stickyHeader: true,
+      },
+      mocks: { $modals },
     });
+
+    expect(wrapper.vm.expanded).toEqual({});
+
+    selectAlarmsListRow(wrapper).at(0).triggerCustomEvent('click:state', true);
+
+    /**
+     * TODO: Should be tested show modal
+     */
   });
 
   it('Renders `alarms-list-table` with default and required props', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms: [],
         totalItems: 0,
@@ -473,7 +534,7 @@ describe('alarms-list-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with custom props', async () => {
@@ -484,7 +545,7 @@ describe('alarms-list-table', () => {
         columns,
         totalItems,
         widget: defaultWidget,
-        pagination: {
+        options: {
           page: 1,
           limit: 10,
         },
@@ -505,7 +566,7 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with expandable, but without selectable', async () => {
@@ -516,7 +577,7 @@ describe('alarms-list-table', () => {
         widget: defaultWidget,
         columns,
         totalItems,
-        pagination: {},
+        options: {},
         selectable: false,
         expandable: true,
       },
@@ -524,14 +585,14 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with compact mode', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: {
           ...defaultWidget,
           parameters: {
@@ -545,14 +606,14 @@ describe('alarms-list-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with links column with links in row count', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: {
           ...defaultWidget,
           parameters: {
@@ -570,14 +631,14 @@ describe('alarms-list-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = false', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms: [],
         totalItems: 0,
@@ -590,14 +651,14 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = true', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms: [],
         totalItems: 0,
@@ -610,6 +671,6 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

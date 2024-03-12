@@ -1,9 +1,11 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import { randomDurationValue } from '@unit/utils/duration';
 
+import { TIME_UNITS } from '@/constants';
+
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
+
+import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsJunitForm from '@/components/other/storage-setting/form/storage-settings-junit-form.vue';
 
 const stubs = {
@@ -38,9 +40,9 @@ describe('storage-settings-junit-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectJunitDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectJunitDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-junit-form` with default form', () => {
@@ -50,7 +52,7 @@ describe('storage-settings-junit-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-junit-form` with custom form and history', () => {
@@ -61,6 +63,6 @@ describe('storage-settings-junit-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

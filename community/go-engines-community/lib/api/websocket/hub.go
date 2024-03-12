@@ -154,7 +154,7 @@ loop:
 
 	stopCtx, stopCancel := context.WithTimeout(context.Background(), stopTimeout)
 	defer stopCancel()
-	h.stop(stopCtx)
+	h.stop(stopCtx) //nolint:contextcheck
 }
 
 func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {

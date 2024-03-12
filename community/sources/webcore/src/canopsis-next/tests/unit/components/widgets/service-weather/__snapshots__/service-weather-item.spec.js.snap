@@ -6,7 +6,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
   style="height: 4em; color: white;"
 >
   <div
-    class="layout fill-height service-weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -19,21 +19,22 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
         />
       </div>
       <div
-        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
           color="white"
-          top="top"
+          top=""
         />
         <impact-state-indicator-stub
           class="mr-1"
           value="3"
         />
         <!---->
+        <!---->
       </div>
       <i
         aria-hidden="true"
-        class="v-icon service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->
@@ -51,7 +52,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
   style="height: 16em; color: white;"
 >
   <div
-    class="layout fill-height service-weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -69,49 +70,73 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
               />
             </strong>
           </p>
-           
           <hr
             id="null"
           />
-           
           <p />
-           
           <p>
              Dernière mise à jour : 
           </p>
         </div>
       </div>
       <div
-        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
           color="white"
-          top="top"
+          top=""
         />
         <impact-state-indicator-stub
           class="mr-1"
           value="0"
         />
         <button
-          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+          class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
           type="button"
         >
-          <div
+          <span
+            class="v-btn__content"
+          >
+            <span
+              aria-hidden="true"
+              class="v-icon notranslate theme--light white--text"
+              style="font-size: 16px; height: 16px; width: 16px;"
+            >
+              <svg
+                class="v-icon__component theme--light white--text"
+                height="15"
+                style="font-size: 16px; height: 16px; width: 16px;"
+                viewBox="0 0 14 15"
+                width="14"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.75 9.4362V10.1712L5.25 8.4212V6.57203L6.825 4.76953H9.33333V1.26953H5.83333V4.12786L4.25833 5.9362H1.75V9.4362H4.66667L8.75 11.4779V12.9362H12.25V9.4362H8.75Z"
+                />
+              </svg>
+            </span>
+          </span>
+        </button>
+        <button
+          class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+          type="button"
+        >
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
+              class="v-icon notranslate material-icons theme--light white--text"
               style="font-size: 16px;"
             >
               help
             </i>
-          </div>
+          </span>
         </button>
       </div>
       <i
         aria-hidden="true"
-        class="v-icon service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->

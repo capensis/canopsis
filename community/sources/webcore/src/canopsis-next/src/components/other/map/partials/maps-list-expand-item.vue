@@ -1,11 +1,31 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $t(`map.types.${map.type}`) }}
-    v-tab-item
-      v-layout.pa-3
-        v-layout(v-if="!mapDetails", justify-center)
-          v-progress-circular.pa-4(color="white", indeterminate)
-        component(v-else, :is="component", :map="mapDetails")
+<template>
+  <v-tabs
+    background-color="secondary lighten-1"
+    slider-color="primary"
+    dark
+    centered
+  >
+    <v-tab>{{ $t(`map.types.${map.type}`) }}</v-tab>
+    <v-tab-item>
+      <v-layout class="pa-3">
+        <v-layout
+          v-if="!mapDetails"
+          justify-center
+        >
+          <v-progress-circular
+            class="pa-4"
+            color="white"
+            indeterminate
+          />
+        </v-layout>
+        <component
+          v-else
+          :is="component"
+          :map="mapDetails"
+        />
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

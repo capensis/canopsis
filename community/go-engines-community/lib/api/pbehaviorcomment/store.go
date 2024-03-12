@@ -3,12 +3,11 @@ package pbehaviorcomment
 import (
 	"context"
 	"errors"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -35,10 +34,12 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 }
 
 func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
+	now := datetime.NewCpsTime()
+
 	doc := pbehavior.Comment{
 		ID:        utils.NewID(),
 		Author:    r.Author,
-		Timestamp: &types.CpsTime{Time: time.Now()},
+		Timestamp: &now,
 		Message:   r.Message,
 	}
 	var response *Response

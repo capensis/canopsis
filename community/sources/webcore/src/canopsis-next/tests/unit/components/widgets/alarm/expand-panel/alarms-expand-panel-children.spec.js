@@ -1,5 +1,6 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { fakeStaticAlarms, fakeAlarm } from '@unit/data/alarm';
+
 import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsExpandPanelChildren from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-children.vue';
@@ -48,7 +49,7 @@ describe('alarms-expand-panel-children', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-children` with editing', () => {
@@ -62,7 +63,7 @@ describe('alarms-expand-panel-children', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-children` with causes alarms', () => {
@@ -76,6 +77,6 @@ describe('alarms-expand-panel-children', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
@@ -51,7 +50,7 @@ describe('bar-chart-metrics', () => {
   test('Renders `bar-chart-metrics` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `bar-chart-metrics` with metrics', async () => {
@@ -70,7 +69,7 @@ describe('bar-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -92,7 +91,7 @@ describe('bar-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -110,7 +109,7 @@ describe('bar-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -129,7 +128,7 @@ describe('bar-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -149,7 +148,7 @@ describe('bar-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });

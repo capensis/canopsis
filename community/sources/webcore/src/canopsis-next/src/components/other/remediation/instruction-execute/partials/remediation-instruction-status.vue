@@ -1,7 +1,17 @@
-<template lang="pug">
-  v-layout.my-2(:class="{ 'error--text': isFailedStatus }", row, align-center)
-    v-icon.mr-1(:color="iconColor") alarm
-    span {{ label }}
+<template>
+  <v-layout
+    :class="{ 'error--text': isFailedStatus }"
+    class="my-2"
+    align-center
+  >
+    <v-icon
+      :color="iconColor"
+      class="mr-1"
+    >
+      alarm
+    </v-icon>
+    <span>{{ label }}</span>
+  </v-layout>
 </template>
 
 <script>

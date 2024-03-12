@@ -1,10 +1,12 @@
-<template lang="pug">
-  div
-    test-suite-history-panel.mb-2(
-      v-for="testSuite in testSuiteHistory",
-      :key="testSuite._id",
+<template>
+  <div>
+    <test-suite-history-panel
+      v-for="testSuite in testSuiteHistory"
+      :key="testSuite._id"
       :test-suite="testSuite"
-    )
+      class="mb-2"
+    />
+  </div>
 </template>
 
 <script>

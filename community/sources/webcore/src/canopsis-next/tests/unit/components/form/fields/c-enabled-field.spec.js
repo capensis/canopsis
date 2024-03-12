@@ -24,20 +24,16 @@ describe('c-enabled-field', () => {
 
   it('Value changed in the input', () => {
     const wrapper = factory({ propsData: { value: false } });
-    const input = wrapper.find('input.v-switch');
 
-    input.setChecked(true);
+    wrapper.find('input.v-switch').setChecked(true);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([true]);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Renders `c-enabled-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-enabled-field` with custom props correctly', () => {
@@ -51,6 +47,6 @@ describe('c-enabled-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

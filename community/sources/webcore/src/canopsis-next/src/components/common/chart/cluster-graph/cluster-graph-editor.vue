@@ -1,25 +1,31 @@
-<template lang="pug">
-  v-layout.cluster-graph-editor
-    v-flex.cluster-graph-editor__sidebar
-      cluster-graph-entities-type.mb-3(
-        v-field="form.impact",
+<template>
+  <v-layout class="cluster-graph-editor">
+    <v-flex class="cluster-graph-editor__sidebar">
+      <cluster-graph-entities-type
+        v-field="form.impact"
+        class="mb-3"
         @change="clearPinnedEntities"
-      )
-      cluster-graph-entities-list(
-        v-field="form.entities",
-        :impact="form.impact",
-        @remove="removeEntity",
-        @update:entity="updateEntity",
+      />
+      <cluster-graph-entities-list
+        v-field="form.entities"
+        :impact="form.impact"
+        @remove="removeEntity"
+        @update:entity="updateEntity"
         @update:pinned="updatePinnedEntities"
-      )
-    v-flex.cluster-graph-editor__content
-      c-zoom-overlay
-        network-graph.fill-height(
-          ref="networkGraph",
-          :options="options",
-          :node-html-label-options="nodeHtmlLabelsOptions",
+      />
+    </v-flex>
+    <v-flex class="cluster-graph-editor__content">
+      <c-zoom-overlay>
+        <network-graph
+          ref="networkGraph"
+          :options="options"
+          :node-html-label-options="nodeHtmlLabelsOptions"
+          class="fill-height"
           ctrl-wheel-zoom
-        )
+        />
+      </c-zoom-overlay>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

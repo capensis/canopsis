@@ -1,23 +1,26 @@
-<template lang="pug">
-  v-layout
-    v-flex(xs6)
-      c-enabled-field(
-        v-field="form.template",
+<template>
+  <v-layout>
+    <v-flex xs6>
+      <c-enabled-field
+        v-field="form.template"
         :label="$t('declareTicket.allowTicketURLTemplate')"
-      )
-    v-flex(xs6)
-      declare-ticket-rule-ticket-url-payload-text-field(
-        v-if="form.template",
-        v-field="form.value",
-        :name="name",
+      />
+    </v-flex>
+    <v-flex xs6>
+      <declare-ticket-rule-ticket-url-payload-text-field
+        v-if="form.template"
+        v-field="form.value"
+        :name="name"
         :disabled="disabled"
-      )
-      declare-ticket-rule-ticket-url-text-field(
-        v-else,
-        v-field="form.value",
-        :name="name",
+      />
+      <declare-ticket-rule-ticket-url-text-field
+        v-else
+        v-field="form.value"
+        :name="name"
         :disabled="disabled"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

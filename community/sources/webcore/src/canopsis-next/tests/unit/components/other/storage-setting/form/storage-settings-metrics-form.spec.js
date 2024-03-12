@@ -1,9 +1,11 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 import { randomDurationValue } from '@unit/utils/duration';
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
+import { TIME_UNITS } from '@/constants';
+
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
+
+import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsMetricsForm from '@/components/other/storage-setting/form/storage-settings-metrics-form.vue';
 
 const stubs = {
@@ -35,9 +37,9 @@ describe('storage-settings-metrics-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectMetricsDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectMetricsDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-metrics-form` with default form', () => {
@@ -47,7 +49,7 @@ describe('storage-settings-metrics-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-metrics-form` with custom form', () => {
@@ -57,6 +59,6 @@ describe('storage-settings-metrics-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

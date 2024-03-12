@@ -15,14 +15,16 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
   >
     <c-quick-date-interval-type-field-stub
       disabled="true"
-      hide-details="hide-details"
+      hide-details=""
       ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      return-object="return-object"
+      return-object=""
       value="[object Object]"
     />
   </div>
 </div>
 `;
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with custom props 2`] = `undefined`;
 
 exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with default props 1`] = `
 <div
@@ -37,9 +39,9 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
     class="c-quick-interval__range"
   >
     <c-quick-date-interval-type-field-stub
-      hide-details="hide-details"
+      hide-details=""
       ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      return-object="return-object"
+      return-object=""
       value="[object Object]"
     />
   </div>
@@ -47,14 +49,82 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
 `;
 
 exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with short format 1`] = `
-<div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;">
-  <div class="v-card v-sheet theme--light" style="width: 400px;">
-    <div class="v-card__text">
-      <c-information-block-stub title="Interval">
-        <hr class="v-divider theme--light">
-        <div class="layout mt-2">
-          <c-date-interval-field-stub value="[object Object]" disabled="true" is-allowed-from-date="function () { [native code] }" is-allowed-to-date="function () { [native code] }" column="column"></c-date-interval-field-stub>
-          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
+<div
+  class="c-quick-interval c-quick-interval--reverse c-quick-interval--short"
+>
+  <div
+    class="v-menu"
+  >
+    <div
+      class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light v-text-field"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Interval
+            </label>
+            <input
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with short format 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-card v-sheet theme--light"
+    style="width: 400px;"
+  >
+    <div
+      class="v-card__text"
+    >
+      <c-information-block-stub
+        title="Interval"
+      >
+        <hr
+          aria-orientation="horizontal"
+          class="v-divider theme--light"
+          role="separator"
+        />
+        <div
+          class="layout mt-2"
+        >
+          <c-date-interval-field-stub
+            column=""
+            disabled="true"
+            is-allowed-from-date="function () { [native code] }"
+            is-allowed-to-date="function () { [native code] }"
+            value="[object Object]"
+          />
+          <c-quick-date-interval-type-field-stub
+            class="c-quick-interval__range ml-4"
+            disabled="true"
+            hide-details=""
+            ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+            return-object=""
+            value="[object Object]"
+          />
         </div>
       </c-information-block-stub>
     </div>
@@ -63,14 +133,82 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
 `;
 
 exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with short format and custom interval 1`] = `
-<div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;">
-  <div class="v-card v-sheet theme--light" style="width: 400px;">
-    <div class="v-card__text">
-      <c-information-block-stub title="Interval">
-        <hr class="v-divider theme--light">
-        <div class="layout mt-2">
-          <c-date-interval-field-stub value="[object Object]" disabled="true" is-allowed-from-date="function () { [native code] }" is-allowed-to-date="function () { [native code] }" column="column"></c-date-interval-field-stub>
-          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
+<div
+  class="c-quick-interval c-quick-interval--reverse c-quick-interval--short"
+>
+  <div
+    class="v-menu"
+  >
+    <div
+      class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light v-text-field"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Interval
+            </label>
+            <input
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with short format and custom interval 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-card v-sheet theme--light"
+    style="width: 400px;"
+  >
+    <div
+      class="v-card__text"
+    >
+      <c-information-block-stub
+        title="Interval"
+      >
+        <hr
+          aria-orientation="horizontal"
+          class="v-divider theme--light"
+          role="separator"
+        />
+        <div
+          class="layout mt-2"
+        >
+          <c-date-interval-field-stub
+            column=""
+            disabled="true"
+            is-allowed-from-date="function () { [native code] }"
+            is-allowed-to-date="function () { [native code] }"
+            value="[object Object]"
+          />
+          <c-quick-date-interval-type-field-stub
+            class="c-quick-interval__range ml-4"
+            disabled="true"
+            hide-details=""
+            ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+            return-object=""
+            value="[object Object]"
+          />
         </div>
       </c-information-block-stub>
     </div>

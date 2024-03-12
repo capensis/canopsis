@@ -1,47 +1,82 @@
-<template lang="pug">
-  v-textarea.c-payload-textarea-field(
-    ref="field",
-    v-validate="rules",
-    v-field="value",
-    :label="label",
-    :name="name",
-    :rows="rows",
-    :readonly="readonly",
-    :disabled="disabled",
-    :error-messages="payloadErrors.inline",
-    :row-height="lineHeight",
-    :style="textareaStyle",
-    :error="!!linesErrors.length",
-    auto-grow,
-    @blur="handleBlur",
+<template>
+  <v-textarea
+    v-validate="rules"
+    v-field="value"
+    ref="field"
+    :label="label"
+    :name="name"
+    :rows="rows"
+    :readonly="readonly"
+    :disabled="disabled"
+    :error-messages="payloadErrors.inline"
+    :row-height="lineHeight"
+    :style="textareaStyle"
+    :error="!!linesErrors.length"
+    class="c-payload-textarea-field"
+    auto-grow
+    @blur="handleBlur"
     @input="debouncedOnSelectionChange"
-  )
-    template(#prepend-inner="")
-      div(:style="{ width: errorsOffsetPixel }")
-    template(#append="")
-      div.c-payload-textarea-field__append
-        variables-menu(
-          v-if="variables",
-          :variables="availableVariables",
-          :visible="variablesShown",
-          :value="variablesMenuValue",
-          :position-x="variablesMenuPosition.x",
-          :position-y="variablesMenuPosition.y",
-          ignore-click-outside,
-          show-value,
+  >
+    <template #prepend-inner="">
+      <div :style="{ width: errorsOffsetPixel }" />
+    </template>
+    <template #append="">
+      <div class="c-payload-textarea-field__append">
+        <variables-menu
+          v-if="variables"
+          :variables="availableVariables"
+          :visible="variablesShown"
+          :value="variablesMenuValue"
+          :position-x="variablesMenuPosition.x"
+          :position-y="variablesMenuPosition.y"
+          ignore-click-outside
+          show-value
           @input="pasteVariable"
-        )
-        span.c-payload-textarea-field__lines(:style="linesStyle")
-          span.c-payload-textarea-field__line(v-for="(line, index) in lines", :key="index", :style="lineStyle")
-            span.c-payload-textarea-field__fake-line(v-if="selectedVariable && index === selectedVariable.index")
-              | {{ line.text.slice(0, selectedVariable.start) }}
-              span.c-payload-textarea-field__highlight(ref="variable")
-                | {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
-            v-tooltip(v-if="line.error", top)
-              template(#activator="{ on }")
-                v-icon.c-payload-textarea-field__warning-icon(v-on="on", :size="lineHeight", color="error") warning
-              span {{ line.error.message }}
-            | {{ line.text }}
+        />
+        <span
+          :style="linesStyle"
+          class="c-payload-textarea-field__lines"
+        >
+          <span
+            v-for="(line, index) in lines"
+            :key="index"
+            :style="lineStyle"
+            class="c-payload-textarea-field__line"
+          >
+            <span
+              v-if="selectedVariable && index === selectedVariable.index"
+              class="c-payload-textarea-field__fake-line"
+            >
+              <span>{{ line.text.slice(0, selectedVariable.start) }}</span>
+              <span
+                ref="variable"
+                class="c-payload-textarea-field__highlight"
+              >
+                <span>{{ line.text.slice(selectedVariable.start, selectedVariable.end) }}</span>
+              </span>
+            </span>
+            <v-tooltip
+              v-if="line.error"
+              top
+            >
+              <template #activator="{ on }">
+                <v-icon
+                  :size="lineHeight"
+                  class="c-payload-textarea-field__warning-icon"
+                  color="error"
+                  v-on="on"
+                >
+                  warning
+                </v-icon>
+              </template>
+              <span>{{ line.error.message }}</span>
+            </v-tooltip>
+            <span>{{ line.text }}</span>
+          </span>
+        </span>
+      </div>
+    </template>
+  </v-textarea>
 </template>
 
 <script>
@@ -191,7 +226,7 @@ $iconBarWidth: 18px;
   }
 
   .v-input__prepend-inner {
-    padding: 0;
+    padding: 0 !important;
   }
 
   textarea {
@@ -202,11 +237,11 @@ $iconBarWidth: 18px;
     display: flex;
     flex-direction: column;
 
-    padding: 7px 0 8px 0;
     max-height: 100%;
   }
 
   &__line, &__fake-line {
+    line-height: 16px;
     white-space: pre-wrap;
     word-break: normal;
     text-align: start;
@@ -229,6 +264,7 @@ $iconBarWidth: 18px;
     left: 0;
     z-index: 1;
     pointer-events: auto;
+    transform: translateX(-100%);
   }
 
   &__append {

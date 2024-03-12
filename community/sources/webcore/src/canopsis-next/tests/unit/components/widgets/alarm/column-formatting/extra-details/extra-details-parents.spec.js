@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsParents from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-parents.vue';
@@ -27,27 +25,27 @@ describe('extra-details-parents', () => {
   });
 
   it('Renders `extra-details-parents` with full parents', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         total,
         rules,
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-parents` without rules', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         total,
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

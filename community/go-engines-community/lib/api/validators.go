@@ -40,8 +40,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/gin-gonic/gin/binding"
@@ -49,7 +49,7 @@ import (
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
+func RegisterValidators(client mongo.DbClient) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
 		return
@@ -99,7 +99,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
-	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, types.CpsTime{})
+	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, datetime.CpsTime{})
 
 	// Request validators
 	v.RegisterStructValidation(common.ValidateFilteredQuery, pagination.FilteredQuery{})
@@ -110,16 +110,13 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		pbhUniqueIDValidator.Validate(ctx, sl)
 		pbhValidator.ValidateCreateRequest(sl)
 	}, pbehavior.CreateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		pbhValidator.ValidateUpdateRequest(ctx, sl)
-	}, pbehavior.UpdateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		pbhValidator.ValidateUpdateRequest(ctx, sl)
-	}, pbehavior.BulkUpdateRequestItem{})
+	v.RegisterStructValidation(pbhValidator.ValidateUpdateRequest, pbehavior.UpdateRequest{})
+	v.RegisterStructValidation(pbhValidator.ValidateUpdateRequest, pbehavior.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
+	v.RegisterStructValidationCtx(pbhValidator.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")
@@ -179,24 +176,14 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	entityserviceValidator := entityservice.NewValidator(client)
 	entityserviceUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.EntityMongoCollection, "ID")
-	entityserviceUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.EntityMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		entityserviceUniqueIDValidator.Validate(ctx, sl)
-		if !enableSameServiceNames {
-			entityserviceUniqueNameValidator.Validate(ctx, sl)
-		}
 		entityserviceValidator.ValidateCreateRequest(sl)
 	}, entityservice.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		if !enableSameServiceNames {
-			entityserviceUniqueNameValidator.Validate(ctx, sl)
-		}
 		entityserviceValidator.ValidateUpdateRequest(sl)
 	}, entityservice.UpdateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		if !enableSameServiceNames {
-			entityserviceUniqueNameValidator.Validate(ctx, sl)
-		}
 		entityserviceValidator.ValidateUpdateRequest(sl)
 	}, entityservice.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(entityserviceValidator.ValidateEditRequest, entityservice.EditRequest{})
@@ -211,6 +198,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	userValidator := user.NewValidator(client)
 	v.RegisterStructValidationCtx(userValidator.ValidateUpdateRequest, user.UpdateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateCreateRequest, user.CreateRequest{})
+	v.RegisterStructValidationCtx(userValidator.ValidatePatchRequest, user.PatchRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateBulkUpdateRequestItem, user.BulkUpdateRequestItem{})
 
 	accountValidator := account.NewValidator(client)
@@ -234,8 +222,9 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})
 
 	stateSettingsValidator := statesettings.NewValidator()
-	v.RegisterStructValidation(stateSettingsValidator.ValidateStateSettingRequest, statesettings.StateSettingRequest{})
-	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThresholds, statesettings.StateThresholds{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateEditRequest, statesettings.EditRequest{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateJUnitThresholds, statesettings.JUnitThreshold{})
+	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThreshold, statesettings.StateThreshold{})
 
 	eventfilterValidator := eventfilter.NewValidator(client)
 	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRuleCollection, "ID")

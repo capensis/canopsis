@@ -14,6 +14,7 @@ import {
   ENTITY_FIELDS_TO_LABELS_KEYS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SORT_ORDERS,
+  TREE_OF_DEPENDENCIES_SHOW_TYPES,
 } from '@/constants';
 import { DEFAULT_WEATHER_LIMIT, PAGINATION_LIMIT } from '@/config';
 
@@ -67,8 +68,14 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {number} heightFactor
  * @property {number} modalItemsPerPage
  * @property {boolean} isPriorityEnabled
+ * @property {boolean} isHideGrayEnabled
+ * @property {boolean} isSecondaryIconEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
+ * @property {boolean} entitiesActionsInQueue
+ * @property {number} treeOfDependenciesShowType
+ * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -129,7 +136,13 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
       state_types: [],
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
+  isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
+  isSecondaryIconEnabled: parameters.isSecondaryIconEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
+  entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
+  treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**
@@ -162,7 +175,6 @@ export const prepareServiceWeatherWidget = (widget = {}) => setSeveralFields(wid
 
       sortable: false,
       text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      value: column.value.startsWith('entity.') ? column.value : `entity.${column.value}`,
     }))
   ),
 

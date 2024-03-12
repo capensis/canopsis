@@ -4,6 +4,8 @@ export default {
   thresholdRate: 'Threshold rate',
   thresholdCount: 'Threshold count',
   timeInterval: 'Time interval',
+  childInactiveDelay: 'Child inactive delay',
+  childInactiveDelayTooltip: 'The alarm matched with this rule is activated only after the inactivity delay',
   valuePath: 'Value path | Value paths',
   autoResolve: 'Auto resolve',
   idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',

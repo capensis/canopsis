@@ -1,7 +1,9 @@
 package correlation
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -17,20 +19,21 @@ const (
 )
 
 type Rule struct {
-	ID             string     `bson:"_id" json:"_id"`
-	Type           string     `bson:"type" json:"type"`
-	Name           string     `bson:"name" json:"name"`
-	Author         string     `bson:"author" json:"author"`
-	OutputTemplate string     `bson:"output_template" json:"output_template"`
-	Config         RuleConfig `bson:"config" json:"config"`
-	AutoResolve    bool       `bson:"auto_resolve" json:"auto_resolve"`
+	ID                 string                     `bson:"_id" json:"_id"`
+	Type               string                     `bson:"type" json:"type"`
+	Name               string                     `bson:"name" json:"name"`
+	Author             string                     `bson:"author" json:"author"`
+	OutputTemplate     string                     `bson:"output_template" json:"output_template"`
+	ChildInactiveDelay *datetime.DurationWithUnit `bson:"child_inactive_delay,omitempty" json:"child_inactive_delay,omitempty"`
+	Config             RuleConfig                 `bson:"config" json:"config"`
+	AutoResolve        bool                       `bson:"auto_resolve" json:"auto_resolve"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 	TotalEntityPatternFields         `bson:",inline"`
 
-	Created *types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
@@ -44,7 +47,7 @@ func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
 		}
 	}
 
-	return pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern)
+	return match.Match(&alarmWithEntity.Entity, &alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern)
 }
 
 func (r *Rule) IsManual() bool {

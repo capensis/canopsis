@@ -1,63 +1,133 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex.manage-playlist-tabs.mr-2(xs12)
-      v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.groups') }}
-      v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
-        group-panel(
-          v-for="group in groups",
-          :group="group",
-          :key="group._id",
+<template>
+  <v-layout>
+    <v-flex
+      class="manage-playlist-tabs mr-2"
+      xs12
+    >
+      <v-flex class="text-center mb-2">
+        {{ $t('modals.createPlaylist.groups') }}
+      </v-flex>
+      <v-expansion-panels
+        :value="openedPanels"
+        accordion
+        readonly
+        multiple
+        dark
+      >
+        <group-panel
+          v-for="group in groups"
+          :key="group._id"
+          :group="group"
           hide-actions
-        )
-          template(#title="")
-            v-checkbox.group-checkbox.mt-0.pt-0(
-              :input-value="selectedGroupsIds",
-              :value="group._id",
-              :disabled="isDisabledGroup(group)",
-              color="primary",
-              @change="selectGroupHandler(group, $event)"
-            )
-            span.group-title {{ group.title }}
-          v-expansion-panel.tabs-panel(
-            v-for="view in group.views",
-            :key="view._id",
-            :value="getPanelValueFromArray(view.tabs)",
-            readonly,
-            hide-actions,
-            expand,
-            dark,
-            focusable
-          )
-            v-expansion-panel-content(hide-actions)
-              template(#header="")
-                group-view-panel(:view="view")
-                  template(#title="")
-                    v-layout(align-center, row, justify-space-between)
-                      v-checkbox.group-checkbox.mt-0.pt-0(
-                        :input-value="selectedViewsIds",
-                        :value="view._id",
-                        :disabled="isDisabledView(view)",
-                        color="primary",
-                        @change="selectViewHandler(view, $event)"
-                      )
-                      span.ellipsis.fill-width {{ view.title }}
-                        span.ml-1(v-show="view.description") ({{ view.description }})
-              tab-panel-content(v-for="tab in view.tabs", :key="tab._id", :tab="tab", hide-actions)
-                template(#title="")
-                  v-layout.ml-5(align-center)
-                    v-checkbox.tab-checkbox.group-checkbox(
-                      :input-value="selectedTabsIds",
-                      :value="tab._id",
-                      color="primary",
-                      @change="selectTabHandler(tab, $event)"
-                    )
-                    span {{ tab.title }}
+        >
+          <template #title="">
+            <v-layout align-center>
+              <v-checkbox
+                :input-value="selectedGroupsIds"
+                :value="group._id"
+                :disabled="isDisabledGroup(group)"
+                class="group-checkbox mt-0 pt-0"
+                color="primary"
+                @change="selectGroupHandler(group, $event)"
+              >
+                <template #label>
+                  {{ group.title }}
+                </template>
+              </v-checkbox>
+            </v-layout>
+          </template>
+          <v-expansion-panels
+            :value="getPanelValueFromArray(group.views)"
+            accordion
+            readonly
+            hide-actions
+            multiple
+            dark
+          >
+            <v-expansion-panel
+              v-for="view in group.views"
+              :key="view._id"
+              class="tabs-panel"
+            >
+              <v-expansion-panel-header
+                class="pa-0"
+                hide-actions
+              >
+                <group-view-panel :view="view">
+                  <template #title="">
+                    <v-checkbox
+                      :input-value="selectedViewsIds"
+                      :value="view._id"
+                      :disabled="isDisabledView(view)"
+                      class="group-checkbox mt-0 pt-0"
+                      color="primary"
+                      @change="selectViewHandler(view, $event)"
+                    >
+                      <template #label>
+                        <span class="text-truncate fill-width">
+                          {{ view.title }}
+                          <span
+                            v-show="view.description"
+                            class="ml-1"
+                          >
+                            ({{ view.description }})
+                          </span>
+                        </span>
+                      </template>
+                    </v-checkbox>
+                  </template>
+                </group-view-panel>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content hide-actions>
+                <v-expansion-panels
+                  :value="getPanelValueFromArray(view.tabs)"
+                  accordion
+                  readonly
+                  hide-actions
+                  multiple
+                  dark
+                >
+                  <v-expansion-panel
+                    v-for="tab in view.tabs"
+                    :key="tab._id"
+                  >
+                    <v-expansion-panel-header
+                      class="pa-0"
+                      hide-actions
+                    >
+                      <tab-panel-content :tab="tab">
+                        <template #title="">
+                          <v-checkbox
+                            :input-value="selectedTabsIds"
+                            :value="tab._id"
+                            :label="tab.title"
+                            class="ml-10"
+                            color="primary"
+                            @change="selectTabHandler(tab, $event)"
+                          >
+                            <template #label>
+                              {{ tab.title }}
+                            </template>
+                          </v-checkbox>
+                        </template>
+                      </tab-panel-content>
+                    </v-expansion-panel-header>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </group-panel>
+      </v-expansion-panels>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
+import { createRangeArray } from '@/helpers/array';
+
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
-import GroupsSideBarGroup from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
 
 import TabPanelContent from '../partials/tab-panel-content.vue';
 
@@ -66,7 +136,6 @@ export default {
     TabPanelContent,
     GroupViewPanel,
     GroupPanel,
-    GroupsSideBarGroup,
   },
   model: {
     prop: 'selectedTabs',
@@ -115,7 +184,7 @@ export default {
   },
   methods: {
     getPanelValueFromArray(values = []) {
-      return new Array(values.length).fill(true);
+      return createRangeArray(values.length);
     },
 
     selectTabHandler(tab, checkedTabs) {
@@ -173,12 +242,6 @@ export default {
     & ::v-deep .v-expansion-panel__header {
       padding: 0;
       margin: 0;
-    }
-    .tab-checkbox {
-      flex: none;
-      height: 24px;
-      margin: 0;
-      padding: 0;
     }
   }
 </style>

@@ -17,8 +17,8 @@ html {
   z-index: 9;
 }
 
-.v-list .v-list__tile {
-  > *:not(.v-list__tile__action) {
+.v-list .v-list-item {
+  > *:not(.v-list-item__action) {
     .v-input {
       &, &__slot {
         margin-top: 4px;
@@ -199,7 +199,7 @@ html {
   border-radius: 50% !important;
 }
 
-.map-preview__help-icon {
+.map-preview__help-icon.v-icon {
   cursor: pointer;
   position: absolute;
   bottom: 10px;
@@ -220,21 +220,6 @@ html {
 
 .blinking {
   animation: blink 2s linear infinite;
-}
-
-.v-list__tile__title.v-list-badge__tile__title {
-  overflow: visible;
-
-  .v-badge__badge {
-    top: -5px;
-    right: -11px;
-    height: 16px;
-    width: 16px;
-
-    .v-icon {
-      font-size: 11px;
-    }
-  }
 }
 
 .kpi-widget {
@@ -271,4 +256,31 @@ html {
 
 .fill-width {
   width: 100%;
+}
+
+.v-btn-legacy-m {
+  &--x {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  &--y {
+    margin-bottom: 6px;
+    margin-top: 6px;
+  }
+
+  margin: 6px 8px;
+}
+
+.v-icon svg {
+  fill: currentColor;
+}
+
+@for $i from 0 through 16 {
+  .row-gap-#{$i}, .gap-#{$i} {
+    row-gap: $i * 4px;
+  }
+  .col-gap-#{$i}, .gap-#{$i} {
+    column-gap: $i * 4px;
+  }
 }

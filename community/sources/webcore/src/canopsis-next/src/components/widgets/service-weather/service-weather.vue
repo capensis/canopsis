@@ -1,68 +1,127 @@
-<template lang="pug">
-  div.pa-2
-    v-layout.mx-1(wrap)
-      v-flex(v-if="hasAccessToCategory", xs3)
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-      v-flex(xs5)
-        v-layout(row, align-center)
-          template(v-if="hasAccessToUserFilter")
-            filter-selector(
-              :label="$t('settings.selectAFilter')",
-              :filters="userPreference.filters",
-              :locked-filters="widget.filters",
-              :locked-value="lockedFilter",
-              :value="mainFilter",
-              :disabled="!hasAccessToListFilters",
+<template>
+  <div class="pa-2">
+    <v-layout
+      class="mx-1"
+      wrap
+    >
+      <v-flex
+        v-if="hasAccessToCategory"
+        xs3
+      >
+        <c-entity-category-field
+          :category="query.category"
+          class="mr-3"
+          @input="updateCategory"
+        />
+      </v-flex>
+      <v-flex xs5>
+        <v-layout align-center>
+          <template v-if="hasAccessToUserFilter">
+            <filter-selector
+              :label="$t('settings.selectAFilter')"
+              :filters="userPreference.filters"
+              :locked-filters="widget.filters"
+              :locked-value="lockedFilter"
+              :value="mainFilter"
+              :disabled="!hasAccessToListFilters"
               @input="updateSelectedFilter"
-            )
-            filters-list-btn(
-              v-if="hasAccessToAddFilter || hasAccessToEditFilter",
-              :widget-id="widget._id",
-              :addable="hasAccessToAddFilter",
-              :editable="hasAccessToEditFilter",
-              :entity-types="[$constants.ENTITY_TYPES.service]",
-              with-entity,
-              with-service-weather,
-              private,
+            />
+            <filters-list-btn
+              v-if="hasAccessToAddFilter || hasAccessToEditFilter"
+              :widget-id="widget._id"
+              :addable="hasAccessToAddFilter"
+              :editable="hasAccessToEditFilter"
+              :entity-types="[$constants.ENTITY_TYPES.service]"
+              with-entity
+              with-service-weather
+              private
               entity-counters-type
-            )
-          c-enabled-field.ml-3(
-            :value="query.hide_grey",
-            :label="$t('serviceWeather.hideGrey')",
+            />
+          </template>
+          <c-enabled-field
+            v-if="isHideGrayEnabled"
+            :value="query.hide_grey"
+            :label="$t('serviceWeather.hideGrey')"
+            class="ml-3"
             @input="updateHideGray"
-          )
-    v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
-      v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
-    v-layout.fill-height(key="content", wrap)
-      v-alert(v-if="hasNoData && servicesError", :value="true", type="error")
-        v-layout(align-center)
-          div.mr-4 {{ $t('errors.default') }}
-          c-help-icon(icon="help", top)
-            div(v-if="servicesError.name") {{ $t('common.name') }}: {{ servicesError.name }}
-            div(v-if="servicesError.description") {{ $t('common.description') }}: {{ servicesError.description }}
-      v-alert(v-else-if="hasNoData", :value="true", type="info") {{ $t('common.noData') }}
-      template(v-else)
-        v-flex(
-          v-for="service in services",
-          :key="service._id",
+          />
+        </v-layout>
+      </v-flex>
+    </v-layout>
+    <v-fade-transition
+      v-if="servicesPending"
+      key="progress"
+      mode="out-in"
+    >
+      <v-progress-linear
+        class="progress-linear-absolute--top"
+        height="2"
+        indeterminate
+      />
+    </v-fade-transition>
+    <v-layout
+      key="content"
+      class="fill-height"
+      wrap
+    >
+      <v-layout
+        v-if="hasNoData"
+        justify-center
+      >
+        <v-alert
+          v-if="servicesError"
+          type="error"
+        >
+          <v-layout align-center>
+            <div class="mr-4">
+              {{ $t('errors.default') }}
+            </div>
+            <c-help-icon
+              icon="help"
+              top
+            >
+              <div v-if="servicesError.name">
+                {{ $t('common.name') }}: {{ servicesError.name }}
+              </div>
+              <div v-if="servicesError.description">
+                {{ $t('common.description') }}: {{ servicesError.description }}
+              </div>
+            </c-help-icon>
+          </v-layout>
+        </v-alert>
+        <v-alert type="info">
+          {{ $t('common.noData') }}
+        </v-alert>
+      </v-layout>
+      <template v-else>
+        <v-flex
+          v-for="service in services"
+          :key="service._id"
           :class="flexSize"
-        )
-          service-weather-item(
-            :service="service",
-            :action-required-blinking="actionRequiredSettings.is_blinking",
-            :action-required-color="actionRequiredSettings.color",
-            :action-required-icon="actionRequiredSettings.icon_name",
-            :show-alarms-button="isBothModalType && hasAlarmsListAccess",
-            :show-variables-help-button="hasVariablesHelpAccess",
-            :template="widget.parameters.blockTemplate",
-            :height-factor="widget.parameters.heightFactor",
-            :color-indicator="widget.parameters.colorIndicator",
-            :priority-enabled="widget.parameters.isPriorityEnabled",
-            :counters-settings="widget.parameters.counters",
-            :margin="widget.parameters.margin",
-            @show:service="showAdditionalInfoModal(service)",
+        >
+          <service-weather-item
+            :service="service"
+            :action-required-blinking="actionRequiredSettings.is_blinking"
+            :action-required-color="actionRequiredSettings.color"
+            :action-required-icon="actionRequiredSettings.icon_name"
+            :show-alarms-button="isBothModalType && hasAlarmsListAccess"
+            :show-variables-help-button="hasVariablesHelpAccess"
+            :template="widget.parameters.blockTemplate"
+            :height-factor="widget.parameters.heightFactor"
+            :color-indicator="widget.parameters.colorIndicator"
+            :priority-enabled="widget.parameters.isPriorityEnabled"
+            :secondary-icon-enabled="widget.parameters.isSecondaryIconEnabled"
+            :counters-settings="widget.parameters.counters"
+            :show-root-cause-by-state-click="showRootCauseByStateClick"
+            :margin="widget.parameters.margin"
+            @show:service="showAdditionalInfoModal(service)"
             @show:alarms="showAlarmListModal(service)"
-          )
+            @show:root-cause="openRootCauseDiagram(service)"
+          />
+        </v-flex>
+      </template>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -144,6 +203,14 @@ export default {
     isAlarmListModalType() {
       return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
     },
+
+    isHideGrayEnabled() {
+      return this.widget.parameters.isHideGrayEnabled ?? true;
+    },
+
+    showRootCauseByStateClick() {
+      return this.widget.parameters.showRootCauseByStateClick ?? true;
+    },
   },
   methods: {
     showAdditionalInfoModal(service) {
@@ -185,8 +252,20 @@ export default {
           },
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       }
+    },
+
+    openRootCauseDiagram(service) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity: service,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
+        },
+      });
     },
 
     updateHideGray(hideGrey) {

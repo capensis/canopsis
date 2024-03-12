@@ -13,7 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
@@ -28,6 +30,8 @@ const (
 	defaultTimeFieldResolved = "v.resolved"
 	entityInfosPrefix        = "entity.infos"
 )
+
+var ErrUnknownQuery = fmt.Errorf("unknown query type")
 
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
@@ -90,6 +94,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 			"v.resource":       {},
 			"v.display_name":   {},
 			"v.output":         {},
+			"v.ticket.ticket":  {},
 		},
 		availableSearchByEntityFields: map[string]struct{}{
 			"entity.name":        {},
@@ -125,18 +130,16 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 	}
 }
 
-func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
+func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.searchPipeline = make([]bson.M, 0)
-	q.alarmMatch = make([]bson.M, 0)
-	q.additionalMatch = []bson.M{
+	q.alarmMatch = []bson.M{
 		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+			"healthcheck": bson.M{"$in": bson.A{nil, false}},
 		}},
 	}
+	q.additionalMatch = make([]bson.M, 0)
 
-	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
+	q.lookupsForAdditionalMatch = make(map[string]bool)
 	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
@@ -156,7 +159,58 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
-func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime, userID string) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
+	q.clear(now, "")
+
+	err := q.handlePatterns(FilterRequest{
+		BaseFilterRequest: BaseFilterRequest{
+			AlarmPattern:     r.AlarmPattern,
+			EntityPattern:    r.EntityPattern,
+			PbehaviorPattern: r.PbehaviorPattern,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	match := bson.M{"v.resolved": nil}
+
+	if r.Search != "" {
+		match["v.display_name"] = primitive.Regex{
+			Pattern: fmt.Sprintf(".*%s.*", r.Search),
+			Options: "i",
+		}
+	}
+
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+
+	sortDir := 1
+	if r.Sort == common.SortDesc {
+		sortDir = -1
+	}
+
+	q.sort = bson.M{"$sort": bson.M{"v.display_name": sortDir}}
+
+	// maps are not used need to call functions below
+	addedLookups := make(map[string]bool)
+	addedComputedFields := make(map[string]bool)
+
+	pipeline := make([]bson.M, 0)
+	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &pipeline)
+	pipeline = append(pipeline, q.alarmMatch...)
+
+	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &pipeline)
+	pipeline = append(pipeline, q.additionalMatch...)
+
+	return pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		q.sort,
+		[]bson.M{{"$project": bson.M{"_id": 1, "display_name": "$v.display_name"}}},
+	), nil
+}
+
+func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime, userID string) ([]bson.M, error) {
 	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r.FilterRequest)
@@ -180,7 +234,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, userID string, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, userID string, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r)
@@ -199,17 +253,15 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
-	now types.CpsTime,
+	now datetime.CpsTime,
 	userID string,
+	opened int,
 	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
+	q.handleOpened(opened)
 	q.handleDependencies(true)
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": match},
-	)
-
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 	if onlyParents {
 		q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
 		q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
@@ -221,6 +273,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 		Page:  1,
 		Limit: 1,
 	}
+
 	return q.createPaginationAggregationPipeline(query), nil
 }
 
@@ -231,7 +284,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
 	filterRequest FilterRequest,
-	now types.CpsTime,
+	now datetime.CpsTime,
 	userID string,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
@@ -264,22 +317,12 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	search string,
 	userID string,
 	searchBy []string,
-	now types.CpsTime,
+	now datetime.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
+	q.handleOpened(opened)
 	q.handleDependencies(true)
-
-	match := bson.M{
-		"v.parents": parentId,
-	}
-	if opened == OnlyOpened {
-		match["v.resolved"] = nil
-	}
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": match},
-	)
-
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"v.parents": parentId}})
 	q.lookups = append(q.lookups, lookupWithKey{key: "parents", pipeline: []bson.M{
 		{"$graphLookup": bson.M{
 			"from":                    mongo.AlarmMongoCollection,
@@ -325,9 +368,9 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 		expr, err := p.Parse(search)
 		if err == nil {
 			query := expr.ExprQuery()
-			resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
-			if err != nil {
-				return nil, err
+			resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
+			if !ok {
+				return nil, ErrUnknownQuery
 			}
 
 			b, err := json.Marshal(resolvedQuery)
@@ -397,7 +440,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	ctx context.Context,
 	r ListRequest,
-	now types.CpsTime,
+	now datetime.CpsTime,
 	userID string,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
@@ -517,8 +560,9 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 
 func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, userID string) error {
 	alarmMatch := make([]bson.M, 0)
+	entityMatch := make([]bson.M, 0)
 
-	q.addOpenedFilter(r, &alarmMatch)
+	q.addOpenedFilter(r.GetOpenedFilter(), &alarmMatch, &entityMatch)
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
@@ -540,7 +584,6 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
 	}
 
-	entityMatch := make([]bson.M, 0)
 	q.addCategoryFilter(r, &entityMatch)
 	err = q.addInstructionsFilter(ctx, r, &entityMatch)
 	if err != nil {
@@ -631,7 +674,7 @@ func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
 }
 
 func (q *MongoQueryBuilder) handleAlarmPattern(alarmPattern pattern.Alarm) error {
-	alarmPatternQuery, err := alarmPattern.ToMongoQuery("")
+	alarmPatternQuery, err := db.AlarmPatternToMongoQuery(alarmPattern, "")
 	if err != nil {
 		return err
 	}
@@ -655,7 +698,7 @@ func (q *MongoQueryBuilder) handleAlarmPattern(alarmPattern pattern.Alarm) error
 }
 
 func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.PbehaviorInfo) error {
-	pbhPatternQuery, err := pbehaviorPattern.ToMongoQuery("v")
+	pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(pbehaviorPattern, "v")
 	if err != nil {
 		return err
 	}
@@ -668,7 +711,7 @@ func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.Pbeh
 }
 
 func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
-	entityPatternQuery, err := entityPattern.ToMongoQuery("entity")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "entity")
 	if err != nil {
 		return err
 	}
@@ -690,7 +733,11 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 	expr, err := p.Parse(r.Search)
 	if err == nil {
 		query := expr.Query()
-		resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
+		resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
+		if !ok {
+			return nil, false, ErrUnknownQuery
+		}
+
 		b, err := json.Marshal(resolvedQuery)
 		if err != nil {
 			return nil, false, fmt.Errorf("cannot marshal search expression: %w", err)
@@ -808,12 +855,14 @@ func (q *MongoQueryBuilder) getTimeField(r FilterRequest) string {
 	return r.TimeField
 }
 
-func (q *MongoQueryBuilder) addOpenedFilter(r FilterRequest, match *[]bson.M) {
-	if r.GetOpenedFilter() != OnlyOpened {
+func (q *MongoQueryBuilder) addOpenedFilter(opened int, match *[]bson.M, entityMatch *[]bson.M) {
+	if opened == OnlyOpened {
+		*match = append(*match, bson.M{"v.resolved": nil})
 		return
 	}
 
-	*match = append(*match, bson.M{"v.resolved": nil})
+	// disabled entity cannot have open alarm but can have resolved
+	*entityMatch = append(*entityMatch, bson.M{"entity.enabled": true})
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) {
@@ -1147,7 +1196,9 @@ func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	case reflect.String:
-		return q.resolveAlias(val.Interface().(string))
+		if s, ok := val.Interface().(string); ok {
+			return q.resolveAlias(s)
+		}
 	}
 
 	return res
@@ -1183,9 +1234,24 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	return prefix + v
 }
 
+func (q *MongoQueryBuilder) handleOpened(opened int) {
+	alarmMatch := make([]bson.M, 0)
+	entityMatch := make([]bson.M, 0)
+	q.addOpenedFilter(opened, &alarmMatch, &entityMatch)
+	if len(alarmMatch) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
+	}
+
+	if len(entityMatch) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
+	}
+}
+
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
 	if withDependencies {
 		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.depends_counts", pipeline: getDependsCountPipeline()})
 	}
 }
 
@@ -1291,6 +1357,29 @@ func getPbehaviorInfoTypeLookup() []bson.M {
 	}
 }
 
+func getEntityPbehaviorInfoTypeLookup() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "entity.pbehavior_info.type",
+			"as":           "entity.pbehavior_info_type",
+		}},
+		{"$unwind": bson.M{"path": "$entity.pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"entity.pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$entity.pbehavior_info",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$entity.pbehavior_info",
+					bson.M{"icon_name": "$entity.pbehavior_info_type.icon_name"},
+				}},
+				"else": nil,
+			}},
+		}},
+		{"$project": bson.M{"entity.pbehavior_info_type": 0}},
+	}
+}
+
 func getMetaAlarmRuleLookup() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -1365,7 +1454,7 @@ func getInstructionExecutionLookup(withType bool) []bson.M {
 	return pipeline
 }
 
-func getComputedFields(now types.CpsTime, userID string) bson.M {
+func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 	computedFields := bson.M{
 		"infos":        "$v.infos",
 		"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
@@ -1430,12 +1519,12 @@ func getIsMetaAlarmField() bson.M {
 }
 
 func getInstructionQuery(instruction Instruction) (bson.M, error) {
-	alarmPatternQuery, err := instruction.AlarmPattern.ToMongoQuery("")
+	alarmPatternQuery, err := db.AlarmPatternToMongoQuery(instruction.AlarmPattern, "")
 	if err != nil {
 		return nil, fmt.Errorf("invalid alarm pattern in instruction id=%q: %w", instruction.ID, err)
 	}
 
-	entityPatternQuery, err := instruction.EntityPattern.ToMongoQuery("entity")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(instruction.EntityPattern, "entity")
 	if err != nil {
 		return nil, fmt.Errorf("invalid entity pattern in instruction id=%q: %w", instruction.ID, err)
 	}
@@ -1464,45 +1553,92 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	return bson.M{"$and": and}, nil
 }
 
+func getDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "entity.service_depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "component",
+			"as":           "entity.component_depends",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"type": types.EntityTypeResource}},
+				{"$project": bson.M{"_id": 1}},
+			},
+		}},
+		{"$addFields": bson.M{
+			"entity.depends_count": bson.M{"$cond": bson.A{
+				bson.M{"$and": []bson.M{
+					{"$eq": bson.A{"$entity.type", types.EntityTypeComponent}},
+					{"$eq": bson.A{bson.M{"$type": "$entity.state_info._id"}, "string"}},
+					{"$ne": bson.A{"$entity.state_info._id", ""}},
+				}},
+				bson.M{"$size": "$entity.component_depends"},
+				bson.M{"$size": "$entity.service_depends"},
+			}},
+		}},
+		{"$project": bson.M{"entity.service_depends": 0, "entity.component_depends": 0}},
+	}
+}
+
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let": bson.M{"services": bson.M{"$cond": bson.M{
-				"if":   "$entity.services",
-				"then": "$entity.services",
-				"else": bson.A{},
-			}}},
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "entity.service_impacts",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
-				}},
 				{"$project": bson.M{"_id": 1}},
 			},
-			"as": "service_impacts",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let":  bson.M{"service": "$entity._id"},
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.component",
+			"foreignField": "_id",
+			"as":           "entity.component_impacts",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$and": []bson.M{
-						{"$isArray": "$services"},
-						{"$in": bson.A{"$$service", "$services"}},
-					}},
+				{"$project": bson.M{
+					"hasStateSettings": bson.M{
+						"$cond": []interface{}{bson.M{
+							"$and": []bson.M{
+								{"$eq": []interface{}{
+									bson.M{"$type": "$state_info._id"},
+									"string",
+								}},
+								{"$ne": []string{"$state_info._id", ""}},
+							}},
+							true,
+							false,
+						},
+					},
 				}},
-				{"$project": bson.M{"_id": 1}},
 			},
-			"as": "depends",
 		}},
+		{"$unwind": bson.M{"path": "$entity.component_impacts", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"entity.depends_count": bson.M{"$size": "$depends"},
-			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
+			"entity.impacts_count": bson.M{
+				"$cond": []interface{}{
+					bson.M{"$and": []interface{}{
+						bson.M{"$eq": []string{
+							"$entity.type", "resource"},
+						},
+						"$entity.component_impacts.hasStateSettings",
+					}},
+					bson.M{"$sum": bson.A{1, bson.M{"$size": "$entity.service_impacts"}}},
+					bson.M{"$size": "$entity.service_impacts"},
+				},
+			},
 		}},
-		{"$project": bson.M{
-			"service_impacts": 0,
-			"depends":         0,
-		}},
+		{"$project": bson.M{"entity.service_impacts": 0, "entity.component_impacts": 0}},
 	}
 }
 

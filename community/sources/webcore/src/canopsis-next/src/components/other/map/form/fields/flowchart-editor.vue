@@ -1,31 +1,40 @@
-<template lang="pug">
-  v-layout(column)
-    flowchart.flowchart-map-editor.mb-2(
-      :shapes="form.shapes",
-      :background-color="form.background_color",
-      :style="editorStyles",
-      :cursor-style="addOnClick ? 'crosshair' : undefined",
-      @input="updateShapes",
+<template>
+  <v-layout column>
+    <flowchart
+      :shapes="form.shapes"
+      :background-color="form.background_color"
+      :style="editorStyles"
+      :cursor-style="addOnClick ? 'crosshair' : undefined"
+      class="flowchart-map-editor mb-2"
+      @input="updateShapes"
       @update:backgroundColor="updateBackgroundColor"
-    )
-      template(#sidebar-prepend="{ data }")
-        add-location-btn(v-model="addOnClick")
-        v-divider
-      template(#layers="{ data }")
-        flowchart-points-editor(
-          v-field="form.points",
-          :shapes="data",
+    >
+      <template #sidebar-prepend>
+        <add-location-btn v-model="addOnClick" />
+        <v-divider />
+      </template>
+      <template #layers="{ data }">
+        <flowchart-points-editor
+          v-field="form.points"
+          :shapes="data"
           :add-on-click="addOnClick"
-        )
-      c-help-icon(
-        :text="$t('flowchart.panzoom.helpText')",
-        size="32",
-        icon-class="flowchart-map-editor__help-icon",
-        color="secondary",
-        icon="help",
+        />
+      </template>
+      <c-help-icon
+        :text="$t('flowchart.panzoom.helpText')"
+        size="32"
+        icon-class="flowchart-map-editor__help-icon"
+        color="secondary"
+        icon="help"
         top
-      )
-    v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
+      />
+    </flowchart>
+    <v-messages
+      v-if="hasChildrenError"
+      :value="errorMessages"
+      color="error"
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -121,14 +130,14 @@ export default {
 </script>
 
 <style lang="scss">
-$borderColor: #e5e5e5;
-
 .flowchart-map-editor {
+  --flowchart-map-editor-border-color: #e5e5e5;
+
   position: relative;
-  border: 1px solid $borderColor;
+  border: 1px solid var(--flowchart-map-editor-border-color);
   height: 800px;
 
-  &__help-icon {
+  &__help-icon.v-icon {
     position: absolute;
     right: 10px;
     bottom: 10px;

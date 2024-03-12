@@ -2,7 +2,7 @@
 
 exports[`pattern-operator-information Renders \`pattern-operator-information\` 1`] = `
 <div
-  class="layout pattern-operator-information row align-center"
+  class="layout pattern-operator-information align-center"
 >
   <c-pattern-operator-chip-stub
     class="mr-4"

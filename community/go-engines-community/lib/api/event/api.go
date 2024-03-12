@@ -271,7 +271,7 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	err = api.alarmCollection.FindOne(c, bson.M{"d": eid}).Err()
-	if err != nil && err != mongodriver.ErrNoDocuments {
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get alarm from mongo")
 		return false
 	}

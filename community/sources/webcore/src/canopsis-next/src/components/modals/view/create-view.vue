@@ -1,30 +1,51 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        c-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-        view-form(
-          v-model="form",
-          :groups="availableGroups",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <c-alert
+          :value="duplicate"
+          type="info"
+        >
+          {{ $t('modals.view.duplicate.infoMessage') }}
+        </c-alert>
+        <view-form
+          v-model="form"
+          :groups="availableGroups"
           :duplicate-private="isInitialViewPrivate && config.duplicableToAll"
-        )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          v-if="submittable",
-          :disabled="isDisabled",
-          :loading="submitting",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          v-if="submittable"
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
-        v-btn(
-          v-if="deletable",
-          :disabled="submitting",
-          :outline="$system.dark",
-          color="error",
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn
+          v-if="deletable"
+          :disabled="submitting"
+          :outlined="$system.dark"
+          color="error"
           @click="remove"
-        ) {{ $t('common.delete') }}
+        >
+          {{ $t('common.delete') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

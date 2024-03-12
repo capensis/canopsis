@@ -47,15 +47,15 @@ describe('field-map', () => {
 
     const newMap = Faker.datatype.string();
 
-    mapField.vm.$emit('input', newMap);
+    mapField.triggerCustomEvent('input', newMap);
 
-    expect(wrapper).toEmit('input', newMap);
+    expect(wrapper).toEmitInput(newMap);
   });
 
   it('Renders `field-map` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `field-map` with custom props', () => {
@@ -65,6 +65,6 @@ describe('field-map', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

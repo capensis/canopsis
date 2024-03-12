@@ -1,21 +1,4 @@
-import { isUndefined } from 'lodash';
-
-/**
- * Links collection comparator by label
- *
- * @returns {number}
- */
-export const linksCollectionComparatorByLabel = (a, b) => {
-  if (a.label > b.label) {
-    return 1;
-  }
-
-  if (a.label < b.label) {
-    return -1;
-  }
-
-  return 0;
-};
+import { isUndefined, sortBy, intersection } from 'lodash';
 
 /**
  * Harmonize links for special category
@@ -29,7 +12,7 @@ export const harmonizeCategoryLinks = (links = {}, category) => {
     return [];
   }
 
-  return links[category].sort(linksCollectionComparatorByLabel);
+  return sortBy(links[category] ?? [], 'label');
 };
 
 /**
@@ -59,9 +42,7 @@ export const getLinkRuleLinkActionType = (link = {}) => [link.rule_id, link.icon
  * @param {AlarmLinks} [links = {}]
  * @returns {AlarmLink[]}
  */
-export const harmonizeLinks = (links = {}) => Object.values(links)
-  .flat()
-  .sort(linksCollectionComparatorByLabel);
+export const harmonizeLinks = (links = {}) => sortBy(Object.values(links).flat(), 'label');
 
 /**
  * Get filtered links for alarms
@@ -71,16 +52,21 @@ export const harmonizeLinks = (links = {}) => Object.values(links)
  */
 export const harmonizeAlarmsLinks = (alarms = []) => {
   const links = alarms
-    .map(alarm => harmonizeLinks(alarm.links).filter(link => !!link.rule_id));
+    .map(alarm => harmonizeLinks(alarm.links).filter(link => !!link.rule_id && !link.single));
 
   if (links.length === 0) {
     return [];
   }
 
   const linksByKeys = {};
-  const lastIndexesByRuleIds = {};
+  const alarmsRuleIds = [];
 
-  links.forEach((itemLinks, index) => {
+  /**
+   * We are checking intersection links rule_ids in all alarms
+   */
+  links.forEach((itemLinks) => {
+    const ruleIdsMap = {};
+
     itemLinks.forEach((link) => {
       const key = getLinkRuleLinkActionType(link);
 
@@ -88,25 +74,20 @@ export const harmonizeAlarmsLinks = (alarms = []) => {
         linksByKeys[key] = link;
       }
 
-      if (!index) {
-        lastIndexesByRuleIds[link.rule_id] = 0;
-        return;
-      }
-
-      if (!lastIndexesByRuleIds[link.rule_id]) {
-        return;
-      }
-
-      if (lastIndexesByRuleIds[link.rule_id] - index > 1) {
-        delete lastIndexesByRuleIds[link.rule_id];
-        return;
-      }
-
-      lastIndexesByRuleIds[link.rule_id] = index;
+      ruleIdsMap[link.rule_id] = true;
     });
+
+    alarmsRuleIds.push(Object.keys(ruleIdsMap));
   });
 
-  return Object.values(linksByKeys)
-    .filter(link => !link.single && !isUndefined(lastIndexesByRuleIds[link.rule_id]))
-    .sort(linksCollectionComparatorByLabel);
+  const availableRuleIds = intersection(...alarmsRuleIds).reduce((acc, ruleId) => {
+    acc[ruleId] = true;
+
+    return acc;
+  }, {});
+
+  return sortBy(
+    Object.values(linksByKeys).filter(link => availableRuleIds[link.rule_id]),
+    'label',
+  );
 };

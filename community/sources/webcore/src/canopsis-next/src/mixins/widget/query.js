@@ -1,15 +1,15 @@
-import { pick, isEqual } from 'lodash';
-
-import { SORT_ORDERS } from '@/constants';
-
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
+import { widgetOptionsMixin } from './options';
+
 export const queryWidgetMixin = {
   mixins: [
     queryMixin,
+    widgetOptionsMixin,
     entitiesUserPreferenceMixin,
   ],
   props: {
@@ -39,56 +39,23 @@ export const queryWidgetMixin = {
     tabQueryNonce() {
       return this.getQueryNonceById(this.tabId);
     },
-
-    pagination: {
-      get() {
-        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
-        const descending = sortDir === SORT_ORDERS.desc;
-
-        return { page, limit, sortBy, descending, multiSortBy };
-      },
-
-      set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
-        const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.pagination, paginationKeys);
-
-        if (isEqual(newPagination, oldPagination)) {
-          return;
-        }
-
-        const {
-          sortBy = null,
-          descending = false,
-          multiSortBy = [],
-        } = newPagination;
-
-        const newQuery = {
-          sortKey: sortBy,
-          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
-        };
-
-        this.query = {
-          ...this.query,
-          ...newQuery,
-        };
-      },
-    },
   },
   methods: {
     getQuery() {
       return convertWidgetQueryToRequest(this.query);
     },
 
-    updateRecordsPerPage(limit) {
-      this.updateLockedQuery({
+    updateItemsPerPage(itemsPerPage) {
+      this.updateLockedQueryById({
         id: this.queryId,
-        query: { limit },
+        query: {
+          itemsPerPage,
+          page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
+        },
       });
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.query = { ...this.query, page };
     },
   },

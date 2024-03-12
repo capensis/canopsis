@@ -8,9 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -18,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -201,6 +200,11 @@ func benchmarkMessageProcessorWithConfig(
 	cfg config.CanopsisConf,
 	genEvent func(i int) types.Event,
 ) {
+	defer func() {
+		if r := recover(); r != nil {
+			b.Fatal("benchmark failed due to panic:", r)
+		}
+	}()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
@@ -237,6 +241,7 @@ func benchmarkMessageProcessorWithConfig(
 		}
 	})
 
+	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, zerolog.Nop())
 	failureService := eventfilter.NewFailureService(dbClient, time.Hour, zerolog.Nop())
 	eventCounter := eventfilter.NewEventCounter(dbClient, time.Hour, zerolog.Nop())
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
@@ -245,7 +250,7 @@ func benchmarkMessageProcessorWithConfig(
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), zerolog.Nop())
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), failureService, tplExecutor))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(failureService, tplExecutor, techMetricsSender), failureService))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(alarmConfigProvider, failureService, tplExecutor, techMetricsSender), failureService))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, eventCounter, failureService, tplExecutor, zerolog.Nop())
@@ -254,27 +259,31 @@ func benchmarkMessageProcessorWithConfig(
 		b.Fatalf("unexpected error %v", err)
 	}
 
+	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, zerolog.Nop())
 	p := messageProcessor{
 		FeaturePrintEventOnError: true,
-		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
-		ContextGraphManager:      contextgraph.NewManager(entity.NewAdapter(dbClient), dbClient, contextgraph.NewEntityServiceStorage(dbClient), metrics.NewNullMetaUpdater(), zerolog.Nop()),
-		EventFilterService:       ruleService,
+		AlarmConfigProvider:      alarmConfigProvider,
+		MetricsSender:            metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop()),
+		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
+		EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
 		Encoder:                  json.NewEncoder(),
 		Decoder:                  json.NewDecoder(),
 		Logger:                   zerolog.Nop(),
+		// AmqpPublisher field has not accessed by test paths, otherwise it has to be initialized with mock value
 	}
-
-	encoder := json.NewEncoder()
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		event := genEvent(i)
-		body, err := encoder.Encode(event)
+		body, err := p.Encoder.Encode(event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
+		b.StartTimer()
 		_, err = p.Process(ctx, amqp.Delivery{
 			Body: body,
 		})

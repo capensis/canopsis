@@ -1,8 +1,17 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      div.ml-2.mb-2.body-2 {{ $t('login.loginWithSAML') }}
-      v-btn(:href="samlHref", color="primary") {{ title }}
+<template>
+  <v-card>
+    <v-card-text>
+      <div class="ml-2 mb-2 text-body-2">
+        {{ $t('login.loginWithSAML') }}
+      </div>
+      <v-btn
+        :href="samlHref"
+        color="primary"
+      >
+        {{ title }}
+      </v-btn>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

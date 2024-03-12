@@ -11,12 +11,12 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
       class="layout c-information-block column mb-5"
     >
       <div
-        class="layout row"
+        class="layout"
       >
         <div
-          class="subheading font-weight-bold"
+          class="text-subtitle-1 font-weight-bold"
         >
-          Alarm metrics
+      Alarm metrics
         </div>
         <!---->
       </div>
@@ -27,12 +27,12 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
       class="layout c-information-block column mb-5"
     >
       <div
-        class="layout row"
+        class="layout"
       >
         <div
-          class="subheading font-weight-bold"
+          class="text-subtitle-1 font-weight-bold"
         >
-          Ratings
+      Ratings
         </div>
         <!---->
       </div>
@@ -43,12 +43,12 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
       class="layout c-information-block column mb-5"
     >
       <div
-        class="layout row"
+        class="layout"
       >
         <div
-          class="subheading font-weight-bold"
+          class="text-subtitle-1 font-weight-bold"
         >
-          SLI
+      SLI
         </div>
         <!---->
       </div>

@@ -1,4 +1,4 @@
-import { ENTITY_TYPES } from '@/constants';
+import { ENTITY_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 export default {
   manageInfos: 'Manage Infos',
@@ -26,5 +26,10 @@ export default {
     alarmCreationDate: 'Alarm creation date',
     importSource: 'Import source',
     imported: 'Imported date',
+  },
+  treeOfDependenciesShowTypes: {
+    [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Show all dependencies',
+    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]: 'Show dependencies defining the state',
+    [TREE_OF_DEPENDENCIES_SHOW_TYPES.custom]: 'Show selector',
   },
 };

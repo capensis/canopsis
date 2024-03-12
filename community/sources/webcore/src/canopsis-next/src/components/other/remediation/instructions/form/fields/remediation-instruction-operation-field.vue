@@ -1,59 +1,86 @@
-<template lang="pug">
-  v-layout
-    v-flex.mt-3(xs1)
-      c-draggable-step-number(
-        drag-class="operation-drag-handler",
-        :disabled="disabled",
+<template>
+  <v-layout>
+    <v-flex
+      class="mt-3"
+      xs1
+    >
+      <c-draggable-step-number
+        :disabled="disabled"
         :color="hasChildrenError ? 'error' : 'primary'"
-      ) {{ operationNumber }}
-    v-flex(xs11)
-      v-layout(row, justify-space-between)
-        v-flex(xs11)
-          v-layout(row)
-            c-expand-btn.operation-expand(
-              v-if="!disabled",
-              v-model="expanded",
+        drag-class="operation-drag-handler"
+      >
+        {{ operationNumber }}
+      </c-draggable-step-number>
+    </v-flex>
+    <v-flex xs11>
+      <v-layout justify-space-between>
+        <v-flex xs11>
+          <v-layout>
+            <c-expand-btn
+              v-if="!disabled"
+              v-model="expanded"
               :color="!expanded && hasChildrenError ? 'error' : ''"
-            )
-            v-layout(column)
-              v-text-field(
-                v-field="operation.name",
-                v-validate="'required'",
-                :label="$t('common.name')",
-                :error-messages="errors.collect(nameFieldName)",
-                :name="nameFieldName",
-                :disabled="disabled",
-                box
-              )
-              v-expand-transition(mode="out-in")
-                v-layout(v-if="expanded", column)
-                  remediation-instruction-time-to-complete-field(
-                    v-field="operation.time_to_complete",
-                    :disabled="disabled",
+              class="operation-expand"
+            />
+            <v-layout column>
+              <v-text-field
+                v-field="operation.name"
+                v-validate="'required'"
+                :label="$t('common.name')"
+                :error-messages="errors.collect(nameFieldName)"
+                :name="nameFieldName"
+                :disabled="disabled"
+                filled
+              />
+              <v-expand-transition mode="out-in">
+                <v-layout
+                  v-if="expanded"
+                  column
+                >
+                  <remediation-instruction-time-to-complete-field
+                    v-field="operation.time_to_complete"
+                    :disabled="disabled"
                     :name="timeToCompleteFieldName"
-                  )
-                  text-editor-blurred(
-                    v-if="disabled",
-                    :value="operation.description",
-                    :label="$t('common.description')",
-                    :disabled="disabled",
+                  />
+                  <text-editor-blurred
+                    v-if="disabled"
+                    :value="operation.description"
+                    :label="$t('common.description')"
+                    :disabled="disabled"
                     hide-details
-                  )
-                  text-editor-field(
-                    v-else,
-                    v-field="operation.description",
-                    v-validate="'required'",
-                    :label="$t('common.description')",
-                    :error-messages="errors.collect(descriptionFieldName)",
+                  />
+                  <text-editor-field
+                    v-else
+                    v-field="operation.description"
+                    v-validate="'required'"
+                    :label="$t('common.description')"
+                    :error-messages="errors.collect(descriptionFieldName)"
                     :name="descriptionFieldName"
-                  )
-                  jobs-chips(
-                    v-if="disabled &&  operation.jobs && operation.jobs.length",
+                  />
+                  <jobs-chips
+                    v-if="disabled && operation.jobs && operation.jobs.length"
                     :jobs="operation.jobs"
-                  )
-                  jobs-select(v-if="!disabled", v-field="operation.jobs")
-        span
-          c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
+                  />
+                  <jobs-select
+                    v-if="!disabled"
+                    v-field="operation.jobs"
+                  />
+                </v-layout>
+              </v-expand-transition>
+            </v-layout>
+          </v-layout>
+        </v-flex>
+        <span>
+          <c-action-btn
+            v-if="!disabled"
+            class="mt-1"
+            type="delete"
+            @click="$emit('remove')"
+          />
+        </span>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -1,5 +1,8 @@
-<template lang="pug">
-  mermaid-preview.mermaid-expand-panel(:map="map")
+<template>
+  <mermaid-preview
+    :map="map"
+    class="mermaid-expand-panel"
+  />
 </template>
 
 <script>

@@ -14,7 +14,10 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const shutdownTimout = 5 * time.Second
+const (
+	shutdownTimout    = 5 * time.Second
+	readHeaderTimeout = 30 * time.Second
+)
 
 // Router is used to implement adding new routes to API.
 type Router func(*gin.Engine)
@@ -96,8 +99,9 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 
 	// Start server.
 	server := &http.Server{
-		Addr:    a.addr,
-		Handler: handler,
+		Addr:              a.addr,
+		Handler:           handler,
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
 	go func() {

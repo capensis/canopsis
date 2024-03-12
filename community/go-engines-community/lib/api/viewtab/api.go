@@ -131,7 +131,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, id)
 	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return
@@ -233,7 +233,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 
 	ok, err := a.store.UpdatePositions(c, tabs)
 	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return

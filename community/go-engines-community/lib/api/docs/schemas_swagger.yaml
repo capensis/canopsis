@@ -69,7 +69,7 @@ definitions:
         $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
@@ -228,6 +228,8 @@ definitions:
         type: integer
       canceled:
         $ref: '#/definitions/common.AlarmStep'
+      change_state:
+        $ref: '#/definitions/common.AlarmStep'
       children:
         items:
           type: string
@@ -379,9 +381,7 @@ definitions:
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
       entity:
-        $ref: '#/definitions/alarm.EntityDetails'
-        description: Entity isn't the same as Entity of Alarm, but have counts in
-          response as well
+        $ref: '#/definitions/entity.Entity'
       filtered_perf_data:
         items:
           type: string
@@ -433,80 +433,11 @@ definitions:
       status:
         type: integer
     type: object
-  alarm.EntityDetails:
+  alarm.DisplayNameData:
     properties:
       _id:
         type: string
-      category:
-        type: string
-      component:
-        type: string
-      component_infos:
-        additionalProperties:
-          $ref: '#/definitions/types.Info'
-        type: object
-      connector:
-        type: string
-      created:
-        $ref: '#/definitions/types.CpsTime'
-      depends_count:
-        description: DependsCount contains only service's dependencies
-        type: integer
-      description:
-        type: string
-      enable_history:
-        items:
-          $ref: '#/definitions/types.CpsTime'
-        type: array
-      enabled:
-        type: boolean
-      idle_since:
-        $ref: '#/definitions/types.CpsTime'
-        description: IdleSince represents since when entity didn't receive any events.
-      impact_level:
-        type: integer
-      impacts_count:
-        description: ImpactsCount contains only services
-        type: integer
-      import_source:
-        type: string
-      imported:
-        $ref: '#/definitions/types.CpsTime'
-      infos:
-        additionalProperties:
-          $ref: '#/definitions/types.Info'
-        type: object
-      last_event_date:
-        $ref: '#/definitions/types.CpsTime'
-      last_idle_rule_apply:
-        description: LastIdleRuleApply is used to mark entity if some idle rule was
-          applied.
-        type: string
-      last_pbehavior_date:
-        $ref: '#/definitions/types.CpsTime'
-      measurements:
-        description: unused collection ids
-      name:
-        type: string
-      pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
-      services:
-        items:
-          type: string
-        type: array
-      services_to_add:
-        items:
-          type: string
-        type: array
-      services_to_remove:
-        items:
-          type: string
-        type: array
-      sli_avail_state:
-        type: integer
-      soft_deleted:
-        $ref: '#/definitions/types.CpsTime'
-      type:
+      display_name:
         type: string
     type: object
   alarm.Execution:
@@ -758,7 +689,7 @@ definitions:
         maxLength: 255
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - _id
     - duration
@@ -798,7 +729,7 @@ definitions:
         maxLength: 255
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - duration
     type: object
@@ -975,9 +906,9 @@ definitions:
   appinfo.PopupTimeout:
     properties:
       error:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       info:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
   appinfo.RemediationConf:
     properties:
@@ -1333,20 +1264,6 @@ definitions:
       status:
         type: string
     type: object
-  contextgraph.ImportRequest:
-    properties:
-      json:
-        properties:
-          cis:
-            items:
-              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
-            type: array
-          links:
-            items:
-              $ref: '#/definitions/importcontextgraph.Link'
-            type: array
-        type: object
-    type: object
   contextgraph.ImportResponse:
     properties:
       _id:
@@ -1357,53 +1274,53 @@ definitions:
       alarm:
         properties:
           archive_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       event_filter_failure:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       health_check:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       junit:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       metrics:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       pbehavior:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       perf_data_metrics:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       remediation:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
           delete_mod_stats_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
           delete_stats_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       webhook:
         properties:
           delete_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
           log_credentials:
             type: boolean
         type: object
@@ -1447,6 +1364,47 @@ definitions:
       time:
         type: integer
     type: object
+  datetime.DurationWithEnabled:
+    properties:
+      enabled:
+        type: boolean
+      unit:
+        enum:
+        - s
+        - m
+        - h
+        - d
+        - w
+        - M
+        - "y"
+        type: string
+      value:
+        minimum: 1
+        type: integer
+    required:
+    - enabled
+    - unit
+    - value
+    type: object
+  datetime.DurationWithUnit:
+    properties:
+      unit:
+        enum:
+        - s
+        - m
+        - h
+        - d
+        - w
+        - M
+        - "y"
+        type: string
+      value:
+        minimum: 1
+        type: integer
+    required:
+    - unit
+    - value
+    type: object
   entity.ArchiveDisabledRequest:
     properties:
       with_dependencies:
@@ -1455,7 +1413,7 @@ definitions:
   entity.ArchiveUnlinkedRequest:
     properties:
       archive_before:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
   entity.BulkToggleRequestItem:
     properties:
@@ -1470,6 +1428,35 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  entity.CheckStateSettingRequest:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      connector:
+        type: string
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entity.InfoRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - component
+        - service
+        type: string
+    required:
+    - impact_level
+    - name
+    - type
     type: object
   entity.ContextGraphResponse:
     properties:
@@ -1611,6 +1598,18 @@ definitions:
         type: string
       value: {}
     type: object
+  entity.InfoRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      value: {}
+    required:
+    - name
+    type: object
   entity.Infos:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
@@ -1646,6 +1645,31 @@ definitions:
         description: TypeName is Name of pbehavior.Type.
         type: string
     type: object
+  entity.StateSettingResponse:
+    properties:
+      _id:
+        type: string
+      depends_count:
+        type: integer
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      method:
+        type: string
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      threshold_state:
+        type: string
+      threshold_state_depends_count:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   entitybasic.EditRequest:
     properties:
       category:
@@ -1663,7 +1687,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       sli_avail_state:
         maximum: 3
@@ -1762,18 +1786,6 @@ definitions:
       type:
         type: string
     type: object
-  entitybasic.InfoRequest:
-    properties:
-      description:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      value: {}
-    required:
-    - name
-    type: object
   entitycategory.Category:
     properties:
       _id:
@@ -1831,7 +1843,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       name:
         maxLength: 255
@@ -1850,6 +1862,94 @@ definitions:
     - name
     - output_template
     - sli_avail_state
+    type: object
+  entityservice.ContextGraphEntity:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
+      category:
+        $ref: '#/definitions/entity.Category'
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      deletable:
+        description: Flags
+        type: boolean
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
+      idle_since:
+        type: integer
+      impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      last_pbehavior_date:
+        type: integer
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
+        description: Links
+      name:
+        type: string
+      ok_events:
+        description: Stats
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
+      state:
+        description: Alarm fields
+        type: integer
+      state_depends_count:
+        type: integer
+      state_setting:
+        $ref: '#/definitions/entityservice.StateSettingResponse'
+      status:
+        type: integer
+      type:
+        type: string
     type: object
   entityservice.CreateRequest:
     properties:
@@ -1875,7 +1975,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       name:
         maxLength: 255
@@ -1982,6 +2082,15 @@ definitions:
       type:
         type: string
     type: object
+  entityservice.StateSettingResponse:
+    properties:
+      _id:
+        type: string
+      method:
+        type: string
+      title:
+        type: string
+    type: object
   entityservice.UpdateRequest:
     properties:
       category:
@@ -2004,7 +2113,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       name:
         maxLength: 255
@@ -2198,8 +2307,6 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties:
-          type: any
         type: object
       message:
         type: string
@@ -2436,7 +2543,7 @@ definitions:
         maxLength: 255
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       entity_pattern:
         items:
           items:
@@ -2481,7 +2588,7 @@ definitions:
       description:
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       entity_pattern:
         items:
           items:
@@ -2513,7 +2620,7 @@ definitions:
         maxLength: 255
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       entity_pattern:
         items:
           items:
@@ -2623,6 +2730,17 @@ definitions:
           $ref: '#/definitions/healthcheck.Service'
         type: array
     type: object
+  icon.Response:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
   idlerule.BulkDeleteRequestItem:
     properties:
       _id:
@@ -2656,7 +2774,7 @@ definitions:
           type: string
         type: array
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       enabled:
         type: boolean
       entity_pattern:
@@ -2708,7 +2826,7 @@ definitions:
           type: string
         type: array
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       enabled:
         type: boolean
       entity_pattern:
@@ -2757,7 +2875,7 @@ definitions:
           type: string
         type: array
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       enabled:
         type: boolean
       entity_pattern:
@@ -2801,7 +2919,7 @@ definitions:
   idlerule.Parameters:
     properties:
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
       name:
         description: Pbehavior
@@ -2873,7 +2991,7 @@ definitions:
           type: string
         type: array
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       enabled:
         type: boolean
       entity_pattern:
@@ -2892,49 +3010,6 @@ definitions:
         type: string
       updated:
         type: integer
-    type: object
-  importcontextgraph.ConfigurationItem:
-    properties:
-      _id:
-        type: string
-      action:
-        enum:
-        - set
-        - create
-        - update
-        - delete
-        - enable
-        - disable
-        type: string
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      impact_level:
-        type: integer
-      infos:
-        additionalProperties: true
-        type: object
-      measurements:
-        items: {}
-        type: array
-      name:
-        type: string
-      output_template:
-        type: string
-      type:
-        enum:
-        - connector
-        - component
-        - resource
-        - service
-        type: string
     type: object
   importcontextgraph.EntityConfiguration:
     properties:
@@ -2967,26 +3042,6 @@ definitions:
     required:
     - name
     - type
-    type: object
-  importcontextgraph.Link:
-    properties:
-      _id:
-        type: string
-      action:
-        enum:
-        - create
-        - delete
-        type: string
-      action_properties: {}
-      from:
-        items:
-          type: string
-        type: array
-      infos:
-        additionalProperties: true
-        type: object
-      to:
-        type: string
     type: object
   importcontextgraph.Stats:
     properties:
@@ -3211,7 +3266,7 @@ definitions:
       rate:
         type: boolean
       rate_frequency:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     required:
     - rate
     - rate_frequency
@@ -3367,6 +3422,61 @@ definitions:
       updated:
         type: integer
     type: object
+  pbehavior.BulkConnectorCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - name
+    - origin
+    - reason
+    - tstart
+    - tstop
+    - type
+    type: object
+  pbehavior.BulkConnectorDeleteRequestItem:
+    properties:
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      origin:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
   pbehavior.BulkDeleteRequestItem:
     properties:
       _id:
@@ -3389,8 +3499,6 @@ definitions:
         maxLength: 255
         type: string
       reason:
-        type: string
-      rrule:
         type: string
       tstart:
         type: integer
@@ -3983,7 +4091,7 @@ definitions:
       fullscreen:
         type: boolean
       interval:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       name:
         maxLength: 255
         type: string
@@ -4011,7 +4119,7 @@ definitions:
       fullscreen:
         type: boolean
       interval:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       name:
         type: string
       tabs_list:
@@ -4053,11 +4161,11 @@ definitions:
       retry_count:
         type: integer
       retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       skip_verify:
         type: boolean
       timeout:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       url:
         type: string
     required:
@@ -4099,7 +4207,7 @@ definitions:
         maxLength: 255
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       entity_pattern:
         items:
           items:
@@ -4142,7 +4250,7 @@ definitions:
       description:
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       entity_pattern:
         items:
           items:
@@ -4172,7 +4280,7 @@ definitions:
         maxLength: 255
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       entity_pattern:
         items:
           items:
@@ -4384,7 +4492,7 @@ definitions:
         maxLength: 255
         type: string
       delay:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
         items:
           type: string
@@ -4421,7 +4529,7 @@ definitions:
         maxLength: 255
         type: string
       delay:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
         items:
           type: string
@@ -4455,7 +4563,7 @@ definitions:
         maxLength: 255
         type: string
       delay:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
         items:
           type: string
@@ -4486,7 +4594,7 @@ definitions:
       declare_ticket:
         $ref: '#/definitions/request.WebhookDeclareTicket'
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
@@ -4543,7 +4651,7 @@ definitions:
       created:
         type: integer
       delay:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
         items:
           type: string
@@ -4630,9 +4738,9 @@ definitions:
   security.AuthMethodConf:
     properties:
       expiration_interval:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
       inactivity_interval:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
   serviceweather.Counters:
     properties:
@@ -4847,7 +4955,7 @@ definitions:
         maxLength: 500
         type: string
       duration:
-        $ref: '#/definitions/types.DurationWithUnit'
+        $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
   sharetoken.Response:
     properties:
@@ -4870,43 +4978,50 @@ definitions:
       value:
         type: string
     type: object
-  statesettings.JUnitThresholds:
+  statesettings.EditRequest:
     properties:
-      errors:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      failures:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      skipped:
-        $ref: '#/definitions/statesettings.StateThresholds'
-    required:
-    - errors
-    - failures
-    - skipped
-    type: object
-  statesettings.StateSetting:
-    properties:
-      _id:
-        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       junit_thresholds:
         $ref: '#/definitions/statesettings.JUnitThresholds'
+        description: JUnit state setting only field
       method:
+        description: |-
+          Possible method values.
+            * `worst` - take worst state.
+            * `worst_of_share` - take worst of share defined in junit_thresholds.
+            * `inherited` - take worst of subset of dependencies defined by pattern in inherited_entity_pattern.
+            * `dependencies` - calculate state by rules defined in state_thresholds.
+        type: string
+      priority:
+        minimum: 0
+        type: integer
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
+        description: Service and component state setting only fields
         type: string
       type:
-        type: string
-    type: object
-  statesettings.StateSettingRequest:
-    properties:
-      junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
-      method:
-        type: string
-      type:
+        enum:
+        - component
+        - service
         type: string
     required:
     - method
-    - type
     type: object
-  statesettings.StateThresholds:
+  statesettings.JUnitThreshold:
     properties:
       critical:
         maximum: 100
@@ -4927,6 +5042,115 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statesettings.JUnitThresholds:
+    properties:
+      errors:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      failures:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      skipped:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+    required:
+    - errors
+    - failures
+    - skipped
+    type: object
+  statesettings.Response:
+    properties:
+      _id:
+        type: string
+      deletable:
+        type: boolean
+      editable:
+        type: boolean
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      junit_thresholds:
+        $ref: '#/definitions/statesettings.JUnitThresholds'
+        description: JUnit state setting only field
+      method:
+        description: |-
+          Possible method values.
+            * `worst` - take worst state.
+            * `worst_of_share` - take worst of share defined in junit_thresholds.
+            * `inherited` - take worst of subset of dependencies defined by pattern in inherited_entity_pattern.
+            * `dependencies` - calculate state by rules defined in state_thresholds.
+        type: string
+      priority:
+        minimum: 0
+        type: integer
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
+        description: Service and component state setting only fields
+        type: string
+      type:
+        enum:
+        - component
+        - service
+        type: string
+    required:
+    - method
+    type: object
+  statesettings.StateThreshold:
+    properties:
+      cond:
+        description: |-
+          Possible cond values.
+            * `gt` - greater than.
+            * `lt` - less than.
+        enum:
+        - gt
+        - lt
+        type: string
+      method:
+        description: |-
+          Possible method values.
+            * `number` - calculate by number of entities.
+            * `share` - calculate by share of entities.
+        enum:
+        - number
+        - share
+        type: string
+      state:
+        description: |-
+          Possible state values.
+            * `critical` - calculate critical state.
+            * `major` - calculate major state.
+            * `minor` - calculate minor state.
+            * `ok` - calculate ok state.
+        enum:
+        - critical
+        - major
+        - minor
+        - ok
+        type: string
+      value:
+        type: integer
+    type: object
+  statesettings.StateThresholds:
+    properties:
+      critical:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      major:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      minor:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      ok:
+        $ref: '#/definitions/statesettings.StateThreshold'
     type: object
   statistics.EventStatistics:
     properties:
@@ -4981,11 +5205,6 @@ definitions:
     - lat
     - lng
     type: object
-  types.CpsTime:
-    properties:
-      time.Time:
-        type: string
-    type: object
   types.CropCounter:
     properties:
       state:0:
@@ -5003,47 +5222,6 @@ definitions:
       stateinc:
         type: integer
     type: object
-  types.DurationWithEnabled:
-    properties:
-      enabled:
-        type: boolean
-      unit:
-        enum:
-        - s
-        - m
-        - h
-        - d
-        - w
-        - M
-        - "y"
-        type: string
-      value:
-        minimum: 1
-        type: integer
-    required:
-    - enabled
-    - unit
-    - value
-    type: object
-  types.DurationWithUnit:
-    properties:
-      unit:
-        enum:
-        - s
-        - m
-        - h
-        - d
-        - w
-        - M
-        - "y"
-        type: string
-      value:
-        minimum: 1
-        type: integer
-    required:
-    - unit
-    - value
-    type: object
   types.Exdate:
     properties:
       begin:
@@ -5058,35 +5236,6 @@ definitions:
       name:
         type: string
       value: {}
-    type: object
-  types.PbehaviorInfo:
-    properties:
-      canonical_type:
-        description: CanonicalType is Type of pbehavior.Type.
-        type: string
-      id:
-        description: ID is ID of pbehavior.PBehavior.
-        type: string
-      name:
-        description: Name is Name of pbehavior.PBehavior.
-        type: string
-      reason:
-        description: ReasonID is ID of pbehavior.Reason.
-        type: string
-      reason_name:
-        description: ReasonName is Name of pbehavior.Reason.
-        type: string
-      timestamp:
-        description: |-
-          Timestamp is time when entity enters pbehavior.
-          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
-        type: integer
-      type:
-        description: TypeID is ID of pbehavior.Type.
-        type: string
-      type_name:
-        description: TypeName is Name of pbehavior.Type.
-        type: string
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -5177,6 +5326,39 @@ definitions:
     - enable
     - name
     - roles
+    type: object
+  user.PatchRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
+        type: string
     type: object
   user.Role:
     properties:
@@ -5345,7 +5527,7 @@ definitions:
       group:
         type: string
       periodic_refresh:
-        $ref: '#/definitions/types.DurationWithEnabled'
+        $ref: '#/definitions/datetime.DurationWithEnabled'
       tags:
         items:
           type: string
@@ -5467,7 +5649,7 @@ definitions:
       is_private:
         type: boolean
       periodic_refresh:
-        $ref: '#/definitions/types.DurationWithEnabled'
+        $ref: '#/definitions/datetime.DurationWithEnabled'
       tabs:
         items:
           $ref: '#/definitions/viewtab.Response'

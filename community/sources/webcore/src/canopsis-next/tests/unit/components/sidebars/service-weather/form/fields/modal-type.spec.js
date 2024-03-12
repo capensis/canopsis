@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
 
 import FieldModalType from '@/components/sidebars/service-weather/form/fields/modal-type.vue';
@@ -23,15 +24,15 @@ describe('field-modal-type', () => {
   test('Value changed after trigger radio group', () => {
     const wrapper = factory();
 
-    selectRadioGroup(wrapper).vm.$emit('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
+    selectRadioGroup(wrapper).triggerCustomEvent('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
 
-    expect(wrapper).toEmit('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
+    expect(wrapper).toEmitInput(SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
   });
 
   test('Renders `field-modal-type` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-modal-type` with custom props', () => {
@@ -45,6 +46,6 @@ describe('field-modal-type', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,48 +1,90 @@
-<template lang="pug">
-  div
-    c-page-header
-
-    v-card.ma-4.mt-0
-      v-layout.pa-4(v-if="pending", justify-center)
-        v-progress-circular(color="primary", indeterminate)
-      template(v-else)
-        v-tabs(v-model="activeTab", slider-color="primary", centered)
-          v-tab(:href="`#${$constants.KPI_TABS.graphs}`") {{ $tc('common.graph', 2) }}
-          v-tab(
-            v-if="hasReadAnyKpiFiltersAccess",
+<template>
+  <div>
+    <c-page-header />
+    <v-card class="ma-4 mt-0">
+      <v-layout
+        v-if="pending"
+        class="pa-4"
+        justify-center
+      >
+        <v-progress-circular
+          color="primary"
+          indeterminate
+        />
+      </v-layout>
+      <template v-else>
+        <v-tabs
+          v-model="activeTab"
+          slider-color="primary"
+          centered
+        >
+          <v-tab :href="`#${$constants.KPI_TABS.graphs}`">
+            {{ $tc('common.graph', 2) }}
+          </v-tab>
+          <v-tab
+            v-if="hasReadAnyKpiFiltersAccess"
             :href="`#${$constants.KPI_TABS.filters}`"
-          ) {{ $t('common.filters') }}
-          v-tab(
-            v-if="hasReadAnyKpiRatingSettingsAccess",
+          >
+            {{ $t('common.filters') }}
+          </v-tab>
+          <v-tab
+            v-if="hasReadAnyKpiRatingSettingsAccess"
             :href="`#${$constants.KPI_TABS.ratingSettings}`"
-          ) {{ $t('kpi.tabs.ratingSettings') }}
-          v-tab(
-            v-if="hasReadAnyKpiCollectionSettingsAccess",
+          >
+            {{ $t('kpi.tabs.ratingSettings') }}
+          </v-tab>
+          <v-tab
+            v-if="hasReadAnyKpiCollectionSettingsAccess"
             :href="`#${$constants.KPI_TABS.collectionSettings}`"
-          ) {{ $t('kpi.tabs.collectionSettings') }}
-
-        v-tabs-items(v-model="activeTab")
-          v-card-text
-            v-tab-item(:value="$constants.KPI_TABS.graphs")
-              div.error--text.text-xs-center(v-if="!timescaleAvailable") {{ $t('kpi.metricsNotAvailable') }}
-              kpi-charts(:unavailable="!timescaleAvailable")
-            v-tab-item(:value="$constants.KPI_TABS.filters", lazy)
-              kpi-filters
-            v-tab-item(:value="$constants.KPI_TABS.ratingSettings", lazy)
-              kpi-rating-settings
-            v-tab-item(:value="$constants.KPI_TABS.collectionSettings", lazy)
-              v-layout(row)
-                v-flex(xs12, offset-md1, md10, offset-lg2, lg8)
-                  kpi-collection-settings
-
-    v-slide-x-reverse-transition
-      c-fab-btn(
-        v-if="hasFabButton",
-        :has-access="hasAccessToCreate",
-        @create="create",
+          >
+            {{ $t('kpi.tabs.collectionSettings') }}
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="activeTab">
+          <v-card-text>
+            <v-tab-item :value="$constants.KPI_TABS.graphs">
+              <div
+                v-if="!timescaleAvailable"
+                class="error--text text-center"
+              >
+                {{ $t('kpi.metricsNotAvailable') }}
+              </div>
+              <kpi-charts :unavailable="!timescaleAvailable" />
+            </v-tab-item>
+            <v-tab-item :value="$constants.KPI_TABS.filters">
+              <kpi-filters />
+            </v-tab-item>
+            <v-tab-item :value="$constants.KPI_TABS.ratingSettings">
+              <kpi-rating-settings />
+            </v-tab-item>
+            <v-tab-item :value="$constants.KPI_TABS.collectionSettings">
+              <v-layout>
+                <v-flex
+                  xs12
+                  offset-md1
+                  md10
+                  offset-lg2
+                  lg8
+                >
+                  <kpi-collection-settings />
+                </v-flex>
+              </v-layout>
+            </v-tab-item>
+          </v-card-text>
+        </v-tabs-items>
+      </template>
+    </v-card>
+    <v-slide-x-reverse-transition>
+      <c-fab-btn
+        v-if="hasFabButton"
+        :has-access="hasAccessToCreate"
+        @create="create"
         @refresh="refresh"
-      )
-        span {{ $t('modals.createFilter.create.title') }}
+      >
+        <span>{{ $t('modals.createFilter.create.title') }}</span>
+      </c-fab-btn>
+    </v-slide-x-reverse-transition>
+  </div>
 </template>
 
 <script>

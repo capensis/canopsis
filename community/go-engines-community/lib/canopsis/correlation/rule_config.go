@@ -1,12 +1,10 @@
 package correlation
 
-import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-)
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 type RuleConfig struct {
 	// TimeInterval defines the length of the time window for alarm groups.
-	TimeInterval *types.DurationWithUnit `bson:"time_interval,omitempty" json:"time_interval,omitempty"`
+	TimeInterval *datetime.DurationWithUnit `bson:"time_interval,omitempty" json:"time_interval,omitempty"`
 	// ThresholdRate is malfunctioning entities rate threshold to trigger the rule.
 	ThresholdRate float64 `bson:"threshold_rate,omitempty" json:"threshold_rate,omitempty"`
 	// ThresholdCount is malfunctioning entities count threshold to trigger the rule.
@@ -21,4 +19,21 @@ type RuleConfig struct {
 	CorelParent string `bson:"corel_parent,omitempty" json:"corel_parent,omitempty"`
 	// CorelChild is the correlation relation value, which mark alarm as a child.
 	CorelChild string `bson:"corel_child,omitempty" json:"corel_child,omitempty"`
+}
+
+func (c *RuleConfig) GetTimeIntervalInSeconds() int64 {
+	var timeInterval int64
+
+	if c.TimeInterval != nil {
+		v, err := c.TimeInterval.To("s")
+		if err == nil {
+			timeInterval = v.Value
+		}
+	}
+
+	if timeInterval == 0 {
+		timeInterval = DefaultConfigTimeInterval
+	}
+
+	return timeInterval
 }

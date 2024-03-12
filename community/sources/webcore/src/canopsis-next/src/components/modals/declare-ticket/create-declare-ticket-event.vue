@@ -1,33 +1,43 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createDeclareTicketEvent.title') }}
-      template(#text="")
-        c-enabled-field(
-          v-if="config.items.length > 1",
-          v-model="singleMode",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createDeclareTicketEvent.title') }}</span>
+      </template>
+      <template #text="">
+        <c-enabled-field
+          v-if="config.items.length > 1"
+          v-model="singleMode"
           :label="$t('declareTicket.oneTicketForAlarms')"
-        )
-        declare-ticket-events-form(
-          v-model="form",
-          :alarms="config.items",
-          :tickets-by-alarms="config.ticketsByAlarms",
-          :alarms-by-tickets="config.alarmsByTickets",
-          :hide-ticket-resource="!isAllComponentAlarms",
+        />
+        <declare-ticket-events-form
+          v-model="form"
+          :alarms="config.items"
+          :tickets-by-alarms="config.ticketsByAlarms"
+          :alarms-by-tickets="config.alarmsByTickets"
+          :hide-ticket-resource="!isAllComponentAlarms"
           :single-mode="singleMode"
-        )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

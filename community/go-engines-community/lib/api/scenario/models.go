@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -25,14 +26,14 @@ type FilteredQuery struct {
 }
 
 type EditRequest struct {
-	Name                 string                  `json:"name" binding:"required,max=255"`
-	Author               string                  `json:"author" binding:"required,max=255"`
-	Enabled              *bool                   `json:"enabled" binding:"required"`
-	Priority             int64                   `json:"priority" binding:"min=0"`
-	Triggers             []Trigger               `json:"triggers" binding:"required,notblank,dive"`
-	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
-	Delay                *types.DurationWithUnit `json:"delay"`
-	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
+	Name                 string                     `json:"name" binding:"required,max=255"`
+	Author               string                     `json:"author" binding:"required,max=255"`
+	Enabled              *bool                      `json:"enabled" binding:"required"`
+	Priority             int64                      `json:"priority" binding:"min=0"`
+	Triggers             []Trigger                  `json:"triggers" binding:"required,notblank,dive"`
+	DisableDuringPeriods []string                   `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
+	Delay                *datetime.DurationWithUnit `json:"delay"`
+	Actions              []ActionRequest            `json:"actions" binding:"required,notblank,dive"`
 }
 
 type Trigger struct {
@@ -127,17 +128,17 @@ type ActionRequest struct {
 }
 
 type Scenario struct {
-	ID                   string                  `bson:"_id" json:"_id"`
-	Name                 string                  `bson:"name" json:"name"`
-	Author               *author.Author          `bson:"author" json:"author"`
-	Enabled              bool                    `bson:"enabled" json:"enabled"`
-	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
-	Triggers             []Trigger               `bson:"triggers" json:"triggers"`
-	Actions              []Action                `bson:"actions" json:"actions"`
-	Priority             int64                   `bson:"priority" json:"priority"`
-	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`
-	Created              types.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID                   string                     `bson:"_id" json:"_id"`
+	Name                 string                     `bson:"name" json:"name"`
+	Author               *author.Author             `bson:"author" json:"author"`
+	Enabled              bool                       `bson:"enabled" json:"enabled"`
+	DisableDuringPeriods []string                   `bson:"disable_during_periods" json:"disable_during_periods"`
+	Triggers             []Trigger                  `bson:"triggers" json:"triggers"`
+	Actions              []Action                   `bson:"actions" json:"actions"`
+	Priority             int64                      `bson:"priority" json:"priority"`
+	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
+	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type Action struct {
@@ -166,7 +167,7 @@ type Parameters struct {
 	// AssocTicket and Webhook
 	TicketSystemName string `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
 	// Snooze and Pbehavior
-	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
+	Duration *datetime.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
 	// Pbehavior
 	Name           string            `json:"name,omitempty" bson:"name"`
 	Reason         *pbehavior.Reason `json:"reason,omitempty" bson:"reason"`

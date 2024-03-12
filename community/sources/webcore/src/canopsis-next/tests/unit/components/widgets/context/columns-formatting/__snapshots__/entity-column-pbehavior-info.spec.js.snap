@@ -2,16 +2,30 @@
 
 exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with default props 1`] = `undefined`;
 
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with default props 2`] = `<!---->`;
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with default props 2`] = `undefined`;
 
 exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: active 1`] = `undefined`;
 
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: active 2`] = `<!---->`;
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: active 2`] = `undefined`;
 
 exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: inactive 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light primary--text"
+  >
+    brightness_3
+  </i>
+</span>
+`;
+
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: inactive 2`] = `
 <div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
   <span>
     pbehavior-inactive-name
@@ -19,26 +33,24 @@ exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` w
 </div>
 `;
 
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: inactive 2`] = `
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: maintenance 1`] = `
 <span
   class="v-tooltip v-tooltip--top"
 >
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
+  <!---->
   <i
     aria-hidden="true"
-    class="v-icon material-icons theme--light primary--text"
+    class="v-icon notranslate material-icons theme--light primary--text"
   >
-    brightness_3
+    build
   </i>
 </span>
 `;
 
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: maintenance 1`] = `
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: maintenance 2`] = `
 <div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
   <span>
     pbehavior-maintenance-name
@@ -46,45 +58,27 @@ exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` w
 </div>
 `;
 
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: maintenance 2`] = `
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: pause 1`] = `
 <span
   class="v-tooltip v-tooltip--top"
 >
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
+  <!---->
   <i
     aria-hidden="true"
-    class="v-icon material-icons theme--light primary--text"
+    class="v-icon notranslate material-icons theme--light primary--text"
   >
-    build
+    pause
   </i>
 </span>
 `;
 
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: pause 1`] = `
+exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: pause 2`] = `
 <div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
   <span>
     pbehavior-pause-name
   </span>
 </div>
-`;
-
-exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` with type: pause 2`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light primary--text"
-  >
-    pause
-  </i>
-</span>
 `;

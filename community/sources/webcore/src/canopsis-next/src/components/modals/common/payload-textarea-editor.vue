@@ -1,28 +1,36 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        c-payload-textarea-field(
-          v-model="form.text",
-          :required="isRequired",
-          :label="config.label",
-          :name="config.name",
-          :variables="config.variables",
-          name="text"
-        )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title>
+        {{ title }}
+      </template>
+      <template #text>
+        <c-payload-textarea-field
+          v-model="form.text"
+          :required="isRequired"
+          :label="config.label"
+          :name="config.name"
+          :variables="config.variables"
+        />
+      </template>
+      <template #actions>
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

@@ -25,13 +25,13 @@ describe('c-alarm-action-chip', () => {
 
     closeIcon.trigger('click');
 
-    expect(wrapper).toEmit('close');
+    expect(wrapper).toHaveBeenEmit('close');
   });
 
   test('Renders `c-alarm-tag-chip` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-alarm-tag-chip` with custom props and slot', () => {
@@ -45,6 +45,6 @@ describe('c-alarm-action-chip', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

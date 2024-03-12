@@ -138,7 +138,7 @@ func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, request.ID)
 
 	if err != nil {
-		if err == ErrLinkedEntityToAlarm || err == ErrComponent {
+		if errors.Is(err, ErrLinkedEntityToAlarm) || errors.Is(err, ErrComponent) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}

@@ -1,16 +1,23 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.chart.graphType')")
-    v-radio-group.pt-0.mt-0(v-field="value", :name="name", hide-details)
-      v-radio(
-        :value="false",
-        :label="$t('settings.chart.separateBars')",
+<template>
+  <widget-settings-item :title="$t('settings.chart.graphType')">
+    <v-radio-group
+      v-field="value"
+      :name="name"
+      class="pt-0 mt-0"
+      hide-details
+    >
+      <v-radio
+        :value="false"
+        :label="$t('settings.chart.separateBars')"
         color="primary"
-      )
-      v-radio(
-        :value="true",
-        :label="$t('settings.chart.stackedBars')",
+      />
+      <v-radio
+        :value="true"
+        :label="$t('settings.chart.stackedBars')"
         color="primary"
-      )
+      />
+    </v-radio-group>
+  </widget-settings-item>
 </template>
 
 <script>

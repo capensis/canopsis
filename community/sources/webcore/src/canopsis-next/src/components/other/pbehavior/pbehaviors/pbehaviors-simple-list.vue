@@ -1,47 +1,63 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout(row, justify-end)
-      c-action-fab-btn.ma-0(
-        v-if="addable",
-        :tooltip="$t('modals.createPbehavior.create.title')",
-        icon="add",
-        color="primary",
-        small,
-        left,
+<template>
+  <v-layout column>
+    <v-layout justify-end>
+      <c-action-fab-btn
+        v-if="addable"
+        :tooltip="$t('modals.createPbehavior.create.title')"
+        icon="add"
+        color="primary"
+        left
         @click="showCreatePbehaviorModal"
-      )
-      c-action-fab-btn.ma-0(
-        :tooltip="$t('modals.pbehaviorsCalendar.title')",
-        icon="calendar_today",
-        color="secondary",
-        small,
-        left,
+      />
+      <c-action-fab-btn
+        :tooltip="$t('modals.pbehaviorsCalendar.title')"
+        icon="calendar_today"
+        color="secondary"
+        left
         @click="showPbehaviorsCalendarModal"
-      )
-    c-advanced-data-table.ma-0(
-      :items="pbehaviors",
-      :headers="headers",
-      :loading="pending",
+      />
+    </v-layout>
+    <c-advanced-data-table
+      :items="pbehaviors"
+      :headers="headers"
+      :loading="pending"
       :dense="dense"
-    )
-      template(#enabled="{ item }")
-        c-enabled(:value="item.enabled")
-      template(#tstart="{ item }") {{ formatIntervalDate(item, 'tstart') }}
-      template(#tstop="{ item }") {{ formatIntervalDate(item, 'tstop') }}
-      template(#rrule_end="{ item }") {{ formatRruleEndDate(item) }}
-      template(#rrule="{ item }")
-        v-icon {{ item.rrule ? 'check' : 'clear' }}
-      template(#icon="{ item }")
-        v-icon(color="primary") {{ item.type.icon_name }}
-      template(#status="{ item }")
-        v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
-      template(#actions="{ item }")
-        pbehavior-actions(
-          :pbehavior="item",
-          :removable="removable",
-          :updatable="updatable",
+    >
+      <template #enabled="{ item }">
+        <c-enabled :value="item.enabled" />
+      </template>
+      <template #tstart="{ item }">
+        {{ formatIntervalDate(item, 'tstart') }}
+      </template>
+      <template #tstop="{ item }">
+        {{ formatIntervalDate(item, 'tstop') }}
+      </template>
+      <template #rrule_end="{ item }">
+        {{ formatRruleEndDate(item) }}
+      </template>
+      <template #rrule="{ item }">
+        <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
+      </template>
+      <template #icon="{ item }">
+        <v-icon color="primary">
+          {{ item.type.icon_name }}
+        </v-icon>
+      </template>
+      <template #status="{ item }">
+        <v-icon :color="item.is_active_status ? 'primary' : 'error'">
+          $vuetify.icons.settings_sync
+        </v-icon>
+      </template>
+      <template #actions="{ item }">
+        <pbehavior-actions
+          :pbehavior="item"
+          :removable="removable"
+          :updatable="updatable"
           @refresh="fetchList"
-        )
+        />
+      </template>
+    </c-advanced-data-table>
+  </v-layout>
 </template>
 
 <script>
@@ -114,7 +130,7 @@ export default {
         { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$t('common.icon'), value: 'icon' },
+        { text: this.$tc('common.icon', 1), value: 'icon' },
       ];
 
       if (this.withActiveStatus) {

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -79,6 +80,9 @@ func (f *Faker) JWT() (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, registeredClaims).SignedString([]byte(""))
 }
 
+// GenerateExdates
+//
+//nolint:gosec
 func (*Faker) GenerateExdates(count int) interface{} {
 	exdates := make([]types.Exdate, count)
 	now := time.Now()
@@ -89,9 +93,9 @@ func (*Faker) GenerateExdates(count int) interface{} {
 
 	for idx := range exdates {
 		begin := rand.Int63n(interval)
-		exdates[idx].Begin = types.CpsTime{Time: time.Unix(leftBound+begin, 0)}
+		exdates[idx].Begin = datetime.CpsTime{Time: time.Unix(leftBound+begin, 0)}
 		end := rand.Int63n(interval - begin)
-		exdates[idx].End = types.CpsTime{Time: time.Unix(exdates[idx].Begin.Unix()+end, 0)}
+		exdates[idx].End = datetime.CpsTime{Time: time.Unix(exdates[idx].Begin.Unix()+end, 0)}
 	}
 
 	return exdates

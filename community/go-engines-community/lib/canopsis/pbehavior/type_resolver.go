@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/rs/zerolog"
@@ -78,11 +79,11 @@ func (r *typeResolver) Resolve(
 	}
 
 	pbhRes, err := r.getPbehaviorIntervals(ctx, t, func(id string, computed ComputedPbehavior) bool {
-		if len(computed.Pattern) == 0 {
+		if len(computed.EntityPattern) == 0 {
 			return false
 		}
 
-		matched, err := computed.Pattern.Match(entity)
+		matched, err := match.MatchEntityPattern(computed.EntityPattern, &entity)
 		if err != nil {
 			r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
 			return false

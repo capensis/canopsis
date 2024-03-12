@@ -236,7 +236,7 @@ Si votre installation utilise un noeud unique MongoDB, vous devez le migrer vers
 
     Si vous êtes utilisateur de l'édition `pro`, voici les étapes à suivre.
 
-    Télécharger le paquet de la version 23.10.0 (canopsis-pro-docker-compose-23.10.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-pro/-/releases](https://git.canopsis.net/canopsis/canopsis-pro/-/releases).
+    Télécharger le paquet de la version 23.10.0 (canopsis-pro-docker-compose-23.10.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases).
 
     ```sh
     export CPS_EDITION=pro

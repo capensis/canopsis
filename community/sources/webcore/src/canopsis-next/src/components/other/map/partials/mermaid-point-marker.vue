@@ -1,13 +1,14 @@
-<template lang="pug">
-  point-icon.mermaid-point(
-    v-on="$listeners",
-    :class="{ 'mermaid-point--centered': isFullEntity }",
-    :style="{ top: `${y}px`, left: `${x}px` }",
-    :entity="entity",
-    :size="size",
-    :color-indicator="colorIndicator",
+<template>
+  <point-icon
+    :class="{ 'mermaid-point--centered': isFullEntity }"
+    :style="{ top: `${y}px`, left: `${x}px` }"
+    :entity="entity"
+    :size="size"
+    :color-indicator="colorIndicator"
     :pbehavior-enabled="pbehaviorEnabled"
-  )
+    class="mermaid-point"
+    v-on="$listeners"
+  />
 </template>
 
 <script>

@@ -87,12 +87,8 @@ func (s *storage) Delete(id, hashPath string) error {
 func (s *storage) DeleteByName(name string) (bool, error) {
 	err := os.Remove(name)
 	if err != nil {
-		var pathError *os.PathError
-		if errors.As(err, &pathError) {
-			err = pathError.Err
-			if err == syscall.ENOTEMPTY {
-				return false, nil
-			}
+		if errors.Is(err, syscall.ENOTEMPTY) {
+			return false, nil
 		}
 
 		return false, err

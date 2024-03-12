@@ -8,7 +8,7 @@ describe('c-progress-overlay', () => {
   it('Renders `c-progress-overlay` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-progress-overlay` with pending true correctly', () => {
@@ -18,7 +18,7 @@ describe('c-progress-overlay', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-progress-overlay` with custom props correctly', () => {
@@ -31,6 +31,6 @@ describe('c-progress-overlay', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

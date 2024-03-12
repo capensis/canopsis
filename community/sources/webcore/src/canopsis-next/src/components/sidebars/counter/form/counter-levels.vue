@@ -1,22 +1,23 @@
-<template lang="pug">
-  widget-settings-group(:title="$t('settings.counterLevels.title')")
-    widget-settings-item(:title="$t('settings.counterLevels.fields.counter')")
-      v-select.select(
-        v-field="form.counter",
-        :label="$t('settings.counterLevels.fields.counter')",
-        :items="availableCounters",
-        hide-details,
-        single-line,
+<template>
+  <widget-settings-group :title="$t('settings.counterLevels.title')">
+    <widget-settings-item :title="$t('settings.counterLevels.fields.counter')">
+      <v-select
+        v-field="form.counter"
+        :label="$t('settings.counterLevels.fields.counter')"
+        :items="availableCounters"
+        class="select"
+        hide-details
+        single-line
         dense
-      )
-    v-divider
-    field-criticity-levels(v-field="form.values")
-    v-divider
-    field-levels-colors-selector(
-      v-field="form.colors",
-      colorType="hex",
+      />
+    </widget-settings-item>
+    <field-criticity-levels v-field="form.values" />
+    <field-levels-colors-selector
+      v-field="form.colors"
+      color-type="hex"
       hide-suffix
-    )
+    />
+  </widget-settings-group>
 </template>
 
 <script>

@@ -27,6 +27,8 @@ import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
+import { hasStateSetting } from '@/helpers/entities/entity/entity';
+import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
@@ -137,6 +139,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumn[]} widgetColumns
  * @property {string} exportPdfTemplate
  * @property {string} exportPdfTemplateTemplate
+ * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -168,6 +172,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} sticky_header
  * @property {boolean} dense
+ * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -185,6 +191,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetKioskParameters} kiosk
  * @property {AlarmChart[]} charts
  * @property {WidgetColumnsParameters} [columns]
+ * @property {string[]} [usedAlarmProperties]
  */
 
 /**
@@ -280,6 +287,8 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
+  showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: alarmListParameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**
@@ -370,6 +379,8 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
   exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**
@@ -399,6 +410,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   kiosk: kioskParametersToForm(parameters.kiosk),
   columns: columnsParametersToForm(parameters.columns),
   charts: addKeyInEntities(parameters.charts),
+  usedAlarmProperties: [],
 });
 
 /**
@@ -444,21 +456,27 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
  * @param {AlarmListWidgetParametersForm} form
  * @return {AlarmListWidgetParameters}
  */
-export const formToAlarmListWidgetParameters = form => ({
-  ...form,
+export const formToAlarmListWidgetParameters = (form) => {
+  const parameters = {
+    ...form,
 
-  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
-  exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
-  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
-  widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
-  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
-  widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
-  widgetColumns: formToWidgetColumns(form.widgetColumns),
-  widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
-  widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
-  serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
-  charts: removeKeyFromEntities(form.charts),
-});
+    moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+    exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
+    widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+    widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
+    serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
+    widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
+    widgetColumns: formToWidgetColumns(form.widgetColumns),
+    widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
+    widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+    serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
+    charts: removeKeyFromEntities(form.charts),
+  };
+
+  parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
+
+  return parameters;
+};
 
 /**
  * Prepared alarms list widget for displaying
@@ -491,7 +509,6 @@ export const prepareAlarmListWidget = (widget = {}) => setSeveralFields(widget, 
 
       sortable: false,
       text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      value: column.value.startsWith('entity.') ? column.value : `entity.${column.value}`,
     }))
   ),
 
@@ -542,18 +559,34 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
  * @param {string} value
  * @param {boolean} [onlyIcon]
  * @param {number} [inlineLinksCount]
+ * @param {boolean} [showRootCauseByStateClick]
  * @returns {Function}
  */
-export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon, inlineLinksCount }) => {
+export const getAlarmsListWidgetColumnComponentGetter = (
+  { value, onlyIcon, inlineLinksCount },
+  { showRootCauseByStateClick } = {},
+) => {
   switch (value) {
     case ALARM_FIELDS.state:
-      return context => ({
-        bind: {
-          is: 'alarm-column-value-state',
-          alarm: context.alarm,
-          small: context.small,
-        },
-      });
+      return (context) => {
+        const component = {
+          bind: {
+            is: 'alarm-column-value-state',
+            alarm: context.alarm,
+            small: context.small,
+          },
+        };
+
+        if (showRootCauseByStateClick && hasStateSetting(context.alarm.entity)) {
+          component.bind.class = 'cursor-pointer';
+          component.bind.appendIconName = '$vuetify.icons.root_cause';
+          component.on = {
+            click: () => context.$emit('click:state', { ...context.alarm.entity, state: context.alarm.v?.state?.val }),
+          };
+        }
+
+        return component;
+      };
 
     case ALARM_FIELDS.status:
       return context => ({

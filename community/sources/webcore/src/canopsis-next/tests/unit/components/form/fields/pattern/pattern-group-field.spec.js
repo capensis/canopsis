@@ -27,14 +27,9 @@ describe('pattern-group-field', () => {
 
     const newRules = [{}, {}];
 
-    patternRulesField.vm.$emit('input', newRules);
+    patternRulesField.triggerCustomEvent('input', newRules);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       rules: newRules,
     });
   });
@@ -49,13 +44,9 @@ describe('pattern-group-field', () => {
       },
     });
 
-    const patternRulesField = selectPatternRulesField(wrapper);
+    selectPatternRulesField(wrapper).triggerCustomEvent('input', []);
 
-    patternRulesField.vm.$emit('input', []);
-
-    const removeEvents = wrapper.emitted('remove');
-
-    expect(removeEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   test('Renders `pattern-group-field` with default props', () => {
@@ -68,7 +59,7 @@ describe('pattern-group-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-group-field` with custom props', () => {
@@ -84,6 +75,6 @@ describe('pattern-group-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

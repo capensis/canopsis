@@ -4,8 +4,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {
@@ -33,14 +33,14 @@ type UpdateRequest struct {
 }
 
 type Response struct {
-	ID        string         `bson:"_id" json:"_id"`
-	Type      int64          `bson:"type" json:"type"`
-	Value     string         `bson:"value" json:"value"`
-	Color     string         `bson:"color" json:"color"`
-	Author    *author.Author `bson:"author" json:"author"`
-	Updated   types.CpsTime  `bson:"updated" json:"updated" swaggertype:"integer"`
-	Created   types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
-	Deletable *bool          `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	ID        string           `bson:"_id" json:"_id"`
+	Type      int64            `bson:"type" json:"type"`
+	Value     string           `bson:"value" json:"value"`
+	Color     string           `bson:"color" json:"color"`
+	Author    *author.Author   `bson:"author" json:"author"`
+	Updated   datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	Created   datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Deletable *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

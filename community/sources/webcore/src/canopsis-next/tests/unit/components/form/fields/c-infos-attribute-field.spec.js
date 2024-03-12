@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
@@ -31,14 +30,9 @@ describe('c-infos-attribute-field', () => {
 
     const newDictionary = 'newDictionary';
 
-    dictionarySelect.vm.$emit('input', newDictionary);
+    dictionarySelect.triggerCustomEvent('input', newDictionary);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       dictionary: newDictionary,
       field: value.field,
     });
@@ -59,20 +53,15 @@ describe('c-infos-attribute-field', () => {
 
     const newField = 'newField';
 
-    fieldSelect.vm.$emit('input', newField);
+    fieldSelect.triggerCustomEvent('input', newField);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       dictionary: value.dictionary,
       field: newField,
     });
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with default props and combobox', () => {
+  it('Renders `c-pattern-infos-attribute-field` with default props and combobox', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -83,11 +72,13 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with default props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with default props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -97,11 +88,13 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -120,11 +113,13 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -143,7 +138,9 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

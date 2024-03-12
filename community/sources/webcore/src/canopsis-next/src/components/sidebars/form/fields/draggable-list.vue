@@ -1,14 +1,42 @@
-<template lang="pug">
-  c-draggable-list-field(v-field="items", :handle="`.${handleClass}`")
-    v-layout(v-for="(item, index) in items", :key="item[itemKey]", row, align-center)
-      v-flex(xs1)
-        v-icon.draggable(:class="handleClass") drag_indicator
-      v-flex(xs8)
-        slot(name="title", :item="item", :index="index")
-          span {{ item[itemText] }}
-      v-flex(xs3)
-        c-action-btn(type="edit", @click="edit(item, index)")
-        c-action-btn(type="delete", @click="remove(item, index)")
+<template>
+  <c-draggable-list-field
+    v-field="items"
+    :handle="`.${handleClass}`"
+  >
+    <v-layout
+      v-for="(item, index) in items"
+      :key="item[itemKey]"
+      align-center
+    >
+      <v-flex xs1>
+        <v-icon
+          :class="handleClass"
+          class="draggable"
+        >
+          drag_indicator
+        </v-icon>
+      </v-flex>
+      <v-flex xs8>
+        <slot
+          :item="item"
+          :index="index"
+          name="title"
+        >
+          <span>{{ item[itemText] }}</span>
+        </slot>
+      </v-flex>
+      <v-flex xs3>
+        <c-action-btn
+          type="edit"
+          @click="edit(item, index)"
+        />
+        <c-action-btn
+          type="delete"
+          @click="remove(item, index)"
+        />
+      </v-flex>
+    </v-layout>
+  </c-draggable-list-field>
 </template>
 
 <script>

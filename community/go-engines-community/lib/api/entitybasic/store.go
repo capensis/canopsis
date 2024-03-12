@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -77,7 +78,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		"enabled":         *r.Enabled,
 		"category":        r.Category,
 		"impact_level":    r.ImpactLevel,
-		"infos":           transformInfos(r),
+		"infos":           entity.TransformInfosRequest(r.Infos),
 		"sli_avail_state": r.SliAvailState,
 	}
 	update := bson.M{}
@@ -135,7 +136,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		}
 
 		updatedEntity, err = s.GetOneBy(ctx, r.ID)
-		if err != nil {
+		if err != nil || updatedEntity == nil {
 			return err
 		}
 
@@ -236,17 +237,4 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	})
 
 	return res, err
-}
-
-func transformInfos(request EditRequest) map[string]types.Info {
-	infos := make(map[string]types.Info, len(request.Infos))
-	for _, v := range request.Infos {
-		infos[v.Name] = types.Info{
-			Name:        v.Name,
-			Description: v.Description,
-			Value:       v.Value,
-		}
-	}
-
-	return infos
 }

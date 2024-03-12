@@ -1,26 +1,28 @@
-<template lang="pug">
-  v-layout(column)
-    v-text-field(
-      v-if="withTitle",
-      v-field="form.title",
-      v-validate="titleRules",
-      :label="$t('common.title')",
-      :error-messages="errors.collect('title')",
+<template>
+  <v-layout column>
+    <v-text-field
+      v-if="withTitle"
+      v-field="form.title"
+      v-validate="titleRules"
+      :label="$t('common.title')"
+      :error-messages="errors.collect('title')"
       name="title"
-    )
-    c-patterns-field.mt-2(
-      v-field="form",
-      :with-alarm="withAlarm",
-      :with-entity="withEntity",
-      :with-pbehavior="withPbehavior",
-      :with-event="withEvent",
-      :with-service-weather="withServiceWeather",
-      :alarm-attributes="alarmAttributes",
-      :entity-attributes="entityAttributes",
-      :entity-types="entityTypes",
-      :entity-counters-type="entityCountersType",
+    />
+    <c-patterns-field
+      v-field="form"
+      :with-alarm="withAlarm"
+      :with-entity="withEntity"
+      :with-pbehavior="withPbehavior"
+      :with-event="withEvent"
+      :with-service-weather="withServiceWeather"
+      :alarm-attributes="alarmAttributes"
+      :entity-attributes="entityAttributes"
+      :entity-types="entityTypes"
+      :entity-counters-type="entityCountersType"
+      class="mt-2"
       some-required
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -19,7 +19,7 @@ describe('map-breadcrumbs', () => {
     const index = 2;
     const button = selectButtonByIndex(wrapper, index);
 
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('click', { index: 2 });
   });
@@ -27,7 +27,7 @@ describe('map-breadcrumbs', () => {
   test('Renders `map-breadcrumbs` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `map-breadcrumbs` with custom props', async () => {
@@ -48,6 +48,6 @@ describe('map-breadcrumbs', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

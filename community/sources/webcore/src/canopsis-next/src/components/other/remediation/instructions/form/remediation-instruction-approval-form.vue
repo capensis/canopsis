@@ -1,44 +1,56 @@
-<template lang="pug">
-  v-layout(column)
-    v-checkbox(
-      v-model="needApprove",
-      :label="$t('remediation.instruction.requestApproval')",
-      :disabled="disabled || required",
-      color="primary",
+<template>
+  <v-layout column>
+    <v-checkbox
+      v-model="needApprove"
+      :label="$t('remediation.instruction.requestApproval')"
+      :disabled="disabled || required"
+      color="primary"
       hide-details
-    )
-    template(v-if="needApprove")
-      v-layout(v-if="disabled", row)
-        span.subheading.grey--text.my-4 {{ assignLabel }}: {{ assignValue }}
-      v-layout(v-else, row, align-center)
-        v-flex(xs6)
-          remediation-instruction-approval-type-field(v-field="approval.type", @input="resetErrors")
-        v-flex(xs5)
-          c-role-field(
-            v-show="isRoleType",
-            v-field="approval.role",
-            :required="isRoleType",
-            :name="roleFieldName",
-            :permission="approvePermission",
+    />
+    <template v-if="needApprove">
+      <v-layout v-if="disabled">
+        <span class="text-subtitle-1 grey--text my-4">{{ assignLabel }}: {{ assignValue }}</span>
+      </v-layout>
+      <v-layout
+        v-else
+        align-center
+      >
+        <v-flex xs6>
+          <remediation-instruction-approval-type-field
+            v-field="approval.type"
+            @input="resetErrors"
+          />
+        </v-flex>
+        <v-flex xs5>
+          <c-role-field
+            v-show="isRoleType"
+            v-field="approval.role"
+            :required="isRoleType"
+            :name="roleFieldName"
+            :permission="approvePermission"
             autocomplete
-          )
-          c-user-picker-field(
-            v-show="!isRoleType",
-            v-field="approval.user",
-            :required="!isRoleType",
-            :name="userFieldName",
-            :label="$tc('common.user')",
-            :permission="approvePermission",
+          />
+          <c-user-picker-field
+            v-show="!isRoleType"
+            v-field="approval.user"
+            :required="!isRoleType"
+            :name="userFieldName"
+            :label="$tc('common.user')"
+            :permission="approvePermission"
             return-object
-          )
-      v-textarea(
-        v-field="approval.comment",
-        v-validate="'required'",
-        :label="$tc('common.comment')",
-        :error-messages="errors.collect('comment')",
-        :disabled="disabled",
+          />
+        </v-flex>
+      </v-layout>
+      <v-textarea
+        v-field="approval.comment"
+        v-validate="'required'"
+        :label="$tc('common.comment')"
+        :error-messages="errors.collect('comment')"
+        :disabled="disabled"
         name="comment"
-      )
+      />
+    </template>
+  </v-layout>
 </template>
 
 <script>

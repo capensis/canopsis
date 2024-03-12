@@ -43,13 +43,17 @@ func (a *api) List(c *gin.Context) {
 	var authorizedIds []string
 	ids, ok := c.Get(middleware.AuthorizedIds)
 	if ok {
-		authorizedIds = ids.([]string)
+		if s, ok := ids.([]string); ok {
+			authorizedIds = s
+		}
 	}
 
 	var ownedIds []string
 	ids, ok = c.Get(middleware.OwnedIds)
 	if ok {
-		ownedIds = ids.([]string)
+		if s, ok := ids.([]string); ok {
+			ownedIds = s
+		}
 	}
 
 	viewgroups, err := a.store.Find(c, query, authorizedIds, ownedIds)

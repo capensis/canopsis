@@ -2,13 +2,12 @@ package scenario
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -97,7 +96,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 
 	if r.ID == "" {
@@ -133,7 +132,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 

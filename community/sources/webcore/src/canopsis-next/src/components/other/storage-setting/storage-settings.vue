@@ -1,22 +1,43 @@
-<template lang="pug">
-  v-layout.my-2(v-if="!form", justify-center)
-    v-progress-circular(indeterminate, color="primary")
-  v-flex(v-else, offset-xs1, md10)
-    v-form(@submit.prevent="submit")
-      storage-settings-form(
-        v-model="form",
-        :history="history",
-        @archive:disabled="archiveDisabledEntities",
-        @archive:unlinked="archiveUnlinkedEntities",
+<template>
+  <v-layout
+    v-if="!form"
+    class="my-2"
+    justify-center
+  >
+    <v-progress-circular
+      color="primary"
+      indeterminate
+    />
+  </v-layout>
+  <v-flex
+    v-else
+    offset-xs1
+    md10
+  >
+    <v-form @submit.prevent="submit">
+      <storage-settings-form
+        v-model="form"
+        :history="history"
+        @archive:disabled="archiveDisabledEntities"
+        @archive:unlinked="archiveUnlinkedEntities"
         @clean:archive="cleanArchivedEntities"
-      )
-      v-divider.mt-3
-      v-layout.mt-3(row, justify-end)
-        v-btn.primary.mr-0(
-          :disabled="isDisabled",
-          :loading="submitting",
+      />
+      <v-divider class="mt-3" />
+      <v-layout
+        class="mt-3"
+        justify-end
+      >
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary mr-0"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </v-layout>
+    </v-form>
+  </v-flex>
 </template>
 
 <script>
@@ -77,8 +98,11 @@ export default {
     },
 
     archiveDisabledEntities() {
-      this.showConfirmationPhraseModal({
-        action: () => this.archiveDisabledEntitiesData({ data: this.form.entity_disabled }),
+      this.$modals.show({
+        name: MODALS.archiveDisabledEntities,
+        config: {
+          action: data => this.archiveDisabledEntitiesData({ data }),
+        },
       });
     },
 

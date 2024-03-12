@@ -1,12 +1,18 @@
-<template lang="pug">
-  v-radio-group.mt-0(v-field="value", :name="name", :label="label")
-    v-radio(
-      v-for="aggregateFunction in availableAggregateFunctions",
-      :key="aggregateFunction.value",
-      :label="aggregateFunction.label",
-      :value="aggregateFunction.value",
+<template>
+  <v-radio-group
+    v-field="value"
+    :name="name"
+    :label="label"
+    class="mt-0"
+  >
+    <v-radio
+      v-for="aggregateFunction in availableAggregateFunctions"
+      :key="aggregateFunction.value"
+      :label="aggregateFunction.label"
+      :value="aggregateFunction.value"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

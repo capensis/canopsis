@@ -55,7 +55,6 @@ func NewSchedulerService(
 	decoder encoding.Decoder,
 	encoder encoding.Encoder,
 ) Scheduler {
-
 	s := scheduler{
 		redisConn:      redisLockStorage,
 		channelPub:     channelPub,

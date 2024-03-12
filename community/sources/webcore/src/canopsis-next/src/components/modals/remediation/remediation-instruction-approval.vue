@@ -1,38 +1,51 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.remediationInstructionApproval.title') }}
-      template(#text="")
-        v-fade-transition
-          v-layout(v-if="!remediationInstructionApproval", justify-center)
-            v-progress-circular(color="primary", indeterminate)
-          v-layout(v-else, column)
-            remediation-instruction-approval-alert(
-              :approval="remediationInstructionApproval.approval"
-            )
-            remediation-instruction-approval-tabs(
-              :original="remediationInstructionApproval.original",
-              :updated="remediationInstructionApproval.updated"
-            )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
-          @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.warning(
-          :disabled="isDisabled || !remediationInstructionApproval",
-          :loading="submitting",
-          depressed,
-          flat,
-          @click="dismiss"
-        ) {{ $t('common.dismiss') }}
-        v-btn.primary(
-          :disabled="isDisabled || !remediationInstructionApproval",
-          :loading="submitting",
-          @click="approve"
-        ) {{ $t('common.approve') }}
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      {{ $t('modals.remediationInstructionApproval.title') }}
+    </template>
+    <template #text="">
+      <v-fade-transition>
+        <v-layout
+          v-if="!remediationInstructionApproval"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <v-layout
+          v-else
+          column
+        >
+          <remediation-instruction-approval-alert
+            :user-name="remediationInstructionApproval.approval.requested_by.name"
+            :comment="remediationInstructionApproval.approval.comment"
+          >
+            <remediation-instruction-approval-form
+              :disabled="!remediationInstructionApproval"
+              :submitting="submitting"
+              @approve="approve"
+              @dismiss="dismiss"
+            />
+          </remediation-instruction-approval-alert>
+          <remediation-instruction-approval-tabs
+            :original="remediationInstructionApproval.original"
+            :updated="remediationInstructionApproval.updated"
+          />
+        </v-layout>
+      </v-fade-transition>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.close') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -44,6 +57,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
+import RemediationInstructionApprovalForm from '@/components/other/remediation/instructions/partials/approval-form.vue';
 import RemediationInstructionApprovalTabs from '@/components/other/remediation/instructions/partials/approval-tabs.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -54,6 +68,7 @@ export default {
   name: MODALS.remediationInstructionApproval,
   components: {
     RemediationInstructionApprovalAlert,
+    RemediationInstructionApprovalForm,
     RemediationInstructionApprovalTabs,
     ModalWrapper,
   },
@@ -82,17 +97,20 @@ export default {
     },
 
     approve() {
-      return this.submit(true);
+      return this.submit({ approve: true });
     },
 
-    dismiss() {
-      return this.submit();
+    dismiss(comment) {
+      return this.submit({
+        approve: false,
+        comment,
+      });
     },
 
-    async submit(approve = false) {
+    async submit(data) {
       await this.updateRemediationInstructionApproval({
         id: this.config.remediationInstructionId,
-        data: { approve },
+        data,
       });
 
       if (this.config.afterSubmit) {

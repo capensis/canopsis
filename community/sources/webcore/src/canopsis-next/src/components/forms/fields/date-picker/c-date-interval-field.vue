@@ -1,24 +1,32 @@
-<template lang="pug">
-  div.c-date-interval(:class="{ 'c-date-interval--column': column }")
-    c-date-picker-field(
-      v-field="value.from",
-      :label="$t('common.from')",
-      :disabled="disabled",
-      :allowed-dates="isAllowedFromDate",
+<template>
+  <div
+    :class="{ 'c-date-interval--column': column }"
+    class="c-date-interval"
+  >
+    <c-date-picker-field
+      v-field="value.from"
+      :label="$t('common.from')"
+      :disabled="disabled"
+      :allowed-dates="isAllowedFromDate"
       hide-details
-    )
-      template(#append="")
-        v-icon calendar_today
-    c-date-picker-field(
-      v-field="value.to",
-      :label="$t('common.to')",
-      :disabled="disabled",
-      :allowed-dates="isAllowedToDate",
-      :content-class="{ 'ml-4': !column }",
+    >
+      <template #append="">
+        <v-icon>calendar_today</v-icon>
+      </template>
+    </c-date-picker-field>
+    <c-date-picker-field
+      v-field="value.to"
+      :label="$t('common.to')"
+      :disabled="disabled"
+      :allowed-dates="isAllowedToDate"
+      :content-class="{ 'ml-4': !column }"
       hide-details
-    )
-      template(#append="")
-        v-icon calendar_today
+    >
+      <template #append="">
+        <v-icon>calendar_today</v-icon>
+      </template>
+    </c-date-picker-field>
+  </div>
 </template>
 
 <script>

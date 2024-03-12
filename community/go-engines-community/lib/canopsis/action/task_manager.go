@@ -103,6 +103,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
 							Err:          errors.New("scenario doesn't exist"),
+							EntityType:   task.Entity.Type,
 						}
 						return
 					}
@@ -113,6 +114,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
 							Err:          err,
+							EntityType:   task.Entity.Type,
 						}
 						return
 					}
@@ -130,6 +132,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
 							Err:          err,
+							EntityType:   task.Entity.Type,
 						}
 						return
 					}
@@ -182,6 +185,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						Alarm:        task.Alarm,
 						FifoAckEvent: task.FifoAckEvent,
 						Err:          err,
+						EntityType:   task.Entity.Type,
 					}
 					return
 				}
@@ -190,6 +194,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					e.outputChannel <- ScenarioResult{
 						Alarm:        task.Alarm,
 						FifoAckEvent: task.FifoAckEvent,
+						EntityType:   task.Entity.Type,
 					}
 				}
 			}(ctx, scenariosTask)
@@ -238,6 +243,7 @@ func (e *redisBasedManager) finishExecution(
 			Err:              executionErr,
 			ActionExecutions: execution.ActionExecutions,
 			FifoAckEvent:     execution.FifoAckEvent,
+			EntityType:       execution.Entity.Type,
 		}
 	}
 }
@@ -566,15 +572,12 @@ func (e *redisBasedManager) startExecution(
 	isInstructionMatched bool,
 ) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
-	var executions []Execution
-	for _, action := range scenario.Actions {
-		executions = append(
-			executions,
-			Execution{
-				Action:   action,
-				Executed: false,
-			},
-		)
+	executions := make([]Execution, len(scenario.Actions))
+	for i := range scenario.Actions {
+		executions[i] = Execution{
+			Action:   scenario.Actions[i],
+			Executed: false,
+		}
 	}
 
 	data.RuleName = scenario.Name

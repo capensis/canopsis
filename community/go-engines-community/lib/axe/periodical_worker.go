@@ -10,11 +10,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
@@ -99,7 +99,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeUpdateStatus,
 			Author:        canopsis.DefaultEventAuthor,
 			Output:        "",
@@ -119,7 +119,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeResolveClose,
 			Initiator:     types.InitiatorSystem,
 		}
@@ -137,7 +137,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeResolveCancel,
 			Initiator:     types.InitiatorSystem,
 		}
@@ -155,7 +155,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeUnsnooze,
 			Initiator:     types.InitiatorSystem,
 		}
@@ -184,7 +184,7 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 	if err != nil {
 		return fmt.Errorf("cannot encode event : %w", err)
 	}
-	return errt.NewIOError(w.ChannelPub.PublishWithContext(
+	return w.ChannelPub.PublishWithContext(
 		ctx,
 		"",
 		canopsis.FIFOQueueName,
@@ -195,5 +195,5 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 			Body:         bevent,
 			DeliveryMode: amqp.Persistent,
 		},
-	))
+	)
 }

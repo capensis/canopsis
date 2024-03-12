@@ -57,7 +57,7 @@ describe('widget-wrapper', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(types)('Renders `widget-wrapper` with type %s and core edition', (type) => {
@@ -79,7 +79,7 @@ describe('widget-wrapper', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(types)('Renders `widget-wrapper` with type %s and cat edition', (type) => {
@@ -101,7 +101,7 @@ describe('widget-wrapper', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `widget-wrapper` with widget title', () => {
@@ -124,7 +124,7 @@ describe('widget-wrapper', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `widget-wrapper` with editing mode', () => {
@@ -146,7 +146,7 @@ describe('widget-wrapper', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `widget-wrapper` with title and editing mode', () => {
@@ -169,6 +169,6 @@ describe('widget-wrapper', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
