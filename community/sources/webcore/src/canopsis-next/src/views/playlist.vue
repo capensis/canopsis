@@ -28,7 +28,7 @@
             v-btn(color="primary", large, @click="play")
               v-icon(large) play_arrow
           v-fade-transition(mode="out-in")
-            view-tab-widgets(v-if="activeTab", :tab="activeTab", :key="activeTab._id")
+            view-tab-widgets(v-if="activeTab", :tab="activeTab", :key="activeTab._id", visible)
 </template>
 
 <script>
