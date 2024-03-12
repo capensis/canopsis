@@ -29,7 +29,7 @@ export default {
   props: {
     availabilities: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     query: {
       type: Object,
