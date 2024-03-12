@@ -67,11 +67,9 @@ describe('line-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `line-chart-metrics` with history data props', async () => {
@@ -85,11 +83,9 @@ describe('line-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `line-chart-metrics` with empty data', async () => {
@@ -105,10 +101,8 @@ describe('line-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 });

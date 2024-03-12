@@ -16,6 +16,7 @@
       :filters="mainFilter"
       :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToListFilters"
+      :show-export="hasAccessToExportAsCsv"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
       :min-interval-date="minAvailableDate"
@@ -68,6 +69,7 @@ import { exportMixinCreator } from '@/mixins/widget/export';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { entitiesAvailabilityMixin } from '@/mixins/entities/availability';
 import { widgetOptionsMixin } from '@/mixins/widget/options';
+import { permissionsWidgetsAvailabilityExport } from '@/mixins/permissions/widgets/availability/export';
 
 import AvailabilityWidgetFilters from '@/components/widgets/availability/partials/availability-widget-filters.vue';
 import AvailabilityList from '@/components/other/availability/availability-list.vue';
@@ -80,6 +82,7 @@ export default {
     widgetFetchQueryMixin,
     permissionsWidgetsAvailabilityFilters,
     permissionsWidgetsAlarmStatisticsInterval,
+    permissionsWidgetsAvailabilityExport,
     queryIntervalFilterMixin,
     entitiesAvailabilityMixin,
     widgetOptionsMixin,

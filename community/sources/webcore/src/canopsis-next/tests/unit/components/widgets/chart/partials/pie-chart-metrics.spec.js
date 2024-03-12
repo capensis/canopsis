@@ -41,11 +41,9 @@ describe('pie-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `pie-chart-metrics` with number labels props', async () => {
@@ -65,11 +63,9 @@ describe('pie-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `pie-chart-metrics` with empty data', async () => {
@@ -85,10 +81,8 @@ describe('pie-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 });

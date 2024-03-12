@@ -26,7 +26,7 @@ import { AVAILABILITY_FILENAME_PREFIX } from '@/config';
 import { convertDateToString, getDiffBetweenDates } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { saveFile } from '@/helpers/file/files';
-import { getAvailabilityDownloadFileUrl } from '@/helpers/entities/availability/url';
+import { getAvailabilityHistoryDownloadFileUrl } from '@/helpers/entities/availability/url';
 
 import { localQueryMixin } from '@/mixins/query/query';
 import { exportMixinCreator } from '@/mixins/widget/export';
@@ -78,6 +78,8 @@ export default {
   methods: {
     ...mapAvailabilityActions({
       fetchAvailabilityHistoryWithoutStore: 'fetchAvailabilityHistoryWithoutStore',
+      createAvailabilityHistoryExport: 'createAvailabilityHistoryExport',
+      fetchAvailabilityHistoryExport: 'fetchAvailabilityHistoryExport',
     }),
 
     getSamplingByInterval() {
@@ -94,6 +96,7 @@ export default {
       return {
         from: this.interval.from,
         to: this.interval.to,
+        sampling: this.query.sampling,
       };
     },
 
@@ -125,7 +128,6 @@ export default {
         fromTime,
         toTime,
         this.query.sampling,
-        this.query.sampling,
       ].join('-');
     },
 
@@ -147,9 +149,9 @@ export default {
           data: this.getQuery(),
         });
 
-        this.downloadFile(getAvailabilityDownloadFileUrl(fileData._id));
+        this.downloadFile(getAvailabilityHistoryDownloadFileUrl(fileData._id));
       } catch (err) {
-        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
+        this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {
         this.downloading = false;
       }

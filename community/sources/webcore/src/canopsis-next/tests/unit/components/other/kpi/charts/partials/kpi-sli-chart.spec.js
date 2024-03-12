@@ -177,9 +177,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with percent metrics', async () => {
@@ -191,9 +189,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with time metrics by hour', async () => {
@@ -207,9 +203,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with time metrics by day', async () => {
@@ -222,9 +216,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with time metrics by week', async () => {
@@ -238,9 +230,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with time metrics by month', async () => {
@@ -254,9 +244,7 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
     expect(wrapper).toMatchSnapshot();
   });
 
