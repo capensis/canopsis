@@ -43,7 +43,11 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
     const typesKey = `${key}_types`;
 
     if (filter.all) {
-      instructionQuery[typesKey] = [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual];
+      instructionQuery[typesKey] = [
+        REMEDIATION_INSTRUCTION_TYPES.auto,
+        REMEDIATION_INSTRUCTION_TYPES.manual,
+        REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+      ];
     } else if (filter.auto || filter.manual) {
       instructionQuery[typesKey] = [];
 

@@ -79,7 +79,7 @@ export default {
           alarms: mapIds(this.items),
         };
 
-        await this.config?.action(data);
+        await this.config?.action?.(data);
 
         this.$modals.hide();
       }
