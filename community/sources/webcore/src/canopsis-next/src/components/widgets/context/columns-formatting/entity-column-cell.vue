@@ -18,11 +18,13 @@ import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import EntityColumnEventStatistics from './entity-column-event-statistics.vue';
 import EntityColumnPbehaviorInfo from './entity-column-pbehavior-info.vue';
+import EntityColumnState from './entity-column-state.vue';
 
 export default {
   components: {
     EntityColumnEventStatistics,
     EntityColumnPbehaviorInfo,
+    EntityColumnState,
   },
   mixins: [widgetColumnsFiltersMixin],
   props: {
@@ -73,7 +75,7 @@ export default {
     stateCellProperties() {
       const component = {
         bind: {
-          is: 'c-alarm-chip',
+          is: 'entity-column-state',
           type: ENTITY_INFOS_TYPE.state,
           value: this.value,
         },
@@ -81,6 +83,7 @@ export default {
 
       if (this.showRootCauseByStateClick && hasStateSetting(this.entity)) {
         component.bind.class = 'cursor-pointer';
+        component.bind.appendIconName = '$vuetify.icons.root_cause';
         component.on = {
           click: () => this.$emit('click:state', this.entity),
         };
