@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -181,10 +182,8 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 				if !childAlarm.Alarm.HasParentByEID(metaAlarm.EntityID) {
 					metaAlarm.AddChild(childAlarm.Alarm.EntityID)
 					childAlarm.Alarm.AddParent(metaAlarm.EntityID)
-					newStepMsg := p.getChildStepMsg(rule, metaAlarm, event)
-					newStep := types.NewAlarmStep(types.AlarmStepMetaAlarmAttach, event.Parameters.Timestamp,
-						event.Parameters.Author, newStepMsg, event.Parameters.User, event.Parameters.Role,
-						event.Parameters.Initiator, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
+					newStep := libevent.NewAlarmStep(types.AlarmStepMetaAlarmAttach, event.Parameters, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
+					newStep.Message = p.getChildStepMsg(rule, metaAlarm, event)
 					err := childAlarm.Alarm.Value.Steps.Add(newStep)
 					if err != nil {
 						return err
@@ -330,10 +329,8 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(
 				lastEventDate = childAlarm.Alarm.Value.LastEventDate
 			}
 
-			newStepMsg := p.getChildStepMsg(rule, metaAlarm, event)
-			newStep := types.NewAlarmStep(types.AlarmStepMetaAlarmAttach, event.Parameters.Timestamp,
-				event.Parameters.Author, newStepMsg, event.Parameters.User, event.Parameters.Role,
-				event.Parameters.Initiator, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
+			newStep := libevent.NewAlarmStep(types.AlarmStepMetaAlarmAttach, event.Parameters, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
+			newStep.Message = p.getChildStepMsg(rule, metaAlarm, event)
 			err = childAlarm.Alarm.Value.Steps.Add(newStep)
 			if err != nil {
 				return err
@@ -501,10 +498,8 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(
 				metaAlarm.RemoveChild(childAlarm.Entity.ID)
 				childrenIds = append(childrenIds, childAlarm.Entity.ID)
 				eventsCount -= childAlarm.Alarm.Value.EventsCount
-				newStepMsg := p.getChildStepMsg(rule, metaAlarm, event)
-				newStep := types.NewAlarmStep(types.AlarmStepMetaAlarmDetach, event.Parameters.Timestamp,
-					event.Parameters.Author, newStepMsg, event.Parameters.User, event.Parameters.Role,
-					event.Parameters.Initiator, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
+				newStep := libevent.NewAlarmStep(types.AlarmStepMetaAlarmDetach, event.Parameters, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
+				newStep.Message = p.getChildStepMsg(rule, metaAlarm, event)
 				err = childAlarm.Alarm.Value.Steps.Add(newStep)
 				if err != nil {
 					return err
