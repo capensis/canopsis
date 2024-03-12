@@ -45,10 +45,11 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	entity := *event.Entity
 	match := getOpenAlarmMatch(event)
 	match["v.canceled"] = nil
-	output := event.Parameters.Output
 	newStatus := types.CpsNumber(types.AlarmStatusCancelled)
-	newIncStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusIncrease, newStatus, output, event.Parameters)
-	newDecStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusDecrease, newStatus, output, event.Parameters)
+	newIncStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusIncrease, newStatus,
+		event.Parameters.Output, event.Parameters)
+	newDecStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusDecrease, newStatus,
+		event.Parameters.Output, event.Parameters)
 	newStepQuery := bson.M{"$cond": bson.M{
 		"if":   bson.M{"$gt": bson.A{newStatus, "$v.status.val"}},
 		"then": newIncStepStatusQuery,

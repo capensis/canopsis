@@ -43,6 +43,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	config.SetDbClientRetry(mongoClient, cfg)
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	actionAdapter := action.NewAdapter(mongoClient)
@@ -110,7 +111,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, templateExecutor),
+				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, templateExecutor, alarmConfigProvider),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -233,6 +234,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,
+		alarmConfigProvider,
 	))
 
 	healthcheck.Start(ctx, healthcheck.NewChecker(

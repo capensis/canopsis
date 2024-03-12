@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -25,7 +24,6 @@ import (
 
 func NewChangeStateProcessor(
 	client mongo.DbClient,
-	alarmConfigProvider config.AlarmConfigProvider,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
 	autoInstructionMatcher AutoInstructionMatcher,
@@ -42,7 +40,6 @@ func NewChangeStateProcessor(
 		client:                          client,
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		alarmConfigProvider:             alarmConfigProvider,
 		userInterfaceConfigProvider:     userInterfaceConfigProvider,
 		alarmStatusService:              alarmStatusService,
 		autoInstructionMatcher:          autoInstructionMatcher,
@@ -61,7 +58,6 @@ type changeStateProcessor struct {
 	client                          mongo.DbClient
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
-	alarmConfigProvider             config.AlarmConfigProvider
 	userInterfaceConfigProvider     config.UserInterfaceConfigProvider
 	alarmStatusService              alarmstatus.Service
 	autoInstructionMatcher          AutoInstructionMatcher
@@ -96,8 +92,6 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 	matchUpdate := getOpenAlarmMatch(event)
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-	conf := p.alarmConfigProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	var componentStateChanged bool
@@ -117,8 +111,9 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			return err
 		}
 
-		newStepState := types.NewAlarmStep(types.AlarmStepChangeState, event.Parameters.Timestamp, event.Parameters.Author, output,
-			event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		newStepState := types.NewAlarmStep(types.AlarmStepChangeState, event.Parameters.Timestamp, event.Parameters.Author,
+			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
+			!alarm.Value.PbehaviorInfo.IsDefaultActive())
 		newStepState.Value = *event.Parameters.State
 		alarmChange := types.NewAlarmChange()
 		alarmChange.PreviousState = alarm.Value.State.Value
@@ -143,8 +138,9 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 				"$push": bson.M{"v.steps": newStepState},
 			}
 		} else {
-			newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+			newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp,
+				event.Parameters.Author, event.Parameters.Output, event.Parameters.User, event.Parameters.Role,
+				event.Parameters.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 			newStepStatus.Value = newStatus
 			if alarm.Value.Status.Value > newStatus {
 				newStepStatus.Type = types.AlarmStepStatusDecrease

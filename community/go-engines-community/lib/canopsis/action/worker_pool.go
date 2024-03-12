@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -67,12 +68,13 @@ type WorkerPool interface {
 }
 
 type pool struct {
-	size             int
-	axeRpcClient     engine.RPCClient
-	webhookRpcClient engine.RPCClient
-	encoder          encoding.Encoder
-	logger           zerolog.Logger
-	templateExecutor template.Executor
+	size                int
+	axeRpcClient        engine.RPCClient
+	webhookRpcClient    engine.RPCClient
+	encoder             encoding.Encoder
+	logger              zerolog.Logger
+	templateExecutor    template.Executor
+	alarmConfigProvider config.AlarmConfigProvider
 
 	alarmCollection          mongo.DbCollection
 	webhookHistoryCollection mongo.DbCollection
@@ -86,14 +88,16 @@ func NewWorkerPool(
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 	templateExecutor template.Executor,
+	alarmConfigProvider config.AlarmConfigProvider,
 ) WorkerPool {
 	return &pool{
-		size:             size,
-		axeRpcClient:     axeRpcClient,
-		webhookRpcClient: webhookRpcClient,
-		encoder:          encoder,
-		logger:           logger,
-		templateExecutor: templateExecutor,
+		size:                size,
+		axeRpcClient:        axeRpcClient,
+		webhookRpcClient:    webhookRpcClient,
+		encoder:             encoder,
+		logger:              logger,
+		templateExecutor:    templateExecutor,
+		alarmConfigProvider: alarmConfigProvider,
 
 		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryMongoCollection),
@@ -258,8 +262,9 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	outputBuilder.WriteString(types.RuleNameScenarioPrefix)
 	outputBuilder.WriteString(task.ScenarioName)
 	if params.Output != "" {
+		alarmConfig := s.alarmConfigProvider.Get()
 		outputBuilder.WriteString(". Comment: ")
-		outputBuilder.WriteString(params.Output)
+		outputBuilder.WriteString(utils.TruncateString(params.Output, alarmConfig.OutputLength))
 		outputBuilder.WriteRune('.')
 	}
 

@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -63,8 +62,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.ack"] = nil
 	conf := p.configProvider.Get()
-	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAck,
-		utils.TruncateString(event.Parameters.Output, conf.OutputLength), event.Parameters)
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAck, event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.ack":   newStepQuery,
