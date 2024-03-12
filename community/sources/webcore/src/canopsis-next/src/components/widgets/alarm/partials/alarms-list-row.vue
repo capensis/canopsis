@@ -4,7 +4,6 @@
     class="alarm-list-row"
     v-on="listeners"
   >
-    {{ renderCount() }}
     <td
       v-if="hasRowActions"
       class="alarm-list-row__icons pr-0"
