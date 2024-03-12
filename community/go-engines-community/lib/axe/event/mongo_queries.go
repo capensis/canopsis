@@ -35,23 +35,23 @@ func getOpenAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
 }
 
 func stepUpdateQueryWithInPbhInterval(stepType, msg string, params rpc.AxeParameters) bson.M {
-	newStep := types.NewAlarmStep(stepType, params.Timestamp, params.Author, msg, params.User, params.Role,
-		params.Initiator, false)
+	newStep := NewAlarmStep(stepType, params, false)
+	newStep.Message = msg
 
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
 }
 
 func valStepUpdateQueryWithInPbhInterval(stepType string, value types.CpsNumber, msg string, params rpc.AxeParameters) bson.M {
-	newStep := types.NewAlarmStep(stepType, params.Timestamp, params.Author, msg, params.User, params.Role,
-		params.Initiator, false)
+	newStep := NewAlarmStep(stepType, params, false)
+	newStep.Message = msg
 	newStep.Value = value
 
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
 }
 
 func execStepUpdateQueryWithInPbhInterval(stepType, displayGroup, msg string, params rpc.AxeParameters) bson.M {
-	newStep := types.NewAlarmStep(stepType, params.Timestamp, params.Author, msg, params.User, params.Role,
-		params.Initiator, false)
+	newStep := NewAlarmStep(stepType, params, false)
+	newStep.Message = msg
 	newStep.Execution = params.Execution
 	newStep.DisplayGroup = displayGroup
 
@@ -59,8 +59,9 @@ func execStepUpdateQueryWithInPbhInterval(stepType, displayGroup, msg string, pa
 }
 
 func ticketStepUpdateQueryWithInPbhInterval(stepType string, displayGroup, msg string, params rpc.AxeParameters) bson.M {
-	newStep := types.NewTicketStep(stepType, params.Timestamp, params.Author, msg, params.User, params.Role,
-		params.Initiator, params.TicketInfo, false)
+	newStep := NewAlarmStep(stepType, params, false)
+	newStep.Message = msg
+	newStep.TicketInfo = params.TicketInfo
 	newStep.Execution = params.Execution
 	newStep.DisplayGroup = displayGroup
 

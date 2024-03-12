@@ -518,17 +518,3 @@ func (v *AlarmValue) Transform() {
 		v.Resolved = nil
 	}
 }
-
-func NewTicketStep(
-	stepType string,
-	timestamp datetime.CpsTime,
-	author, msg, userID, role, initiator string,
-	ticketInfo TicketInfo,
-	inPbehaviorInterval bool,
-) AlarmStep {
-	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator, inPbehaviorInterval)
-
-	s.TicketInfo = ticketInfo
-
-	return s
-}
