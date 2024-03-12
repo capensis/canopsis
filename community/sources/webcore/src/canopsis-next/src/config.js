@@ -306,6 +306,7 @@ export const API_ROUTES = {
   },
   availability: {
     list: '/api/v4/cat/availabilities',
+    history: '/api/v4/cat/availabilities-history',
     exportList: '/api/v4/cat/availability-export',
   },
 };

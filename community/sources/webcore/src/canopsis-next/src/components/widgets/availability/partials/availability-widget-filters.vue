@@ -66,6 +66,7 @@
       @input="debouncedEmitUpdateValueFilter"
     />
     <c-action-btn
+      v-if="showExport"
       :loading="exporting"
       :tooltip="$t('settings.exportAsCsv')"
       icon="cloud_download"
@@ -165,6 +166,10 @@ export default {
     },
     maxValueFilterSeconds: {
       type: Number,
+      required: false,
+    },
+    showExport: {
+      type: Boolean,
       required: false,
     },
   },

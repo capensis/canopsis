@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
-import { CANOPSIS_EDITION } from '@/constants';
+import { CANOPSIS_EDITION, EXPORT_STATUSES } from '@/constants';
 
 import request from '@/services/request';
 
@@ -1327,6 +1327,11 @@ export const createPlaylistModule = () => {
 };
 
 export const createAvailabilityModule = () => {
+  const exportAvailabilityData = {
+    _id: 'export-availability-id',
+    status: EXPORT_STATUSES.completed,
+  };
+
   const fetchAvailabilityWithoutStore = jest.fn().mockResolvedValue({
     availability: {
       uptime: 10,
@@ -1334,20 +1339,35 @@ export const createAvailabilityModule = () => {
       inactive_time: 5,
     },
   });
+  const fetchAvailabilityHistoryWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const createAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
+  const fetchAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
 
   afterEach(() => {
     fetchAvailabilityWithoutStore.mockClear();
+    fetchAvailabilityHistoryWithoutStore.mockClear();
+    createAvailabilityHistoryExport.mockClear();
+    fetchAvailabilityHistoryExport.mockClear();
   });
 
   const availabilityModule = {
     name: 'availability',
     actions: {
       fetchAvailabilityWithoutStore,
+      fetchAvailabilityHistoryWithoutStore,
+      createAvailabilityHistoryExport,
+      fetchAvailabilityHistoryExport,
     },
   };
 
   return {
     availabilityModule,
+    exportAvailabilityData,
     fetchAvailabilityWithoutStore,
+    fetchAvailabilityHistoryWithoutStore,
+    createAvailabilityHistoryExport,
+    fetchAvailabilityHistoryExport,
   };
 };
