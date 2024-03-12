@@ -8,9 +8,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	libamqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -22,11 +24,12 @@ type EventsSender interface {
 }
 
 type sender struct {
-	encoder         encoding.Encoder
-	pubChannel      amqp.Publisher
-	pubExchangeName string
-	pubQueueName    string
-	connector       string
+	encoder             encoding.Encoder
+	pubChannel          amqp.Publisher
+	pubExchangeName     string
+	pubQueueName        string
+	connector           string
+	alarmConfigProvider config.AlarmConfigProvider
 }
 
 func NewEventSender(
@@ -35,13 +38,15 @@ func NewEventSender(
 	pubExchangeName string,
 	pubQueueName string,
 	connector string,
+	alarmConfigProvider config.AlarmConfigProvider,
 ) EventsSender {
 	return &sender{
-		encoder:         encoder,
-		pubChannel:      pubChannel,
-		pubExchangeName: pubExchangeName,
-		pubQueueName:    pubQueueName,
-		connector:       connector,
+		encoder:             encoder,
+		pubChannel:          pubChannel,
+		pubExchangeName:     pubExchangeName,
+		pubQueueName:        pubQueueName,
+		connector:           connector,
+		alarmConfigProvider: alarmConfigProvider,
 	}
 }
 
@@ -118,6 +123,7 @@ func (s *sender) RecomputeService(ctx context.Context, serviceID string) error {
 }
 
 func (s *sender) UpdateServiceState(ctx context.Context, serviceID string, serviceInfo UpdatedServicesInfo) error {
+	alarmConfig := s.alarmConfigProvider.Get()
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeService,
@@ -125,7 +131,7 @@ func (s *sender) UpdateServiceState(ctx context.Context, serviceID string, servi
 		Connector:     s.connector,
 		ConnectorName: s.connector,
 		State:         types.CpsNumber(serviceInfo.State),
-		Output:        serviceInfo.Output,
+		Output:        utils.TruncateString(serviceInfo.Output, alarmConfig.OutputLength),
 		Timestamp:     datetime.NewCpsTime(),
 		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
