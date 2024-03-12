@@ -181,11 +181,6 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 			}
 		}
 
-		err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, event.Parameters.Output, p.alarmStatusService)
-		if err != nil {
-			return err
-		}
-
 		output := ""
 		if rule.IsManual() {
 			output = event.Parameters.Output
@@ -201,6 +196,11 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		}
 
 		metaAlarm.UpdateOutput(output)
+		err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, output, p.alarmStatusService)
+		if err != nil {
+			return err
+		}
+
 		metaAlarm.Value.EventsCount = eventsCount
 
 		err = p.adapter.Insert(ctx, metaAlarm)
@@ -306,13 +306,6 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		}
 
 		metaAlarm.IncrementEventsCount(eventsCount)
-		if worstState > metaAlarm.CurrentState() {
-			err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
-			if err != nil {
-				return err
-			}
-		}
-
 		childrenCount, err := p.adapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 		if err != nil {
 			return err
@@ -332,7 +325,17 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			}
 		}
 
+		if output == "" {
+			output = metaAlarm.Value.Output
+		}
+
 		metaAlarm.UpdateOutput(output)
+		if worstState > metaAlarm.CurrentState() {
+			err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, output, p.alarmStatusService)
+			if err != nil {
+				return err
+			}
+		}
 
 		return p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{metaAlarm}, updatedChildrenAlarms...))
 	})
@@ -419,12 +422,6 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 
 		metaAlarm.PartialUpdateLastEventDate(lastEventDate)
 		metaAlarm.IncrementEventsCount(eventsCount)
-
-		err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
-		if err != nil {
-			return err
-		}
-
 		infos := correlation.EventExtraInfosMeta{
 			Rule:  rule,
 			Count: int64(len(metaAlarmChildren)),
@@ -443,7 +440,15 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			}
 		}
 
+		if output == "" {
+			output = metaAlarm.Value.Output
+		}
+
 		metaAlarm.UpdateOutput(output)
+		err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, output, p.alarmStatusService)
+		if err != nil {
+			return err
+		}
 
 		return p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{metaAlarm}, updatedChildrenAlarms...))
 	})
