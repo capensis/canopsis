@@ -113,9 +113,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-rating-chart` with percent metrics', async () => {
@@ -128,9 +126,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-rating-chart` with seconds metrics', async () => {
@@ -143,9 +139,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-rating-chart` with counter metrics', async () => {
@@ -158,9 +152,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
     expect(wrapper).toMatchSnapshot();
   });
 

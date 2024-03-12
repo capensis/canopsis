@@ -172,3 +172,20 @@ export const mockXMLHttpRequest = () => {
 
   return request;
 };
+
+/**
+ * Mock console methods
+ *
+ * @return {Object}
+ */
+export const mockConsole = () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+  afterEach(() => {
+    consoleErrorSpy.mockReset();
+  });
+
+  return {
+    error: consoleErrorSpy,
+  };
+};
