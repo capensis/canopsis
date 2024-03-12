@@ -1,32 +1,34 @@
-<template lang="pug">
-  v-layout(column)
-    field-title(v-field="form.title")
-    field-periodic-refresh(v-field="form.parameters")
-    field-main-parameter(
-      v-field="form.parameters.mainParameter",
+<template>
+  <v-layout column>
+    <field-title v-field="form.title" />
+    <field-periodic-refresh v-field="form.parameters" />
+    <field-main-parameter
+      v-field="form.parameters.mainParameter"
       :type="type"
-    )
-    field-statistics-columns(
-      v-model="form.parameters.widgetColumns",
+    />
+    <field-statistics-columns
+      v-field="form.parameters.widgetColumns"
       :type="type"
-    )
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-title(
-        v-field="form.parameters.table_title",
-        :label="$tc('common.header')",
+    />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-title
+        v-field="form.parameters.table_title"
+        :label="$tc('common.header')"
         :placeholder="$t('settings.headerTitle')"
-      )
-      field-quick-date-interval-type(v-field="form.parameters.default_time_range")
-      field-filters(
-        v-if="showFilter",
-        v-field="form.parameters.mainFilter",
-        :filters="form.filters",
-        :widget-id="widget._id",
-        :addable="filterAddable",
-        :editable="filterEditable",
-        with-entity,
+      />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-filters
+        v-if="showFilter"
+        v-field="form.parameters.mainFilter"
+        :filters="form.filters"
+        :widget-id="widget._id"
+        :addable="filterAddable"
+        :editable="filterEditable"
+        with-entity
         @update:filters="updateField('filters', $event)"
-      )
+      />
+    </widget-settings-group>
+  </v-layout>
 </template>
 
 <script>

@@ -1,23 +1,36 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="failures",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :is-expandable-item="hasEvent",
-    expand,
-    advanced-pagination,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#status="{ item }")
-      c-circle-badge.error.text-uppercase(v-if="item.unread") {{ $t('common.new') }}
-    template(#t="{ item }") {{ item.t | date }}
-    template(#type="{ item }") {{ $t(`eventFilter.failureTypes.${item.type}`) }}
-    template(#message="{ item }")
-      span.pre-wrap {{ item.message }}
-    template(#expand="{ item }")
-      event-filter-failures-list-expand-panel(:failure="item")
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="failures"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :is-expandable-item="hasEvent"
+    expand
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #status="{ item }">
+      <c-circle-badge
+        v-if="item.unread"
+        class="error text-uppercase"
+      >
+        {{ $t('common.new') }}
+      </c-circle-badge>
+    </template>
+    <template #t="{ item }">
+      {{ item.t | date }}
+    </template>
+    <template #type="{ item }">
+      {{ $t(`eventFilter.failureTypes.${item.type}`) }}
+    </template>
+    <template #message="{ item }">
+      <span class="pre-wrap">{{ item.message }}</span>
+    </template>
+    <template #expand="{ item }">
+      <event-filter-failures-list-expand-panel :failure="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -38,7 +51,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

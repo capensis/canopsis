@@ -9,7 +9,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-enabled': true,
@@ -37,23 +36,23 @@ describe('declare-ticket-rules-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         declareTicketRules: [],
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `declare-ticket-rules-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         declareTicketRules,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Rule',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [true],
         },
         totalItems: 50,
         pending: true,
@@ -63,6 +62,6 @@ describe('declare-ticket-rules-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

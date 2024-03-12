@@ -1,16 +1,36 @@
-<template lang="pug">
-  v-form(data-test="createRoleModal", @submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        role-form(v-model="form", :with-template="config.withTemplate")
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary.white--text(
-          :disabled="isDisabled",
+<template>
+  <v-form
+    data-test="createRoleModal"
+    @submit.prevent="submit"
+  >
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <role-form
+          v-model="form"
+          :with-template="config.withTemplate"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          class="primary white--text"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

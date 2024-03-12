@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import DefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
 
 const stubs = {
@@ -25,18 +25,11 @@ describe('default-elements-per-page', () => {
       },
     });
 
-    const elementsPerPageField = selectElementsPerPageField(wrapper);
-
     const newValue = 10;
 
-    elementsPerPageField.vm.$emit('input', newValue);
+    selectElementsPerPageField(wrapper).triggerCustomEvent('input', newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `default-sort-column` with default props', () => {
@@ -44,7 +37,7 @@ describe('default-elements-per-page', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -57,7 +50,7 @@ describe('default-elements-per-page', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

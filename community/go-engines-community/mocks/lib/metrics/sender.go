@@ -228,6 +228,18 @@ func (mr *MockSenderMockRecorder) SendInstructionExecutionForInstruction(arg0, a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionExecutionForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionExecutionForInstruction), arg0, arg1)
 }
 
+// SendMessageRate mocks base method.
+func (m *MockSender) SendMessageRate(arg0 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendMessageRate", arg0)
+}
+
+// SendMessageRate indicates an expected call of SendMessageRate.
+func (mr *MockSenderMockRecorder) SendMessageRate(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessageRate", reflect.TypeOf((*MockSender)(nil).SendMessageRate), arg0)
+}
+
 // SendNotAckedInDayDec mocks base method.
 func (m *MockSender) SendNotAckedInDayDec(arg0 types.Alarm, arg1 time.Time) {
 	m.ctrl.T.Helper()
@@ -370,6 +382,18 @@ func (m *MockSender) SendResolve(arg0 types.Alarm, arg1 types.Entity, arg2 time.
 func (mr *MockSenderMockRecorder) SendResolve(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResolve", reflect.TypeOf((*MockSender)(nil).SendResolve), arg0, arg1, arg2)
+}
+
+// SendSliMetric mocks base method.
+func (m *MockSender) SendSliMetric(arg0 time.Time, arg1 types.Alarm, arg2 types.Entity) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendSliMetric", arg0, arg1, arg2)
+}
+
+// SendSliMetric indicates an expected call of SendSliMetric.
+func (mr *MockSenderMockRecorder) SendSliMetric(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendSliMetric", reflect.TypeOf((*MockSender)(nil).SendSliMetric), arg0, arg1, arg2)
 }
 
 // SendTicket mocks base method.

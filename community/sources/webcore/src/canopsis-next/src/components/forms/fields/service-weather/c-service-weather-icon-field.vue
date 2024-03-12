@@ -1,19 +1,22 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :label="label",
-    :items="availableIcons",
-    :loading="pending",
-    :name="name",
-    :error-messages="errors.collect(name)",
+<template>
+  <v-select
+    v-field="value"
+    :label="label"
+    :items="availableIcons"
+    :loading="pending"
+    :name="name"
+    :error-messages="errors.collect(name)"
     item-value="icon"
-  )
-    template(#selection="{ item }")
-      v-icon {{ item.icon }}
-      span.ml-2 {{ item.text }}
-    template(#item="{ item }")
-      v-icon {{ item.icon }}
-      span.ml-2 {{ item.text }}
+  >
+    <template #selection="{ item }">
+      <v-icon>{{ item.icon }}</v-icon>
+      <span class="ml-2">{{ item.text }}</span>
+    </template>
+    <template #item="{ item }">
+      <v-icon>{{ item.icon }}</v-icon>
+      <span class="ml-2">{{ item.text }}</span>
+    </template>
+  </v-select>
 </template>
 
 <script>

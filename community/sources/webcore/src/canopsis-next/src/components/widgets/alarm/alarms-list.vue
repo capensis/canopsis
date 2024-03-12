@@ -1,122 +1,146 @@
-<template lang="pug">
-  div
-    v-layout(
-      v-if="!hideToolbar",
-      :class="{ 'mb-4': !dense }",
-      row,
-      wrap,
-      justify-space-between,
+<template>
+  <div class="alarms-list">
+    <v-layout
+      v-if="!hideToolbar"
+      :class="['alarms-list__toolbar', { 'mb-4': !dense }]"
+      wrap
+      justify-space-between
       align-end
-    )
-      v-flex
-        c-advanced-search-field(
-          :query.sync="query",
-          :columns="widget.parameters.widgetColumns",
-          :tooltip="$t('alarm.advancedSearch')",
-          :items="searches",
-          combobox,
-          @submit="updateSearchesInUserPreferences",
-          @toggle-pin="togglePinSearchInUserPreferences",
+    >
+      <v-flex>
+        <c-advanced-search-field
+          :query.sync="query"
+          :columns="widget.parameters.widgetColumns"
+          :tooltip="$t('alarm.advancedSearch')"
+          :items="searches"
+          combobox
+          @submit="updateSearchesInUserPreferences"
+          @toggle-pin="togglePinSearchInUserPreferences"
           @remove="removeSearchFromUserPreferences"
-        )
-      v-flex(v-if="hasAccessToCategory")
-        c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
-      v-flex(v-if="hasAccessToCorrelation")
-        v-switch.mt-0(
-          :value="query.correlation",
-          :label="$t('common.correlation')",
-          color="primary",
-          hide-details,
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToCategory">
+        <c-entity-category-field
+          :category="query.category"
+          class="mr-3 mt-0"
+          hide-details
+          @input="updateCategory"
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToCorrelation">
+        <v-switch
+          :value="query.correlation"
+          :label="$t('common.correlation')"
+          class="mt-0"
+          color="primary"
+          hide-details
           @change="updateCorrelation"
-        )
-      v-flex
-        v-layout(v-if="hasAccessToUserFilter", row, align-end)
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="userPreference.filters",
-            :locked-filters="widget.filters",
-            :locked-value="lockedFilter",
-            :value="mainFilter",
-            :disabled="!hasAccessToListFilters",
-            :clearable="!widget.parameters.clearFilterDisabled",
-            hide-details,
+        />
+      </v-flex>
+      <v-flex>
+        <v-layout
+          v-if="hasAccessToUserFilter"
+          align-end
+        >
+          <filter-selector
+            :label="$t('settings.selectAFilter')"
+            :filters="userPreference.filters"
+            :locked-filters="widget.filters"
+            :locked-value="lockedFilter"
+            :value="mainFilter"
+            :disabled="!hasAccessToListFilters"
+            :clearable="!widget.parameters.clearFilterDisabled"
+            hide-details
             @input="updateSelectedFilter"
-          )
-          filters-list-btn(
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
-            :widget-id="widget._id",
-            :addable="hasAccessToAddFilter",
-            :editable="hasAccessToEditFilter",
-            private,
-            with-alarm,
-            with-entity,
+          />
+          <filters-list-btn
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
+            :widget-id="widget._id"
+            :addable="hasAccessToAddFilter"
+            :editable="hasAccessToEditFilter"
+            private
+            with-alarm
+            with-entity
             with-pbehavior
-          )
-      v-flex(v-if="hasAccessToFilterByBookmark")
-        v-switch.mt-0(
-          :value="query.only_bookmarks",
-          :label="$t('alarm.filterByBookmark')",
-          color="primary",
-          hide-details,
+          />
+        </v-layout>
+      </v-flex>
+      <v-flex v-if="hasAccessToFilterByBookmark">
+        <v-switch
+          :value="query.only_bookmarks"
+          :label="$t('alarm.filterByBookmark')"
+          class="mt-0"
+          color="primary"
+          hide-details
           @change="updateOnlyBookmarks"
-        )
-      v-flex
-        alarms-list-remediation-instructions-filters(
-          :filters.sync="remediationInstructionsFilters",
-          :locked-filters.sync="widgetRemediationInstructionsFilters",
-          :editable="hasAccessToEditRemediationInstructionsFilter",
-          :addable="hasAccessToUserRemediationInstructionsFilter",
+        />
+      </v-flex>
+      <v-flex>
+        <alarms-list-remediation-instructions-filters
+          :filters.sync="remediationInstructionsFilters"
+          :locked-filters.sync="widgetRemediationInstructionsFilters"
+          :editable="hasAccessToEditRemediationInstructionsFilter"
+          :addable="hasAccessToUserRemediationInstructionsFilter"
           :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
-        )
-      v-flex
-        v-chip.primary.white--text(
-          v-if="activeRange",
-          close,
-          label,
-          @input="removeHistoryFilter"
-        ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
-        c-action-btn(
-          :tooltip="$t('alarm.liveReporting')",
-          :color="activeRange ? 'primary' : ''",
-          icon="schedule",
+        />
+      </v-flex>
+      <v-flex>
+        <v-chip
+          v-if="activeRange"
+          class="primary white--text"
+          close
+          label
+          @click:close="removeHistoryFilter"
+        >
+          {{ $t(`quickRanges.types.${activeRange.value}`) }}
+        </v-chip>
+        <c-action-btn
+          :tooltip="$t('alarm.liveReporting')"
+          :color="activeRange ? 'primary' : ''"
+          icon="schedule"
           @click="showEditLiveReportModal"
-        )
-      v-flex(v-if="hasAccessToExportAsCsv")
-        c-action-btn(
-          :loading="downloading",
-          :tooltip="$t('settings.exportAsCsv')",
-          icon="cloud_download",
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToExportAsCsv">
+        <c-action-btn
+          :loading="downloading"
+          :tooltip="$t('settings.exportAsCsv')"
+          icon="cloud_download"
           @click="exportAlarmsList"
-        )
-    alarms-list-table.mt-1(
-      ref="alarmsTable",
-      :widget="widget",
-      :alarms="alarms",
-      :total-items="alarmsMeta.total_count",
-      :pagination.sync="pagination",
-      :loading="alarmsPending",
-      :hide-children="!query.correlation",
-      :columns="widget.parameters.widgetColumns",
-      :sticky-header="widget.parameters.sticky_header",
-      :dense="dense",
-      :refresh-alarms-list="fetchList",
-      :selected-tag="query.tag",
-      :search="query.search",
-      :selectable="!hideMassSelection",
-      :hide-actions="hideActions",
-      :resizable-column="resizableColumn",
-      :draggable-column="draggableColumn",
-      :cells-content-behavior="cellsContentBehavior",
-      :columns-settings="columnsSettings",
-      expandable,
-      densable,
-      @select:tag="selectTag",
-      @update:dense="updateDense",
-      @update:page="updateQueryPage",
-      @update:rows-per-page="updateRecordsPerPage",
-      @update:columns-settings="updateColumnsSettings",
+        />
+      </v-flex>
+    </v-layout>
+    <alarms-list-table
+      ref="alarmsTable"
+      :widget="widget"
+      :alarms="alarms"
+      :total-items="alarmsMeta.total_count"
+      :options.sync="options"
+      :loading="alarmsPending"
+      :hide-children="!query.correlation"
+      :columns="widget.parameters.widgetColumns"
+      :sticky-header="widget.parameters.sticky_header"
+      :dense="dense"
+      :refresh-alarms-list="fetchList"
+      :selected-tag="query.tag"
+      :search="query.search"
+      :selectable="!hideMassSelection"
+      :hide-actions="hideActions"
+      :resizable-column="resizableColumn"
+      :draggable-column="draggableColumn"
+      :cells-content-behavior="cellsContentBehavior"
+      :columns-settings="columnsSettings"
+      class="mt-2"
+      expandable
+      densable
+      @select:tag="selectTag"
+      @update:dense="updateDense"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+      @update:columns-settings="updateColumnsSettings"
       @clear:tag="clearTag"
-    )
+    />
+  </div>
 </template>
 
 <script>
@@ -126,6 +150,8 @@ import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
+import { setSeveralFields } from '@/helpers/immutable';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -145,6 +171,7 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -176,6 +203,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
+    entitiesWidgetMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
@@ -257,6 +285,9 @@ export default {
       return !!this.widget.parameters?.columns?.draggable;
     },
   },
+  created() {
+    this.actualizeUsedProperties();
+  },
   methods: {
     refreshExpanded() {
       if (this.$refs.alarmsTable?.expanded) {
@@ -324,24 +355,19 @@ export default {
       };
     },
 
-    updateRecordsPerPage(limit) {
-      this.updateContentInUserPreference({ itemsPerPage: limit });
+    updateItemsPerPage(itemsPerPage) {
+      this.updateContentInUserPreference({ itemsPerPage });
 
       this.query = {
         ...this.query,
 
-        limit,
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
       };
     },
 
     updateDense(dense) {
       this.updateContentInUserPreference({ dense });
-    },
-
-    expandFirstAlarm() {
-      if (!this.firstAlarmExpanded) {
-        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
-      }
     },
 
     removeHistoryFilter() {
@@ -450,6 +476,29 @@ export default {
         this.downloading = false;
       }
     },
+
+    actualizeUsedProperties() {
+      const unwatch = this.$watch(() => this.query.active_columns, (activeColumns) => {
+        if (!isEqual(activeColumns, this.widget.parameters.usedAlarmProperties)) {
+          this.updateWidget({
+            id: this.widget._id,
+            data: setSeveralFields(this.widget, {
+              'parameters.usedAlarmProperties': activeColumns,
+            }),
+          });
+        }
+
+        unwatch();
+      });
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.alarms-list {
+  &__toolbar {
+    z-index: 3;
+  }
+}
+</style>

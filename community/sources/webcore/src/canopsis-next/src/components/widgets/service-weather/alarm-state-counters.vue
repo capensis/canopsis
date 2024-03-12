@@ -1,19 +1,27 @@
-<template lang="pug">
-  v-tooltip(top)
-    template(#activator="{ on }")
-      v-layout.alarm-counters.fill-height(v-on="on", column)
-        alarm-counter(
-          v-for="counter in preparedCounters",
-          :key="counter.name",
-          :count="counter.count",
-          :color="counter.color",
+<template>
+  <v-tooltip top>
+    <template #activator="{ on }">
+      <v-layout
+        class="alarm-counters fill-height"
+        column
+        v-on="on"
+      >
+        <alarm-counter
+          v-for="counter in preparedCounters"
+          :key="counter.name"
+          :count="counter.count"
+          :color="counter.color"
           :icon="counter.icon"
-        )
-    v-layout(column)
-      span(
-        v-for="(counter, index) in preparedCounters",
+        />
+      </v-layout>
+    </template>
+    <v-layout column>
+      <span
+        v-for="(counter, index) in preparedCounters"
         :key="counter.name"
-      ) {{ countersMessages[index] }}
+      >{{ countersMessages[index] }}</span>
+    </v-layout>
+  </v-tooltip>
 </template>
 
 <script>

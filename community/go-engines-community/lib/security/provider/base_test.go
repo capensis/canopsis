@@ -2,11 +2,12 @@ package provider
 
 import (
 	"context"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	mock_password "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/password"
 	"github.com/golang/mock/gomock"
-	"testing"
 )
 
 func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.T) {

@@ -37,9 +37,9 @@ describe('dynamic-info-form', () => {
       description: Faker.datatype.string(),
     };
 
-    dynamicInfoGeneralForm.vm.$emit('input', newForm);
+    dynamicInfoGeneralForm.triggerCustomEvent('input', newForm);
 
-    expect(wrapper).toEmit('input', newForm);
+    expect(wrapper).toEmitInput(newForm);
   });
 
   test('Dynamic info infos changed after trigger infos form', () => {
@@ -61,9 +61,9 @@ describe('dynamic-info-form', () => {
       },
     ];
 
-    dynamicInfoInfosForm.vm.$emit('input', newInfos);
+    dynamicInfoInfosForm.triggerCustomEvent('input', newInfos);
 
-    expect(wrapper).toEmit('input', { infos: newInfos });
+    expect(wrapper).toEmitInput({ infos: newInfos });
   });
 
   test('Dynamic info patterns changed after trigger patterns form', () => {
@@ -83,9 +83,9 @@ describe('dynamic-info-form', () => {
       entity_pattern: {},
     };
 
-    patternsForm.vm.$emit('input', newPatterns);
+    patternsForm.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       infos: [],
       patterns: newPatterns,
     });
@@ -100,7 +100,7 @@ describe('dynamic-info-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `dynamic-info-form` with custom props', () => {
@@ -114,7 +114,7 @@ describe('dynamic-info-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `dynamic-info-form` with errors', async () => {
@@ -132,6 +132,6 @@ describe('dynamic-info-form', () => {
       hasPatternsFormAnyError: true,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

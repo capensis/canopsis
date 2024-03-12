@@ -1,4 +1,4 @@
-//nolint
+// nolint
 // no lint until #4082 has not fixed
 package main
 
@@ -232,10 +232,7 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 		newResourcesMap: newResourcesMap,
 	}
 
-	if err := f.flags.ParseArgs(); err != nil {
-		return nil, err
-	}
-
+	f.flags.ParseArgs()
 	if f.flags.Version {
 		canopsis.PrintVersionInfo()
 		os.Exit(0)

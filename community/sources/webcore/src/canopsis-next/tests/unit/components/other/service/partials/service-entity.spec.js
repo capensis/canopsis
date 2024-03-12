@@ -1,7 +1,7 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
-
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ENTITY_TYPES, MODALS, PBEHAVIOR_TYPE_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';
@@ -25,7 +25,7 @@ const snapshotStubs = {
 
 const selectServiceEntityHeader = wrapper => wrapper.find('service-entity-header-stub');
 const selectServiceEntityInfoTab = wrapper => wrapper.find('service-entity-info-tab-stub');
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectTabItemByIndex = (wrapper, index) => selectTabItems(wrapper).at(index);
 
 describe('service-entity', () => {
@@ -81,7 +81,7 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.vm.$emit('update:selected');
+    await header.triggerCustomEvent('update:selected');
 
     expect(updateSelected).toHaveBeenCalled();
   });
@@ -91,7 +91,7 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.vm.$emit('remove:unavailable');
+    await header.triggerCustomEvent('remove:unavailable');
 
     expect(removeUnavailable).toHaveBeenCalled();
   });
@@ -102,7 +102,7 @@ describe('service-entity', () => {
     const info = selectServiceEntityInfoTab(wrapper);
     const assignedInstruction = {};
 
-    await info.vm.$emit('execute', assignedInstruction);
+    await info.triggerCustomEvent('execute', assignedInstruction);
 
     expect($modals.show).toBeCalledWith(
       {
@@ -120,22 +120,25 @@ describe('service-entity', () => {
 
     modalArguments.config.onClose();
 
-    expect(wrapper).toEmit('refresh');
+    expect(wrapper).toHaveBeenEmit('refresh');
   });
 
-  test('Renders `service-entity` with default props', () => {
+  test('Renders `service-entity` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `service-entity` with custom props', () => {
+  test('Renders `service-entity` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         entity: {
           _id: 'service-id',
           source_type: ENTITY_TYPES.component,
           pbehaviors: [],
+          alarm_id: 'alarm-id',
         },
         selected: true,
         lastActionUnavailable: true,
@@ -146,15 +149,19 @@ describe('service-entity', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity` with tree of deps tab', async () => {
     const wrapper = snapshotFactory({});
 
+    await wrapper.openAllExpansionPanels();
+
     await selectTabItemByIndex(wrapper, 1).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity` with pbehaviors tab', async () => {
@@ -168,9 +175,11 @@ describe('service-entity', () => {
       store: createMockedStoreModules([authModule]),
     });
 
+    await wrapper.openAllExpansionPanels();
+
     await selectTabItemByIndex(wrapper, 2).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity` after opened flag updated', async () => {
@@ -178,6 +187,6 @@ describe('service-entity', () => {
 
     await wrapper.setData({ opened: [true] });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

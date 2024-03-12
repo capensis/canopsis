@@ -27,13 +27,11 @@ describe('c-description-field', () => {
       },
     });
 
-    const textareaNode = selectTextareaNode(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textareaNode.$emit('input', newValue);
+    selectTextareaNode(wrapper).$emit('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `c-description-field` with default props', async () => {
@@ -43,7 +41,7 @@ describe('c-description-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-description-field` with custom props', async () => {
@@ -57,7 +55,7 @@ describe('c-description-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-description-field` with errors', async () => {
@@ -72,6 +70,6 @@ describe('c-description-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -37,7 +38,7 @@ func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.
 		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.Name}).Err()
 		if err == nil {
 			sl.ReportError(r.Name, "Name", "Name", "unique", "")
-		} else if err != mongodriver.ErrNoDocuments {
+		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			panic(err)
 		}
 	}
@@ -49,7 +50,7 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 	if r.DefaultView != "" {
 		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
 			} else {
 				panic(err)

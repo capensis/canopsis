@@ -1,16 +1,45 @@
-<template lang="pug">
-  div
-    template(v-if="source")
-      v-layout(v-for="field in fields", :key="field", row)
-        v-chip.chip-small.va-middle(color="info", text-color="white")
-          span {{ field }}
-        v-icon.va-middle arrow_right_alt
-        v-chip.chip-small.va-middle(v-show="source[field]", color="warning", text-color="white")
-          span {{ source[field] }}
-    template(v-else)
-      v-layout(v-for="field in fields", :key="field", row)
-        v-chip.chip-small.va-middle(color="info", text-color="white")
-          span {{ field }}
+<template>
+  <div>
+    <template v-if="source">
+      <v-layout
+        v-for="field in fields"
+        :key="field"
+      >
+        <v-chip
+          class="chip-small va-middle"
+          color="info"
+          text-color="white"
+        >
+          <span>{{ field }}</span>
+        </v-chip>
+        <v-icon class="va-middle">
+          arrow_right_alt
+        </v-icon>
+        <v-chip
+          v-show="source[field]"
+          class="chip-small va-middle"
+          color="warning"
+          text-color="white"
+        >
+          <span>{{ source[field] }}</span>
+        </v-chip>
+      </v-layout>
+    </template>
+    <template v-else>
+      <v-layout
+        v-for="field in fields"
+        :key="field"
+      >
+        <v-chip
+          class="chip-small va-middle"
+          color="info"
+          text-color="white"
+        >
+          <span>{{ field }}</span>
+        </v-chip>
+      </v-layout>
+    </template>
+  </div>
 </template>
 
 <script>

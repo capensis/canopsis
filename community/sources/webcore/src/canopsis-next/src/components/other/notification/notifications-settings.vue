@@ -1,16 +1,37 @@
-<template lang="pug">
-  v-layout.my-2(justify-center)
-    v-progress-circular(v-if="!form", color="primary", indeterminate)
-    v-flex(v-else, offset-xs1, md10)
-      v-form(@submit.prevent="submit")
-        notifications-settings-form(v-model="form")
-        v-divider.mt-3
-        v-layout.mt-3(row, justify-end)
-          v-btn.primary.mr-0(
-            :disabled="isDisabled",
-            :loading="submitting",
+<template>
+  <v-layout
+    class="my-2"
+    justify-center
+  >
+    <v-progress-circular
+      v-if="!form"
+      color="primary"
+      indeterminate
+    />
+    <v-flex
+      v-else
+      offset-xs1
+      md10
+    >
+      <v-form @submit.prevent="submit">
+        <notifications-settings-form v-model="form" />
+        <v-divider class="mt-3" />
+        <v-layout
+          class="mt-3"
+          justify-end
+        >
+          <v-btn
+            :disabled="isDisabled"
+            :loading="submitting"
+            class="primary mr-0"
             type="submit"
-          ) {{ $t('common.submit') }}
+          >
+            {{ $t('common.submit') }}
+          </v-btn>
+        </v-layout>
+      </v-form>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

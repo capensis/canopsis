@@ -1,8 +1,9 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
-import MermaidThemeField from '@/components/other/map/form/fields/mermaid-theme-field.vue';
+
 import { MERMAID_THEMES } from '@/constants';
+
+import MermaidThemeField from '@/components/other/map/form/fields/mermaid-theme-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -23,9 +24,9 @@ describe('mermaid-theme-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', MERMAID_THEMES.default);
+    selectField.triggerCustomEvent('input', MERMAID_THEMES.default);
 
-    expect(wrapper).toEmit('input', MERMAID_THEMES.default);
+    expect(wrapper).toEmitInput(MERMAID_THEMES.default);
   });
 
   test('Renders `mermaid-theme-field` with default props', () => {
@@ -35,7 +36,7 @@ describe('mermaid-theme-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -48,7 +49,7 @@ describe('mermaid-theme-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

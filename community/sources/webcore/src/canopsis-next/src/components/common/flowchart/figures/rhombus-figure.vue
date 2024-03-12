@@ -1,5 +1,8 @@
-<template lang="pug">
-  path(v-on="$listeners", :d="rhombusPath")
+<template>
+  <path
+    :d="rhombusPath"
+    v-on="$listeners"
+  />
 </template>
 
 <script>

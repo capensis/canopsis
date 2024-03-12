@@ -2,7 +2,8 @@ package types
 
 import (
 	"strconv"
-	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // AlarmChangeType is a type representing a change that can occur on an alarm.
@@ -74,33 +75,36 @@ const (
 
 	// AlarmChangeEventsCount is used for eventscount trigger and alarm's events_count value should be added to the end of a trigger name, e.g. "eventscount3"
 	AlarmChangeEventsCount AlarmChangeType = "eventscount"
+
+	AlarmChangeTypeMetaAlarmChildActivate   AlarmChangeType = "metaalarmchildactivate"
+	AlarmChangeTypeMetaAlarmChildDeactivate AlarmChangeType = "metaalarmchilddeactivate"
 )
 
 const MinimalEventsCountThreshold = 2
 
-// AlarmChange is a struct containing the type of change that occured on an
+// AlarmChange is a struct containing the type of change that occurred on an
 // alarm, as well as its previous state.
 type AlarmChange struct {
-	Type                            AlarmChangeType
-	PreviousState                   CpsNumber
-	PreviousStateChange             CpsTime
-	PreviousStatus                  CpsNumber
-	PreviousStatusChange            CpsTime
-	PreviousPbehaviorTime           *CpsTime
-	PreviousEntityPbehaviorTime     *CpsTime
-	PreviousPbehaviorTypeID         string
-	PreviousPbehaviorCannonicalType string
+	Type                            AlarmChangeType   `json:"Type"`
+	PreviousState                   CpsNumber         `json:"PreviousState"`
+	PreviousStateChange             datetime.CpsTime  `json:"PreviousStateChange"`
+	PreviousStatus                  CpsNumber         `json:"PreviousStatus"`
+	PreviousStatusChange            datetime.CpsTime  `json:"PreviousStatusChange"`
+	PreviousPbehaviorTime           *datetime.CpsTime `json:"PreviousPbehaviorTime"`
+	PreviousEntityPbehaviorTime     *datetime.CpsTime `json:"PreviousEntityPbehaviorTime"`
+	PreviousPbehaviorTypeID         string            `json:"PreviousPbehaviorTypeID"`
+	PreviousPbehaviorCannonicalType string            `json:"PreviousPbehaviorCannonicalType"`
 
-	EventsCount int
+	EventsCount int `json:"EventsCount"`
 }
 
 func NewAlarmChange() AlarmChange {
 	return AlarmChange{
 		Type:                 AlarmChangeTypeNone,
 		PreviousState:        AlarmStateOK,
-		PreviousStateChange:  CpsTime{Time: time.Now()},
+		PreviousStateChange:  datetime.NewCpsTime(),
 		PreviousStatus:       AlarmStatusOff,
-		PreviousStatusChange: CpsTime{Time: time.Now()},
+		PreviousStatusChange: datetime.NewCpsTime(),
 	}
 }
 
@@ -153,7 +157,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
 		AlarmChangeTypeAutoDeclareTicketWebhookFail,
-		AlarmChangeTypeAutoInstructionActivate:
+		AlarmChangeTypeAutoInstructionActivate,
+		AlarmChangeTypeMetaAlarmChildActivate,
+		AlarmChangeTypeMetaAlarmChildDeactivate:
 		// not a trigger
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:

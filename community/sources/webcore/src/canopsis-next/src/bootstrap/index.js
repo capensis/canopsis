@@ -5,6 +5,7 @@ import * as constants from '@/constants';
 import * as config from '@/config';
 
 /* eslint-disable import/order */
+import { createVuetify } from '@/plugins/vuetify';
 import { bootstrapApplicationPlugins } from './plugins';
 import { registerApplicationComponents } from './components';
 /* eslint-enable import/order */
@@ -12,6 +13,8 @@ import { registerApplicationComponents } from './components';
 import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
+
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 import App from '@/app.vue';
 
@@ -27,6 +30,15 @@ export const bootstrapApplication = (Vue) => {
     },
   });
 
+  const vuetify = createVuetify(Vue, {
+    theme: {
+      dark: false,
+      themes: {
+        light: themePropertiesToCSSVariables(config.DEFAULT_THEME_COLORS),
+        dark: themePropertiesToCSSVariables(config.DEFAULT_THEME_COLORS),
+      },
+    },
+  });
   bootstrapApplicationPlugins(Vue);
   registerApplicationComponents(Vue);
 
@@ -47,6 +59,7 @@ export const bootstrapApplication = (Vue) => {
   Vue.prototype.$config = deepFreeze(config);
 
   return new Vue({
+    vuetify,
     router,
     store,
     i18n,

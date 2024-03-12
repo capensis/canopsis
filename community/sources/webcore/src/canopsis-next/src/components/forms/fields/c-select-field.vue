@@ -1,24 +1,45 @@
-<template lang="pug">
-  component.c-select-field(
-    :value="value",
-    v-bind="$attrs",
-    v-on="$listeners",
-    v-validate="rules",
-    :class="{ 'c-select-field--ellipsis': ellipsis }",
-    :is="component",
-    :item-text="itemText",
-    :item-value="itemValue",
-    :name="name",
-    :error-messages="errors.collect(name)",
+<template>
+  <component
+    v-bind="$attrs"
+    :is="component"
+    v-validate="rules"
     ref="select"
-  )
-    template(v-if="$scopedSlots.selection || ellipsis", #selection="props")
-      slot(name="selection", v-bind="props")
-        span.ellipsis {{ getItemText(props.item) }}
-    template(v-if="$scopedSlots.item", #item="props")
-      slot(name="item", v-bind="props")
-    template(v-if="$scopedSlots['append-item']", #append-item="")
-      slot(name="append-item")
+    :value="value"
+    :class="{ 'c-select-field--ellipsis': ellipsis }"
+    :item-text="itemText"
+    :item-value="itemValue"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    class="c-select-field"
+    v-on="$listeners"
+  >
+    <template
+      v-if="$scopedSlots.selection || ellipsis"
+      #selection="props"
+    >
+      <slot
+        name="selection"
+        v-bind="props"
+      >
+        <span class="text-truncate">{{ getItemText(props.item) }}</span>
+      </slot>
+    </template>
+    <template
+      v-if="$scopedSlots.item"
+      #item="props"
+    >
+      <slot
+        name="item"
+        v-bind="props"
+      />
+    </template>
+    <template
+      v-if="$scopedSlots['append-item']"
+      #append-item=""
+    >
+      <slot name="append-item" />
+    </template>
+  </component>
 </template>
 
 <script>

@@ -10,8 +10,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -85,10 +88,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		"enabled": true,
 	}})
 	q.lookups = []lookupWithKey{
-		{key: "category", pipeline: getCategoryLookup()},
+		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
@@ -105,7 +108,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear()
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
@@ -113,12 +116,12 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 		"enabled":  true,
 	}})
 	q.lookups = []lookupWithKey{
-		{key: "category", pipeline: getCategoryLookup()},
+		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
-		{key: "depends_count", pipeline: getDependsCountPipeline()},
+		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()},
 	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
@@ -270,7 +273,7 @@ func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
 }
 
 func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
-	entityPatternQuery, err := entityPattern.ToMongoQuery("")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
 	if err != nil {
 		return err
 	}
@@ -337,18 +340,6 @@ func (q *MongoQueryBuilder) handleSort(sortBy, sort string) {
 	}
 
 	q.sort = bson.M{"$sort": sortQuery}
-}
-
-func getCategoryLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "category",
-			"foreignField": "_id",
-			"as":           "category",
-		}},
-		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-	}
 }
 
 func getAlarmLookup() []bson.M {
@@ -451,29 +442,6 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 	return pipeline
 }
 
-func getPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior_info.type",
-			"as":           "pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-		{"$project": bson.M{"pbehavior_info_type": 0}},
-	}
-}
-
 func getPbehaviorAlarmCountersLookup() []bson.M {
 	defaultVal := StateIconOk
 	stateVals := []bson.M{
@@ -494,7 +462,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	return []bson.M{
 		{
 			"$lookup": bson.M{
-				"from":         mongo.EntityServiceCountersCollection,
+				"from":         mongo.EntityCountersCollection,
 				"localField":   "_id",
 				"foreignField": "_id",
 				"as":           "counters",
@@ -590,6 +558,13 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 							}},
 							"then": "$pbehavior_info.icon_name",
 						},
+						{
+							"case": bson.M{"$and": []bson.M{
+								{"$gt": bson.A{"$counters.under_pbh", 0}},
+								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
+							}},
+							"then": "",
+						},
 					},
 					stateVals...,
 				),
@@ -636,13 +611,12 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 func getPbhOriginLookup(origin string) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.PbehaviorMongoCollection,
-			"let":  bson.M{"id": "$_id"},
+			"from":         mongo.PbehaviorMongoCollection,
+			"localField":   "_id",
+			"foreignField": "entity",
 			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$$id", "$entity"}}},
-					{"origin": origin},
-				}}},
+				{"$match": bson.M{"origin": origin}},
+				{"$limit": 1},
 			},
 			"as": "pbh_origin",
 		}},
@@ -661,7 +635,7 @@ func getPbhOriginLookup(origin string) []bson.M {
 	}
 }
 
-func getEventStatsLookup(now types.CpsTime) []bson.M {
+func getEventStatsLookup(now datetime.CpsTime) []bson.M {
 	year, month, day := now.Date()
 	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, now.Location()).Unix()
 
@@ -724,23 +698,5 @@ func getListDependenciesComputedFields() bson.M {
 			),
 			"default": defaultVal,
 		}},
-	}
-}
-
-func getDependsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "services",
-			"as":           "depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$addFields": bson.M{
-			"depends_count": bson.M{"$size": "$depends"},
-		}},
-		{"$project": bson.M{"depends": 0}},
 	}
 }

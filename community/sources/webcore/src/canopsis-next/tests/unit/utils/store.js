@@ -6,6 +6,7 @@ import Faker from 'faker';
 import { CANOPSIS_EDITION } from '@/constants';
 
 import request from '@/services/request';
+
 import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
 /**
@@ -540,6 +541,16 @@ export const createServiceModule = () => {
     data: [],
     meta: { total_count: 0 },
   });
+  const fetchDependenciesWithoutStore = jest.fn()
+    .mockResolvedValue({
+      data: [],
+      meta: {},
+    });
+  const fetchImpactsWithoutStore = jest.fn()
+    .mockResolvedValue({
+      data: [],
+      meta: {},
+    });
   const fetchServiceAlarmsWithoutStore = jest.fn();
   const fetchServicesList = jest.fn();
   const getServicesPendingByWidgetId = jest.fn().mockReturnValue(false);
@@ -556,6 +567,8 @@ export const createServiceModule = () => {
     actions: {
       fetchInfosKeysWithoutStore: fetchEntityInfosKeysWithoutStore,
       fetchAlarmsWithoutStore: fetchServiceAlarmsWithoutStore,
+      fetchDependenciesWithoutStore,
+      fetchImpactsWithoutStore,
       fetchList: fetchServicesList,
     },
   };
@@ -567,7 +580,25 @@ export const createServiceModule = () => {
     fetchEntityInfosKeysWithoutStore,
     fetchServicesList,
     fetchServiceAlarmsWithoutStore,
+    fetchDependenciesWithoutStore,
+    fetchImpactsWithoutStore,
     serviceModule,
+  };
+};
+
+export const createEntityModule = () => {
+  const fetchStateSettingWithoutStore = jest.fn();
+
+  const entityModule = {
+    name: 'entity',
+    actions: {
+      fetchStateSettingWithoutStore,
+    },
+  };
+
+  return {
+    fetchStateSettingWithoutStore,
+    entityModule,
   };
 };
 

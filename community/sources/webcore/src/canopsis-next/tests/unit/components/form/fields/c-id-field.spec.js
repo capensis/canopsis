@@ -40,7 +40,7 @@ describe('c-id-field', () => {
 
     textField.setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `c-id-field` with default props', () => {
@@ -50,7 +50,7 @@ describe('c-id-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-id-field` with custom props', () => {
@@ -64,7 +64,7 @@ describe('c-id-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-id-field` with errors', async () => {
@@ -88,6 +88,6 @@ describe('c-id-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

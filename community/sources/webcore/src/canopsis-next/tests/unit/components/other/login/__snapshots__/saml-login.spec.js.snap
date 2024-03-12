@@ -8,19 +8,19 @@ exports[`saml-login Renders \`saml-login\` with redirect query and title 1`] = `
     class="v-card__text"
   >
     <div
-      class="ml-2 mb-2 body-2"
+      class="ml-2 mb-2 text-body-2"
     >
       Login with SAML
     </div>
     <a
-      class="v-btn theme--light primary"
-      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhostundefined%2Fredirect"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhost%2Fredirect"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Saml config title
-      </div>
+      Saml config title
+      </span>
     </a>
   </div>
 </div>
@@ -34,19 +34,19 @@ exports[`saml-login Renders \`saml-login\` without redirect 1`] = `
     class="v-card__text"
   >
     <div
-      class="ml-2 mb-2 body-2"
+      class="ml-2 mb-2 text-body-2"
     >
       Login with SAML
     </div>
     <a
-      class="v-btn theme--light primary"
-      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhostundefined"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhost"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Login with SAML
-      </div>
+      Login with SAML
+      </span>
     </a>
   </div>
 </div>

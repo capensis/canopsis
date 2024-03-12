@@ -1,22 +1,34 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        c-alert(type="warning") {{ config.warningText }}
-        maintenance-form(v-model="form")
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <c-alert type="warning">
+          {{ config.warningText }}
+        </c-alert>
+        <maintenance-form v-model="form" />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
-        ) {{  $t(config.maintenance ? 'common.submit' : 'modals.createMaintenance.enableMaintenance') }}
+        >
+          {{ $t(config.maintenance ? 'common.submit' : 'modals.createMaintenance.enableMaintenance') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

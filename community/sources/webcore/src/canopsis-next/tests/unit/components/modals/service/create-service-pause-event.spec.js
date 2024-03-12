@@ -1,11 +1,11 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateServicePauseEvent from '@/components/modals/service/create-service-pause-event.vue';
@@ -101,7 +101,7 @@ describe('create-service-pause-event', () => {
       reason: Faker.datatype.string(),
     };
 
-    servicePauseEventForm.vm.$emit('input', newData);
+    servicePauseEventForm.triggerCustomEvent('input', newData);
 
     submitButton.trigger('click');
 
@@ -124,9 +124,7 @@ describe('create-service-pause-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -188,9 +186,7 @@ describe('create-service-pause-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -223,9 +219,7 @@ describe('create-service-pause-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -247,9 +241,7 @@ describe('create-service-pause-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -263,6 +255,6 @@ describe('create-service-pause-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
