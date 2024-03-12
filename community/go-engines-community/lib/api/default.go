@@ -33,14 +33,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
-	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v1"
-	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	linkv1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v1"
 	linkv2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -175,12 +174,7 @@ func Default(
 		cfg,
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
-		libcontextgraphV1.NewWorker(
-			dbClient,
-			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-			metricsEntityMetaUpdater,
-		),
-		libcontextgraphV2.NewWorker(
+		importcontextgraph.NewWorker(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
@@ -300,6 +294,8 @@ func Default(
 		linkGenerator = wrapper.NewGenerator(linkGenerators...)
 	}
 
+	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.CacheControl())
 
@@ -315,8 +311,9 @@ func Default(
 			})
 		})
 
-		RegisterValidators(dbClient, flags.EnableSameServiceNames)
+		RegisterValidators(dbClient)
 		RegisterRoutes(
+			ctx,
 			cfg,
 			router,
 			security,
@@ -338,7 +335,6 @@ func Default(
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			p.UserInterfaceConfigProvider,
-			cfg.File.Upload,
 			websocketHub,
 			websocketStore,
 			broadcastMessageChan,
@@ -347,6 +343,8 @@ func Default(
 			author.NewProvider(dbClient, p.ApiConfigProvider),
 			healthcheckStore,
 			tplExecutor,
+			stateSettingsUpdatesChan,
+			flags.EnableSameServiceNames,
 			logger,
 		)
 	})
@@ -386,12 +384,17 @@ func Default(
 		techMetricsSender.Run(ctx)
 	})
 	api.AddWorker("session_clean", func(ctx context.Context) {
-		security.GetSessionStore().StartAutoClean(ctx, flags.IntegrationPeriodicalWaitTime)
+		security.GetSessionStore().StartAutoClean(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
-		enforcer.StartAutoLoadPolicy(ctx)
+		enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
+
+	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, json.NewEncoder(), logger)
+	api.AddWorker("state_settings_listener", func(ctx context.Context) {
+		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
+	})
 	api.AddWorker("entity_event_publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
 	})
@@ -445,7 +448,7 @@ func Default(
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)
 	})
-	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, dbClient, logger, flags.IntegrationPeriodicalWaitTime))
+	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, pgPoolProvider, logger, flags.IntegrationPeriodicalWaitTime))
 
 	return api, docsFile, nil
 }
@@ -484,6 +487,10 @@ func newWebsocketHub(
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomMessageRates, apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan); err != nil {
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
 		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
 

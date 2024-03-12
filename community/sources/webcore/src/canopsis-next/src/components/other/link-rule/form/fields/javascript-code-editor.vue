@@ -1,10 +1,10 @@
-<template lang="pug">
-  code-editor(
-    v-field="value",
-    :options="editorOptions",
-    :resettable="resettable",
+<template>
+  <code-editor
+    v-field="value"
+    :options="editorOptions"
+    :resettable="resettable"
     language="javascript"
-  )
+  />
 </template>
 
 <script>

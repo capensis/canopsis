@@ -1,51 +1,76 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="pbehaviors",
-    :pagination="pagination",
-    :loading="pending",
-    :headers="headers",
-    :total-items="totalItems",
-    :search-tooltip="$t('pbehavior.searchHelp')",
-    :select-all="removable || enablable || disablable",
-    advanced-search,
-    advanced-pagination,
-    expand,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected, clearSelected }")
-      pbehaviors-mass-actions-panel(
-        :items="selected",
-        :removable="removable",
-        :enablable="enablable",
-        :disablable="disablable",
+<template>
+  <c-advanced-data-table
+    :items="pbehaviors"
+    :options="options"
+    :loading="pending"
+    :headers="headers"
+    :total-items="totalItems"
+    :search-tooltip="$t('pbehavior.searchHelp')"
+    :select-all="removable || enablable || disablable"
+    advanced-search
+    advanced-pagination
+    expand
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected, clearSelected }">
+      <pbehaviors-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="enablable"
+        :disablable="disablable"
         @clear:items="clearSelected"
-      )
-    template(#name="{ item }")
-      c-ellipsis(:text="item.name")
-    template(#enabled="{ item }")
-      c-enabled(:value="item.enabled")
-    template(#tstart="{ item }") {{ formatIntervalDate(item, 'tstart') }}
-    template(#tstop="{ item }") {{ formatIntervalDate(item, 'tstop') }}
-    template(#rrule_end="{ item }") {{ formatRruleEndDate(item) }}
-    template(#last_alarm_date="{ item }") {{ item.last_alarm_date | timezone($system.timezone) }}
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#rrule="{ item }")
-      v-icon {{ item.rrule ? 'check' : 'clear' }}
-    template(#type.icon_name="{ item }")
-      v-icon(color="primary") {{ item.type.icon_name }}
-    template(#is_active_status="{ item }")
-      v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
-    template(#actions="{ item }")
-      pbehavior-actions(
-        :pbehavior="item",
-        :removable="removable",
-        :updatable="updatable",
-        :duplicable="duplicable",
+      />
+    </template>
+    <template #name="{ item }">
+      <c-ellipsis :text="item.name" />
+    </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
+    <template #tstart="{ item }">
+      {{ formatIntervalDate(item, 'tstart') }}
+    </template>
+    <template #tstop="{ item }">
+      {{ formatIntervalDate(item, 'tstop') }}
+    </template>
+    <template #rrule_end="{ item }">
+      {{ formatRruleEndDate(item) }}
+    </template>
+    <template #last_alarm_date="{ item }">
+      {{ item.last_alarm_date | timezone($system.timezone) }}
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #rrule="{ item }">
+      <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
+    </template>
+    <template #type.icon_name="{ item }">
+      <v-icon color="primary">
+        {{ item.type.icon_name }}
+      </v-icon>
+    </template>
+    <template #is_active_status="{ item }">
+      <v-icon :color="item.is_active_status ? 'primary' : 'error'">
+        $vuetify.icons.settings_sync
+      </v-icon>
+    </template>
+    <template #actions="{ item }">
+      <pbehavior-actions
+        :pbehavior="item"
+        :removable="removable"
+        :updatable="updatable"
+        :duplicable="duplicable"
         @refresh="$emit('refresh')"
-      )
-    template(#expand="{ item }")
-      pbehaviors-list-expand-item(:pbehavior="item")
+      />
+    </template>
+    <template #expand="{ item }">
+      <pbehaviors-list-expand-item :pbehavior="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -68,7 +93,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -116,7 +141,7 @@ export default {
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.updated'), value: 'updated' },
         { text: this.$t('pbehavior.lastAlarmDate'), value: 'last_alarm_date' },
-        { text: this.$t('common.icon'), value: 'type.icon_name' },
+        { text: this.$tc('common.icon', 1), value: 'type.icon_name' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];

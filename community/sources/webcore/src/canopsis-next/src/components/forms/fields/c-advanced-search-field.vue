@@ -1,17 +1,27 @@
-<template lang="pug">
-  c-search-field(
-    :combobox="combobox",
-    :items="items",
-    @submit="submit",
-    @clear="clear",
-    @toggle-pin="togglePin",
+<template>
+  <c-search-field
+    :combobox="combobox"
+    :items="items"
+    @submit="submit"
+    @clear="clear"
+    @toggle-pin="togglePin"
     @remove="remove"
-  )
-    v-tooltip(v-if="tooltip", bottom)
-      template(#activator="{ on }")
-        v-btn(v-on="on", icon)
-          v-icon help_outline
-      div(v-html="tooltip")
+  >
+    <v-tooltip
+      v-if="tooltip"
+      bottom
+    >
+      <template #activator="{ on }">
+        <v-btn
+          icon
+          v-on="on"
+        >
+          <v-icon>help_outline</v-icon>
+        </v-btn>
+      </template>
+      <div v-html="tooltip" />
+    </v-tooltip>
+  </c-search-field>
 </template>
 
 <script>

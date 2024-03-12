@@ -14,12 +14,14 @@ const (
 	ActionConsumerName          = "action"
 	ActionRPCConsumerName       = "action_rpc"
 
-	AxeEngineName                  = "engine-axe"
-	AxeQueueName                   = "Engine_axe"
-	AxePbehaviorRPCClientQueueName = "Engine_axe_pbehavior_rpc_client"
-	AxeRPCQueueServerName          = "Engine_axe_rpc_server"
-	AxeConsumerName                = "axe"
-	AxeRPCConsumerName             = "axe_rpc"
+	AxeEngineName                     = "engine-axe"
+	AxeQueueName                      = "Engine_axe"
+	AxePbehaviorRPCClientQueueName    = "Engine_axe_pbehavior_rpc_client"
+	AxeDynamicInfosRPCClientQueueName = "Engine_axe_dynamic_infos_rpc_client"
+	AxeRPCQueueServerName             = "Engine_axe_rpc_server"
+	AxeConsumerName                   = "axe"
+	AxeRPCConsumerName                = "axe_rpc"
+	AxeConnector                      = "axe"
 
 	CheExchangeName = ""
 	CheEngineName   = "engine-che"
@@ -54,9 +56,12 @@ const (
 	FIFOConsumerName    = "fifo"
 	FIFOAckConsumerName = "fifo_ack"
 
-	CorrelationEngineName   = "engine-correlation"
-	CorrelationQueueName    = "Engine_correlation"
-	CorrelationConsumerName = "correlation"
+	CorrelationEngineName            = "engine-correlation"
+	CorrelationQueueName             = "Engine_correlation"
+	CorrelationAxeRPCClientQueueName = "Engine_correlation_axe_rpc_client"
+	CorrelationConsumerName          = "correlation"
+	CorrelationRPCConsumerName       = "correlation_rpc"
+	CorrelationConnector             = "correlation"
 
 	PeriodicalWaitTime     = time.Minute
 	JsonContentType        = "application/json"
@@ -77,4 +82,6 @@ const (
 	FacetLimit = 1000
 
 	ApiName = "api"
+
+	DefaultEventWorkers = 10
 )

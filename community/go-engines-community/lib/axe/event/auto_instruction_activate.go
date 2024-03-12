@@ -48,6 +48,7 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 				"if": bson.M{"$and": []bson.M{
 					{"$eq": bson.A{"$v.snooze", nil}},
 					{"$in": bson.A{"$v.pbehavior_info", bson.A{nil, "", pbehavior.TypeActive}}},
+					{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
 				}},
 				"then": nil,
 				"else": event.Parameters.Timestamp,

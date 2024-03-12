@@ -6,6 +6,7 @@ import (
 	"time"
 
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -121,32 +122,33 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 	params := rpc.AxeParameters{
-		Output:             event.Output,
-		Author:             event.Author,
-		User:               event.UserID,
-		Role:               event.Role,
-		Initiator:          event.Initiator,
-		Timestamp:          event.Timestamp,
-		State:              &event.State,
-		TicketInfo:         event.TicketInfo,
-		PbehaviorInfo:      event.PbehaviorInfo,
-		Execution:          event.Execution,
-		Instruction:        event.Instruction,
-		LongOutput:         event.LongOutput,
-		Connector:          event.Connector,
-		ConnectorName:      event.ConnectorName,
-		Tags:               event.Tags,
-		IdleRuleApply:      event.IdleRuleApply,
-		MetaAlarmRuleID:    event.MetaAlarmRuleID,
-		MetaAlarmValuePath: event.MetaAlarmValuePath,
-		DisplayName:        event.DisplayName,
-		MetaAlarmChildren:  event.MetaAlarmChildren,
+		Output:              event.Output,
+		Author:              event.Author,
+		User:                event.UserID,
+		Role:                event.Role,
+		Initiator:           event.Initiator,
+		Timestamp:           event.Timestamp,
+		State:               &event.State,
+		TicketInfo:          event.TicketInfo,
+		PbehaviorInfo:       event.PbehaviorInfo,
+		Execution:           event.Execution,
+		Instruction:         event.Instruction,
+		LongOutput:          event.LongOutput,
+		Connector:           event.Connector,
+		ConnectorName:       event.ConnectorName,
+		Tags:                event.Tags,
+		IdleRuleApply:       event.IdleRuleApply,
+		MetaAlarmRuleID:     event.MetaAlarmRuleID,
+		MetaAlarmValuePath:  event.MetaAlarmValuePath,
+		DisplayName:         event.DisplayName,
+		MetaAlarmChildren:   event.MetaAlarmChildren,
+		StateSettingUpdated: event.StateSettingUpdated,
 	}
 
 	if event.Duration > 0 {
-		params.Duration = &types.DurationWithUnit{
+		params.Duration = &datetime.DurationWithUnit{
 			Value: int64(event.Duration),
-			Unit:  types.DurationUnitSecond,
+			Unit:  datetime.DurationUnitSecond,
 		}
 	}
 

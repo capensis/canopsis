@@ -1,39 +1,51 @@
-<template lang="pug">
-  div
-    snmp-rule-form-field-title(:label="$t('snmpRule.oid')")
-    v-layout(row, wrap)
-      v-flex.pr-1(xs6)
-        v-autocomplete.pt-0(
-          v-validate="'required'",
-          :value="form.moduleName",
-          :items="modules",
-          :search-input.sync="searchInput",
-          :loading="modulesPending",
-          :placeholder="$t('snmpRule.module')",
-          :error-messages="errors.collect('moduleName')",
-          item-text="moduleName",
-          item-value="_id",
-          name="moduleName",
-          hide-no-data,
-          hide-details,
+<template>
+  <div>
+    <snmp-rule-form-field-title :label="$t('snmpRule.oid')" />
+    <v-layout wrap>
+      <v-flex
+        class="pr-1"
+        xs6
+      >
+        <v-autocomplete
+          v-validate="'required'"
+          :value="form.moduleName"
+          :items="modules"
+          :search-input.sync="searchInput"
+          :loading="modulesPending"
+          :placeholder="$t('snmpRule.module')"
+          :error-messages="errors.collect('moduleName')"
+          class="pt-0"
+          item-text="moduleName"
+          item-value="_id"
+          name="moduleName"
+          hide-no-data
+          hide-details
           @change="selectModule"
-        )
-      v-flex.pl-1(xs6)
-        v-autocomplete.pt-0(
-          v-validate="'required'",
-          :value="form.mib",
-          :items="moduleMibs",
-          :loading="moduleMibsPending",
-          :menu-props="{ offsetY: true }",
-          :error-messages="errors.collect('mib')",
-          item-text="name",
-          item-value="_id",
-          name="mib",
-          hide-no-data,
-          hide-details,
-          return-object,
+        />
+      </v-flex>
+      <v-flex
+        class="pl-1"
+        xs6
+      >
+        <v-autocomplete
+          v-validate="'required'"
+          :value="form.mib"
+          :items="moduleMibs"
+          :loading="moduleMibsPending"
+          :menu-props="{ offsetY: true }"
+          :error-messages="errors.collect('mib')"
+          class="pt-0"
+          item-text="name"
+          item-value="_id"
+          name="mib"
+          hide-no-data
+          hide-details
+          return-object
           @change="selectMib"
-        )
+        />
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>

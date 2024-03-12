@@ -1,20 +1,35 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.selectWidgetTemplateType.title') }}
-    template(#text="")
-      v-layout(column)
-        v-card.my-1.cursor-pointer(
-          v-for="{ value, text, icon } in availableTypes",
-          :key="value",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.selectWidgetTemplateType.title') }}</span>
+    </template>
+    <template #text="">
+      <v-layout column>
+        <v-card
+          v-for="{ value, text, icon } in availableTypes"
+          :key="value"
+          class="my-1 cursor-pointer"
           @click="selectType(value)"
-        )
-          v-card-title(primary-title)
-            v-layout(wrap, justify-between)
-              v-flex(xs11)
-                div.subheading {{ text }}
-              v-flex
-                v-icon {{ icon }}
+        >
+          <v-card-title primary-title>
+            <v-layout
+              wrap
+              justify-between
+            >
+              <v-flex xs11>
+                <div class="text-subtitle-1">
+                  {{ text }}
+                </div>
+              </v-flex>
+              <v-flex>
+                <v-icon>{{ icon }}</v-icon>
+              </v-flex>
+            </v-layout>
+          </v-card-title>
+        </v-card>
+      </v-layout>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

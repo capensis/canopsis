@@ -31,9 +31,9 @@ describe('geomap-map-form', () => {
 
     const nameField = selectNameField(wrapper);
 
-    nameField.vm.$emit('input', newName);
+    nameField.triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       name: newName,
     });
@@ -56,9 +56,9 @@ describe('geomap-map-form', () => {
 
     const geomapEditor = selectGeomapEditor(wrapper);
 
-    geomapEditor.vm.$emit('input', newParameters);
+    geomapEditor.triggerCustomEvent('input', newParameters);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       parameters: newParameters,
     });
@@ -74,6 +74,6 @@ describe('geomap-map-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,14 +1,15 @@
-<template lang="pug">
-  v-card-text
-    planning-reasons-list(
-      :pbehavior-reasons="pbehaviorReasons",
-      :pending="pbehaviorReasonsPending",
-      :totalItems="pbehaviorReasonsMeta.total_count",
-      :pagination.sync="pagination",
-      @remove-selected="showRemoveSelectedPbehaviorReasonModal",
-      @remove="showRemovePbehaviorReasonModal",
+<template>
+  <v-card-text>
+    <planning-reasons-list
+      :pbehavior-reasons="pbehaviorReasons"
+      :pending="pbehaviorReasonsPending"
+      :total-items="pbehaviorReasonsMeta.total_count"
+      :options.sync="options"
+      @remove-selected="showRemoveSelectedPbehaviorReasonModal"
+      @remove="showRemovePbehaviorReasonModal"
       @edit="showEditPbehaviorReasonModal"
-    )
+    />
+  </v-card-text>
 </template>
 
 <script>
@@ -49,6 +50,8 @@ export default {
       try {
         await this.removePbehaviorReason({ id: pbehavioReasonId });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },

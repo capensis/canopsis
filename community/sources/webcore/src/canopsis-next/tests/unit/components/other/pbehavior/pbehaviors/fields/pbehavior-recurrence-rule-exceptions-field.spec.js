@@ -42,9 +42,9 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
       },
     });
 
-    selectAddExceptionButton(wrapper).vm.$emit('click');
+    selectAddExceptionButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...exdates,
       {
         key: expect.any(String),
@@ -71,7 +71,7 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
       },
     ];
 
-    selectChooseExceptionButton(wrapper).vm.$emit('input', mewExceptions);
+    selectChooseExceptionButton(wrapper).triggerCustomEvent('input', mewExceptions);
 
     expect(wrapper).toEmit('update:exceptions', mewExceptions);
   });
@@ -79,7 +79,7 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
   test('Renders `pbehavior-exceptions-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-exceptions-field` with custom props', () => {
@@ -97,6 +97,6 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

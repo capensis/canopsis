@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { QUICK_RANGES } from '@/constants';
 
 import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
@@ -24,14 +24,9 @@ describe('c-quick-date-interval-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', QUICK_RANGES.yesterday);
+    selectField.triggerCustomEvent('input', QUICK_RANGES.yesterday);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(QUICK_RANGES.yesterday);
+    expect(wrapper).toEmitInput(QUICK_RANGES.yesterday);
   });
 
   test('Renders `c-quick-date-interval-type-field` with default props', () => {
@@ -43,7 +38,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -58,7 +53,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -72,7 +67,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 });

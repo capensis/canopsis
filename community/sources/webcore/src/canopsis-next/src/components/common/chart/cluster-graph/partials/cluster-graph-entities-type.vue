@@ -1,17 +1,28 @@
-<template lang="pug">
-  div
-    h6.my-2.title.text-xs-center {{ $t('common.type') }}
-    v-radio-group.justify-center(v-field="impact", row, hide-details)
-      v-radio(
-        :value="false",
-        :label="$t('context.treeOfDependencies')",
-        color="primary"
-      )
-      v-radio(
-        :value="true",
-        :label="$t('context.impactChain')",
-        color="primary"
-      )
+<template>
+  <div>
+    <h6 class="my-2 text-h6 text-center">
+      {{ $t('common.type') }}
+    </h6>
+    <v-layout justify-center>
+      <v-radio-group
+        v-field="impact"
+        class="my-0"
+        row
+        hide-details
+      >
+        <v-radio
+          :value="false"
+          :label="$t('context.treeOfDependencies')"
+          color="primary"
+        />
+        <v-radio
+          :value="true"
+          :label="$t('context.impactChain')"
+          color="primary"
+        />
+      </v-radio-group>
+    </v-layout>
+  </div>
 </template>
 
 <script>

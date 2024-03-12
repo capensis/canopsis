@@ -2,114 +2,107 @@
 
 exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with exceptions 1`] = `
 <div
-  class="v-data-iterator theme--light"
+  class="v-data-iterator"
 >
-  <div>
+  <div
+    class="layout column"
+  >
     <div
-      class="layout column"
+      class="layout align-center"
     >
-      <div
-        class="layout row align-center"
-      >
-        <h4>
-          exception-0
-        </h4>
-        <c-action-btn-stub
-          type="delete"
-        />
-      </div>
-      <c-advanced-data-table-stub
-        headers="[object Object],[object Object],[object Object]"
-        items="[object Object],[object Object]"
+      <h4>
+        exception-0
+      </h4>
+      <c-action-btn-stub
+        type="delete"
       />
     </div>
+    <c-advanced-data-table-stub
+      headers="[object Object],[object Object],[object Object]"
+      items="[object Object],[object Object]"
+    />
+  </div>
+  <div
+    class="layout column"
+  >
     <div
-      class="layout column"
+      class="layout align-center"
     >
-      <div
-        class="layout row align-center"
-      >
-        <h4>
-          exception-1
-        </h4>
-        <c-action-btn-stub
-          type="delete"
-        />
-      </div>
-      <c-advanced-data-table-stub
-        headers="[object Object],[object Object],[object Object]"
-        items="[object Object],[object Object]"
+      <h4>
+        exception-1
+      </h4>
+      <c-action-btn-stub
+        type="delete"
       />
     </div>
+    <c-advanced-data-table-stub
+      headers="[object Object],[object Object],[object Object]"
+      items="[object Object],[object Object]"
+    />
+  </div>
+  <div
+    class="layout column"
+  >
     <div
-      class="layout column"
+      class="layout align-center"
     >
-      <div
-        class="layout row align-center"
-      >
-        <h4>
-          exception-2
-        </h4>
-        <c-action-btn-stub
-          type="delete"
-        />
-      </div>
-      <c-advanced-data-table-stub
-        headers="[object Object],[object Object],[object Object]"
-        items="[object Object],[object Object]"
+      <h4>
+        exception-2
+      </h4>
+      <c-action-btn-stub
+        type="delete"
       />
     </div>
+    <c-advanced-data-table-stub
+      headers="[object Object],[object Object],[object Object]"
+      items="[object Object],[object Object]"
+    />
+  </div>
+  <div
+    class="layout column"
+  >
     <div
-      class="layout column"
+      class="layout align-center"
     >
-      <div
-        class="layout row align-center"
-      >
-        <h4>
-          exception-3
-        </h4>
-        <c-action-btn-stub
-          type="delete"
-        />
-      </div>
-      <c-advanced-data-table-stub
-        headers="[object Object],[object Object],[object Object]"
-        items="[object Object],[object Object]"
+      <h4>
+        exception-3
+      </h4>
+      <c-action-btn-stub
+        type="delete"
       />
     </div>
+    <c-advanced-data-table-stub
+      headers="[object Object],[object Object],[object Object]"
+      items="[object Object],[object Object]"
+    />
+  </div>
+  <div
+    class="layout column"
+  >
     <div
-      class="layout column"
+      class="layout align-center"
     >
-      <div
-        class="layout row align-center"
-      >
-        <h4>
-          exception-4
-        </h4>
-        <c-action-btn-stub
-          type="delete"
-        />
-      </div>
-      <c-advanced-data-table-stub
-        headers="[object Object],[object Object],[object Object]"
-        items="[object Object],[object Object]"
+      <h4>
+        exception-4
+      </h4>
+      <c-action-btn-stub
+        type="delete"
       />
     </div>
+    <c-advanced-data-table-stub
+      headers="[object Object],[object Object],[object Object]"
+      items="[object Object],[object Object]"
+    />
   </div>
 </div>
 `;
 
 exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` without exceptions 1`] = `
 <div
-  class="v-data-iterator theme--light"
+  class="v-data-iterator"
 >
   <div>
-    <div
-      class="text-xs-center"
-      style="width: 100%;"
-    >
-      No data available
-    </div>
+    No data available
   </div>
 </div>
 `;

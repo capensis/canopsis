@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { LINE_TYPES, STROKE_TYPES } from '@/constants';
 
 import FlowchartStrokeTypeField from '@/components/common/flowchart/fields/flowchart-stroke-type-field.vue';
@@ -19,19 +20,20 @@ describe('flowchart-stroke-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', STROKE_TYPES.dashed);
+    selectField.triggerCustomEvent('input', STROKE_TYPES.dashed);
 
-    expect(wrapper).toEmit('input', STROKE_TYPES.dashed);
+    expect(wrapper).toEmitInput(STROKE_TYPES.dashed);
   });
 
-  test('Renders `flowchart-stroke-type-field` with default props', () => {
+  test('Renders `flowchart-stroke-type-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `flowchart-stroke-type-field` with custom props', () => {
+  test('Renders `flowchart-stroke-type-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: LINE_TYPES.line,
@@ -39,7 +41,8 @@ describe('flowchart-stroke-type-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

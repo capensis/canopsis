@@ -6,6 +6,8 @@ module.exports = {
 
     const exportedPath = JSON.stringify(path.relative(rootDir, filename));
 
-    return `module.exports = ${exportedPath}`;
+    return {
+      code: `module.exports = ${exportedPath}`,
+    };
   },
 };

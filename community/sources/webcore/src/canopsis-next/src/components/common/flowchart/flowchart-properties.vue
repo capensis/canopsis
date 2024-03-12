@@ -1,61 +1,77 @@
-<template lang="pug">
-  v-expansion-panel(color="grey")
-    v-expansion-panel-content
-      template(#header="")
-        span {{ $t('flowchart.properties') }}
-      v-divider
-      v-card
-        v-card-text
-          flowchart-color-field.my-1(
-            v-if="showFill",
-            :label="$t('flowchart.fill')",
-            :value="fillValue",
-            :palette="shapesColors",
-            @input="updateFill"
-          )
-          flowchart-color-field.my-1(
-            v-if="showStroke",
-            :label="$t('flowchart.stroke')",
-            :value="stroke",
-            :palette="borderColors",
-            @input="updateStroke"
-          )
-          template(v-if="showStroke && isStrokeEnabled")
-            flowchart-number-field.my-1(
-              :label="$t('flowchart.strokeWidth')",
-              :value="strokeWidth",
-              @input="updateStrokeWidth"
-            )
-            flowchart-stroke-type-field.my-1(
-              :label="$t('flowchart.strokeType')",
-              :value="strokeType",
-              @input="updateStrokeType"
-            )
-          flowchart-line-type-field.my-2(
-            v-if="showLineType",
-            :label="$t('flowchart.lineType')",
-            :value="lineType",
-            :average-points="lineAveragePoints",
-            @input="updateLineType"
-          )
-          v-divider(v-if="showLineType || showStroke || showFill")
-          flowchart-color-field.my-1(
-            :label="$t('flowchart.fontColor')",
-            :value="textColor",
-            :palette="textColors",
-            @input="updateTextColor"
-          )
-          flowchart-color-field.my-1(
-            :label="$t('flowchart.fontBackgroundColor')",
-            :value="textBackgroundColor",
-            :palette="backgroundColors",
-            @input="updateTextBackgroundColor"
-          )
-          flowchart-number-field.my-1(
-            :label="$t('flowchart.fontSize')",
-            :value="textFontSize",
-            @input="updateFontSize"
-          )
+<template>
+  <v-expansion-panels color="grey">
+    <v-expansion-panel color="grey">
+      <v-expansion-panel-header>
+        <span>{{ $t('flowchart.properties') }}</span>
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+        <v-divider />
+        <v-card flat>
+          <v-card-text>
+            <flowchart-color-field
+              v-if="showFill"
+              :label="$t('flowchart.fill')"
+              :value="fillValue"
+              :palette="shapesColors"
+              class="my-1"
+              @input="updateFill"
+            />
+            <flowchart-color-field
+              v-if="showStroke"
+              :label="$t('flowchart.stroke')"
+              :value="stroke"
+              :palette="borderColors"
+              class="my-1"
+              @input="updateStroke"
+            />
+            <template v-if="showStroke && isStrokeEnabled">
+              <flowchart-number-field
+                :label="$t('flowchart.strokeWidth')"
+                :value="strokeWidth"
+                class="my-1"
+                @input="updateStrokeWidth"
+              />
+              <flowchart-stroke-type-field
+                :label="$t('flowchart.strokeType')"
+                :value="strokeType"
+                class="my-1"
+                @input="updateStrokeType"
+              />
+            </template>
+            <flowchart-line-type-field
+              v-if="showLineType"
+              :label="$t('flowchart.lineType')"
+              :value="lineType"
+              :average-points="lineAveragePoints"
+              class="my-2"
+              @input="updateLineType"
+            />
+            <v-divider v-if="showLineType || showStroke || showFill" />
+            <flowchart-color-field
+              :label="$t('flowchart.fontColor')"
+              :value="textColor"
+              :palette="textColors"
+              class="my-1"
+              @input="updateTextColor"
+            />
+            <flowchart-color-field
+              :label="$t('flowchart.fontBackgroundColor')"
+              :value="textBackgroundColor"
+              :palette="backgroundColors"
+              class="my-1"
+              @input="updateTextBackgroundColor"
+            />
+            <flowchart-number-field
+              :label="$t('flowchart.fontSize')"
+              :value="textFontSize"
+              class="my-1"
+              @input="updateFontSize"
+            />
+          </v-card-text>
+        </v-card>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <script>

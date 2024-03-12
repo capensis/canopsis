@@ -7,7 +7,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -16,17 +16,16 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         Assign patterns
       </span>
     </div>
-     
     <div
       class="text"
     >
       <c-patterns-field-stub
         alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        both-counters="both-counters"
+        both-counters=""
         entity-attributes="[object Object]"
         value="[object Object]"
-        with-alarm="with-alarm"
-        with-entity="with-entity"
+        with-alarm=""
+        with-entity=""
       />
       <c-collapse-panel-stub
         class="mt-3"
@@ -37,29 +36,28 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         />
       </c-collapse-panel-stub>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>
@@ -73,7 +71,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -82,17 +80,16 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         Assign patterns
       </span>
     </div>
-     
     <div
       class="text"
     >
       <c-patterns-field-stub
         alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        both-counters="both-counters"
+        both-counters=""
         entity-attributes="[object Object]"
         value="[object Object]"
-        with-alarm="with-alarm"
-        with-entity="with-entity"
+        with-alarm=""
+        with-entity=""
       />
       <c-collapse-panel-stub
         class="mt-3"
@@ -103,29 +100,28 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         />
       </c-collapse-panel-stub>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>
@@ -139,7 +135,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -148,17 +144,16 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         Remediation patterns title
       </span>
     </div>
-     
     <div
       class="text"
     >
       <c-patterns-field-stub
         alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        both-counters="both-counters"
+        both-counters=""
         entity-attributes="[object Object]"
         value="[object Object]"
-        with-alarm="with-alarm"
-        with-entity="with-entity"
+        with-alarm=""
+        with-entity=""
       />
       <c-collapse-panel-stub
         class="mt-3"
@@ -169,29 +164,28 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         />
       </c-collapse-panel-stub>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>

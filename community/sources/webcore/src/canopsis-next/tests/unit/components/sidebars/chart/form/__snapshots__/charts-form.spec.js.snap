@@ -18,6 +18,7 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
       closeonclick="true"
       closeoncontentclick="true"
       contentclass=""
+      contentprops="[object Object]"
       maxheight="auto"
       maxwidth="auto"
       nudgebottom="0"
@@ -30,13 +31,16 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
       origin="top left"
       transition="v-menu-transition"
     >
-      <v-list-stub>
-        <v-list-tile-stub
-          activeclass="primary--text"
+      <v-list-stub
+        tag="div"
+      >
+        <v-list-item-stub
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             stacked_bar_chart
           </i>
@@ -45,13 +49,14 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           >
             Bar chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
-          activeclass="primary--text"
+        </v-list-item-stub>
+        <v-list-item-stub
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             show_chart
           </i>
@@ -60,13 +65,14 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           >
             Line chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
-          activeclass="primary--text"
+        </v-list-item-stub>
+        <v-list-item-stub
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             functions
           </i>
@@ -75,7 +81,7 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           >
             Numbers
           </span>
-        </v-list-tile-stub>
+        </v-list-item-stub>
       </v-list-stub>
     </v-menu-stub>
   </div>
@@ -102,6 +108,7 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
       closeonclick="true"
       closeoncontentclick="true"
       contentclass=""
+      contentprops="[object Object]"
       maxheight="auto"
       maxwidth="auto"
       nudgebottom="0"
@@ -114,13 +121,16 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
       origin="top left"
       transition="v-menu-transition"
     >
-      <v-list-stub>
-        <v-list-tile-stub
-          activeclass="primary--text"
+      <v-list-stub
+        tag="div"
+      >
+        <v-list-item-stub
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             stacked_bar_chart
           </i>
@@ -129,13 +139,14 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           >
             Bar chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
-          activeclass="primary--text"
+        </v-list-item-stub>
+        <v-list-item-stub
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             show_chart
           </i>
@@ -144,13 +155,14 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           >
             Line chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
-          activeclass="primary--text"
+        </v-list-item-stub>
+        <v-list-item-stub
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             functions
           </i>
@@ -159,7 +171,7 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           >
             Numbers
           </span>
-        </v-list-tile-stub>
+        </v-list-item-stub>
       </v-list-stub>
     </v-menu-stub>
   </div>

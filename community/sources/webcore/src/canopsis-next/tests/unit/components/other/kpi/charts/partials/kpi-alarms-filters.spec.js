@@ -1,8 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
@@ -51,21 +49,14 @@ describe('kpi-alarms-filters', () => {
       to: stop,
     };
 
-    quickIntervalField.vm.$emit('input', {
+    quickIntervalField.triggerCustomEvent('input', {
       from: start,
       to: stop,
     });
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.interval).toEqual(expectedInterval);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -80,18 +71,11 @@ describe('kpi-alarms-filters', () => {
 
     const samplingField = wrapper.find('c-sampling-field-stub');
 
-    samplingField.vm.$emit('input', SAMPLINGS.month);
+    samplingField.triggerCustomEvent('input', SAMPLINGS.month);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.sampling).toEqual(SAMPLINGS.month);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       sampling: SAMPLINGS.month,
     });
@@ -110,20 +94,11 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    const samplingField = wrapper.find('c-sampling-field-stub');
-
-    samplingField.vm.$emit('input', SAMPLINGS.hour);
+    wrapper.find('c-sampling-field-stub').triggerCustomEvent('input', SAMPLINGS.hour);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.sampling).toEqual(SAMPLINGS.hour);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
         from: nowSubtractYearTimestamp,
@@ -148,18 +123,11 @@ describe('kpi-alarms-filters', () => {
 
     const samplingField = wrapper.find('c-sampling-field-stub');
 
-    samplingField.vm.$emit('input', SAMPLINGS.hour);
+    samplingField.triggerCustomEvent('input', SAMPLINGS.hour);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.sampling).toEqual(SAMPLINGS.hour);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
         from: nowSubtractYearTimestamp + 1,
@@ -177,20 +145,11 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    const metricParametersField = wrapper.find('c-alarm-metric-parameters-field-stub');
-
-    metricParametersField.vm.$emit('input', newParameters);
+    wrapper.find('c-alarm-metric-parameters-field-stub').triggerCustomEvent('input', newParameters);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.parameters).toEqual(newParameters);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       parameters: newParameters,
     });
@@ -206,18 +165,11 @@ describe('kpi-alarms-filters', () => {
 
     const filtersField = wrapper.find('c-filter-field-stub');
 
-    filtersField.vm.$emit('input', expectedFilter);
+    filtersField.triggerCustomEvent('input', expectedFilter);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.filter).toEqual(expectedFilter);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       filter: expectedFilter,
     });
@@ -240,7 +192,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-alarms-filters` with hour sampling', async () => {
@@ -261,7 +213,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-alarms-filters` with hour sampling and normal interval', async () => {
@@ -282,6 +234,6 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

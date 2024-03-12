@@ -1,18 +1,19 @@
-<template lang="pug">
-  v-card-text
-    remediation-configurations-list(
-      :remediation-configurations="remediationConfigurations",
-      :pending="remediationConfigurationsPending",
-      :total-items="remediationConfigurationsMeta.total_count",
-      :pagination.sync="pagination",
-      :removable="hasDeleteAnyRemediationConfigurationAccess",
-      :duplicable="hasCreateAnyRemediationConfigurationAccess",
-      :updatable="hasUpdateAnyRemediationConfigurationAccess",
-      @remove-selected="showRemoveSelectedRemediationConfigurationsModal",
-      @remove="showRemoveRemediationConfigurationModal",
-      @duplicate="showDuplicateRemediationConfigurationModal",
+<template>
+  <v-card-text>
+    <remediation-configurations-list
+      :remediation-configurations="remediationConfigurations"
+      :pending="remediationConfigurationsPending"
+      :total-items="remediationConfigurationsMeta.total_count"
+      :options.sync="options"
+      :removable="hasDeleteAnyRemediationConfigurationAccess"
+      :duplicable="hasCreateAnyRemediationConfigurationAccess"
+      :updatable="hasUpdateAnyRemediationConfigurationAccess"
+      @remove-selected="showRemoveSelectedRemediationConfigurationsModal"
+      @remove="showRemoveRemediationConfigurationModal"
+      @duplicate="showDuplicateRemediationConfigurationModal"
       @edit="showEditRemediationConfigurationModal"
-    )
+    />
+  </v-card-text>
 </template>
 
 <script>

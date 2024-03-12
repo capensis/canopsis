@@ -20,3 +20,4 @@ export { default as CClickableTooltip } from '@/components/common/clickable-tool
 export { default as CCollapsePanel } from '@/components/common/block/c-collapse-panel.vue';
 export { default as CContextmenu } from '@/components/common/contextmenu/c-contextmenu.vue';
 export { default as CCircleBadge } from '@/components/common/badge/c-circle-badge.vue';
+export { default as CCalendar } from '@/components/common/calendar/c-calendar.vue';

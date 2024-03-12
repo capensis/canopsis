@@ -4,10 +4,11 @@ import (
 	"log"
 	"regexp"
 	"sort"
+	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Alarm states
@@ -96,23 +97,16 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string  `bson:"_id" json:"_id"`
-	Time     CpsTime `bson:"t" json:"t"`
-	EntityID string  `bson:"d" json:"d"`
+	ID       string           `bson:"_id" json:"_id"`
+	Time     datetime.CpsTime `bson:"t" json:"t"`
+	EntityID string           `bson:"d" json:"d"`
 
-	Tags                []string  `bson:"tags" json:"tags"`
-	ExternalTags        []string  `bson:"etags" json:"etags"`
-	InternalTags        []string  `bson:"itags" json:"itags"`
-	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
+	Tags                []string           `bson:"tags" json:"tags"`
+	ExternalTags        []string           `bson:"etags" json:"etags"`
+	InternalTags        []string           `bson:"itags" json:"itags"`
+	InternalTagsUpdated datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
-	// update contains alarm changes after last mongo update. Use functions Update* to
-	// fill it.
-	update         bson.M
-	childrenUpdate []string
-	childrenRemove []string
-	parentsUpdate  []string
-	parentsRemove  []string
 
 	// is used only for manual instructions KPI metrics
 	KpiAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
@@ -122,14 +116,23 @@ type Alarm struct {
 	KpiExecutedAutoInstructions []string `bson:"kpi_executed_auto_instructions,omitempty" json:"kpi_executed_auto_instructions,omitempty"`
 
 	// is used only for not acked metrics
-	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
-	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
-	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
+	NotAckedMetricType     string            `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *datetime.CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *datetime.CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 
 	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
 	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
 
+	InactiveDelayMetaAlarmInProgress bool `bson:"inactive_delay_meta_alarm_in_progress,omitempty" json:"inactive_delay_meta_alarm_in_progress,omitempty"`
+	// MetaAlarmInactiveDelay shows that an alarm is matched to some meta alarm rules with child_inactive_delay
+	MetaAlarmInactiveDelay []MetaAlarmInactiveDelay `bson:"meta_alarm_inactive_delay,omitempty" json:"meta_alarm_inactive_delay,omitempty"`
+
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
+}
+
+type MetaAlarmInactiveDelay struct {
+	ID      string           `bson:"_id"`
+	Expired datetime.CpsTime `bson:"expired"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -194,15 +197,6 @@ func (a *Alarm) CurrentState() CpsNumber {
 	return alarmState
 }
 
-// UpdateOutput updates an alarm output field
-func (a *Alarm) UpdateOutput(newOutput string) {
-	a.Value.Output = newOutput
-
-	a.AddUpdate("$set", bson.M{
-		"v.output": a.Value.Output,
-	})
-}
-
 // Closable checks the last step for it's state to be OK for at least d interval.
 // Reference time is time.Now() when this function is called.
 func (a *Alarm) Closable(d time.Duration) bool {
@@ -258,12 +252,12 @@ func (a *Alarm) IsSnoozed() bool {
 	}
 
 	snoozeEnd := a.Value.Snooze.Value.CpsTimestamp()
-	return snoozeEnd.After(NewCpsTime())
+	return snoozeEnd.After(datetime.NewCpsTime())
 }
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)
 func (a *Alarm) IsStateLocked() bool {
-	return a.Value.State != nil && a.Value.State.Type == AlarmStepChangeState
+	return a.Value.ChangeState != nil
 }
 
 // IsMalfunctioning...
@@ -333,25 +327,15 @@ func (a *Alarm) AddChild(childEID string) {
 	}
 
 	a.Value.Children = append(a.Value.Children, childEID)
-	a.childrenUpdate = append(a.childrenUpdate, childEID)
-
-	a.AddUpdate("$addToSet", bson.M{"v.children": bson.M{"$each": a.childrenUpdate}})
 }
 
 func (a *Alarm) RemoveChild(childEID string) {
-	removed := false
 	for idx, child := range a.Value.Children {
 		if child == childEID {
 			a.Value.Children = append(a.Value.Children[:idx], a.Value.Children[idx+1:]...)
-			removed = true
 
-			break
+			return
 		}
-	}
-
-	if removed {
-		a.childrenRemove = append(a.childrenRemove, childEID)
-		a.AddUpdate("$pull", bson.M{"v.children": bson.M{"$in": a.childrenRemove}})
 	}
 }
 
@@ -361,8 +345,7 @@ func (a *Alarm) AddParent(parentEID string) bool {
 	}
 
 	a.Value.Parents = append(a.Value.Parents, parentEID)
-	a.parentsUpdate = append(a.parentsUpdate, parentEID)
-	a.AddUpdate("$addToSet", bson.M{"v.parents": bson.M{"$each": a.parentsUpdate}})
+
 	return true
 }
 
@@ -381,25 +364,9 @@ func (a *Alarm) RemoveParent(parentEID string) bool {
 		return false
 	}
 
-	a.parentsRemove = append(a.parentsRemove, parentEID)
 	a.Value.UnlinkedParents = append(a.Value.UnlinkedParents, parentEID)
-	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
-	a.AddUpdate("$push", bson.M{"v.unlinked_parents": parentEID})
+
 	return true
-}
-
-func (a *Alarm) SetMeta(meta string) {
-	a.Value.Meta = meta
-	a.AddUpdate("$set", bson.M{"v.meta": meta})
-}
-
-func (a *Alarm) SetMetaValuePath(path string) {
-	a.Value.MetaValuePath = path
-	a.AddUpdate("$set", bson.M{"v.meta_value_path": path})
-}
-
-func (a *Alarm) Activate() {
-	a.Value.ActivationDate = &CpsTime{time.Now()}
 }
 
 func (a *Alarm) IsActivated() bool {
@@ -411,13 +378,218 @@ func (a *Alarm) IsInActivePeriod() bool {
 }
 
 func (a *Alarm) CanActivate() bool {
-	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
+	return !a.IsActivated() &&
+		!a.IsSnoozed() &&
+		a.Value.PbehaviorInfo.IsActive() &&
+		!a.InactiveAutoInstructionInProgress &&
+		!a.InactiveDelayMetaAlarmInProgress
 }
 
-func (a *Alarm) IncrementEventsCount(count CpsNumber) {
-	a.AddUpdate("$inc", bson.M{"v.events_count": count})
+// GetStringField is a magic getter for string fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetStringField(f string) (string, bool) {
+	switch f {
+	case "v.display_name":
+		return a.Value.DisplayName, true
+	case "v.output":
+		return a.Value.Output, true
+	case "v.long_output":
+		return a.Value.LongOutput, true
+	case "v.initial_output":
+		return a.Value.InitialOutput, true
+	case "v.initial_long_output":
+		return a.Value.InitialLongOutput, true
+	case "v.connector":
+		return a.Value.Connector, true
+	case "v.connector_name":
+		return a.Value.ConnectorName, true
+	case "v.component":
+		return a.Value.Component, true
+	case "v.resource":
+		return a.Value.Resource, true
+	case "v.last_comment.m":
+		if a.Value.LastComment == nil {
+			return "", true
+		}
+		return a.Value.LastComment.Message, true
+	case "v.last_comment.initiator":
+		return a.Value.LastComment.GetInitiator(), true
+	case "v.ticket.m":
+		if a.Value.Ticket == nil {
+			return "", true
+		}
+
+		return a.Value.Ticket.Message, true
+	case "v.ticket.ticket":
+		if a.Value.Ticket == nil {
+			return "", true
+		}
+
+		return a.Value.Ticket.Ticket, true
+	case "v.ticket.initiator":
+		return a.Value.Ticket.GetInitiator(), true
+	case "v.ack.a":
+		if a.Value.ACK == nil {
+			return "", true
+		}
+
+		return a.Value.ACK.Author, true
+	case "v.ack.m":
+		if a.Value.ACK == nil {
+			return "", true
+		}
+
+		return a.Value.ACK.Message, true
+	case "v.ack.initiator":
+		return a.Value.ACK.GetInitiator(), true
+	case "v.canceled.initiator":
+		return a.Value.Canceled.GetInitiator(), true
+	default:
+		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {
+				return "", true
+			}
+
+			return a.Value.Ticket.TicketData[n], true
+		}
+
+		return "", false
+	}
 }
 
-func (a *Alarm) DecrementEventsCount(count CpsNumber) {
-	a.AddUpdate("$inc", bson.M{"v.events_count": -count})
+// GetIntField is a magic getter for int fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetIntField(f string) (int64, bool) {
+	switch f {
+	case "v.state.val":
+		if a.Value.State == nil {
+			return 0, true
+		}
+		return int64(a.Value.State.Value), true
+	case "v.status.val":
+		if a.Value.Status == nil {
+			return 0, true
+		}
+		return int64(a.Value.Status.Value), true
+	case "v.total_state_changes":
+		return int64(a.Value.TotalStateChanges), true
+	default:
+		return 0, false
+	}
+}
+
+// GetRefField is a magic getter for reference fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetRefField(f string) (interface{}, bool) {
+	switch f {
+	case "v.ack":
+		if a.Value.ACK == nil {
+			return nil, true
+		}
+		return a.Value.ACK, true
+	case "v.ticket":
+		if a.Value.Ticket == nil {
+			return nil, true
+		}
+		return a.Value.Ticket, true
+	case "v.canceled":
+		if a.Value.Canceled == nil {
+			return nil, true
+		}
+		return a.Value.Canceled, true
+	case "v.snooze":
+		if a.Value.Snooze == nil {
+			return nil, true
+		}
+		return a.Value.Snooze, true
+	case "v.activation_date":
+		if a.Value.ActivationDate == nil {
+			return nil, true
+		}
+		return a.Value.ActivationDate, true
+	case "v.change_state":
+		if a.Value.ChangeState == nil {
+			return nil, true
+		}
+		return a.Value.ChangeState, true
+	default:
+		return nil, false
+	}
+}
+
+// GetTimeField is a magic getter for time fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetTimeField(f string) (time.Time, bool) {
+	switch f {
+	case "v.creation_date":
+		return a.Value.CreationDate.Time, true
+	case "v.last_event_date":
+		return a.Value.LastEventDate.Time, true
+	case "v.last_update_date":
+		return a.Value.LastUpdateDate.Time, true
+	case "v.ack.t":
+		if a.Value.ACK != nil {
+			return a.Value.ACK.Timestamp.Time, true
+		}
+
+		return time.Time{}, true
+	case "v.resolved":
+		if a.Value.Resolved != nil {
+			return a.Value.Resolved.Time, true
+		}
+
+		return time.Time{}, true
+	case "v.activation_date":
+		if a.Value.ActivationDate != nil {
+			return a.Value.ActivationDate.Time, true
+		}
+		return time.Time{}, true
+	default:
+		return time.Time{}, false
+	}
+}
+
+// GetDurationField is a magic getter for duration fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetDurationField(f string) (int64, bool) {
+	switch f {
+	case "v.duration":
+		if a.Value.Duration > 0 {
+			return a.Value.Duration, true
+		}
+
+		if a.Value.Resolved != nil {
+			return int64(a.Value.Resolved.Sub(a.Time.Time).Seconds()), true
+		}
+
+		return int64(time.Since(a.Time.Time).Seconds()), true
+	default:
+		return 0, false
+	}
+}
+
+// GetStringArrayField is a magic getter for string array fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetStringArrayField(f string) ([]string, bool) {
+	switch f {
+	case "tags":
+		return a.Tags, true
+	default:
+		return nil, false
+	}
+}
+
+// GetInfoVal is a magic getter for infos fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetInfoVal(f string) (interface{}, bool) {
+	for _, infosByRule := range a.Value.Infos {
+		if v, ok := infosByRule[f]; ok {
+			return v, true
+		}
+	}
+
+	return nil, false
+}
+
+func (a *Alarm) GetMetaAlarmInactiveExpiration(ruleId string) (datetime.CpsTime, bool) {
+	for _, delay := range a.MetaAlarmInactiveDelay {
+		if delay.ID == ruleId {
+			return delay.Expired, true
+		}
+	}
+
+	return datetime.CpsTime{}, false
 }

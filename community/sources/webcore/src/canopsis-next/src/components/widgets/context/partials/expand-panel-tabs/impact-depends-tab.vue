@@ -1,36 +1,70 @@
-<template lang="pug">
-  div
-    v-progress-linear.ma-0(:active="pending", height="2", indeterminate)
-    div.pa-3
-      v-layout
-        v-flex(xs6)
-          h3.headline.text-xs-center.my-1.white--text {{ $t('context.impacts') }}
-          v-container
-            v-card
-              v-card-text
-                v-data-iterator(:items="impact")
-                  template(#item="props")
-                    v-flex
-                      v-card
-                        v-card-title {{ props.item }}
-                  template(#no-data="")
-                    v-flex
-                      v-card
-                        v-card-title {{ $t('common.noData') }}
-        v-flex(xs6)
-          h3.headline.text-xs-center.my-1.white--text {{ $t('context.dependencies') }}
-          v-container
-            v-card
-              v-card-text
-                v-data-iterator(:items="depends")
-                  template(#item="props")
-                    v-flex
-                      v-card
-                        v-card-title {{ props.item }}
-                  template(#no-data="")
-                    v-flex
-                      v-card
-                        v-card-title {{ $t('common.noData') }}
+<template>
+  <div>
+    <v-progress-linear
+      :active="pending"
+      class="ma-0"
+      height="2"
+      indeterminate
+    />
+    <div class="pa-3">
+      <v-layout>
+        <v-flex xs6>
+          <h3 class="text-h5 text-center my-1 white--text">
+            {{ $t('context.impacts') }}
+          </h3>
+          <v-container>
+            <v-card>
+              <v-card-text>
+                <v-data-iterator :items="impact">
+                  <template #item="props">
+                    <v-flex>
+                      <v-card>
+                        <v-card-title>{{ props.item }}</v-card-title>
+                      </v-card>
+                    </v-flex>
+                  </template>
+                  <template #no-data="">
+                    <v-flex>
+                      <v-card>
+                        <v-card-title>{{ $t('common.noData') }}</v-card-title>
+                      </v-card>
+                    </v-flex>
+                  </template>
+                </v-data-iterator>
+              </v-card-text>
+            </v-card>
+          </v-container>
+        </v-flex>
+        <v-flex xs6>
+          <h3 class="text-h5 text-center my-1 white--text">
+            {{ $t('context.dependencies') }}
+          </h3>
+          <v-container>
+            <v-card>
+              <v-card-text>
+                <v-data-iterator :items="depends">
+                  <template #item="props">
+                    <v-flex>
+                      <v-card>
+                        <v-card-title>{{ props.item }}</v-card-title>
+                      </v-card>
+                    </v-flex>
+                  </template>
+                  <template #no-data="">
+                    <v-flex>
+                      <v-card>
+                        <v-card-title>{{ $t('common.noData') }}</v-card-title>
+                      </v-card>
+                    </v-flex>
+                  </template>
+                </v-data-iterator>
+              </v-card-text>
+            </v-card>
+          </v-container>
+        </v-flex>
+      </v-layout>
+    </div>
+  </div>
 </template>
 
 <script>

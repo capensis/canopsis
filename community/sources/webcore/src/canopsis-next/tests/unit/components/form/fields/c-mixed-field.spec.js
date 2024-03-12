@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
@@ -32,14 +33,9 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.string);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.string);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe('12');
+    expect(wrapper).toEmitInput('12');
   });
 
   it('Input type changed after trigger input type field with number value', () => {
@@ -51,14 +47,9 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.number);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.number);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(12);
+    expect(wrapper).toEmitInput(12);
   });
 
   it('Input type changed after trigger input type field with null value', () => {
@@ -70,14 +61,9 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.null);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.null);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(null);
+    expect(wrapper).toEmitInput(null);
   });
 
   it('Input type changed after trigger input type field with boolean value', () => {
@@ -89,14 +75,9 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.boolean);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.boolean);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Input type changed after trigger input type field with array value', () => {
@@ -108,14 +89,9 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.stringArray);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.stringArray);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(['12']);
+    expect(wrapper).toEmitInput(['12']);
   });
 
   it('Value changed on the first field after remove selected type', async () => {
@@ -138,11 +114,7 @@ describe('c-mixed-field', () => {
       ],
     });
 
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(`${value}`);
+    expect(wrapper).toEmitInput(`${value}`);
   });
 
   it('Value change on undefined after remove all types', async () => {
@@ -162,17 +134,13 @@ describe('c-mixed-field', () => {
       types: [],
     });
 
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(undefined);
+    expect(wrapper).toEmitInput(undefined);
   });
 
   it('Renders `c-mixed-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with custom props', () => {
@@ -196,6 +164,6 @@ describe('c-mixed-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

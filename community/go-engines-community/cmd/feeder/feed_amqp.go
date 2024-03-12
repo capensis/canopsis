@@ -18,10 +18,10 @@ func (f *Feeder) sendIterable(ctx context.Context, iterable []interface{}) error
 
 		bv, err := json.Marshal(v)
 		if err != nil {
-			return fmt.Errorf("sending event: %v", err)
+			return fmt.Errorf("sending event: %w", err)
 		}
 		if err = f.sendBytes(ctx, bv, "#"); err != nil {
-			return fmt.Errorf("sending event: %v", err)
+			return fmt.Errorf("sending event: %w", err)
 		}
 	}
 
@@ -35,7 +35,7 @@ func (f *Feeder) sendLoop(ctx context.Context, content []byte) error {
 		err = json.Unmarshal(content, &ref)
 
 		if err != nil {
-			return fmt.Errorf("cannot unmarshal: %v", err)
+			return fmt.Errorf("cannot unmarshal: %w", err)
 		}
 
 		var iterable bool
@@ -77,7 +77,7 @@ func (f *Feeder) modeSendEvent(ctx context.Context) error {
 	content, err := os.ReadFile(f.flags.File)
 
 	if err != nil {
-		return fmt.Errorf("reading file %s: %v", f.flags.File, err)
+		return fmt.Errorf("reading file %s: %w", f.flags.File, err)
 	}
 
 	sendLoop := true
@@ -86,7 +86,7 @@ func (f *Feeder) modeSendEvent(ctx context.Context) error {
 		err := f.sendLoop(ctx, content)
 
 		if err != nil {
-			return fmt.Errorf("sending event: %v", err)
+			return fmt.Errorf("sending event: %w", err)
 		}
 
 		// breaking the loop

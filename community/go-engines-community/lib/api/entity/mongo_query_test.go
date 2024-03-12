@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
@@ -32,15 +33,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			Paginate: true,
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 10},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -115,15 +116,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -214,15 +215,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -278,7 +279,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, datetime.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
 	})
@@ -311,15 +312,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -396,15 +397,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -426,10 +427,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"alarm.v.resource": bson.M{"$eq": "test-resource"}},
-			{"$and": []bson.M{
-				{"alarm.v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-				{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
-			}},
+			{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
 		}}}}},
 		{"$project": bson.M{"alarm": 0}},
 		{"$facet": bson.M{
@@ -482,7 +480,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{
 			{Key: "state", Value: 1},
@@ -491,8 +489,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	computedFields := getComputedFields()
 	stateField := computedFields["state"]
@@ -557,15 +555,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -624,15 +622,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -751,15 +749,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),

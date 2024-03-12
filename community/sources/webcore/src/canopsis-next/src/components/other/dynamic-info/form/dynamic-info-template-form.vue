@@ -1,16 +1,21 @@
-<template lang="pug">
-  div
-    v-text-field(
-      v-field="template.title",
-      v-validate="'required'",
-      :error-messages="errors.collect('title')",
-      :label="$t('common.title')",
+<template>
+  <div>
+    <v-text-field
+      v-field="template.title"
+      v-validate="'required'"
+      :error-messages="errors.collect('title')"
+      :label="$t('common.title')"
       name="title"
-    )
-    h3 {{ $t('modals.createDynamicInfoTemplate.fields.names') }}
-    dynamic-info-template-names-field(v-field="template.names")
-      template(#no-data="")
-        v-alert(:value="true", type="info") {{ $t('modals.createDynamicInfoTemplate.emptyNames') }}
+    />
+    <h3>{{ $t('modals.createDynamicInfoTemplate.fields.names') }}</h3>
+    <dynamic-info-template-names-field v-field="template.names">
+      <template #no-data="">
+        <v-alert type="info">
+          {{ $t('modals.createDynamicInfoTemplate.emptyNames') }}
+        </v-alert>
+      </template>
+    </dynamic-info-template-names-field>
+  </div>
 </template>
 
 <script>

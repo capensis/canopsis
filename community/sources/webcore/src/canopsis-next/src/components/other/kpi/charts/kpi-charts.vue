@@ -1,12 +1,30 @@
-<template lang="pug">
-  v-layout.pa-4(column, align-center)
-    div.kpi-charts
-      c-information-block.mb-5(:title="$t('kpi.alarmMetrics')")
-        kpi-alarms(:unavailable="unavailable")
-      c-information-block.mb-5(:title="$tc('common.rating', 2)")
-        kpi-rating(:unavailable="unavailable")
-      c-information-block.mb-5(:title="$t('kpi.sli')")
-        kpi-sli(:unavailable="unavailable")
+<template>
+  <v-layout
+    class="pa-4"
+    column
+    align-center
+  >
+    <div class="kpi-charts">
+      <c-information-block
+        :title="$t('kpi.alarmMetrics')"
+        class="mb-5"
+      >
+        <kpi-alarms :unavailable="unavailable" />
+      </c-information-block>
+      <c-information-block
+        :title="$tc('common.rating', 2)"
+        class="mb-5"
+      >
+        <kpi-rating :unavailable="unavailable" />
+      </c-information-block>
+      <c-information-block
+        :title="$t('kpi.sli')"
+        class="mb-5"
+      >
+        <kpi-sli :unavailable="unavailable" />
+      </c-information-block>
+    </div>
+  </v-layout>
 </template>
 
 <script>

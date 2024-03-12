@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -23,11 +24,11 @@ type EditRequest struct {
 	common.EntityPatternFieldsRequest
 	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
 
-	RRule      string           `json:"rrule,omitempty"`
-	Start      *types.CpsTime   `json:"start,omitempty" swaggertype:"integer"`
-	Stop       *types.CpsTime   `json:"stop,omitempty" swaggertype:"integer"`
-	Exdates    []exdate.Request `json:"exdates" binding:"dive"`
-	Exceptions []string         `json:"exceptions"`
+	RRule      string            `json:"rrule,omitempty"`
+	Start      *datetime.CpsTime `json:"start,omitempty" swaggertype:"integer"`
+	Stop       *datetime.CpsTime `json:"stop,omitempty" swaggertype:"integer"`
+	Exdates    []exdate.Request  `json:"exdates" binding:"dive"`
+	Exceptions []string          `json:"exceptions"`
 }
 
 type Response struct {
@@ -39,11 +40,11 @@ type Response struct {
 	Enabled      bool                                          `bson:"enabled" json:"enabled"`
 	Config       eventfilter.RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
-	Created      *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created      *datetime.CpsTime                             `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *datetime.CpsTime                             `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 	RRule        string                                        `bson:"rrule" json:"rrule"`
-	Start        *types.CpsTime                                `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
-	Stop         *types.CpsTime                                `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
+	Start        *datetime.CpsTime                             `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
+	Stop         *datetime.CpsTime                             `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
 	Exdates      []types.Exdate                                `bson:"exdates" json:"exdates"`
 	Exceptions   []Exception                                   `bson:"exceptions" json:"exceptions"`
 
@@ -56,11 +57,11 @@ type Response struct {
 }
 
 type Exception struct {
-	ID          string         `bson:"_id" json:"_id"`
-	Name        string         `bson:"name" json:"name"`
-	Description string         `bson:"description" json:"description"`
-	Exdates     []types.Exdate `bson:"exdates" json:"exdates"`
-	Created     types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
+	ID          string           `bson:"_id" json:"_id"`
+	Name        string           `bson:"name" json:"name"`
+	Description string           `bson:"description" json:"description"`
+	Exdates     []types.Exdate   `bson:"exdates" json:"exdates"`
+	Created     datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
 }
 
 type CreateRequest struct {
@@ -107,12 +108,12 @@ type FailureRequest struct {
 }
 
 type FailureResponse struct {
-	ID        string         `bson:"_id" json:"_id"`
-	Type      int64          `bson:"type" json:"type"`
-	Timestamp types.CpsTime  `bson:"t" json:"t" swaggertype:"integer"`
-	Message   string         `bson:"message" json:"message"`
-	Event     map[string]any `bson:"event" json:"event"`
-	Unread    bool           `bson:"unread" json:"unread"`
+	ID        string           `bson:"_id" json:"_id"`
+	Type      int64            `bson:"type" json:"type"`
+	Timestamp datetime.CpsTime `bson:"t" json:"t" swaggertype:"integer"`
+	Message   string           `bson:"message" json:"message"`
+	Event     map[string]any   `bson:"event" json:"event" swaggertype:"object"`
+	Unread    bool             `bson:"unread" json:"unread"`
 }
 
 type AggregationFailureResult struct {

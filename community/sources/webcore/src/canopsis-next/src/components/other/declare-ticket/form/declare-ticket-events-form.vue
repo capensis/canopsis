@@ -1,36 +1,61 @@
-<template lang="pug">
-  v-layout(column)
-    c-information-block(v-if="!singleMode", :title="$t('declareTicket.applyRules')")
-      declare-ticket-event-form(
-        :form="commonValue",
-        :alarms="alarms",
-        :tickets-by-alarms="ticketsByAlarms",
-        :hide-ticket-resource="hideTicketResource",
-        hide-row-select,
+<template>
+  <v-layout column>
+    <c-information-block
+      v-if="!singleMode"
+      :title="$t('declareTicket.applyRules')"
+    >
+      <declare-ticket-event-form
+        :form="commonValue"
+        :alarms="alarms"
+        :tickets-by-alarms="ticketsByAlarms"
+        :hide-ticket-resource="hideTicketResource"
+        hide-row-select
         @input="updateCommonValue"
-      )
-    template(v-else)
-      c-information-block(v-for="group in groups", :key="group.ticketId", :title="$t('declareTicket.applyRules')")
-        v-layout.mt-2
-          v-checkbox(
-            :input-value="group.everyEnabled",
-            :indeterminate="group.someEnabled",
-            :label="group.name",
-            color="primary",
-            hide-details,
+      />
+    </c-information-block>
+    <template v-else>
+      <c-information-block
+        v-for="group in groups"
+        :key="group.ticketId"
+        :title="$t('declareTicket.applyRules')"
+      >
+        <v-layout class="mt-2">
+          <v-checkbox
+            :input-value="group.everyEnabled"
+            :indeterminate="group.someEnabled"
+            :label="group.name"
+            color="primary"
+            hide-details
             @change="updateEnabledTickets(group.ticketId)"
-          )
-        declare-ticket-event-form(
-          :form="group.value",
-          :alarms="group.alarms",
-          :tickets-by-alarms="group.ticketsByAlarms",
-          :hide-ticket-resource="hideTicketResource",
-          hide-tickets,
+          />
+        </v-layout>
+        <declare-ticket-event-form
+          :form="group.value"
+          :alarms="group.alarms"
+          :tickets-by-alarms="group.ticketsByAlarms"
+          :hide-ticket-resource="hideTicketResource"
+          hide-tickets
           @input="updateGroup(group.ticketId, $event)"
-        )
-      c-information-block(v-if="alarmsWithoutTickets.length", :title="$t('declareTicket.noRulesForAlarms')")
-        declare-ticket-event-alarms-tickets-field(:alarms="alarmsWithoutTickets", hide-tickets, hide-row-select)
-    c-alert(v-if="hasErrors", type="error") {{ $t('declareTicket.errors.ticketRequired') }}
+        />
+      </c-information-block>
+      <c-information-block
+        v-if="alarmsWithoutTickets.length"
+        :title="$t('declareTicket.noRulesForAlarms')"
+      >
+        <declare-ticket-event-alarms-tickets-field
+          :alarms="alarmsWithoutTickets"
+          hide-tickets
+          hide-row-select
+        />
+      </c-information-block>
+    </template>
+    <c-alert
+      v-if="hasErrors"
+      type="error"
+    >
+      {{ $t('declareTicket.errors.ticketRequired') }}
+    </c-alert>
+  </v-layout>
 </template>
 
 <script>

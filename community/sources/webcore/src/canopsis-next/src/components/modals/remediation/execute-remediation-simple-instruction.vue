@@ -1,23 +1,40 @@
-<template lang="pug">
-  modal-wrapper(:close="closeModal", minimize)
-    template(#title="")
-      span {{ config.assignedInstruction.name }}
-    template(#text="")
-      v-fade-transition
-        v-layout(v-if="pending", justify-center)
-          v-progress-circular(color="primary", indeterminate)
-        remediation-instruction-simple-execute(
-          v-else,
-          :executed="executed",
-          :jobs="jobs",
+<template>
+  <modal-wrapper
+    :close="closeModal"
+    minimize
+  >
+    <template #title="">
+      <span>{{ config.assignedInstruction.name }}</span>
+    </template>
+    <template #text="">
+      <v-fade-transition>
+        <v-layout
+          v-if="pending"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <remediation-instruction-simple-execute
+          v-else
+          :executed="executed"
+          :jobs="jobs"
           @run:jobs="runJobs"
-        )
-    template(#actions="")
-      v-btn(
-        depressed,
-        flat,
+        />
+      </v-fade-transition>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
         @click="closeModal"
-      ) {{ $t('common.close') }}
+      >
+        {{ $t('common.close') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -180,6 +197,8 @@ export default {
           this.executed = true;
         }
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
         this.closeModal();
@@ -206,6 +225,8 @@ export default {
           await this.config.onExecute();
         }
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
         this.closeModal();

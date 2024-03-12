@@ -12,7 +12,7 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
       class="flex xs5"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <!---->
         <c-enabled-field-stub
@@ -27,16 +27,28 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
     class="layout fill-height wrap"
   >
     <div
-      class="v-alert info"
+      class="layout justify-center"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light v-alert__icon"
+      <!---->
+      <div
+        class="v-alert v-sheet theme--dark info"
+        role="alert"
       >
-        info
-      </i>
-      <div>
+        <div
+          class="v-alert__wrapper"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            info
+          </i>
+          <div
+            class="v-alert__content"
+          >
         No data
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -57,7 +69,7 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
       class="flex xs5"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <!---->
         <c-enabled-field-stub
@@ -72,34 +84,65 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
     class="layout fill-height wrap"
   >
     <div
-      class="v-alert error"
+      class="layout justify-center"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light v-alert__icon"
+      <div
+        class="v-alert v-sheet theme--dark error"
+        role="alert"
       >
-        warning
-      </i>
-      <div>
         <div
-          class="layout align-center"
+          class="v-alert__wrapper"
         >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            warning
+          </i>
           <div
-            class="mr-4"
+            class="v-alert__content"
           >
+            <div
+              class="layout align-center"
+            >
+              <div
+                class="mr-4"
+              >
             Something went wrong...
-          </div>
-          <c-help-icon-stub
-            icon="help"
-            top="top"
-          >
-            <div>
+              </div>
+              <c-help-icon-stub
+                icon="help"
+                top=""
+              >
+                <div>
               Name: Service name error
-            </div>
-            <div>
+                </div>
+                <div>
               Description: Service description error
+                </div>
+              </c-help-icon-stub>
             </div>
-          </c-help-icon-stub>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-alert v-sheet theme--dark info"
+        role="alert"
+      >
+        <div
+          class="v-alert__wrapper"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            info
+          </i>
+          <div
+            class="v-alert__content"
+          >
+        No data
+          </div>
         </div>
       </div>
     </div>
@@ -127,7 +170,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
       class="flex xs5"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -148,10 +191,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
           withentity="true"
           withserviceweather="true"
         />
-        <c-enabled-field-stub
-          class="ml-3"
-          label="Hide gray"
-        />
+        <!---->
       </div>
     </div>
   </div>
@@ -168,7 +208,9 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
         heightfactor="0"
         margin="[object Object]"
         priorityenabled="true"
+        secondaryiconenabled="true"
         service="[object Object]"
+        showrootcausebystateclick="true"
         template=""
       />
     </div>

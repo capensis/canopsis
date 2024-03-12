@@ -1,9 +1,10 @@
 package testutils
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"os"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 )
 
 // Testutils constants
@@ -12,11 +13,12 @@ const (
 )
 
 // EnvBackup handles backup and restore of environment variables.
-// 	{
-// 		e := NewEnvBackup("MY_VAR", "newval")
+//
+//	{
+//		e := NewEnvBackup("MY_VAR", "newval")
 //		doYourStuff()
-// 		e.Restore()
-// 	}
+//		e.Restore()
+//	}
 type EnvBackup struct {
 	value string
 	name  string
