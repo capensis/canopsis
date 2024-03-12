@@ -245,6 +245,8 @@ describe('text-editor', () => {
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
+    jest.useFakeTimers();
+
     const action = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -261,18 +263,19 @@ describe('text-editor', () => {
       },
     });
 
-    const textEditorField = selectTextEditorField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textEditorField.triggerCustomEvent('input', newValue);
-
-    selectSubmitButton(wrapper).trigger('click');
+    await selectTextEditorField(wrapper).triggerCustomEvent('input', newValue);
+    await selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
+    jest.runAllTimers();
+
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
+
+    jest.useRealTimers();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -287,9 +290,7 @@ describe('text-editor', () => {
       },
     });
 
-    selectCancelButton(wrapper).trigger('click');
-
-    await flushPromises();
+    await selectCancelButton(wrapper).trigger('click');
 
     expect($modals.hide).toBeCalled();
   });
