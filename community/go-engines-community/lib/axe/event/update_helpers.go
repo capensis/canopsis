@@ -25,6 +25,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func NewAlarmStep(t string, params rpc.AxeParameters, inPbehaviorInterval bool) types.AlarmStep {
+	return types.NewAlarmStep(t, params.Timestamp, params.Author, params.Output, params.User, params.Role,
+		params.Initiator, inPbehaviorInterval)
+}
+
 func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now datetime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
 	result, err := pbhTypeResolver.Resolve(ctx, entity, now.Time)
 	if err != nil {
@@ -444,8 +449,8 @@ func postProcessResolve(
 }
 
 func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.M {
-	newStep := types.NewAlarmStep(types.AlarmStepResolve, t, params.Author,
-		params.Output, params.User, params.Role, params.Initiator, false)
+	newStep := NewAlarmStep(types.AlarmStepResolve, params, false)
+	newStep.Timestamp = t
 
 	return []bson.M{
 		{"$set": bson.M{
