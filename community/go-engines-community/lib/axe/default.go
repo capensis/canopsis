@@ -48,7 +48,6 @@ type Options struct {
 	PeriodicalWaitTime       time.Duration
 	TagsPeriodicalWaitTime   time.Duration
 	SliPeriodicalWaitTime    time.Duration
-	WithRemediation          bool
 	RecomputeAllOnInit       bool
 	Workers                  int
 }
@@ -63,10 +62,12 @@ func ParseOptions() Options {
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
-	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", 2, "Amount of workers to process main event flow")
+
+	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
+
 	flag.Parse()
 
 	return opts
@@ -76,9 +77,13 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	dbClient mongo.DbClient,
+	amqpConnection amqp.Connection,
 	cfg config.CanopsisConf,
 	metricsSender metrics.Sender,
 	autoInstructionMatcher event.AutoInstructionMatcher,
+	remediationRpcClient libengine.RPCClient,
+	dynamicInfosRpcClient libengine.RPCClient,
+	rpcPublishQueues []string,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -94,7 +99,6 @@ func NewEngine(
 		panic(fmt.Errorf("dependency error: %s: %v", "can't get user interface config", err))
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -122,22 +126,6 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
-	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
-	var remediationRpcClient libengine.RPCClient
-	if options.WithRemediation {
-		remediationRpcClient = libengine.NewRPCClient(
-			canopsis.AxeRPCConsumerName,
-			canopsis.RemediationRPCQueueServerName,
-			"",
-			cfg.Global.PrefetchCount,
-			cfg.Global.PrefetchSize,
-			nil,
-			amqpChannel,
-			logger,
-		)
-		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
-	}
-
 	idleSinceService := entityservice.NewService(
 		entityservice.NewAdapter(dbClient),
 		entity.NewAdapter(dbClient),
@@ -220,7 +208,8 @@ func NewEngine(
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil,
+			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...)),
 		amqpChannel,
 		logger,
 	)
@@ -259,12 +248,7 @@ func NewEngine(
 			return autoInstructionMatcher.Load(ctx)
 		},
 		func(ctx context.Context) {
-			err := amqpConnection.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close amqp connection")
-			}
-
-			err = lockRedisClient.Close()
+			err := lockRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -326,6 +310,7 @@ func NewEngine(
 			EventProcessor:           eventProcessor,
 			ActionRpc:                actionRpcClient,
 			PbhRpc:                   pbhRpcClient,
+			DynamicInfosRpc:          dynamicInfosRpcClient,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
@@ -333,6 +318,10 @@ func NewEngine(
 		logger,
 	))
 	engineAxe.AddConsumer(pbhRpcClient)
+	if dynamicInfosRpcClient != nil {
+		engineAxe.AddConsumer(dynamicInfosRpcClient)
+	}
+
 	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:      options.PeriodicalWaitTime,
