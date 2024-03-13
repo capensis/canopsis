@@ -34,7 +34,9 @@ export default {
   },
   computed: {
     hasDayUnit() {
-      return fromSeconds(this.maxValue, TIME_UNITS.day) > 1;
+      return this.maxValue
+        ? fromSeconds(this.maxValue, TIME_UNITS.day) > 1
+        : true;
     },
 
     availableItems() {
@@ -80,6 +82,10 @@ export default {
     },
 
     maxValuesByUnit() {
+      if (!this.maxValue) {
+        return {};
+      }
+
       const { values } = this.availableItems.reduce((acc, { unit }) => {
         acc.values[unit] = this.convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
         acc.restSeconds -= toSeconds(this.valuesByUnit[unit], unit);
