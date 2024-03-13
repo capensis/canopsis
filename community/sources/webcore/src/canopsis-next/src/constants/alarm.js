@@ -561,4 +561,12 @@ export const ALARM_ACTION_BUTTON_MARGINS = {
   [ALARM_DENSE_TYPES.small]: 0,
 };
 
+export const ALARM_ACTIONS_PADDINGS = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 6,
+  [ALARM_DENSE_TYPES.small]: 6,
+};
+
+export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;
+
 export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
