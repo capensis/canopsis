@@ -116,7 +116,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -141,7 +141,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -166,7 +166,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -804,7 +804,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -829,7 +829,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -854,7 +854,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1019,7 +1019,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1044,7 +1044,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1069,7 +1069,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1659,7 +1659,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1684,7 +1684,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1709,7 +1709,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""

@@ -105,7 +105,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -130,7 +130,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -155,7 +155,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -180,7 +180,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -205,7 +205,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -230,7 +230,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1113,7 +1113,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1138,7 +1138,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1163,7 +1163,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1188,7 +1188,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1213,7 +1213,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1238,7 +1238,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""

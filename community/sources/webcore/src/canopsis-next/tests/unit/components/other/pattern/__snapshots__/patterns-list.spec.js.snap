@@ -101,7 +101,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -139,7 +139,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -164,7 +164,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -961,7 +961,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -999,7 +999,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""

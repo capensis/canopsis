@@ -1,6 +1,6 @@
 <template>
   <v-flex
-    v-resize="changeHeaderPositionOnResize"
+    v-resize="resizeHandler"
     v-on="wrapperListeners"
   >
     <c-empty-data-table-columns v-if="!columns.length" />
@@ -148,6 +148,7 @@
             :search="search"
             :wrap-actions="resizableColumn"
             :show-instruction-icon="hasInstructionsAlarms"
+            :actions-inline-count="actionsInlineCount"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -187,7 +188,15 @@
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS, MODALS } from '@/constants';
+import {
+  ALARM_ACTION_BUTTON_MARGINS,
+  ALARM_ACTION_BUTTON_WIDTHS,
+  ALARM_ACTIONS_PADDINGS,
+  ALARM_DENSE_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
+  MODALS,
+} from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -311,7 +320,6 @@ export default {
       default: '',
     },
   },
-
   computed: {
     shownTopPagination() {
       return this.totalItems && (this.densable || !this.hideActions || !this.hidePagination);
@@ -414,6 +422,22 @@ export default {
       }
 
       return this.headers;
+    },
+
+    actionsInlineCount() {
+      if (!this.resizableColumn) {
+        return DEFAULT_ALARM_ACTIONS_INLINE_COUNT;
+      }
+
+      const denseType = {
+        [this.isSmallDense]: ALARM_DENSE_TYPES.small,
+        [this.isMediumDense]: ALARM_DENSE_TYPES.medium,
+      }.true ?? ALARM_DENSE_TYPES.large;
+      const width = this.getColumnWidthByField('actions') ?? 0;
+      const widthInPixelWithoutPaddings = (width / this.percentsInPixel) - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
+      const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[denseType] + ALARM_ACTION_BUTTON_MARGINS[denseType];
+
+      return Math.floor(widthInPixelWithoutPaddings / actionWidth) || 1;
     },
 
     vDataTableClass() {
@@ -546,11 +570,11 @@ export default {
     },
 
     resetColumnsSettings() {
-      if (this.resizableColumn) {
+      if (this.draggableColumn) {
         this.setColumnsPosition({});
       }
 
-      if (this.draggableColumn) {
+      if (this.resizableColumn) {
         this.setColumnsWidth({});
         this.$nextTick(this.calculateColumnsWidths);
       }
@@ -582,6 +606,11 @@ export default {
           colorIndicator: this.widget.parameters.rootCauseColorIndicator,
         },
       });
+    },
+
+    resizeHandler() {
+      this.changeHeaderPositionOnResize();
+      this.calculateColumnsWidths();
     },
   },
 };

@@ -183,7 +183,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -221,7 +221,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -259,7 +259,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -284,7 +284,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -309,7 +309,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -334,7 +334,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1754,7 +1754,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1792,7 +1792,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1830,7 +1830,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1855,7 +1855,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1880,7 +1880,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1905,7 +1905,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -2152,7 +2152,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -2190,7 +2190,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -2228,7 +2228,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -2253,7 +2253,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -2278,7 +2278,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -2303,7 +2303,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -3395,7 +3395,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -3433,7 +3433,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -3471,7 +3471,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -3496,7 +3496,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -3521,7 +3521,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -3546,7 +3546,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""

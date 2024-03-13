@@ -373,7 +373,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -398,7 +398,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -423,7 +423,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -448,7 +448,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -778,7 +778,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -803,7 +803,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -828,7 +828,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -853,7 +853,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1121,7 +1121,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1146,7 +1146,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1171,7 +1171,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1196,7 +1196,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1421,7 +1421,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1446,7 +1446,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1471,7 +1471,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1690,7 +1690,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1715,7 +1715,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1740,7 +1740,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -1765,7 +1765,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2217,7 +2217,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2242,7 +2242,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2267,7 +2267,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2292,7 +2292,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2622,7 +2622,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2647,7 +2647,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2672,7 +2672,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2697,7 +2697,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2892,7 +2892,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2917,7 +2917,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2942,7 +2942,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""
@@ -2967,7 +2967,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   scope="col"
                 >
                   <div
-                    class="layout"
+                    class="layout align-center"
                   >
                     <span
                       class=""

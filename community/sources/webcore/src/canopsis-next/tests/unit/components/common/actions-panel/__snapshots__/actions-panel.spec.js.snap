@@ -1,6 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly. With zero width. 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'xl' 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout align-center"
+  >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'xl' 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with default props correctly 1`] = `
 <div
   class="actions-panel"
 >
@@ -12,9 +36,9 @@ exports[`actions-panel Renders \`actions-panel\` with default props correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly. With zero width. 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with default props correctly 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for one item. 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 1`] = `
 <div
   class="actions-panel"
 >
@@ -45,7 +69,7 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for one item. 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
   role="menu"
@@ -136,36 +160,7 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 1`] = `
-<div
-  class="actions-panel"
->
-  <div
-    class="layout align-center"
-  >
-    <c-action-btn-stub
-      color="primary"
-      icon="edit"
-      tooltip="Edit title"
-    />
-    <c-action-btn-stub
-      color="secondary"
-      icon="delete"
-      tooltip="Delete title"
-    />
-    <c-action-btn-stub
-      color="secondary"
-      icon="done"
-      tooltip="Ack title"
-    />
-    <!---->
-  </div>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 2`] = `undefined`;
-
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 3`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'm' 1`] = `
 <div
   class="actions-panel"
 >
@@ -196,7 +191,7 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items and changing to one item. 4`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'm' 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
   role="menu"
@@ -287,7 +282,129 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items. 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 't' 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout align-center"
+  >
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
+        >
+          more_vert
+        </i>
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 't' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
+          >
+            edit
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Edit title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 1`] = `
 <div
   class="actions-panel"
 >
@@ -314,14 +431,14 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for three items. 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For large dense. 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and wrap 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout align-center"
+    class="layout wrap align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -352,7 +469,7 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For large dense. 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and wrap 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
   role="menu"
@@ -417,204 +534,147 @@ exports[`actions-panel Renders \`actions-panel\` with three actions correctly. W
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For medium dense. 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout align-center"
+    class="layout wrap align-center"
   >
     <c-action-btn-stub
       color="primary"
       icon="edit"
       tooltip="Edit title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For medium dense. 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <div
-    class="v-list v-sheet theme--light"
-  >
-    <div
-      class="v-list-item v-list-item--link theme--light"
-      role="menuitem"
-      tabindex="0"
-    >
-      <div
-        class="v-list-item__title"
-      >
-        <span
-          class="mr-4"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
-          >
-            delete
-          </i>
-        </span>
-        <span
-          class="text-body-1"
-        >
-              Delete title
-        </span>
-      </div>
-    </div>
-    <div
-      class="v-list-item v-list-item--link theme--light"
-      role="menuitem"
-      tabindex="0"
-    >
-      <div
-        class="v-list-item__title"
-      >
-        <span
-          class="mr-4"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
-          >
-            done
-          </i>
-        </span>
-        <span
-          class="text-body-1"
-        >
-              Ack title
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For small dense. 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size l 1`] = `
 <div
-  class="actions-panel actions-panel--small"
+  class="actions-panel"
 >
   <div
-    class="layout align-center"
+    class="layout wrap align-center"
   >
     <c-action-btn-stub
       color="primary"
       icon="edit"
       tooltip="Edit title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions correctly. With width for two items. For small dense. 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size l 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size m 1`] = `
 <div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+  class="actions-panel"
 >
   <div
-    class="v-list v-sheet theme--light"
+    class="layout wrap align-center"
   >
-    <div
-      class="v-list-item v-list-item--link theme--light"
-      role="menuitem"
-      tabindex="0"
-    >
-      <div
-        class="v-list-item__title"
-      >
-        <span
-          class="mr-4"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
-          >
-            delete
-          </i>
-        </span>
-        <span
-          class="text-body-1"
-        >
-              Delete title
-        </span>
-      </div>
-    </div>
-    <div
-      class="v-list-item v-list-item--link theme--light"
-      role="menuitem"
-      tabindex="0"
-    >
-      <div
-        class="v-list-item__title"
-      >
-        <span
-          class="mr-4"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
-          >
-            done
-          </i>
-        </span>
-        <span
-          class="text-body-1"
-        >
-              Ack title
-        </span>
-      </div>
-    </div>
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
+    <!---->
   </div>
 </div>
 `;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size m 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size t 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout wrap align-center"
+  >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size t 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size xl 1`] = `
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout wrap align-center"
+  >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size xl 2`] = `undefined`;

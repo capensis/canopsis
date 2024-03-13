@@ -61,7 +61,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -86,7 +86,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -111,7 +111,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -136,7 +136,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -161,7 +161,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -186,7 +186,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -211,7 +211,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -236,7 +236,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -261,7 +261,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -355,7 +355,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -380,7 +380,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -405,7 +405,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -430,7 +430,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -455,7 +455,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -480,7 +480,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -505,7 +505,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -530,7 +530,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1140,7 +1140,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1165,7 +1165,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1190,7 +1190,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1215,7 +1215,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1240,7 +1240,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1265,7 +1265,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1290,7 +1290,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1315,7 +1315,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""

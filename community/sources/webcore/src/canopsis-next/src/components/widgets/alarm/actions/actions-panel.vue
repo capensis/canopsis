@@ -1,9 +1,9 @@
 <template>
   <shared-actions-panel
     :actions="preparedActions"
-    :medium="medium"
     :small="small"
     :wrap="wrap"
+    :inline-count="inlineCount"
   />
 </template>
 
@@ -76,10 +76,6 @@ export default {
       type: Object,
       default: null,
     },
-    medium: {
-      type: Boolean,
-      default: false,
-    },
     small: {
       type: Boolean,
       default: false,
@@ -91,6 +87,10 @@ export default {
     refreshAlarmsList: {
       type: Function,
       default: () => {},
+    },
+    inlineCount: {
+      type: Number,
+      required: false,
     },
   },
   computed: {
