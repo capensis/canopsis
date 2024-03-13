@@ -97,7 +97,13 @@ export default {
         const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, page, limit, descending, multiSortBy };
+        return {
+          sortBy,
+          page,
+          descending,
+          multiSortBy,
+          rowsPerPage: limit,
+        };
       },
 
       set(value) {
