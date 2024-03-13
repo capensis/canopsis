@@ -1,7 +1,7 @@
 <template lang="pug">
   v-flex(
     v-on="wrapperListeners",
-    v-resize="changeHeaderPositionOnResize"
+    v-resize="resizeHandler"
   )
     c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
@@ -102,6 +102,7 @@
             :search="search",
             :wrap-actions="resizableColumn",
             :show-instruction-icon="hasInstructionsAlarms",
+            :actions-inline-count="actionsInlineCount",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)",
             @expand="props.expanded = $event"
@@ -133,7 +134,14 @@
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import {
+  ALARM_ACTION_BUTTON_MARGINS,
+  ALARM_ACTION_BUTTON_WIDTHS,
+  ALARM_ACTIONS_PADDINGS,
+  ALARM_DENSE_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
+} from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -362,6 +370,22 @@ export default {
       return this.headers;
     },
 
+    actionsInlineCount() {
+      if (!this.resizableColumn) {
+        return DEFAULT_ALARM_ACTIONS_INLINE_COUNT;
+      }
+
+      const denseType = {
+        [this.isSmallDense]: ALARM_DENSE_TYPES.small,
+        [this.isMediumDense]: ALARM_DENSE_TYPES.medium,
+      }.true ?? ALARM_DENSE_TYPES.large;
+      const width = this.getColumnWidthByField('actions') ?? 0;
+      const widthInPixelWithoutPaddings = (width / this.percentsInPixel) - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
+      const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[denseType] + ALARM_ACTION_BUTTON_MARGINS[denseType];
+
+      return Math.floor(widthInPixelWithoutPaddings / actionWidth) || 1;
+    },
+
     vDataTableClass() {
       const columnsLength = this.headers.length;
       const COLUMNS_SIZES_VALUES = {
@@ -492,11 +516,11 @@ export default {
     },
 
     resetColumnsSettings() {
-      if (this.resizableColumn) {
+      if (this.draggableColumn) {
         this.setColumnsPosition({});
       }
 
-      if (this.draggableColumn) {
+      if (this.resizableColumn) {
         this.setColumnsWidth({});
         this.$nextTick(this.calculateColumnsWidths);
       }
@@ -510,7 +534,11 @@ export default {
       this.$emit('update:page', page);
     },
 
-    changeHeaderPositionOnResize() {
+    updatePaginationHandler(data) {
+      this.$emit('update:pagination', data);
+    },
+
+    resizeHandler() {
       if (this.stickyHeader) {
         this.changeHeaderPosition();
       }
@@ -518,10 +546,10 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-    },
 
-    updatePaginationHandler(data) {
-      this.$emit('update:pagination', data);
+      if (!this.resizingMode) {
+        this.calculateSpecialColumnWidth('actions');
+      }
     },
   },
 };

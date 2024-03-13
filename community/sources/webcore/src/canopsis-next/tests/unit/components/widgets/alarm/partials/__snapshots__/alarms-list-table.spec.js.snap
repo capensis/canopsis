@@ -149,6 +149,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           </thead>
           <tbody>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -171,6 +172,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -193,6 +195,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -215,6 +218,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -237,6 +241,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -877,6 +882,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           </thead>
           <tbody>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -896,6 +902,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -915,6 +922,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -934,6 +942,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
@@ -953,6 +962,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              actionsinlinecount="4"
               alarm="[object Object]"
               columnsfilters=""
               expandable="true"
