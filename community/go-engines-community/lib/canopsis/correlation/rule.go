@@ -19,14 +19,13 @@ const (
 )
 
 type Rule struct {
-	ID                 string                     `bson:"_id" json:"_id"`
-	Type               string                     `bson:"type" json:"type"`
-	Name               string                     `bson:"name" json:"name"`
-	Author             string                     `bson:"author" json:"author"`
-	OutputTemplate     string                     `bson:"output_template" json:"output_template"`
-	ChildInactiveDelay *datetime.DurationWithUnit `bson:"child_inactive_delay,omitempty" json:"child_inactive_delay,omitempty"`
-	Config             RuleConfig                 `bson:"config" json:"config"`
-	AutoResolve        bool                       `bson:"auto_resolve" json:"auto_resolve"`
+	ID             string     `bson:"_id" json:"_id"`
+	Type           string     `bson:"type" json:"type"`
+	Name           string     `bson:"name" json:"name"`
+	Author         string     `bson:"author" json:"author"`
+	OutputTemplate string     `bson:"output_template" json:"output_template"`
+	Config         RuleConfig `bson:"config" json:"config"`
+	AutoResolve    bool       `bson:"auto_resolve" json:"auto_resolve"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
