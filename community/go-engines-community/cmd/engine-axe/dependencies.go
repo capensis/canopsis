@@ -18,15 +18,23 @@ func NewEngineAXE(ctx context.Context, options axe.Options, logger zerolog.Logge
 	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
+	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
-	e := axe.NewEngine(ctx, options, dbClient, cfg, metricsSender, event.NewNullAutoInstructionMatcher(), logger)
+	e := axe.NewEngine(ctx, options, dbClient, amqpConnection, cfg, metricsSender, event.NewNullAutoInstructionMatcher(), nil, nil, nil, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)
 		if err != nil {
 			logger.Err(err).Msg("failed to close mongo connection")
 		}
+
+		err = amqpConnection.Close()
+		if err != nil {
+			logger.Error().Err(err).Msg("failed to close amqp connection")
+		}
+
+		pgPoolProvider.Close()
 	})
 
 	return e
