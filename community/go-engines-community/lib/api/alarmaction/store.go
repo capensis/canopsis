@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -211,6 +212,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 	event := types.Event{
 		EventType:  types.EventTypeAssocTicket,
 		TicketInfo: ticketInfo,
+		Output:     ticketInfo.GetStepMessage(),
 		Component:  alarm.Alarm.Value.Component,
 		Resource:   alarm.Alarm.Value.Resource,
 		SourceType: alarm.Entity.Type,
@@ -379,6 +381,16 @@ func (s *store) ackResources(
 	}
 	defer cursor.Close(ctx)
 
+	outputBuilder := strings.Builder{}
+	if comment != "" {
+		outputBuilder.WriteString(comment)
+		outputBuilder.WriteString("\n")
+	}
+
+	outputBuilder.WriteString(types.OutputComponentPrefix)
+	outputBuilder.WriteString(component)
+
+	output := outputBuilder.String()
 	for cursor.Next(ctx) {
 		alarm := types.AlarmWithEntity{}
 		err = cursor.Decode(&alarm)
@@ -388,7 +400,7 @@ func (s *store) ackResources(
 
 		event := types.Event{
 			EventType:  types.EventTypeAck,
-			Output:     comment,
+			Output:     output,
 			Component:  alarm.Alarm.Value.Component,
 			Resource:   alarm.Alarm.Value.Resource,
 			SourceType: alarm.Entity.Type,
@@ -440,6 +452,13 @@ func (s *store) ticketResources(
 	}
 	defer cursor.Close(ctx)
 
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(ticketInfo.GetStepMessage())
+	outputBuilder.WriteString(" ")
+	outputBuilder.WriteString(types.OutputComponentPrefix)
+	outputBuilder.WriteString(component)
+	outputBuilder.WriteRune('.')
+	output := outputBuilder.String()
 	for cursor.Next(ctx) {
 		alarm := types.AlarmWithEntity{}
 		err = cursor.Decode(&alarm)
@@ -450,6 +469,7 @@ func (s *store) ticketResources(
 		event := types.Event{
 			EventType:  types.EventTypeAssocTicket,
 			TicketInfo: ticketInfo,
+			Output:     output,
 			Component:  alarm.Alarm.Value.Component,
 			Resource:   alarm.Alarm.Value.Resource,
 			SourceType: alarm.Entity.Type,

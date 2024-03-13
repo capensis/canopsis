@@ -217,11 +217,11 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		return result, err
 	}
 
-	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
-		params.Output, params.User, params.Role, params.Initiator, false)
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
+	stateStep.Author = author
 	stateStep.Value = *params.State
-	statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, author,
-		params.Output, params.User, params.Role, params.Initiator, false)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
+	statusStep.Author = author
 	statusStep.Value = types.AlarmStatusOngoing
 	alarm.Value.State = &stateStep
 	err = alarm.Value.Steps.Add(stateStep)
@@ -356,8 +356,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 
 	var stateStep types.AlarmStep
 	if newState != previousState && (!alarm.IsStateLocked() || newState == types.AlarmStateOK) {
-		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
-			params.Output, params.User, params.Role, params.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		stateStep = NewAlarmStep(types.AlarmStepStateIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		stateStep.Author = author
 		stateStep.Value = newState
 		alarmChange.Type = types.AlarmChangeTypeStateIncrease
 		if newState < previousState {
@@ -392,8 +392,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
 		}
 
-		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, author,
-			params.Output, params.User, params.Role, params.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		statusStep.Author = author
 		statusStep.Value = newStatus
 		if newStatus < previousStatus {
 			statusStep.Type = types.AlarmStepStatusDecrease
