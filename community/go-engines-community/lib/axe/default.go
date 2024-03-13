@@ -5,6 +5,7 @@ import (
 	"flag"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -39,7 +40,6 @@ type Options struct {
 	PublishToQueue           string
 	PeriodicalWaitTime       time.Duration
 	TagsPeriodicalWaitTime   time.Duration
-	WithRemediation          bool
 }
 
 func ParseOptions() Options {
@@ -50,8 +50,10 @@ func ParseOptions() Options {
 	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.ServiceQueueName, "Publish event to this queue")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
-	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
+
+	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
+
 	flag.Parse()
 
 	return opts
@@ -61,9 +63,13 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	dbClient mongo.DbClient,
+	amqpConnection amqp.Connection,
 	cfg config.CanopsisConf,
 	metricsSender metrics.Sender,
 	autoInstructionMatcher AutoInstructionMatcher,
+	remediationRpcClient libengine.RPCClient,
+	dynamicInfosRpcClient libengine.RPCClient,
+	rpcPublishQueues []string,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -72,7 +78,6 @@ func NewEngine(
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -100,24 +105,7 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
-	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
-	var remediationRpcClient libengine.RPCClient
-	if options.WithRemediation {
-		remediationRpcClient = libengine.NewRPCClient(
-			canopsis.AxeRPCConsumerName,
-			canopsis.RemediationRPCQueueServerName,
-			"",
-			cfg.Global.PrefetchCount,
-			cfg.Global.PrefetchSize,
-			nil,
-			amqpChannel,
-			logger,
-		)
-		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
-	}
-
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
-
 	pbhRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
@@ -164,7 +152,8 @@ func NewEngine(
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil,
+			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...)),
 		amqpChannel,
 		logger,
 	)
@@ -187,12 +176,7 @@ func NewEngine(
 			return autoInstructionMatcher.Load(ctx)
 		},
 		func(ctx context.Context) {
-			err := amqpConnection.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close amqp connection")
-			}
-
-			err = lockRedisClient.Close()
+			err := lockRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -271,6 +255,7 @@ func NewEngine(
 			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
+			DynamicInfosRpc:          dynamicInfosRpcClient,
 			ActionRpc:                actionRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			Executor:                 m.DepOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
@@ -282,6 +267,10 @@ func NewEngine(
 	))
 	engineAxe.AddConsumer(serviceRpcClient)
 	engineAxe.AddConsumer(pbhRpcClient)
+	if dynamicInfosRpcClient != nil {
+		engineAxe.AddConsumer(dynamicInfosRpcClient)
+	}
+
 	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:     options.PeriodicalWaitTime,
