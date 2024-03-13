@@ -1,5 +1,8 @@
 <template>
-  <v-flex v-on="wrapperListeners">
+  <v-flex
+    v-resize="resizeHandler"
+    v-on="wrapperListeners"
+  >
     <c-empty-data-table-columns v-if="!columns.length" />
     <div v-else>
       <v-layout
@@ -323,17 +326,9 @@ export default {
     },
 
     wrapperListeners() {
-      const listeners = {};
-
-      if (this.stickyHeader || this.selecting || this.resizableColumn) {
-        listeners.resize = this.resizeHandler;
-      }
-
-      if (this.selectable) {
-        listeners.mousemove = this.throttledMousemoveHandler;
-      }
-
-      return listeners;
+      return this.selectable
+        ? { mousemove: this.throttledMousemoveHandler }
+        : {};
     },
 
     unresolvedSelected() {
@@ -611,8 +606,8 @@ export default {
         this.calculateRowsPositions();
       }
 
-      if (this.resizableColumn) {
-        this.calculateColumnsWidths();
+      if (!this.resizingMode) {
+        this.calculateSpecialColumnWidth('actions');
       }
     },
   },
