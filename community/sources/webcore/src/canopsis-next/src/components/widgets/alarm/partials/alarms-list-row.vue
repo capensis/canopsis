@@ -62,9 +62,9 @@
         :widget="widget"
         :parent-alarm="parentAlarm"
         :refresh-alarms-list="refreshAlarmsList"
-        :medium="medium"
         :small="small"
         :wrap="wrapActions"
+        :inline-count="actionsInlineCount"
       />
       <alarm-column-value
         v-else
@@ -189,6 +189,10 @@ export default {
     search: {
       type: String,
       default: '',
+    },
+    actionsInlineCount: {
+      type: Number,
+      required: false,
     },
   },
   data() {
