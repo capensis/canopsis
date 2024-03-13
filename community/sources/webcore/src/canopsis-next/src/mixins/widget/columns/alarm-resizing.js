@@ -105,6 +105,19 @@ export const widgetColumnResizingAlarmMixin = {
       }, {});
     },
 
+    calculateSpecialColumnWidth(field) {
+      this.setPercentsInPixel();
+
+      const headerElement = this.tableRow.querySelector(`th[data-value="${field}"]`);
+
+      if (headerElement) {
+        const { width: headerWidth } = headerElement.getBoundingClientRect();
+        const width = headerWidth * this.percentsInPixel;
+
+        this.columnsWidthByField[field] = this.getNormalizedWidth(field, width);
+      }
+    },
+
     resizeColumnByDiff(index) {
       const diff = this.aggregatedMovementDiff;
 
