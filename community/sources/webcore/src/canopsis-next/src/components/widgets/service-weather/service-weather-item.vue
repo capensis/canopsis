@@ -37,16 +37,22 @@
             class="mr-1"
           />
           <v-btn
+            v-if="showRootCauseByStateClick"
+            icon
+            small
+            @click.stop="$emit('show:root-cause')"
+          >
+            <v-icon color="white" small>
+              $vuetify.icons.root_cause
+            </v-icon>
+          </v-btn>
+          <v-btn
             v-if="showVariablesHelpButton"
-            class="ma-0"
             icon
             small
             @click.stop="showVariablesHelpModal(service)"
           >
-            <v-icon
-              color="white"
-              small
-            >
+            <v-icon color="white" small>
               help
             </v-icon>
           </v-btn>
@@ -143,6 +149,10 @@ export default {
       default: false,
     },
     showVariablesHelpButton: {
+      type: Boolean,
+      default: false,
+    },
+    showRootCauseByStateClick: {
       type: Boolean,
       default: false,
     },
