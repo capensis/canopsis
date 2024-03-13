@@ -5,18 +5,9 @@
         <span>{{ $t('modals.createManualMetaAlarm.title') }}</span>
       </template>
       <template #text="">
-        <v-layout>
-          <v-flex class="text-center">
-            <alarm-general-table :items="alarms" />
-          </v-flex>
-        </v-layout>
-        <v-layout>
-          <v-divider class="my-3" />
-        </v-layout>
-        <v-layout>
-          <v-flex xs12>
-            <manual-meta-alarm-form v-model="form" />
-          </v-flex>
+        <v-layout column>
+          <alarm-general-table :items="alarms" class="mb-4" />
+          <manual-meta-alarm-form v-model="form" />
         </v-layout>
       </template>
       <template #actions="">

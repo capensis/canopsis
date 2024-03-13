@@ -13,6 +13,26 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -75,70 +95,106 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
           </tr>
         </thead>
         <tbody>
-          <tr
-            class=""
-          >
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-0
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-0
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-0
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-0
+            </td>
           </tr>
           <tr
-            class=""
-          >
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-1
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-1
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-1
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-1
+            </td>
           </tr>
           <tr
-            class=""
-          >
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-2
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-2
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-2
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-2
+            </td>
           </tr>
           <tr
-            class=""
-          >
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-3
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-3
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-3
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-3
+            </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
         </tbody>
       </table>
     </div>
