@@ -48,7 +48,7 @@ func (p *declareTicketWebhookProcessor) Process(ctx context.Context, event rpc.A
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket, "",
-		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
+		event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.ticket":  newTicketStepQuery,

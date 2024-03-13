@@ -60,6 +60,7 @@ const (
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+	AlarmStepMetaAlarmDetach = "metaalarmdetach"
 	AlarmStepActivate        = "activate"
 	AlarmStepResolve         = "resolve"
 
@@ -108,6 +109,7 @@ func GetAlarmStepTypes() []string {
 		AlarmStepPbhEnter,
 		AlarmStepPbhLeave,
 		AlarmStepMetaAlarmAttach,
+		AlarmStepMetaAlarmDetach,
 		AlarmStepActivate,
 		AlarmStepResolve,
 		AlarmStepAssocTicket,

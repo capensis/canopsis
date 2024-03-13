@@ -169,11 +169,9 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		return result, err
 	}
 
-	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
-		params.Output, params.User, params.Role, params.Initiator, false)
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Value = *params.State
-	statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, params.Author,
-		params.Output, params.User, params.Role, params.Initiator, false)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
 	statusStep.Value = types.AlarmStatusNoEvents
 	alarm.Value.State = &stateStep
 	err = alarm.Value.Steps.Add(stateStep)
@@ -272,8 +270,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 
 	var stateStep types.AlarmStep
 	if newState != previousState {
-		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
-			params.Output, params.User, params.Role, params.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		stateStep = NewAlarmStep(types.AlarmStepStateIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		stateStep.Value = newState
 		alarmChange.Type = types.AlarmChangeTypeStateIncrease
 		if newState < previousState {
@@ -311,8 +308,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 			inc["v.state_changes_since_status_update"] = 1
 		}
 	} else {
-		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, params.Author,
-			params.Output, params.User, params.Role, params.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		statusStep.Value = newStatus
 		if newStatus < previousStatus {
 			statusStep.Type = types.AlarmStepStatusDecrease

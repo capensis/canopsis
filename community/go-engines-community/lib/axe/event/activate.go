@@ -47,8 +47,7 @@ func (p *activateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	match := getOpenAlarmMatch(event)
 	match["v.activation_date"] = nil
-	newStep := types.NewAlarmStep(types.AlarmStepActivate, event.Parameters.Timestamp, event.Parameters.Author,
-		event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
+	newStep := NewAlarmStep(types.AlarmStepActivate, event.Parameters, false)
 	update := bson.M{
 		"$set":  bson.M{"v.activation_date": event.Parameters.Timestamp},
 		"$push": bson.M{"v.steps": newStep},
