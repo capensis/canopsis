@@ -318,7 +318,7 @@ exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
             scope="col"
           >
             <div
-              class="layout"
+              class="layout align-center"
             >
               <span
                 class=""
@@ -343,7 +343,7 @@ exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
             scope="col"
           >
             <div
-              class="layout"
+              class="layout align-center"
             >
               <span
                 class=""
@@ -525,7 +525,7 @@ exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis 
             scope="col"
           >
             <div
-              class="layout"
+              class="layout align-center"
             >
               <span
                 class="v-data-table-header-span--ellipsis"
@@ -551,7 +551,7 @@ exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis 
             scope="col"
           >
             <div
-              class="layout"
+              class="layout align-center"
             >
               <span
                 class="v-data-table-header-span--ellipsis"

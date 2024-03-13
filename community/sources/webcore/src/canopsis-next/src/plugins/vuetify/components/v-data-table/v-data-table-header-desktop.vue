@@ -113,7 +113,9 @@ export default {
       }
 
       if (children.length > 1) {
-        return this.$createElement('th', data, [this.$createElement(VLayout, children)]);
+        return this.$createElement('th', data, [
+          this.$createElement(VLayout, { class: 'align-center' }, children),
+        ]);
       }
 
       return this.$createElement('th', data, children);

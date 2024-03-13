@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { ALARM_ACTION_BUTTON_MARGINS, ALARM_ACTION_BUTTON_WIDTHS, ALARM_DENSE_TYPES } from '@/constants';
+import { DEFAULT_ALARM_ACTIONS_INLINE_COUNT } from '@/constants';
 
 export default {
   props: {
@@ -86,11 +86,7 @@ export default {
     },
     inlineCount: {
       type: Number,
-      default: 3,
-    },
-    medium: {
-      type: Boolean,
-      default: false,
+      default: DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
     },
     small: {
       type: Boolean,
@@ -101,32 +97,21 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      width: 0,
-    };
-  },
   computed: {
-    denseType() {
-      if (this.small) {
-        return ALARM_DENSE_TYPES.small;
+    preparedActions() {
+      if (!this.wrap && this.$mq !== 'xl') {
+        return {
+          inline: [],
+          dropDown: this.actions,
+        };
       }
 
-      return this.medium
-        ? ALARM_DENSE_TYPES.medium
-        : ALARM_DENSE_TYPES.large;
-    },
+      if (this.inlineCount < this.actions.length) {
+        const inlineCountWithoutMenu = this.inlineCount - 1;
 
-    preparedActions() {
-      const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[this.denseType] + ALARM_ACTION_BUTTON_MARGINS[this.denseType];
-      const maxActionsCount = Math.floor(this.width / actionWidth) - 1;
-      const countForSlice = Math.min(maxActionsCount, this.inlineCount);
-      const countForSliceWithMenu = countForSlice + 1;
-
-      if (countForSliceWithMenu < this.actions.length) {
         return {
-          inline: this.actions.slice(0, countForSlice),
-          dropDown: this.actions.slice(countForSlice),
+          inline: this.actions.slice(0, inlineCountWithoutMenu),
+          dropDown: this.actions.slice(inlineCountWithoutMenu),
         };
       }
 
@@ -134,22 +119,6 @@ export default {
         inline: this.actions,
         dropDown: [],
       };
-    },
-  },
-  mounted() {
-    this.$resizeObserver = new ResizeObserver(this.resizeObserverHandler);
-    this.$resizeObserver.observe(this.$el);
-  },
-  beforeDestroy() {
-    this.$resizeObserver.disconnect();
-  },
-  methods: {
-    resizeObserverHandler([entry]) {
-      const { target: { offsetWidth } } = entry ?? {};
-
-      if (this.width !== offsetWidth) {
-        this.width = offsetWidth;
-      }
     },
   },
 };

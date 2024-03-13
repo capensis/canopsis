@@ -178,7 +178,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -203,7 +203,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -228,7 +228,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -253,7 +253,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -278,7 +278,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1348,7 +1348,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1373,7 +1373,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1398,7 +1398,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1423,7 +1423,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""
@@ -1448,7 +1448,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               scope="col"
             >
               <div
-                class="layout"
+                class="layout align-center"
               >
                 <span
                   class=""

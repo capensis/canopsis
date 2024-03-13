@@ -31,6 +31,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
         class="v-data-table__wrapper"
       >
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -49,6 +50,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -67,6 +69,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -85,6 +88,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -103,6 +107,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -169,7 +174,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 scope="col"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
@@ -304,7 +309,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
@@ -391,7 +396,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     ellipsisheaders="true"
@@ -481,7 +486,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 style="width: 40px; min-width: 40px;"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
@@ -594,7 +599,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
@@ -709,7 +714,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 scope="col"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
@@ -812,6 +817,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
         class="v-data-table__wrapper"
       >
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -827,6 +833,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -842,6 +849,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -857,6 +865,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -872,6 +881,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           tag="td"
         />
         <alarms-list-row-stub
+          actionsinlinecount="4"
           alarm="[object Object]"
           columnsfilters=""
           expandable="true"
@@ -925,7 +935,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 scope="col"
               >
                 <div
-                  class="layout"
+                  class="layout align-center"
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"

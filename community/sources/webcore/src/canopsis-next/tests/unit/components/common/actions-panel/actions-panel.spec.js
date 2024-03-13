@@ -2,7 +2,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { createButtonStub } from '@unit/stubs/button';
 
-import { ALARM_ACTION_BUTTON_MARGINS, ALARM_ACTION_BUTTON_WIDTHS, ALARM_DENSE_TYPES } from '@/constants';
+import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
 
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -18,16 +18,8 @@ const snapshotStubs = {
 describe('actions-panel', () => {
   const factory = generateShallowRenderer(ActionsPanel, { stubs });
   const snapshotFactory = generateRenderer(ActionsPanel, { stubs: snapshotStubs });
-  const ACTION_WIDTHS = {
-    large: ALARM_ACTION_BUTTON_WIDTHS[ALARM_DENSE_TYPES.large]
-      + ALARM_ACTION_BUTTON_MARGINS[ALARM_DENSE_TYPES.large],
-    medium: ALARM_ACTION_BUTTON_WIDTHS[ALARM_DENSE_TYPES.medium]
-      + ALARM_ACTION_BUTTON_MARGINS[ALARM_DENSE_TYPES.medium],
-    small: ALARM_ACTION_BUTTON_WIDTHS[ALARM_DENSE_TYPES.small]
-      + ALARM_ACTION_BUTTON_MARGINS[ALARM_DENSE_TYPES.small],
-  };
 
-  test('Method into list called after trigger click on action item button. With width for two items. For large dense.', async () => {
+  it('Method into list called after trigger click on action item button. Size \'xl\'', async () => {
     const actions = [
       fakeAction(),
       fakeAction(),
@@ -37,9 +29,10 @@ describe('actions-panel', () => {
       propsData: {
         actions,
       },
+      mocks: {
+        $mq: 'xl',
+      },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.large * 2 });
 
     await flushPromises();
     const actionElements = wrapper.findAll('.c-action-btn');
@@ -54,8 +47,8 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  test('Method into dropdown called after trigger click on action item button. With width for three items. For large dense.', async () => {
-    const inlineCount = 1;
+  it('Method into dropdown called after trigger click on action item button. Size \'xl\'', async () => {
+    const inlineCount = 2;
     const actions = [
       fakeAction(),
       fakeAction(),
@@ -66,15 +59,16 @@ describe('actions-panel', () => {
         actions,
         inlineCount,
       },
+      mocks: {
+        $mq: 'xl',
+      },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.large * 2 });
 
     await flushPromises();
 
     const dropdownActionElements = wrapper.findAll('v-menu-stub .v-list-item');
 
-    expect(dropdownActionElements).toHaveLength(actions.length - inlineCount);
+    expect(dropdownActionElements).toHaveLength(actions.length - inlineCount + 1);
 
     const firstDropdownActionElement = dropdownActionElements.at(0);
 
@@ -84,7 +78,7 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  test('Renders `actions-panel` with default props correctly. With zero width.', async () => {
+  it('Renders `actions-panel` with default props correctly', async () => {
     const wrapper = snapshotFactory();
 
     await flushPromises();
@@ -95,14 +89,15 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `actions-panel` with three actions correctly. With width for two items. For large dense.', async () => {
+  it('Renders `actions-panel` with actions correctly. Size \'xl\'', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        actions: [editAction, deleteAction, ackAction],
+        actions: [editAction, deleteAction],
+      },
+      mocks: {
+        $mq: 'xl',
       },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.large * 2 });
 
     await flushPromises();
 
@@ -112,15 +107,18 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `actions-panel` with three actions correctly. With width for two items. For medium dense.', async () => {
+  it.each(
+    Object.keys(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP),
+  )('Renders `actions-panel` with three actions and 3 inlineCount correctly. Size \'%s\'', async ($mq) => {
     const wrapper = snapshotFactory({
       propsData: {
+        inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
-        medium: true,
+      },
+      mocks: {
+        $mq,
       },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.medium * 2 });
 
     await flushPromises();
 
@@ -130,15 +128,19 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `actions-panel` with three actions correctly. With width for two items. For small dense.', async () => {
+  it.each(
+    Object.keys(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP),
+  )('Renders `actions-panel` with three actions, 3 inlineCount and wrap correctly. Size %s', async ($mq) => {
     const wrapper = snapshotFactory({
       propsData: {
+        inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
-        small: true,
+        wrap: true,
+      },
+      mocks: {
+        $mq,
       },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.small * 2 });
 
     await flushPromises();
 
@@ -148,14 +150,14 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `actions-panel` with three actions correctly. With width for one item.', async () => {
+  it('Renders `actions-panel` with three actions, 2 inlineCount and wrap', async () => {
     const wrapper = snapshotFactory({
       propsData: {
+        inlineCount: 2,
         actions: [editAction, deleteAction, ackAction],
+        wrap: true,
       },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.large });
 
     await flushPromises();
 
@@ -165,40 +167,14 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `actions-panel` with three actions correctly. With width for three items.', async () => {
+  it('Renders `actions-panel` with three actions, 3 inlineCount and wrap', async () => {
     const wrapper = snapshotFactory({
       propsData: {
+        inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
+        wrap: true,
       },
     });
-
-    wrapper.setData({ width: ACTION_WIDTHS.large * 3 });
-
-    await flushPromises();
-
-    expect(wrapper).toMatchSnapshot();
-
-    await wrapper.activateAllMenus();
-    expect(wrapper).toMatchMenuSnapshot();
-  });
-
-  test('Renders `actions-panel` with three actions correctly. With width for three items and changing to one item.', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        actions: [editAction, deleteAction, ackAction],
-      },
-    });
-
-    wrapper.setData({ width: ACTION_WIDTHS.large * 3 });
-
-    await flushPromises();
-
-    expect(wrapper).toMatchSnapshot();
-
-    await wrapper.activateAllMenus();
-    expect(wrapper).toMatchMenuSnapshot();
-
-    wrapper.setData({ width: ACTION_WIDTHS.large });
 
     await flushPromises();
 

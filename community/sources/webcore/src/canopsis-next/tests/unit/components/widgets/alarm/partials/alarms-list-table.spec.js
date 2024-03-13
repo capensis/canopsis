@@ -205,7 +205,7 @@ describe('alarms-list-table', () => {
     expect(addEventListener).toHaveBeenNthCalledWith(
       5,
       'resize',
-      wrapper.vm.changeHeaderPositionOnResize,
+      wrapper.vm.resizeHandler,
       { passive: true },
     );
 
@@ -278,7 +278,7 @@ describe('alarms-list-table', () => {
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
       'resize',
-      wrapper.vm.changeHeaderPositionOnResize,
+      wrapper.vm.resizeHandler,
       { passive: true },
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
