@@ -326,9 +326,17 @@ export default {
     },
 
     wrapperListeners() {
-      return this.selectable
-        ? { mousemove: this.throttledMousemoveHandler }
-        : {};
+      const listeners = {};
+
+      if (this.stickyHeader || this.selecting || this.resizableColumn) {
+        listeners.resize = this.resizeHandler;
+      }
+
+      if (this.selectable) {
+        listeners.mousemove = this.throttledMousemoveHandler;
+      }
+
+      return listeners;
     },
 
     unresolvedSelected() {
@@ -539,7 +547,6 @@ export default {
       },
     },
   },
-
   methods: {
     updateColumnsSettings() {
       const settings = {};
@@ -588,16 +595,6 @@ export default {
       this.$emit('update:page', page);
     },
 
-    changeHeaderPositionOnResize() {
-      if (this.stickyHeader) {
-        this.changeHeaderPosition();
-      }
-
-      if (this.selecting) {
-        this.calculateRowsPositions();
-      }
-    },
-
     openRootCauseDiagram(entity) {
       this.$modals.show({
         name: MODALS.entitiesRootCauseDiagram,
@@ -609,8 +606,17 @@ export default {
     },
 
     resizeHandler() {
-      this.changeHeaderPositionOnResize();
-      this.calculateColumnsWidths();
+      if (this.stickyHeader) {
+        this.changeHeaderPosition();
+      }
+
+      if (this.selecting) {
+        this.calculateRowsPositions();
+      }
+
+      if (this.resizableColumn) {
+        this.calculateColumnsWidths();
+      }
     },
   },
 };
