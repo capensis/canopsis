@@ -1,8 +1,5 @@
 <template>
-  <v-flex
-    v-resize="resizeHandler"
-    v-on="wrapperListeners"
-  >
+  <v-flex v-on="wrapperListeners">
     <c-empty-data-table-columns v-if="!columns.length" />
     <div v-else>
       <v-layout
