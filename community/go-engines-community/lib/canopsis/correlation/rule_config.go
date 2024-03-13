@@ -19,6 +19,8 @@ type RuleConfig struct {
 	CorelParent string `bson:"corel_parent,omitempty" json:"corel_parent,omitempty"`
 	// CorelChild is the correlation relation value, which mark alarm as a child.
 	CorelChild string `bson:"corel_child,omitempty" json:"corel_child,omitempty"`
+
+	ChildInactiveDelay *datetime.DurationWithUnit `bson:"child_inactive_delay,omitempty" json:"child_inactive_delay,omitempty"`
 }
 
 func (c *RuleConfig) GetTimeIntervalInSeconds() int64 {
