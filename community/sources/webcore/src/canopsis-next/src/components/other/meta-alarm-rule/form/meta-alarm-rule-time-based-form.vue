@@ -12,7 +12,7 @@
         <c-duration-field
           v-field="timebased.child_inactive_delay"
           :label="$t('metaAlarmRule.childInactiveDelay')"
-          required
+          clearable
         />
         <div>
           <v-tooltip top>
