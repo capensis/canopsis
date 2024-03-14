@@ -72,10 +72,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    truncate: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     preparedActions() {
-      if (!this.wrap && this.$mq !== 'xl') {
+      if (!(this.wrap || this.truncate) && this.$mq !== 'xl') {
         return {
           inline: [],
           dropDown: this.actions,

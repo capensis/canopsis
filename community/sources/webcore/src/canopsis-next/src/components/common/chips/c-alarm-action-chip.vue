@@ -5,7 +5,7 @@
     small,
     @click="$emit('click')"
   )
-    span.c-alarm-action-chip__text.white--text
+    v-layout.c-alarm-action-chip__text.white--text(row, align-center)
       slot
     v-icon.cursor-pointer.ml-2(
       v-if="closable",
