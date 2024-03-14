@@ -130,12 +130,12 @@ describe('actions-panel', () => {
 
   it.each(
     Object.keys(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP),
-  )('Renders `actions-panel` with three actions, 3 inlineCount and wrap correctly. Size %s', async ($mq) => {
+  )('Renders `actions-panel` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size %s', async ($mq) => {
     const wrapper = snapshotFactory({
       propsData: {
         inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
-        wrap: true,
+        ignoreMediaQuery: true,
       },
       mocks: {
         $mq,
@@ -150,12 +150,12 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with three actions, 2 inlineCount and wrap', async () => {
+  it('Renders `actions-panel` with three actions, 2 inlineCount and ignoreMediaQuery', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         inlineCount: 2,
         actions: [editAction, deleteAction, ackAction],
-        wrap: true,
+        ignoreMediaQuery: true,
       },
     });
 
@@ -167,12 +167,12 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with three actions, 3 inlineCount and wrap', async () => {
+  it('Renders `actions-panel` with three actions, 3 inlineCount and ignoreMediaQuery', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
-        wrap: true,
+        ignoreMediaQuery: true,
       },
     });
 

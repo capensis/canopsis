@@ -146,10 +146,9 @@
             :small="isSmallDense"
             :resizing="resizingMode"
             :search="search"
-            :wrap-actions="isCellContentWrapped"
-            :truncate-actions="isCellContentTruncated"
             :show-instruction-icon="hasInstructionsAlarms"
             :actions-inline-count="actionsInlineCount"
+            :actions-ignore-media-query="resizableColumn"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -608,7 +607,7 @@ export default {
       }
 
       if (!this.resizingMode) {
-        this.calculateSpecialColumnWidth('actions');
+        this.debouncedCalculateColumnsWidths();
       }
     },
   },

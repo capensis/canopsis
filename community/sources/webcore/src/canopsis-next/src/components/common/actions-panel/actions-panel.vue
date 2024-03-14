@@ -3,10 +3,7 @@
     :class="{ 'actions-panel--small': small }"
     class="actions-panel"
   >
-    <v-layout
-      :wrap="wrap"
-      align-center
-    >
+    <v-layout align-center>
       <c-action-btn
         v-for="(action, index) in preparedActions.inline"
         :key="index"
@@ -92,18 +89,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    wrap: {
-      type: Boolean,
-      default: false,
-    },
-    truncate: {
+    ignoreMediaQuery: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
     preparedActions() {
-      if (!this.wrap && !this.truncate && this.$mq !== 'xl') {
+      if (!this.ignoreMediaQuery && this.$mq !== 'xl') {
         return {
           inline: [],
           dropDown: this.actions,

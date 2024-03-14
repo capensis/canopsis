@@ -433,12 +433,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inline
 
 exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and wrap 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and ignoreMediaQuery 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout wrap align-center"
+    class="layout align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -469,7 +469,7 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and wrap 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and ignoreMediaQuery 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
   role="menu"
@@ -534,12 +534,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout wrap align-center"
+    class="layout align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -561,14 +561,14 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size l 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout wrap align-center"
+    class="layout align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -590,14 +590,14 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size l 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size m 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout wrap align-center"
+    class="layout align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -619,14 +619,14 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size m 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size t 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout wrap align-center"
+    class="layout align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -648,14 +648,14 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size t 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size xl 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 1`] = `
 <div
   class="actions-panel"
 >
   <div
-    class="layout wrap align-center"
+    class="layout align-center"
   >
     <c-action-btn-stub
       color="primary"
@@ -677,4 +677,4 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and wrap correctly. Size xl 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 2`] = `undefined`;
