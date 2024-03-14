@@ -21,7 +21,7 @@ describe('actions-panel', () => {
   const factory = generateShallowRenderer(ActionsPanel, { stubs });
   const snapshotFactory = generateRenderer(ActionsPanel, { stubs: snapshotStubs });
 
-  it('Method into list called after trigger click on action item button. Size \'xl\'', async () => {
+  test('Method into list called after trigger click on action item button. Size \'xl\'', async () => {
     const actions = [
       fakeAction(),
       fakeAction(),
@@ -49,7 +49,7 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Method into dropdown called after trigger click on action item button. Size \'xl\'', async () => {
+  test('Method into dropdown called after trigger click on action item button. Size \'xl\'', async () => {
     const inlineCount = 2;
     const actions = [
       fakeAction(),
@@ -126,12 +126,12 @@ describe('actions-panel', () => {
 
   it.each(
     Object.keys(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP),
-  )('Renders `actions-panel` with three actions, 3 inlineCount and wrap correctly. Size %s', async ($mq) => {
+  )('Renders `actions-panel` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size %s', async ($mq) => {
     const wrapper = snapshotFactory({
       propsData: {
         inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
-        wrap: true,
+        ignoreMediaQuery: true,
       },
       mocks: {
         $mq,
@@ -144,12 +144,12 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with three actions, 2 inlineCount and wrap', async () => {
+  test('Renders `actions-panel` with three actions, 2 inlineCount and ignoreMediaQuery', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         inlineCount: 2,
         actions: [editAction, deleteAction, ackAction],
-        wrap: true,
+        ignoreMediaQuery: true,
       },
     });
 
@@ -159,12 +159,12 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `actions-panel` with three actions, 3 inlineCount and wrap', async () => {
+  test('Renders `actions-panel` with three actions, 3 inlineCount and ignoreMediaQuery', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         inlineCount: 3,
         actions: [editAction, deleteAction, ackAction],
-        wrap: true,
+        ignoreMediaQuery: true,
       },
     });
 

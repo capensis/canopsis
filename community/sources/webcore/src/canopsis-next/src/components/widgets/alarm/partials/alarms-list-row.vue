@@ -27,8 +27,7 @@
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
         :small="small",
-        :wrap="wrapActions",
-        :truncate="truncateActions",
+        :ignore-media-query="actionsIgnoreMediaQuery",
         :inline-count="actionsInlineCount"
       )
       alarm-column-value(
@@ -158,6 +157,10 @@ export default {
     actionsInlineCount: {
       type: Number,
       required: false,
+    },
+    actionsIgnoreMediaQuery: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -104,6 +104,7 @@
             :truncate-actions="isCellContentTruncated",
             :show-instruction-icon="hasInstructionsAlarms",
             :actions-inline-count="actionsInlineCount",
+            :actions-ignore-media-query="resizableColumn",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)",
             @expand="props.expanded = $event"
@@ -549,7 +550,7 @@ export default {
       }
 
       if (!this.resizingMode) {
-        this.calculateSpecialColumnWidth('actions');
+        this.debouncedCalculateColumnsWidths();
       }
     },
   },
