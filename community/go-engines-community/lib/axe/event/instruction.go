@@ -42,10 +42,6 @@ func NewInstructionProcessor(
 			types.EventTypeAutoInstructionFailed:    types.AlarmStepAutoInstructionFail,
 			// Manual and auto instruction
 			types.EventTypeInstructionAborted: types.AlarmStepInstructionAbort,
-			// Job
-			types.EventTypeInstructionJobStarted:   types.AlarmStepInstructionJobStart,
-			types.EventTypeInstructionJobCompleted: types.AlarmStepInstructionJobComplete,
-			types.EventTypeInstructionJobFailed:    types.AlarmStepInstructionJobFail,
 		},
 		alarmChangeTypeMap: map[string]types.AlarmChangeType{
 			// Manual instruction
@@ -84,105 +80,93 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		return result, nil
 	}
 
-	alarmStepType, ok := p.alarmStepTypeMap[event.EventType]
-	if !ok {
-		return result, nil
-	}
-
+	alarmStepType := p.alarmStepTypeMap[event.EventType]
 	alarmChangeType, ok := p.alarmChangeTypeMap[event.EventType]
 	if !ok {
 		return result, nil
 	}
 
-	match := getOpenAlarmMatchWithStepsLimit(event)
-	newStepQuery := execStepUpdateQueryWithInPbhInterval(alarmStepType, "", event.Parameters.Output, event.Parameters)
-	var update []bson.M
+	var match bson.M
+	set := bson.M{}
+	if alarmStepType == "" {
+		match = getOpenAlarmMatch(event)
+	} else {
+		match = getOpenAlarmMatchWithStepsLimit(event)
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(alarmStepType, "", event.Parameters.Output, event.Parameters)
+		set["v.steps"] = addStepUpdateQuery(newStepQuery)
+	}
 
 	switch alarmChangeType {
 	case types.AlarmStepAutoInstructionStart:
-		update = []bson.M{
-			{"$set": bson.M{
-				"v.steps": addStepUpdateQuery(newStepQuery),
-				"v.inactive_start": bson.M{"$cond": bson.M{
-					"if":   "$auto_instruction_in_progress",
-					"then": event.Parameters.Timestamp,
-					"else": "$v.inactive_start",
+		set["v.inactive_start"] = bson.M{"$cond": bson.M{
+			"if":   "$auto_instruction_in_progress",
+			"then": event.Parameters.Timestamp,
+			"else": "$v.inactive_start",
+		}}
+		set["v.inactive_duration"] = bson.M{"$sum": bson.A{
+			"$v.inactive_duration",
+			bson.M{"$cond": bson.M{
+				"if": bson.M{"$and": []bson.M{
+					{"$eq": bson.A{"$auto_instruction_in_progress", true}},
+					{"$gt": bson.A{"$v.inactive_start", 0}},
 				}},
-				"v.inactive_duration": bson.M{"$sum": bson.A{
-					"$v.inactive_duration",
-					bson.M{"$cond": bson.M{
-						"if": bson.M{"$and": []bson.M{
-							{"$eq": bson.A{"$auto_instruction_in_progress", true}},
-							{"$gt": bson.A{"$v.inactive_start", 0}},
-						}},
-						"then": bson.M{"$subtract": bson.A{
-							event.Parameters.Timestamp,
-							"$v.inactive_start",
-						}},
-						"else": 0,
-					}},
+				"then": bson.M{"$subtract": bson.A{
+					event.Parameters.Timestamp,
+					"$v.inactive_start",
 				}},
+				"else": 0,
 			}},
-		}
+		}}
 	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
-		update = []bson.M{
-			{"$set": bson.M{
-				"v.steps": addStepUpdateQuery(newStepQuery),
-				"kpi_executed_instructions": bson.M{"$concatArrays": bson.A{
-					bson.M{"$cond": bson.M{
-						"if":   "$kpi_executed_instructions",
-						"then": "$kpi_executed_instructions",
-						"else": bson.A{},
-					}},
-					bson.M{"$cond": bson.M{
-						"if": bson.M{"$and": []bson.M{
-							{"$in": bson.A{
-								event.Parameters.Instruction,
-								bson.M{"$cond": bson.M{
-									"if":   "$kpi_assigned_instructions",
-									"then": "$kpi_assigned_instructions",
-									"else": bson.A{},
-								}},
-							}},
-							{"$not": bson.M{"$in": bson.A{
-								event.Parameters.Instruction,
-								bson.M{"$cond": bson.M{
-									"if":   "$kpi_executed_instructions",
-									"then": "$kpi_executed_instructions",
-									"else": bson.A{},
-								}},
-							}}},
+		set["kpi_executed_instructions"] = bson.M{"$concatArrays": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$kpi_executed_instructions",
+				"then": "$kpi_executed_instructions",
+				"else": bson.A{},
+			}},
+			bson.M{"$cond": bson.M{
+				"if": bson.M{"$and": []bson.M{
+					{"$in": bson.A{
+						event.Parameters.Instruction,
+						bson.M{"$cond": bson.M{
+							"if":   "$kpi_assigned_instructions",
+							"then": "$kpi_assigned_instructions",
+							"else": bson.A{},
 						}},
-						"then": bson.A{event.Parameters.Instruction},
-						"else": bson.A{},
 					}},
+					{"$not": bson.M{"$in": bson.A{
+						event.Parameters.Instruction,
+						bson.M{"$cond": bson.M{
+							"if":   "$kpi_executed_instructions",
+							"then": "$kpi_executed_instructions",
+							"else": bson.A{},
+						}},
+					}}},
 				}},
+				"then": bson.A{event.Parameters.Instruction},
+				"else": bson.A{},
 			}},
-		}
+		}}
 	case types.AlarmStepAutoInstructionComplete, types.AlarmStepAutoInstructionFail:
-		update = []bson.M{
-			{"$set": bson.M{
-				"v.steps": addStepUpdateQuery(newStepQuery),
-				"kpi_executed_auto_instructions": bson.M{"$setUnion": bson.A{
-					bson.M{"$cond": bson.M{
-						"if":   "$kpi_executed_auto_instructions",
-						"then": "$kpi_executed_auto_instructions",
-						"else": bson.A{},
-					}},
-					bson.A{event.Parameters.Instruction},
-				}},
+		set["kpi_executed_auto_instructions"] = bson.M{"$setUnion": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$kpi_executed_auto_instructions",
+				"then": "$kpi_executed_auto_instructions",
+				"else": bson.A{},
 			}},
-		}
-	default:
-		update = []bson.M{
-			{"$set": bson.M{
-				"v.steps": addStepUpdateQuery(newStepQuery),
-			}},
-		}
+			bson.A{event.Parameters.Instruction},
+		}}
 	}
-	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
 	alarm := types.Alarm{}
-	err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
+	var err error
+	if len(set) == 0 {
+		err = p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
+	} else {
+		opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+		err = p.alarmCollection.FindOneAndUpdate(ctx, match, []bson.M{{"$set": set}}, opts).Decode(&alarm)
+	}
+
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return result, nil
