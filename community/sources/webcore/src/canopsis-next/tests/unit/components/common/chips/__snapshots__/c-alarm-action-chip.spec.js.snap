@@ -10,13 +10,13 @@ exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with custom props and 
   <span
     class="v-chip__content"
   >
-    <span
-      class="c-alarm-action-chip__text white--text"
+    <div
+      class="layout c-alarm-action-chip__text white--text row align-center"
     >
       <div
         class="default-slot"
       />
-    </span>
+    </div>
     <!---->
   </span>
 </span>
@@ -30,8 +30,8 @@ exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with default props 1`]
   <span
     class="v-chip__content"
   >
-    <span
-      class="c-alarm-action-chip__text white--text"
+    <div
+      class="layout c-alarm-action-chip__text white--text row align-center"
     />
     <!---->
   </span>

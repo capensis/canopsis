@@ -70,7 +70,7 @@
             :header="header",
             :selected-tag="selectedTag",
             :resizing="resizingMode",
-            :ellipsis-headers="widget.parameters.isEllipsisHeaders",
+            :ellipsis-headers="isCellContentTruncated",
             @clear:tag="$emit('clear:tag')"
           )
           template
@@ -100,7 +100,8 @@
             :small="isSmallDense",
             :resizing="resizingMode",
             :search="search",
-            :wrap-actions="resizableColumn",
+            :wrap-actions="isCellContentWrapped",
+            :truncate-actions="isCellContentTruncated",
             :show-instruction-icon="hasInstructionsAlarms",
             :actions-inline-count="actionsInlineCount",
             @start:resize="startColumnResize",
