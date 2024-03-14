@@ -28,7 +28,7 @@ export const widgetColumnResizingAlarmMixin = {
   },
   computed: {
     tableRow() {
-      return this.tableHeader.querySelector('tr:first-of-type');
+      return this.tableHeader?.querySelector('tr:first-of-type');
     },
 
     headerCells() {
@@ -80,6 +80,10 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     setPercentsInPixel() {
+      if (!this.tableRow) {
+        return;
+      }
+
       const { width: rowWidth } = this.tableRow.getBoundingClientRect();
 
       this.percentsInPixel = 100 / rowWidth;
@@ -108,7 +112,7 @@ export const widgetColumnResizingAlarmMixin = {
     calculateSpecialColumnWidth(field) {
       this.setPercentsInPixel();
 
-      const headerElement = this.tableRow.querySelector(`th[data-value="${field}"]`);
+      const headerElement = this.tableRow?.querySelector(`th[data-value="${field}"]`);
 
       if (headerElement) {
         const { width: headerWidth } = headerElement.getBoundingClientRect();
