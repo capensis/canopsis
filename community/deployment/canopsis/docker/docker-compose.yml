@@ -189,6 +189,7 @@ services:
     volumes:
       - junitsharedata:/tmp/canopsis/junit
       - uploadfiles:/opt/canopsis/var/lib/upload-files
+      - uploadicons:/opt/canopsis/var/lib/icons
     ports:
       - "8082:8082"
     healthcheck:
