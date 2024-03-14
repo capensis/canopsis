@@ -22,6 +22,7 @@ export const widgetColumnResizingAlarmMixin = {
   },
   created() {
     this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
+    this.debouncedCalculateColumnsWidths = throttle(this.calculateColumnsWidths, 50);
   },
   beforeDestroy() {
     this.finishColumnResize();
@@ -32,7 +33,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     headerCells() {
-      return this.tableRow.querySelectorAll('th');
+      return this.tableRow?.querySelectorAll('th');
     },
 
     sumOfColumnsWidth() {
@@ -93,33 +94,25 @@ export const widgetColumnResizingAlarmMixin = {
       return Object.values(columnsWidth).reduce((acc, width) => acc + width, 0);
     },
 
+    calculateElementNormalizedWidth(element, field) {
+      const { width: headerWidth } = element.getBoundingClientRect();
+      const width = headerWidth * this.percentsInPixel;
+
+      return this.getNormalizedWidth(field, width);
+    },
+
     calculateColumnsWidths() {
       this.setPercentsInPixel();
 
       this.columnsWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
-          const { width: headerWidth } = headerElement.getBoundingClientRect();
-          const width = headerWidth * this.percentsInPixel;
 
-          acc[value] = this.getNormalizedWidth(value, width);
+          acc[value] = this.calculateElementNormalizedWidth(headerElement, value);
         }
 
         return acc;
       }, {});
-    },
-
-    calculateSpecialColumnWidth(field) {
-      this.setPercentsInPixel();
-
-      const headerElement = this.tableRow?.querySelector(`th[data-value="${field}"]`);
-
-      if (headerElement) {
-        const { width: headerWidth } = headerElement.getBoundingClientRect();
-        const width = headerWidth * this.percentsInPixel;
-
-        this.columnsWidthByField[field] = this.getNormalizedWidth(field, width);
-      }
     },
 
     resizeColumnByDiff(index) {
