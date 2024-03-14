@@ -6,7 +6,8 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
-import { ALARM_DENSE_TYPES, ALARM_FIELDS } from '@/constants';
+
+import { ALARM_DENSE_TYPES, ALARM_FIELDS, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
@@ -613,7 +614,7 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `alarms-list-table` with default and required props with ellipsis headers', () => {
+  test('Renders `alarms-list-table` with default and required props with cellsContentBehavior is `wrap`', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -622,12 +623,31 @@ describe('alarms-list-table', () => {
           ...defaultWidget,
           parameters: {
             ...defaultWidget.parameters,
-
-            isEllipsisHeaders: true,
           },
         },
         alarms: [],
         columns,
+        cellsContentBehavior: ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `alarms-list-table` with default and required props with cellsContentBehavior is `truncate`', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+          },
+        },
+        alarms: [],
+        columns,
+        cellsContentBehavior: ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
       },
     });
 
