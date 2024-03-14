@@ -64,6 +64,7 @@
         :refresh-alarms-list="refreshAlarmsList"
         :small="small"
         :wrap="wrapActions"
+        :truncate="truncateActions"
         :inline-count="actionsInlineCount"
       />
       <alarm-column-value
@@ -179,6 +180,10 @@ export default {
       default: false,
     },
     wrapActions: {
+      type: Boolean,
+      default: false,
+    },
+    truncateActions: {
       type: Boolean,
       default: false,
     },
