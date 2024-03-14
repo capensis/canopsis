@@ -1260,7 +1260,7 @@ func (p *metaAlarmEventProcessor) getChildStepMsg(
 
 	if event.Parameters.Output != "" {
 		msgBuilder.WriteRune(' ')
-		msgBuilder.WriteString(types.OutputComponentPrefix)
+		msgBuilder.WriteString(types.OutputCommentPrefix)
 		msgBuilder.WriteString(event.Parameters.Output)
 		msgBuilder.WriteRune('.')
 	}
