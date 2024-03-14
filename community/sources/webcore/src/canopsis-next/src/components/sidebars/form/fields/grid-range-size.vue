@@ -5,9 +5,11 @@
       :min="min"
       :max="max"
       :step="step"
+      class="mt-3"
       ticks="always"
       always-dirty
       thumb-label
+      hide-details
     />
   </widget-settings-item>
 </template>

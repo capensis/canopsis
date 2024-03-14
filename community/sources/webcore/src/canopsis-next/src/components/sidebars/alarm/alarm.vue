@@ -213,11 +213,11 @@ import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-pag
 import FieldFilters from '../form/fields/filters.vue';
 import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
 import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
-import FieldGridRangeSize from './form/fields/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
 import FieldDensity from './form/fields/density.vue';
 import FieldLiveReporting from './form/fields/live-reporting.vue';
