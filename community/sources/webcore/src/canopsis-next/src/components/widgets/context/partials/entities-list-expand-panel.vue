@@ -72,7 +72,7 @@
 <script>
 import { GRID_SIZES } from '@/constants';
 
-import { getFlexPropsForGridRangeSize } from '@/helpers/entities/shared/grid';
+import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
@@ -128,7 +128,7 @@ export default {
   },
   computed: {
     cardFlexClass() {
-      return getFlexPropsForGridRangeSize(this.expandGridRangeSize);
+      return getFlexClassesForGridRangeSize(this.expandGridRangeSize);
     },
 
     hasWidgetCharts() {
