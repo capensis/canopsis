@@ -21,6 +21,7 @@ const (
 	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 
 	OutputCommentPrefix   = "Comment: "
+	OutputTitlePrefix     = "Title: "
 	OutputComponentPrefix = "Component: "
 )
 
