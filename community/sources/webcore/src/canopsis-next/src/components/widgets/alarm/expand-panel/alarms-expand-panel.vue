@@ -134,7 +134,7 @@ import { setField } from '@/helpers/immutable';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
-import { getFlexClassForGridRangeSize } from '@/helpers/grid';
+import { getFlexClassesForGridRangeSize } from '@/helpers/grid';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -218,7 +218,7 @@ export default {
     },
 
     cardFlexClass() {
-      return getFlexClassForGridRangeSize(this.widget.parameters.expandGridRangeSize);
+      return getFlexClassesForGridRangeSize(this.widget.parameters.expandGridRangeSize);
     },
 
     isHtmlEnabled() {

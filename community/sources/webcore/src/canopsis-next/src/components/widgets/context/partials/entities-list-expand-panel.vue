@@ -63,7 +63,7 @@
 <script>
 import { GRID_SIZES } from '@/constants';
 
-import { getFlexClassForGridRangeSize } from '@/helpers/grid';
+import { getFlexClassesForGridRangeSize } from '@/helpers/grid';
 
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
@@ -113,7 +113,7 @@ export default {
   },
   computed: {
     cardFlexClass() {
-      return getFlexClassForGridRangeSize(this.expandGridRangeSize);
+      return getFlexClassesForGridRangeSize(this.expandGridRangeSize);
     },
   },
 };

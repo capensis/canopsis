@@ -104,7 +104,7 @@ export default {
     },
   },
   moreInfosModal: 'Fenêtre "Plus d\'infos"',
-  expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
+  expandGridRangeSize: 'Largeur-position',
   weatherTemplate: 'Template - Tuiles',
   modalTemplate: 'Template - Modale',
   entityTemplate: 'Template - Entités',
