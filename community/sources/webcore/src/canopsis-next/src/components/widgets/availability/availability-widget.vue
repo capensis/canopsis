@@ -190,7 +190,7 @@ export default {
         valueFilter,
       } = this.query;
 
-      return {
+      const query = {
         ...this.interval,
         ...pick(this.query, ['page', 'itemsPerPage']),
         ...convertSortToRequest(sortBy, sortDesc),
@@ -201,10 +201,16 @@ export default {
           ...valueFilter,
         },
       };
+
+      if (showTrend) {
+        query.with_trends = true;
+      }
+
+      return query;
     },
 
-    async fetchList() {
-      await this.fetchAvailabilityList({
+    fetchList() {
+      this.fetchAvailabilityList({
         widgetId: this.widget._id,
         params: this.getQuery(),
       });

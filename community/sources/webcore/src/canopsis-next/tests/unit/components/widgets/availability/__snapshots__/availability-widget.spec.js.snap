@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-widget Renders \`availability-widget\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <availability-widget-filters-stub
+    class="px-3 pt-3"
+    maxvaluefilterseconds="86400"
+    widgetfilters=""
+    widgetid="Availability_id"
+  />
+  <availability-list-stub
+    activealarmscolumns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    availabilities=""
+    columns="[object Object],[object Object]"
+    displayparameter="0"
+    interval="[object Object]"
+    options="[object Object]"
+    resolvedalarmscolumns="[object Object],[object Object],[object Object]"
+    showtype="0"
+    totalitems="0"
+  />
+</div>
+`;
