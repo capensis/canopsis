@@ -185,8 +185,9 @@ import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
-import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import {
+  permissionsWidgetsAlarmsListRemediationInstructionsFilters,
+} from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
