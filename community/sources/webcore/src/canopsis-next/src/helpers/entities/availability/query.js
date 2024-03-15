@@ -1,6 +1,8 @@
 import { isUndefined } from 'lodash';
 
-import { QUICK_RANGES } from '@/constants';
+import { AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE, AVAILABILITY_TREND_TYPES, QUICK_RANGES } from '@/constants';
+
+import { findQuickRangeByInterval } from '@/helpers/date/date-intervals';
 
 /**
  * This function converts userPreference with widget availability type to query Object
@@ -63,4 +65,12 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
       to: stop,
     },
   };
+};
+
+export const getAvailabilitiesTrendByInterval = (interval) => {
+  const selectedQuickRange = findQuickRangeByInterval(interval);
+  const selectedQuickRangeType = selectedQuickRange?.value;
+
+  return AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE[selectedQuickRangeType]
+    || AVAILABILITY_TREND_TYPES.custom;
 };

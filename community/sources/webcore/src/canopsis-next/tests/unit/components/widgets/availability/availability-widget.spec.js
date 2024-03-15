@@ -10,12 +10,16 @@ import {
   createQueryModule,
   createUserPreferenceModule,
 } from '@unit/utils/store';
+import { randomArrayItem } from '@unit/utils/array';
 
 import {
   AVAILABILITY_DISPLAY_PARAMETERS,
+  AVAILABILITY_FIELDS,
   AVAILABILITY_SHOW_TYPE,
+  AVAILABILITY_TREND_TYPES,
   AVAILABILITY_VALUE_FILTER_METHODS,
   QUICK_RANGES,
+  SORT_ORDERS,
   USERS_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
@@ -37,6 +41,8 @@ const generateDefaultAvailabilityWidget = () => ({
   _id: `${WIDGET_TYPES.availability}_id`,
 });
 describe('availability-widget', () => {
+  jest.useFakeTimers({ now: 1386435500000 });
+
   const tabId = Faker.datatype.string();
 
   const widget = generateDefaultAvailabilityWidget();
@@ -58,14 +64,14 @@ describe('availability-widget', () => {
   const { alarmModule } = createAlarmModule();
 
   const { userPreferenceModule, updateUserPreference } = createUserPreferenceModule();
-  const { queryModule, updateQuery } = createQueryModule();
+  const { queryModule, updateQuery, getQueryById } = createQueryModule();
   const { availabilityModule, fetchAvailabilityList } = createAvailabilityModule();
 
   currentUserPermissionsById.mockReturnValue({
     [USERS_PERMISSIONS.business.availability.actions.userFilter]: { actions: [] },
   });
 
-  const store = createMockedStoreModules([
+  const createStore = () => createMockedStoreModules([
     authModule,
     userPreferenceModule,
     availabilityModule,
@@ -73,6 +79,7 @@ describe('availability-widget', () => {
     alarmModule,
     queryModule,
   ]);
+  const store = createStore();
 
   const factory = generateShallowRenderer(AvailabilityWidget, {
     stubs,
@@ -110,9 +117,80 @@ describe('availability-widget', () => {
     );
   });
 
-  test('Data fetched when correct query', async () => {
+  test('Data fetched with correct query', async () => {
+    const mainFilter = Faker.datatype.string();
+    const filter = Faker.datatype.string();
+    const itemsPerPage = Faker.datatype.number({ min: 10, max: 100 });
+    const page = Faker.datatype.number({ min: 1, max: 10 });
+    const valueFilter = {
+      method: randomArrayItem(Object.values(AVAILABILITY_VALUE_FILTER_METHODS)),
+      value: Faker.datatype.number({ min: 1, max: 100 }),
+    };
+
+    getQueryById.mockReturnValueOnce(() => ({
+      showTrend: true,
+      interval: {
+        from: QUICK_RANGES.yesterday.start,
+        to: QUICK_RANGES.yesterday.stop,
+      },
+      itemsPerPage,
+      page,
+      sortBy: [AVAILABILITY_FIELDS.uptimeShare],
+      sortDesc: [true],
+      valueFilter,
+      filter,
+    }));
+
     const wrapper = factory({
-      store,
+      store: createStore(),
+      propsData: {
+        tabId,
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            mainFilter,
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    await wrapper.vm.fetchList();
+
+    expect(fetchAvailabilityList).toBeDispatchedWith(
+      {
+        widgetId: widget._id,
+        params: {
+          from: 1386284400,
+          to: 1386284400,
+          sort_by: AVAILABILITY_FIELDS.uptimeShare,
+          sort: SORT_ORDERS.desc.toLowerCase(),
+          page,
+          itemsPerPage,
+          trend: AVAILABILITY_TREND_TYPES.lastDay,
+          value_filter: {
+            ...valueFilter,
+            parameter: AVAILABILITY_FIELDS.downtimeDuration,
+          },
+          widget_filters: [filter, mainFilter],
+        },
+      },
+    );
+  });
+
+  test('Data fetched when correct query when trend enabled', async () => {
+    getQueryById.mockReturnValueOnce(() => ({
+      showTrend: true,
+      interval: {
+        from: QUICK_RANGES.last3Months.start,
+        to: QUICK_RANGES.last3Months.stop,
+      },
+    }));
+
+    const wrapper = factory({
+      store: createStore(),
       propsData: {
         tabId,
         widget,
@@ -127,6 +205,9 @@ describe('availability-widget', () => {
       {
         widgetId: widget._id,
         params: {
+          from: 1378072800,
+          to: 1385852400,
+          trend: AVAILABILITY_TREND_TYPES.lastThreeMonths,
           value_filter: undefined,
           widget_filters: [],
         },

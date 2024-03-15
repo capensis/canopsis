@@ -1,8 +1,5 @@
 <template>
-  <v-layout
-    class="gap-3"
-    column
-  >
+  <v-layout class="gap-3" column>
     <availability-widget-filters
       :type="query.showType"
       :display-parameter="query.displayParameter"
@@ -59,6 +56,7 @@ import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date'
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
+import { getAvailabilitiesTrendByInterval } from '@/helpers/entities/availability/query';
 
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -194,7 +192,6 @@ export default {
         ...this.interval,
         ...pick(this.query, ['page', 'itemsPerPage']),
         ...convertSortToRequest(sortBy, sortDesc),
-        with_trends: showTrend,
         widget_filters: convertFiltersToQuery(filter, this.lockedFilter),
         value_filter: valueFilter && {
           parameter: getAvailabilityFieldByDisplayParameterAndShowType(displayParameter, showType),
@@ -203,7 +200,7 @@ export default {
       };
 
       if (showTrend) {
-        query.with_trends = true;
+        query.trend = getAvailabilitiesTrendByInterval(this.query.interval);
       }
 
       return query;
