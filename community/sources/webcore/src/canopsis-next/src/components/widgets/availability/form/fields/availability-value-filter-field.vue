@@ -34,12 +34,14 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_SHOW_TYPE, AVAILABILITY_VALUE_FILTER_METHODS } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModelValue } from '@/hooks/form';
 
 export default {
-  mixins: [formMixin],
   props: {
     value: {
       type: Object,
@@ -54,31 +56,41 @@ export default {
       required: false,
     },
   },
-  computed: {
-    method: {
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const modelValue = useModelValue(props, emit);
+
+    const method = computed({
       get() {
-        return this.value?.method;
+        return modelValue.value?.method;
       },
-      set(method) {
-        this.updateModel({ ...this.value, value: this.value?.value ?? 0, method });
+      set(newMethod) {
+        modelValue.value = {
+          ...modelValue.value,
+          value: modelValue.value?.value ?? 0,
+          method: newMethod,
+        };
       },
-    },
+    });
+    const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
+    const valueFilterMethods = computed(
+      () => Object.values(AVAILABILITY_VALUE_FILTER_METHODS).map(valueFilterMethod => ({
+        value: valueFilterMethod,
+        text: t(`availability.valueFilterMethods.${valueFilterMethod}`),
+      })),
+    );
 
-    isPercentType() {
-      return this.showType === AVAILABILITY_SHOW_TYPE.percent;
-    },
+    const clearValue = () => {
+      modelValue.value = undefined;
+    };
 
-    valueFilterMethods() {
-      return Object.values(AVAILABILITY_VALUE_FILTER_METHODS).map(method => ({
-        value: method,
-        text: this.$t(`availability.valueFilterMethods.${method}`),
-      }));
-    },
-  },
-  methods: {
-    clearValue() {
-      this.updateModel(undefined);
-    },
+    return {
+      method,
+
+      isPercentType,
+      valueFilterMethods,
+      clearValue,
+    };
   },
 };
 </script>
