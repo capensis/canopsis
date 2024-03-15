@@ -127,18 +127,14 @@
 <script>
 import { isEqual, map } from 'lodash';
 
-import {
-  ENTITY_TYPES,
-  GRID_SIZES,
-  TOURS,
-  JUNIT_ALARM_CONNECTOR,
-} from '@/constants';
+import { ENTITY_TYPES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { setField } from '@/helpers/immutable';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
+import { getFlexClassForGridRangeSize } from '@/helpers/grid';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -222,12 +218,7 @@ export default {
     },
 
     cardFlexClass() {
-      const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
-
-      return [
-        `offset-xs${start}`,
-        `xs${end - start}`,
-      ];
+      return getFlexClassForGridRangeSize(this.widget.parameters.expandGridRangeSize);
     },
 
     isHtmlEnabled() {
