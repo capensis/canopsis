@@ -139,13 +139,14 @@
 <script>
 import { isEqual, map } from 'lodash';
 
-import { ENTITY_TYPES, GRID_SIZES, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import { ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { setField } from '@/helpers/immutable';
 import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
+import { getFlexPropsForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -208,12 +209,7 @@ export default {
   },
   computed: {
     cardFlexClass() {
-      const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
-
-      return [
-        `offset-xs${start}`,
-        `xs${end - start}`,
-      ];
+      return getFlexPropsForGridRangeSize(this.widget.parameters.expandGridRangeSize);
     },
 
     isHtmlEnabled() {
