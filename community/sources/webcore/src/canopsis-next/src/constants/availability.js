@@ -46,3 +46,25 @@ export const AVAILABILITY_FIELDS = {
   uptimeShareHistory: 'uptime_share_history',
   downtimeShareHistory: 'downtime_share_history',
 };
+
+export const AVAILABILITY_TREND_TYPES = {
+  lastHour: 'last_hour',
+  lastDay: 'last_day',
+  lastWeek: 'last_week',
+  lastMonth: 'last_month',
+  lastThreeMonths: 'last_three_months',
+  lastSixMonths: 'last_six_months',
+  custom: 'custom',
+};
+
+export const AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE = {
+  [QUICK_RANGES.last1Hour.value]: AVAILABILITY_TREND_TYPES.lastHour,
+  [QUICK_RANGES.today.value]: AVAILABILITY_TREND_TYPES.lastDay,
+  [QUICK_RANGES.yesterday.value]: AVAILABILITY_TREND_TYPES.lastDay,
+  [QUICK_RANGES.thisWeek.value]: AVAILABILITY_TREND_TYPES.lastWeek,
+  [QUICK_RANGES.previousWeek.value]: AVAILABILITY_TREND_TYPES.lastWeek,
+  [QUICK_RANGES.thisMonth.value]: AVAILABILITY_TREND_TYPES.lastMonth,
+  [QUICK_RANGES.previousMonth.value]: AVAILABILITY_TREND_TYPES.lastMonth,
+  [QUICK_RANGES.last3Months.value]: AVAILABILITY_TREND_TYPES.lastThreeMonths,
+  [QUICK_RANGES.last6Months.value]: AVAILABILITY_TREND_TYPES.lastSixMonths,
+};
