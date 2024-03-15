@@ -77,6 +77,7 @@
 
 <script>
 import { debounce } from 'lodash';
+import { ref, watch } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
@@ -173,31 +174,28 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      localValueFilter: undefined,
-    };
-  },
-  computed: {
-    quickRanges() {
-      return Object.values(AVAILABILITY_QUICK_RANGES);
-    },
-  },
-  watch: {
-    valueFilter: {
-      immediate: true,
-      handler() {
-        this.localValueFilter = this.valueFilter && { ...this.valueFilter };
+  setup(props, { emit }) {
+    const localValueFilter = ref();
+    const quickRanges = Object.values(AVAILABILITY_QUICK_RANGES);
+
+    watch(
+      () => props.valueFilter,
+      () => {
+        localValueFilter.value = props.valueFilter && { ...props.valueFilter };
       },
-    },
-  },
-  created() {
-    this.debouncedEmitUpdateValueFilter = debounce(this.emitUpdateValueFilter, 1000);
-  },
-  methods: {
-    emitUpdateValueFilter(value) {
-      this.$emit('update:value-filter', value);
-    },
+      { immediate: true },
+    );
+
+    const emitUpdateValueFilter = value => emit('update:value-filter', value);
+    const debouncedEmitUpdateValueFilter = debounce(emitUpdateValueFilter, 1000);
+
+    return {
+      localValueFilter,
+      quickRanges,
+
+      emitUpdateValueFilter,
+      debouncedEmitUpdateValueFilter,
+    };
   },
 };
 </script>
