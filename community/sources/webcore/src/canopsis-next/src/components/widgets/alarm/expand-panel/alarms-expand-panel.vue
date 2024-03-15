@@ -146,7 +146,7 @@ import { setField } from '@/helpers/immutable';
 import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
-import { getFlexPropsForGridRangeSize } from '@/helpers/entities/shared/grid';
+import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -209,7 +209,7 @@ export default {
   },
   computed: {
     cardFlexClass() {
-      return getFlexPropsForGridRangeSize(this.widget.parameters.expandGridRangeSize);
+      return getFlexClassesForGridRangeSize(this.widget.parameters.expandGridRangeSize);
     },
 
     isHtmlEnabled() {
