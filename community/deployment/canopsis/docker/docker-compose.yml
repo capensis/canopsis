@@ -13,6 +13,8 @@ volumes:
     driver: local
   uploadfiles:
     driver: local
+  uploadicons:
+    driver: local
 
 #
 # SERVICE FRAGMENTS (or templates)
