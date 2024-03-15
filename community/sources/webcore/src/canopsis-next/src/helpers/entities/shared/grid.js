@@ -1,7 +1,7 @@
 import { GRID_SIZES } from '@/constants';
 
 /**
- * Generates flex properties for a given grid range size.
+ * Generates flex classes for a given grid range size.
  *
  * @param {Array<number>} [gridRangeSize] - An array of two numbers where the first number is the start of the range
  *                                          and the second number is the end of the range. Optional.
@@ -9,13 +9,13 @@ import { GRID_SIZES } from '@/constants';
  *
  * @example
  * // Returns ['offset-xs0`, `xs12`]
- * getFlexPropsForGridRangeSize();
+ * getFlexClassesForGridRangeSize();
  *
  * @example
  * // Returns ['offset-xs2`, `xs4`]
- * getFlexPropsForGridRangeSize([2, 6]);
+ * getFlexClassesForGridRangeSize([2, 6]);
  */
-export const getFlexPropsForGridRangeSize = (gridRangeSize) => {
+export const getFlexClassesForGridRangeSize = (gridRangeSize) => {
   const [start, end] = gridRangeSize ?? [GRID_SIZES.min, GRID_SIZES.max];
 
   return [
