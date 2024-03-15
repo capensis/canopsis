@@ -1332,6 +1332,12 @@ export const createAvailabilityModule = () => {
     status: EXPORT_STATUSES.completed,
   };
 
+  const getAvailabilityPendingByWidgetId = jest.fn().mockReturnValue(false);
+  const getAvailabilityListByWidgetId = jest.fn().mockReturnValue([]);
+  const getAvailabilityMetaByWidgetId = jest.fn().mockReturnValue({
+    total_count: 0,
+  });
+
   const fetchAvailabilityWithoutStore = jest.fn().mockResolvedValue({
     availability: {
       uptime: 10,
@@ -1342,10 +1348,14 @@ export const createAvailabilityModule = () => {
   const fetchAvailabilityHistoryWithoutStore = jest.fn().mockResolvedValue({
     data: [],
   });
+  const fetchAvailabilityList = jest.fn().mockResolvedValue({
+    data: [],
+  });
   const createAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
   const fetchAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
 
   afterEach(() => {
+    fetchAvailabilityList.mockClear();
     fetchAvailabilityWithoutStore.mockClear();
     fetchAvailabilityHistoryWithoutStore.mockClear();
     createAvailabilityHistoryExport.mockClear();
@@ -1354,7 +1364,13 @@ export const createAvailabilityModule = () => {
 
   const availabilityModule = {
     name: 'availability',
+    getters: {
+      getPendingByWidgetId: () => getAvailabilityPendingByWidgetId,
+      getListByWidgetId: () => getAvailabilityListByWidgetId,
+      getMetaByWidgetId: () => getAvailabilityMetaByWidgetId,
+    },
     actions: {
+      fetchList: fetchAvailabilityList,
       fetchAvailabilityWithoutStore,
       fetchAvailabilityHistoryWithoutStore,
       createAvailabilityHistoryExport,
@@ -1364,6 +1380,7 @@ export const createAvailabilityModule = () => {
 
   return {
     availabilityModule,
+    fetchAvailabilityList,
     exportAvailabilityData,
     fetchAvailabilityWithoutStore,
     fetchAvailabilityHistoryWithoutStore,
