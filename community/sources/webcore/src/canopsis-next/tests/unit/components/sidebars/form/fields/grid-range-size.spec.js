@@ -1,7 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createNumberInputStub } from '@unit/stubs/input';
-import GridRangeSize from '@/components/sidebars/alarm/form/fields/grid-range-size.vue';
+import GridRangeSize from '@/components/sidebars/form/fields/grid-range-size.vue';
 
 const stubs = {
   'v-range-slider': createNumberInputStub('v-range-slider'),

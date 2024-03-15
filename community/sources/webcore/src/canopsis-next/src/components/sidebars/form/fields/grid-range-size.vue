@@ -9,9 +9,11 @@
         :min="min",
         :max="max",
         :step="step",
+        class="mt-3",
         ticks="always",
         always-dirty,
-        thumb-label
+        thumb-label,
+        hide-details
       )
 </template>
 
