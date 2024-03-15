@@ -3,7 +3,7 @@
     v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
       v-layout.pa-3(row)
-        v-flex(xs12)
+        v-flex(:class="cardFlexClass")
           v-card
             v-card-text
               pbehaviors-simple-list(
@@ -15,12 +15,13 @@
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.impactDepends') }}
       v-tab-item(lazy)
-        impact-depends-tab(:entity="item")
+        v-flex(:class="cardFlexClass")
+          impact-depends-tab(:entity="item")
 
     v-tab {{ $t('common.infos') }}
     v-tab-item(lazy)
       v-layout.pa-3(row)
-        v-flex(xs12)
+        v-flex(:class="cardFlexClass")
           v-card
             v-card-text
               infos-tab(:infos="item.infos", :columns-filters="columnsFilters")
@@ -29,7 +30,7 @@
       v-tab {{ $t('context.charts') }}
       v-tab-item(lazy)
         v-layout.pa-3(row)
-          v-flex(xs12)
+          v-flex(:class="cardFlexClass")
             v-card
               v-card-text
                 entity-charts(:charts="charts", :entity="item", :available-metrics="item.filtered_perf_data")
@@ -38,7 +39,7 @@
       v-tab {{ $t('context.treeOfDependencies') }}
       v-tab-item(lazy)
         v-layout.pa-3(row)
-          v-flex(xs12)
+          v-flex(:class="cardFlexClass")
             v-card
               v-card-text
                 tree-of-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
@@ -46,7 +47,7 @@
     v-tab {{ $t('context.impactChain') }}
     v-tab-item(lazy)
       v-layout.pa-3(row)
-        v-flex(xs12)
+        v-flex(:class="cardFlexClass")
           v-card
             v-card-text.pa-0
               impact-chain-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
@@ -54,7 +55,7 @@
     v-tab {{ $t('context.activeAlarm') }}
     v-tab-item(lazy)
       v-layout.pa-3(row)
-        v-flex(xs12)
+        v-flex(:class="cardFlexClass")
           v-card
             v-card-text
               entity-alarms-list-table(:entity="item", :columns="activeAlarmsColumns")
@@ -62,13 +63,17 @@
     v-tab {{ $t('context.resolvedAlarms') }}
     v-tab-item(lazy)
       v-layout.pa-3(row)
-        v-flex(xs12)
+        v-flex(:class="cardFlexClass")
           v-card
             v-card-text
               entity-alarms-list-table(:entity="item", :columns="resolvedAlarmsColumns", resolved)
 </template>
 
 <script>
+import { GRID_SIZES } from '@/constants';
+
+import { getFlexPropsForGridRangeSize } from '@/helpers/entities/shared/grid';
+
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -116,8 +121,16 @@ export default {
       type: Array,
       default: () => [],
     },
+    expandGridRangeSize: {
+      type: Array,
+      default: () => [GRID_SIZES.min, GRID_SIZES.max],
+    },
   },
   computed: {
+    cardFlexClass() {
+      return getFlexPropsForGridRangeSize(this.expandGridRangeSize);
+    },
+
     hasWidgetCharts() {
       return this.charts?.length && this.item.filtered_perf_data?.length;
     },
