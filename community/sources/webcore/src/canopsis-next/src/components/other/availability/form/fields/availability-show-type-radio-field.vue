@@ -21,7 +21,7 @@ import { computed } from 'vue';
 
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 
-import { useI18n } from '@/i18n';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {

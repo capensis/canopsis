@@ -42,7 +42,7 @@ import { computed } from 'vue';
 
 import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_SHOW_TYPE } from '@/constants';
 
-import { useI18n } from '@/i18n';
+import { useI18n } from '@/hooks/i18n';
 
 import AvailabilityListColumnValue from '@/components/other/availability/partials/availability-list-column-value.vue';
 import EntityColumnCell from '@/components/widgets/context/columns-formatting/entity-column-cell.vue';
