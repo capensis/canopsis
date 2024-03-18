@@ -215,8 +215,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.ReasonName = string(in.String())
 		case "r":
 			out.ReasonID = string(in.String())
-		case "f":
-			out.Filter = string(in.String())
 		case "t":
 			if in.IsNull() {
 				in.Skip()
@@ -314,11 +312,6 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"r\":"
 		out.RawString(prefix)
 		out.String(string(in.ReasonID))
-	}
-	{
-		const prefix string = ",\"f\":"
-		out.RawString(prefix)
-		out.String(string(in.Filter))
 	}
 	{
 		const prefix string = ",\"t\":"

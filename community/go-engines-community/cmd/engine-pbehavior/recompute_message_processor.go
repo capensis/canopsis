@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -31,7 +30,6 @@ type recomputeMessageProcessor struct {
 	PbhService               libpbehavior.Service
 	PbehaviorCollection      mongo.DbCollection
 	EntityCollection         mongo.DbCollection
-	EventGenerator           libevent.Generator
 	EventManager             libpbehavior.EventManager
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
@@ -50,7 +48,7 @@ func (p *recomputeMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 		return nil, nil
 	}
 
-	err = p.computePbehaviors(ctx, event.Ids)
+	err = p.computePbehaviors(ctx, event)
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
@@ -63,7 +61,8 @@ func (p *recomputeMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 	return nil, nil
 }
 
-func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, ids []string) error {
+func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, event rpc.PbehaviorRecomputeEvent) error {
+	ids := event.Ids
 	var resolver libpbehavior.ComputedEntityTypeResolver
 	var err error
 	if len(ids) == 0 {
@@ -88,7 +87,7 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, ids [
 
 	excludeIds := make([]string, 0)
 	for _, id := range ids {
-		excludeIds, err = p.updateAlarms(ctx, id, excludeIds, resolver)
+		excludeIds, err = p.updateAlarms(ctx, id, excludeIds, resolver, ids, event.Author, event.UserID, event.Initiator)
 		if err != nil {
 			return err
 		}
@@ -99,12 +98,30 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, ids [
 
 func (p *recomputeMessageProcessor) updateAlarms(
 	ctx context.Context,
-	id string,
+	pbhId string,
 	excludeIds []string,
 	resolver libpbehavior.ComputedEntityTypeResolver,
+	updatedPbhIds []string,
+	author, userId, initiator string,
 ) ([]string, error) {
+	matchByPbehaviorId := bson.M{"pbehavior_info.id": pbhId}
+	if len(excludeIds) > 0 {
+		matchByPbehaviorId["_id"] = bson.M{"$nin": excludeIds}
+	}
+
+	cursor, err := p.EntityCollection.Find(ctx, matchByPbehaviorId)
+	if err != nil {
+		return excludeIds, err
+	}
+
+	idsByPbhInfo, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userId, initiator)
+	if err != nil {
+		return excludeIds, err
+	}
+
+	excludeIds = append(excludeIds, idsByPbhInfo...)
 	pbehavior := libpbehavior.PBehavior{}
-	err := p.PbehaviorCollection.FindOne(ctx, bson.M{"_id": id},
+	err = p.PbehaviorCollection.FindOne(ctx, bson.M{"_id": pbhId},
 		options.FindOne().SetProjection(bson.M{
 			"entity_pattern": 1,
 		})).Decode(&pbehavior)
@@ -128,33 +145,17 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		}}
 	}
 
-	cursor, err := p.EntityCollection.Find(ctx, matchByPattern)
+	cursor, err = p.EntityCollection.Find(ctx, matchByPattern)
 	if err != nil {
 		return excludeIds, err
 	}
 
-	idsByPattern, err := p.sendAlarmEvents(ctx, cursor, id, resolver)
+	idsByPattern, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userId, initiator)
 	if err != nil {
 		return excludeIds, err
 	}
 
 	excludeIds = append(excludeIds, idsByPattern...)
-	matchByPbehaviorId := bson.M{"pbehavior_info.id": id}
-	if len(excludeIds) > 0 {
-		matchByPbehaviorId["_id"] = bson.M{"$nin": excludeIds}
-	}
-
-	cursor, err = p.EntityCollection.Find(ctx, matchByPbehaviorId)
-	if err != nil {
-		return excludeIds, err
-	}
-
-	idsByPbhInfo, err := p.sendAlarmEvents(ctx, cursor, id, resolver)
-	if err != nil {
-		return excludeIds, err
-	}
-
-	excludeIds = append(excludeIds, idsByPbhInfo...)
 
 	return excludeIds, nil
 }
@@ -162,8 +163,10 @@ func (p *recomputeMessageProcessor) updateAlarms(
 func (p *recomputeMessageProcessor) sendAlarmEvents(
 	ctx context.Context,
 	cursor mongo.Cursor,
-	id string,
+	pbhId string,
 	resolver libpbehavior.ComputedEntityTypeResolver,
+	updatedPbhIds []string,
+	author, userId, initiator string,
 ) ([]string, error) {
 	if cursor == nil {
 		return nil, nil
@@ -171,7 +174,7 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 
 	defer cursor.Close(ctx)
 
-	ids := make([]string, 0)
+	entityIds := make([]string, 0)
 	now := time.Now()
 	for cursor.Next(ctx) {
 		entity := types.Entity{}
@@ -181,25 +184,47 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 			continue
 		}
 
-		ids = append(ids, entity.ID)
+		entityIds = append(entityIds, entity.ID)
 		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			return nil, fmt.Errorf("cannot resolve pbehavior for entity: %w", err)
 		}
 
-		eventType, output := p.EventManager.GetEventType(resolveResult, entity.PbehaviorInfo)
-		if eventType == "" {
+		event, err := p.EventManager.GetEvent(resolveResult, entity, datetime.CpsTime{Time: now})
+		if err != nil {
+			p.Logger.Err(err).Str("entity", entity.ID).Msg("cannot generate event")
 			continue
 		}
 
-		event, err := p.EventGenerator.Generate(entity)
-		if err != nil {
-			return nil, fmt.Errorf("cannot generate event: %w", err)
+		if event.EventType == "" {
+			continue
 		}
 
-		event.EventType = eventType
-		event.Output = output
-		event.PbehaviorInfo = libpbehavior.NewPBehaviorInfo(datetime.CpsTime{Time: now}, resolveResult)
+		if author != "" {
+			isNewPbh := false
+			for _, updatedId := range updatedPbhIds {
+				if event.PbehaviorInfo.ID == updatedId {
+					isNewPbh = true
+					break
+				}
+			}
+
+			if isNewPbh || entity.PbehaviorInfo.ID == pbhId {
+				event.Author = author
+				if !event.PbehaviorInfo.IsDefaultActive() {
+					event.PbehaviorInfo.Author = author
+				}
+
+				if userId != "" {
+					event.UserID = userId
+				}
+
+				if initiator != "" {
+					event.Initiator = initiator
+				}
+			}
+		}
+
 		body, err := p.Encoder.Encode(event)
 		if err != nil {
 			return nil, fmt.Errorf("cannot encode event: %w", err)
@@ -222,10 +247,10 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 			return nil, fmt.Errorf("cannot send event: %w", err)
 		}
 
-		p.Logger.Debug().Str("pbehavior", id).Str("entity", entity.ID).Msgf("send %s event", event.EventType)
+		p.Logger.Debug().Str("pbehavior", pbhId).Str("entity", entity.ID).Msgf("send %s event", event.EventType)
 	}
 
-	return ids, nil
+	return entityIds, nil
 }
 
 func (p *recomputeMessageProcessor) logError(err error, errMsg string, msg []byte) {

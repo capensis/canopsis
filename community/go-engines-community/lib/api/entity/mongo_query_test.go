@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -15,6 +17,7 @@ import (
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -42,6 +45,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -68,12 +72,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		}},
 	}
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -125,6 +130,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -157,12 +163,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -224,6 +231,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -263,12 +271,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -321,6 +330,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -354,12 +364,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -406,6 +417,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -439,12 +451,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -491,6 +504,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 	}
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	computedFields := getComputedFields()
 	stateField := computedFields["state"]
@@ -525,12 +539,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -564,6 +579,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -597,12 +613,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		}},
 	}
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -631,6 +648,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -658,12 +676,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -758,6 +777,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -806,12 +826,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
