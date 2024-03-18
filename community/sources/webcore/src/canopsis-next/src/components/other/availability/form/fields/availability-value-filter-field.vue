@@ -1,11 +1,8 @@
 <template>
   <v-layout class="availability-value-filter-field gap-3" d-inline-flex align-end>
-    <v-select
+    <availability-value-filter-method-field
       v-model="method"
-      :label="$t('availability.filterByValue')"
-      :items="valueFilterMethods"
       class="availability-value-filter-field__method"
-      hide-details
     />
     <template v-if="method">
       <c-percents-field
@@ -36,12 +33,15 @@
 <script>
 import { computed } from 'vue';
 
-import { AVAILABILITY_SHOW_TYPE, AVAILABILITY_VALUE_FILTER_METHODS } from '@/constants';
+import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModelValue } from '@/hooks/form';
+import { useModelField } from '@/hooks/form';
+
+import AvailabilityValueFilterMethodField
+  from '@/components/other/availability/form/fields/availability-value-filter-method-field.vue';
 
 export default {
+  components: { AvailabilityValueFilterMethodField },
   props: {
     value: {
       type: Object,
@@ -57,38 +57,28 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t } = useI18n();
-    const modelValue = useModelValue(props, emit);
+    const { updateModel } = useModelField(props, emit);
 
     const method = computed({
       get() {
-        return modelValue.value?.method;
+        return props.value?.method;
       },
       set(newMethod) {
-        modelValue.value = {
-          ...modelValue.value,
-          value: modelValue.value?.value ?? 0,
+        updateModel({
+          ...props.value,
+          value: props.value?.value ?? 0,
           method: newMethod,
-        };
+        });
       },
     });
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
-    const valueFilterMethods = computed(
-      () => Object.values(AVAILABILITY_VALUE_FILTER_METHODS).map(valueFilterMethod => ({
-        value: valueFilterMethod,
-        text: t(`availability.valueFilterMethods.${valueFilterMethod}`),
-      })),
-    );
 
-    const clearValue = () => {
-      modelValue.value = undefined;
-    };
+    const clearValue = () => updateModel(undefined);
 
     return {
       method,
 
       isPercentType,
-      valueFilterMethods,
       clearValue,
     };
   },
