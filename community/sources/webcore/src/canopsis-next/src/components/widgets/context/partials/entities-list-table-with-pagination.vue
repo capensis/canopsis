@@ -38,7 +38,8 @@
           :columns-filters="columnsFilters",
           :service-dependencies-columns="widget.parameters.serviceDependenciesColumns",
           :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns",
-          :active-alarms-columns="widget.parameters.activeAlarmsColumns"
+          :active-alarms-columns="widget.parameters.activeAlarmsColumns",
+          :expand-grid-range-size="widget.parameters.expandGridRangeSize"
         )
       template(#mass-actions="{ selected, clearSelected }")
         mass-actions-panel.ml-3(

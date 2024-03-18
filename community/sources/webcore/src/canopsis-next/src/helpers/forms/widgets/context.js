@@ -8,7 +8,7 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
-  SORT_ORDERS,
+  SORT_ORDERS, GRID_SIZES,
 } from '@/constants';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
@@ -29,6 +29,7 @@ import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-
  * @property {WidgetColumn[]} resolvedAlarmsColumns
  * @property {WidgetColumn[]} activeAlarmsColumns
  * @property {string[]} selectedTypes
+ * @property {number[]} expandGridRangeSize
  * @property {WidgetSort} sort
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
@@ -75,6 +76,9 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   selectedTypes: parameters.selectedTypes
     ? cloneDeep(parameters.selectedTypes)
     : [],
+  expandGridRangeSize: parameters.expandGridRangeSize
+    ? [...parameters.expandGridRangeSize]
+    : [GRID_SIZES.min, GRID_SIZES.max],
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,

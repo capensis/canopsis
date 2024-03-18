@@ -64,6 +64,11 @@
         v-divider
       field-context-entities-types-filter(v-model="form.parameters.selectedTypes")
       v-divider
+      field-grid-range-size(
+        v-model="form.parameters.expandGridRangeSize",
+        :title="$t('settings.expandGridRangeSizeContext')"
+      )
+      v-divider
       export-csv-form(
         v-model="form.parameters",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -94,6 +99,7 @@ import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
+import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 import ExportCsvForm from './forms/export-csv.vue';
 import WidgetSettings from './partials/widget-settings.vue';
 import WidgetSettingsGroup from './partials/widget-settings-group.vue';
@@ -106,6 +112,7 @@ export default {
     FieldColumns,
     FieldFilters,
     FieldContextEntitiesTypesFilter,
+    FieldGridRangeSize,
     ExportCsvForm,
     WidgetSettings,
     WidgetSettingsGroup,
