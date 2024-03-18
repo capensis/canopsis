@@ -66,6 +66,8 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { AVAILABILITY_DISPLAY_PARAMETERS } from '@/constants';
 
 import EntityAlarmsListTable from '@/components/widgets/context/partials/expand-panel-tabs/entity-alarms-list-table.vue';
@@ -102,9 +104,11 @@ export default {
       default: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
     },
   },
-  data() {
+  setup() {
+    const activeTab = ref(0);
+
     return {
-      activeTab: 0,
+      activeTab,
     };
   },
 };
