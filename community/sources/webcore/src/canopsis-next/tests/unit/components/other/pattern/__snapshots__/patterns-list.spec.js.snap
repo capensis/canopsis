@@ -102,7 +102,11 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Type
+              <div
+                class="layout align-center"
+              >
+                Type
+              </div>
             </th>
             <th
               aria-label="Last modified on: Sorted descending. Activate to remove sorting."
@@ -160,7 +164,11 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -736,7 +744,11 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Type
+              <div
+                class="layout align-center"
+              >
+                Type
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -770,7 +782,11 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
