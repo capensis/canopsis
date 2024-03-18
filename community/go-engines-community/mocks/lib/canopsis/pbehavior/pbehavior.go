@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 	time "time"
 
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	timespan "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -206,32 +207,18 @@ func (m *MockEventManager) EXPECT() *MockEventManagerMockRecorder {
 }
 
 // GetEvent mocks base method.
-func (m *MockEventManager) GetEvent(arg0 pbehavior.ResolveResult, arg1 types.Alarm, arg2 types.Entity, arg3 time.Time) types.Event {
+func (m *MockEventManager) GetEvent(arg0 pbehavior.ResolveResult, arg1 types.Entity, arg2 datetime.CpsTime) (types.Event, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEvent", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "GetEvent", arg0, arg1, arg2)
 	ret0, _ := ret[0].(types.Event)
-	return ret0
-}
-
-// GetEvent indicates an expected call of GetEvent.
-func (mr *MockEventManagerMockRecorder) GetEvent(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvent", reflect.TypeOf((*MockEventManager)(nil).GetEvent), arg0, arg1, arg2, arg3)
-}
-
-// GetEventType mocks base method.
-func (m *MockEventManager) GetEventType(arg0 pbehavior.ResolveResult, arg1 types.PbehaviorInfo) (string, string) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEventType", arg0, arg1)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(string)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetEventType indicates an expected call of GetEventType.
-func (mr *MockEventManagerMockRecorder) GetEventType(arg0, arg1 interface{}) *gomock.Call {
+// GetEvent indicates an expected call of GetEvent.
+func (mr *MockEventManagerMockRecorder) GetEvent(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEventType", reflect.TypeOf((*MockEventManager)(nil).GetEventType), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvent", reflect.TypeOf((*MockEventManager)(nil).GetEvent), arg0, arg1, arg2)
 }
 
 // MockStore is a mock of Store interface.

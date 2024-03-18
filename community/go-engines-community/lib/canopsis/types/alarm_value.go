@@ -385,6 +385,9 @@ type PbehaviorInfo struct {
 	TypeName string `bson:"type_name" json:"type_name"`
 	// CanonicalType is Type of pbehavior.Type.
 	CanonicalType string `bson:"canonical_type" json:"canonical_type"`
+
+	Author   string `bson:"author" json:"author"`
+	RuleName string `bson:"rule_name,omitempty" json:"rule_name,omitempty"`
 }
 
 func (i *PbehaviorInfo) IsDefaultActive() bool {
@@ -444,6 +447,24 @@ func (i *PbehaviorInfo) GetStringField(f string) (string, bool) {
 	default:
 		return "", false
 	}
+}
+
+func (i *PbehaviorInfo) GetStepMessage() string {
+	builder := strings.Builder{}
+	if i.RuleName != "" {
+		builder.WriteString(i.RuleName)
+		builder.WriteString(". ")
+	}
+
+	builder.WriteString(OutputTitlePrefix)
+	builder.WriteString(i.Name)
+	builder.WriteString(". Type: ")
+	builder.WriteString(i.TypeName)
+	builder.WriteString(". Reason: ")
+	builder.WriteString(i.ReasonName)
+	builder.WriteRune('.')
+
+	return builder.String()
 }
 
 // AlarmValue represents a full description of an alarm.

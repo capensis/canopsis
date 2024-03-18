@@ -8,6 +8,7 @@ import (
 type Comment struct {
 	ID        string            `bson:"_id" json:"_id"`
 	Author    string            `bson:"author" json:"author"`
+	Origin    string            `bson:"origin,omitempty" json:"origin,omitempty"`
 	Timestamp *datetime.CpsTime `bson:"ts" json:"ts" swaggertype:"integer"`
 	Message   string            `bson:"message" json:"message"`
 }
