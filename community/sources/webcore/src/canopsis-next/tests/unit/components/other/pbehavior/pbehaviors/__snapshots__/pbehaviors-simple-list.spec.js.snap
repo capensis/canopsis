@@ -336,11 +336,15 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 role="columnheader"
                 scope="col"
               >
-                <span
-                  class=""
+                <div
+                  class="layout align-center"
                 >
-                  Status
-                </span>
+                  <span
+                    class=""
+                  >
+                    Status
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Actions"
@@ -349,11 +353,15 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 role="columnheader"
                 scope="col"
               >
-                <span
-                  class=""
+                <div
+                  class="layout align-center"
                 >
-                  Actions
-                </span>
+                  <span
+                    class=""
+                  >
+                    Actions
+                  </span>
+                </div>
               </th>
             </tr>
           </thead>

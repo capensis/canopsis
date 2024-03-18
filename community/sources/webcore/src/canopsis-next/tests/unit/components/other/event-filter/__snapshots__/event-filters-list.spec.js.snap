@@ -170,9 +170,13 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -206,11 +210,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
@@ -244,11 +252,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Enabled
-              </span>
+                <span
+                  class=""
+                >
+                  Enabled
+                </span>
+              </div>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
@@ -357,11 +369,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Calendar
-              </span>
+                <span
+                  class=""
+                >
+                  Calendar
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -370,11 +386,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1741,9 +1761,13 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -1777,11 +1801,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
@@ -1815,11 +1843,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Enabled
-              </span>
+                <span
+                  class=""
+                >
+                  Enabled
+                </span>
+              </div>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
@@ -1928,11 +1960,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Calendar
-              </span>
+                <span
+                  class=""
+                >
+                  Calendar
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -1941,11 +1977,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -2139,9 +2179,13 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -2175,11 +2219,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
@@ -2213,11 +2261,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Enabled
-              </span>
+                <span
+                  class=""
+                >
+                  Enabled
+                </span>
+              </div>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
@@ -2326,11 +2378,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Calendar
-              </span>
+                <span
+                  class=""
+                >
+                  Calendar
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -2339,11 +2395,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -3382,9 +3442,13 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
@@ -3418,11 +3482,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
@@ -3456,11 +3524,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Enabled
-              </span>
+                <span
+                  class=""
+                >
+                  Enabled
+                </span>
+              </div>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
@@ -3569,11 +3641,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Calendar
-              </span>
+                <span
+                  class=""
+                >
+                  Calendar
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -3582,11 +3658,15 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
