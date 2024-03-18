@@ -3,6 +3,7 @@ import { GROUPS_NAVIGATION_TYPES, USER_METRIC_PARAMETERS } from '@/constants';
 export default {
   seeProfile: 'Voir le profil',
   selectDefaultView: 'Sélectionner une vue par défaut',
+  displayName: 'Nom d\'affichage de l\'utilisateur',
   firstName: 'Prénom',
   lastName: 'Nom',
   email: 'Email',
