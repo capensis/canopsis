@@ -114,7 +114,7 @@ export default {
   },
   moreInfosModal: '"More Infos" Popup',
   exportPdfTemplate: 'Export PDF template',
-  expandGridRangeSize: 'Expand card width',
+  expandGridRangeSize: 'Expand card (more infos) width',
   weatherTemplate: 'Template - Weather item',
   modalTemplate: 'Template - Modal',
   entityTemplate: 'Template - Entities',
