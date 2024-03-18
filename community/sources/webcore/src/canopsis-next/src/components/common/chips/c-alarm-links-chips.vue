@@ -8,7 +8,9 @@
     item-text="text"
     item-value="url"
     item-class="c-alarm-links-chips__chip"
+    text-color=""
     return-object
+    outlined
     @select="select"
     @activate="activate"
   >
@@ -19,7 +21,6 @@
       >
         <template #activator="{ on }">
           <v-icon
-            color="white"
             small
             v-on="on"
           >
@@ -31,7 +32,6 @@
       <template v-else>
         <v-icon
           class="mr-1"
-          color="white"
           small
         >
           {{ item.icon }}
