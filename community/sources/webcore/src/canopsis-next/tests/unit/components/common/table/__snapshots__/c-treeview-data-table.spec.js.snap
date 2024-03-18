@@ -372,16 +372,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -391,16 +397,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -410,16 +422,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -429,16 +447,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -753,16 +777,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -772,16 +802,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -791,16 +827,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -810,16 +852,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -1072,16 +1120,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -1091,16 +1145,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -1110,16 +1170,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -1129,16 +1195,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -1348,16 +1420,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -1367,16 +1445,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -1386,16 +1470,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -1599,16 +1689,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -1618,16 +1714,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -1637,16 +1739,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -1656,16 +1764,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -2102,16 +2216,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -2121,16 +2241,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -2140,16 +2266,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -2159,16 +2291,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -2483,16 +2621,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -2502,16 +2646,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -2521,16 +2671,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -2540,16 +2696,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -2729,16 +2891,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Username
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
@@ -2748,16 +2916,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Firstname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
@@ -2767,16 +2941,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Lastname
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
@@ -2786,16 +2966,22 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   role="columnheader"
                   scope="col"
                 >
-                  <span>
-                    Email
-                  </span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                    style="font-size: 18px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
             </thead>
