@@ -1,6 +1,7 @@
 <template lang="pug">
   c-alarm-actions-chips.c-alarm-links-chips(
     v-if="hasAccessToLinks",
+    :class="{ 'my-1': !small }",
     :items="links",
     :small="small",
     :inline-count="inlineCount",

@@ -22,17 +22,18 @@ export const widgetColumnResizingAlarmMixin = {
   },
   created() {
     this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
+    this.throttledCalculateColumnsWidths = throttle(this.calculateColumnsWidths, 50);
   },
   beforeDestroy() {
     this.finishColumnResize();
   },
   computed: {
     tableRow() {
-      return this.tableHeader.querySelector('tr:first-of-type');
+      return this.tableHeader?.querySelector('tr:first-of-type');
     },
 
     headerCells() {
-      return this.tableRow.querySelectorAll('th');
+      return this.tableRow?.querySelectorAll('th');
     },
 
     sumOfColumnsWidth() {
@@ -80,6 +81,10 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     setPercentsInPixel() {
+      if (!this.tableRow) {
+        return;
+      }
+
       const { width: rowWidth } = this.tableRow.getBoundingClientRect();
 
       this.percentsInPixel = 100 / rowWidth;
@@ -89,16 +94,21 @@ export const widgetColumnResizingAlarmMixin = {
       return Object.values(columnsWidth).reduce((acc, width) => acc + width, 0);
     },
 
+    calculateElementNormalizedWidth(element, field) {
+      const { width: headerWidth } = element.getBoundingClientRect();
+      const width = headerWidth * this.percentsInPixel;
+
+      return this.getNormalizedWidth(field, width);
+    },
+
     calculateColumnsWidths() {
       this.setPercentsInPixel();
 
       this.columnsWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
-          const { width: headerWidth } = headerElement.getBoundingClientRect();
-          const width = headerWidth * this.percentsInPixel;
 
-          acc[value] = this.getNormalizedWidth(value, width);
+          acc[value] = this.calculateElementNormalizedWidth(headerElement, value);
         }
 
         return acc;
