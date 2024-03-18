@@ -104,7 +104,7 @@ export default {
     },
   },
   moreInfosModal: '"More Infos" Popup',
-  expandGridRangeSize: 'Expand card width',
+  expandGridRangeSize: 'Expand card (more infos) width',
   weatherTemplate: 'Template - Weather item',
   modalTemplate: 'Template - Modal',
   entityTemplate: 'Template - Entities',

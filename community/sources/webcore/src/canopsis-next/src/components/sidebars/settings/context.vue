@@ -66,7 +66,7 @@
       v-divider
       field-grid-range-size(
         v-model="form.parameters.expandGridRangeSize",
-        :title="$t('settings.expandGridRangeSize')"
+        :title="$t('settings.expandGridRangeSizeContext')"
       )
       v-divider
       export-csv-form(
