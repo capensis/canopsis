@@ -19,7 +19,7 @@ describe('v-data-table', () => {
 
   const snapshotFactory = generateRenderer(VDataTable, { stubs });
 
-  it('Column sorted by DESC after click on the header', async () => {
+  test('Column sorted by DESC after click on the header', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -61,7 +61,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Other column sorted by ASC after click on the header', async () => {
+  test('Other column sorted by ASC after click on the header', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -102,7 +102,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Column sort reset after click on the header', async () => {
+  test('Column sort reset after click on the header', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         headers,
@@ -152,7 +152,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Column sorted by DESC after click on the header with must sort', async () => {
+  test('Column sorted by DESC after click on the header with must sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -189,7 +189,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('First column sorted by DESC after click on the header with multi sort', async () => {
+  test('First column sorted by DESC after click on the header with multi sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -232,7 +232,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('First column sorted by ASC after click on the header with multi sort', async () => {
+  test('First column sorted by ASC after click on the header with multi sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -270,7 +270,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Second column sorted by DESC after click on the header with multi sort', async () => {
+  test('Second column sorted by DESC after click on the header with multi sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -307,7 +307,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Second column sorted by ASC after click on the header with multi sort', async () => {
+  test('Second column sorted by ASC after click on the header with multi sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -350,7 +350,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Second column sort reset after click on the header with multi sort', async () => {
+  test('Second column sort reset after click on the header with multi sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -392,7 +392,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Column sort reset after click on the header with multi sort', async () => {
+  test('Column sort reset after click on the header with multi sort', async () => {
     const pagination = {
       page,
       itemsPerPage,
@@ -431,7 +431,7 @@ describe('v-data-table', () => {
     );
   });
 
-  it('Renders `v-data-table` with required props', () => {
+  test('Renders `v-data-table` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -441,7 +441,7 @@ describe('v-data-table', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with hidden headers', () => {
+  test('Renders `v-data-table` with hidden headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -452,7 +452,7 @@ describe('v-data-table', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with custom headers', () => {
+  test('Renders `v-data-table` with custom headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -470,7 +470,7 @@ describe('v-data-table', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with select all', () => {
+  test('Renders `v-data-table` with select all', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -481,7 +481,7 @@ describe('v-data-table', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with data and headers', () => {
+  test('Renders `v-data-table` with items and headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [{ property1: 'Property 1', property2: 'Property 2' }],
@@ -489,6 +489,26 @@ describe('v-data-table', () => {
           { value: 'property1', text: 'Header 1' },
           { value: 'property2', text: 'Header 2', sortable: true },
         ],
+      },
+      scopedSlots: {
+        items(props) {
+          return this.$createElement('tr', `Row${JSON.stringify(props)}`);
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `v-data-table` with items, headers and ellipsis headers', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: [{ property1: 'Property 1', property2: 'Property 2' }],
+        headers: [
+          { value: 'property1', text: 'Header 1' },
+          { value: 'property2', text: 'Header 2', sortable: true },
+        ],
+        ellipsisHeaders: true,
       },
       scopedSlots: {
         items(props) {

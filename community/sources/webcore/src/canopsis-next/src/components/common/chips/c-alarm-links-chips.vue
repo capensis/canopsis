@@ -1,6 +1,7 @@
 <template>
   <c-alarm-actions-chips
     v-if="hasAccessToLinks"
+    :class="{ 'my-1': !small }"
     :items="links"
     :small="small"
     :inline-count="inlineCount"
@@ -28,7 +29,10 @@
         </template>
         <span>{{ item.text }}</span>
       </v-tooltip>
-      <template v-else>
+      <v-layout
+        v-else
+        align-center
+      >
         <v-icon
           class="mr-1"
           color="white"
@@ -37,7 +41,7 @@
           {{ item.icon }}
         </v-icon>
         <span>{{ item.text }}</span>
-      </template>
+      </v-layout>
     </template>
   </c-alarm-actions-chips>
 </template>

@@ -613,6 +613,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
           onlyIcon,
 
           is: 'c-alarm-links-chips',
+          class: { 'my-1': !context.small },
           alarm: context.alarm,
           small: context.small,
           inlineCount: inlineLinksCount,
@@ -654,6 +655,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         onlyIcon,
 
         is: 'c-alarm-links-chips',
+        class: { 'my-1': !context.small },
         alarm: context.alarm,
         small: context.small,
         inlineCount: inlineLinksCount,
