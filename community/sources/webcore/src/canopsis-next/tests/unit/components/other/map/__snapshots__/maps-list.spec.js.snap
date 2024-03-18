@@ -171,7 +171,11 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -834,7 +838,11 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Sorted ascending. Activate to sort descending."
@@ -940,7 +948,11 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr

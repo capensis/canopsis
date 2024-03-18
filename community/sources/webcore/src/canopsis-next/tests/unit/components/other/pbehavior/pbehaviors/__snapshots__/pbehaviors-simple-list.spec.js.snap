@@ -290,7 +290,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 role="columnheader"
                 scope="col"
               >
-                Status
+                <div
+                  class="layout align-center"
+                >
+                  Status
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."
@@ -300,7 +304,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 role="columnheader"
                 scope="col"
               >
-                Actions
+                <div
+                  class="layout align-center"
+                >
+                  Actions
+                </div>
               </th>
             </tr>
             <tr
