@@ -88,12 +88,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		return nil, err
 	}
 
-	res, err := s.storeFile(id, r.File)
+	err = s.storage.Delete(id, old.Storage)
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.storage.Delete(id, old.Storage)
+	res, err := s.storeFile(id, r.File)
 	if err != nil {
 		return nil, err
 	}
@@ -130,12 +130,12 @@ func (s *store) Patch(ctx context.Context, r PatchRequest) (*Response, error) {
 		res.Etag = old.Etag
 		res.MimeType = old.MimeType
 	} else {
-		res, err = s.storeFile(id, r.File)
+		err = s.storage.Delete(id, old.Storage)
 		if err != nil {
 			return nil, err
 		}
 
-		err = s.storage.Delete(id, old.Storage)
+		res, err = s.storeFile(id, r.File)
 		if err != nil {
 			return nil, err
 		}
