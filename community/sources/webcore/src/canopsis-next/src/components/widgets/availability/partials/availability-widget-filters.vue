@@ -85,8 +85,7 @@ import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import AvailabilityDisplayParameterField from '@/components/other/availability/form/fields/availability-display-parameter-field.vue';
 import AvailabilityShowTypeField from '@/components/other/availability/form/fields/availability-show-type-field.vue';
-import AvailabilityValueFilterField
-  from '@/components/widgets/availability/form/fields/availability-value-filter-field.vue';
+import AvailabilityValueFilterField from '@/components/other/availability/form/fields/availability-value-filter-field.vue';
 
 export default {
   components: {

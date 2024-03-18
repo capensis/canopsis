@@ -1,5 +1,3 @@
-import { computed } from 'vue';
-
 import { useComponentModel } from './vue';
 
 /**
@@ -7,17 +5,16 @@ import { useComponentModel } from './vue';
  *
  * @param {Object} props
  * @param {Function} emit
- * @return {import('vue').WritableComputedRef}
+ * @return {{ updateModel: function }}
  */
-export const useModelValue = (props, emit) => {
-  const { prop, event } = useComponentModel();
+export const useModelField = (props, emit) => {
+  const { event } = useComponentModel();
 
-  return computed({
-    set(value) {
-      emit(event, value);
-    },
-    get() {
-      return props[prop];
-    },
-  });
+  const updateModel = (value) => {
+    emit(event, value);
+
+    return value;
+  };
+
+  return { updateModel };
 };
