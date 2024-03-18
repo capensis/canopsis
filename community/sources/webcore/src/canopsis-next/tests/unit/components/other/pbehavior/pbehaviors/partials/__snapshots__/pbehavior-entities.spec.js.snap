@@ -46,11 +46,15 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Id
-              </span>
+                <span
+                  class=""
+                >
+                  Id
+                </span>
+              </div>
             </th>
             <th
               aria-label="Name"
@@ -59,11 +63,15 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Name
-              </span>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -72,11 +80,15 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -438,11 +450,15 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Id
-              </span>
+                <span
+                  class=""
+                >
+                  Id
+                </span>
+              </div>
             </th>
             <th
               aria-label="Name"
@@ -451,11 +467,15 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Name
-              </span>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -464,11 +484,15 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
           </tr>
         </thead>

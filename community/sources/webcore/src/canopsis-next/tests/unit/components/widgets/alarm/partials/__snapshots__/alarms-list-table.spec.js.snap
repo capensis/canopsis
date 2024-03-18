@@ -334,13 +334,17 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  ellipsisheaders="true"
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    ellipsisheaders="true"
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>
@@ -422,12 +426,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>
@@ -509,12 +517,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>
@@ -597,12 +609,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>
@@ -710,12 +726,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>
@@ -825,12 +845,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>
@@ -1006,12 +1030,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 scope="col"
                 style="width: 100px; min-width: 100px;"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
               <th
                 aria-label="Not sorted. Activate to sort ascending."
@@ -1046,12 +1074,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
           </thead>

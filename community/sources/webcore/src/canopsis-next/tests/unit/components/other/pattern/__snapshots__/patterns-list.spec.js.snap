@@ -124,11 +124,15 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Sorted descending. Activate to remove sorting."
@@ -187,11 +191,15 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -984,11 +992,15 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Type
-              </span>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -1022,11 +1034,15 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>

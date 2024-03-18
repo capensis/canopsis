@@ -607,7 +607,7 @@ export default {
       }
 
       if (!this.resizingMode) {
-        this.debouncedCalculateColumnsWidths();
+        this.throttledCalculateColumnsWidths();
       }
     },
   },

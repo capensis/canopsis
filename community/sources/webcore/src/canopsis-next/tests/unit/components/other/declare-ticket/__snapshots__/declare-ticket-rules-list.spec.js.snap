@@ -253,11 +253,15 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1261,11 +1265,15 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>

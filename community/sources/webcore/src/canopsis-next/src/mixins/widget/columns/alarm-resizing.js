@@ -22,7 +22,7 @@ export const widgetColumnResizingAlarmMixin = {
   },
   created() {
     this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
-    this.debouncedCalculateColumnsWidths = throttle(this.calculateColumnsWidths, 50);
+    this.throttledCalculateColumnsWidths = throttle(this.calculateColumnsWidths, 50);
   },
   beforeDestroy() {
     this.finishColumnResize();

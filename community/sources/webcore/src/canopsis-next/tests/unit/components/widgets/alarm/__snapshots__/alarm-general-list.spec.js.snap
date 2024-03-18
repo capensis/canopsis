@@ -58,11 +58,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Author
-              </span>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector"
@@ -70,11 +74,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Connector
-              </span>
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component"
@@ -82,11 +90,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Component
-              </span>
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource"
@@ -94,11 +106,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Resource
-              </span>
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -248,11 +264,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Author
-              </span>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector"
@@ -260,11 +280,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Connector
-              </span>
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component"
@@ -272,11 +296,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Component
-              </span>
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource"
@@ -284,11 +312,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Resource
-              </span>
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
