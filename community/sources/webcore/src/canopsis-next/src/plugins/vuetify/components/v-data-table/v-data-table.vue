@@ -221,9 +221,7 @@ export default {
 
       return [
         data,
-        children.length > 1
-          ? [this.$createElement(VLayout, { class: 'align-center' }, children)]
-          : children,
+        [this.$createElement(VLayout, { class: 'align-center' }, children)],
       ];
     },
 

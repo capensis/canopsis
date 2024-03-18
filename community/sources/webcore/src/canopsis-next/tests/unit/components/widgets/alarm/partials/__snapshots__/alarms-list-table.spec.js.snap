@@ -302,9 +302,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 </div>
               </th>
               <th role="columnheader" scope="col" aria-label="Actions: Not sorted." data-value="actions" aria-sort="none" class="column text-xs-left alarms-list-table__draggable-column">
-                <alarm-header-cell-stub header="[object Object]" selectedtag="" ellipsisheaders="true"></alarm-header-cell-stub>
-                <!---->
-                <!---->
+                <div class="layout align-center">
+                  <alarm-header-cell-stub header="[object Object]" selectedtag="" ellipsisheaders="true"></alarm-header-cell-stub>
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr class="v-datatable__progress">
@@ -342,9 +344,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 </div>
               </th>
               <th role="columnheader" scope="col" aria-label="Actions: Not sorted." data-value="actions" aria-sort="none" class="column text-xs-left alarms-list-table__draggable-column">
-                <alarm-header-cell-stub header="[object Object]" selectedtag=""></alarm-header-cell-stub>
-                <!---->
-                <!---->
+                <div class="layout align-center">
+                  <alarm-header-cell-stub header="[object Object]" selectedtag=""></alarm-header-cell-stub>
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr class="v-datatable__progress">
@@ -419,12 +423,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr
@@ -510,12 +518,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr
@@ -634,12 +646,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr
@@ -760,12 +776,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr
@@ -859,12 +879,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 scope="col"
                 width="100"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
               <th
                 aria-label=""
@@ -903,12 +927,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 role="columnheader"
                 scope="col"
               >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag=""
-                />
-                <!---->
-                <!---->
+                <div
+                  class="layout align-center"
+                >
+                  <alarm-header-cell-stub
+                    header="[object Object]"
+                    selectedtag=""
+                  />
+                  <!---->
+                  <!---->
+                </div>
               </th>
             </tr>
             <tr

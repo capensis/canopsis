@@ -34,7 +34,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -116,7 +120,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -667,7 +675,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Sorted ascending. Activate to sort descending."
@@ -749,7 +761,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -812,7 +828,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -894,7 +914,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -1356,7 +1380,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -1438,7 +1466,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
