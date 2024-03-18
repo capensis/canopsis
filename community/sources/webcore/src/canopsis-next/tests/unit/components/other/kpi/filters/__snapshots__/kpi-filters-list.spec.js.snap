@@ -103,9 +103,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -189,11 +193,15 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -791,9 +799,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -877,11 +889,15 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1006,9 +1022,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -1092,11 +1112,15 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1646,9 +1670,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -1732,11 +1760,15 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>

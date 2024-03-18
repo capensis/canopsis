@@ -200,9 +200,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -536,11 +540,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Status
-              </span>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -549,11 +557,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -2548,9 +2560,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -2884,11 +2900,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Status
-              </span>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -2897,11 +2917,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -3091,9 +3115,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -3427,11 +3455,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Status
-              </span>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -3440,11 +3472,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -5209,9 +5245,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span
-                class=""
-              />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -5545,11 +5585,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Status
-              </span>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -5558,11 +5602,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               role="columnheader"
               scope="col"
             >
-              <span
-                class=""
+              <div
+                class="layout align-center"
               >
-                Actions
-              </span>
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
