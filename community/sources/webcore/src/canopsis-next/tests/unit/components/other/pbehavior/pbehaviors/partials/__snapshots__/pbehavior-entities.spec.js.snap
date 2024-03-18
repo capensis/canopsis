@@ -33,7 +33,11 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              Id
+              <div
+                class="layout align-center"
+              >
+                Id
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted."
@@ -43,7 +47,11 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              Name
+              <div
+                class="layout align-center"
+              >
+                Name
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted."
@@ -53,7 +61,11 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               role="columnheader"
               scope="col"
             >
-              Type
+              <div
+                class="layout align-center"
+              >
+                Type
+              </div>
             </th>
           </tr>
           <tr
@@ -332,7 +344,11 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              Id
+              <div
+                class="layout align-center"
+              >
+                Id
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted."
@@ -342,7 +358,11 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              Name
+              <div
+                class="layout align-center"
+              >
+                Name
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted."
@@ -352,7 +372,11 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               role="columnheader"
               scope="col"
             >
-              Type
+              <div
+                class="layout align-center"
+              >
+                Type
+              </div>
             </th>
           </tr>
           <tr

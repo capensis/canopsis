@@ -34,7 +34,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -45,14 +49,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
@@ -63,14 +73,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Creation date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Creation date
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -81,14 +97,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."
@@ -98,7 +120,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -649,7 +675,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Sorted ascending. Activate to sort descending."
@@ -660,14 +690,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
               tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -678,14 +714,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
               tabindex="0"
             >
-              Creation date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Creation date
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -696,14 +738,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."
@@ -713,7 +761,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -776,7 +828,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -787,14 +843,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
               tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -805,14 +867,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
               tabindex="0"
             >
-              Creation date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Creation date
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -823,14 +891,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."
@@ -840,7 +914,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
@@ -1302,7 +1380,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
               width="20"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
@@ -1313,14 +1395,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
               tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Name
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
@@ -1331,14 +1419,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
               tabindex="0"
             >
-              Creation date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Creation date
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -1349,14 +1443,20 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               scope="col"
               tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                Last modified on
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </span>
+              </div>
             </th>
             <th
               aria-label="Actions: Not sorted."
@@ -1366,7 +1466,11 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                Actions
+              </div>
             </th>
           </tr>
           <tr
