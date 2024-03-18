@@ -7,9 +7,7 @@
       @update:interval="$emit('update:interval', $event)"
     />
     <availability-bar-chart
-      :downtime="availability.downtime"
-      :uptime="availability.uptime"
-      :inactive-time="availability.inactive_time"
+      :availability="availability"
       :show-type="showType"
     />
   </v-layout>
