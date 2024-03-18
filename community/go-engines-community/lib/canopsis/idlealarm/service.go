@@ -282,6 +282,7 @@ func (s *baseService) applyAlarmRule(
 				Tstop:          rule.Operation.Parameters.Tstop,
 				StartOnTrigger: rule.Operation.Parameters.StartOnTrigger,
 				Duration:       rule.Operation.Parameters.Duration,
+				RuleName:       types.RuleNameIdleRulePrefix + rule.Name,
 			},
 		}
 		b, err := s.encoder.Encode(rpcEvent)

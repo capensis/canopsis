@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -30,7 +29,6 @@ type periodicalWorker struct {
 	EntityAdapter          libentity.Adapter
 	EventManager           pbehavior.EventManager
 	FrameDuration          time.Duration
-	EventGenerator         libevent.Generator
 	TimezoneConfigProvider config.TimezoneConfigProvider
 	Encoder                encoding.Encoder
 	Logger                 zerolog.Logger
@@ -131,17 +129,24 @@ func (w *periodicalWorker) processAlarms(
 		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
+
 			return processedEntityIds, eventsCount
 		}
 
-		event := w.EventManager.GetEvent(resolveResult, alarm, entity, now)
+		event, err := w.EventManager.GetEvent(resolveResult, entity, datetime.CpsTime{Time: now})
+		if err != nil {
+			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("cannot generate event")
+
+			continue
+		}
+
 		if event.EventType != "" {
 			eventsCount++
 			ech <- PublishEventMsg{
 				event:   event,
 				id:      alarm.ID,
-				pbhID:   resolveResult.ResolvedPbhID,
-				pbhType: resolveResult.ResolvedType,
+				pbhID:   resolveResult.ID,
+				pbhType: resolveResult.Type,
 			}
 		}
 	}
@@ -190,28 +195,20 @@ func (w *periodicalWorker) processEntities(
 			return eventsCount
 		}
 
-		eventType, output := w.EventManager.GetEventType(resolveResult, entity.PbehaviorInfo)
-		if eventType == "" {
+		event, err := w.EventManager.GetEvent(resolveResult, entity, datetime.CpsTime{Time: now})
+		if err != nil {
+			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("cannot generate event")
 			continue
 		}
 
-		event, err := w.EventGenerator.Generate(entity)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot generate event")
-			return eventsCount
-		}
-
-		event.EventType = eventType
-		event.Output = output
-		event.Timestamp = datetime.CpsTime{Time: now}
-		event.PbehaviorInfo = pbehavior.NewPBehaviorInfo(event.Timestamp, resolveResult)
-
-		eventsCount++
-		ech <- PublishEventMsg{
-			event:   event,
-			id:      entity.ID,
-			pbhID:   resolveResult.ResolvedPbhID,
-			pbhType: resolveResult.ResolvedType,
+		if event.EventType != "" {
+			eventsCount++
+			ech <- PublishEventMsg{
+				event:   event,
+				id:      entity.ID,
+				pbhID:   resolveResult.ID,
+				pbhType: resolveResult.Type,
+			}
 		}
 	}
 

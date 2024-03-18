@@ -39,6 +39,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -162,7 +163,7 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
 	}
 	// Create pbehavior computer.
-	pbhComputeChan := make(chan []string, chanBuf)
+	pbhComputeChan := make(chan rpc.PbehaviorRecomputeEvent, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, logger)
 	// Create entity service event publisher.

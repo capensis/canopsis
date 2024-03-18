@@ -10,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -447,11 +448,12 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		{"$unwind": "$" + entityLookupName},
 	}
 
-	pipeline = append(pipeline, getEntityCategoryLookup()...)
-	pipeline = append(pipeline, getEntityPbehaviorInfoTypeLookup()...)
+	pipeline = append(pipeline, dbquery.GetCategoryLookup("entity")...)
+	pipeline = append(pipeline, dbquery.GetPbehaviorInfoTypeLookup("entity")...)
+	pipeline = append(pipeline, dbquery.GetPbehaviorInfoLastCommentLookup(s.authorProvider, "entity")...)
 	if r.WithDependencies {
-		pipeline = append(pipeline, getImpactsCountPipeline()...)
-		pipeline = append(pipeline, getDependsCountPipeline()...)
+		pipeline = append(pipeline, dbquery.GetImpactsCountPipeline("entity")...)
+		pipeline = append(pipeline, dbquery.GetDependsCountPipeline("entity")...)
 	}
 
 	if r.Steps != nil {
