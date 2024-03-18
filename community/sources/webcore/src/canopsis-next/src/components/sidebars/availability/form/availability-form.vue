@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
@@ -124,23 +126,27 @@ export default {
       default: false,
     },
   },
-  computed: {
-    availabilityRanges() {
-      return AVAILABILITY_QUICK_RANGES;
-    },
-  },
-  methods: {
-    updateWidgetColumnsTemplate(template, columns) {
-      this.$emit('update:widget-columns-template', template, columns);
-    },
+  setup(props, { emit }) {
+    const availabilityRanges = computed(() => AVAILABILITY_QUICK_RANGES);
 
-    updateActiveAlarmsColumnsTemplate(template, columns) {
-      this.$emit('update:active-alarms-columns-template', template, columns);
-    },
+    const updateWidgetColumnsTemplate = (template, columns) => {
+      emit('update:widget-columns-template', template, columns);
+    };
 
-    updateResolvedAlarmsColumnsTemplate(template, columns) {
-      this.$emit('update:resolved-alarms-columns-template', template, columns);
-    },
+    const updateActiveAlarmsColumnsTemplate = (template, columns) => {
+      emit('update:active-alarms-columns-template', template, columns);
+    };
+
+    const updateResolvedAlarmsColumnsTemplate = (template, columns) => {
+      emit('update:resolved-alarms-columns-template', template, columns);
+    };
+
+    return {
+      availabilityRanges,
+      updateWidgetColumnsTemplate,
+      updateActiveAlarmsColumnsTemplate,
+      updateResolvedAlarmsColumnsTemplate,
+    };
   },
 };
 </script>
