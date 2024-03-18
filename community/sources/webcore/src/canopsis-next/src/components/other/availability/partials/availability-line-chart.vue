@@ -6,7 +6,6 @@
     :width="width"
     :height="height"
     :dark="$system.dark"
-    class="kpi-widget__chart"
   >
     <template #actions="{ chart }">
       <chart-export-actions
@@ -20,6 +19,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import {
   AVAILABILITY_LINE_CHART_X_AXES_IDS,
   SAMPLINGS,
@@ -85,159 +86,132 @@ export default {
       default: true,
     },
   },
-  computed: {
-    isUptimeParameter() {
-      return this.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime;
-    },
+  setup(props) {
+    const isUptimeParameter = computed(() => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime);
+    const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
 
-    isPercentType() {
-      return this.showType === AVAILABILITY_SHOW_TYPE.percent;
-    },
+    const labelsFont = computed(() => ({
+      size: 11,
+      family: 'Arial, sans-serif',
+    }));
 
-    maxTimeValue() {
-      return MAX_TIME_VALUE_BY_SAMPLING[this.sampling];
-    },
+    const getChartTimeTickLabel = (_, index, data) => {
+      const { value } = data[index] ?? {};
 
-    samplingUnit() {
-      return TIME_UNITS_BY_SAMPLING[this.sampling];
-    },
-
-    xAxes() {
-      return {
-        [AVAILABILITY_LINE_CHART_X_AXES_IDS.default]: {
-          type: 'time',
-          ticks: {
-            source: 'data',
-            callback: this.getChartTimeTickLabel,
-            font: {
-              size: 11,
-              family: 'Arial, sans-serif',
-            },
-          },
+      return getDateLabelBySampling(value, props.sampling);
+    };
+    const xAxes = computed(() => ({
+      [AVAILABILITY_LINE_CHART_X_AXES_IDS.default]: {
+        type: 'time',
+        ticks: {
+          source: 'data',
+          callback: getChartTimeTickLabel,
+          font: labelsFont.value,
         },
-      };
-    },
+      },
+    }));
 
-    yAxes() {
-      return {
-        [AVAILABILITY_LINE_CHART_Y_AXES_IDS.percent]: {
-          stacked: this.stacked,
-          display: 'auto',
-          beginAtZero: true,
-          max: 100,
-          ticks: {
-            callback: this.getChartYPercentTick,
-            font: {
-              size: 11,
-              family: 'Arial, sans-serif',
-            },
-          },
-        },
-        [AVAILABILITY_LINE_CHART_Y_AXES_IDS.time]: {
-          stacked: this.stacked,
-          display: 'auto',
-          beginAtZero: true,
-          max: this.maxTimeValue,
-          ticks: {
-            callback: this.getChartYTimeTick,
-            font: {
-              size: 11,
-              family: 'Arial, sans-serif',
-            },
-          },
-        },
-      };
-    },
+    const maxTimeValue = computed(() => MAX_TIME_VALUE_BY_SAMPLING[props.sampling]);
+    const samplingUnit = computed(() => TIME_UNITS_BY_SAMPLING[props.sampling]);
 
-    datasets() {
-      const color = this.isUptimeParameter ? COLORS.kpi.uptime : COLORS.kpi.downtime;
+    const getChartYPercentTick = value => `${value}%`;
+    const getChartYTimeTick = value => `${value}${samplingUnit.value}`;
+
+    const yAxes = computed(() => ({
+      [AVAILABILITY_LINE_CHART_Y_AXES_IDS.percent]: {
+        display: 'auto',
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: getChartYPercentTick,
+          font: labelsFont.value,
+        },
+      },
+      [AVAILABILITY_LINE_CHART_Y_AXES_IDS.time]: {
+        display: 'auto',
+        beginAtZero: true,
+        max: maxTimeValue.value,
+        ticks: {
+          callback: getChartYTimeTick,
+          font: labelsFont.value,
+        },
+      },
+    }));
+
+    const convertValueByShowType = (availability) => {
+      const valueField = getAvailabilityFieldByDisplayParameterAndShowType(
+        props.displayParameter,
+        props.showType,
+      );
+      const value = availability[valueField];
+
+      if (isPercentType.value) {
+        return value;
+      }
+
+      return fromSeconds(value, props.samplingUnit);
+    };
+    const datasets = computed(() => {
+      const color = isUptimeParameter.value ? COLORS.kpi.uptime : COLORS.kpi.downtime;
 
       return [
         {
           borderColor: color,
           xAxisID: AVAILABILITY_LINE_CHART_X_AXES_IDS.default,
-          yAxisID: this.isPercentType
+          yAxisID: isPercentType.value
             ? AVAILABILITY_LINE_CHART_Y_AXES_IDS.percent
             : AVAILABILITY_LINE_CHART_Y_AXES_IDS.time,
           pointRadius: 0,
-          data: this.availabilities.map(availability => ({
+          data: props.availabilities.map(availability => ({
             x: availability.timestamp * 1000,
-            y: this.convertValueByShowType(availability),
+            y: convertValueByShowType(availability),
           })),
         },
       ];
-    },
+    });
 
-    chartOptions() {
-      return {
-        responsive: this.responsive,
-        animation: this.animation,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        scales: {
-          ...this.xAxes,
-          ...this.yAxes,
-        },
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            displayColors: false,
-            callbacks: {
-              title: this.getChartTooltipTitle,
-              label: this.getChartTooltipLabel,
-            },
-          },
-        },
-      };
-    },
-  },
-  methods: {
-    convertValueByShowType(availability) {
-      const valueField = getAvailabilityFieldByDisplayParameterAndShowType(
-        this.displayParameter,
-        this.showType,
-      );
-      const value = availability[valueField];
-
-      if (this.isPercentType) {
-        return value;
-      }
-
-      return fromSeconds(value, this.samplingUnit);
-    },
-
-    getChartTimeTickLabel(_, index, data) {
-      const { value } = data[index] ?? {};
-
-      return getDateLabelBySampling(value, this.sampling);
-    },
-
-    getChartYPercentTick(value) {
-      return `${value}%`;
-    },
-
-    getChartYTimeTick(value) {
-      return `${value}${this.samplingUnit}`;
-    },
-
-    getChartTooltipTitle(data) {
+    const getChartTooltipTitle = (data) => {
       const [dataset] = data;
       const { x: timestamp } = dataset.raw;
 
-      return getDateLabelBySampling(timestamp, this.sampling);
-    },
-
-    getChartTooltipLabel({ raw }) {
-      if (this.isPercentType) {
+      return getDateLabelBySampling(timestamp, props.sampling);
+    };
+    const getChartTooltipLabel = ({ raw }) => {
+      if (isPercentType.value) {
         return `${convertNumberToFixedString(raw.y, 2)}%`;
       }
 
-      return convertDurationToString(raw.y, undefined, this.samplingUnit);
-    },
+      return convertDurationToString(raw.y, undefined, samplingUnit.value);
+    };
+    const chartOptions = computed(() => ({
+      responsive: props.responsive,
+      animation: props.animation,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      scales: {
+        ...xAxes.value,
+        ...yAxes.value,
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          displayColors: false,
+          callbacks: {
+            title: getChartTooltipTitle,
+            label: getChartTooltipLabel,
+          },
+        },
+      },
+    }));
+
+    return {
+      chartOptions,
+      datasets,
+    };
   },
 };
 </script>

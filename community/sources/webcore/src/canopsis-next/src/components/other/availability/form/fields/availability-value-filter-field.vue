@@ -37,8 +37,7 @@ import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 
 import { useModelField } from '@/hooks/form';
 
-import AvailabilityValueFilterMethodField
-  from '@/components/other/availability/form/fields/availability-value-filter-method-field.vue';
+import AvailabilityValueFilterMethodField from './availability-value-filter-method-field.vue';
 
 export default {
   components: { AvailabilityValueFilterMethodField },

@@ -14,14 +14,16 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { TIME_UNITS } from '@/constants';
 
 import { fromSeconds, toSeconds } from '@/helpers/date/duration';
 
-import { formMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form';
 
 export default {
-  mixins: [formMixin],
   props: {
     value: {
       type: Number,
@@ -32,21 +34,22 @@ export default {
       required: false,
     },
   },
-  computed: {
-    hasDayUnit() {
-      return this.maxValue
-        ? fromSeconds(this.maxValue, TIME_UNITS.day) > 1
-        : true;
-    },
+  setup(props, { emit }) {
+    const { tc } = useI18n();
+    const { updateModel } = useModelField(props, emit);
 
-    availableItems() {
+    const hasDayUnit = computed(
+      () => (props.maxValue ? fromSeconds(props.maxValue, TIME_UNITS.day) > 1 : true),
+    );
+
+    const availableItems = computed(() => {
       const items = [];
 
-      if (this.hasDayUnit) {
+      if (hasDayUnit.value) {
         items.push(
           {
             unit: TIME_UNITS.day,
-            label: this.$tc('common.times.day', 2),
+            label: tc('common.times.day', 2),
           },
         );
       }
@@ -54,62 +57,66 @@ export default {
       items.push(
         {
           unit: TIME_UNITS.hour,
-          label: this.$tc('common.times.hour', 2),
+          label: tc('common.times.hour', 2),
         },
         {
           unit: TIME_UNITS.minute,
-          label: this.$tc('common.times.minute', 2),
+          label: tc('common.times.minute', 2),
         },
       );
 
       return items;
-    },
+    });
 
-    valuesByUnit() {
-      const { values } = this.availableItems.reduce((acc, { unit }) => {
-        const unitValue = this.convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
+    const convertSecondsToRoundedUnitValue = (value, unit) => Math.floor(fromSeconds(value, unit));
+
+    const valuesByUnit = computed(() => {
+      const { values } = availableItems.value.reduce((acc, { unit }) => {
+        const unitValue = convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
 
         acc.values[unit] = unitValue;
         acc.restSeconds -= toSeconds(unitValue, unit);
 
         return acc;
       }, {
-        restSeconds: this.value,
+        restSeconds: props.value,
         values: {},
       });
 
       return values;
-    },
+    });
 
-    maxValuesByUnit() {
-      if (!this.maxValue) {
+    const maxValuesByUnit = computed(() => {
+      if (!props.maxValue) {
         return {};
       }
 
-      const { values } = this.availableItems.reduce((acc, { unit }) => {
-        acc.values[unit] = this.convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
-        acc.restSeconds -= toSeconds(this.valuesByUnit[unit], unit);
+      const { values } = availableItems.value.reduce((acc, { unit }) => {
+        acc.values[unit] = convertSecondsToRoundedUnitValue(acc.restSeconds, unit);
+        acc.restSeconds -= toSeconds(valuesByUnit.value[unit], unit);
 
         return acc;
       }, {
-        restSeconds: this.maxValue,
+        restSeconds: props.maxValue,
         values: {},
       });
 
       return values;
-    },
-  },
-  methods: {
-    updateValueByUnit(value, unit) {
+    });
+
+    const updateValueByUnit = (value, unit) => {
       const preparedValue = Math.max(value || 0, 0);
-      const newValue = this.value + toSeconds(preparedValue - this.valuesByUnit[unit], unit);
+      const newValue = props.value + toSeconds(preparedValue - valuesByUnit.value[unit], unit);
 
-      this.updateModel(this.maxValue ? Math.min(this.maxValue, newValue) : newValue);
-    },
+      updateModel(props.maxValue ? Math.min(props.maxValue, newValue) : newValue);
+    };
 
-    convertSecondsToRoundedUnitValue(value, unit) {
-      return Math.floor(fromSeconds(value, unit));
-    },
+    return {
+      availableItems,
+      valuesByUnit,
+      maxValuesByUnit,
+      updateValueByUnit,
+    };
   },
 };
 </script>
