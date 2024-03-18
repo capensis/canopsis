@@ -51,14 +51,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Name
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Name
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Author: Not sorted. Activate to sort ascending."
@@ -69,14 +75,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Author
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Author
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Is enabled: Not sorted. Activate to sort ascending."
@@ -87,14 +99,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Is enabled
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Is enabled
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Begins: Not sorted. Activate to sort ascending."
@@ -105,14 +123,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Begins
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Begins
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Ends: Not sorted. Activate to sort ascending."
@@ -123,14 +147,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Ends
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Ends
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="End of recurrence: Not sorted. Activate to sort ascending."
@@ -141,14 +171,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                End of recurrence
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  End of recurrence
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Recurrence: Not sorted. Activate to sort ascending."
@@ -159,14 +195,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Recurrence
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Recurrence
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Type: Not sorted. Activate to sort ascending."
@@ -177,14 +219,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Type
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Type
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Reason: Not sorted. Activate to sort ascending."
@@ -195,14 +243,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Reason
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Reason
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Icon: Not sorted. Activate to sort ascending."
@@ -213,14 +267,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 scope="col"
                 tabindex="0"
               >
-                Icon
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Icon
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Status: Not sorted."
@@ -230,7 +290,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 role="columnheader"
                 scope="col"
               >
-                Status
+                <div
+                  class="layout align-center"
+                >
+                  Status
+                </div>
               </th>
               <th
                 aria-label="Actions: Not sorted."
@@ -240,7 +304,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 role="columnheader"
                 scope="col"
               >
-                Actions
+                <div
+                  class="layout align-center"
+                >
+                  Actions
+                </div>
               </th>
             </tr>
             <tr
@@ -935,14 +1003,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Name
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Name
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Author: Not sorted. Activate to sort ascending."
@@ -953,14 +1027,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Author
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Author
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Is enabled: Not sorted. Activate to sort ascending."
@@ -971,14 +1051,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Is enabled
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Is enabled
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Begins: Not sorted. Activate to sort ascending."
@@ -989,14 +1075,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Begins
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Begins
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Ends: Not sorted. Activate to sort ascending."
@@ -1007,14 +1099,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Ends
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Ends
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="End of recurrence: Not sorted. Activate to sort ascending."
@@ -1025,14 +1123,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                End of recurrence
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  End of recurrence
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Recurrence: Not sorted. Activate to sort ascending."
@@ -1043,14 +1147,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Recurrence
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Recurrence
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Type: Not sorted. Activate to sort ascending."
@@ -1061,14 +1171,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Type
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Type
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Reason: Not sorted. Activate to sort ascending."
@@ -1079,14 +1195,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Reason
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Reason
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
               <th
                 aria-label="Icon: Not sorted. Activate to sort ascending."
@@ -1097,14 +1219,20 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
                 scope="col"
                 tabindex="0"
               >
-                Icon
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                  style="font-size: 16px;"
+                <div
+                  class="layout align-center"
                 >
-                  arrow_upward
-                </i>
+                  Icon
+                  <span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                      style="font-size: 16px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </span>
+                </div>
               </th>
             </tr>
             <tr

@@ -44,7 +44,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               scope="col"
               width="100"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Criteria: Not sorted."
@@ -54,7 +58,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <div
+                class="layout align-center"
+              >
+                Criteria
+              </div>
             </th>
           </tr>
           <tr
@@ -603,7 +611,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               scope="col"
               width="100"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Criteria: Not sorted."
@@ -613,7 +625,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <div
+                class="layout align-center"
+              >
+                Criteria
+              </div>
             </th>
           </tr>
           <tr
@@ -1194,7 +1210,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               scope="col"
               width="100"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Criteria: Not sorted."
@@ -1204,7 +1224,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <div
+                class="layout align-center"
+              >
+                Criteria
+              </div>
             </th>
           </tr>
           <tr
@@ -1300,7 +1324,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               scope="col"
               width="100"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Criteria: Not sorted."
@@ -1310,7 +1338,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <div
+                class="layout align-center"
+              >
+                Criteria
+              </div>
             </th>
           </tr>
           <tr
@@ -1859,7 +1891,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               scope="col"
               width="100"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                
+              </div>
             </th>
             <th
               aria-label="Criteria: Not sorted."
@@ -1869,7 +1905,11 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <div
+                class="layout align-center"
+              >
+                Criteria
+              </div>
             </th>
           </tr>
           <tr
