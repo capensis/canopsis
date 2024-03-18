@@ -17,9 +17,6 @@
         @click="$emit('remove-selected', selected)"
       />
     </template>
-    <template #name="{ item }">
-      {{ item.display_name }}
-    </template>
     <template #enable="{ item }">
       <c-enabled :value="item.enable" />
     </template>
@@ -90,6 +87,10 @@ export default {
         {
           text: this.$t('common.username'),
           value: 'name',
+        },
+        {
+          text: this.$t('user.displayName'),
+          value: 'display_name',
         },
         {
           text: this.$t('user.firstName'),
