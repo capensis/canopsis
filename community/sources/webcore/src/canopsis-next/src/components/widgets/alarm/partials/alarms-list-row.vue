@@ -63,7 +63,8 @@
         :parent-alarm="parentAlarm"
         :refresh-alarms-list="refreshAlarmsList"
         :small="small"
-        :wrap="wrapActions"
+        :ignore-media-query="actionsIgnoreMediaQuery"
+        :inline-count="actionsInlineCount"
       />
       <alarm-column-value
         v-else
@@ -177,10 +178,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    wrapActions: {
-      type: Boolean,
-      default: false,
-    },
     showInstructionIcon: {
       type: Boolean,
       default: false,
@@ -188,6 +185,14 @@ export default {
     search: {
       type: String,
       default: '',
+    },
+    actionsInlineCount: {
+      type: Number,
+      required: false,
+    },
+    actionsIgnoreMediaQuery: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
