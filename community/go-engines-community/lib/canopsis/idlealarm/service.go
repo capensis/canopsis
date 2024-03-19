@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -34,34 +33,33 @@ func NewService(
 	alarmAdapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
 	pbhRpcClient engine.RPCClient,
-	connector string,
+	eventGenerator libevent.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Service {
 	return &baseService{
-		ruleAdapter:   ruleAdapter,
-		alarmAdapter:  alarmAdapter,
-		entityAdapter: entityAdapter,
-		pbhRpcClient:  pbhRpcClient,
-		connector:     connector,
-		encoder:       encoder,
-		logger:        logger,
+		ruleAdapter:    ruleAdapter,
+		alarmAdapter:   alarmAdapter,
+		entityAdapter:  entityAdapter,
+		pbhRpcClient:   pbhRpcClient,
+		eventGenerator: eventGenerator,
+		encoder:        encoder,
+		logger:         logger,
 	}
 }
 
 type baseService struct {
-	ruleAdapter   idlerule.RuleAdapter
-	alarmAdapter  libalarm.Adapter
-	entityAdapter libentity.Adapter
-	pbhRpcClient  engine.RPCClient
-	connector     string
-	encoder       encoding.Encoder
-	logger        zerolog.Logger
+	ruleAdapter    idlerule.RuleAdapter
+	alarmAdapter   libalarm.Adapter
+	entityAdapter  libentity.Adapter
+	pbhRpcClient   engine.RPCClient
+	eventGenerator libevent.Generator
+	encoder        encoding.Encoder
+	logger         zerolog.Logger
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	now := datetime.NewCpsTime()
-	eventGenerator := libevent.NewGenerator(s.connector, s.connector)
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
@@ -109,7 +107,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, fmt.Errorf("cannot decode alarm %w", err)
 			}
 
-			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, eventGenerator, now)
+			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, now)
 			if err != nil {
 				return events, err
 			}
@@ -138,7 +136,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, fmt.Errorf("cannot decode entity : %w", err)
 			}
 
-			event, err := s.applyRules(ctx, rules, entity, nil, eventGenerator, now)
+			event, err := s.applyRules(ctx, rules, entity, nil, now)
 			if err != nil {
 				return events, err
 			}
@@ -167,7 +165,6 @@ func (s *baseService) applyRules(
 	rules []idlerule.Rule,
 	entity types.Entity,
 	alarm *types.Alarm,
-	eventGenerator libevent.Generator,
 	now datetime.CpsTime,
 ) (*types.Event, error) {
 	lastAlarm := alarm
@@ -216,7 +213,7 @@ func (s *baseService) applyRules(
 				}
 			}
 
-			return s.applyEntityRule(rule, entity, eventGenerator)
+			return s.applyEntityRule(rule, entity)
 		}
 	}
 
@@ -231,19 +228,14 @@ func (s *baseService) applyAlarmRule(
 	now datetime.CpsTime,
 ) (*types.Event, error) {
 	idleRuleApply := fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition)
-	event := types.Event{
-		Connector:     s.connector,
-		ConnectorName: s.connector,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		SourceType:    entity.Type,
-		Timestamp:     now,
-		Author:        canopsis.DefaultEventAuthor,
-		Initiator:     types.InitiatorSystem,
-		IdleRuleApply: idleRuleApply,
-		Output:        s.getEventOutput(rule),
+	event, err := s.eventGenerator.Generate(entity)
+	if err != nil {
+		return nil, err
 	}
 
+	event.Timestamp = now
+	event.IdleRuleApply = idleRuleApply
+	event.Output = s.getEventOutput(rule)
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}
@@ -324,9 +316,8 @@ func (s *baseService) applyAlarmRule(
 func (s *baseService) applyEntityRule(
 	rule idlerule.Rule,
 	entity types.Entity,
-	eventGenerator libevent.Generator,
 ) (*types.Event, error) {
-	event, err := eventGenerator.Generate(entity)
+	event, err := s.eventGenerator.Generate(entity)
 	if err != nil {
 		return nil, err
 	}
@@ -334,8 +325,6 @@ func (s *baseService) applyEntityRule(
 	event.EventType = types.EventTypeNoEvents
 	event.Timestamp = datetime.NewCpsTime()
 	event.State = types.AlarmStateCritical
-	event.Author = canopsis.DefaultEventAuthor
-	event.Initiator = types.InitiatorSystem
 	event.Output = s.getEventOutput(rule)
 	event.IdleRuleApply = rule.Type
 
