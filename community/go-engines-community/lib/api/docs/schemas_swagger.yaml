@@ -538,8 +538,6 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
-      last_comment:
-        $ref: '#/definitions/pbehaviorcomment.Response'
       name:
         type: string
       reason:
@@ -1659,6 +1657,8 @@ definitions:
     type: object
   entity.PbehaviorInfo:
     properties:
+      author:
+        type: string
       canonical_type:
         description: CanonicalType is Type of pbehavior.Type.
         type: string
@@ -1667,6 +1667,17 @@ definitions:
       id:
         description: ID is ID of pbehavior.PBehavior.
         type: string
+      last_comment:
+        properties:
+          _id:
+            type: string
+          author:
+            type: string
+          message:
+            type: string
+          ts:
+            type: integer
+        type: object
       name:
         description: Name is Name of pbehavior.PBehavior.
         type: string
@@ -1675,6 +1686,8 @@ definitions:
         type: string
       reason_name:
         description: ReasonName is Name of pbehavior.Reason.
+        type: string
+      rule_name:
         type: string
       timestamp:
         description: |-

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -25,6 +26,7 @@ import (
 
 type MongoQueryBuilder struct {
 	filterCollection mongo.DbCollection
+	authorProvider   author.Provider
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -55,9 +57,10 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection: client.Collection(mongo.WidgetFiltersMongoCollection),
+		authorProvider:   authorProvider,
 
 		defaultSearchByFields: []string{
 			"_id", "name", "type",
@@ -80,6 +83,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime) {
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "event_stats", pipeline: getEventStatsLookup(now)},
 	}
 

@@ -781,6 +781,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.TypeName = string(in.String())
 		case "canonical_type":
 			out.CanonicalType = string(in.String())
+		case "author":
+			out.Author = string(in.String())
+		case "rule_name":
+			out.RuleName = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -838,6 +842,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"canonical_type\":"
 		out.RawString(prefix)
 		out.String(string(in.CanonicalType))
+	}
+	{
+		const prefix string = ",\"author\":"
+		out.RawString(prefix)
+		out.String(string(in.Author))
+	}
+	if in.RuleName != "" {
+		const prefix string = ",\"rule_name\":"
+		out.RawString(prefix)
+		out.String(string(in.RuleName))
 	}
 	out.RawByte('}')
 }
