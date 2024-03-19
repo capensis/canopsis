@@ -247,14 +247,8 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 			alarm.Value.InactiveStart = &now
 		}
 
-		pbhOutput := fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s.",
-			pbehaviorInfo.Name,
-			pbehaviorInfo.TypeName,
-			pbehaviorInfo.ReasonName,
-		)
-		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, canopsis.DefaultEventAuthor,
-			pbhOutput, "", "", types.InitiatorSystem, false)
+		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
+			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, false)
 		newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
 		alarm.Value.PbehaviorInfo = pbehaviorInfo
 		err := alarm.Value.Steps.Add(newStep)

@@ -259,6 +259,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	}
 
 	axeParams := rpc.AxeParameters{
+		RuleName:       types.RuleNameScenarioPrefix + task.ScenarioName,
 		Author:         additionalData.Author,
 		User:           additionalData.User,
 		State:          params.State,
@@ -272,27 +273,29 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		StartOnTrigger: params.StartOnTrigger,
 	}
 
-	if task.Action.Type == types.ActionTypeAssocTicket {
+	switch task.Action.Type {
+	case types.ActionTypeAssocTicket:
 		axeParams.TicketInfo = types.TicketInfo{
 			Ticket:           params.Ticket,
 			TicketURL:        params.TicketURL,
 			TicketSystemName: params.TicketSystemName,
-			TicketRuleName:   types.RuleNameScenarioPrefix + task.ScenarioName,
+			TicketRuleName:   axeParams.RuleName,
 			TicketRuleID:     task.ScenarioID,
 			TicketData:       params.TicketData,
 			TicketComment:    task.Action.Comment,
 		}
 		axeParams.Output = axeParams.TicketInfo.GetStepMessage()
-	} else if params.Output != "" {
-		outputBuilder := strings.Builder{}
-		outputBuilder.WriteString(types.RuleNameScenarioPrefix)
-		outputBuilder.WriteString(task.ScenarioName)
-		alarmConfig := s.alarmConfigProvider.Get()
-		outputBuilder.WriteString(". ")
-		outputBuilder.WriteString(types.OutputCommentPrefix)
-		outputBuilder.WriteString(utils.TruncateString(params.Output, alarmConfig.OutputLength))
-		outputBuilder.WriteRune('.')
-		axeParams.Output = outputBuilder.String()
+	default:
+		if params.Output != "" {
+			outputBuilder := strings.Builder{}
+			outputBuilder.WriteString(axeParams.RuleName)
+			alarmConfig := s.alarmConfigProvider.Get()
+			outputBuilder.WriteString(". ")
+			outputBuilder.WriteString(types.OutputCommentPrefix)
+			outputBuilder.WriteString(utils.TruncateString(params.Output, alarmConfig.OutputLength))
+			outputBuilder.WriteRune('.')
+			axeParams.Output = outputBuilder.String()
+		}
 	}
 
 	return &rpc.AxeEvent{

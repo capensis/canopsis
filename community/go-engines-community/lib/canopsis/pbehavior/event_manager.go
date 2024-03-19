@@ -1,64 +1,53 @@
 package pbehavior
 
 import (
-	"fmt"
-	"time"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EventManager interface {
-	GetEvent(ResolveResult, types.Alarm, types.Entity, time.Time) types.Event
-	GetEventType(resolveResult ResolveResult, curPbehaviorInfo types.PbehaviorInfo) (eventType string, output string)
+	GetEvent(ResolveResult, types.Entity, datetime.CpsTime) (types.Event, error)
 }
 
 type eventManager struct {
-	connector string
+	eventGenerator libevent.Generator
 }
 
-func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, entity types.Entity, now time.Time) types.Event {
-	eventType, output := r.GetEventType(resolveResult, alarm.Value.PbehaviorInfo)
+func (r *eventManager) GetEvent(resolveResult ResolveResult, entity types.Entity, ts datetime.CpsTime) (types.Event, error) {
+	pbhInfo := NewPBehaviorInfo(ts, resolveResult)
+	eventType, output := r.getEventType(pbhInfo, entity.PbehaviorInfo)
 	if eventType == "" {
-		return types.Event{}
+		return types.Event{}, nil
 	}
 
-	event := types.Event{
-		Connector:     r.connector,
-		ConnectorName: r.connector,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		SourceType:    entity.Type,
-		Timestamp:     datetime.CpsTime{Time: now},
-		EventType:     eventType,
-		Output:        output,
-		PbehaviorInfo: NewPBehaviorInfo(datetime.CpsTime{Time: now}, resolveResult),
-		Author:        canopsis.DefaultEventAuthor,
-		Initiator:     types.InitiatorSystem,
+	event, err := r.eventGenerator.Generate(entity)
+	if err != nil {
+		return event, err
 	}
 
-	return event
+	event.Timestamp = ts
+	event.EventType = eventType
+	event.Output = output
+	event.PbehaviorInfo = pbhInfo
+	event.Author = pbhInfo.Author
+	event.Initiator = types.InitiatorSystem
+
+	return event, nil
 }
 
-func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo types.PbehaviorInfo) (string, string) {
-	resolvedType := resolveResult.ResolvedType
-
-	if resolvedType.ID != "" && resolvedType.ID == curPbehaviorInfo.TypeID && resolveResult.ResolvedPbhID == curPbehaviorInfo.ID ||
-		resolvedType.ID == "" && curPbehaviorInfo.IsDefaultActive() {
+func (r *eventManager) getEventType(newPbehaviorInfo, curPbehaviorInfo types.PbehaviorInfo) (string, string) {
+	if newPbehaviorInfo.TypeID != "" && newPbehaviorInfo.TypeID == curPbehaviorInfo.TypeID && newPbehaviorInfo.ID == curPbehaviorInfo.ID ||
+		newPbehaviorInfo.TypeID == "" && curPbehaviorInfo.IsDefaultActive() {
 		return "", ""
 	}
 
 	var eventType string
 	var output string
-	if resolvedType.ID == "" {
+	if newPbehaviorInfo.TypeID == "" {
 		eventType = types.EventTypePbhLeave
-		output = fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s.",
-			curPbehaviorInfo.Name,
-			curPbehaviorInfo.TypeName,
-			curPbehaviorInfo.ReasonName,
-		)
+		output = curPbehaviorInfo.GetStepMessage()
 	} else {
 		if curPbehaviorInfo.IsDefaultActive() {
 			eventType = types.EventTypePbhEnter
@@ -66,36 +55,34 @@ func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo
 			eventType = types.EventTypePbhLeaveAndEnter
 		}
 
-		output = fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s.",
-			resolveResult.ResolvedPbhName,
-			resolvedType.Name,
-			resolveResult.ResolvedPbhReasonName,
-		)
+		output = newPbehaviorInfo.GetStepMessage()
 	}
 
 	return eventType, output
 }
 
-func NewEventManager(connector string) EventManager {
-	return eventManager{
-		connector: connector,
+func NewEventManager(eventGenerator libevent.Generator) EventManager {
+	return &eventManager{
+		eventGenerator: eventGenerator,
 	}
 }
 
 func NewPBehaviorInfo(time datetime.CpsTime, result ResolveResult) types.PbehaviorInfo {
-	if result.ResolvedType.ID == "" {
+	if result.Type.ID == "" {
 		return types.PbehaviorInfo{}
 	}
 
-	return types.PbehaviorInfo{
+	pbhInfo := types.PbehaviorInfo{
 		Timestamp:     &time,
-		ID:            result.ResolvedPbhID,
-		Name:          result.ResolvedPbhName,
-		ReasonName:    result.ResolvedPbhReasonName,
-		ReasonID:      result.ResolvedPbhReasonID,
-		TypeID:        result.ResolvedType.ID,
-		TypeName:      result.ResolvedType.Name,
-		CanonicalType: result.ResolvedType.Type,
+		ID:            result.ID,
+		Name:          result.Name,
+		ReasonName:    result.ReasonName,
+		ReasonID:      result.ReasonID,
+		TypeID:        result.Type.ID,
+		TypeName:      result.Type.Name,
+		CanonicalType: result.Type.Type,
+		Author:        canopsis.DefaultEventAuthor,
 	}
+
+	return pbhInfo
 }

@@ -43,7 +43,6 @@ type ComputedPbehavior struct {
 	Name       string         `json:"n"`
 	ReasonName string         `json:"rn"`
 	ReasonID   string         `json:"r"`
-	Filter     string         `json:"f"`
 	Types      []ComputedType `json:"t"`
 	Created    int64          `json:"c"`
 	Color      string         `json:"-"`
