@@ -287,8 +287,11 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	}
 
 	newStatus := types.CpsNumber(types.AlarmStatusNoEvents)
+	statusStepMessage := params.Output
 	if newState == types.AlarmStateOK {
-		newStatus = p.alarmStatusService.ComputeStatus(alarm, entity)
+		var statusRuleName string
+		newStatus, statusRuleName = p.alarmStatusService.ComputeStatus(alarm, entity)
+		statusStepMessage = ConcatOutputAndRuleName(params.Output, statusRuleName)
 	}
 
 	if newStatus == previousStatus && newState == previousState {
@@ -304,6 +307,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	} else {
 		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		statusStep.Value = newStatus
+		statusStep.Message = statusStepMessage
 		if newStatus < previousStatus {
 			statusStep.Type = types.AlarmStepStatusDecrease
 		}
