@@ -629,40 +629,37 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 }
 
 func (m *manager) HandleService(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
-	var service *types.Entity
-	var err error
-
 	serviceID := event.Component
-
-	service, err = m.getEntity(ctx, serviceID)
+	service, err := m.getEntity(ctx, serviceID)
 	if err != nil {
 		return Report{}, err
 	}
 
 	if service == nil {
 		return Report{}, fmt.Errorf("service %s doesn't exist", serviceID)
-	} else if service.SoftDeleted != nil {
+	}
+
+	if service.SoftDeleted != nil {
 		event.Entity = service
 
 		return Report{}, nil
 	}
 
-	now := datetime.NewCpsTime()
-	commRegister.RegisterUpdate(serviceID, bson.M{"last_event_date": now})
-	service.LastEventDate = &now
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() {
+		now := datetime.NewCpsTime()
+		commRegister.RegisterUpdate(serviceID, bson.M{"last_event_date": now})
+		service.LastEventDate = &now
+	}
+
 	event.Entity = service
 
 	return Report{}, nil
 }
 
 func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
-	var connector *types.Entity
-	var err error
-
 	connectorName := event.ConnectorName
 	connectorID := event.Connector + "/" + connectorName
-
-	connector, err = m.getEntity(ctx, connectorID)
+	connector, err := m.getEntity(ctx, connectorID)
 	if err != nil {
 		return Report{}, err
 	}
@@ -671,8 +668,13 @@ func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commR
 		return Report{}, fmt.Errorf("connector %s doesn't exist", connectorID)
 	}
 
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() {
+		now := datetime.NewCpsTime()
+		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		connector.LastEventDate = &now
+	}
+
 	event.Entity = connector
-	commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": datetime.NewCpsTime()})
 
 	return Report{}, nil
 }
@@ -809,27 +811,6 @@ func (m *manager) ProcessComponentDependencies(ctx context.Context, component *t
 	}
 
 	return ids, nil
-}
-
-func (m *manager) UpdateLastEventDate(ctx context.Context, event *types.Event, updateConnectorLastEventDate bool) error {
-	if event.EventType != types.EventTypeCheck || event.Entity.LastEventDate == nil {
-		return nil
-	}
-
-	var query bson.M
-	if updateConnectorLastEventDate {
-		query = bson.M{"_id": bson.M{"$in": bson.A{event.Entity.ID, event.Entity.Connector}}}
-	} else {
-		query = bson.M{"_id": event.Entity.ID}
-	}
-
-	_, err := m.entityCollection.UpdateMany(
-		ctx,
-		query,
-		bson.M{"$set": bson.M{"last_event_date": event.Entity.LastEventDate}},
-	)
-
-	return err
 }
 
 func (m *manager) AssignStateSetting(ctx context.Context, entity *types.Entity, commRegister libmongo.CommandsRegister) (bool, error) {
