@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -200,6 +201,7 @@ func sendTriggerEvent(
 	result Result,
 	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
+	eventGenerator event.Generator,
 	logger zerolog.Logger,
 ) {
 	switch result.AlarmChange.Type {
@@ -215,20 +217,20 @@ func sendTriggerEvent(
 		return
 	}
 
-	body, err := encoder.Encode(types.Event{
-		EventType:     types.EventTypeTrigger,
-		Connector:     canopsis.AxeConnector,
-		ConnectorName: canopsis.AxeConnector,
-		Component:     result.Alarm.Value.Component,
-		Resource:      result.Alarm.Value.Resource,
-		SourceType:    event.Entity.Type,
-		AlarmChange:   &result.AlarmChange,
-		AlarmID:       result.Alarm.ID,
-		Author:        canopsis.DefaultEventAuthor,
-		Initiator:     types.InitiatorSystem,
-	})
+	triggerEvent, err := eventGenerator.Generate(*event.Entity)
+	if err != nil {
+		logger.Err(err).Msgf("cannot generate event")
+
+		return
+	}
+
+	triggerEvent.EventType = types.EventTypeTrigger
+	triggerEvent.AlarmChange = &result.AlarmChange
+	triggerEvent.AlarmID = result.Alarm.ID
+	body, err := encoder.Encode(triggerEvent)
 	if err != nil {
 		logger.Err(err).Msgf("cannot encode event")
+
 		return
 	}
 

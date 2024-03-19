@@ -6,6 +6,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -20,6 +21,7 @@ func NewInstructionProcessor(
 	client mongo.DbClient,
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -27,6 +29,7 @@ func NewInstructionProcessor(
 		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 		metricsSender:   metricsSender,
 		amqpPublisher:   amqpPublisher,
+		eventGenerator:  eventGenerator,
 		encoder:         encoder,
 		logger:          logger,
 		alarmStepTypeMap: map[string]string{
@@ -68,6 +71,7 @@ type instructionProcessor struct {
 	alarmCollection    mongo.DbCollection
 	metricsSender      metrics.Sender
 	amqpPublisher      libamqp.Publisher
+	eventGenerator     event.Generator
 	encoder            encoding.Encoder
 	logger             zerolog.Logger
 	alarmStepTypeMap   map[string]string
@@ -202,5 +206,5 @@ func (p *instructionProcessor) postProcess(
 		"",
 	)
 
-	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.logger)
+	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
 }

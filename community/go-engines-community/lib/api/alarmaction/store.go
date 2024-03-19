@@ -8,9 +8,9 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -39,6 +39,7 @@ func NewStore(
 	exchange, queue string,
 	encoder encoding.Encoder,
 	contentType string,
+	eventGenerator libevent.Generator,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -50,6 +51,7 @@ func NewStore(
 		queue:                queue,
 		encoder:              encoder,
 		contentType:          contentType,
+		eventGenerator:       eventGenerator,
 		logger:               logger,
 	}
 }
@@ -62,6 +64,7 @@ type store struct {
 	exchange, queue      string
 	encoder              encoding.Encoder
 	contentType          string
+	eventGenerator       libevent.Generator
 	logger               zerolog.Logger
 }
 
@@ -72,15 +75,12 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, userna
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeAck,
-		Output:     r.Comment,
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeAck, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -104,15 +104,12 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, use
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeAckremove,
-		Output:     r.Comment,
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeAckremove, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -132,16 +129,13 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, 
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeSnooze,
-		Output:     r.Comment,
-		Duration:   types.CpsNumber(d.Value),
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeSnooze, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.Duration = types.CpsNumber(d.Value)
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -156,15 +150,12 @@ func (s *store) Cancel(ctx context.Context, id string, r Request, userId, userna
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeCancel,
-		Output:     r.Comment,
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeCancel, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -179,15 +170,12 @@ func (s *store) Uncancel(ctx context.Context, id string, r Request, userId, user
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeUncancel,
-		Output:     r.Comment,
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeUncancel, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -209,16 +197,13 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		TicketSystemName: r.SystemName,
 		TicketData:       r.Data,
 	}
-	event := types.Event{
-		EventType:  types.EventTypeAssocTicket,
-		TicketInfo: ticketInfo,
-		Output:     ticketInfo.GetStepMessage(),
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.TicketInfo = ticketInfo
+	event.Output = ticketInfo.GetStepMessage()
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -242,15 +227,12 @@ func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeComment,
-		Output:     r.Comment,
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeComment, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -265,16 +247,13 @@ func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest
 		return false, err
 	}
 
-	event := types.Event{
-		EventType:  types.EventTypeChangestate,
-		State:      types.CpsNumber(*r.State),
-		Output:     r.Comment,
-		Component:  alarm.Alarm.Value.Component,
-		Resource:   alarm.Alarm.Value.Resource,
-		SourceType: alarm.Entity.Type,
-		UserID:     userId,
-		Author:     username,
+	event, err := s.genEvent(types.EventTypeChangestate, alarm.Entity, username, userId)
+	if err != nil {
+		return false, err
 	}
+
+	event.State = types.CpsNumber(*r.State)
+	event.Output = r.Comment
 	err = s.sendEvent(ctx, event)
 	if err != nil {
 		return false, err
@@ -299,11 +278,8 @@ func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEnt
 		}},
 		{"$unwind": "$entity"},
 		{"$project": bson.M{
-			"alarm._id":         "$_id",
-			"alarm.v.component": "$v.component",
-			"alarm.v.resource":  "$v.resource",
-			"entity._id":        1,
-			"entity.type":       1,
+			"alarm._id": "$_id",
+			"entity":    1,
 		}},
 	})
 	if err != nil {
@@ -321,11 +297,26 @@ func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEnt
 	return alarm, nil
 }
 
-func (s *store) sendEvent(ctx context.Context, event types.Event) error {
-	event.Connector = canopsis.ApiConnector
-	event.ConnectorName = canopsis.ApiConnector
-	event.Initiator = types.InitiatorUser
+func (s *store) genEvent(
+	eventType string,
+	entity types.Entity,
+	username, userId string,
+) (types.Event, error) {
+	event, err := s.eventGenerator.Generate(entity)
+	if err != nil {
+		return event, fmt.Errorf("cannot generate event: %w", err)
+	}
+
+	event.EventType = eventType
 	event.Timestamp = datetime.NewCpsTime()
+	event.Author = username
+	event.UserID = userId
+	event.Initiator = types.InitiatorUser
+
+	return event, nil
+}
+
+func (s *store) sendEvent(ctx context.Context, event types.Event) error {
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		return err
@@ -369,11 +360,8 @@ func (s *store) ackResources(
 			"entity.type": types.EntityTypeResource,
 		}},
 		{"$project": bson.M{
-			"alarm._id":         "$_id",
-			"alarm.v.component": "$v.component",
-			"alarm.v.resource":  "$v.resource",
-			"entity._id":        1,
-			"entity.type":       1,
+			"alarm._id": "$_id",
+			"entity":    1,
 		}},
 	})
 	if err != nil {
@@ -398,15 +386,12 @@ func (s *store) ackResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event := types.Event{
-			EventType:  types.EventTypeAck,
-			Output:     output,
-			Component:  alarm.Alarm.Value.Component,
-			Resource:   alarm.Alarm.Value.Resource,
-			SourceType: alarm.Entity.Type,
-			UserID:     userId,
-			Author:     username,
+		event, err := s.genEvent(types.EventTypeAck, alarm.Entity, username, userId)
+		if err != nil {
+			return err
 		}
+
+		event.Output = output
 		err = s.sendEvent(ctx, event)
 		if err != nil {
 			return err
@@ -440,11 +425,8 @@ func (s *store) ticketResources(
 			"entity.type": types.EntityTypeResource,
 		}},
 		{"$project": bson.M{
-			"alarm._id":         "$_id",
-			"alarm.v.component": "$v.component",
-			"alarm.v.resource":  "$v.resource",
-			"entity._id":        1,
-			"entity.type":       1,
+			"alarm._id": "$_id",
+			"entity":    1,
 		}},
 	})
 	if err != nil {
@@ -466,16 +448,13 @@ func (s *store) ticketResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event := types.Event{
-			EventType:  types.EventTypeAssocTicket,
-			TicketInfo: ticketInfo,
-			Output:     output,
-			Component:  alarm.Alarm.Value.Component,
-			Resource:   alarm.Alarm.Value.Resource,
-			SourceType: alarm.Entity.Type,
-			UserID:     userId,
-			Author:     username,
+		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, username, userId)
+		if err != nil {
+			return err
 		}
+
+		event.TicketInfo = ticketInfo
+		event.Output = output
 		err = s.sendEvent(ctx, event)
 		if err != nil {
 			return err
