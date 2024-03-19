@@ -18,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -306,7 +307,7 @@ func benchmarkMessageProcessor(
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
-		template.NewExecutor(templateConfigProvider, tzConfigProvider), canopsis.AxeConnector, logger)
+		template.NewExecutor(templateConfigProvider, tzConfigProvider), libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -341,6 +342,7 @@ func benchmarkMessageProcessor(
 			alarmtag.NewExternalUpdater(dbClient),
 			alarmtag.NewInternalTagAlarmMatcher(dbClient),
 			amqpChannel,
+			libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
 			logger,
 		),
 		TechMetricsSender: techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
