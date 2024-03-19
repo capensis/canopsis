@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -53,129 +52,61 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot delete resolved alarms")
+
 			return
 		}
 	}
 
-	// Resolve the alarms whose state is info.
-	closed, err := w.AlarmService.ResolveClosed(ctx)
+	resolveOkEvents, err := w.AlarmService.ResolveClosed(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot resolve ok alarms")
+
 		return
 	}
 
-	// Process the snoozed alarms.
-	// Note that this may unsnooze some alarms, but it will not resolve any.
-	// This is the reason why the snoozedResolved alarms are not added to the
-	// resolvedAlarms slice.
-	unsnoozedAlarms, err := w.AlarmService.ResolveSnoozes(ctx, alarmConfig)
+	eventsCount += len(resolveOkEvents)
+	w.publishEvents(ctx, resolveOkEvents)
+	unsnoozeEvents, err := w.AlarmService.ResolveSnoozes(ctx, alarmConfig)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot unsnooze alarms")
+
 		return
 	}
 
-	// Resolve the alarms marked as canceled.
-	cancelResolved, err := w.AlarmService.ResolveCancels(ctx, alarmConfig)
+	eventsCount += len(unsnoozeEvents)
+	w.publishEvents(ctx, unsnoozeEvents)
+	resolveCanceledEvents, err := w.AlarmService.ResolveCancels(ctx, alarmConfig)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot resolve canceled alarms")
+
 		return
 	}
 
-	// Process the flapping alarms.
-	// Note that this may change the status of some alarms, but it will not
-	// resolve any.
-	// This is the reason why the statusUpdated alarms are not added to the
-	// resolvedAlarms slice.
-	statusUpdated, err := w.AlarmService.UpdateFlappingAlarms(ctx)
+	eventsCount += len(resolveCanceledEvents)
+	w.publishEvents(ctx, resolveCanceledEvents)
+	statusUpdateEvents, err := w.AlarmService.UpdateFlappingAlarms(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot update flapping alarms")
+
 		return
 	}
 
-	eventsCount += len(statusUpdated)
-	for _, alarm := range statusUpdated {
-		eventUpdateStatus := types.Event{
-			Connector:     canopsis.AxeConnector,
-			ConnectorName: canopsis.AxeConnector,
-			Component:     alarm.Alarm.Value.Component,
-			Resource:      alarm.Alarm.Value.Resource,
-			SourceType:    alarm.Entity.Type,
-			Timestamp:     datetime.NewCpsTime(),
-			EventType:     types.EventTypeUpdateStatus,
-			Author:        canopsis.DefaultEventAuthor,
-			Output:        "",
-			Initiator:     types.InitiatorSystem,
-		}
-		err = w.publishToEngineFIFO(ctx, eventUpdateStatus)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot publish event")
-		}
-	}
-
-	eventsCount += len(closed)
-	for _, alarm := range closed {
-		eventResolveClosed := types.Event{
-			Connector:     canopsis.AxeConnector,
-			ConnectorName: canopsis.AxeConnector,
-			Component:     alarm.Alarm.Value.Component,
-			Resource:      alarm.Alarm.Value.Resource,
-			SourceType:    alarm.Entity.Type,
-			Timestamp:     datetime.NewCpsTime(),
-			EventType:     types.EventTypeResolveClose,
-			Author:        canopsis.DefaultEventAuthor,
-			Initiator:     types.InitiatorSystem,
-		}
-		err = w.publishToEngineFIFO(ctx, eventResolveClosed)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot publish event")
-		}
-	}
-
-	eventsCount += len(cancelResolved)
-	for _, alarm := range cancelResolved {
-		eventResolveCancel := types.Event{
-			Connector:     canopsis.AxeConnector,
-			ConnectorName: canopsis.AxeConnector,
-			Component:     alarm.Alarm.Value.Component,
-			Resource:      alarm.Alarm.Value.Resource,
-			SourceType:    alarm.Entity.Type,
-			Timestamp:     datetime.NewCpsTime(),
-			EventType:     types.EventTypeResolveCancel,
-			Author:        canopsis.DefaultEventAuthor,
-			Initiator:     types.InitiatorSystem,
-		}
-		err = w.publishToEngineFIFO(ctx, eventResolveCancel)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot publish event")
-		}
-	}
-
-	eventsCount += len(unsnoozedAlarms)
-	for _, alarm := range unsnoozedAlarms {
-		eventUnsnooze := types.Event{
-			Connector:     canopsis.AxeConnector,
-			ConnectorName: canopsis.AxeConnector,
-			Component:     alarm.Alarm.Value.Component,
-			Resource:      alarm.Alarm.Value.Resource,
-			SourceType:    alarm.Entity.Type,
-			Timestamp:     datetime.NewCpsTime(),
-			EventType:     types.EventTypeUnsnooze,
-			Author:        canopsis.DefaultEventAuthor,
-			Initiator:     types.InitiatorSystem,
-		}
-		err = w.publishToEngineFIFO(ctx, eventUnsnooze)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot publish event")
-		}
-	}
-
-	events, err := w.IdleAlarmService.Process(ctx)
+	eventsCount += len(statusUpdateEvents)
+	w.publishEvents(ctx, statusUpdateEvents)
+	idleEvents, err := w.IdleAlarmService.Process(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot process idle rules")
+
+		return
 	}
-	eventsCount += len(events)
+
+	eventsCount += len(idleEvents)
+	w.publishEvents(ctx, idleEvents)
+}
+
+func (w *periodicalWorker) publishEvents(ctx context.Context, events []types.Event) {
 	for _, event := range events {
-		err = w.publishToEngineFIFO(ctx, event)
+		err := w.publishToEngineFIFO(ctx, event)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
@@ -185,8 +116,9 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.Event) error {
 	bevent, err := w.Encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("cannot encode event : %w", err)
+		return fmt.Errorf("cannot encode event: %w", err)
 	}
+
 	return w.ChannelPub.PublishWithContext(
 		ctx,
 		"",
@@ -194,7 +126,7 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 		false,
 		false,
 		amqp.Publishing{
-			ContentType:  "application/json", // this type is mandatory to avoid bad conversions into Python.
+			ContentType:  canopsis.JsonContentType,
 			Body:         bevent,
 			DeliveryMode: amqp.Persistent,
 		},

@@ -19,6 +19,7 @@ const (
 	RuleNameScenarioPrefix          = "Scenario: "
 	RuleNameIdleRulePrefix          = "Idle rule: "
 	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+	RuleNameRulePrefix              = "Rule: "
 
 	OutputCommentPrefix   = "Comment: "
 	OutputTitlePrefix     = "Title: "

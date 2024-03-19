@@ -32,9 +32,9 @@ import (
 const workers = 10
 
 const (
-	outputMetaAlarmRulePrefix   = "Rule: "
-	outputMetaAlarmNamePrefix   = "Meta alarm name: "
-	outputMetaAlarmEntityPrefix = "Meta alarm entity: "
+	outputMetaAlarmNamePrefix   = "Display name: "
+	outputMetaAlarmEntityPrefix = "Entity: "
+	outputMetaAlarmPrefix       = "Meta alarm name: "
 )
 
 func NewMetaAlarmEventProcessor(
@@ -781,7 +781,7 @@ func (p *metaAlarmEventProcessor) getChildEventOutput(
 	outputBuilder := strings.Builder{}
 	msgLen := len(msg)
 	if msgLen == 0 {
-		outputBuilder.WriteString(outputMetaAlarmNamePrefix)
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
 		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
 
 		return outputBuilder.String()
@@ -794,12 +794,12 @@ func (p *metaAlarmEventProcessor) getChildEventOutput(
 		}
 
 		outputBuilder.WriteRune(' ')
-		outputBuilder.WriteString(outputMetaAlarmNamePrefix)
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
 		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
 		outputBuilder.WriteRune('.')
 	} else {
 		outputBuilder.WriteString("\n")
-		outputBuilder.WriteString(outputMetaAlarmNamePrefix)
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
 		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
 	}
 
@@ -1246,7 +1246,7 @@ func (p *metaAlarmEventProcessor) getChildStepMsg(
 ) string {
 	msgBuilder := strings.Builder{}
 	if !rule.IsManual() {
-		msgBuilder.WriteString(outputMetaAlarmRulePrefix)
+		msgBuilder.WriteString(types.RuleNameRulePrefix)
 		msgBuilder.WriteString(rule.Name)
 		msgBuilder.WriteString(". ")
 	}
@@ -1327,7 +1327,8 @@ func updateMetaAlarmState(
 		alarm.Value.LastUpdateDate = timestamp
 	}
 
-	newStatus := service.ComputeStatus(*alarm, entity)
+	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
+	statusStepMessage := libevent.ConcatOutputAndRuleName(output, statusRuleName)
 	if newStatus == currentStatus {
 		if state == currentState {
 			return nil, nil, nil
@@ -1346,7 +1347,7 @@ func updateMetaAlarmState(
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "",
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, statusStepMessage, "", "",
 		types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
 	newStepStatus.Value = newStatus
 

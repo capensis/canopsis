@@ -7,9 +7,11 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
@@ -115,10 +117,11 @@ func TestService_ResolveCancels(t *testing.T) {
 				mockAlarmAdapter,
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
+				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
 				log.NewLogger(true),
 			)
 
-			cancelAlarms, err := service.ResolveCancels(context.Background(), config.AlarmConfig{
+			events, err := service.ResolveCancels(context.Background(), config.AlarmConfig{
 				CancelAutosolveDelay: time.Minute * 60,
 			})
 			if err != nil {
@@ -128,8 +131,8 @@ func TestService_ResolveCancels(t *testing.T) {
 				}
 			}
 
-			if len(cancelAlarms) != dataset.expectedCancel {
-				t.Errorf("expected %d cancel alarms but got %d", dataset.expectedCancel, len(cancelAlarms))
+			if len(events) != dataset.expectedCancel {
+				t.Errorf("expected %d cancel alarms but got %d", dataset.expectedCancel, len(events))
 			}
 		})
 	}
@@ -229,10 +232,11 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				mockAlarmAdapter,
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
+				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
 				log.NewLogger(true),
 			)
 
-			unsnoozedAlarms, err := service.ResolveSnoozes(context.Background(), config.AlarmConfig{})
+			events, err := service.ResolveSnoozes(context.Background(), config.AlarmConfig{})
 			if err != nil {
 				expectedErr := fmt.Sprintf("snooze alarms error: %v", dataset.findError.Error())
 				if errors.Is(err, errors.New(expectedErr)) {
@@ -240,8 +244,8 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				}
 			}
 
-			if len(unsnoozedAlarms) != dataset.expectedUnsnoozes {
-				t.Errorf("expected %d unsnoozed alarms but got %d", dataset.expectedUnsnoozes, len(unsnoozedAlarms))
+			if len(events) != dataset.expectedUnsnoozes {
+				t.Errorf("expected %d unsnoozed alarms but got %d", dataset.expectedUnsnoozes, len(events))
 			}
 		})
 	}
@@ -256,6 +260,9 @@ func newCancelAlarm(time datetime.CpsTime) types.AlarmWithEntity {
 					Timestamp: time,
 				},
 			},
+		},
+		Entity: types.Entity{
+			Type: types.EntityTypeResource,
 		},
 	}
 }
@@ -272,6 +279,9 @@ func newSnoozedAlarm(snoozeStart time.Time, snoozeEnd time.Time) types.AlarmWith
 					Value:     types.CpsNumber(snoozeEnd.Unix()),
 				},
 			},
+		},
+		Entity: types.Entity{
+			Type: types.EntityTypeResource,
 		},
 	}
 }
@@ -292,6 +302,9 @@ func newSnoozedAlarmWithActivePbh(snoozeStart time.Time, snoozeEnd time.Time) ty
 				},
 			},
 		},
+		Entity: types.Entity{
+			Type: types.EntityTypeResource,
+		},
 	}
 }
 
@@ -310,6 +323,9 @@ func newSnoozedAlarmWithMaintenancePbh(snoozeStart time.Time, snoozeEnd time.Tim
 					Value:     types.CpsNumber(snoozeEnd.Unix()),
 				},
 			},
+		},
+		Entity: types.Entity{
+			Type: types.EntityTypeResource,
 		},
 	}
 }

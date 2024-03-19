@@ -524,3 +524,15 @@ func getResolveEntityUpdate() bson.M {
 		"last_idle_rule_apply": "",
 	}}
 }
+
+func ConcatOutputAndRuleName(output, ruleName string) string {
+	if ruleName != "" {
+		if output != "" {
+			output += "\n"
+		}
+
+		output += ruleName
+	}
+
+	return output
+}
