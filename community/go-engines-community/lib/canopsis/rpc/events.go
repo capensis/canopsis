@@ -26,6 +26,7 @@ type AxeEvent struct {
 }
 
 type AxeParameters struct {
+	RuleName  string           `json:"rule_name,omitempty"`
 	Output    string           `json:"output,omitempty"`
 	Author    string           `json:"author,omitempty"`
 	User      string           `json:"user,omitempty"`
@@ -103,7 +104,10 @@ type WebhookEvent struct {
 //
 //easyjson:json
 type PbehaviorRecomputeEvent struct {
-	Ids []string `json:"ids"`
+	Ids       []string `json:"ids"`
+	Author    string   `json:"author"`
+	UserID    string   `json:"user_id"`
+	Initiator string   `json:"initiator"`
 }
 
 // PbehaviorEvent
@@ -127,6 +131,7 @@ type PbehaviorParameters struct {
 	Tstop          *datetime.CpsTime          `json:"tstop,omitempty"`
 	StartOnTrigger *bool                      `json:"start_on_trigger,omitempty"`
 	Duration       *datetime.DurationWithUnit `json:"duration,omitempty"`
+	RuleName       string                     `json:"rule_name,omitempty"`
 }
 
 // PbehaviorResultEvent
