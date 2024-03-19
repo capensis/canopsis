@@ -52,6 +52,8 @@ func (s *store) RetrieveLoginConfig() LoginConf {
 	var login = LoginConf{}
 	for _, p := range s.securityConfig.Security.AuthProviders {
 		switch p {
+		case security.AuthMethodBasic:
+			login.BasicConfig.Enable = true
 		case security.AuthMethodLdap:
 			login.LdapConfig.Enable = true
 		case security.AuthMethodCas:
