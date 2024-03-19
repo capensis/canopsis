@@ -62,6 +62,7 @@ type AppInfoResponse struct {
 }
 
 type LoginConf struct {
+	BasicConfig  LoginConfigMethod       `json:"basic,omitempty"`
 	CasConfig    LoginConfigMethod       `json:"casconfig,omitempty"`
 	LdapConfig   LoginConfigMethod       `json:"ldapconfig,omitempty"`
 	SamlConfig   LoginConfigMethod       `json:"saml2config,omitempty"`
