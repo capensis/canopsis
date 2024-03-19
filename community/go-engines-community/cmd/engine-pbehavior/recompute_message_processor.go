@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -201,15 +202,10 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 		}
 
 		if author != "" {
-			isNewPbh := false
-			for _, updatedId := range updatedPbhIds {
-				if event.PbehaviorInfo.ID == updatedId {
-					isNewPbh = true
-					break
-				}
-			}
-
-			if isNewPbh || entity.PbehaviorInfo.ID == pbhId {
+			newPbhId := event.PbehaviorInfo.ID
+			prevPbhId := entity.PbehaviorInfo.ID
+			if newPbhId != "" && slices.Contains(updatedPbhIds, newPbhId) ||
+				prevPbhId != "" && slices.Contains(updatedPbhIds, prevPbhId) {
 				event.Author = author
 				if !event.PbehaviorInfo.IsDefaultActive() {
 					event.PbehaviorInfo.Author = author
