@@ -111,8 +111,8 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 
 	if r.WithFlags {
 		q.addFlags()
-		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline("")})
-		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline("")})
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -148,8 +148,8 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	q.handleSort(sortRequest)
 
 	if withFlags {
-		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline("")})
-		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline("")})
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
 		if withStateDependsCount {
 			q.lookups = append(q.lookups, lookupWithKey{key: "state_setting", pipeline: dbquery.GetStateSettingPipeline()})
 			q.lookups = append(q.lookups, lookupWithKey{key: "state_depends_count", pipeline: getStateDependsCountPipeline()})

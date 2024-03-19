@@ -123,7 +123,7 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
-		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline("")},
+		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()},
 	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
