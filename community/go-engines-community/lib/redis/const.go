@@ -16,13 +16,14 @@ const (
 	ActionDelayedScenarioKey   = "action-delayed-scenario"
 	ActionScenarioExecutionKey = "action-scenario-execution"
 
-	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
-	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
-	AxeInternalTagsPeriodicalLockKey     = "axe-internal-tags-periodical-lock-key"
-	AxeEntityServiceStateLockKey         = "axe-entity-service-state-lock-key"
-	AxeIdleSincePeriodicalLockKey        = "axe-idle-since-periodical-lock-key"
-	AxeNotAckedMetricsPeriodicalLockKey  = "axe-not-acked-metrics-periodical-lock-key"
-	AxeSliMetricsPeriodicalLockKey       = "axe-sli-metrics-periodical-lock-key"
+	AxePeriodicalLockKey                  = "axe-periodical-lock-key"
+	AxeResolvedArchiverPeriodicalLockKey  = "axe-resolved-archiver-periodical-lock-key"
+	AxeInternalTagsPeriodicalLockKey      = "axe-internal-tags-periodical-lock-key"
+	AxeEntityServiceStateLockKey          = "axe-entity-service-state-lock-key"
+	AxeIdleSincePeriodicalLockKey         = "axe-idle-since-periodical-lock-key"
+	AxeNotAckedMetricsPeriodicalLockKey   = "axe-not-acked-metrics-periodical-lock-key"
+	AxeSliMetricsPeriodicalLockKey        = "axe-sli-metrics-periodical-lock-key"
+	AxeCleanExternalTagsPeriodicalLockKey = "axe-clean-external-tags-periodical-lock-key"
 
 	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
 
