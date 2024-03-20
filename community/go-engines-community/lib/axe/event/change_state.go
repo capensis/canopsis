@@ -126,7 +126,6 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 
 		currentStatus := alarm.Value.Status.Value
 		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
-		statusStepMessage := ConcatOutputAndRuleName(event.Parameters.Output, statusRuleName)
 		var update bson.M
 		if newStatus == currentStatus {
 			update = bson.M{
@@ -138,7 +137,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}
 		} else {
 			newStepStatus := NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
-			newStepStatus.Message = statusStepMessage
+			newStepStatus.Message = ConcatOutputAndRuleName(event.Parameters.Output, statusRuleName)
 			newStepStatus.Value = newStatus
 			if alarm.Value.Status.Value > newStatus {
 				newStepStatus.Type = types.AlarmStepStatusDecrease
