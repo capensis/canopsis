@@ -20,35 +20,15 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
       class="text"
     >
       <div
-        class="layout"
+        class="layout column"
       >
-        <div
-          class="flex text-center"
-        >
-          <alarm-general-table-stub
-            items="[object Object]"
-          />
-        </div>
-      </div>
-      <div
-        class="layout"
-      >
-        <hr
-          aria-orientation="horizontal"
-          class="my-3 v-divider theme--light"
-          role="separator"
+        <alarm-general-table-stub
+          class="mb-4"
+          items="[object Object]"
         />
-      </div>
-      <div
-        class="layout"
-      >
-        <div
-          class="flex xs12"
-        >
-          <manual-meta-alarm-form-stub
-            form="[object Object]"
-          />
-        </div>
+        <manual-meta-alarm-form-stub
+          form="[object Object]"
+        />
       </div>
     </div>
     <div

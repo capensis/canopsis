@@ -58,9 +58,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector"
@@ -68,9 +74,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Connector
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component"
@@ -78,9 +90,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Component
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource"
@@ -88,9 +106,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Resource
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -240,9 +264,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector"
@@ -250,9 +280,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Connector
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component"
@@ -260,9 +296,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Component
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource"
@@ -270,9 +312,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Resource
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
         </thead>

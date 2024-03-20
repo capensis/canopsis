@@ -1,9 +1,5 @@
 <template>
-  <shared-actions-panel
-    :actions="preparedActions"
-    :small="small"
-    :wrap="wrap"
-  />
+  <shared-actions-panel v-bind="$attrs" :actions="preparedActions" />
 </template>
 
 <script>
@@ -61,6 +57,7 @@ export default {
     clipboardMixin,
     widgetActionsPanelAlarmExportPdfMixin,
   ],
+  inheritAttrs: false,
   props: {
     item: {
       type: Object,
@@ -73,14 +70,6 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
-    },
-    small: {
-      type: Boolean,
-      default: false,
-    },
-    wrap: {
-      type: Boolean,
-      default: false,
     },
     refreshAlarmsList: {
       type: Function,

@@ -37,16 +37,22 @@
             class="mr-1"
           />
           <v-btn
+            v-if="showRootCauseByStateClick"
+            icon
+            small
+            @click.stop="$emit('show:root-cause')"
+          >
+            <v-icon color="white" small>
+              $vuetify.icons.root_cause
+            </v-icon>
+          </v-btn>
+          <v-btn
             v-if="showVariablesHelpButton"
-            class="ma-0"
             icon
             small
             @click.stop="showVariablesHelpModal(service)"
           >
-            <v-icon
-              color="white"
-              small
-            >
+            <v-icon color="white" small>
               help
             </v-icon>
           </v-btn>
@@ -59,7 +65,7 @@
           {{ backgroundIcon }}
         </v-icon>
         <v-icon
-          v-if="service.secondary_icon"
+          v-if="secondaryIconEnabled && service.secondary_icon"
           :color="color"
           class="service-weather-item__secondary-icon mb-1 mr-1"
         >
@@ -146,7 +152,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    showRootCauseByStateClick: {
+      type: Boolean,
+      default: false,
+    },
     priorityEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    secondaryIconEnabled: {
       type: Boolean,
       default: true,
     },

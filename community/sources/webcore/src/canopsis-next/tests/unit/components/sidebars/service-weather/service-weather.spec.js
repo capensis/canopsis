@@ -22,7 +22,12 @@ import {
 
 import ClickOutside from '@/services/click-outside';
 
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
+import {
+  widgetToForm,
+  formToWidget,
+  getEmptyWidgetByType,
+  formToWidgetParameters,
+} from '@/helpers/entities/widget/form';
 
 import ServiceWeatherSettings from '@/components/sidebars/service-weather/service-weather.vue';
 
@@ -48,6 +53,7 @@ const stubs = {
   'field-modal-type': true,
   'field-action-required-settings': true,
   'field-tree-of-dependencies-settings': true,
+  'field-root-cause-settings': true,
 };
 
 const generateDefaultServiceWeatherWidget = () => ({
@@ -78,9 +84,11 @@ const selectFieldCounters = wrapper => wrapper.find('field-counters-selector-stu
 const selectFieldSwitcherByIndex = (wrapper, index) => wrapper.findAll('field-switcher-stub').at(index);
 const selectIsPriorityField = wrapper => selectFieldSwitcherByIndex(wrapper, 0);
 const selectIsHideGrayField = wrapper => selectFieldSwitcherByIndex(wrapper, 1);
-const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
+const selectIsSecondaryEnabledField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
+const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 3);
 const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
 const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
+const selectFieldRootCauseSettings = wrapper => wrapper.find('field-root-cause-settings-stub');
 
 describe('service-weather', () => {
   const nowTimestamp = 1386435600000;
@@ -127,7 +135,6 @@ describe('service-weather', () => {
   ]);
 
   const factory = generateShallowRenderer(ServiceWeatherSettings, {
-
     stubs,
     store,
     propsData: {
@@ -136,7 +143,6 @@ describe('service-weather', () => {
     mocks: {
       $sidebar,
     },
-
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
@@ -145,7 +151,6 @@ describe('service-weather', () => {
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherSettings, {
-
     stubs,
     store,
     propsData: {
@@ -154,7 +159,6 @@ describe('service-weather', () => {
     mocks: {
       $sidebar,
     },
-
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
@@ -634,7 +638,7 @@ describe('service-weather', () => {
     });
   });
 
-  test('Is priority enabled changed after trigger switcher field', async () => {
+  test('Is hide gray enabled changed after trigger switcher field', async () => {
     const wrapper = factory();
 
     selectIsHideGrayField(wrapper).triggerCustomEvent('input', true);
@@ -646,6 +650,22 @@ describe('service-weather', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isHideGrayEnabled', true),
+      },
+    });
+  });
+
+  test('Is secondary icon enabled changed after trigger switcher field', async () => {
+    const wrapper = factory();
+
+    selectIsSecondaryEnabledField(wrapper).triggerCustomEvent('input', true);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isSecondaryIconEnabled', true),
       },
     });
   });
@@ -704,6 +724,42 @@ describe('service-weather', () => {
     });
   });
 
+  test('Root cause settings changed after trigger root cause settings field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const newParameters = {
+      ...widget.parameters,
+      showRootCauseByStateClick: false,
+      rootCauseColorIndicator: COLOR_INDICATOR_TYPES.impactState,
+    };
+    selectFieldRootCauseSettings(wrapper).triggerCustomEvent('input', newParameters);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          formToWidgetParameters({
+            type: WIDGET_TYPES.serviceWeather,
+            parameters: newParameters,
+          }),
+        ),
+      },
+    });
+  });
+
   test('Renders `service-weather` widget settings with default props', async () => {
     const wrapper = snapshotFactory();
 
@@ -753,6 +809,8 @@ describe('service-weather', () => {
                   icon_name: 'menu',
                   color: '#123',
                 },
+                showRootCauseByStateClick: false,
+                rootCauseColorIndicator: COLOR_INDICATOR_TYPES.impactState,
               },
             },
           },
