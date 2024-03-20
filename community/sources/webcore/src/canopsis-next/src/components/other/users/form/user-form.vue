@@ -31,6 +31,7 @@
       autocomplete="new-password"
     />
     <c-password-field
+      v-if="hasPassword"
       v-field="form.password"
       :required="isNew"
       autocomplete="new-password"
@@ -78,7 +79,7 @@
 </template>
 
 <script>
-import { GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
@@ -110,6 +111,10 @@ export default {
     },
   },
   computed: {
+    hasPassword() {
+      return Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(this.user?.source ?? '');
+    },
+
     groupsNavigationItems() {
       return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
         text: this.$t(`user.navigationTypes.${type}`),
