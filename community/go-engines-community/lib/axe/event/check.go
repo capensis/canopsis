@@ -374,7 +374,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		}
 	}
 
-	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
+	newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, entity)
 	if newStatus == previousStatus {
 		if stateStep.Type != "" {
 			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
@@ -387,6 +387,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		}
 
 		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		statusStep.Message = ConcatOutputAndRuleName(params.Output, statusRuleName)
 		statusStep.Author = author
 		statusStep.Value = newStatus
 		if newStatus < previousStatus {

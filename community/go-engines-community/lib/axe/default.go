@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -364,7 +365,7 @@ func NewEngine(
 			TechMetricsSender:  techMetricsSender,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         amqpChannel,
-			AlarmService:       libalarm.NewService(libalarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
+			AlarmService:       libalarm.NewService(libalarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), logger),
 			AlarmAdapter:       libalarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(

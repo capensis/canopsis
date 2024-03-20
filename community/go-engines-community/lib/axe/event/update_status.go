@@ -59,7 +59,7 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 		}
 
 		currentStatus := alarm.Value.Status.Value
-		newStatus := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
 		if newStatus == currentStatus {
 			return nil
 		}
@@ -69,7 +69,8 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 			alarmStepType = types.AlarmStepStatusDecrease
 		}
 
-		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, event.Parameters.Output, event.Parameters)
+		statusStepMessage := ConcatOutputAndRuleName(event.Parameters.Output, statusRuleName)
+		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, statusStepMessage, event.Parameters)
 		matchUpdate := getOpenAlarmMatchWithStepsLimit(event)
 		update := []bson.M{
 			{"$set": bson.M{
