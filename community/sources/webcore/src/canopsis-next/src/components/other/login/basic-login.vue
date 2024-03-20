@@ -1,57 +1,43 @@
 <template>
-  <v-card>
-    <v-card-title class="primary white--text">
-      <v-layout
-        justify-space-between
-        align-center
-      >
-        <h3>{{ $t('common.login') }}</h3>
-        <img
-          class="secondaryLogo"
-          src="@/assets/canopsis.png"
-          alt=""
-        >
-      </v-layout>
-    </v-card-title>
-    <v-card-text>
-      <v-form
-        class="pa-2"
-        @submit.prevent.stop="submit"
-      >
+  <v-form
+    class="gap-3"
+    @submit.prevent.stop="submit"
+  >
+    <v-layout class="gap-2" column>
+      <v-flex>
         <ldap-login-information v-if="isLDAPAuthEnabled" />
-        <login-form v-field.model="form" />
-        <v-flex>
-          <v-layout
-            class="mb-1"
-            justify-space-between
-            align-center
+      </v-flex>
+      <login-form v-field.model="form" />
+      <v-flex>
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <v-btn
+            type="submit"
+            color="primary"
           >
-            <v-btn
-              type="submit"
-              color="primary"
+            {{ $t('common.connect') }}
+          </v-btn>
+          <v-flex xs9>
+            <c-alert
+              :value="!!serverErrorMessage"
+              class="py-1 my-0 font-weight-bold"
+              type="error"
             >
-              {{ $t('common.connect') }}
-            </v-btn>
-            <v-flex xs9>
-              <c-alert
-                :value="!!serverErrorMessage"
-                class="py-1 my-0 font-weight-bold"
-                type="error"
-              >
-                {{ serverErrorMessage }}
-              </c-alert>
-            </v-flex>
+              {{ serverErrorMessage }}
+            </c-alert>
+          </v-flex>
+        </v-layout>
+        <template v-if="footer">
+          <v-divider class="my-2" />
+          <v-layout>
+            <c-compiled-template :template="footer" />
           </v-layout>
-          <template v-if="footer">
-            <v-divider class="my-2" />
-            <v-layout>
-              <c-compiled-template :template="footer" />
-            </v-layout>
-          </template>
-        </v-flex>
-      </v-form>
-    </v-card-text>
-  </v-card>
+        </template>
+      </v-flex>
+    </v-layout>
+  </v-form>
 </template>
 
 <script>
@@ -120,11 +106,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .secondaryLogo {
-    max-width: 35%;
-    max-height: 4em;
-    object-fit: scale-down;
-  }
-</style>

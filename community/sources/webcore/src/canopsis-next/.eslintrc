@@ -82,11 +82,11 @@
       "order": [
         "GLOBAL",
         "CONDITIONALS",
+        "LIST_RENDERING",
         "DEFINITION",
         "TWO_WAY_BINDING",
         "CONTENT",
         "OTHER_DIRECTIVES",
-        "LIST_RENDERING",
         "RENDER_MODIFIERS",
         "UNIQUE",
         "SLOT",
