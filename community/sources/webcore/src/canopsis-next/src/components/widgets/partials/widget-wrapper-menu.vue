@@ -27,9 +27,9 @@
         <div>{{ $t('view.copyWidgetId') }}</div>
       </v-list-item>
       <v-list-item @click="showDeleteWidgetModal">
-        <v-list-item-title class="error--text">
+        <div class="error--text">
           {{ $t('common.delete') }}
-        </v-list-item-title>
+        </div>
       </v-list-item>
     </v-list>
   </v-menu>

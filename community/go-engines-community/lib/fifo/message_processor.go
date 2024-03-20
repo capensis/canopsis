@@ -10,7 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -23,7 +23,7 @@ type messageProcessor struct {
 
 	EventFilterService eventfilter.Service
 	Scheduler          scheduler.Scheduler
-	StatsSender        ratelimit.StatsSender
+	MetricsSender      metrics.Sender
 	Decoder            encoding.Decoder
 	Logger             zerolog.Logger
 
@@ -70,7 +70,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}()
 
 	event.Format()
-	p.StatsSender.Add(time.Now().Unix(), true)
+	p.MetricsSender.SendMessageRate(time.Now())
 
 	err = event.InjectExtraInfos(msg)
 	if err != nil {

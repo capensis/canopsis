@@ -18,6 +18,10 @@ export default {
       type: Function,
       required: false,
     },
+    ellipsisHeaders: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     /**
@@ -173,6 +177,7 @@ export default {
           someItems: this.someItems,
           everyItem: this.everyItem,
           singleSelect: this.singleSelect,
+          ellipsisHeaders: this.ellipsisHeaders,
           disableSort: this.disableSort,
           disableSelect: this.selectableItems.length === 0,
         },
