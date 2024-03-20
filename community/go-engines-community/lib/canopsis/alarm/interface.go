@@ -82,15 +82,15 @@ type MetaAlarmEventProcessor interface {
 
 type Service interface {
 	// ResolveClosed close ok alarms.
-	ResolveClosed(ctx context.Context) ([]types.AlarmWithEntity, error)
+	ResolveClosed(ctx context.Context) ([]types.Event, error)
 
 	// ResolveCancels close canceled alarms when time has expired
-	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.AlarmWithEntity, error)
+	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Event, error)
 
 	// ResolveSnoozes remove snooze state when snooze time has expired
-	ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.AlarmWithEntity, error)
+	ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Event, error)
 
 	// UpdateFlappingAlarms updates the status of the flapping alarms, removing
 	// the flapping status if needed.
-	UpdateFlappingAlarms(ctx context.Context) ([]types.AlarmWithEntity, error)
+	UpdateFlappingAlarms(ctx context.Context) ([]types.Event, error)
 }
