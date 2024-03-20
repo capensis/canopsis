@@ -217,13 +217,13 @@ func NewEngine(
 		mainMessageProcessor,
 		logger,
 	))
-	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engine.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventFilterService,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 		LoadRules:          !mongoClient.IsDistributed(),
 	})
-	engine.AddPeriodicalWorker("soft delete", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("soft_delete", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.CheSoftDeletePeriodicalLockKey,
 		&softDeletePeriodicalWorker{
@@ -236,8 +236,8 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
-	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("eventfilter_intervals", eventfilterIntervalsPeriodicalWorker)
+	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
@@ -248,7 +248,7 @@ func NewEngine(
 		templateConfigProvider,
 		dataStorageConfigProvider,
 	))
-	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("impacted_services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
@@ -258,7 +258,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
+	engine.AddPeriodicalWorker("entity_infos_dictionary", infosDictLockedPeriodicalWorker)
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
 			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventFilterService)
