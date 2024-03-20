@@ -6,10 +6,10 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -20,6 +20,7 @@ type delayedScenarioListener struct {
 	DelayedScenarioManager action.DelayedScenarioManager
 	AmqpChannel            libamqp.Channel
 	Queue                  string
+	EventGenerator         libevent.Generator
 	Encoder                encoding.Encoder
 	Logger                 zerolog.Logger
 }
@@ -53,22 +54,17 @@ func (l *delayedScenarioListener) publishRunDelayedScenarioEvent(
 	if err != nil {
 		return fmt.Errorf("cannot encode event: %w", err)
 	}
-	event := types.Event{
-		EventType:     types.EventTypeRunDelayedScenario,
-		Connector:     canopsis.ActionConnector,
-		ConnectorName: canopsis.ActionConnector,
-		Component:     task.Alarm.Value.Component,
-		Resource:      task.Alarm.Value.Resource,
-		SourceType:    task.Entity.Type,
-		Timestamp:     datetime.NewCpsTime(),
-		Output:        "run delayed scenario",
-		Author:        canopsis.DefaultEventAuthor,
-		Initiator:     types.InitiatorSystem,
 
-		DelayedScenarioID:   task.Scenario.ID,
-		DelayedScenarioData: string(b),
+	event, err := l.EventGenerator.Generate(task.Entity)
+	if err != nil {
+		return fmt.Errorf("cannot generate event: %w", err)
 	}
 
+	event.EventType = types.EventTypeRunDelayedScenario
+	event.Timestamp = datetime.NewCpsTime()
+	event.Output = types.RuleNameScenarioPrefix + task.Scenario.Name
+	event.DelayedScenarioID = task.Scenario.ID
+	event.DelayedScenarioData = string(b)
 	body, err := l.Encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("cannot encode event: %w", err)

@@ -9,6 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -36,14 +37,16 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	entity := types.Entity{
-		Type: types.EntityTypeResource,
+		Type:      types.EntityTypeResource,
+		Component: "test-component",
+		Name:      "test-resource",
 	}
 	alarm := types.Alarm{
 		ID: "test-alarm",
 		Value: types.AlarmValue{
 			LastEventDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
-			Connector:     canopsis.AxeConnector,
-			ConnectorName: canopsis.AxeConnector,
+			Connector:     "test-connector",
+			ConnectorName: "test-connector",
 			Component:     "test-component",
 			Resource:      "test-resource",
 		},
@@ -92,7 +95,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		Return(mockCursor, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, canopsis.AxeConnector, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -107,8 +110,8 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 
 	expectedEvent := types.Event{
 		EventType:     types.EventTypeAck,
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
+		Connector:     canopsis.AxeConnector,
+		ConnectorName: canopsis.AxeConnector,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
 		Author:        canopsis.DefaultEventAuthor,
@@ -137,14 +140,16 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	entity := types.Entity{
-		Type: types.EntityTypeResource,
+		Type:      types.EntityTypeResource,
+		Component: "test-component",
+		Name:      "test-resource",
 	}
 	alarm := types.Alarm{
 		ID: "test-alarm",
 		Value: types.AlarmValue{
 			LastUpdateDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
-			Connector:      canopsis.AxeConnector,
-			ConnectorName:  canopsis.AxeConnector,
+			Connector:      "test-connector",
+			ConnectorName:  "test-connector",
 			Component:      "test-component",
 			Resource:       "test-resource",
 		},
@@ -192,7 +197,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		Return(mockCursor, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, canopsis.AxeConnector, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -207,8 +212,8 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 
 	expectedEvent := types.Event{
 		EventType:     types.EventTypeAck,
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
+		Connector:     canopsis.AxeConnector,
+		ConnectorName: canopsis.AxeConnector,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
 		Author:        canopsis.DefaultEventAuthor,
@@ -296,7 +301,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Return(mockCursor, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, canopsis.AxeConnector, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -359,7 +364,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 		Return(nil, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return([]types.Alarm{alarm}, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, canopsis.AxeConnector, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
