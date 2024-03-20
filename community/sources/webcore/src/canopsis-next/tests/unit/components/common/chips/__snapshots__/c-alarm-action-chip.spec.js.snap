@@ -2,7 +2,7 @@
 
 exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with custom props and slot 1`] = `
 <span
-  class="c-alarm-action-chip v-chip v-chip--clickable theme--light v-size--small"
+  class="c-alarm-action-chip v-chip v-chip--clickable theme--light v-size--small white--text"
   close="true"
   style="background-color: rgb(0, 0, 0); border-color: #000;"
 >
@@ -10,7 +10,7 @@ exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with custom props and 
     class="v-chip__content"
   >
     <span
-      class="c-alarm-action-chip__text white--text"
+      class="c-alarm-action-chip__text"
     >
       <div
         class="default-slot"
@@ -23,13 +23,13 @@ exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with custom props and 
 
 exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with default props 1`] = `
 <span
-  class="c-alarm-action-chip v-chip v-chip--clickable v-chip--no-color theme--light v-size--small"
+  class="c-alarm-action-chip v-chip v-chip--clickable v-chip--no-color theme--light v-size--small white--text"
 >
   <span
     class="v-chip__content"
   >
     <span
-      class="c-alarm-action-chip__text white--text"
+      class="c-alarm-action-chip__text"
     />
     <!---->
   </span>
