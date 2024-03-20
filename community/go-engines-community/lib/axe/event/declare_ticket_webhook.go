@@ -6,6 +6,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -20,6 +21,7 @@ func NewDeclareTicketWebhookProcessor(
 	client mongo.DbClient,
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -27,6 +29,7 @@ func NewDeclareTicketWebhookProcessor(
 		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 		metricsSender:   metricsSender,
 		amqpPublisher:   amqpPublisher,
+		eventGenerator:  eventGenerator,
 		encoder:         encoder,
 		logger:          logger,
 	}
@@ -36,6 +39,7 @@ type declareTicketWebhookProcessor struct {
 	alarmCollection mongo.DbCollection
 	metricsSender   metrics.Sender
 	amqpPublisher   libamqp.Publisher
+	eventGenerator  event.Generator
 	encoder         encoding.Encoder
 	logger          zerolog.Logger
 }
@@ -95,5 +99,5 @@ func (p *declareTicketWebhookProcessor) postProcess(
 		"",
 	)
 
-	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.logger)
+	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
 }

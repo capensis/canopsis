@@ -72,6 +72,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -131,6 +132,7 @@ func RegisterRoutes(
 	tplExecutor libtemplate.Executor,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	enableSameServiceNames bool,
+	eventGenerator libevent.Generator,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -285,7 +287,7 @@ func RegisterRoutes(
 			tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
-			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
+			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
