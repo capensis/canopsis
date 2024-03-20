@@ -1278,6 +1278,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      alarm_external_tag:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
       event_filter_failure:
         properties:
           delete_after:
@@ -1335,6 +1340,8 @@ definitions:
   datastorage.History:
     properties:
       alarm:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      alarm_external_tag:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       entity_cleaned:
         $ref: '#/definitions/datastorage.HistoryWithCount'
