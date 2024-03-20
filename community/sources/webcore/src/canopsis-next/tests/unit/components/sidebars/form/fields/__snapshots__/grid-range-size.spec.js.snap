@@ -43,7 +43,8 @@ exports[`grid-range-size Renders \`grid-range-size\` with custom props 1`] = `
       >
         <input
           always-dirty=""
-          class="v-range-slider"
+          class="v-range-slider mt-3"
+          hide-details=""
           max="10"
           min="2"
           step="2"
@@ -98,7 +99,8 @@ exports[`grid-range-size Renders \`grid-range-size\` with default and required p
       >
         <input
           always-dirty=""
-          class="v-range-slider"
+          class="v-range-slider mt-3"
+          hide-details=""
           max="12"
           min="0"
           step="1"
