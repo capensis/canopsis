@@ -7,6 +7,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -22,6 +23,7 @@ func NewWebhookCompleteProcessor(
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -30,6 +32,7 @@ func NewWebhookCompleteProcessor(
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
 		metricsSender:           metricsSender,
 		amqpPublisher:           amqpPublisher,
+		eventGenerator:          eventGenerator,
 		encoder:                 encoder,
 		logger:                  logger,
 	}
@@ -40,6 +43,7 @@ type webhookCompleteProcessor struct {
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	amqpPublisher           libamqp.Publisher
+	eventGenerator          event.Generator
 	encoder                 encoding.Encoder
 	logger                  zerolog.Logger
 }
@@ -125,5 +129,5 @@ func (p *webhookCompleteProcessor) postProcess(
 		p.logger.Err(err).Msg("cannot process meta alarm")
 	}
 
-	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.logger)
+	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
 }

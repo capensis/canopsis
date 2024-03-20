@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -149,6 +150,7 @@ func NewEngineAction(
 				DelayedScenarioManager: delayedScenarioManager,
 				AmqpChannel:            amqpChannel,
 				Queue:                  canopsis.FIFOQueueName,
+				EventGenerator:         libevent.NewGenerator(canopsis.ActionConnector, canopsis.ActionConnector),
 				Encoder:                json.NewEncoder(),
 				Logger:                 logger,
 			}
