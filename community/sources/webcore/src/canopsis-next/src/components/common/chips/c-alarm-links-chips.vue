@@ -9,7 +9,9 @@
     item-text="text"
     item-value="url"
     item-class="c-alarm-links-chips__chip"
+    text-color=""
     return-object
+    outlined
     @select="select"
     @activate="activate"
   >
@@ -20,7 +22,6 @@
       >
         <template #activator="{ on }">
           <v-icon
-            color="white"
             small
             v-on="on"
           >
@@ -35,7 +36,6 @@
       >
         <v-icon
           class="mr-1"
-          color="white"
           small
         >
           {{ item.icon }}
@@ -60,6 +60,7 @@ import { writeTextToClipboard } from '@/helpers/clipboard';
 import { authMixin } from '@/mixins/auth';
 
 export default {
+  inject: ['$system'],
   mixins: [authMixin],
   props: {
     alarm: {
@@ -98,7 +99,7 @@ export default {
         icon: link.icon_name,
         url: link.url,
         action: link.action,
-        color: 'grey',
+        color: `blue-grey${this.$system.dark ? ' lighten-1' : ''}`,
       }));
     },
   },
