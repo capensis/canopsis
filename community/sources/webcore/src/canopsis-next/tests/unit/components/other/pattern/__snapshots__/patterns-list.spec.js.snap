@@ -100,16 +100,22 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Title
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Title
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -118,9 +124,15 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Sorted descending. Activate to remove sorting."
@@ -130,16 +142,22 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified on
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
@@ -149,16 +167,22 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified by
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified by
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -167,9 +191,15 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Actions
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -938,16 +968,22 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Title
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Title
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type"
@@ -956,9 +992,15 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Type
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
@@ -968,16 +1010,22 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Last modified on
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Actions"
@@ -986,9 +1034,15 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Actions
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
