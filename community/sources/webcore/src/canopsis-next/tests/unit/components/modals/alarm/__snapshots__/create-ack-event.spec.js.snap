@@ -23,6 +23,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         class="layout column"
       >
         <alarm-general-table-stub
+          class="mb-4"
           items="[object Object]"
         />
         <ack-event-form-stub
@@ -167,6 +168,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         class="layout column"
       >
         <alarm-general-table-stub
+          class="mb-4"
           items="[object Object]"
         />
         <ack-event-form-stub

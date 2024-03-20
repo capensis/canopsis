@@ -9,6 +9,7 @@
           <alarm-general-table
             v-if="config.items"
             :items="config.items"
+            class="mb-4"
           />
           <ack-event-form
             v-model="form"

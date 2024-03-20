@@ -909,7 +909,7 @@ export default {
     title: 'Sélectionner le type de modèle de widget',
   },
   entityDependenciesList: {
-    title: 'Entités Centreon impactées',
+    title: 'Diagramme de cause racine',
   },
   createDeclareTicketRule: {
     create: {

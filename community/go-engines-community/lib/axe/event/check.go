@@ -536,9 +536,14 @@ func (p *checkProcessor) postProcess(
 	componentStateChanged bool,
 	newComponentState int,
 ) {
+	entity := *event.Entity
+	if result.Entity.ID != "" {
+		entity = result.Entity
+	}
+
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
-		*event.Entity,
+		entity,
 		result.AlarmChange,
 		event.Parameters.Timestamp.Time,
 		event.Parameters.Initiator,
