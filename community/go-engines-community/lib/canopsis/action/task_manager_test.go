@@ -82,8 +82,13 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 		}).
 		Return(taskResultCh, nil)
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).Return(int64(0), nil)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().IncExecutedCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().IncExecutedWebhookCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(0)), gomock.Eq(true)).Return(int64(0), nil)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).Return(int64(0), nil)
+	mockExecutionStorage.EXPECT().DelExecutingCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().DelExecutedCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().DelExecutedWebhookCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(true, nil)
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(&execution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
@@ -215,14 +220,23 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		}).
 		Return(taskResultCh, nil)
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
 		Return(int64(1), nil).Times(1)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(false)).
-		Return(int64(2), nil).Times(1)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+	mockExecutionStorage.EXPECT().IncExecutedCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
 		Return(int64(1), nil).Times(1)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+	mockExecutionStorage.EXPECT().IncExecutedWebhookCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(0)), gomock.Eq(true)).
 		Return(int64(0), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(false)).
+		Return(int64(2), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutedCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(false)).
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+		Return(int64(0), nil).Times(1)
+	mockExecutionStorage.EXPECT().DelExecutingCount(gomock.Any(), gomock.Any()).Return(int64(2), nil)
+	mockExecutionStorage.EXPECT().DelExecutedCount(gomock.Any(), gomock.Any()).Return(int64(2), nil)
+	mockExecutionStorage.EXPECT().DelExecutedWebhookCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	createCall := 0
 	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, _ action.ScenarioExecution) (bool, error) {
 		createCall++
@@ -341,8 +355,11 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 		}).
 		Return(taskResultCh, nil)
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).Return(int64(0), nil)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).Return(int64(0), nil)
+	mockExecutionStorage.EXPECT().DelExecutingCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().DelExecutedCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().DelExecutedWebhookCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(true, nil)
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), execution.GetCacheKey()).Return(&execution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
@@ -449,7 +466,7 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 		}).
 		Return(taskResultCh, nil)
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
-	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(&execution, nil).Times(2)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
 	mockExecutionStorage.EXPECT().Del(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(nil)

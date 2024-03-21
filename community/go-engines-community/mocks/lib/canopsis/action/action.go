@@ -311,6 +311,51 @@ func (mr *MockScenarioExecutionStorageMockRecorder) Del(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Del", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).Del), arg0, arg1)
 }
 
+// DelExecutedCount mocks base method.
+func (m *MockScenarioExecutionStorage) DelExecutedCount(arg0 context.Context, arg1 string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DelExecutedCount", arg0, arg1)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DelExecutedCount indicates an expected call of DelExecutedCount.
+func (mr *MockScenarioExecutionStorageMockRecorder) DelExecutedCount(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DelExecutedCount", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).DelExecutedCount), arg0, arg1)
+}
+
+// DelExecutedWebhookCount mocks base method.
+func (m *MockScenarioExecutionStorage) DelExecutedWebhookCount(arg0 context.Context, arg1 string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DelExecutedWebhookCount", arg0, arg1)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DelExecutedWebhookCount indicates an expected call of DelExecutedWebhookCount.
+func (mr *MockScenarioExecutionStorageMockRecorder) DelExecutedWebhookCount(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DelExecutedWebhookCount", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).DelExecutedWebhookCount), arg0, arg1)
+}
+
+// DelExecutingCount mocks base method.
+func (m *MockScenarioExecutionStorage) DelExecutingCount(arg0 context.Context, arg1 string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DelExecutingCount", arg0, arg1)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DelExecutingCount indicates an expected call of DelExecutingCount.
+func (mr *MockScenarioExecutionStorageMockRecorder) DelExecutingCount(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DelExecutingCount", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).DelExecutingCount), arg0, arg1)
+}
+
 // Get mocks base method.
 func (m *MockScenarioExecutionStorage) Get(arg0 context.Context, arg1 string) (*action.ScenarioExecution, error) {
 	m.ctrl.T.Helper()
@@ -341,19 +386,49 @@ func (mr *MockScenarioExecutionStorageMockRecorder) GetAbandoned(arg0 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAbandoned", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).GetAbandoned), arg0)
 }
 
-// Inc mocks base method.
-func (m *MockScenarioExecutionStorage) Inc(arg0 context.Context, arg1 string, arg2 int64, arg3 bool) (int64, error) {
+// IncExecutedCount mocks base method.
+func (m *MockScenarioExecutionStorage) IncExecutedCount(arg0 context.Context, arg1 string, arg2 int64, arg3 bool) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Inc", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "IncExecutedCount", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Inc indicates an expected call of Inc.
-func (mr *MockScenarioExecutionStorageMockRecorder) Inc(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+// IncExecutedCount indicates an expected call of IncExecutedCount.
+func (mr *MockScenarioExecutionStorageMockRecorder) IncExecutedCount(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Inc", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).Inc), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncExecutedCount", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).IncExecutedCount), arg0, arg1, arg2, arg3)
+}
+
+// IncExecutedWebhookCount mocks base method.
+func (m *MockScenarioExecutionStorage) IncExecutedWebhookCount(arg0 context.Context, arg1 string, arg2 int64, arg3 bool) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncExecutedWebhookCount", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IncExecutedWebhookCount indicates an expected call of IncExecutedWebhookCount.
+func (mr *MockScenarioExecutionStorageMockRecorder) IncExecutedWebhookCount(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncExecutedWebhookCount", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).IncExecutedWebhookCount), arg0, arg1, arg2, arg3)
+}
+
+// IncExecutingCount mocks base method.
+func (m *MockScenarioExecutionStorage) IncExecutingCount(arg0 context.Context, arg1 string, arg2 int64, arg3 bool) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncExecutingCount", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IncExecutingCount indicates an expected call of IncExecutingCount.
+func (mr *MockScenarioExecutionStorageMockRecorder) IncExecutingCount(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncExecutingCount", reflect.TypeOf((*MockScenarioExecutionStorage)(nil).IncExecutingCount), arg0, arg1, arg2, arg3)
 }
 
 // Update mocks base method.

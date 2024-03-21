@@ -18,4 +18,5 @@ type Result struct {
 
 	Forward              bool
 	IsInstructionMatched bool
+	IsCountersUpdated    bool
 }

@@ -76,7 +76,8 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		isInfosUpdated, err := p.eventFilterService.ProcessEvent(ctx, event)
+		var isInfosUpdated bool
+		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}
@@ -122,6 +123,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		resourceIDsToUpdateMetrics = resourceIDsToUpdateMetrics[:0]
 
 		eventMetric.IsServicesUpdated = false
+		eventMetric.IsStateSettingUpdated = false
 
 		var component types.Entity
 		var connector types.Entity
@@ -187,6 +189,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		event.Entity = &component
 		event.StateSettingUpdated = stateSettingUpdated
 		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		eventMetric.IsStateSettingUpdated = stateSettingUpdated
 
 		return nil
 	})
