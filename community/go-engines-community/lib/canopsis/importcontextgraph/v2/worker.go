@@ -469,7 +469,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
 			default:
-				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
+				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.Name, ci.Component, now)
 				if err != nil {
 					return res, err
 				}
