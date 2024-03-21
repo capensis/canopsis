@@ -1,6 +1,10 @@
+import { omit } from 'lodash';
+
 import { WIDGET_TYPES } from '@/constants';
 
 import featuresService from '@/services/features';
+
+import { mapIds } from '@/helpers/array';
 
 import {
   prepareRemediationInstructionsFiltersToQuery,
@@ -92,6 +96,14 @@ export function prepareWidgetQuery(widget, userPreference) {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
+
+  if (query.filter) {
+    const allFiltersIds = mapIds([...widget.filters, ...userPreference.filters]);
+
+    if (!allFiltersIds.includes(query.filter)) {
+      query = omit(query, ['filter']);
+    }
+  }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
 
