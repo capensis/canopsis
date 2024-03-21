@@ -281,7 +281,6 @@ func (s *sender) getColumns(metricName string) []string {
 	case CanopsisEvent,
 		FIFOEvent,
 		CorrelationEvent,
-		ServiceEvent,
 		DynamicInfosEvent,
 		ActionEvent:
 		return []string{
