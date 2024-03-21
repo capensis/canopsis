@@ -232,12 +232,12 @@ export const dataStorageEventFilterFailureToForm = (errors = {}) => ({
 /**
  * Convert data storage alarm external tag config to form object
  *
- * @param {DataStorageAlarmExternalTagConfig} errors
+ * @param {DataStorageAlarmExternalTagConfig} alarmExternalTag
  * @return {DataStorageAlarmExternalTagConfig}
  */
-export const dataStorageAlarmExternalTagToForm = (errors = {}) => ({
-  delete_after: errors.delete_after
-    ? durationWithEnabledToForm(errors.delete_after)
+export const dataStorageAlarmExternalTagToForm = (alarmExternalTag = {}) => ({
+  delete_after: alarmExternalTag.delete_after
+    ? durationWithEnabledToForm(alarmExternalTag.delete_after)
     : { value: 30, unit: TIME_UNITS.day, enabled: false },
 });
 
