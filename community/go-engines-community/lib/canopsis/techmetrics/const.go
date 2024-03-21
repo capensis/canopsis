@@ -6,7 +6,6 @@ const (
 	CheEvent          = "che_event"
 	AxeEvent          = "axe_event"
 	CorrelationEvent  = "correlation_event"
-	ServiceEvent      = "service_event"
 	DynamicInfosEvent = "dynamic_infos_event"
 	ActionEvent       = "action_event"
 
