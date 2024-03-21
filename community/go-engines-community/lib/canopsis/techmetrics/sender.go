@@ -20,7 +20,9 @@ const maxUrlLength = 500
 type Sender interface {
 	Run(ctx context.Context)
 
-	SendSimpleEvent(metricName string, metric EventMetric)
+	SendFifoEvent(metric FifoEventMetric)
+
+	SendCpsEvent(metric CpsEventMetric)
 
 	SendQueue(metricName string, timestamp time.Time, length int64)
 
@@ -34,7 +36,12 @@ type Sender interface {
 
 	SendApiRequest(metric ApiRequestMetric)
 
+	SendCorrelationEvent(metric CorrelationEventMetric)
 	SendCorrelationRetries(metric CorrelationRetriesMetric)
+
+	SendDynamicInfosEvent(metric DynamicInfoEventMetric)
+
+	SendActionEvent(metric ActionEventMetric)
 }
 
 func NewSender(
@@ -101,6 +108,7 @@ func (s *sender) SendAxePeriodical(metric AxePeriodicalMetric) {
 		metric.Timestamp.UTC(),
 		metric.Interval.Microseconds(),
 		metric.Events,
+		metric.IdleEvents,
 	})
 }
 
@@ -134,15 +142,35 @@ func (s *sender) SendApiRequest(metric ApiRequestMetric) {
 	})
 }
 
-func (s *sender) SendSimpleEvent(metricName string, metric EventMetric) {
-	s.addBatch(metricName, []any{
+func (s *sender) SendCpsEvent(metric CpsEventMetric) {
+	s.addBatch(CanopsisEvent, []any{
 		metric.Timestamp.UTC(),
 		metric.EventType,
 		metric.Interval.Microseconds(),
+		metric.IsOkState,
+	})
+}
+
+func (s *sender) SendFifoEvent(metric FifoEventMetric) {
+	var externalRequests map[string]int64
+	if len(metric.ExternalRequests) > 0 {
+		externalRequests = metric.ExternalRequests
+	}
+
+	s.addBatch(FIFOEvent, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
+		externalRequests,
 	})
 }
 
 func (s *sender) SendCheEvent(metric CheEventMetric) {
+	var externalRequests map[string]int64
+	if len(metric.ExternalRequests) > 0 {
+		externalRequests = metric.ExternalRequests
+	}
+
 	s.addBatch(CheEvent, []any{
 		metric.Timestamp.UTC(),
 		metric.EventType,
@@ -151,6 +179,9 @@ func (s *sender) SendCheEvent(metric CheEventMetric) {
 		metric.IsNewEntity,
 		metric.IsInfosUpdated,
 		metric.IsServicesUpdated,
+		metric.IsStateSettingUpdated,
+		metric.ExecutedEnrichRules,
+		externalRequests,
 	})
 }
 
@@ -161,6 +192,18 @@ func (s *sender) SendAxeEvent(metric AxeEventMetric) {
 		metric.Interval.Microseconds(),
 		metric.EntityType,
 		metric.AlarmChangeType,
+		metric.IsOkState,
+		metric.IsCountersUpdated,
+	})
+}
+
+func (s *sender) SendCorrelationEvent(metric CorrelationEventMetric) {
+	s.addBatch(CorrelationEvent, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
+		metric.MatchedRuleCount,
+		metric.MatchedRuleTypes,
 	})
 }
 
@@ -169,6 +212,25 @@ func (s *sender) SendCorrelationRetries(metric CorrelationRetriesMetric) {
 		metric.Timestamp.UTC(),
 		metric.Type,
 		metric.Retries,
+	})
+}
+
+func (s *sender) SendDynamicInfosEvent(metric DynamicInfoEventMetric) {
+	s.addBatch(DynamicInfosEvent, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
+		metric.ExecutedRules,
+	})
+}
+
+func (s *sender) SendActionEvent(metric ActionEventMetric) {
+	s.addBatch(ActionEvent, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
+		metric.ExecutedRules,
+		metric.ExecutedWebhooks,
 	})
 }
 
@@ -260,6 +322,13 @@ func (s *sender) addBatch(metricName string, args []any) {
 
 func (s *sender) getColumns(metricName string) []string {
 	switch metricName {
+	case FIFOEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+			"external_requests",
+		}
 	case CheEvent:
 		return []string{
 			"time",
@@ -269,6 +338,9 @@ func (s *sender) getColumns(metricName string) []string {
 			"is_new_entity",
 			"is_infos_updated",
 			"is_services_updated",
+			"is_state_settings_updated",
+			"executed_enrich_rules",
+			"external_requests",
 		}
 	case AxeEvent:
 		return []string{
@@ -277,22 +349,45 @@ func (s *sender) getColumns(metricName string) []string {
 			"interval",
 			"entity_type",
 			"alarm_change_type",
+			"is_ok_state",
+			"is_counters_updated",
 		}
-	case CanopsisEvent,
-		FIFOEvent,
-		CorrelationEvent,
-		DynamicInfosEvent,
-		ActionEvent:
+	case CanopsisEvent:
 		return []string{
 			"time",
 			"type",
 			"interval",
+			"is_ok_state",
+		}
+	case CorrelationEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+			"matched_rules",
+			"matched_rule_types",
+		}
+	case ActionEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+			"executed_rules",
+			"executed_webhooks",
+		}
+	case DynamicInfosEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+			"executed_rules",
 		}
 	case AxePeriodical:
 		return []string{
 			"time",
 			"interval",
 			"events",
+			"idle_events",
 		}
 	case PBehaviorPeriodical:
 		return []string{

@@ -180,7 +180,7 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
 			p.entityServiceCountersCalculator,
 			p.componentCountersCalculator,

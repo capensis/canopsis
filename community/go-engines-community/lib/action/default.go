@@ -80,6 +80,9 @@ func NewEngineAction(
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
 		action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
 	storage := action.NewRedisScenarioExecutionStorage(redis.ActionScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
 		json.NewDecoder(), options.LastRetryInterval, logger)
@@ -87,7 +90,7 @@ func NewEngineAction(
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName), logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName), techMetricsSender, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
@@ -180,17 +183,12 @@ func NewEngineAction(
 		logger,
 	)
 
-	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
-		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-
 	engineAction.AddRoutine(func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
 		return nil
 	})
 
 	mainMessageProcessor := &messageProcessor{
-		TechMetricsSender:        techMetricsSender,
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		ActionService:            actionService,
 		Decoder:                  json.NewDecoder(),

@@ -45,6 +45,7 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = Result{}
 		updatedServiceStates = nil
 
 		alarm := types.Alarm{}
@@ -54,9 +55,9 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 		}
 
 		if alarm.ID == "" {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
+			result.IsCountersUpdated, updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
 		} else {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &alarm, result.AlarmChange)
+			result.IsCountersUpdated, updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &alarm, result.AlarmChange)
 		}
 
 		return err
