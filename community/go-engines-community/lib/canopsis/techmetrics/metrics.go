@@ -8,18 +8,50 @@ type EventMetric struct {
 	Interval  time.Duration
 }
 
+type CpsEventMetric struct {
+	EventMetric
+	IsOkState *bool
+}
+
+type FifoEventMetric struct {
+	EventMetric
+	ExternalRequests map[string]int64
+}
+
 type CheEventMetric struct {
 	EventMetric
-	EntityType        string
-	IsNewEntity       bool
-	IsInfosUpdated    bool
-	IsServicesUpdated bool
+	EntityType            string
+	IsNewEntity           bool
+	IsInfosUpdated        bool
+	IsServicesUpdated     bool
+	IsStateSettingUpdated bool
+	ExecutedEnrichRules   int64
+	ExternalRequests      map[string]int64
 }
 
 type AxeEventMetric struct {
 	EventMetric
-	EntityType      string
-	AlarmChangeType string
+	EntityType        string
+	AlarmChangeType   string
+	IsOkState         *bool
+	IsCountersUpdated bool
+}
+
+type CorrelationEventMetric struct {
+	EventMetric
+	MatchedRuleCount int64
+	MatchedRuleTypes []string
+}
+
+type DynamicInfoEventMetric struct {
+	EventMetric
+	ExecutedRules int64
+}
+
+type ActionEventMetric struct {
+	EventMetric
+	ExecutedRules    int64
+	ExecutedWebhooks int64
 }
 
 type PeriodicalMetric struct {
@@ -29,7 +61,8 @@ type PeriodicalMetric struct {
 
 type AxePeriodicalMetric struct {
 	PeriodicalMetric
-	Events int64
+	Events     int64
+	IdleEvents int64
 }
 
 type PbehaviorPeriodicalMetric struct {

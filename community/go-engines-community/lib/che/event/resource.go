@@ -76,7 +76,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		isInfosUpdated, err := p.eventFilterService.ProcessEvent(ctx, event)
+		var isInfosUpdated bool
+		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}
@@ -132,6 +133,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		toCountersUpdate = toCountersUpdate[:0]
 
 		eventMetric.IsServicesUpdated = false
+		eventMetric.IsStateSettingUpdated = false
 
 		var resource types.Entity
 		var component types.Entity
@@ -185,7 +187,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 				toCountersUpdate = append(toCountersUpdate, component)
 			}
 
-			_, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
+			eventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
 			if err != nil {
 				return fmt.Errorf("cannot assign state settings for a component: %w", err)
 			}

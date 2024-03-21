@@ -145,7 +145,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 			}
 		}
 
-		updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+		result.IsCountersUpdated, updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, entity, &result.Alarm, result.AlarmChange)
 
 		return err
 	})
