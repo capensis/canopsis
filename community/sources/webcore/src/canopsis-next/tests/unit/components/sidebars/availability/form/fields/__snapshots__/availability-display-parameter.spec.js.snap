@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-display-parameter Renders \`availability-display-parameter\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Default parameter to display"
+>
+  <availability-display-parameter-radio-field-stub
+    class="mt-0"
+    name="parameter"
+    value="1"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`availability-display-parameter Renders \`availability-display-parameter\` with required props 1`] = `
+<widget-settings-item-stub
+  title="Default parameter to display"
+>
+  <availability-display-parameter-radio-field-stub
+    class="mt-0"
+    name="parameter"
+    value="0"
+  />
+</widget-settings-item-stub>
+`;

@@ -26,7 +26,7 @@ import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 
 import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
 
-const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
+const { mapActions: mapAvailabilityActions } = createNamespacedHelpers('availability');
 
 export default {
   components: { AvailabilityBar },
@@ -80,8 +80,8 @@ export default {
     this.fetchList();
   },
   methods: {
-    ...mapEntityActions({
-      fetchEntityAvailabilityWithoutStore: 'fetchAvailabilityWithoutStore',
+    ...mapAvailabilityActions({
+      fetchAvailabilityWithoutStore: 'fetchAvailabilityWithoutStore',
     }),
 
     customQueryCondition(query, oldQuery) {
@@ -98,7 +98,7 @@ export default {
       this.pending = true;
 
       try {
-        const { min_date: minDate, availability } = await this.fetchEntityAvailabilityWithoutStore({
+        const { min_date: minDate, availability } = await this.fetchAvailabilityWithoutStore({
           id: this.entity._id,
           params: this.getQuery(),
         });
@@ -121,6 +121,7 @@ export default {
 
   &__content {
     max-width: 900px;
+    width: 100%;
   }
 }
 </style>
