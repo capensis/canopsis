@@ -187,11 +187,13 @@ export default {
         filter,
         lockedFilter,
         valueFilter,
+        itemsPerPage,
       } = this.query;
 
       const query = {
         ...this.interval,
-        ...pick(this.query, ['page', 'itemsPerPage']),
+        ...pick(this.query, ['page']),
+        limit: itemsPerPage,
         ...convertSortToRequest(sortBy, sortDesc),
         filters: convertFiltersToQuery(filter, lockedFilter),
       };
