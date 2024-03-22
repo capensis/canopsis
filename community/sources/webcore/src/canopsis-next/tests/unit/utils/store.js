@@ -1351,14 +1351,12 @@ export const createAvailabilityModule = () => {
   const fetchAvailabilityList = jest.fn().mockResolvedValue({
     data: [],
   });
-  const createAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
   const fetchAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
 
   afterEach(() => {
     fetchAvailabilityList.mockClear();
     fetchAvailabilityWithoutStore.mockClear();
     fetchAvailabilityHistoryWithoutStore.mockClear();
-    createAvailabilityHistoryExport.mockClear();
     fetchAvailabilityHistoryExport.mockClear();
   });
 
@@ -1373,7 +1371,6 @@ export const createAvailabilityModule = () => {
       fetchList: fetchAvailabilityList,
       fetchAvailabilityWithoutStore,
       fetchAvailabilityHistoryWithoutStore,
-      createAvailabilityHistoryExport,
       fetchAvailabilityHistoryExport,
     },
   };
@@ -1384,7 +1381,6 @@ export const createAvailabilityModule = () => {
     exportAvailabilityData,
     fetchAvailabilityWithoutStore,
     fetchAvailabilityHistoryWithoutStore,
-    createAvailabilityHistoryExport,
     fetchAvailabilityHistoryExport,
   };
 };

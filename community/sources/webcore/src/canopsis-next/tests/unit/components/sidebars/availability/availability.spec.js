@@ -12,6 +12,7 @@ import {
   AVAILABILITY_SHOW_TYPE,
   CUSTOM_WIDGET_TEMPLATE,
   ENTITY_FIELDS,
+  EXPORT_CSV_SEPARATORS,
   QUICK_RANGES,
   SIDE_BARS,
   USERS_PERMISSIONS,
@@ -184,6 +185,10 @@ describe('availability-settings', () => {
         default_time_range: QUICK_RANGES.last30Days.value,
         default_display_parameter: AVAILABILITY_DISPLAY_PARAMETERS.downtime,
         default_show_type: AVAILABILITY_SHOW_TYPE.duration,
+        export_settings: {
+          exportCsvSeparator: EXPORT_CSV_SEPARATORS.space,
+          widgetExportColumns: [],
+        },
       },
     };
 
@@ -220,6 +225,11 @@ describe('availability-settings', () => {
             active_alarms_columns_template: '',
             resolved_alarms_columns_template: '',
             widget_columns_template: '',
+            export_settings: {
+              export_csv_separator: EXPORT_CSV_SEPARATORS.space,
+              widget_export_columns: [],
+              widget_export_columns_template: undefined,
+            },
           },
         ),
       },
