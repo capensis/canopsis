@@ -893,6 +893,8 @@ definitions:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
       ldapconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
+      oauth2config:
+        $ref: '#/definitions/appinfo.Oauth2LoginConfigMethod'
       saml2config:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
     type: object
@@ -902,6 +904,15 @@ definitions:
         type: boolean
       title:
         type: string
+    type: object
+  appinfo.Oauth2LoginConfigMethod:
+    properties:
+      enable:
+        type: boolean
+      providers:
+        items:
+          type: string
+        type: array
     type: object
   appinfo.PopupTimeout:
     properties:
