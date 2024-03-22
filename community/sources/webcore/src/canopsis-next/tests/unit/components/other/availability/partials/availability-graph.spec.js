@@ -27,11 +27,13 @@ describe('availability-graph', () => {
   const consoleMock = mockConsole();
 
   const availability = {
-    _id: 1,
     uptime_duration: 3142,
     downtime_duration: 7101,
     uptime_share: '30.67',
     downtime_share: 69.33,
+    entity: {
+      _id: 'availability-entity-id-1',
+    },
   };
   const interval = {
     from: 1384435500000,
@@ -42,12 +44,18 @@ describe('availability-graph', () => {
     availabilityModule,
     exportAvailabilityData,
     fetchAvailabilityHistoryWithoutStore,
-    createAvailabilityHistoryExport,
     fetchAvailabilityHistoryExport,
   } = createAvailabilityModule();
   const store = createMockedStoreModules([
     availabilityModule,
   ]);
+
+  const defaultParams = {
+    _id: availability.entity._id,
+    sampling: SAMPLINGS.hour,
+    from: interval.from,
+    to: interval.to,
+  };
 
   const factory = generateShallowRenderer(AvailabilityGraph, {
     stubs,
@@ -76,8 +84,8 @@ describe('availability-graph', () => {
     });
 
     expect(fetchAvailabilityHistoryWithoutStore).toBeDispatchedWith({
-      id: availability._id,
       params: {
+        _id: availability.entity._id,
         sampling: SAMPLINGS.hour,
         from: interval.from,
         to: interval.to,
@@ -107,8 +115,8 @@ describe('availability-graph', () => {
     );
 
     expect(fetchAvailabilityHistoryWithoutStore).toBeDispatchedWith({
-      id: availability._id,
       params: {
+        _id: availability.entity._id,
         sampling: SAMPLINGS.day,
         from: longInterval.from,
         to: longInterval.to,
@@ -177,13 +185,9 @@ describe('availability-graph', () => {
 
     await flushPromises();
 
-    expect(createAvailabilityHistoryExport).toBeDispatchedWith(
+    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith(
       {
-        data: {
-          sampling: SAMPLINGS.hour,
-          from: interval.from,
-          to: interval.to,
-        },
+        params: defaultParams,
       },
     );
 
@@ -191,18 +195,14 @@ describe('availability-graph', () => {
 
     jest.runAllTimers();
 
-    expect(fetchAvailabilityHistoryExport).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: exportAvailabilityData._id,
-      },
-      undefined,
-    );
+    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
+      params: defaultParams,
+    });
 
     await flushPromises();
 
     expect(windowOpenMock).toHaveBeenCalledWith(
-      `${API_HOST}${API_ROUTES.availability.history}/${exportAvailabilityData._id}/download`,
+      `${API_HOST}${API_ROUTES.metrics.exportMetric}/${exportAvailabilityData._id}/download`,
       '_blank',
     );
   });
@@ -214,7 +214,7 @@ describe('availability-graph', () => {
       status: EXPORT_STATUSES.failed,
     };
 
-    fetchAvailabilityHistoryExport.mockResolvedValueOnce(exportFailedAvailabilityData);
+    fetchAvailabilityHistoryExport.mockRejectedValue(exportFailedAvailabilityData);
 
     const wrapper = factory({
       store,
@@ -230,27 +230,17 @@ describe('availability-graph', () => {
 
     await flushPromises();
 
-    expect(createAvailabilityHistoryExport).toBeDispatchedWith(
-      {
-        data: {
-          sampling: SAMPLINGS.hour,
-          from: interval.from,
-          to: interval.to,
-        },
-      },
-    );
+    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
+      params: defaultParams,
+    });
 
     await flushPromises();
 
     jest.runAllTimers();
 
-    expect(fetchAvailabilityHistoryExport).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: exportAvailabilityData._id,
-      },
-      undefined,
-    );
+    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
+      params: defaultParams,
+    });
 
     await flushPromises();
 

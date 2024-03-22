@@ -111,15 +111,23 @@ exports[`availability-list Renders \`availability-list\` with custom props 1`] =
               <span />
             </th>
             <th
-              aria-label="Downtime"
-              class="text-start"
-              data-value="value"
+              aria-label="Downtime: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="downtime_duration"
               role="columnheader"
               scope="col"
             >
               <span>
                 Downtime
               </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
             </th>
             <th
               aria-label="Custom column: Sorted descending. Activate to remove sorting."
@@ -649,15 +657,23 @@ exports[`availability-list Renders \`availability-list\` with default props 1`] 
               <span />
             </th>
             <th
-              aria-label="Uptime"
-              class="text-start"
-              data-value="value"
+              aria-label="Uptime: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="uptime_share"
               role="columnheader"
               scope="col"
             >
               <span>
                 Uptime
               </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
             </th>
             <th
               aria-label="Custom column: Not sorted. Activate to sort ascending."
