@@ -117,8 +117,8 @@ benchmark.each(
 
           const performanceMetrics = await application.stopMeasurePerformance();
           const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
-          const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration } = longAnimationFrame.args.data;
+          const alarmRequestTimeTrace = performanceMetrics.findFinishXHRTaskByUrl('/alarms');
+          const { dur: duration } = alarmRequestTimeTrace;
 
           report({ duration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
