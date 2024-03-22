@@ -15,8 +15,12 @@ describe('availability-bar-chart', () => {
   test('Renders `availability-bar-chart` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        uptime: 20000,
-        downtime: 10000,
+        availability: {
+          uptime_duration: 20000,
+          uptime_share: 66.67,
+          downtime_duration: 10000,
+          downtime_share: 33.33,
+        },
       },
     });
 
@@ -26,9 +30,13 @@ describe('availability-bar-chart', () => {
   test('Renders `availability-bar-chart` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        uptime: 30000,
-        downtime: 20000,
-        inactiveTime: 2000,
+        availability: {
+          uptime_duration: 30000,
+          uptime_share: 60,
+          downtime_duration: 20000,
+          downtime_share: 40,
+          inactive_time: 2000,
+        },
         uptimeColor: COLORS.primary,
         downtimeColor: COLORS.secondary,
         showType: AVAILABILITY_SHOW_TYPE.duration,

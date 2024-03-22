@@ -230,6 +230,7 @@ export default {
     compact: 'Compact view',
     ultraCompact: 'Ultra compact view',
   },
+  showTrend: 'Show trend',
 
   chart: {
     graphType: 'Graph type',
@@ -240,7 +241,6 @@ export default {
     showComparison: 'Show comparison',
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
-    showTrend: 'Show trend',
     fontSize: 'Font size adjustment',
     auto: 'Auto',
     manual: 'Manual',
@@ -303,5 +303,6 @@ export default {
   availability: {
     graphSettings: 'Availability graph settings',
     defaultAvailabilityDisplay: 'Default availability display',
+    defaultParameterToDisplay: 'Default parameter to display',
   },
 };

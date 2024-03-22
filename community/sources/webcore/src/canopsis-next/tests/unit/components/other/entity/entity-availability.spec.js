@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createEntityModule, createMockedStoreModules } from '@unit/utils/store';
+import { createAvailabilityModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { AVAILABILITY_SHOW_TYPE, QUICK_RANGES } from '@/constants';
 
@@ -34,10 +34,10 @@ describe('entity-availability', () => {
     },
   });
 
-  const { entityModule, fetchAvailabilityWithoutStore } = createEntityModule();
+  const { availabilityModule, fetchAvailabilityWithoutStore } = createAvailabilityModule();
 
   const store = createMockedStoreModules([
-    entityModule,
+    availabilityModule,
   ]);
 
   test('Availability fetched after mount', async () => {
@@ -61,6 +61,37 @@ describe('entity-availability', () => {
       params: {
         from: 1386284400,
         to: 1386284400,
+      },
+    });
+  });
+
+  test('Availability fetched after trigger update interval with different time range', async () => {
+    const entityId = Faker.datatype.string();
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        entity: {
+          _id: entityId,
+        },
+        defaultTimeRange: QUICK_RANGES.yesterday.value,
+      },
+    });
+
+    await flushPromises();
+
+    fetchAvailabilityWithoutStore.mockClear();
+
+    await selectAvailabilityBar(wrapper).triggerCustomEvent('update:interval', {
+      from: QUICK_RANGES.last30Days.start,
+      to: QUICK_RANGES.last30Days.stop,
+    });
+
+    expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
+      id: entityId,
+      params: {
+        from: 1383865200,
+        to: 1386370800,
       },
     });
   });
@@ -92,6 +123,37 @@ describe('entity-availability', () => {
       params: {
         from: 1370124000,
         to: 1385852400,
+      },
+    });
+  });
+
+  test('Fetching availability data for a different entity ID and time range', async () => {
+    const entityId = Faker.datatype.string();
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        entity: {
+          _id: entityId,
+        },
+        defaultTimeRange: QUICK_RANGES.yesterday.value,
+      },
+    });
+
+    await flushPromises();
+
+    fetchAvailabilityWithoutStore.mockClear();
+
+    await selectAvailabilityBar(wrapper).triggerCustomEvent('update:interval', {
+      from: QUICK_RANGES.last30Days.start,
+      to: QUICK_RANGES.last30Days.stop,
+    });
+
+    expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
+      id: entityId,
+      params: {
+        from: 1383865200,
+        to: 1386370800,
       },
     });
   });

@@ -39,6 +39,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
       value="Chart title"
     />
     <field-quick-date-interval-type-stub
+      ranges="[object Object]"
       value="last30Days"
     />
     <field-sampling-stub
@@ -92,6 +93,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
       value=""
     />
     <field-quick-date-interval-type-stub
+      ranges="[object Object]"
       value="last30Days"
     />
     <field-sampling-stub

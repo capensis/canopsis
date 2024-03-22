@@ -3,15 +3,15 @@ import Vue from 'vue';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 
-import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-describe('kpi-chart-export-actions', () => {
-  const factory = generateShallowRenderer(KpiChartExportActions, { stubs });
-  const snapshotFactory = generateRenderer(KpiChartExportActions);
+describe('chart-export-actions', () => {
+  const factory = generateShallowRenderer(ChartExportActions, { stubs });
+  const snapshotFactory = generateRenderer(ChartExportActions);
 
   it('Export csv event emitted', () => {
     const wrapper = factory({
@@ -56,7 +56,7 @@ describe('kpi-chart-export-actions', () => {
     toBlobSpy.mockReset();
   });
 
-  it('Renders `kpi-chart-export-actions` without props', () => {
+  it('Renders `chart-export-actions` without props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         chart: {},
@@ -69,7 +69,7 @@ describe('kpi-chart-export-actions', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `kpi-chart-export-actions` with custom props', () => {
+  it('Renders `chart-export-actions` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         chart: {},

@@ -304,6 +304,11 @@ export const API_ROUTES = {
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
   },
+  availability: {
+    list: '/api/v4/cat/availabilities',
+    history: '/api/v4/cat/availabilities-history',
+    exportList: '/api/v4/cat/availability-export',
+  },
 };
 
 export const COLORS = {
@@ -584,6 +589,8 @@ export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
 
 export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
+
+export const AVAILABILITY_FILENAME_PREFIX = 'availability';
 
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 

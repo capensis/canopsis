@@ -22,7 +22,11 @@ Object.defineProperty(HTMLElement.prototype, 'innerText', {
   },
 });
 
-function toMatchCanvasSnapshot(canvas, options, ...args) {
+function toMatchCanvasSnapshot(canvasOrWrapper, options, ...args) {
+  const canvas = canvasOrWrapper?.tagName !== 'CANVAS' && canvasOrWrapper.find
+    ? canvasOrWrapper.find('canvas')?.element
+    : canvasOrWrapper;
+
   const img = canvas.toDataURL();
   const data = img.replace(/^data:image\/(png|jpg);base64,/, '');
   const newOptions = {

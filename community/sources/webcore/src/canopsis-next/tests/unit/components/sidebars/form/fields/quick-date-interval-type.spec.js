@@ -1,9 +1,9 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
 
-import { QUICK_RANGES } from '@/constants';
+import { METRICS_QUICK_RANGES, QUICK_RANGES } from '@/constants';
 
-import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
 
 const stubs = {
   'widget-settings-item': true,
@@ -42,6 +42,7 @@ describe('quick-date-interval-type', () => {
       propsData: {
         value: QUICK_RANGES.last1Year.value,
         name: 'custom_name',
+        ranges: METRICS_QUICK_RANGES,
       },
     });
 

@@ -21,6 +21,7 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Rights for Numbers',
     [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Rights for User Statistics',
     [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Rights for Alarm Statistics',
+    [USER_PERMISSIONS_PREFIXES.business.availability]: 'Rights for Availability',
   },
   api: {
     general: 'General',
@@ -494,6 +495,30 @@ export default {
     },
     [USERS_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
       name: 'Alarm Statistics: show filters',
+      description: 'The filter is shown for users with this permission',
+    },
+
+    /**
+     * Business Availability
+     */
+    [USERS_PERMISSIONS.business.availability.actions.interval]: {
+      name: 'Availability: interval',
+      description: 'Users with this permission can change time interval for the data displayed',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.listFilters]: {
+      name: 'Availability: view filters',
+      description: 'Users with this permission can see the list of filters available',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.editFilter]: {
+      name: 'Availability: edit filters',
+      description: 'Users with this permission can edit filters',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.addFilter]: {
+      name: 'Availability: add filters',
+      description: 'Users with this permission can add filters',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.userFilter]: {
+      name: 'Availability: show filters',
       description: 'The filter is shown for users with this permission',
     },
 

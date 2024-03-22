@@ -1,0 +1,1040 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-list Renders \`availability-list\` with custom props 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout wrap"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
+    <div
+      class="v-data-table__wrapper"
+    >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      >
+        <div
+          class="v-data-table__expanded__content"
+        >
+          <div
+            class="secondary lighten-2"
+          >
+            <availability-list-expand-panel-stub
+              activealarmscolumns=""
+              availability="[object Object]"
+              defaultshowtype="1"
+              displayparameter="1"
+              interval="[object Object]"
+              resolvedalarmscolumns=""
+            />
+          </div>
+        </div>
+      </transition-group-stub>
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
+          <tr>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <span />
+            </th>
+            <th
+              aria-label="Downtime"
+              class="text-start"
+              data-value="value"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Downtime
+              </span>
+            </th>
+            <th
+              aria-label="Custom column: Sorted descending. Activate to remove sorting."
+              aria-sort="descending"
+              class="text-start sortable active desc"
+              data-value="column"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Custom column
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+          </tr>
+        </thead>
+        <thead>
+          <tr
+            class="v-data-table__progress"
+          >
+            <th
+              class="column"
+              colspan="3"
+            >
+              <div
+                aria-valuemax="100"
+                aria-valuemin="0"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
+                role="progressbar"
+                style="height: 2px;"
+              >
+                <div
+                  class="v-progress-linear__background primary"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
+                />
+                <div
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
+                >
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
+                  >
+                    <div
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light v-data-table__expand-icon--active"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="1"
+                showtrend="true"
+                showtype="1"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    items-per-page="10"
+    page="2"
+    total-items="11"
+  />
+</div>
+`;
+
+exports[`availability-list Renders \`availability-list\` with default props 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout wrap"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
+    <div
+      class="v-data-table__wrapper"
+    >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="3"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
+          <tr>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <span />
+            </th>
+            <th
+              aria-label="Uptime"
+              class="text-start"
+              data-value="value"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Uptime
+              </span>
+            </th>
+            <th
+              aria-label="Custom column: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="column"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Custom column
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+              <availability-list-column-value-stub
+                availability="[object Object]"
+                displayparameter="0"
+                showtype="0"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+              <entity-column-cell-stub
+                column="[object Object]"
+                columnsfilters=""
+                entity="[object Object]"
+              />
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub />
+</div>
+`;

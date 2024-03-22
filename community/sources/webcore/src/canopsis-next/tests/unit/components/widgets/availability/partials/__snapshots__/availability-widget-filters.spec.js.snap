@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-widget-filters Renders \`availability-widget-filters\` with custom props 1`] = `
+<div
+  class="layout availability-widget-filters gap-6 align-end wrap"
+>
+  <c-quick-date-interval-field-stub
+    class="availability-widget-filters__interval"
+    interval="[object Object]"
+    min="1234567"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    short=""
+  />
+  <div
+    class="layout availability-widget-filters__filter-wrapper align-end"
+  >
+    <filter-selector-stub
+      class="availability-widget-filters__filter-selector mr-4"
+      clearable="true"
+      disabled="true"
+      filters="[object Object]"
+      hidedetails="true"
+      itemtext="title"
+      itemvalue="_id"
+      label="Select a filter"
+      lockedfilters="[object Object],[object Object]"
+      lockedvalue="locked-filter"
+      value="test-filter"
+    />
+    <filters-list-btn-stub
+      addable="true"
+      editable="true"
+      private="true"
+      widgetid="widget-id"
+      withentity="true"
+    />
+  </div>
+  <availability-display-parameter-field-stub
+    class="availability-widget-filters__parameter"
+    label="Value"
+    name="parameter"
+    value="1"
+  />
+  <availability-show-type-field-stub
+    class="availability-widget-filters__show-type"
+    label="Show"
+    name="availability"
+    value="0"
+  />
+  <c-enabled-field-stub
+    hide-details=""
+    label="Show trend"
+    value="true"
+  />
+  <availability-value-filter-field-stub
+    class="availability-widget-filters__value-filter"
+    maxseconds="123"
+    showtype="0"
+    value="[object Object]"
+  />
+  <c-action-btn-stub
+    icon="cloud_download"
+    loading="true"
+    tooltip="Export widget as csv file"
+  />
+</div>
+`;
+
+exports[`availability-widget-filters Renders \`availability-widget-filters\` with default props 1`] = `
+<div
+  class="layout availability-widget-filters gap-6 align-end wrap"
+>
+  <!---->
+  <!---->
+  <availability-display-parameter-field-stub
+    class="availability-widget-filters__parameter"
+    label="Value"
+    name="parameter"
+    value="0"
+  />
+  <availability-show-type-field-stub
+    class="availability-widget-filters__show-type"
+    label="Show"
+    name="availability"
+    value="0"
+  />
+  <c-enabled-field-stub
+    hide-details=""
+    label="Show trend"
+  />
+  <availability-value-filter-field-stub
+    class="availability-widget-filters__value-filter"
+    showtype="0"
+  />
+  <!---->
+</div>
+`;
