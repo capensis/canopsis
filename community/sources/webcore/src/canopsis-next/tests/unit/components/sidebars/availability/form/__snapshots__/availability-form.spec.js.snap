@@ -13,6 +13,7 @@ exports[`availability-form Renders \`availability-form\` with custom props 1`] =
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
+    excludedcolumns="component,connector,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,enabled,component_infos,import_source,imported"
     label="Column names"
     templates="[object Object]"
     templatespending="true"
@@ -54,6 +55,14 @@ exports[`availability-form Renders \`availability-form\` with custom props 1`] =
       widgetid="widget-id"
       withentity="true"
     />
+    <export-csv-form-stub
+      excludedcolumns="component,connector,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,enabled,component_infos,import_source,imported"
+      form="[object Object]"
+      templates="[object Object]"
+      templatespending="true"
+      type="entity"
+      withoutinfosattributes="true"
+    />
   </widget-settings-group-stub>
 </div>
 `;
@@ -71,6 +80,7 @@ exports[`availability-form Renders \`availability-form\` with required props 1`]
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
+    excludedcolumns="component,connector,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,enabled,component_infos,import_source,imported"
     label="Column names"
     templates=""
     type="entity"
@@ -99,6 +109,7 @@ exports[`availability-form Renders \`availability-form\` with required props 1`]
       name="default_show_type"
       value="0"
     />
+    <!---->
     <!---->
   </widget-settings-group-stub>
 </div>

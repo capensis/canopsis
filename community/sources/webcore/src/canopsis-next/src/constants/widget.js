@@ -66,7 +66,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.serviceWeather]: 'view_module',
   [WIDGET_TYPES.statsCalendar]: 'calendar_today',
   [WIDGET_TYPES.text]: 'view_headline',
-  [WIDGET_TYPES.counter]: 'view_module',
+  [WIDGET_TYPES.counter]: '$vuetify.icons.numbers',
   [WIDGET_TYPES.testingWeather]: 'view_module',
   [WIDGET_TYPES.map]: 'location_on',
   [WIDGET_TYPES.barChart]: 'stacked_bar_chart',
@@ -76,10 +76,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.numbers]: 'functions',
   [WIDGET_TYPES.userStatistics]: 'perm_identity',
   [WIDGET_TYPES.alarmStatistics]: 'notification_important',
-  /**
-   * TODO: Icon should be changed
-   */
-  [WIDGET_TYPES.availability]: 'notification_important',
+  [WIDGET_TYPES.availability]: '$vuetify.icons.published_with_changes',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };

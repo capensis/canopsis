@@ -6,7 +6,7 @@ exports[`availability-display-parameter Renders \`availability-display-parameter
 >
   <availability-display-parameter-radio-field-stub
     class="mt-0"
-    name="parameter"
+    name="customName"
     value="1"
   />
 </widget-settings-item-stub>
@@ -18,7 +18,7 @@ exports[`availability-display-parameter Renders \`availability-display-parameter
 >
   <availability-display-parameter-radio-field-stub
     class="mt-0"
-    name="parameter"
+    name="default_display_parameter"
     value="0"
   />
 </widget-settings-item-stub>
