@@ -11,7 +11,12 @@ import featuresService from '@/services/features';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
-import { isCancelledAlarmStatus, isClosedAlarmStatus, isResolvedAlarm } from '@/helpers/entities/alarm/form';
+import {
+  isAlarmStateOk,
+  isCancelledAlarmStatus,
+  isClosedAlarmStatus,
+  isResolvedAlarm,
+} from '@/helpers/entities/alarm/form';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
@@ -50,24 +55,46 @@ export default {
       return this.items.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
     },
 
+    alarmsForActions() {
+      return this.items.filter((item) => {
+        if (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item)) {
+          return true;
+        }
+
+        return !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item);
+      });
+    },
+
+    openedAndUnResolvedAlarms() {
+      return this.openedAlarms.filter(alarm => !isResolvedAlarm(alarm));
+    },
+
     cancelledAndUnResolvedAlarms() {
       return this.items.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
     },
 
     alarmsWithAssignedDeclareTicketRules() {
-      return this.openedAlarms.filter(item => item.assigned_declare_ticket_rules?.length);
+      return this.alarmsForActions.filter(item => item.assigned_declare_ticket_rules?.length);
     },
 
     alarmsWithTickets() {
-      return this.openedAlarms.filter(item => item.v?.ticket);
+      return this.alarmsForActions.filter(item => item.v?.ticket);
     },
 
     alarmsWithoutTickets() {
-      return difference(this.openedAlarms, this.alarmsWithTickets);
+      return difference(this.alarmsForActions, this.alarmsWithTickets);
+    },
+
+    alarmsWithAck() {
+      return this.alarmsForActions.filter(item => item.v?.ack);
+    },
+
+    alarmsWithoutAck() {
+      return difference(this.alarmsForActions, this.alarmsWithAck);
     },
 
     hasOpenedAlarms() {
-      return !!this.openedAlarms.length;
+      return !!this.alarmsForActions.length;
     },
 
     hasCancelledAndUnResolvedAlarms() {
@@ -78,8 +105,20 @@ export default {
       return !!this.alarmsWithoutTickets.length;
     },
 
+    hasAlarmsWithAck() {
+      return !!this.alarmsWithAck.length;
+    },
+
+    hasAlarmsWithoutAck() {
+      return !!this.alarmsWithoutAck.length;
+    },
+
     hasMetaAlarm() {
-      return this.openedAlarms.some(item => item.is_meta_alarm);
+      return this.alarmsForActions.some(item => item.is_meta_alarm);
+    },
+
+    isActionsAllowWithOkState() {
+      return this.widget.parameters.isActionsAllowWithOkState;
     },
 
     actions() {
@@ -90,59 +129,76 @@ export default {
         method: this.showUnCancelEventModal,
       };
 
-      if (!this.hasOpenedAlarms) {
-        return [unCancelAction];
+      const actions = [];
+
+      if (this.hasOpenedAlarms) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
+            title: this.$t('alarm.actions.titles.pbehavior'),
+            method: this.showAddPbehaviorModal,
+          },
+        );
       }
 
-      const actions = [
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
-          title: this.$t('alarm.actions.titles.pbehavior'),
-          method: this.showAddPbehaviorModal,
-        },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
-          title: this.$t('alarm.actions.titles.ack'),
-          method: this.showAckModal,
-        },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
-          title: this.$t('alarm.actions.titles.fastAck'),
-          method: this.createMassFastAckEvent,
-        },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
-          title: this.$t('alarm.actions.titles.ackRemove'),
-          method: this.showAckRemoveModal,
-        },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: '$vuetify.icons.list_delete',
-          title: this.$t('alarm.actions.titles.cancel'),
-          method: this.showCancelEventModal,
-        },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
-          icon: 'delete',
-          title: this.$t('alarm.actions.titles.fastCancel'),
-          method: this.createFastCancelEvent,
-        },
-      ];
+      if (this.hasAlarmsWithoutAck || this.widget.parameters.isMultiAckEnabled) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.ack,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
+            title: this.$t('alarm.actions.titles.ack'),
+            method: this.showAckModal,
+          },
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.fastAck,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
+            title: this.$t('alarm.actions.titles.fastAck'),
+            method: this.createMassFastAckEvent,
+          },
+        );
+      }
+
+      if (this.hasAlarmsWithAck) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
+            title: this.$t('alarm.actions.titles.ackRemove'),
+            method: this.showAckRemoveModal,
+          },
+        );
+      }
+
+      if (this.hasOpenedAlarms) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.cancel,
+            icon: '$vuetify.icons.list_delete',
+            title: this.$t('alarm.actions.titles.cancel'),
+            method: this.showCancelEventModal,
+          },
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+            icon: 'delete',
+            title: this.$t('alarm.actions.titles.fastCancel'),
+            method: this.createFastCancelEvent,
+          },
+        );
+      }
 
       if (this.hasCancelledAndUnResolvedAlarms) {
         actions.push(unCancelAction);
       }
 
-      actions.push({
-        type: ALARM_LIST_ACTIONS_TYPES.comment,
-        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
-        title: this.$t('alarm.actions.titles.comment'),
-        method: this.showCreateCommentEventModal,
-      });
+      if (this.hasOpenedAlarms) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.comment,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
+          title: this.$t('alarm.actions.titles.comment'),
+          method: this.showCreateCommentEventModal,
+        });
+      }
 
       if (this.hasAlarmsWithoutTickets || this.widget.parameters.isMultiDeclareTicketEnabled) {
         if (this.alarmsWithAssignedDeclareTicketRules.length) {
@@ -162,14 +218,16 @@ export default {
         });
       }
 
-      actions.push(
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.snooze,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
-          title: this.$t('alarm.actions.titles.snooze'),
-          method: this.showSnoozeModal,
-        },
-      );
+      if (this.openedAndUnResolvedAlarms.length) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.snooze,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
+            title: this.$t('alarm.actions.titles.snooze'),
+            method: this.showSnoozeModal,
+          },
+        );
+      }
 
       if (!this.hasMetaAlarm) {
         actions.push(
@@ -206,7 +264,7 @@ export default {
         return [];
       }
 
-      return harmonizeAlarmsLinks(this.openedAlarms).map((link) => {
+      return harmonizeAlarmsLinks(this.alarmsForActions).map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
         return {
@@ -243,17 +301,17 @@ export default {
     },
 
     showSnoozeModal() {
-      this.showSnoozeModalByAlarms(this.openedAlarms);
+      this.showSnoozeModalByAlarms(this.openedAndUnResolvedAlarms);
     },
 
     showAddPbehaviorModal() {
-      this.showAddPbehaviorModalByAlarms(this.openedAlarms);
+      this.showAddPbehaviorModalByAlarms(this.alarmsForActions);
     },
 
     showCreateAssociateTicketModal() {
       this.showAssociateTicketModalByAlarms(
         this.widget.parameters.isMultiDeclareTicketEnabled
-          ? this.openedAlarms
+          ? this.alarmsForActions
           : this.alarmsWithoutTickets,
       );
     },
@@ -261,21 +319,25 @@ export default {
     showCreateDeclareTicketModal() {
       this.showDeclareTicketModalByAlarms(
         this.widget.parameters.isMultiDeclareTicketEnabled
-          ? this.openedAlarms
+          ? this.alarmsForActions
           : this.alarmsWithoutTickets,
       );
     },
 
     showAckModal() {
-      this.showAckModalByAlarms(this.openedAlarms);
+      this.showAckModalByAlarms(
+        this.widget.parameters.isMultiAckEnabled
+          ? this.alarmsForActions
+          : this.alarmsWithoutAck,
+      );
     },
 
     showAckRemoveModal() {
-      this.showAckRemoveModalByAlarms(this.openedAlarms);
+      this.showAckRemoveModalByAlarms(this.alarmsForActions);
     },
 
     showCancelEventModal() {
-      this.showCancelModalByAlarms(this.openedAlarms);
+      this.showCancelModalByAlarms(this.alarmsForActions);
     },
 
     showUnCancelEventModal() {
@@ -283,23 +345,27 @@ export default {
     },
 
     showCreateManualMetaAlarmModal() {
-      this.showCreateManualMetaAlarmModalByAlarms(this.openedAlarms);
+      this.showCreateManualMetaAlarmModalByAlarms(this.alarmsForActions);
     },
 
     createMassFastAckEvent() {
-      this.createFastAckActionByAlarms(this.openedAlarms);
+      this.createFastAckActionByAlarms(
+        this.widget.parameters.isMultiAckEnabled
+          ? this.alarmsForActions
+          : this.alarmsWithoutAck,
+      );
     },
 
     createFastCancelEvent() {
-      this.createFastCancelActionByAlarms(this.openedAlarms);
+      this.createFastCancelActionByAlarms(this.alarmsForActions);
     },
 
     showCreateCommentEventModal() {
-      this.showCreateCommentModalByAlarms(this.openedAlarms);
+      this.showCreateCommentModalByAlarms(this.alarmsForActions);
     },
 
     linkAction(link, type) {
-      this.handleLinkClickActionByAlarms(this.openedAlarms, link, type);
+      this.handleLinkClickActionByAlarms(this.alarmsForActions, link, type);
     },
   },
 };
