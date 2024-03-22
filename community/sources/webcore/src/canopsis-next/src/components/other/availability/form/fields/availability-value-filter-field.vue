@@ -57,6 +57,7 @@ export default {
   },
   setup(props, { emit }) {
     const { updateModel } = useModelField(props, emit);
+    const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
 
     const method = computed({
       get() {
@@ -70,7 +71,6 @@ export default {
         });
       },
     });
-    const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
 
     const clearValue = () => updateModel(undefined);
 

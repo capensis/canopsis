@@ -27,9 +27,9 @@ import { convertDateToString, getDiffBetweenDates } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { saveFile } from '@/helpers/file/files';
 import { getAvailabilityHistoryDownloadFileUrl } from '@/helpers/entities/availability/url';
+import { openUrlInNewTab } from '@/helpers/url';
 
 import { localQueryMixin } from '@/mixins/query/query';
-import { exportMixinCreator } from '@/mixins/widget/export';
 
 import AvailabilityHistory from '@/components/other/availability/partials/availability-history.vue';
 
@@ -39,10 +39,6 @@ export default {
   components: { AvailabilityHistory },
   mixins: [
     localQueryMixin,
-    exportMixinCreator({
-      createExport: 'createAvailabilityHistoryExport',
-      fetchExport: 'fetchAvailabilityHistoryExport',
-    }),
   ],
   props: {
     availability: {
@@ -78,7 +74,6 @@ export default {
   methods: {
     ...mapAvailabilityActions({
       fetchAvailabilityHistoryWithoutStore: 'fetchAvailabilityHistoryWithoutStore',
-      createAvailabilityHistoryExport: 'createAvailabilityHistoryExport',
       fetchAvailabilityHistoryExport: 'fetchAvailabilityHistoryExport',
     }),
 
@@ -94,6 +89,7 @@ export default {
 
     getQuery() {
       return {
+        _id: this.availability.entity._id,
         from: this.interval.from,
         to: this.interval.to,
         sampling: this.query.sampling,
@@ -104,8 +100,7 @@ export default {
       this.pending = true;
 
       try {
-        const { data: availabilities } = await this.fetchAvailabilityHistoryWithoutStore({
-          id: this.availability._id,
+        const availabilities = await this.fetchAvailabilityHistoryWithoutStore({
           params: this.getQuery(),
         });
 
@@ -145,11 +140,11 @@ export default {
       this.downloading = true;
 
       try {
-        const fileData = await this.generateFile({
-          data: this.getQuery(),
+        const fileData = await this.fetchAvailabilityHistoryExport({
+          params: this.getQuery(),
         });
 
-        this.downloadFile(getAvailabilityHistoryDownloadFileUrl(fileData._id));
+        openUrlInNewTab(getAvailabilityHistoryDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {

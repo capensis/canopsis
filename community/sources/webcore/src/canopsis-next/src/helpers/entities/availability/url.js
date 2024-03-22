@@ -6,7 +6,7 @@ import { API_HOST, API_ROUTES } from '@/config';
  * @param {string} id
  * @return {string}
  */
-export const getAvailabilityDownloadFileUrl = id => `${API_HOST}${API_ROUTES.availability.list}/${id}/download`;
+export const getAvailabilityDownloadFileUrl = id => `${API_HOST}${API_ROUTES.metrics.exportMetric}/${id}/download`;
 
 /**
  * Get availability history download file url
@@ -14,4 +14,4 @@ export const getAvailabilityDownloadFileUrl = id => `${API_HOST}${API_ROUTES.ava
  * @param {string} id
  * @return {string}
  */
-export const getAvailabilityHistoryDownloadFileUrl = id => `${API_HOST}${API_ROUTES.availability.history}/${id}/download`;
+export const getAvailabilityHistoryDownloadFileUrl = id => `${API_HOST}${API_ROUTES.metrics.exportMetric}/${id}/download`;

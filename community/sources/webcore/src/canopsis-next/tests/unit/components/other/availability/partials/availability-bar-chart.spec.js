@@ -20,6 +20,7 @@ describe('availability-bar-chart', () => {
           uptime_share: 66.67,
           downtime_duration: 10000,
           downtime_share: 33.33,
+          total_active_time: 30000,
         },
       },
     });
@@ -35,7 +36,8 @@ describe('availability-bar-chart', () => {
           uptime_share: 60,
           downtime_duration: 20000,
           downtime_share: 40,
-          inactive_time: 2000,
+          total_inactive_time: 2000,
+          total_active_time: 50000,
         },
         uptimeColor: COLORS.primary,
         downtimeColor: COLORS.secondary,

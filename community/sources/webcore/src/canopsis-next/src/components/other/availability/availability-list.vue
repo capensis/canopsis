@@ -5,11 +5,12 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    item-key="entity._id"
     expand
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #value="{ item }">
+    <template #[valueField]="{ item }">
       <availability-list-column-value
         :availability="item"
         :display-parameter="displayParameter"
@@ -41,6 +42,8 @@
 import { computed } from 'vue';
 
 import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_SHOW_TYPE } from '@/constants';
+
+import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -100,17 +103,21 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
+    const valueField = computed(() => getAvailabilityFieldByDisplayParameterAndShowType(
+      props.displayParameter,
+      props.showType,
+    ));
     const isUptimeParameter = computed(() => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime);
     const headers = computed(() => [
       {
         text: t(`common.${isUptimeParameter.value ? 'uptime' : 'downtime'}`),
-        value: 'value',
-        sortable: false,
+        value: valueField.value,
       },
       ...props.columns,
     ]);
 
     return {
+      valueField,
       headers,
     };
   },

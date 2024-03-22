@@ -63,7 +63,7 @@
       :show-type="type"
       :max-seconds="maxValueFilterSeconds"
       class="availability-widget-filters__value-filter"
-      @input="debouncedEmitUpdateValueFilter"
+      @input="handleUpdateValueFilter"
     />
     <c-action-btn
       v-if="showExport"
@@ -185,15 +185,22 @@ export default {
       { immediate: true },
     );
 
-    const emitUpdateValueFilter = value => emit('update:value-filter', value);
+    const emitUpdateValueFilter = valueFilter => emit('update:value-filter', valueFilter);
     const debouncedEmitUpdateValueFilter = debounce(emitUpdateValueFilter, 1000);
+
+    const handleUpdateValueFilter = (valueFilter) => {
+      if (!valueFilter || valueFilter.value === props.valueFilter?.value) {
+        emitUpdateValueFilter(valueFilter);
+      } else if (valueFilter.value) {
+        debouncedEmitUpdateValueFilter(valueFilter);
+      }
+    };
 
     return {
       localValueFilter,
       quickRanges,
 
-      emitUpdateValueFilter,
-      debouncedEmitUpdateValueFilter,
+      handleUpdateValueFilter,
     };
   },
 };
