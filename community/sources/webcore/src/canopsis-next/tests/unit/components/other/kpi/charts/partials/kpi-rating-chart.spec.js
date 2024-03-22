@@ -5,8 +5,10 @@ import { ALARM_METRIC_PARAMETERS } from '@/constants';
 import KpiRatingChart from '@/components/other/kpi/charts/partials/kpi-rating-chart';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
+
+const selectChartExportActions = wrapper => wrapper.find('chart-export-actions-stub');
 
 describe('kpi-rating-chart', () => {
   const metricsInPercent = [
@@ -85,9 +87,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
-
-    kpiChartExportActions.triggerCustomEvent('export:csv');
+    selectChartExportActions(wrapper).triggerCustomEvent('export:csv');
 
     expect(exportCsv).toHaveBeenCalledTimes(1);
   });
@@ -103,9 +103,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
-
-    kpiChartExportActions.triggerCustomEvent('export:png');
+    selectChartExportActions(wrapper).triggerCustomEvent('export:png');
 
     expect(exportPng).toHaveBeenCalledTimes(1);
   });
@@ -115,9 +113,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-rating-chart` with percent metrics', async () => {
@@ -130,9 +126,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-rating-chart` with seconds metrics', async () => {
@@ -145,9 +139,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `kpi-rating-chart` with counter metrics', async () => {
@@ -160,9 +152,7 @@ describe('kpi-rating-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
     expect(wrapper).toMatchSnapshot();
   });
 

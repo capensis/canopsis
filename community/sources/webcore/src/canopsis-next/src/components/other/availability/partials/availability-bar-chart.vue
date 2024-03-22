@@ -19,7 +19,7 @@
             {{ totalActiveTimeDuration }}
           </availability-bar-chart-information-row>
           <availability-bar-chart-information-row
-            v-if="inactiveTime"
+            v-if="availability.inactive_time"
             :label="$t('common.inactiveTime')"
             class="text--disabled"
           >
@@ -38,24 +38,15 @@ import { AVAILABILITY_SHOW_TYPE } from '@/constants';
 import { COLORS } from '@/config';
 
 import { convertDurationToString } from '@/helpers/date/duration';
-import { convertNumberToFixedString } from '@/helpers/string';
 
 import AvailabilityBarChartInformationRow from './availability-bar-chart-information-row.vue';
 
 export default {
   components: { AvailabilityBarChartInformationRow },
   props: {
-    uptime: {
-      type: Number,
+    availability: {
+      type: Object,
       required: true,
-    },
-    downtime: {
-      type: Number,
-      required: true,
-    },
-    inactiveTime: {
-      type: Number,
-      default: 0,
     },
     uptimeColor: {
       type: String,
@@ -72,19 +63,17 @@ export default {
   },
   setup(props) {
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
+    const totalTime = computed(
+      () => props.availability.uptime_duration + props.availability.downtime_duration,
+    );
 
-    const totalTime = computed(() => props.uptime + props.downtime);
+    const uptimePercent = computed(() => `${props.availability.uptime_share}%`);
+    const downtimePercent = computed(() => `${props.availability.downtime_share}%`);
 
-    const convertValueToPercent = value => (value / totalTime.value) * 100;
-    const convertValueToPercentString = value => `${convertNumberToFixedString(convertValueToPercent(value), 2)}%`;
-
-    const uptimePercent = computed(() => convertValueToPercentString(props.uptime));
-    const downtimePercent = computed(() => convertValueToPercentString(props.downtime));
-
-    const uptimeDuration = computed(() => convertDurationToString(props.uptime));
-    const downtimeDuration = computed(() => convertDurationToString(props.downtime));
+    const uptimeDuration = computed(() => convertDurationToString(props.availability.uptime_duration));
+    const downtimeDuration = computed(() => convertDurationToString(props.availability.downtime_duration));
     const totalActiveTimeDuration = computed(() => convertDurationToString(totalTime.value));
-    const inactiveTimeDuration = computed(() => convertDurationToString(props.inactiveTime));
+    const inactiveTimeDuration = computed(() => convertDurationToString(props.availability.inactive_time));
 
     const uptimeValue = computed(() => (isPercentType.value ? uptimePercent.value : uptimeDuration.value));
     const downtimeValue = computed(() => (isPercentType.value ? downtimePercent.value : downtimeDuration.value));

@@ -60,8 +60,8 @@ describe('availability-bar', () => {
     const wrapper = factory({
       propsData: {
         availability: {
-          uptime: Faker.datatype.number(),
-          downtime: Faker.datatype.number(),
+          uptime_duration: Faker.datatype.number(),
+          downtime_duration: Faker.datatype.number(),
           inactive_time: Faker.datatype.number(),
         },
         query: {
@@ -88,8 +88,10 @@ describe('availability-bar', () => {
     const wrapper = snapshotFactory({
       propsData: {
         availability: {
-          uptime: 20000,
+          uptime_duration: 20000,
+          uptime_share: 66.67,
           downtime: 10000,
+          downtime_share: 33.33,
           inactive_time: 1000,
         },
         query: {
@@ -106,8 +108,10 @@ describe('availability-bar', () => {
     const wrapper = snapshotFactory({
       propsData: {
         availability: {
-          uptime: 30000,
-          downtime: 20000,
+          uptime_duration: 30000,
+          uptime_share: 60,
+          downtime_duration: 20000,
+          downtime_share: 40,
           inactive_time: 2000,
         },
         query: {

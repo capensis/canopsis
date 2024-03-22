@@ -12,7 +12,7 @@ exports[`kpi-alarms-chart Renders \`kpi-alarms-chart\` with all types by month 2
       width="600"
     />
   </div>
-  <kpi-chart-export-actions-stub
+  <chart-export-actions-stub
     chart="[object Object]"
     class="mt-4"
   />
@@ -31,7 +31,7 @@ exports[`kpi-alarms-chart Renders \`kpi-alarms-chart\` with downloading true 1`]
       width="600"
     />
   </div>
-  <kpi-chart-export-actions-stub
+  <chart-export-actions-stub
     chart="[object Object]"
     class="mt-4"
     downloading="true"

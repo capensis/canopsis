@@ -5,6 +5,7 @@ import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+import { createInputStub } from '@unit/stubs/input';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -12,7 +13,7 @@ import TextEditor from '@/components/modals/common/text-editor.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'text-editor-field': true,
+  'text-editor-field': createInputStub('text-editor-field'),
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -25,7 +26,7 @@ const snapshotStubs = {
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
+const selectTextEditorField = wrapper => wrapper.find('.text-editor-field');
 
 describe('text-editor', () => {
   const $modals = mockModals();
@@ -244,6 +245,8 @@ describe('text-editor', () => {
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
+    jest.useFakeTimers();
+
     const action = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -260,18 +263,19 @@ describe('text-editor', () => {
       },
     });
 
-    const textEditorField = selectTextEditorField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textEditorField.triggerCustomEvent('input', newValue);
-
-    selectSubmitButton(wrapper).trigger('click');
+    await selectTextEditorField(wrapper).triggerCustomEvent('input', newValue);
+    await selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
+    jest.runAllTimers();
+
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
+
+    jest.useRealTimers();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -286,9 +290,7 @@ describe('text-editor', () => {
       },
     });
 
-    selectCancelButton(wrapper).trigger('click');
-
-    await flushPromises();
+    await selectCancelButton(wrapper).trigger('click');
 
     expect($modals.hide).toBeCalled();
   });

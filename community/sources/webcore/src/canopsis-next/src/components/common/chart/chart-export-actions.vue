@@ -1,6 +1,6 @@
 <template>
   <v-layout
-    class="kpi-chart-export-actions"
+    class="col-gap-6 row-gap-3"
     justify-end
     wrap
   >
@@ -55,10 +55,3 @@ export default {
   },
 };
 </script>
-
-<style scoped lang="scss">
-.kpi-chart-export-actions {
-  column-gap: 24px;
-  row-gap: 12px;
-}
-</style>
