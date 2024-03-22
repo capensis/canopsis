@@ -12,6 +12,7 @@
       :alarm-columns-widget-templates="alarmColumnsWidgetTemplates"
       :alarm-columns-widget-templates-pending="widgetTemplatesPending"
       :show-interval="hasAccessToInterval"
+      :show-export="hasAccessToExportAsCsv"
       :show-filter="hasAccessToListFilters"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
@@ -29,6 +30,7 @@ import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAvailabilityFilters } from '@/mixins/permissions/widgets/availability/filters';
 import { permissionsWidgetsAlarmStatisticsInterval } from '@/mixins/permissions/widgets/availability/interval';
+import { permissionsWidgetsAvailabilityExport } from '@/mixins/permissions/widgets/availability/export';
 
 import WidgetSettings from '../partials/widget-settings.vue';
 
@@ -45,6 +47,7 @@ export default {
     widgetTemplatesMixin,
     permissionsWidgetsAvailabilityFilters,
     permissionsWidgetsAlarmStatisticsInterval,
+    permissionsWidgetsAvailabilityExport,
   ],
   methods: {
     updateWidgetColumnsTemplate(template, columns) {

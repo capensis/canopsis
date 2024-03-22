@@ -521,6 +521,10 @@ export default {
       name: 'Availability: show filters',
       description: 'The filter is shown for users with this permission',
     },
+    [USERS_PERMISSIONS.business.availability.actions.exportAsCsv]: {
+      name: 'Availability: Export as csv',
+      description: 'Users with this permission can export availabilities as CSV file',
+    },
 
     /**
      * Technical General Permissions

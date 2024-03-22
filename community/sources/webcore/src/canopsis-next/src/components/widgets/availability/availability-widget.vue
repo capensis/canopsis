@@ -50,13 +50,13 @@ import { omit, pick } from 'lodash';
 
 import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_VALUE_FILTER_METHODS, TIME_UNITS } from '@/constants';
 
-import { getAvailabilityDownloadFileUrl } from '@/helpers/entities/availability/url';
 import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 import { getAvailabilitiesTrendByInterval } from '@/helpers/entities/availability/query';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -193,7 +193,7 @@ export default {
         ...this.interval,
         ...pick(this.query, ['page', 'itemsPerPage']),
         ...convertSortToRequest(sortBy, sortDesc),
-        filter: convertFiltersToQuery(filter, lockedFilter),
+        filters: convertFiltersToQuery(filter, lockedFilter),
       };
 
       if (valueFilter) {
@@ -256,7 +256,7 @@ export default {
           data: this.getExportQuery(),
         });
 
-        this.downloadFile(getAvailabilityDownloadFileUrl(fileData._id));
+        this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {

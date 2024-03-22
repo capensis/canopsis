@@ -26,7 +26,7 @@ import { AVAILABILITY_FILENAME_PREFIX } from '@/config';
 import { convertDateToString, getDiffBetweenDates } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { saveFile } from '@/helpers/file/files';
-import { getAvailabilityHistoryDownloadFileUrl } from '@/helpers/entities/availability/url';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { openUrlInNewTab } from '@/helpers/url';
 
 import { localQueryMixin } from '@/mixins/query/query';
@@ -144,7 +144,7 @@ export default {
           params: this.getQuery(),
         });
 
-        openUrlInNewTab(getAvailabilityHistoryDownloadFileUrl(fileData._id));
+        openUrlInNewTab(getExportMetricDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {

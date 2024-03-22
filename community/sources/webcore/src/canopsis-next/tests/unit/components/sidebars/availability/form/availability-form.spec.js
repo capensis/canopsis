@@ -249,6 +249,7 @@ describe('availability-form', () => {
         filterEditable: true,
         showInterval: true,
         showFilter: true,
+        showExport: true,
       },
     });
 

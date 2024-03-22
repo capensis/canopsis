@@ -366,6 +366,7 @@ describe('availability-settings', () => {
   test('Renders `availability-settings` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.business.availability.actions.listFilters]: { actions: [] },
+      [USERS_PERMISSIONS.business.availability.actions.exportAsCsv]: { actions: [] },
     });
 
     const wrapper = snapshotFactory({
