@@ -175,7 +175,7 @@ describe('availability-widget', () => {
           value_filter_method: valueFilter.method,
           value_filter_value: valueFilter.value,
           value_filter_parameter: AVAILABILITY_FIELDS.downtimeDuration,
-          filter: [filter, mainFilter],
+          filters: [filter, mainFilter],
         },
       },
     );
@@ -210,7 +210,7 @@ describe('availability-widget', () => {
           to: 1385852400,
           trend: AVAILABILITY_TREND_TYPES.lastThreeMonths,
           value_filter: undefined,
-          filter: [],
+          filters: [],
         },
       },
     );

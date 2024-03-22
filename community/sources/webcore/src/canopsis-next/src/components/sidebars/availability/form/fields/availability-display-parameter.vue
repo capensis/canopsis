@@ -1,6 +1,6 @@
 <template>
   <widget-settings-item :title="$t('settings.availability.defaultParameterToDisplay')">
-    <availability-display-parameter-radio-field v-field="value" class="mt-0" />
+    <availability-display-parameter-radio-field v-field="value" :name="name" class="mt-0" />
   </widget-settings-item>
 </template>
 

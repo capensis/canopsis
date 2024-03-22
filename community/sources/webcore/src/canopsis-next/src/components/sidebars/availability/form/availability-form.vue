@@ -49,6 +49,7 @@
         @update:filters="updateField('filters', $event)"
       />
       <export-csv-form
+        v-if="showExport"
         v-field="form.parameters.export_settings"
         :type="$constants.ENTITIES_TYPES.entity"
         :templates="entityColumnsWidgetTemplates"
@@ -134,6 +135,10 @@ export default {
       default: false,
     },
     filterEditable: {
+      type: Boolean,
+      default: false,
+    },
+    showExport: {
       type: Boolean,
       default: false,
     },

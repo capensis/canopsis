@@ -110,13 +110,7 @@ exports[`availability-form Renders \`availability-form\` with required props 1`]
       value="0"
     />
     <!---->
-    <export-csv-form-stub
-      excludedcolumns="component,connector,last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,enabled,component_infos,import_source,imported"
-      form="[object Object]"
-      templates=""
-      type="entity"
-      withoutinfosattributes="true"
-    />
+    <!---->
   </widget-settings-group-stub>
 </div>
 `;
