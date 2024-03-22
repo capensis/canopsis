@@ -10,6 +10,7 @@ import {
   ALARM_UNSORTABLE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   DEFAULT_CONTEXT_WIDGET_RESOLVED_ALARMS_COLUMNS,
+  EXPORT_CSV_SEPARATORS,
 } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
@@ -17,6 +18,20 @@ import { formToWidgetTemplateValue } from '@/helpers/entities/widget/template/fo
 import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 import { setSeveralFields } from '@/helpers/immutable';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
+
+/**
+ * @typedef {Object} AvailabilityWidgetParametersExportSettings
+ * @property {WidgetColumn[]} widget_export_columns
+ * @property {string} widget_export_columns_template
+ * @property {string} export_csv_separator
+ */
+
+/**
+ * @typedef {Object} AvailabilityWidgetParametersExportSettingsForm
+ * @property {WidgetColumnForm[]} widgetExportColumns
+ * @property {string | Symbol} widgetExportColumnsTemplate
+ * @property {string} exportCsvSeparator
+ */
 
 /**
  * @typedef {Object} AvailabilityWidgetParameters
@@ -31,6 +46,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entitie
  * @property {number} default_show_type
  * @property {string} default_time_range
  * @property {number} default_display_parameter
+ * @property {AvailabilityWidgetParametersExportSettings} export_settings
  */
 
 /**
@@ -48,6 +64,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entitie
  * @property {string | Symbol} active_alarms_columns_template
  * @property {WidgetColumnForm[]} resolved_alarms_columns
  * @property {string | Symbol} resolved_alarms_columns_template
+ * @property {AvailabilityWidgetParametersExportSettingsForm} export_settings
  */
 
 /**
@@ -63,12 +80,26 @@ export const availabilityFieldToForm = (availability = {}) => ({
 });
 
 /**
+ * Convert availability widget field to form
+ *
+ * @param {AvailabilityWidgetParametersExportSettings} [exportSettings = {}]
+ * @return {AvailabilityWidgetParametersExportSettingsForm}
+ */
+export const availabilityWidgetParametersExportSettingsToForm = (exportSettings = {}) => ({
+  widgetExportColumns:
+    widgetColumnsToForm(exportSettings.widget_export_columns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
+  widgetExportColumnsTemplate: formToWidgetTemplateValue(exportSettings.widget_export_columns_template),
+  exportCsvSeparator: exportSettings.export_csv_separator ?? EXPORT_CSV_SEPARATORS.comma,
+});
+
+/**
  * Convert form to availability widget parameters to form
  *
  * @param {AvailabilityWidgetParameters} [parameters = {}]
  * @returns {AvailabilityWidgetParametersForm}
  */
 export const availabilityWidgetParametersToForm = parameters => ({
+  mainFilter: parameters.mainFilter ?? null,
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   widget_columns:
     widgetColumnsToForm(parameters.widget_columns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
@@ -82,7 +113,19 @@ export const availabilityWidgetParametersToForm = parameters => ({
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.today.value,
   default_display_parameter: parameters.default_display_parameter ?? AVAILABILITY_DISPLAY_PARAMETERS.uptime,
   default_show_type: parameters.default_show_type ?? AVAILABILITY_SHOW_TYPE.percent,
-  mainFilter: parameters.mainFilter ?? null,
+  export_settings: availabilityWidgetParametersExportSettingsToForm(parameters.export_settings),
+});
+
+/**
+ * Convert form export setting availability widget parameters to form
+ *
+ * @param {AvailabilityWidgetParametersExportSettingsForm} form
+ * @returns {AvailabilityWidgetParametersExportSettings}
+ */
+export const formToAvailabilityWidgetParametersExportSettings = form => ({
+  export_csv_separator: form.exportCsvSeparator,
+  widget_export_columns: formToWidgetColumns(form.widgetExportColumns),
+  widget_export_columns_template: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
 });
 
 /**
@@ -99,6 +142,7 @@ export const formToAvailabilityWidgetParameters = form => ({
   active_alarms_columns_template: formToWidgetTemplateValue(form.active_alarms_columns_template),
   resolved_alarms_columns: formToWidgetColumns(form.resolved_alarms_columns),
   resolved_alarms_columns_template: formToWidgetTemplateValue(form.resolved_alarms_columns_template),
+  export_settings: formToAvailabilityWidgetParametersExportSettings(form.export_settings),
 });
 
 /**
@@ -132,6 +176,14 @@ export const prepareAvailabilityWidget = (widget = {}) => setSeveralFields(widge
 
       sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
       text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+    }))
+  ),
+
+  'parameters.export_settings.widget_export_columns': (columns = []) => (
+    columns.map(column => ({
+      ...column,
+
+      text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
     }))
   ),
 });
