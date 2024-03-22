@@ -209,13 +209,28 @@ export const isResolvedAlarm = alarm => !!alarm.v.resolved;
 /**
  * Checks if action available for alarm
  *
- * @param alarm - alarm entity
+ * @param {Alarm} alarm - alarm entity
+ * @param {Widget} widget - alarm entity
  * @returns {boolean}
  */
-export const isActionAvailableForAlarm = alarm => !isAlarmStateOk(alarm)
-  && !isResolvedAlarm(alarm)
-  && !isClosedAlarmStatus(alarm)
-  && !isCancelledAlarmStatus(alarm);
+export const isActionAvailableForAlarm = (alarm, widget) => {
+  /**
+   * When alarm state is ok, but we enable actions with ok state
+   */
+  if (isAlarmStateOk(alarm)) {
+    return widget?.parameters?.isActionsAllowWithOkState;
+  }
+
+  /**
+   * When alarm is cancelled, but not resolved we can uncancel by mass actions
+   */
+  if (isCancelledAlarmStatus(alarm)) {
+    return !isResolvedAlarm(alarm);
+  }
+
+  return !isResolvedAlarm(alarm)
+    && !isClosedAlarmStatus(alarm);
+};
 
 /**
  * Checks if alarm have critical state
