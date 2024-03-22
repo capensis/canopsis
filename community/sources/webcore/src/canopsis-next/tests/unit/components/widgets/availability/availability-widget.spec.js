@@ -170,7 +170,7 @@ describe('availability-widget', () => {
           sort_by: AVAILABILITY_FIELDS.uptimeShare,
           sort: SORT_ORDERS.desc.toLowerCase(),
           page,
-          itemsPerPage,
+          limit: itemsPerPage,
           trend: AVAILABILITY_TREND_TYPES.lastDay,
           value_filter_method: valueFilter.method,
           value_filter_value: valueFilter.value,
