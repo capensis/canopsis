@@ -51,12 +51,14 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
       default_display_parameter: defaultDisplayParameter,
       default_show_type: defaultShowType,
       default_time_range: defaultTimeRange,
+      mainFilter,
     },
   } = widget;
 
   const { start, stop } = QUICK_RANGES[defaultTimeRange];
 
   return {
+    lockedFilter: mainFilter,
     displayParameter: defaultDisplayParameter,
     showType: defaultShowType,
     showTrend: false,
