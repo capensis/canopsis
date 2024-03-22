@@ -35,9 +35,11 @@ class PdfReporter {
             let diff = '';
 
             if (firstValue && secondValue) {
-              const diffNumber = (1 - (secondValue / firstValue)) * 100;
+              const [maxValue, minValue] = [firstValue, secondValue].sort((a, b) => b - a);
 
-              diff = `${diffNumber > 0 ? '+' : ''}${diffNumber.toFixed()}%`;
+              const diffNumber = ((maxValue / minValue) * 100) - 100;
+
+              diff = `${firstValue > secondValue ? '+' : '-'}${diffNumber.toFixed()}%`;
             }
 
             const firstString = firstValue ? String(firstValue) : '-';
