@@ -9,8 +9,8 @@
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
-      :locked-filter="lockedFilter"
-      :filters="mainFilter"
+      :locked-filter="query.lockedFilter"
+      :filters="query.filter"
       :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToListFilters"
       :show-export="hasAccessToExportAsCsv"
@@ -48,15 +48,15 @@
 <script>
 import { omit, pick } from 'lodash';
 
-import { AVAILABILITY_VALUE_FILTER_METHODS, TIME_UNITS } from '@/constants';
+import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_VALUE_FILTER_METHODS, TIME_UNITS } from '@/constants';
 
-import { getAvailabilityDownloadFileUrl } from '@/helpers/entities/availability/url';
 import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 import { getAvailabilitiesTrendByInterval } from '@/helpers/entities/availability/query';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -185,6 +185,7 @@ export default {
         showType,
         displayParameter,
         filter,
+        lockedFilter,
         valueFilter,
       } = this.query;
 
@@ -192,12 +193,14 @@ export default {
         ...this.interval,
         ...pick(this.query, ['page', 'itemsPerPage']),
         ...convertSortToRequest(sortBy, sortDesc),
-        widget_filters: convertFiltersToQuery(filter, this.lockedFilter),
-        value_filter: valueFilter && {
-          parameter: getAvailabilityFieldByDisplayParameterAndShowType(displayParameter, showType),
-          ...valueFilter,
-        },
+        filters: convertFiltersToQuery(filter, lockedFilter),
       };
+
+      if (valueFilter) {
+        query.value_filter_parameter = getAvailabilityFieldByDisplayParameterAndShowType(displayParameter, showType);
+        query.value_filter_value = valueFilter.value;
+        query.value_filter_method = valueFilter.method;
+      }
 
       if (showTrend) {
         query.trend = getAvailabilitiesTrendByInterval(this.query.interval);
@@ -214,10 +217,34 @@ export default {
     },
 
     getExportQuery() {
-      /**
-       * TODO: Fix it, when API will be integrated
-       */
-      return {};
+      const {
+        widget_columns: widgetColumns,
+        export_settings: {
+          widget_export_columns: widgetExportColumns,
+          export_csv_separator: exportCsvSeparator,
+        },
+      } = this.widget.parameters;
+
+      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
+
+      const { displayParameter, showType } = this.query;
+      const valueField = getAvailabilityFieldByDisplayParameterAndShowType(
+        displayParameter,
+        showType,
+      );
+      const isUptimeParameter = displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime;
+      const fields = [
+        { name: valueField, label: this.$t(`common.${isUptimeParameter ? 'uptime' : 'downtime'}`) },
+        ...columns.map(({ value, text }) => ({ name: value, label: text })),
+      ];
+
+      const { page, limit, trend, ...restQuery } = this.getQuery();
+
+      return {
+        fields,
+        separator: exportCsvSeparator,
+        ...restQuery,
+      };
     },
 
     async exportAvailabilityList() {
@@ -229,7 +256,7 @@ export default {
           data: this.getExportQuery(),
         });
 
-        this.downloadFile(getAvailabilityDownloadFileUrl(fileData._id));
+        this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {

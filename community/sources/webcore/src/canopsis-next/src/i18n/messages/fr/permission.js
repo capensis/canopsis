@@ -521,6 +521,10 @@ export default {
       name: 'Droits à la disponibilité : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
+    [USERS_PERMISSIONS.business.availability.actions.exportAsCsv]: {
+      name: 'Droits de disponibilité : Exporter au format CSV',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent exporter les disponibilités sous forme de fichier CSV',
+    },
 
     /**
      * Technical General Permissions

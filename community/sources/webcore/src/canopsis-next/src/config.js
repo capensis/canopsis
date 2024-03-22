@@ -274,6 +274,8 @@ export const API_ROUTES = {
     exportAggregate: '/api/v4/cat/metrics-export/aggregate',
     exportRemediation: '/api/v4/cat/metrics-export/remediation',
     exportMetric: '/api/v4/cat/metrics-export',
+    exportAvailabilityByEntity: '/api/v4/cat/metrics-export/availability-by-entity',
+    exportAvailability: '/api/v4/cat/metrics-export/availability',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
     remediation: '/api/v4/cat/metrics/remediation',
@@ -281,8 +283,11 @@ export const API_ROUTES = {
     perfDataMetrics: '/api/v4/cat/perf-data-metrics',
     entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
     entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
+    entityAvailability: '/api/v4/cat/entity-metrics/availability',
+    entityAggregateAvailability: '/api/v4/cat/entity-metrics/aggregate-availability',
     group: '/api/v4/cat/metrics/group',
     exportGroup: '/api/v4/cat/metrics-export/group',
+    availability: '/api/v4/cat/metrics/availability',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
@@ -303,11 +308,6 @@ export const API_ROUTES = {
   tags: '/api/v4/cat/tags',
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
-  },
-  availability: {
-    list: '/api/v4/cat/availabilities',
-    history: '/api/v4/cat/availabilities-history',
-    exportList: '/api/v4/cat/availability-export',
   },
 };
 

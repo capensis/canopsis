@@ -147,7 +147,7 @@ export const formToWidgetColumn = ({ key, column, dictionary, field, onlyIcon, l
   if (column === ALARM_FIELDS.infos) {
     result.value = [column, rule, dictionary].filter(Boolean).join('.');
   } else if (getInfosWidgetColumn(column)) {
-    result.value = `${column}.${dictionary}.${field}`;
+    result.value = [column, dictionary, field].filter(Boolean).join('.');
   } else if (isLinksWidgetColumn(column)) {
     result.onlyIcon = onlyIcon;
 
