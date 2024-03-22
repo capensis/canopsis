@@ -57,8 +57,8 @@ describe('entity-availability', () => {
 
     expect(fetchAvailabilityWithoutStore).toHaveBeenCalledTimes(1);
     expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      id: entityId,
       params: {
+        _id: entityId,
         from: 1386284400,
         to: 1386284400,
       },
@@ -88,8 +88,8 @@ describe('entity-availability', () => {
     });
 
     expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      id: entityId,
       params: {
+        _id: entityId,
         from: 1383865200,
         to: 1386370800,
       },
@@ -119,8 +119,8 @@ describe('entity-availability', () => {
     });
 
     expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      id: entityId,
       params: {
+        _id: entityId,
         from: 1370124000,
         to: 1385852400,
       },
@@ -150,8 +150,8 @@ describe('entity-availability', () => {
     });
 
     expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      id: entityId,
       params: {
+        _id: entityId,
         from: 1383865200,
         to: 1386370800,
       },

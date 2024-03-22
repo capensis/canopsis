@@ -149,7 +149,7 @@ export default {
         return value;
       }
 
-      return fromSeconds(value, props.samplingUnit);
+      return fromSeconds(value, samplingUnit.value);
     };
     const datasets = computed(() => {
       const color = isUptimeParameter.value ? COLORS.kpi.uptime : COLORS.kpi.downtime;

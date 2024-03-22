@@ -6,7 +6,6 @@
       :query="query"
       :availability="availability"
       :default-show-type="defaultShowType"
-      :min-date="minAvailableDate"
       class="entity-availability__content"
       @update:interval="updateInterval"
     />
@@ -18,7 +17,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { QUICK_RANGES } from '@/constants';
 
-import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { localQueryMixin } from '@/mixins/query/query';
@@ -60,22 +58,6 @@ export default {
       },
     };
   },
-  computed: {
-    minAvailableDate() {
-      return this.minDate
-        ? convertDateToStartOfDayTimestampByTimezone(this.minDate, this.$system.timezone)
-        : null;
-    },
-  },
-  watch: {
-    minDate() {
-      const { from } = this.getIntervalQuery();
-
-      if (this.minDate && from < this.minDate) {
-        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
-      }
-    },
-  },
   mounted() {
     this.fetchList();
   },
@@ -90,6 +72,7 @@ export default {
 
     getQuery() {
       return {
+        _id: this.entity._id,
         ...this.getIntervalQuery(),
       };
     },
@@ -98,13 +81,9 @@ export default {
       this.pending = true;
 
       try {
-        const { min_date: minDate, availability } = await this.fetchAvailabilityWithoutStore({
-          id: this.entity._id,
+        this.availability = await this.fetchAvailabilityWithoutStore({
           params: this.getQuery(),
         });
-
-        this.minDate = minDate;
-        this.availability = availability;
       } catch (err) {
         console.error(err);
       } finally {

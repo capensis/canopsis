@@ -18,6 +18,7 @@ const stubs = {
   'field-quick-date-interval-type': createInputStub('field-quick-date-interval-type'),
   'field-availability-display-parameter': createInputStub('field-availability-display-parameter'),
   'field-availability-display-show-type': createInputStub('field-availability-display-show-type'),
+  'export-csv-form': createInputStub('export-csv-form'),
   'field-filters': createInputStub('field-filters'),
 };
 const snapshotStubs = {
@@ -29,6 +30,7 @@ const snapshotStubs = {
   'field-availability-display-parameter': true,
   'field-availability-display-show-type': true,
   'field-filters': true,
+  'export-csv-form': true,
 };
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');

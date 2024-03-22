@@ -344,7 +344,7 @@ export const USERS_PERMISSIONS = {
         addFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_addFilter`,
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_userFilter`,
 
-        exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.context}_exportAsCsv`,
+        exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.availability}_exportAsCsv`,
       },
     },
   },
