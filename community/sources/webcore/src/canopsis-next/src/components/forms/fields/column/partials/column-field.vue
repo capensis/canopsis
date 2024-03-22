@@ -171,6 +171,10 @@ export default {
       type: Array,
       required: false,
     },
+    excludedColumns: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -202,9 +206,11 @@ export default {
     },
 
     availableColumns() {
-      return this.isAlarmType
+      const columns = this.isAlarmType
         ? this.alarmListAvailableColumns
         : this.contextAvailableColumns;
+
+      return columns.filter(({ value }) => !this.excludedColumns.includes(value));
     },
 
     columnLabelFieldName() {

@@ -50,6 +50,7 @@ describe('availability-widget', () => {
   const defaultQuery = {
     displayParameter: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
     filter: undefined,
+    lockedFilter: null,
     interval: {
       from: QUICK_RANGES.today.start,
       to: QUICK_RANGES.today.stop,
@@ -139,6 +140,7 @@ describe('availability-widget', () => {
       sortDesc: [true],
       valueFilter,
       filter,
+      lockedFilter: mainFilter,
     }));
 
     const wrapper = factory({
@@ -170,11 +172,10 @@ describe('availability-widget', () => {
           page,
           itemsPerPage,
           trend: AVAILABILITY_TREND_TYPES.lastDay,
-          value_filter: {
-            ...valueFilter,
-            parameter: AVAILABILITY_FIELDS.downtimeDuration,
-          },
-          widget_filters: [filter, mainFilter],
+          value_filter_method: valueFilter.method,
+          value_filter_value: valueFilter.value,
+          value_filter_parameter: AVAILABILITY_FIELDS.downtimeDuration,
+          filters: [filter, mainFilter],
         },
       },
     );
@@ -209,7 +210,7 @@ describe('availability-widget', () => {
           to: 1385852400,
           trend: AVAILABILITY_TREND_TYPES.lastThreeMonths,
           value_filter: undefined,
-          widget_filters: [],
+          filters: [],
         },
       },
     );
