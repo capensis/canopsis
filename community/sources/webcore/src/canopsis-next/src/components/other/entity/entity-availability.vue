@@ -17,8 +17,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { QUICK_RANGES } from '@/constants';
 
-import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
-
 import { localQueryMixin } from '@/mixins/query/query';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 
@@ -49,7 +47,6 @@ export default {
     return {
       pending: false,
       availability: null,
-      minDate: null,
       query: {
         interval: {
           from: start,
@@ -65,10 +62,6 @@ export default {
     ...mapAvailabilityActions({
       fetchAvailabilityWithoutStore: 'fetchAvailabilityWithoutStore',
     }),
-
-    customQueryCondition(query, oldQuery) {
-      return isMetricsQueryChanged(query, oldQuery, this.minDate);
-    },
 
     getQuery() {
       return {
