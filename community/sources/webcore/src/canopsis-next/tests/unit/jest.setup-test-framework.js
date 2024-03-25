@@ -88,7 +88,7 @@ function toEmit(wrapper, event, ...data) {
     return {
       pass: false,
       message: () => [
-        `Expected number of emit: ${emittedEvents.length}`,
+        `Expected number of emit: ${emittedEvents?.length ?? 0}`,
         `Received number of emit: ${data.length}`,
       ].join('\n'),
     };
