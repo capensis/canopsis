@@ -294,6 +294,13 @@ export const AUTH_METHODS = {
   local: 'local',
 };
 
+export const AUTH_SOURCES_WITH_PASSWORD_CHANGING = {
+  basic: '',
+  ldap: 'ldap',
+  cas: 'cas',
+  saml: 'saml',
+};
+
 export const ASSOCIATIVE_TABLES_NAMES = {
   alarmColumnsFilters: 'alarm-column-filters',
   dynamicInfoTemplates: 'dynamic-info-templates',

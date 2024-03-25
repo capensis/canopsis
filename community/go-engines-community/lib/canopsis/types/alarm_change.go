@@ -75,6 +75,9 @@ const (
 
 	// AlarmChangeEventsCount is used for eventscount trigger and alarm's events_count value should be added to the end of a trigger name, e.g. "eventscount3"
 	AlarmChangeEventsCount AlarmChangeType = "eventscount"
+
+	AlarmChangeTypeMetaAlarmChildActivate   AlarmChangeType = "metaalarmchildactivate"
+	AlarmChangeTypeMetaAlarmChildDeactivate AlarmChangeType = "metaalarmchilddeactivate"
 )
 
 const MinimalEventsCountThreshold = 2
@@ -154,7 +157,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
 		AlarmChangeTypeAutoDeclareTicketWebhookFail,
-		AlarmChangeTypeAutoInstructionActivate:
+		AlarmChangeTypeAutoInstructionActivate,
+		AlarmChangeTypeMetaAlarmChildActivate,
+		AlarmChangeTypeMetaAlarmChildDeactivate:
 		// not a trigger
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:

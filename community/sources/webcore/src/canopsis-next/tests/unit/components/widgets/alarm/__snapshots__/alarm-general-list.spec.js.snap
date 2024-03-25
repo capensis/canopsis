@@ -13,6 +13,26 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -38,9 +58,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector"
@@ -48,9 +74,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Connector
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component"
@@ -58,9 +90,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Component
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource"
@@ -68,77 +106,119 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              <span>
-                Resource
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            class=""
-          >
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-0
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-0
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-0
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-0
+            </td>
           </tr>
           <tr
-            class=""
-          >
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-1
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-1
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-1
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-1
+            </td>
           </tr>
           <tr
-            class=""
-          >
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-2
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-2
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-2
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-2
+            </td>
           </tr>
           <tr
-            class=""
-          >
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
+          <tr>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          author-3
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          connector-3
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          component-3
+            </td>
             <td
-              class="text-start"
-            />
+              class="text-left"
+            >
+          resource-3
+            </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
         </tbody>
       </table>
     </div>
@@ -184,9 +264,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Author
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector"
@@ -194,9 +280,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Connector
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component"
@@ -204,9 +296,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Component
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource"
@@ -214,9 +312,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Resource
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
         </thead>

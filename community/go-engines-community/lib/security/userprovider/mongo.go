@@ -87,8 +87,7 @@ func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User
 
 func (p *mongoProvider) FindByExternalSource(
 	ctx context.Context,
-	externalID string,
-	source security.Source,
+	externalID, source string,
 ) (*security.User, error) {
 	return p.findByFilter(ctx, bson.M{
 		"external_id": externalID,
