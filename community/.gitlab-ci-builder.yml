@@ -8,7 +8,7 @@ build_oci:
   script:
     - make -C ${OCI_PATH_1} docker-images VERSION=$CI_COMMIT_TAG
     - make -C ${OCI_PATH_2} docker-images VERSION=$CI_COMMIT_TAG
-    - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/community | grep $CI_COMMIT_MESSAGE | xargs -I {} echo docker push {}
+    - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/community | grep $CI_COMMIT_TAG | xargs -I {} docker push {}
   rules:
     - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
 
