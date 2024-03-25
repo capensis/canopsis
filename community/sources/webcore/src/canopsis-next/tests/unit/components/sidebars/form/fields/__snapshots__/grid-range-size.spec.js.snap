@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`grid-range-size Renders \`grid-range-size\` with custom props 1`] = `
+<div
+  class="v-list-group"
+>
+  <div
+    aria-expanded="false"
+    class="v-list-group__header v-list-item v-list-item--link theme--light"
+    role="button"
+    tabindex="0"
+  >
+    <div
+      class="v-list-item__content widget-settings-item-title"
+    >
+      <div
+        class="v-list-item__title validation-header"
+      >
+          Custom title
+        <!---->
+      </div>
+    </div>
+    <div
+      class="v-list-item__icon v-list-group__header__append-icon"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        keyboard_arrow_down
+      </i>
+    </div>
+  </div>
+  <transition-stub
+    name="expand-transition"
+  >
+    <div
+      class="v-list-group__items"
+      style="display: none;"
+    >
+      <div
+        class="container"
+      >
+        <input
+          always-dirty=""
+          class="v-range-slider mt-3"
+          hide-details=""
+          max="10"
+          min="2"
+          step="2"
+          thumb-label=""
+          ticks="always"
+        />
+      </div>
+    </div>
+  </transition-stub>
+</div>
+`;
+
+exports[`grid-range-size Renders \`grid-range-size\` with default and required props 1`] = `
+<div
+  class="v-list-group"
+>
+  <div
+    aria-expanded="false"
+    class="v-list-group__header v-list-item v-list-item--link theme--light"
+    role="button"
+    tabindex="0"
+  >
+    <div
+      class="v-list-item__content widget-settings-item-title"
+    >
+      <div
+        class="v-list-item__title validation-header"
+      >
+        <!---->
+      </div>
+    </div>
+    <div
+      class="v-list-item__icon v-list-group__header__append-icon"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        keyboard_arrow_down
+      </i>
+    </div>
+  </div>
+  <transition-stub
+    name="expand-transition"
+  >
+    <div
+      class="v-list-group__items"
+      style="display: none;"
+    >
+      <div
+        class="container"
+      >
+        <input
+          always-dirty=""
+          class="v-range-slider mt-3"
+          hide-details=""
+          max="12"
+          min="0"
+          step="1"
+          thumb-label=""
+          ticks="always"
+        />
+      </div>
+    </div>
+  </transition-stub>
+</div>
+`;

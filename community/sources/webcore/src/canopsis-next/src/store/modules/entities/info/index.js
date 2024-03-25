@@ -41,9 +41,12 @@ export default {
     remediationJobConfigTypes: state => state.appInfo.remediation?.job_config_types ?? [],
     casConfig: state => state.appInfo?.login?.casconfig,
     samlConfig: state => state.appInfo?.login?.saml2config,
+    oauthConfig: state => state.appInfo?.login?.oauth2config,
+    isBasicAuthEnabled: state => !!state.appInfo?.login?.basic?.enable,
     isLDAPAuthEnabled: state => !!state.appInfo?.login?.ldapconfig?.enable,
     isCASAuthEnabled: state => !!state.appInfo?.login?.casconfig?.enable,
     isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
+    isOauthAuthEnabled: state => !!state.appInfo?.login?.oauth2config?.enable,
     eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
   },
   mutations: {

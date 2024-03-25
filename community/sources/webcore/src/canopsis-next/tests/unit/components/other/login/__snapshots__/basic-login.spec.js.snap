@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic-login Renders \`base-login\` with custom state 1`] = `
+<form
+  class="v-form gap-3"
+  novalidate="novalidate"
+>
+  <div
+    class="layout gap-2 column"
+  >
+    <div
+      class="flex"
+    >
+      <ldap-login-information-stub />
+    </div>
+    <login-form-stub
+      form="[object Object]"
+    />
+    <div
+      class="flex"
+    >
+      <div
+        class="layout justify-space-between align-center"
+      >
+        <button
+          class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+          type="submit"
+        >
+          <span
+            class="v-btn__content"
+          >
+          Connect
+          </span>
+        </button>
+        <div
+          class="flex xs9"
+        >
+          <c-alert-stub
+            class="py-1 my-0 font-weight-bold"
+            type="error"
+          >
+          </c-alert-stub>
+        </div>
+      </div>
+      <hr
+        aria-orientation="horizontal"
+        class="my-2 v-divider theme--light"
+        role="separator"
+      />
+      <div
+        class="layout"
+      >
+        <c-compiled-template-stub
+          template="footer"
+        />
+      </div>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`basic-login Renders \`base-login\` with default state 1`] = `
+<form
+  class="v-form gap-3"
+  novalidate="novalidate"
+>
+  <div
+    class="layout gap-2 column"
+  >
+    <div
+      class="flex"
+    >
+      <!---->
+    </div>
+    <login-form-stub
+      form="[object Object]"
+    />
+    <div
+      class="flex"
+    >
+      <div
+        class="layout justify-space-between align-center"
+      >
+        <button
+          class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+          type="submit"
+        >
+          <span
+            class="v-btn__content"
+          >
+          Connect
+          </span>
+        </button>
+        <div
+          class="flex xs9"
+        >
+          <c-alert-stub
+            class="py-1 my-0 font-weight-bold"
+            type="error"
+          >
+          </c-alert-stub>
+        </div>
+      </div>
+      <!---->
+    </div>
+  </div>
+</form>
+`;
+
+exports[`basic-login Renders \`base-login\` with error 1`] = `
+<form
+  class="v-form gap-3"
+  novalidate="novalidate"
+>
+  <div
+    class="layout gap-2 column"
+  >
+    <div
+      class="flex"
+    >
+      <!---->
+    </div>
+    <login-form-stub
+      form="[object Object]"
+    />
+    <div
+      class="flex"
+    >
+      <div
+        class="layout justify-space-between align-center"
+      >
+        <button
+          class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+          type="submit"
+        >
+          <span
+            class="v-btn__content"
+          >
+          Connect
+          </span>
+        </button>
+        <div
+          class="flex xs9"
+        >
+          <c-alert-stub
+            class="py-1 my-0 font-weight-bold"
+            type="error"
+            value="true"
+          >
+            Server error message
+          </c-alert-stub>
+        </div>
+      </div>
+      <!---->
+    </div>
+  </div>
+</form>
+`;

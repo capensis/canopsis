@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { logInfo } = require('../logger');
+
 class FileReporter {
   static readMetricFile(outputPath, metricName) {
     const fileName = metricName.endsWith('.json') ? metricName : `${metricName}.json`;
@@ -36,11 +38,16 @@ class FileReporter {
   report(data) {
     if (!fs.existsSync(this.outputPath)) {
       fs.mkdirSync(this.outputPath);
+      logInfo(`Create folder: ${this.outputPath}`);
     }
 
     const jsonName = this.name.endsWith('.json') ? this.name : `${this.name}.json`;
+    const filePath = path.resolve(this.outputPath, jsonName);
+    const fileContent = JSON.stringify(data, undefined, 2);
 
-    fs.writeFileSync(path.resolve(this.outputPath, jsonName), JSON.stringify(data, undefined, 2));
+    fs.writeFileSync(filePath, fileContent);
+
+    logInfo(`Save file: ${filePath}`);
   }
 }
 
