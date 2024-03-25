@@ -13,6 +13,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-copy-wrapper', 'c-links-list', 'service-entities-list',
+    'v-icon',
   ]),
   allowedAttributes: {
     '*': [
@@ -28,6 +29,9 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'c-alarm-tags-chips': [':alarm', 'inline-count', '@select'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
+    'v-icon': [
+      'color', 'dark', 'dense', 'disabled', 'large', 'light', 'right', 'size', 'small', 'tag', 'x-large', 'x-small',
+    ],
     'service-entities-list': [
       ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',
       'entity-name-field', '@refresh', '@update:options', '@add:action',

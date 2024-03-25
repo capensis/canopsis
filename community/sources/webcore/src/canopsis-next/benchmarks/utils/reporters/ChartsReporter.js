@@ -5,6 +5,7 @@ const path = require('path');
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
 const { getMetricsGroupedData } = require('../metrics-files');
+const { logInfo } = require('../logger');
 
 const CHART_MEASURES_COLORS = [
   '#fda701',
@@ -42,9 +43,13 @@ class ChartsReporter {
 
     if (!fs.existsSync(this.outputPath)) {
       fs.mkdirSync(this.outputPath);
+      logInfo(`Create folder: ${this.outputPath}`);
     }
 
-    fs.writeFileSync(path.resolve(this.outputPath, `${name}.png`), buffer, 'base64');
+    const filePath = path.resolve(this.outputPath, `${name}.png`);
+
+    fs.writeFileSync(filePath, buffer, 'base64');
+    logInfo(`Save file: ${filePath}`);
   }
 
   report(...metrics) {

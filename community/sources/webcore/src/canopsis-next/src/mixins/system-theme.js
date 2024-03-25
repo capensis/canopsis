@@ -108,6 +108,10 @@ export const systemThemeMixin = {
         hover: colorToRgba(completed, isDark ? 0.75 : 0.54),
       };
 
+      const divider = {
+        borderColor: colorToRgba(isDark ? darkBaseColor : lightBaseColor, 0.12),
+      };
+
       this.otherVariables = {
         fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[fontSize]}px`,
         textLight,
@@ -115,6 +119,7 @@ export const systemThemeMixin = {
         buttonsLight,
         buttonsDark,
         stepper,
+        divider,
       };
       this.system.dark = isDark;
       this.system.theme = theme;

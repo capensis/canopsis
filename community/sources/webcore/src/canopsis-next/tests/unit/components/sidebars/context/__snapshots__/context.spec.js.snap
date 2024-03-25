@@ -64,6 +64,13 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
     <field-context-entities-types-filter-stub
       value=""
     />
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos) width"
+      value="0,12"
+    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
@@ -132,6 +139,13 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
     <field-context-entities-types-filter-stub
       value="service"
     />
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos) width"
+      value="0,12"
+    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
@@ -199,6 +213,13 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
     <!---->
     <field-context-entities-types-filter-stub
       value=""
+    />
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos) width"
+      value="0,12"
     />
     <export-csv-form-stub
       form="[object Object]"

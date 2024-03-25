@@ -52,25 +52,23 @@
       <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
       <field-density v-model="form.parameters.dense" />
       <field-opened-resolved-filter v-model="form.parameters.opened" />
-      <template v-if="hasAccessToListFilters">
-        <field-filters
-          v-model="form.parameters.mainFilter"
-          :filters.sync="form.filters"
-          :widget-id="widget._id"
-          :addable="hasAccessToAddFilter"
-          :editable="hasAccessToEditFilter"
-          with-alarm
-          with-entity
-          with-pbehavior
-        />
-      </template>
-      <template v-if="hasAccessToListRemediationInstructionsFilters">
-        <field-remediation-instructions-filters
-          v-model="form.parameters.remediationInstructionsFilters"
-          :addable="hasAccessToAddRemediationInstructionsFilter"
-          :editable="hasAccessToEditRemediationInstructionsFilter"
-        />
-      </template>
+      <field-filters
+        v-if="hasAccessToListFilters"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        :addable="hasAccessToAddFilter"
+        :editable="hasAccessToEditFilter"
+        with-alarm
+        with-entity
+        with-pbehavior
+      />
+      <field-remediation-instructions-filters
+        v-if="hasAccessToListRemediationInstructionsFilters"
+        v-model="form.parameters.remediationInstructionsFilters"
+        :addable="hasAccessToAddRemediationInstructionsFilter"
+        :editable="hasAccessToEditRemediationInstructionsFilter"
+      />
       <field-switcher
         v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
@@ -213,11 +211,11 @@ import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-pag
 import FieldFilters from '../form/fields/filters.vue';
 import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
 import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
-import FieldGridRangeSize from './form/fields/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
 import FieldDensity from './form/fields/density.vue';
 import FieldLiveReporting from './form/fields/live-reporting.vue';

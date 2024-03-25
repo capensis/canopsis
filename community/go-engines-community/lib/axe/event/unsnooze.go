@@ -68,6 +68,7 @@ func (p *unsnoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 				"if": bson.M{"$and": []bson.M{
 					{"$in": bson.A{"$v.pbehavior_info", bson.A{nil, "", pbehavior.TypeActive}}},
 					{"$ne": bson.A{"$auto_instruction_in_progress", true}},
+					{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
 				}},
 				"then": nil,
 				"else": event.Parameters.Timestamp,
