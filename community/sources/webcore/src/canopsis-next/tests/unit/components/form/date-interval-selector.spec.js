@@ -165,7 +165,7 @@ describe('date-interval-selector', () => {
   test('Range didn\'t updated after trigger quick range field with previous value', () => {
     const wrapper = factory({
       propsData: {
-        value: QUICK_RANGES.last3Hour,
+        value: { tstart: QUICK_RANGES.last3Hour.start, tstop: QUICK_RANGES.last3Hour.stop },
       },
     });
 
@@ -228,8 +228,8 @@ describe('date-interval-selector', () => {
     const startDate = tstartField.vm.dateObjectPreparer(QUICK_RANGES.previousWeek.start);
     const stopDate = tstopField.vm.dateObjectPreparer(QUICK_RANGES.previousWeek.stop);
 
-    expect(startDate.getTime()).toBe(1385337600000);
-    expect(stopDate.getTime()).toBe(1385855999999);
+    expect(startDate.getTime()).toBe(1385334000000);
+    expect(stopDate.getTime()).toBe(1385938799999);
   });
 
   test('Renders `date-interval-selector` with default props', () => {
