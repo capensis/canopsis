@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
@@ -57,6 +58,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("cannot create security enforce")
 	}
 
+	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	providers := &api.ConfigProviders{}
 	server, _, err := api.Default(
 		ctx,
@@ -64,7 +66,7 @@ func main() {
 		enforcer,
 		providers,
 		logger,
-		nil,
+		pgPoolProvider,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
 		nil,
@@ -74,6 +76,8 @@ func main() {
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
+
+			pgPoolProvider.Close()
 		},
 		false,
 	)

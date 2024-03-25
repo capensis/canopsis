@@ -5,22 +5,13 @@
         <span>{{ config.title }}</span>
       </template>
       <template #text="">
-        <v-layout>
-          <v-flex class="text-center">
-            <alarm-general-table :items="config.items" />
-          </v-flex>
-        </v-layout>
-        <v-layout>
-          <v-divider class="my-3" />
-        </v-layout>
-        <v-layout>
-          <c-name-field
-            v-model="form.comment"
-            :label="$t('common.note')"
-            :required="isCommentRequired"
-            name="comment"
-          />
-        </v-layout>
+        <alarm-general-table :items="config.items" class="mb-4" />
+        <c-name-field
+          v-model="form.comment"
+          :label="$t('common.note')"
+          :required="isCommentRequired"
+          name="comment"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -85,7 +76,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config?.action(this.form);
+        await this.config?.action?.(this.form);
 
         this.$modals.hide();
       }

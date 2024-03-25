@@ -195,11 +195,11 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
       reversed: true,
       group: true,
       page: 1,
-      limit: PAGINATION_LIMIT,
+      itemsPerPage: PAGINATION_LIMIT,
     },
     children: {
       page: 1,
-      limit: PAGINATION_LIMIT,
+      itemsPerPage: PAGINATION_LIMIT,
       multiSortBy: [],
     },
   };
@@ -220,8 +220,15 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
 export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
 
+  steps: {
+    ...query.steps,
+
+    limit: query.steps?.itemsPerPage ?? PAGINATION_LIMIT,
+  },
   children: {
-    ...omit(query.children, ['sortBy', 'sortDesc']),
+    ...omit(query.children, ['sortBy', 'sortDesc', 'itemsPerPage']),
     ...convertSortToRequest(query.children?.sortBy, query.children?.sortDesc),
+
+    limit: query.children?.itemsPerPage ?? PAGINATION_LIMIT,
   },
 });

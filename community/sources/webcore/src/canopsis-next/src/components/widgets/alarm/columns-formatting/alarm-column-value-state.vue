@@ -8,7 +8,13 @@
       :badge-value="badgeValue"
       :small="small"
       @click="$emit('click', $event)"
-    />
+    >
+      <template v-if="appendIconName" #append>
+        <v-icon color="white" size="14">
+          {{ appendIconName }}
+        </v-icon>
+      </template>
+    </c-alarm-chip>
     <v-icon
       v-if="showIcon"
       :size="small ? 14 : undefined"
@@ -44,6 +50,10 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },
+    appendIconName: {
+      type: String,
+      required: false,
     },
   },
   computed: {
