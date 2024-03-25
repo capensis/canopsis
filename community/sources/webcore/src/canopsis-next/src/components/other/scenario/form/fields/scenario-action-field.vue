@@ -8,6 +8,8 @@
         v-field="action.type"
         :name="`${name}.type`"
       />
+
+      <c-action-btn type="duplicate" @click="duplicateAction" />
     </template>
     <v-layout>
       <v-flex xs6>
@@ -173,6 +175,10 @@ export default {
   methods: {
     removeAction() {
       this.$emit('remove');
+    },
+
+    duplicateAction() {
+      this.$emit('duplicate');
     },
   },
 };
