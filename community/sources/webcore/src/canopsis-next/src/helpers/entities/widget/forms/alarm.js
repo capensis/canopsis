@@ -579,6 +579,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
 
         if (showRootCauseByStateClick && hasStateSetting(context.alarm.entity)) {
           component.bind.class = 'cursor-pointer';
+          component.bind.appendIconName = '$vuetify.icons.root_cause';
           component.on = {
             click: () => context.$emit('click:state', { ...context.alarm.entity, state: context.alarm.v?.state?.val }),
           };
@@ -612,6 +613,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
           onlyIcon,
 
           is: 'c-alarm-links-chips',
+          class: { 'my-1': !context.small },
           alarm: context.alarm,
           small: context.small,
           inlineCount: inlineLinksCount,
@@ -653,6 +655,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         onlyIcon,
 
         is: 'c-alarm-links-chips',
+        class: { 'my-1': !context.small },
         alarm: context.alarm,
         small: context.small,
         inlineCount: inlineLinksCount,

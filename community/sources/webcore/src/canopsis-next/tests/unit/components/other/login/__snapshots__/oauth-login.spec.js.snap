@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`oauth-login Renders \`oauth-login\` with redirect query and one provider 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <div
+    class="text-body-2"
+  >
+    Login with OAuth2/OpenID
+  </div>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="https://canopsis/backend/api/v4/oauth/google/login?redirect=http%3A%2F%2Flocalhost%2Fredirect"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Login google
+    </span>
+  </a>
+</div>
+`;
+
+exports[`oauth-login Renders \`oauth-login\` with redirect query and two provider 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <div
+    class="text-body-2"
+  >
+    Login with OAuth2/OpenID
+  </div>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="https://canopsis/backend/api/v4/oauth/google/login?redirect=http%3A%2F%2Flocalhost%2Fredirect"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Login google
+    </span>
+  </a>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="https://canopsis/backend/api/v4/oauth/github/login?redirect=http%3A%2F%2Flocalhost%2Fredirect"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Login github
+    </span>
+  </a>
+</div>
+`;
+
+exports[`oauth-login Renders \`oauth-login\` without redirect and with two providers 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <div
+    class="text-body-2"
+  >
+    Login with OAuth2/OpenID
+  </div>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="https://canopsis/backend/api/v4/oauth/google/login?redirect=http%3A%2F%2Flocalhost"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Login google
+    </span>
+  </a>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="https://canopsis/backend/api/v4/oauth/github/login?redirect=http%3A%2F%2Flocalhost"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Login github
+    </span>
+  </a>
+</div>
+`;

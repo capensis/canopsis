@@ -4,6 +4,7 @@ const path = require('path');
 const { jsPDF: JsPDF } = require('jspdf');
 
 const { getMetricsGroupedData } = require('../metrics-files');
+const { logInfo } = require('../logger');
 
 class PdfReporter {
   constructor({ outputPath } = {}) {
@@ -54,26 +55,41 @@ class PdfReporter {
           return acc;
         }, []);
 
-        const doc = new JsPDF();
+        const diffWidth = 70;
+        const nameWidth = 340;
+        const versionWidth = nameWidth;
+
+        const width = diffWidth + nameWidth + (versionWidth * 2);
+        const height = 1000;
+        const doc = new JsPDF('p', 'px', [width, height]);
 
         const name = `Compare ${firstVersionName} and ${secondVersionName}(${property})`;
 
-        doc.text(name, 10, 10, { align: 'left' });
+        doc.text(name, 10, 20, { align: 'left' });
         doc.table(
           10,
-          15,
+          30,
           rows,
-          ['name', firstVersionName, secondVersionName, 'diff'],
+          [
+            { name: 'name', width: nameWidth },
+            { name: firstVersionName, width: versionWidth },
+            { name: secondVersionName, width: versionWidth },
+            { name: 'diff', width: diffWidth },
+          ],
           {
-            fontSize: 10,
+            fontSize: 14,
           },
         );
 
         if (!fs.existsSync(this.outputPath)) {
           fs.mkdirSync(this.outputPath);
+          logInfo(`Create folder: ${this.outputPath}`);
         }
 
-        doc.save(path.resolve(this.outputPath, `${name}.pdf`));
+        const filePath = path.resolve(this.outputPath, `${name}.pdf`);
+
+        doc.save(filePath);
+        logInfo(`Save file: ${filePath}`);
       });
     });
   }

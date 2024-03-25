@@ -2,17 +2,18 @@
   <v-chip
     :class="chipClass"
     :color="color"
+    :text-color="textColor"
+    :outlined="outlined"
     class="c-alarm-action-chip"
     small
     @click="$emit('click')"
   >
-    <span class="c-alarm-action-chip__text white--text">
+    <span class="c-alarm-action-chip__text">
       <slot />
     </span>
     <v-icon
       v-if="closable"
       class="cursor-pointer ml-2"
-      color="white"
       @click.stop="$emit('close')"
     >
       cancel
@@ -34,6 +35,14 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },
+    outlined: {
+      type: Boolean,
+      default: false,
+    },
+    textColor: {
+      type: String,
+      default: 'white',
     },
   },
   computed: {

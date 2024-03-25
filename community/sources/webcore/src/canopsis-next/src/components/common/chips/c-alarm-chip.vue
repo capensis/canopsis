@@ -17,6 +17,7 @@
         class="chip"
       >
         {{ style.text }}
+        <slot name="append" />
       </span>
     </v-badge>
   </div>

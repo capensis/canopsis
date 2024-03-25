@@ -5,26 +5,6 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -40,6 +20,31 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -53,11 +58,6 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -112,26 +112,6 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -147,6 +127,31 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -160,11 +165,6 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -237,26 +237,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -272,6 +252,31 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -285,11 +290,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -332,26 +332,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -367,6 +347,31 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -380,11 +385,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -427,26 +427,6 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -462,6 +442,31 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -475,11 +480,6 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -525,26 +525,6 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -560,6 +540,31 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -573,11 +578,6 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -635,26 +635,6 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -670,6 +650,31 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -683,11 +688,6 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -736,26 +736,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   class="shared-actions-panel"
 >
   <button
-    class="action-declareTicket"
-  >
-    Declare ticket|report_problem|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -771,6 +751,31 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -784,11 +789,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -834,6 +834,16 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   class="shared-actions-panel"
 >
   <button
+    class="action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-fastAck"
+  >
+    Fast ack|check|fastAck
+  </button>
+  <button
     class="action-cancel"
   >
     Cancel alarm|$vuetify.icons.list_delete|cancel
@@ -844,14 +854,9 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     Fast cancel|delete|fastCancel
   </button>
   <button
-    class="action-ack"
+    class="action-comment"
   >
-    Ack|playlist_add_check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|check|fastAck
+    Comment|comment|comment
   </button>
   <button
     class="action-snooze"
@@ -867,11 +872,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -917,21 +917,6 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   class="shared-actions-panel"
 >
   <button
-    class="action-associateTicket"
-  >
-    Associate ticket|local_play|associateTicket
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
     class="action-ackRemove"
   >
     Cancel ack|not_interested|ackRemove
@@ -947,6 +932,26 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
     Ack|playlist_add_check|ack
   </button>
   <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -960,11 +965,6 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-history"
@@ -1020,6 +1020,11 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
     Fast cancel|delete|fastCancel
   </button>
   <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
@@ -1033,11 +1038,6 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
     class="action-addBookmark"
   >
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
   </button>
   <button
     class="action-variablesHelp"

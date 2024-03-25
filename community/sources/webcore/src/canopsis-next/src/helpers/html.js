@@ -29,11 +29,13 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'c-alarm-tags-chips': [':alarm', 'inline-count', '@select'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
+    'v-icon': [
+      'color', 'dark', 'dense', 'disabled', 'large', 'light', 'right', 'size', 'small', 'tag', 'x-large', 'x-small',
+    ],
     'service-entities-list': [
       ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
-    'v-icon': ['color', 'large', 'small', 'dark', 'dense', 'tag'],
   },
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
 };
