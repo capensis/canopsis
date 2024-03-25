@@ -10,7 +10,13 @@ import {
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
+import {
+  COLOR_INDICATOR_TYPES,
+  MODALS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  USERS_PERMISSIONS,
+  WIDGET_TYPES,
+} from '@/constants';
 import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
 import {
@@ -358,6 +364,39 @@ describe('service-weather', () => {
       {
         name: MODALS.alarmsList,
         config: expect.any(Object),
+      },
+    );
+  });
+
+  test('Root cause modal showed after trigger show:root-cause event', async () => {
+    const service = {
+      name: Faker.datatype.string(),
+    };
+    getServicesListByWidgetId.mockReturnValueOnce([service]);
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModule,
+        userPreferenceModule,
+        serviceModule,
+        queryModule,
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:root-cause');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity: service,
+          colorIndicator: COLOR_INDICATOR_TYPES.state,
+        },
       },
     );
   });

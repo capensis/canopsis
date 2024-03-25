@@ -6,19 +6,21 @@
       :items="items"
       hide-default-footer
     >
-      <template #items="{ item }">
-        <td class="text-left">
-          {{ item.v.state.a }}
-        </td>
-        <td class="text-left">
-          {{ item.v.connector }}
-        </td>
-        <td class="text-left">
-          {{ item.v.component }}
-        </td>
-        <td class="text-left">
-          {{ item.v.resource }}
-        </td>
+      <template #item="{ item }">
+        <tr>
+          <td class="text-left">
+            {{ item.v.state.a }}
+          </td>
+          <td class="text-left">
+            {{ item.v.connector }}
+          </td>
+          <td class="text-left">
+            {{ item.v.component }}
+          </td>
+          <td class="text-left">
+            {{ item.v.resource }}
+          </td>
+        </tr>
       </template>
     </v-data-table>
   </div>

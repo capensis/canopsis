@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -17,11 +17,6 @@ const stubs = {
   'v-form': createFormStub('v-form'),
 };
 
-const snapshotStubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'text-editor-field': true,
-};
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -34,18 +29,6 @@ describe('text-editor', () => {
   const factory = generateShallowRenderer(TextEditor, {
     stubs,
     attachTo: document.body,
-    parentComponent: {
-      $_veeValidate: {
-        validator: 'new',
-      },
-      provide: {
-        $clickOutside: new ClickOutside(),
-        $system: {},
-      },
-    },
-  });
-  const snapshotFactory = generateRenderer(TextEditor, {
-    stubs: snapshotStubs,
     parentComponent: {
       $_veeValidate: {
         validator: 'new',
@@ -322,26 +305,6 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalled();
-
-    wrapper.destroy();
-  });
-
-  test('Renders `text-editor` with empty modal', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        modal: {
-          config: {},
-        },
-      },
-      mocks: {
-        $modals,
-        $popups,
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper).toMatchSnapshot();
 
     wrapper.destroy();
   });

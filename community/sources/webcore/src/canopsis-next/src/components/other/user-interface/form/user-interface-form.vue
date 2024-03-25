@@ -78,6 +78,12 @@
       </v-flex>
     </v-layout>
     <v-layout>
+      <c-enabled-field
+        v-field="form.required_instruction_approve"
+        :label="$t('userInterface.requiredInstructionApprove')"
+      />
+    </v-layout>
+    <v-layout>
       <v-flex>
         <text-editor-field
           v-field="form.footer"

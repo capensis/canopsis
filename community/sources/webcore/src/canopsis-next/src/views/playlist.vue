@@ -83,6 +83,7 @@
               v-if="activeTab"
               :key="activeTab._id"
               :tab="activeTab"
+              visible
             />
           </v-fade-transition>
         </div>

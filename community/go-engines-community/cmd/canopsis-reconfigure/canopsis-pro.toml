@@ -87,6 +87,14 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_axe_dynamic_infos_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_che"
 durable = true
 autoDelete = false
@@ -159,6 +167,14 @@ noWait = false
 [RabbitMQ.queues.bind]
 key = "Engine_correlation"
 exchange = "amq.direct"
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_correlation_axe_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
 noWait = false
 # args =
 
@@ -306,6 +322,7 @@ TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
 
 [Canopsis.metrics]
+Enabled = true
 # FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
 FlushInterval = "10s"
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.

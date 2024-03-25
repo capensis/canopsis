@@ -13,6 +13,8 @@
       :color="item.color"
       :small="small"
       :closable="closable"
+      :outlined="outlined"
+      :text-color="textColor"
       @click="selectItem(item)"
       @close="closeItem(item)"
     >
@@ -59,6 +61,8 @@
               :class="itemClass"
               :color="item.color"
               :closable="closable"
+              :text-color="textColor"
+              :outlined="outlined"
               class="mx-0"
               @click="selectItem(item)"
               @close="closeItem(item)"
@@ -102,6 +106,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    outlined: {
+      type: Boolean,
+      default: false,
+    },
     itemValue: {
       type: String,
       default: 'text',
@@ -117,6 +125,10 @@ export default {
     returnObject: {
       type: Boolean,
       default: false,
+    },
+    textColor: {
+      type: String,
+      default: 'white',
     },
   },
   data() {

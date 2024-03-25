@@ -130,7 +130,7 @@ export default {
     // message: '', // TODO: add correct message
   },
   [USERS_PERMISSIONS.technical.stateSetting]: {
-    title: 'Paramètres d\'état',
+    title: 'Paramètres de calcul d\'état/sévérité',
     // message: '', // TODO: add correct message
   },
 

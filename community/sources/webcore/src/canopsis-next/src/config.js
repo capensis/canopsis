@@ -202,6 +202,9 @@ export const API_ROUTES = {
   saml: {
     auth: '/api/v4/saml/auth',
   },
+  oauth: {
+    login: '/api/v4/oauth/',
+  },
   scenario: {
     scenarios: '/api/v4/scenarios',
   },

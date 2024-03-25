@@ -145,7 +145,7 @@ func Default(
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
+	security := NewSecurity(securityConfig, cfg, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -448,7 +448,7 @@ func Default(
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)
 	})
-	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, dbClient, logger, flags.IntegrationPeriodicalWaitTime))
+	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, pgPoolProvider, logger, flags.IntegrationPeriodicalWaitTime))
 
 	return api, docsFile, nil
 }

@@ -53,7 +53,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               scope="col"
               style="width: 100px; min-width: 100px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Criteria"
@@ -62,9 +68,15 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               role="columnheader"
               scope="col"
             >
-              <span>
-                Criteria
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Criteria
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -484,7 +496,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               scope="col"
               style="width: 100px; min-width: 100px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Criteria"
@@ -493,9 +511,15 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               role="columnheader"
               scope="col"
             >
-              <span>
-                Criteria
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Criteria
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -953,7 +977,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               scope="col"
               style="width: 100px; min-width: 100px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Criteria"
@@ -962,9 +992,15 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               role="columnheader"
               scope="col"
             >
-              <span>
-                Criteria
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Criteria
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1062,7 +1098,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               scope="col"
               style="width: 100px; min-width: 100px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Criteria"
@@ -1071,9 +1113,15 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               role="columnheader"
               scope="col"
             >
-              <span>
-                Criteria
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Criteria
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1493,7 +1541,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               scope="col"
               style="width: 100px; min-width: 100px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Criteria"
@@ -1502,9 +1556,15 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               role="columnheader"
               scope="col"
             >
-              <span>
-                Criteria
-              </span>
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Criteria
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
