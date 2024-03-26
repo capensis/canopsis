@@ -11,6 +11,7 @@ import {
   ALARM_FIELDS_TO_LABELS_KEYS,
   DEFAULT_CONTEXT_WIDGET_RESOLVED_ALARMS_COLUMNS,
   EXPORT_CSV_SEPARATORS,
+  ENTITY_FIELDS,
 } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
@@ -156,6 +157,7 @@ export const prepareAvailabilityWidget = (widget = {}) => setSeveralFields(widge
     columns.map(column => ({
       ...column,
 
+      value: column.value === ENTITY_FIELDS.categoryName ? ENTITY_FIELDS.category : column.value,
       sortable: getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
       text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
     }))
