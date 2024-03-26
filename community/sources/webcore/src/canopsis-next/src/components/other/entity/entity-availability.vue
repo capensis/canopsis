@@ -17,6 +17,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { QUICK_RANGES } from '@/constants';
 
+import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
+
 import { localQueryMixin } from '@/mixins/query/query';
 import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 
@@ -62,6 +64,19 @@ export default {
     ...mapAvailabilityActions({
       fetchAvailabilityWithoutStore: 'fetchAvailabilityWithoutStore',
     }),
+
+    getIntervalQuery() {
+      const { interval } = this.query;
+
+      if (!interval) {
+        return {};
+      }
+
+      return convertQueryIntervalToTimestamp({
+        interval,
+        timezone: this.$system.timezone,
+      });
+    },
 
     getQuery() {
       return {
