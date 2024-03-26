@@ -2,7 +2,7 @@
   <v-combobox
     ref="combobox"
     :value="value"
-    :items="items"
+    :items="filteredItems"
     :menu-props="menuProps"
     :return-object="false"
     :filter="filter"
@@ -51,6 +51,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    allowedTime: {
+      type: Function,
+      required: false,
+    },
   },
   computed: {
     menuProps() {
@@ -79,6 +83,12 @@ export default {
 
         return `${hours}:${minutes}`;
       });
+    },
+
+    filteredItems() {
+      return this.allowedTime
+        ? this.items.filter(this.allowedTime)
+        : this.items;
     },
   },
   methods: {

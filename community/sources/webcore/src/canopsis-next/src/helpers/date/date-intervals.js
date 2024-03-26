@@ -45,19 +45,19 @@ export const convertStringToDateInterval = (string, type) => {
 
   if (matches && matches.groups) {
     const { initial, operator, deltaValue, deltaUnit, roundUnit } = matches.groups;
+    const preparedRoundUnit = roundUnit === TIME_UNITS.week ? 'isoWeek' : roundUnit;
 
     const isToday = initial === 'today';
     const isStart = type === DATETIME_INTERVAL_TYPES.start;
-
     const result = isToday
-      ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day).utc()
-      : moment().utc();
+      ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
+      : moment();
 
-    if (roundUnit) {
+    if (preparedRoundUnit) {
       if (isStart) {
-        result.startOf(roundUnit);
+        result.startOf(preparedRoundUnit);
       } else {
-        result.endOf(roundUnit);
+        result.endOf(preparedRoundUnit);
       }
     }
 
@@ -67,10 +67,6 @@ export const convertStringToDateInterval = (string, type) => {
       } else {
         result.subtract(deltaValue, deltaUnit);
       }
-    }
-
-    if (isToday && isStart) {
-      result.add(1, TIME_UNITS.day);
     }
 
     return result;
@@ -181,6 +177,25 @@ export const convertStartDateIntervalToTimestamp = (
 );
 
 /**
+ * Convert from value to moment
+ *
+ * @param {LocalDate} date
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
+ * @param {string} [unit]
+ * @return {Moment}
+ */
+export const convertStartDateIntervalToMoment = (
+  date,
+  format = DATETIME_FORMATS.datePicker,
+  unit,
+) => convertDateIntervalToMoment(
+  date,
+  DATETIME_INTERVAL_TYPES.start,
+  format,
+  unit,
+);
+
+/**
  * Convert from value to timestamp or moment
  *
  * @param {LocalDate} date
@@ -203,7 +218,7 @@ export const convertStartDateIntervalToTimestampByTimezone = (
 );
 
 /**
- * Convert to value to timestamp or moment
+ * Convert to value to timestamp
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
@@ -215,6 +230,25 @@ export const convertStopDateIntervalToTimestamp = (
   format = DATETIME_FORMATS.datePicker,
   unit,
 ) => convertDateIntervalToTimestamp(
+  date,
+  DATETIME_INTERVAL_TYPES.stop,
+  format,
+  unit,
+);
+
+/**
+ * Convert to value to moment
+ *
+ * @param {LocalDate} date
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
+ * @param {string} [unit]
+ * @return {Moment}
+ */
+export const convertStopDateIntervalToMoment = (
+  date,
+  format = DATETIME_FORMATS.datePicker,
+  unit,
+) => convertDateIntervalToMoment(
   date,
   DATETIME_INTERVAL_TYPES.stop,
   format,
@@ -361,37 +395,40 @@ export const findQuickRangeByInterval = (
  * @param {string} [timezone = getLocaleTimezone()]
  * @returns {Interval}
  */
+export const convertMetricIntervalToTimestamp = ({
+  interval = {},
+  format = DATETIME_FORMATS.datePicker,
+  timezone = getLocaleTimezone(),
+}) => {
+  const fromMoment = convertStartDateIntervalToMoment(interval.from, format, TIME_UNITS.day);
+  const toMoment = convertStopDateIntervalToMoment(interval.to, format, TIME_UNITS.day);
+  const fromStartedOfDay = convertDateToStartOfDayMoment(fromMoment);
+  const toStartedOfDay = convertDateToStartOfDayMoment(toMoment);
+
+  return {
+    from: convertDateToTimestampByTimezone(fromStartedOfDay, timezone),
+    to: convertDateToTimestampByTimezone(toStartedOfDay, timezone),
+  };
+};
+
+/**
+ * Convert interval form to timestamp interval
+ *
+ * @param {IntervalForm} [interval = {}]
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
+ * @param {string} [timezone = getLocaleTimezone()]
+ * @returns {Interval}
+ */
 export const convertQueryIntervalToTimestamp = ({
   interval = {},
   format = DATETIME_FORMATS.datePicker,
   timezone = getLocaleTimezone(),
 }) => {
-  const selectedQuickRange = findQuickRangeByInterval(interval);
-  const isHoursInterval = selectedQuickRange && [
-    QUICK_RANGES.last1Hour.value,
-    QUICK_RANGES.last3Hour.value,
-    QUICK_RANGES.last6Hour.value,
-    QUICK_RANGES.last12Hour.value,
-    QUICK_RANGES.last24Hour.value,
-  ].includes(selectedQuickRange.value);
-
-  const unit = isHoursInterval ? TIME_UNITS.hour : TIME_UNITS.day;
-
-  const from = convertStartDateIntervalToTimestamp(interval.from, format, unit);
-  const to = convertStopDateIntervalToTimestamp(interval.to, format, unit);
-
-  if (isHoursInterval) {
-    return {
-      from: convertDateToTimestampByTimezone(from, timezone),
-      to: convertDateToTimestampByTimezone(to, timezone),
-    };
-  }
-
-  const fromStartedOfDay = convertDateToStartOfDayMoment(from);
-  const toStartedOfDay = convertDateToStartOfDayMoment(to);
+  const from = convertStartDateIntervalToTimestamp(interval.from, format, TIME_UNITS.hour);
+  const to = convertStopDateIntervalToTimestamp(interval.to, format, TIME_UNITS.hour);
 
   return {
-    from: convertDateToTimestampByTimezone(fromStartedOfDay, timezone),
-    to: convertDateToTimestampByTimezone(toStartedOfDay, timezone),
+    from: convertDateToTimestampByTimezone(from, timezone),
+    to: convertDateToTimestampByTimezone(to, timezone),
   };
 };
