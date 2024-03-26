@@ -119,6 +119,8 @@ export const USERS_PERMISSIONS = {
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`,
     stateSetting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_stateSetting`,
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
+    storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
+    icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -387,6 +389,7 @@ export const USERS_PERMISSIONS = {
       maintenance: `${USER_PERMISSIONS_PREFIXES.api}_maintenance`,
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
       theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
+      icon: `${USER_PERMISSIONS_PREFIXES.api}_icon`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },

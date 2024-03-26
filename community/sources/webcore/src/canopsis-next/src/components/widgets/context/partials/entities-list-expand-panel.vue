@@ -27,7 +27,7 @@
     <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12>
+        <v-flex :class="cardFlexClass">
           <v-card>
             <v-card-text>
               <pbehaviors-simple-list
@@ -44,14 +44,16 @@
     <template v-if="item.type !== $constants.ENTITY_TYPES.service">
       <v-tab>{{ $t('context.impactDepends') }}</v-tab>
       <v-tab-item>
-        <impact-depends-tab :entity="item" />
+        <v-flex :class="cardFlexClass">
+          <impact-depends-tab :entity="item" />
+        </v-flex>
       </v-tab-item>
     </template>
 
     <v-tab>{{ $t('common.infos') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12>
+        <v-flex :class="cardFlexClass">
           <v-card>
             <v-card-text>
               <infos-tab
@@ -68,7 +70,7 @@
       <v-tab>{{ $t('context.charts') }}</v-tab>
       <v-tab-item>
         <v-layout class="pa-3">
-          <v-flex xs12>
+          <v-flex :class="cardFlexClass">
             <v-card>
               <v-card-text>
                 <entity-charts
@@ -87,7 +89,7 @@
       <v-tab>{{ $t('context.treeOfDependencies') }}</v-tab>
       <v-tab-item>
         <v-layout class="pa-3">
-          <v-flex xs12>
+          <v-flex :class="cardFlexClass">
             <v-card>
               <v-card-text>
                 <tree-of-dependencies-tab
@@ -105,7 +107,7 @@
     <v-tab>{{ $t('context.impactChain') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12>
+        <v-flex :class="cardFlexClass">
           <v-card>
             <v-card-text class="pa-0">
               <impact-chain-dependencies-tab
@@ -121,7 +123,7 @@
     <v-tab>{{ $t('context.activeAlarm') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12>
+        <v-flex :class="cardFlexClass">
           <v-card>
             <v-card-text>
               <entity-alarms-list-table
@@ -137,7 +139,7 @@
     <v-tab>{{ $t('context.resolvedAlarms') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12>
+        <v-flex :class="cardFlexClass">
           <v-card>
             <v-card-text>
               <entity-alarms-list-table
@@ -154,7 +156,9 @@
 </template>
 
 <script>
-import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+import { GRID_SIZES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+
+import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
@@ -213,8 +217,16 @@ export default {
       type: Object,
       required: false,
     },
+    expandGridRangeSize: {
+      type: Array,
+      default: () => [GRID_SIZES.min, GRID_SIZES.max],
+    },
   },
   computed: {
+    cardFlexClass() {
+      return getFlexClassesForGridRangeSize(this.expandGridRangeSize);
+    },
+
     hasWidgetCharts() {
       return this.charts?.length && this.item.filtered_perf_data?.length;
     },

@@ -97,7 +97,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config?.action(formToAlarmListChart(this.form));
+        await this.config?.action?.(formToAlarmListChart(this.form));
 
         this.$modals.hide();
       }

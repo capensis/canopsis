@@ -6,16 +6,64 @@ security:
   # - ldap Auth using LDAP service. Define LDAP config below.
   # - cas Auth using CAS service. Define CAS config below.
   # - saml Auth using SAML service. Define SAML config below.
+  # - oauth2 Auth using OAuth2/OpenID service. Define OAuth2/OpenID config below.
   auth_providers:
     - basic
     - apikey
 #    - ldap
 #    - cas
 #    - saml
+#    - oauth2
 
   basic:
     inactivity_interval: 24h
     expiration_interval: 1M
+
+#  oauth2:
+#    providers:
+#      your-provider-name:
+#        # if open_id is set to true, then the provider is considered as OpenID connect provider and requires the issuer field to be set.
+#        open_id: true
+#        # issuer field defines OpenID url for a discovery mechanism, if open_id is set to false, the issuer is ignored.
+#        issuer: your-openid-provider-url
+#        # fields to setup inactivity interval for canopsis api tokens.
+#        inactivity_interval: 24h
+#        # some providers have too long or too short expiration time, set expiration_interval to override token's expiration time.
+#        expiration_interval: 48h
+#        # some oauth2 tokens may have a very short expiration time or have undefined expiration time,
+#        # it's possible to define min_expiration_interval for those cases.
+#        min_expiration_interval: 1h
+#        # oauth2 client_id and client_secret pair defined by your oauth2 provider for your application.
+#        client_id: your-client-id
+#        client_secret: your-client-secret
+#        # redirect_url defines an api callback route to the canopsis api, which should be added to your oauth2 provider.
+#        redirect_url: your-canopsis-api-url/api/v4/oauth/your-provider-name/callback
+#        # PKCE is an extension to the Authorization Code flow to prevent CSRF and authorization code injection attacks,
+#        # some oauth2 provider might not support it, set it to false if it's your case.
+#        pkce: true
+#        # default role for user.
+#        default_role: admin
+#        # attributes map allows to fill canopsis user fields from the OpenID token and user claims,
+#        # use token.claim_name for token claims and user.claim_name for user claims,
+#        # token claims are only supported if open_id is set to true.
+#        attributes_map:
+#          email: token.your_id_field
+#          name: user.your_user_name
+#        # requested scopes.
+#        scopes:
+#          - scope_1
+#          - scope_2
+#          - scope_3
+#        # the following urls are required if open_id is set to false,
+#        # you need to manually define those routes according to your oauth2 provider,
+#        # if open_id is set to true, those urls are ignored.
+#        auth_url: your-oauth-2-provider-auth-url
+#        token_url: your-oauth-2-provider-token-url
+#        user_url: your-oauth-2-provider-user-url
+#        # the user_id is required if open_id is set to false,
+#        # response is taken from user_url response, use "user.your_id_field" for user's id path,
+#        # if open_id is set to true, those urls are ignored.
+#        user_id: user.your_id_field
 
 #  ldap:
 #    inactivity_interval: 24h

@@ -1,17 +1,8 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <div class="ml-2 mb-2 text-body-2">
-        {{ $t('login.loginWithSAML') }}
-      </div>
-      <v-btn
-        :href="samlHref"
-        color="primary"
-      >
-        {{ title }}
-      </v-btn>
-    </v-card-text>
-  </v-card>
+  <third-party-login
+    :title="$t('login.loginWithSAML')"
+    :links="links"
+  />
 </template>
 
 <script>
@@ -24,7 +15,10 @@ import { removeTrailingSlashes } from '@/helpers/url';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
+import ThirdPartyLogin from './partials/third-party-login.vue';
+
 export default {
+  components: { ThirdPartyLogin },
   mixins: [entitiesInfoMixin],
   computed: {
     title() {
@@ -38,6 +32,13 @@ export default {
       const query = qs.stringify({ relayState: removeTrailingSlashes(`${APP_HOST}${redirect}`) });
 
       return `${loginUrl}?${query}`;
+    },
+
+    links() {
+      return [{
+        title: this.title,
+        href: this.samlHref,
+      }];
     },
   },
 };

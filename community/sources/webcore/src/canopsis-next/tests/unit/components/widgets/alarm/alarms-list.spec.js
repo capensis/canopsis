@@ -623,7 +623,10 @@ describe('alarms-list', () => {
           instructions: [
             {
               exclude: [manualInstructionFilter.instructions[0]._id],
-              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.simpleManual],
+              exclude_types: [
+                REMEDIATION_INSTRUCTION_TYPES.manual,
+                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              ],
             },
             {
               exclude: [autoInstructionFilter.instructions[0]._id],
@@ -635,7 +638,11 @@ describe('alarms-list', () => {
                 allAndWithInstructionFilter.instructions[0]._id,
                 allAndWithInstructionFilter.instructions[1]._id,
               ],
-              include_types: [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual],
+              include_types: [
+                REMEDIATION_INSTRUCTION_TYPES.auto,
+                REMEDIATION_INSTRUCTION_TYPES.manual,
+                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              ],
               running: false,
             },
           ],

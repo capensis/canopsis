@@ -182,7 +182,8 @@ $material-light: (
   icons: $icons-light,
   buttons: $buttons-light,
   stepper: $stepper-light,
-  tabs: var(--v-text-light-primary, rgba(0, 0, 0, 0.54))
+  tabs: var(--v-text-light-primary, rgba(0, 0, 0, 0.54)),
+  'item-divider-border-color': rgba(0, 0, 0, 0.12)
 );
 
 // Dark backgrounds
@@ -213,5 +214,6 @@ $material-dark: (
   icons: $icons-dark,
   buttons: $buttons-dark,
   stepper: $stepper-dark,
-  tabs: var(--v-text-dark-primary, rgba(map-get($shades, 'white'), 0.6))
+  tabs: var(--v-text-dark-primary, rgba(map-get($shades, 'white'), 0.6)),
+  'item-divider-border-color': rgba(255, 255, 255, 0.12)
 )

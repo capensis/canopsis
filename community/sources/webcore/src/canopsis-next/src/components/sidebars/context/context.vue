@@ -64,6 +64,10 @@
         entity-counters-type
       />
       <field-context-entities-types-filter v-model="form.parameters.selectedTypes" />
+      <field-grid-range-size
+        v-model="form.parameters.expandGridRangeSize"
+        :title="$t('settings.expandGridRangeSize')"
+      />
       <export-csv-form
         v-model="form.parameters"
         :type="$constants.ENTITIES_TYPES.entity"
@@ -96,6 +100,7 @@ import FieldTitle from '../form/fields/title.vue';
 import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
 import FieldColumns from '../form/fields/columns.vue';
 import FieldFilters from '../form/fields/filters.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
@@ -106,6 +111,7 @@ import FieldContextEntitiesTypesFilter from './form/fields/context-entities-type
 export default {
   name: SIDE_BARS.contextSettings,
   components: {
+    FieldGridRangeSize,
     FieldAvailabilityGraphSettings,
     FieldRootCauseSettings,
     FieldTreeOfDependenciesSettings,

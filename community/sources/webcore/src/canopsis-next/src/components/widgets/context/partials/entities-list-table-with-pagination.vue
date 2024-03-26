@@ -58,6 +58,7 @@
           :active-alarms-columns="widget.parameters.activeAlarmsColumns"
           :charts="widget.parameters.charts"
           :tree-of-dependencies-show-type="widget.parameters.treeOfDependenciesShowType"
+          :expand-grid-range-size="widget.parameters.expandGridRangeSize"
           :availability="widget.parameters.availability"
         />
       </template>

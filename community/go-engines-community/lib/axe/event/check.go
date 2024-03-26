@@ -536,9 +536,14 @@ func (p *checkProcessor) postProcess(
 	componentStateChanged bool,
 	newComponentState int,
 ) {
+	entity := *event.Entity
+	if result.Entity.ID != "" {
+		entity = result.Entity
+	}
+
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
-		*event.Entity,
+		entity,
 		result.AlarmChange,
 		event.Parameters.Timestamp.Time,
 		event.Parameters.Initiator,
@@ -645,7 +650,7 @@ func sendRemediationEvent(
 		entity = &result.Entity
 	}
 
-	body, err := encoder.Encode(types.RPCRemediationEvent{
+	body, err := encoder.Encode(rpc.RemediationEvent{
 		Alarm:       &result.Alarm,
 		Entity:      entity,
 		AlarmChange: result.AlarmChange,

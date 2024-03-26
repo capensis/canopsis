@@ -3,6 +3,7 @@
     v-if="activeTab"
     :tab="activeTab"
     kiosk
+    visible
   />
 </template>
 

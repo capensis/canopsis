@@ -37,6 +37,9 @@ const (
 
 	PerfData     = "perf_data"
 	PerfDataName = "perf_data_name"
+
+	MessageRate       = "message_rate"
+	MessageRateHourly = "message_rate_hourly"
 )
 
 // criteria type

@@ -55,6 +55,7 @@ const stubs = {
   'field-availability-graph-settings': createInputStub('field-availability-graph-settings'),
   'field-filters': createInputStub('field-filters'),
   'field-context-entities-types-filter': createInputStub('field-context-entities-types-filter'),
+  'field-grid-range-size': createInputStub('field-grid-range-size'),
   'export-csv-form': createInputStub('export-csv-form'),
   'charts-form': createInputStub('charts-form'),
   'v-btn': createButtonStub('v-btn'),
@@ -72,6 +73,7 @@ const snapshotStubs = {
   'field-availability-graph-settings': true,
   'field-filters': true,
   'field-context-entities-types-filter': true,
+  'field-grid-range-size': true,
   'export-csv-form': true,
   'charts-form': true,
 };
@@ -88,6 +90,7 @@ const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form'
 const selectChartsForm = wrapper => wrapper.find('input.charts-form');
 const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
+const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
 
 describe('context', () => {
@@ -696,6 +699,34 @@ describe('context', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'charts', newCharts),
+      },
+    });
+  });
+
+  test('Grid range changed after trigger grid range field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldGridRangeSize = selectFieldGridRangeSize(wrapper);
+
+    const expandGridRangeSize = [1, 11];
+
+    fieldGridRangeSize.triggerCustomEvent('input', expandGridRangeSize);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'expandGridRangeSize', expandGridRangeSize),
       },
     });
   });

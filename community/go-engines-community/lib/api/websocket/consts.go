@@ -10,4 +10,5 @@ const (
 	RoomHealthcheck       = "healthcheck"
 	RoomHealthcheckStatus = "healthcheck-status"
 	RoomMessageRates      = "message-rates"
+	RoomIcons             = "icons"
 )

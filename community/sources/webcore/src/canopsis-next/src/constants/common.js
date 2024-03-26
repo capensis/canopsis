@@ -17,6 +17,8 @@ export const ROUTES_NAMES = {
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
   adminTags: 'admin-tags',
+  adminStorageSettings: 'admin-storage-settings',
+  adminStateSettings: 'admin-state-settings',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -53,6 +55,8 @@ export const ROUTES = {
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
   adminTags: '/admin/tags',
+  adminStorageSettings: '/admin/storage-settings',
+  adminStateSettings: '/admin/state-settings',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -316,6 +320,13 @@ export const PATTERNS_TYPES = {
 
 export const AUTH_METHODS = {
   local: 'local',
+};
+
+export const AUTH_SOURCES_WITH_PASSWORD_CHANGING = {
+  basic: '',
+  ldap: 'ldap',
+  cas: 'cas',
+  saml: 'saml',
 };
 
 export const ASSOCIATIVE_TABLES_NAMES = {

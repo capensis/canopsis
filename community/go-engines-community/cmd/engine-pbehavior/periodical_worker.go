@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -268,7 +267,7 @@ func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, que
 		return fmt.Errorf("publishTo(): error while encoding event %w", err)
 	}
 
-	return errt.NewIOError(w.ChannelPub.PublishWithContext(
+	return w.ChannelPub.PublishWithContext(
 		ctx,
 		"",
 		queue,
@@ -279,5 +278,5 @@ func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, que
 			Body:         bevent,
 			DeliveryMode: amqp.Persistent,
 		},
-	))
+	)
 }

@@ -62,6 +62,7 @@ import vectorMetricsModule from './vector-metrics';
 import groupMetricsModule from './group-metrics';
 import tagModule from './tag';
 import themeModule from './theme';
+import iconModule from './icon';
 import availabilityModule from './availability';
 
 export default {
@@ -129,5 +130,6 @@ export default {
   groupMetrics: groupMetricsModule,
   tag: tagModule,
   theme: themeModule,
+  icon: iconModule,
   availability: availabilityModule,
 };

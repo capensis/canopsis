@@ -700,6 +700,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Approbation des consignes',
+    dismissed: 'a rejeté vos mises à jour',
     requested: 'vous a sollicité pour une pour approbation',
     tabs: {
       updated: 'Mise à jour',
@@ -911,7 +912,7 @@ export default {
     title: 'Sélectionner le type de modèle de widget',
   },
   entityDependenciesList: {
-    title: 'Entités Centreon impactées',
+    title: 'Diagramme de cause racine',
   },
   createDeclareTicketRule: {
     create: {
@@ -1010,5 +1011,14 @@ export default {
   },
   archiveDisabledEntities: {
     text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
+  },
+  createIcon: {
+    create: {
+      title: 'Icône de téléchargement',
+      success: 'L\'icône a été téléchargée',
+    },
+    remove: {
+      success: 'L\'icône a été supprimée',
+    },
   },
 };
