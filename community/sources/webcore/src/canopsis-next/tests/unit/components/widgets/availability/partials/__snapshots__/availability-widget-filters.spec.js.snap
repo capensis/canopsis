@@ -10,6 +10,7 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
     min="1234567"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
+    with-hours=""
   />
   <div
     class="layout availability-widget-filters__filter-wrapper align-end"

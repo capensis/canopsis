@@ -57,6 +57,7 @@ import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 import { getAvailabilitiesTrendByInterval } from '@/helpers/entities/availability/query';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -73,6 +74,7 @@ import AvailabilityWidgetFilters from '@/components/widgets/availability/partial
 import AvailabilityList from '@/components/other/availability/availability-list.vue';
 
 export default {
+  inject: ['$system'],
   components: { AvailabilityList, AvailabilityWidgetFilters },
   mixins: [
     widgetPeriodicRefreshMixin,
@@ -134,6 +136,19 @@ export default {
         omit(oldQuery, omitFields),
         this.minAvailableDate,
       );
+    },
+
+    getIntervalQuery() {
+      const { interval } = this.query;
+
+      if (!interval) {
+        return {};
+      }
+
+      return convertQueryIntervalToTimestamp({
+        interval,
+        timezone: this.$system.timezone,
+      });
     },
 
     updateInterval(interval) {
