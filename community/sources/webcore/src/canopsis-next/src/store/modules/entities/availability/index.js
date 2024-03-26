@@ -9,9 +9,6 @@ const prepareAvailabilityData = ({ data }) => data.map(availability => ({
   ...availability,
   entity: {
     ...availability.entity,
-    category: {
-      name: availability.entity.category,
-    },
     infos: availability.entity.infos
       ? Object.entries(availability.entity.infos).reduce((acc, [name, value]) => {
         acc[name] = {
