@@ -73,7 +73,13 @@ describe('mass-actions-panel', () => {
       tickets: [],
     },
   };
-
+  const alarmWithAck = {
+    ...alarm,
+    v: {
+      ...alarm.v,
+      ack: {},
+    },
+  };
   const metaAlarm = {
     _id: 'meta-alarm-id',
     metaalarm: true,
@@ -325,10 +331,11 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
+    const itemsForAck = [...items, alarmWithAck];
     const wrapper = factory({
       store,
       propsData: {
-        items,
+        items: itemsForAck,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -344,7 +351,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createEvent,
         config: {
           title: 'Remove ack',
-          items,
+          items: itemsForAck,
           action: expect.any(Function),
         },
       },
@@ -359,7 +366,7 @@ describe('mass-actions-panel', () => {
     expect(bulkCreateAlarmAckremoveEvent).toBeCalledWith(
       expect.any(Object),
       {
-        data: items.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
+        data: itemsForAck.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
       undefined,
     );
@@ -777,6 +784,18 @@ describe('mass-actions-panel', () => {
       store,
       propsData: {
         items,
+        widget,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with meta ack', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        items: [...items, alarmWithAck],
         widget,
       },
     });

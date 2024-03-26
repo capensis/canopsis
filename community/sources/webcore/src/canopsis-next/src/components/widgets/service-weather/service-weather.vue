@@ -18,11 +18,11 @@
         <v-layout align-center>
           <template v-if="hasAccessToUserFilter">
             <filter-selector
+              :value="query.filter"
+              :locked-value="query.lockedFilter"
               :label="$t('settings.selectAFilter')"
               :filters="userPreference.filters"
               :locked-filters="widget.filters"
-              :locked-value="lockedFilter"
-              :value="mainFilter"
               :disabled="!hasAccessToListFilters"
               @input="updateSelectedFilter"
             />
@@ -110,10 +110,13 @@
             :height-factor="widget.parameters.heightFactor"
             :color-indicator="widget.parameters.colorIndicator"
             :priority-enabled="widget.parameters.isPriorityEnabled"
+            :secondary-icon-enabled="widget.parameters.isSecondaryIconEnabled"
             :counters-settings="widget.parameters.counters"
+            :show-root-cause-by-state-click="showRootCauseByStateClick"
             :margin="widget.parameters.margin"
             @show:service="showAdditionalInfoModal(service)"
             @show:alarms="showAlarmListModal(service)"
+            @show:root-cause="openRootCauseDiagram(service)"
           />
         </v-flex>
       </template>
@@ -204,6 +207,10 @@ export default {
     isHideGrayEnabled() {
       return this.widget.parameters.isHideGrayEnabled ?? true;
     },
+
+    showRootCauseByStateClick() {
+      return this.widget.parameters.showRootCauseByStateClick ?? true;
+    },
   },
   methods: {
     showAdditionalInfoModal(service) {
@@ -249,6 +256,16 @@ export default {
 
         this.$popups.error({ text: this.$t('errors.default') });
       }
+    },
+
+    openRootCauseDiagram(service) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity: service,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
+        },
+      });
     },
 
     updateHideGray(hideGrey) {

@@ -97,6 +97,7 @@ export const SOCKET_ROOMS = {
   declareticket: 'declareticket',
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
+  icons: 'icons',
 };
 
 export const API_ROUTES = {
@@ -114,6 +115,7 @@ export const API_ROUTES = {
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
   alarmLinks: '/api/v4/alarm-links',
+  alarmDisplayNames: '/api/v4/alarm-display-names',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   entityCheckStateSetting: '/api/v4/entities/check-state-setting',
@@ -200,6 +202,9 @@ export const API_ROUTES = {
   saml: {
     auth: '/api/v4/saml/auth',
   },
+  oauth: {
+    login: '/api/v4/oauth/',
+  },
   scenario: {
     scenarios: '/api/v4/scenarios',
   },
@@ -227,6 +232,7 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  icons: '/api/v4/icons',
   themes: {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',

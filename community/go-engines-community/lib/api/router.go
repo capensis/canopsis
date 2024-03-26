@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -30,6 +31,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/icon"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -89,6 +91,10 @@ import (
 
 const BaseUrl = "/api/v4"
 
+const mimeTypeSvg = "image/svg+xml"
+
+const cacheExpiration = time.Hour
+
 // RegisterRoutes
 // nolint: contextcheck
 func RegisterRoutes(
@@ -114,7 +120,6 @@ func RegisterRoutes(
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	filesRoot string,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
@@ -129,7 +134,7 @@ func RegisterRoutes(
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
-	security.RegisterCallbackRoutes(ctx, router, dbClient)
+	security.RegisterCallbackRoutes(ctx, router, dbClient, sessionStore)
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
 	authApi := auth.NewApi(
@@ -208,6 +213,11 @@ func RegisterRoutes(
 			userRouter.PUT("/:id",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				userApi.Update,
+				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
+			userRouter.PATCH("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
+				userApi.Patch,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 			userRouter.DELETE("/:id",
@@ -372,6 +382,11 @@ func RegisterRoutes(
 			"/alarm-counters",
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.Count,
+		)
+		protected.GET(
+			"/alarm-display-names",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmAPI.GetDisplayNames,
 		)
 		exportExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
@@ -818,9 +833,7 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, securityConfig.AuthProviders,
-			securityConfig.Cas.Title, securityConfig.Saml.Title))
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, security.GetConfig()))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
@@ -2023,7 +2036,7 @@ func RegisterRoutes(
 
 		messageRateStatsRouter := protected.Group("/message-rate-stats")
 		{
-			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient))
+			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient, pgPoolProvider))
 			messageRateStatsRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermMessageRateStatsRead, model.PermissionCan, enforcer),
@@ -2034,7 +2047,7 @@ func RegisterRoutes(
 		fileRouter := protected.Group("/file")
 		{
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
-				filesRoot,
+				conf.File.Upload,
 				libfile.NewEtagEncoder(),
 			), conf.File.UploadMaxSize))
 			fileRouter.POST(
@@ -2055,6 +2068,52 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFile, model.PermissionDelete, enforcer),
 				fileAPI.Delete,
+			)
+		}
+
+		iconsCacheMiddlewareGetter := middleware.NewCacheMiddlewareGetter(cacheExpiration, nil)
+		iconsPath := "/icons"
+		iconRouter := protected.Group(iconsPath)
+		{
+			iconStore := icon.NewStore(
+				dbClient,
+				libfile.NewStorage(conf.File.Icon, libfile.NewEtagEncoder()),
+			)
+			iconApi := icon.NewApi(iconStore, websocketHub, actionLogger, conf.File.IconMaxSize, []string{mimeTypeSvg})
+			iconRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Create,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.GET(
+				"",
+				iconsCacheMiddlewareGetter.Cache(),
+				iconApi.List,
+			)
+			iconRouter.GET(
+				"/:id",
+				security.GetFileAuthMiddleware(),
+				iconsCacheMiddlewareGetter.Cache(),
+				iconApi.Get,
+			)
+			iconRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Delete,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Update,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
+			iconRouter.PATCH(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Patch,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
 		}
 

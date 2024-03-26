@@ -38,7 +38,7 @@ RUN apk add --no-cache ca-certificates tzdata
 
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
-RUN mkdir -p /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit /opt/canopsis/var/lib/upload-files && chown canopsis:canopsis /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit /opt/canopsis/var/lib/upload-files
+RUN mkdir -p /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit /opt/canopsis/var/lib/upload-files /opt/canopsis/var/lib/icons && chown canopsis:canopsis /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit /opt/canopsis/var/lib/upload-files /opt/canopsis/var/lib/icons
 
 COPY community/go-engines-community/config /opt/canopsis/share/config
 

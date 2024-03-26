@@ -14,7 +14,10 @@
       </v-btn>
     </h2>
     <v-expand-transition>
-      <div v-show="hasMessage && shownMessage">
+      <div
+        v-if="hasMessage"
+        v-show="shownMessage"
+      >
         <v-layout
           class="pb-2"
           justify-center

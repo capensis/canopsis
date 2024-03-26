@@ -69,10 +69,13 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {number} modalItemsPerPage
  * @property {boolean} isPriorityEnabled
  * @property {boolean} isHideGrayEnabled
+ * @property {boolean} isSecondaryIconEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
  * @property {boolean} entitiesActionsInQueue
  * @property {number} treeOfDependenciesShowType
+ * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -134,9 +137,12 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
   isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
+  isSecondaryIconEnabled: parameters.isSecondaryIconEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
   entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
   treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**

@@ -17,6 +17,8 @@ const stubs = {
 };
 
 const selectCard = wrapper => wrapper.find('card-with-see-alarms-btn-stub');
+const selectToolbar = wrapper => wrapper.find('.service-weather-item__toolbar');
+const selectToolbarButton = wrapper => selectToolbar(wrapper).find('.v-btn, v-btn-stub');
 
 describe('service-weather-item', () => {
   const service = {
@@ -80,6 +82,19 @@ describe('service-weather-item', () => {
     expect(wrapper).toHaveBeenEmit('show:service');
   });
 
+  test('Show root cause emitted after trigger click on show root cause button', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        service,
+        showRootCauseByStateClick: true,
+      },
+    });
+
+    await selectToolbarButton(wrapper).trigger('click');
+
+    expect(wrapper).toHaveBeenEmit('show:root-cause');
+  });
+
   test('Modal doesn\'t show after click on link', async () => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -131,6 +146,7 @@ describe('service-weather-item', () => {
         template: DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
         showVariablesHelpButton: true,
         showAlarmsButton: true,
+        showRootCauseByStateClick: true,
       },
     });
 
