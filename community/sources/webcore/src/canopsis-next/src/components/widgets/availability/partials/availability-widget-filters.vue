@@ -11,6 +11,7 @@
       :quick-ranges="quickRanges"
       class="availability-widget-filters__interval"
       short
+      with-hours
       @input="$emit('update:interval', $event)"
     />
     <v-layout
@@ -212,8 +213,13 @@ export default {
     flex-grow: 0;
   }
 
-  &__show-type, &__filter-selector, &__interval {
+  &__show-type, &__filter-selector {
     max-width: 200px;
+  }
+
+  &__interval {
+    max-width: 300px;
+    flex-grow: 1;
   }
 
   &__value-filter {

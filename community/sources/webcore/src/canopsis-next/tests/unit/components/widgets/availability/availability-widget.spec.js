@@ -166,7 +166,7 @@ describe('availability-widget', () => {
         widgetId: widget._id,
         params: {
           from: 1386284400,
-          to: 1386284400,
+          to: 1386370799,
           sort_by: AVAILABILITY_FIELDS.uptimeShare,
           sort: SORT_ORDERS.desc.toLowerCase(),
           page,
@@ -206,8 +206,9 @@ describe('availability-widget', () => {
       {
         widgetId: widget._id,
         params: {
-          from: 1378072800,
-          to: 1385852400,
+          from: 1377986400,
+          to: 1385852399,
+          limit: undefined,
           trend: AVAILABILITY_TREND_TYPES.lastThreeMonths,
           value_filter: undefined,
           filters: [],
