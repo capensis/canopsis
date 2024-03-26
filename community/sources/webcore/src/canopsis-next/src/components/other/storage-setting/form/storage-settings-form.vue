@@ -40,13 +40,14 @@
     <storage-settings-metrics-form v-field="form.metrics" />
     <storage-settings-perf-data-metrics-form v-field="form.perf_data_metrics" />
     <storage-settings-event-filter-failure-form v-field="form.event_filter_failure" />
+    <storage-settings-alarm-external-tag-form
+      v-field="form.alarm_external_tag"
+      :history="history.alarm_external_tag"
+    />
   </v-layout>
 </template>
 
 <script>
-import StorageSettingsEntityUnlinkedForm
-  from '@/components/other/storage-setting/form/storage-settings-entity-unlinked-form.vue';
-
 import StorageSettingsAlarmForm from './storage-settings-alarm-form.vue';
 import StorageSettingsEntityDisabledForm from './storage-settings-entity-disabled-form.vue';
 import StorageSettingsRemediationForm from './storage-settings-remediation-form.vue';
@@ -58,10 +59,13 @@ import StorageSettingsMetricsForm from './storage-settings-metrics-form.vue';
 import StorageSettingsPerfDataMetricsForm from './storage-settings-perf-data-metrics-form.vue';
 import StorageSettingsEventFilterFailureForm from './storage-settings-event-filter-failure-form.vue';
 import StorageSettingsEntityCleanForm from './storage-settings-entity-clean-form.vue';
+import StorageSettingsAlarmExternalTagForm from './storage-settings-alarm-external-tag-form.vue';
+import StorageSettingsEntityUnlinkedForm from './storage-settings-entity-unlinked-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    StorageSettingsAlarmExternalTagForm,
     StorageSettingsEntityCleanForm,
     StorageSettingsEntityUnlinkedForm,
     StorageSettingsEntityDisabledForm,
