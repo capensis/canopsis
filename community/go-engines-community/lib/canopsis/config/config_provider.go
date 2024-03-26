@@ -1467,6 +1467,7 @@ func parseEngineOrder(value []EngineOrder, oldValue []EngineOrder, logger zerolo
 		canopsis.DynamicInfosEngineName: true,
 		canopsis.ActionEngineName:       true,
 		canopsis.WebhookEngineName:      true,
+		canopsis.SnmpEngineName:         true,
 	}
 
 	for idx, pair := range value {
