@@ -108,7 +108,13 @@ exports[`availability-list Renders \`availability-list\` with custom props 1`] =
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Downtime: Not sorted. Activate to sort ascending."
@@ -118,16 +124,22 @@ exports[`availability-list Renders \`availability-list\` with custom props 1`] =
               role="columnheader"
               scope="col"
             >
-              <span>
-                Downtime
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Downtime
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Custom column: Sorted descending. Activate to remove sorting."
@@ -137,16 +149,22 @@ exports[`availability-list Renders \`availability-list\` with custom props 1`] =
               role="columnheader"
               scope="col"
             >
-              <span>
-                Custom column
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Custom column
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
           </tr>
         </thead>
@@ -654,7 +672,13 @@ exports[`availability-list Renders \`availability-list\` with default props 1`] 
               scope="col"
               style="width: 1px; min-width: 1px;"
             >
-              <span />
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
               aria-label="Uptime: Not sorted. Activate to sort ascending."
@@ -664,16 +688,22 @@ exports[`availability-list Renders \`availability-list\` with default props 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Uptime
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Uptime
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Custom column: Not sorted. Activate to sort ascending."
@@ -683,16 +713,22 @@ exports[`availability-list Renders \`availability-list\` with default props 1`] 
               role="columnheader"
               scope="col"
             >
-              <span>
-                Custom column
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                style="font-size: 18px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Custom column
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
           </tr>
         </thead>
