@@ -342,55 +342,6 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
 </div>
 `;
 
-exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without reason 3`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div>
-    <strong>
-      Periodic behaviors
-    </strong>
-    <div>
-      <div
-        class="mt-2 font-weight-bold"
-      >
-          pbehavior-name
-      </div>
-      <div>
-          Author: pbehavior-author
-      </div>
-      <div>
-          Type: type-name
-      </div>
-      <!---->
-      <div>
-          07/12/2013 3:13:20
-             - 07/12/2013 6:00:00
-      </div>
-      <div>
-          rrule
-      </div>
-      <div>
-          Last comment:
-        <div
-          class="ml-2"
-        >
-            - 
-              pbehavior-comment-1-author: 
-            pbehavior-comment-1-message
-        </div>
-      </div>
-      <hr
-        aria-orientation="horizontal"
-        class="v-divider theme--light"
-        role="separator"
-      />
-    </div>
-  </div>
-</div>
-`;
-
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rrule 1`] = `
 <div>
   <span
