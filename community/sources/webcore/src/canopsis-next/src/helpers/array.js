@@ -48,6 +48,7 @@ export const getIdFromEntity = (entity, idField = '_id') => (isObject(entity) ? 
  *
  * @param {Array} entities
  * @param {string} [idKey = '_id']
+ * @return Array
  */
 export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
 

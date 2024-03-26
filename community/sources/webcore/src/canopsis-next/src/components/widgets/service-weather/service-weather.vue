@@ -7,11 +7,11 @@
         v-layout(row, align-center)
           template(v-if="hasAccessToUserFilter")
             filter-selector(
+              :value="query.filter",
+              :locked-value="query.lockedFilter",
               :label="$t('settings.selectAFilter')",
               :filters="userPreference.filters",
               :locked-filters="widget.filters",
-              :locked-value="lockedFilter",
-              :value="mainFilter",
               :disabled="!hasAccessToListFilters",
               @input="updateSelectedFilter"
             )
