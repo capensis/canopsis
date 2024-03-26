@@ -69,6 +69,12 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
   };
 };
 
+/**
+ * Find quick availability range by interval
+ *
+ * @param {Object} interval
+ * @return {string}
+ */
 export const getAvailabilitiesTrendByInterval = (interval) => {
   const selectedQuickRange = findQuickRangeByInterval(interval);
   const selectedQuickRangeType = selectedQuickRange?.value;

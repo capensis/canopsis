@@ -14,7 +14,7 @@ exports[`availability-graph-settings Renders \`availability-graph-settings\` wit
       <c-quick-date-interval-type-field-stub
         label="Default time range"
         name="customName.default_time_range"
-        ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         value="last7Days"
       />
       <availability-show-type-radio-field-stub

@@ -8,7 +8,7 @@ exports[`availability-filters Renders \`availability-filters\` with custom props
     class="availability-filters__interval"
     interval="[object Object]"
     min="1000000000"
-    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
   />
   <availability-show-type-field-stub
@@ -26,7 +26,7 @@ exports[`availability-filters Renders \`availability-filters\` with default prop
 >
   <c-quick-date-interval-field-stub
     class="availability-filters__interval"
-    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
   />
   <availability-show-type-field-stub

@@ -12,6 +12,9 @@ export const AVAILABILITY_DISPLAY_PARAMETERS = {
 
 export const AVAILABILITY_QUICK_RANGES = {
   [QUICK_RANGES.last1Hour.value]: QUICK_RANGES.last1Hour,
+  [QUICK_RANGES.last3Hour.value]: QUICK_RANGES.last3Hour,
+  [QUICK_RANGES.last6Hour.value]: QUICK_RANGES.last6Hour,
+  [QUICK_RANGES.last12Hour.value]: QUICK_RANGES.last12Hour,
   [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
   [QUICK_RANGES.today.value]: QUICK_RANGES.today,
   [QUICK_RANGES.yesterday.value]: QUICK_RANGES.yesterday,
@@ -62,8 +65,10 @@ export const AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE = {
   [QUICK_RANGES.today.value]: AVAILABILITY_TREND_TYPES.lastDay,
   [QUICK_RANGES.yesterday.value]: AVAILABILITY_TREND_TYPES.lastDay,
   [QUICK_RANGES.thisWeek.value]: AVAILABILITY_TREND_TYPES.lastWeek,
+  [QUICK_RANGES.thisWeekSoFar.value]: AVAILABILITY_TREND_TYPES.lastWeek,
   [QUICK_RANGES.previousWeek.value]: AVAILABILITY_TREND_TYPES.lastWeek,
   [QUICK_RANGES.thisMonth.value]: AVAILABILITY_TREND_TYPES.lastMonth,
+  [QUICK_RANGES.thisMonthSoFar.value]: AVAILABILITY_TREND_TYPES.lastMonth,
   [QUICK_RANGES.previousMonth.value]: AVAILABILITY_TREND_TYPES.lastMonth,
   [QUICK_RANGES.last3Months.value]: AVAILABILITY_TREND_TYPES.lastThreeMonths,
   [QUICK_RANGES.last6Months.value]: AVAILABILITY_TREND_TYPES.lastSixMonths,

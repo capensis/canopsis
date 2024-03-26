@@ -123,10 +123,10 @@ export default {
   },
   methods: {
     customQueryCondition(query, oldQuery) {
-      const omitFields = ['showType'];
+      const omitFields = [];
 
       if (!query.valueFilter) {
-        omitFields.push('displayParameter');
+        omitFields.push('showType', 'displayParameter');
       }
 
       return isMetricsQueryChanged(

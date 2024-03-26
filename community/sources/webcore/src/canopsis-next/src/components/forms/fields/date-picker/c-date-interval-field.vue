@@ -64,6 +64,10 @@ export default {
 .c-date-interval {
   display: inline-flex;
 
+  .v-input__append-inner {
+    pointer-events: none;
+  }
+
   &--column {
     flex-direction: column;
   }

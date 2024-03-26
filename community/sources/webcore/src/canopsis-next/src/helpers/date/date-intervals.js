@@ -366,8 +366,26 @@ export const convertQueryIntervalToTimestamp = ({
   format = DATETIME_FORMATS.datePicker,
   timezone = getLocaleTimezone(),
 }) => {
-  const from = convertStartDateIntervalToTimestamp(interval.from, format, TIME_UNITS.day);
-  const to = convertStopDateIntervalToTimestamp(interval.to, format, TIME_UNITS.day);
+  const selectedQuickRange = findQuickRangeByInterval(interval);
+  const isHoursInterval = selectedQuickRange && [
+    QUICK_RANGES.last1Hour.value,
+    QUICK_RANGES.last3Hour.value,
+    QUICK_RANGES.last6Hour.value,
+    QUICK_RANGES.last12Hour.value,
+    QUICK_RANGES.last24Hour.value,
+  ].includes(selectedQuickRange.value);
+
+  const unit = isHoursInterval ? TIME_UNITS.hour : TIME_UNITS.day;
+
+  const from = convertStartDateIntervalToTimestamp(interval.from, format, unit);
+  const to = convertStopDateIntervalToTimestamp(interval.to, format, unit);
+
+  if (isHoursInterval) {
+    return {
+      from: convertDateToTimestampByTimezone(from, timezone),
+      to: convertDateToTimestampByTimezone(to, timezone),
+    };
+  }
 
   const fromStartedOfDay = convertDateToStartOfDayMoment(from);
   const toStartedOfDay = convertDateToStartOfDayMoment(to);
