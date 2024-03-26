@@ -73,6 +73,10 @@ export default {
     deleteAfter: 'Effacer les messages d\'erreur antérieurs à',
     deleteAfterHelpText: 'Tous les messages d\'erreur antérieurs à la période définie seront supprimés',
   },
+  alarmExternalTag: {
+    title: 'Stockage des données des tags externes d\'alarme',
+    deleteAfter: 'Effacer les balises externes après',
+  },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',
     alarm: {
@@ -82,6 +86,9 @@ export default {
     entity: {
       deletedCount: 'Entités supprimées : {count}.',
       archivedCount: 'Entités archivées : {count}.',
+    },
+    alarmExternalTag: {
+      deletedCount: 'Balises externes d\'alarme supprimées : {count}.',
     },
   },
 };
