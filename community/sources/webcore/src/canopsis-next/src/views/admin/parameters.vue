@@ -15,22 +15,23 @@
             <v-tab :href="`#${$constants.PARAMETERS_TABS.viewExportImport}`">
               {{ $t('parameters.tabs.importExportViews') }}
             </v-tab>
-            <v-tab :href="`#${$constants.PARAMETERS_TABS.stateSettings}`">
-              {{ $t('parameters.tabs.stateSettings') }}
+            <v-tab
+              v-if="isProVersion"
+              :href="`#${$constants.PARAMETERS_TABS.notificationSettings}`"
+            >
+              {{ $t('parameters.tabs.notificationsSettings') }}
             </v-tab>
-            <template v-if="isProVersion">
-              <v-tab :href="`#${$constants.PARAMETERS_TABS.notificationSettings}`">
-                {{ $t('parameters.tabs.notificationsSettings') }}
-              </v-tab>
-              <v-tab :href="`#${$constants.PARAMETERS_TABS.storageSettings}`">
-                {{ $t('parameters.tabs.storageSettings') }}
-              </v-tab>
-            </template>
             <v-tab
               v-if="hasReadAnyWidgetTemplateAccess"
               :href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`"
             >
               {{ $t('parameters.tabs.widgetTemplates') }}
+            </v-tab>
+            <v-tab
+              v-if="hasReadAnyIconAccess"
+              :href="`#${$constants.PARAMETERS_TABS.icons}`"
+            >
+              {{ $tc('common.icon', 2) }}
             </v-tab>
             <v-tabs-items v-model="activeTab">
               <v-tab-item :value="$constants.PARAMETERS_TABS.parameters">
@@ -41,29 +42,28 @@
               <v-tab-item :value="$constants.PARAMETERS_TABS.viewExportImport">
                 <views-import-export />
               </v-tab-item>
-              <v-tab-item :value="$constants.PARAMETERS_TABS.stateSettings">
+              <v-tab-item
+                v-if="isProVersion"
+                :value="$constants.PARAMETERS_TABS.notificationSettings"
+              >
                 <v-card-text>
-                  <state-settings />
+                  <notifications-settings />
                 </v-card-text>
               </v-tab-item>
-              <template v-if="isProVersion">
-                <v-tab-item :value="$constants.PARAMETERS_TABS.notificationSettings">
-                  <v-card-text>
-                    <notifications-settings />
-                  </v-card-text>
-                </v-tab-item>
-                <v-tab-item :value="$constants.PARAMETERS_TABS.storageSettings">
-                  <v-card-text>
-                    <storage-settings />
-                  </v-card-text>
-                </v-tab-item>
-              </template>
               <v-tab-item
                 v-if="hasReadAnyWidgetTemplateAccess"
                 :value="$constants.PARAMETERS_TABS.widgetTemplates"
               >
                 <v-card-text>
                   <widget-templates />
+                </v-card-text>
+              </v-tab-item>
+              <v-tab-item
+                v-if="hasReadAnyIconAccess"
+                :value="$constants.PARAMETERS_TABS.icons"
+              >
+                <v-card-text>
+                  <icons />
                 </v-card-text>
               </v-tab-item>
             </v-tabs-items>
@@ -76,7 +76,7 @@
         v-if="fabData"
         v-on="fabData.on"
       >
-        <span>{{ fabData.label }}</span>
+        <span>{{ fabData.text }}</span>
       </c-fab-btn>
     </v-fade-transition>
   </v-container>
@@ -86,33 +86,33 @@
 import { MODALS, PARAMETERS_TABS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { entitiesStateSettingMixin } from '@/mixins/entities/state-setting';
 import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
+import { entitiesIconMixin } from '@/mixins/entities/icon';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
+import { permissionsTechnicalIconMixin } from '@/mixins/permissions/technical/icon';
 
 import UserInterface from '@/components/other/user-interface/user-interface.vue';
 import ViewsImportExport from '@/components/other/view/views-import-export.vue';
-import StateSettings from '@/components/other/state-setting/state-settings.vue';
 import NotificationsSettings from '@/components/other/notification/notifications-settings.vue';
-import StorageSettings from '@/components/other/storage-setting/storage-settings.vue';
 import WidgetTemplates from '@/components/other/widget-template/widget-templates.vue';
+import Icons from '@/components/other/icons/icons.vue';
 
 export default {
   components: {
     UserInterface,
     ViewsImportExport,
-    StateSettings,
     NotificationsSettings,
-    StorageSettings,
     WidgetTemplates,
+    Icons,
   },
   mixins: [
     entitiesInfoMixin,
-    entitiesStateSettingMixin,
+    entitiesIconMixin,
     entitiesWidgetTemplatesMixin,
     permissionsTechnicalParametersMixin,
     permissionsTechnicalWidgetTemplateMixin,
+    permissionsTechnicalIconMixin,
   ],
   data() {
     return {
@@ -123,17 +123,17 @@ export default {
     fabData() {
       return {
         [PARAMETERS_TABS.widgetTemplates]: {
-          label: this.$t('modals.createWidgetTemplate.create.title'),
+          text: this.$t('modals.createWidgetTemplate.create.title'),
           on: {
             refresh: this.fetchWidgetTemplatesListWithPreviousParams,
             create: this.showSelectWidgetTemplateTypeModal,
           },
         },
-        [PARAMETERS_TABS.stateSettings]: {
-          label: this.$t('modals.createStateSetting.create.title'),
+        [PARAMETERS_TABS.icons]: {
+          text: this.$t('modals.createIcon.create.title'),
           on: {
-            refresh: this.fetchStateSettingsListWithPreviousParams,
-            create: this.showCreateStateSettingModal,
+            refresh: this.fetchIconsListWithPreviousParams,
+            create: this.showCreateIconModal,
           },
         },
       }[this.activeTab];
@@ -148,22 +148,22 @@ export default {
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 
-            this.fabData?.on.refresh();
+            this.fabData?.on?.refresh();
           },
         },
       });
     },
 
-    showCreateStateSettingModal() {
+    showCreateIconModal() {
       this.$modals.show({
-        name: MODALS.createStateSetting,
+        name: MODALS.createIcon,
         config: {
-          title: this.$t('modals.createStateSetting.create.title'),
-          action: async (newStateSetting) => {
-            await this.createStateSetting({ data: newStateSetting });
+          title: this.$t('modals.createIcon.create.title'),
+          action: async (newIcon) => {
+            await this.createIcon({ data: newIcon });
 
-            this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
-            this.fabData?.on.refresh();
+            this.$popups.success({ text: this.$t('modals.createIcon.create.success') });
+            this.fabData?.on?.refresh();
           },
         },
       });

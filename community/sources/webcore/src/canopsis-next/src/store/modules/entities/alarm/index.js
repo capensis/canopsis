@@ -2,14 +2,13 @@ import Vue from 'vue';
 import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request, { useRequestCancelling } from '@/services/request';
 
 import i18n from '@/i18n';
 
-import { alarmSchema } from '@/store/schemas';
-import { ENTITIES_MUTATION_TYPES } from '@/store/plugins/entities';
+import { mergeChangedProperties } from '@/helpers/collection';
+import { mapIds } from '@/helpers/array';
 
 import detailsModule from './details';
 import linksModule from './links';
@@ -19,7 +18,7 @@ export const types = {
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 
-  DOWNLOAD_LIST_COMPLETED: 'DOWNLOAD_LIST_COMPLETED',
+  SET_ALARMS: 'SET_ALARMS',
 };
 
 export default {
@@ -29,28 +28,33 @@ export default {
     links: linksModule,
   },
   state: {
+    alarmsById: {},
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
-      ENTITIES_TYPES.alarm,
-      get(state.widgets[widgetId], 'allIds', []),
-    ),
+    getItem: state => id => state.alarmsById[id],
+
+    getList: (state, getters) => ids => ids.map(getters.getItem),
+
+    getListByWidgetId: (state, getters) => widgetId => getters.getList(get(state.widgets[widgetId], 'allIds', [])),
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending', false),
     getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
 
-    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
-      ENTITIES_TYPES.alarm,
-      id,
-    ),
-    getList: (state, getters, rootState, rootGetters) => ids => rootGetters['entities/getList'](
-      ENTITIES_TYPES.alarm,
-      ids,
-    ),
   },
   mutations: {
+    [types.SET_ALARMS](state, { data }) {
+      data.forEach((alarm) => {
+        const oldAlarm = state.alarmsById[alarm._id];
+
+        const updatedAlarm = oldAlarm
+          ? mergeChangedProperties(oldAlarm, alarm)
+          : alarm;
+
+        Vue.set(state.alarmsById, alarm._id, updatedAlarm);
+      });
+    },
     [types.FETCH_LIST](state, { widgetId, params }) {
       Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
     },
@@ -89,21 +93,14 @@ export default {
             commit(types.FETCH_LIST, { widgetId, params });
           }
 
-          await dispatch('entities/fetch', {
-            route: API_ROUTES.alarms.list,
-            schema: [alarmSchema],
-            params,
-            cancelToken: source.token,
-            dataPreparer: d => d.data,
-            mutationType: ENTITIES_MUTATION_TYPES.smartUpdate,
-            afterCommit: ({ normalizedData, data }) => {
-              commit(types.FETCH_LIST_COMPLETED, {
-                widgetId,
-                allIds: normalizedData.result,
-                meta: data.meta,
-              });
-            },
-          }, { root: true });
+          const { data, meta } = await request.get(API_ROUTES.alarms.list, { params, cancelToken: source.token });
+
+          commit(types.SET_ALARMS, { data });
+          commit(types.FETCH_LIST_COMPLETED, {
+            widgetId,
+            allIds: mapIds(data),
+            meta,
+          });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
         console.error(err);
@@ -114,11 +111,12 @@ export default {
       }
     },
 
-    fetchItem({ dispatch }, { id }) {
-      return dispatch('entities/fetch', {
-        route: `${API_ROUTES.alarms.list}/${id}`,
-        schema: alarmSchema,
-      }, { root: true });
+    async fetchItem({ commit }, { id }) {
+      const alarm = await request.get(`${API_ROUTES.alarms.list}/${id}`);
+
+      commit(types.SET_ALARMS, { data: [alarm] });
+
+      return alarm;
     },
 
     fetchItemWithoutStore(context, { id }) {
@@ -205,11 +203,14 @@ export default {
       return request.delete(`${API_ROUTES.alarms.list}/${id}/bookmark`);
     },
 
-    updateItemInStore({ dispatch }, alarm) {
-      return dispatch('entities/addToStore', {
-        schema: alarmSchema,
-        data: alarm,
-      }, { root: true });
+    fetchDisplayNamesWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.alarmDisplayNames, { params });
+    },
+
+    updateItemInStore({ commit }, alarm) {
+      commit(types.SET_ALARMS, { data: [alarm] });
+
+      return alarm;
     },
   },
 };

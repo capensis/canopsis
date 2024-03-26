@@ -109,7 +109,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
                   </th>
                   <th
                     aria-label="Custom name label"
@@ -118,9 +124,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Custom name label
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Custom name label
+                      </span>
+                    </div>
                   </th>
                   <th
                     aria-label="Custom type label"
@@ -129,9 +141,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Custom type label
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Custom type label
+                      </span>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -336,7 +354,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
                   </th>
                   <th
                     aria-label="Name"
@@ -345,9 +369,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Name
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Name
+                      </span>
+                    </div>
                   </th>
                   <th
                     aria-label="Type"
@@ -356,9 +386,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Type
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Type
+                      </span>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -596,7 +632,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
                   </th>
                   <th
                     aria-label="Name"
@@ -605,9 +647,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Name
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Name
+                      </span>
+                    </div>
                   </th>
                   <th
                     aria-label="Type"
@@ -616,9 +664,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Type
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Type
+                      </span>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -729,7 +783,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                     role="columnheader"
                     scope="col"
                   >
-                    <span />
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
                   </th>
                   <th
                     aria-label="Name"
@@ -738,9 +798,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Name
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Name
+                      </span>
+                    </div>
                   </th>
                   <th
                     aria-label="Type"
@@ -749,9 +815,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                     role="columnheader"
                     scope="col"
                   >
-                    <span>
-                      Type
-                    </span>
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Type
+                      </span>
+                    </div>
                   </th>
                 </tr>
               </thead>

@@ -35,6 +35,7 @@ class Application {
       width: 1920,
       height: 1040,
     });
+    this.page.setDefaultTimeout(120_000);
   }
 
   closePage() {
@@ -48,7 +49,7 @@ class Application {
   async navigate(url) {
     const resultUrl = `${this.url}${url}`;
 
-    await this.page.goto(resultUrl, { timeout: 120_000 });
+    await this.page.goto(resultUrl);
 
     logInfo(`Navigate to ${resultUrl}`);
   }

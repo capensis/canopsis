@@ -3,32 +3,40 @@ package httpprovider
 import (
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // casProvider implements CAS authentication.
 type casProvider struct {
-	client       libhttp.Doer
-	config       security.CasConfig
-	userProvider security.UserProvider
+	roleCollection mongo.DbCollection
+	client         libhttp.Doer
+	config         security.CasConfig
+	userProvider   security.UserProvider
 }
 
 // NewCasProvider creates new provider.
 func NewCasProvider(
+	dbClient mongo.DbClient,
 	client libhttp.Doer,
 	config security.CasConfig,
 	userProvider security.UserProvider,
 ) security.HttpProvider {
 	return &casProvider{
-		client:       client,
-		config:       config,
-		userProvider: userProvider,
+		roleCollection: dbClient.Collection(mongo.RoleCollection),
+		client:         client,
+		config:         config,
+		userProvider:   userProvider,
 	}
 }
 
@@ -132,6 +140,19 @@ func (p *casProvider) saveUser(ctx context.Context, username string) (*security.
 	}
 
 	if user == nil {
+		err = p.roleCollection.FindOne(
+			ctx,
+			bson.M{"name": p.config.DefaultRole},
+			options.FindOne().SetProjection(bson.M{"_id": 1}),
+		).Err()
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil, fmt.Errorf("role %s doesn't exist", p.config.DefaultRole)
+			}
+
+			return nil, err
+		}
+
 		user = &security.User{
 			Name:       username,
 			Roles:      []string{p.config.DefaultRole},
@@ -139,6 +160,7 @@ func (p *casProvider) saveUser(ctx context.Context, username string) (*security.
 			ExternalID: username,
 			Source:     security.SourceCas,
 		}
+
 		err = p.userProvider.Save(ctx, user)
 		if err != nil {
 			return nil, fmt.Errorf("cannot save user: %w", err)

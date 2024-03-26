@@ -34,6 +34,7 @@
     <meta-alarm-rule-time-based-form
       v-if="isTimeBasedFormShown"
       v-field="form.config"
+      :with-child-inactive-delay="withChildInactiveDelay"
     />
     <meta-alarm-rule-value-paths-form
       v-if="isValuePathsFormShown"
@@ -123,6 +124,12 @@ export default {
 
     withTotalEntityPattern() {
       return isMetaAlarmRuleTypeHasTotalEntityPatterns(this.form.type);
+    },
+
+    withChildInactiveDelay() {
+      return this.isComplexType
+        || this.isValueGroupType
+        || this.isCorelFormShown;
     },
 
     /**

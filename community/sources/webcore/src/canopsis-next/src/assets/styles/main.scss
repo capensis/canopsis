@@ -272,6 +272,10 @@ html {
   margin: 6px 8px;
 }
 
+.v-icon svg {
+  fill: currentColor;
+}
+
 @for $i from 0 through 16 {
   .row-gap-#{$i}, .gap-#{$i} {
     row-gap: $i * 4px;

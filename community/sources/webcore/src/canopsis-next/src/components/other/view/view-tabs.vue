@@ -31,9 +31,11 @@
         <template v-if="updatable && editing">
           <v-btn
             :disabled="changed"
+            class="ml-2"
             small
             text
             icon
+            dark
             @click.prevent="showUpdateTabModal(tab)"
           >
             <v-icon small>
@@ -45,6 +47,7 @@
             small
             text
             icon
+            dark
             @click.prevent="showSelectViewModal(tab)"
           >
             <v-icon small>
@@ -56,6 +59,7 @@
             small
             text
             icon
+            dark
             @click.prevent="showDeleteTabModal(tab)"
           >
             <v-icon small>

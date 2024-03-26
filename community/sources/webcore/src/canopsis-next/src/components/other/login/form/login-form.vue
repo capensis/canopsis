@@ -1,26 +1,22 @@
 <template>
   <v-layout column>
-    <v-flex class="mt-1">
-      <v-text-field
-        v-field.mutate="form.username"
-        v-validate="'required'"
-        :label="$t('common.username')"
-        :error-messages="errors.collect('username')"
-        color="primary"
-        name="username"
-        autofocus
-        clearable
-        outlined
-      />
-    </v-flex>
-    <v-flex>
-      <c-password-field
-        v-field.mutate="form.password"
-        required
-        clearable
-        outlined
-      />
-    </v-flex>
+    <v-text-field
+      v-field.mutate="form.username"
+      v-validate="'required'"
+      :label="$t('common.username')"
+      :error-messages="errors.collect('username')"
+      color="primary"
+      name="username"
+      autofocus
+      clearable
+      outlined
+    />
+    <c-password-field
+      v-field.mutate="form.password"
+      required
+      clearable
+      outlined
+    />
   </v-layout>
 </template>
 

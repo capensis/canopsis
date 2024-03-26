@@ -186,6 +186,360 @@ func TestFunctions(t *testing.T) {
 				ExpectedRes: "",
 			},
 		},
+		"substrLeft": {
+			{
+				Tpl: `{{substrLeft .String 5 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substrLeft .String 0 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substrLeft .String 13 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{substrLeft .String 100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{substrLeft .String -100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substrLeft .String 8 }}`,
+				TplData: map[string]any{
+					"String": "élémentaire",
+				},
+				ExpectedRes: "élémenta",
+			},
+		},
+		"substrRight": {
+			{
+				Tpl: `{{substrRight .String 6 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substrRight .String 0 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substrRight .String 13 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{substrRight .String 100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{substrRight .String -100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substrRight .String 6 }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "émenta",
+			},
+		},
+		"substr": {
+			{
+				Tpl: `{{substr .String 0 5 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substr .String 7 5 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world",
+			},
+			{
+				Tpl: `{{substr .String 7 1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substr .String 0 1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{substr .String -1 1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substr .String 5 0 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substr .String 0 -1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substr .String 1 2 }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "lé",
+			},
+		},
+		"strlen": {
+			{
+				Tpl: `{{strlen .String }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "13",
+			},
+			{
+				Tpl: `{{strlen .String }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "8",
+			},
+		},
+		"strpos": {
+			{
+				Tpl: `{{strpos .String "w" }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "7",
+			},
+			{
+				Tpl: `{{strpos .String "ém" }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "2",
+			},
+			{
+				Tpl: `{{strpos .String "invalid" }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "-1",
+			},
+		},
+		"substr_complex": {
+			{
+				Tpl: `{{ $var := add .A .B }}{{ substrLeft .String $var }}`,
+				TplData: map[string]any{
+					"A":      1,
+					"B":      2,
+					"String": "qwerty",
+				},
+				ExpectedRes: "qwe",
+			},
+			{
+				Tpl: `{{substrLeft .String (sub (strlen .String) 8) }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substrLeft .String (strpos .String ",") }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substrLeft .String (sub (strlen .String) 6) }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "él",
+			},
+			{
+				Tpl: `{{substrLeft .String (strpos .String "ém") }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "él",
+			},
+			{
+				Tpl: `{{substrLeft .String (strpos .String "invalid") }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) 7) }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) (strpos .String "w")) }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) 2) }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "émenta",
+			},
+			{
+				Tpl: `{{substrRight .String (sub (strlen .String) (strpos .String "ém")) }}`,
+				TplData: map[string]any{
+					"String": "élémenta",
+				},
+				ExpectedRes: "émenta",
+			},
+			{
+				Tpl: `{{substrRight .String (strpos .String "invalid") }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+		},
+		"add": {
+			{
+				Tpl: `{{ add .A .B }}`,
+				TplData: map[string]any{
+					"A": 2,
+					"B": 2,
+				},
+				ExpectedRes: "4",
+			},
+			{
+				Tpl: `{{ add .A .B }}`,
+				TplData: map[string]any{
+					"A": "2.5",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToInt64,
+			},
+		},
+		"sub": {
+			{
+				Tpl: `{{ sub .A .B }}`,
+				TplData: map[string]any{
+					"A": 4,
+					"B": 2,
+				},
+				ExpectedRes: "2",
+			},
+			{
+				Tpl: `{{ sub .A .B }}`,
+				TplData: map[string]any{
+					"A": "5",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToInt64,
+			},
+		},
+		"mult": {
+			{
+				Tpl: `{{ mult .A .B }}`,
+				TplData: map[string]any{
+					"A": 2,
+					"B": 2,
+				},
+				ExpectedRes: "4",
+			},
+			{
+				Tpl: `{{ mult .A .B }}`,
+				TplData: map[string]any{
+					"A": "2.5",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToInt64,
+			},
+		},
+		"div": {
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 4,
+					"B": 2,
+				},
+				ExpectedRes: "2",
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 13,
+					"B": 2,
+				},
+				ExpectedRes: "6",
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 6,
+					"B": 0,
+				},
+				ExpectedErr: ErrDivisionByZero,
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": "6.25",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToInt64,
+			},
+		},
 	}
 
 	for name, v := range dataSets {
@@ -268,6 +622,8 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"NotAckedMetricType":                alarm.NotAckedMetricType,
 				"NotAckedSince":                     alarm.NotAckedSince,
 				"InactiveAutoInstructionInProgress": alarm.InactiveAutoInstructionInProgress,
+				"InactiveDelayMetaAlarmInProgress":  alarm.InactiveDelayMetaAlarmInProgress,
+				"MetaAlarmInactiveDelay":            alarm.MetaAlarmInactiveDelay,
 				"Healthcheck":                       alarm.Healthcheck,
 				"Env":                               envVars,
 			},
@@ -291,6 +647,8 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"NotAckedMetricType":                alarm.NotAckedMetricType,
 				"NotAckedSince":                     alarm.NotAckedSince,
 				"InactiveAutoInstructionInProgress": alarm.InactiveAutoInstructionInProgress,
+				"InactiveDelayMetaAlarmInProgress":  alarm.InactiveDelayMetaAlarmInProgress,
+				"MetaAlarmInactiveDelay":            alarm.MetaAlarmInactiveDelay,
 				"Healthcheck":                       alarm.Healthcheck,
 				"Env":                               envVars,
 			},
@@ -314,6 +672,8 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"NotAckedMetricType":                alarm.NotAckedMetricType,
 				"NotAckedSince":                     alarm.NotAckedSince,
 				"InactiveAutoInstructionInProgress": alarm.InactiveAutoInstructionInProgress,
+				"InactiveDelayMetaAlarmInProgress":  alarm.InactiveDelayMetaAlarmInProgress,
+				"MetaAlarmInactiveDelay":            alarm.MetaAlarmInactiveDelay,
 				"Healthcheck":                       alarm.Healthcheck,
 				"Env":                               envVars,
 			},
@@ -341,6 +701,8 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"NotAckedMetricType":                alarm.NotAckedMetricType,
 				"NotAckedSince":                     alarm.NotAckedSince,
 				"InactiveAutoInstructionInProgress": alarm.InactiveAutoInstructionInProgress,
+				"InactiveDelayMetaAlarmInProgress":  alarm.InactiveDelayMetaAlarmInProgress,
+				"MetaAlarmInactiveDelay":            alarm.MetaAlarmInactiveDelay,
 				"Healthcheck":                       alarm.Healthcheck,
 				"Env":                               envVars,
 			},
@@ -368,6 +730,8 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"NotAckedMetricType":                alarm.NotAckedMetricType,
 				"NotAckedSince":                     alarm.NotAckedSince,
 				"InactiveAutoInstructionInProgress": alarm.InactiveAutoInstructionInProgress,
+				"InactiveDelayMetaAlarmInProgress":  alarm.InactiveDelayMetaAlarmInProgress,
+				"MetaAlarmInactiveDelay":            alarm.MetaAlarmInactiveDelay,
 				"Healthcheck":                       alarm.Healthcheck,
 				"Env":                               envVars,
 			},
@@ -395,6 +759,8 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"NotAckedMetricType":                alarm.NotAckedMetricType,
 				"NotAckedSince":                     alarm.NotAckedSince,
 				"InactiveAutoInstructionInProgress": alarm.InactiveAutoInstructionInProgress,
+				"InactiveDelayMetaAlarmInProgress":  alarm.InactiveDelayMetaAlarmInProgress,
+				"MetaAlarmInactiveDelay":            alarm.MetaAlarmInactiveDelay,
 				"Healthcheck":                       alarm.Healthcheck,
 				"Env":                               envVars,
 			},
