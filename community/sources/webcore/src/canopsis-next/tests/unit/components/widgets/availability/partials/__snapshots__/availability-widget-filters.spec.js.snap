@@ -8,7 +8,7 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
     class="availability-widget-filters__interval"
     interval="[object Object]"
     min="1234567"
-    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
   />
   <div

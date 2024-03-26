@@ -191,7 +191,7 @@ export default {
     const handleUpdateValueFilter = (valueFilter) => {
       if (!valueFilter || valueFilter.value === props.valueFilter?.value) {
         emitUpdateValueFilter(valueFilter);
-      } else if (valueFilter.value) {
+      } else {
         debouncedEmitUpdateValueFilter(valueFilter);
       }
     };
