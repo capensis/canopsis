@@ -6,6 +6,7 @@
       :quick-ranges="quickRanges"
       class="availability-filters__interval"
       short
+      with-hours
       @input="$emit('update:interval', $event)"
     />
     <availability-show-type-field
@@ -53,8 +54,8 @@ export default {
 <style lang="scss">
 .availability-filters {
   &__show-type, &__interval {
-    max-width: 200px;
-    flex: 1;
+    max-width: 300px;
+    flex-grow: 1;
   }
 }
 </style>

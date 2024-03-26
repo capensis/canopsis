@@ -10,6 +10,7 @@ exports[`availability-filters Renders \`availability-filters\` with custom props
     min="1000000000"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
+    with-hours=""
   />
   <availability-show-type-field-stub
     class="availability-filters__show-type"
@@ -28,6 +29,7 @@ exports[`availability-filters Renders \`availability-filters\` with default prop
     class="availability-filters__interval"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
+    with-hours=""
   />
   <availability-show-type-field-stub
     class="availability-filters__show-type"
