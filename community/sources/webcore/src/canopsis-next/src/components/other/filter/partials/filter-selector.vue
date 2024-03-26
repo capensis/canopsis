@@ -63,7 +63,7 @@
       >
         <v-list-item-action v-if="isMultiple">
           <v-checkbox
-            :input-value="item.active || attrs.value"
+            :input-value="item.active || attrs.inputValue"
             :color="parent.color"
             :disabled="attrs.disabled"
           />
