@@ -7,6 +7,7 @@
       class="availability-filters__interval"
       short
       with-hours
+      allow-future
       @input="$emit('update:interval', $event)"
     />
     <availability-show-type-field

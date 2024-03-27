@@ -195,7 +195,6 @@ describe('availability-widget-filters', () => {
         lockedFilter: 'locked-filter',
         userFilters: [{}],
         widgetFilters: [{}, {}],
-        minIntervalDate: 1234567,
         showInterval: true,
         showFilter: true,
         filterAddable: true,

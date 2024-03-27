@@ -5,6 +5,7 @@ exports[`availability-filters Renders \`availability-filters\` with custom props
   class="layout availability-filters gap-6 wrap"
 >
   <c-quick-date-interval-field-stub
+    allow-future=""
     class="availability-filters__interval"
     interval="[object Object]"
     min="1000000000"
@@ -26,6 +27,7 @@ exports[`availability-filters Renders \`availability-filters\` with default prop
   class="layout availability-filters gap-6 wrap"
 >
   <c-quick-date-interval-field-stub
+    allow-future=""
     class="availability-filters__interval"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""

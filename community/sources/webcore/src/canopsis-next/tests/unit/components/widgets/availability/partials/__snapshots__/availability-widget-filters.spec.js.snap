@@ -5,9 +5,9 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
   class="layout availability-widget-filters gap-6 align-end wrap"
 >
   <c-quick-date-interval-field-stub
+    allow-future=""
     class="availability-widget-filters__interval"
     interval="[object Object]"
-    min="1234567"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
     with-hours=""
