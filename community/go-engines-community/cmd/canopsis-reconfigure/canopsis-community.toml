@@ -197,6 +197,12 @@ PartsOrder = ["time", "level", "caller", "message"]
 Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
+GoMetrics = [
+    "proc_cpu_total",
+    "proc_virtual_memory",
+    "proc_resident_memory",
+    "proc_file_descriptors",
+]
 
 # Template vars can be used in any template like this {{ .Env.Location }}.
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
