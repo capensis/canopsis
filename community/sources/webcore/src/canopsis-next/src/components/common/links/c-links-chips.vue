@@ -56,7 +56,7 @@ export default {
   props: {
     links: {
       type: Object,
-      required: true,
+      required: false,
     },
     inlineCount: {
       type: [Number, String],
