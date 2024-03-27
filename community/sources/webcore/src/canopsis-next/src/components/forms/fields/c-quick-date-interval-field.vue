@@ -124,6 +124,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    allowFuture: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     shortValue() {
@@ -250,7 +254,7 @@ export default {
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
-        && this.isLessNowDate(stopTimestamp)
+        && (this.allowFuture || this.isLessNowDate(stopTimestamp))
         && this.isAllowedAccumulatedToDate(stopTimestamp);
     },
 

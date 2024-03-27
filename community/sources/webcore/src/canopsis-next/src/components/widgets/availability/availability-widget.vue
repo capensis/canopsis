@@ -16,7 +16,6 @@
       :show-export="hasAccessToExportAsCsv"
       :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
-      :min-interval-date="minAvailableDate"
       :exporting="exporting"
       :max-value-filter-seconds="maxValueFilterSeconds"
       class="px-3 pt-3"
@@ -46,18 +45,17 @@
 </template>
 
 <script>
-import { omit, pick } from 'lodash';
+import { isEmpty, pick } from 'lodash';
 
 import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_VALUE_FILTER_METHODS, TIME_UNITS } from '@/constants';
 
 import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
-import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 import { getAvailabilitiesTrendByInterval } from '@/helpers/entities/availability/query';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { isOmitEqual } from '@/helpers/collection';
 
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -103,14 +101,6 @@ export default {
     };
   },
   computed: {
-    minAvailableDate() {
-      const { min_date: minDate } = this.availabilitiesMeta;
-
-      return minDate
-        ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
-        : null;
-    },
-
     interval() {
       return this.getIntervalQuery();
     },
@@ -131,11 +121,7 @@ export default {
         omitFields.push('showType', 'displayParameter');
       }
 
-      return isMetricsQueryChanged(
-        omit(query, omitFields),
-        omit(oldQuery, omitFields),
-        this.minAvailableDate,
-      );
+      return !isOmitEqual(query, oldQuery, omitFields) && !isEmpty(query);
     },
 
     getIntervalQuery() {

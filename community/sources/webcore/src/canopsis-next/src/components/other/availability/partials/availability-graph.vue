@@ -19,6 +19,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { isEqual } from 'lodash';
 
 import { AVAILABILITY_DISPLAY_PARAMETERS, DATETIME_FORMATS, SAMPLINGS, TIME_UNITS } from '@/constants';
 import { AVAILABILITY_FILENAME_PREFIX } from '@/config';
@@ -67,6 +68,13 @@ export default {
         sampling: this.getSamplingByInterval(),
       },
     };
+  },
+  watch: {
+    interval(interval, oldInterval) {
+      if (!isEqual(interval, oldInterval)) {
+        this.fetchList();
+      }
+    },
   },
   mounted() {
     this.fetchList();
