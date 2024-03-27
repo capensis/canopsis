@@ -197,6 +197,7 @@ PartsOrder = ["time", "level", "caller", "message"]
 Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
+GoMetricsInterval = "1s"
 GoMetrics = [
     "proc_cpu_total",
     "proc_virtual_memory",
