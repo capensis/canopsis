@@ -689,7 +689,6 @@ func (p *metaAlarmEventProcessor) getChildEventByStep(
 		return childEvent, err
 	}
 
-	childEvent.EventType = types.EventTypeMetaAlarmChildActivate
 	childEvent.Timestamp = datetime.NewCpsTime()
 	childEvent.Author = metaAlarmStep.Author
 	childEvent.UserID = metaAlarmStep.UserID

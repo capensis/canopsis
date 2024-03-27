@@ -82,7 +82,6 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime) {
 	q.lookups = []lookupWithKey{
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "category", pipeline: dbquery.GetCategoryLookup()},
-		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "event_stats", pipeline: getEventStatsLookup(now)},
 	}
@@ -92,7 +91,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime) {
 	q.computedFieldsForAdditionalMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields()
-	q.excludedFields = []string{"services", "alarm", "event_stats", "pbehavior_info_type"}
+	q.excludedFields = []string{"services", "alarm", "event_stats"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime) ([]bson.M, error) {
