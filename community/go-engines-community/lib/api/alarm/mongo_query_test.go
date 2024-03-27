@@ -47,7 +47,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -61,7 +60,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -142,7 +140,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -156,7 +153,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -244,7 +240,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
@@ -261,7 +256,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -342,7 +336,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -356,7 +349,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -452,7 +444,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -466,7 +457,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -533,7 +523,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -547,7 +536,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -677,7 +665,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
@@ -694,7 +681,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -799,7 +785,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -813,7 +798,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -906,7 +890,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	activeDurationField := fields["v.active_duration"]
@@ -925,7 +908,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -993,7 +975,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -1007,7 +988,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -1081,7 +1061,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
 	fields := getComputedFields(now, "")
@@ -1099,7 +1078,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 			"resolved_children":      0,
 		}},
 	)
@@ -1182,7 +1160,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
 	fields := getComputedFields(now, "")
@@ -1200,7 +1177,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 			"resolved_children":      0,
 		}},
 	)
@@ -1269,7 +1245,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -1283,7 +1258,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -1347,7 +1321,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
@@ -1364,7 +1337,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -1429,7 +1401,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now, "")
 	infosField := fields["infos"]
 	delete(fields, "infos")
@@ -1446,7 +1417,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -1574,7 +1544,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -1587,7 +1556,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 			"entity.services":        0,
 		}},
 	)
@@ -1688,7 +1656,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetImpactsCountPipeline("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDependsCountPipeline("entity")...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1704,7 +1671,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 			"v.steps":                0,
 			"pbehavior.comments":     0,
 			"pbehavior.last_comment": 0,
-			"pbehavior_info_type":    0,
 		}},
 	)
 	expected := []bson.M{

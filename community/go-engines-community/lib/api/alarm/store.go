@@ -449,7 +449,6 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 	}
 
 	pipeline = append(pipeline, dbquery.GetCategoryLookup("entity")...)
-	pipeline = append(pipeline, dbquery.GetPbehaviorInfoTypeLookup("entity")...)
 	pipeline = append(pipeline, dbquery.GetPbehaviorInfoLastCommentLookup(s.authorProvider, "entity")...)
 	if r.WithDependencies {
 		pipeline = append(pipeline, dbquery.GetImpactsCountPipeline("entity")...)

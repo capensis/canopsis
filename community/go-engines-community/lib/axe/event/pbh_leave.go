@@ -100,8 +100,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
-			newStep := NewAlarmStep(types.AlarmStepPbhLeave, event.Parameters, false)
-			newStep.PbehaviorCanonicalType = alarm.Value.PbehaviorInfo.CanonicalType
+			newStep := NewPbhAlarmStep(types.AlarmStepPbhLeave, event.Parameters, alarm.Value.PbehaviorInfo)
 			update := bson.M{
 				"$push":  bson.M{"v.steps": newStep},
 				"$unset": bson.M{"v.pbehavior_info": ""},

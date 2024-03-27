@@ -251,6 +251,8 @@ type AlarmStep struct {
 	Value     types.CpsNumber   `bson:"val" json:"val"`
 	Initiator string            `bson:"initiator" json:"initiator"`
 	Execution string            `bson:"exec,omitempty" json:"-"`
+	IconName  string            `bson:"icon_name,omitempty" json:"icon_name,omitempty"`
+	Color     string            `bson:"color,omitempty" json:"color,omitempty"`
 
 	// Ticket related fields
 	types.TicketInfo `bson:",inline"`
