@@ -7,6 +7,7 @@
     <pbehavior-form
       v-model="form"
       :no-pattern="!!entityPattern"
+      class="py-3"
     />
     <v-layout
       class="pbehavior-form__actions"
