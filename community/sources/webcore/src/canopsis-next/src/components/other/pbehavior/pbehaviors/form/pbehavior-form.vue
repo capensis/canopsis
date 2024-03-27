@@ -11,7 +11,6 @@
     v-else
     slider-color="primary"
     centered
-    fixed-tabs
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
@@ -27,7 +26,6 @@
         :no-enabled="noEnabled"
         :no-comments="noComments"
         :with-start-on-trigger="withStartOnTrigger"
-        class="py-3"
       />
     </v-tab-item>
     <v-tab-item eager>
