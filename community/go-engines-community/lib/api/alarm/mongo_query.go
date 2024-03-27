@@ -148,7 +148,6 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 		{key: "entity.category", pipeline: dbquery.GetCategoryLookup("entity")},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
-		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 	}
 
 	q.sort = bson.M{}
@@ -156,7 +155,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
-	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior.last_comment", "pbehavior_info_type", "entity.services"}
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior.last_comment", "entity.services"}
 }
 
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
@@ -1323,28 +1322,6 @@ func getPbehaviorTypeLookup() []bson.M {
 					"else": nil,
 				},
 			},
-		}},
-	}
-}
-
-func getPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "v.pbehavior_info.type",
-			"as":           "pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"v.pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$v.pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$v.pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
 		}},
 	}
 }
