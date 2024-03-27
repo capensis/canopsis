@@ -105,8 +105,9 @@ type SectionMetrics struct {
 }
 
 type SectionTechMetrics struct {
-	Enabled          bool   `toml:"Enabled"`
-	DumpKeepInterval string `toml:"DumpKeepInterval"`
+	Enabled          bool     `toml:"Enabled"`
+	DumpKeepInterval string   `toml:"DumpKeepInterval"`
+	GoMetrics        []string `toml:"GoMetrics"`
 }
 
 type SectionTemplate struct {
