@@ -7,11 +7,11 @@
     <c-quick-date-interval-field
       v-if="showInterval"
       :interval="interval"
-      :min="minIntervalDate"
       :quick-ranges="quickRanges"
       class="availability-widget-filters__interval"
       short
       with-hours
+      allow-future
       @input="$emit('update:interval', $event)"
     />
     <v-layout
@@ -119,10 +119,6 @@ export default {
     },
     lockedFilter: {
       type: [String, Array],
-      required: false,
-    },
-    minIntervalDate: {
-      type: Number,
       required: false,
     },
     showInterval: {
