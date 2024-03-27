@@ -20,6 +20,7 @@ describe('pattern form converters', () => {
     attribute: '',
     operator: '',
     field: '',
+    fieldType: PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
     range: {
@@ -633,6 +634,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.infos,
       field: PATTERN_RULE_INFOS_FIELDS.value,
+      fieldType: PATTERN_FIELD_TYPES.number,
       operator: PATTERN_OPERATORS.equal,
       dictionary,
       value,
@@ -640,7 +642,7 @@ describe('pattern form converters', () => {
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
-  it('should be converted to form and back to pattern with infos and number value', () => {
+  it('should be converted to form and back to pattern with infos and string value', () => {
     const value = Faker.lorem.word();
     const dictionary = Faker.lorem.word();
     const patternRule = {
@@ -677,6 +679,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.infos,
       field: PATTERN_RULE_INFOS_FIELDS.value,
+      fieldType: PATTERN_FIELD_TYPES.boolean,
       operator: PATTERN_OPERATORS.equal,
       dictionary,
       value,
@@ -684,7 +687,7 @@ describe('pattern form converters', () => {
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
-  it('should be converted to form and back to pattern with infos and number value', () => {
+  it('should be converted to form and back to pattern with infos and string array value', () => {
     const value = Faker.datatype.array(2);
     const dictionary = Faker.lorem.word();
     const patternRule = {
@@ -699,6 +702,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.infos,
       field: PATTERN_RULE_INFOS_FIELDS.value,
+      fieldType: PATTERN_FIELD_TYPES.stringArray,
       operator: PATTERN_OPERATORS.hasNot,
       dictionary,
       value,

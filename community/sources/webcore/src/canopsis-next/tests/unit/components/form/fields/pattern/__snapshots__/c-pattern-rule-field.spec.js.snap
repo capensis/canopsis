@@ -49,7 +49,6 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props
           label="Type"
           name="customName"
           types="[object Object],[object Object]"
-          value="string"
         />
       </div>
       <div

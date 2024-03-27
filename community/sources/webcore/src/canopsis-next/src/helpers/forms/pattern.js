@@ -14,12 +14,11 @@ import {
   QUICK_RANGES,
   PATTERNS_FIELDS,
   SERVICE_WEATHER_PATTERN_FIELDS,
-  TIME_UNITS,
+  TIME_UNITS, PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import uid from '@/helpers/uid';
 import {
-  getFieldType,
   getObjectPatternRuleField,
   isDatePatternRuleField,
   isInfosPatternRuleField,
@@ -85,6 +84,7 @@ import { durationToForm, toSeconds } from '@/helpers/date/duration';
  * @property {string} attribute
  * @property {string} operator
  * @property {string} field
+ * @property {string} fieldType
  * @property {string} dictionary
  * @property {number | string} value
  * @property {PatternRuleRangeForm} range
@@ -119,6 +119,7 @@ export const patternRuleToForm = (rule = {}) => {
     attribute: rule.field ?? '',
     operator: '',
     field: '',
+    fieldType: rule.field_type ?? PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
     range: {
@@ -416,7 +417,7 @@ export const formRuleToPatternRule = (rule) => {
   }
 
   if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
-    pattern.field_type = getFieldType(rule.value);
+    pattern.field_type = rule.fieldType;
   }
 
   switch (rule.operator) {
