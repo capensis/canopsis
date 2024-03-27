@@ -103,7 +103,8 @@ func (s *sender) Run(ctx context.Context) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		ticker := time.NewTicker(time.Second)
+		interval := s.configProvider.Get().GoMetricsInterval
+		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		for {
@@ -112,6 +113,13 @@ func (s *sender) Run(ctx context.Context) {
 				return
 			case <-ticker.C:
 				s.collectGoMetrics(ctx)
+
+				newInterval := s.configProvider.Get().GoMetricsInterval
+				if newInterval != interval {
+					ticker.Stop()
+					interval = newInterval
+					ticker = time.NewTicker(interval)
+				}
 			}
 		}
 	}()
