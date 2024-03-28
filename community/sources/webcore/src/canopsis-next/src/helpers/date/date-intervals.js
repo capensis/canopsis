@@ -158,7 +158,7 @@ export const convertDateIntervalToTimestampByTimezone = (date, type, format, uni
 );
 
 /**
- * Convert from value to timestamp or moment
+ * Convert from value to timestamp
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
