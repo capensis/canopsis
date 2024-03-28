@@ -538,3 +538,6 @@ to = "engine-action"
 [[HealthCheck.engine_order]]
 from = "engine-action"
 to = "engine-webhook"
+[[HealthCheck.engine_order]]
+from = "engine-snmp"
+to = "engine-fifo"
