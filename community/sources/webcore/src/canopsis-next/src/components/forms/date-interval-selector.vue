@@ -25,6 +25,7 @@
         c-quick-date-interval-type-field(
           v-model="range",
           :ranges="quickRanges",
+          :item-value="getQuickRangeItemValue",
           return-object
         )
         v-select(
@@ -79,10 +80,10 @@ export default {
   computed: {
     range: {
       get() {
-        return this.value;
+        return { start: this.value?.tstart, stop: this.value?.tstop };
       },
       set(range) {
-        if (range.value !== this.range.value) {
+        if (range.start !== this.range.start || range.stop !== this.range.stop) {
           this.updateModel({
             ...this.value,
             ...getValueFromQuickRange(range),
@@ -107,6 +108,10 @@ export default {
     },
   },
   methods: {
+    getQuickRangeItemValue(item) {
+      return `${item.start}|${item.stop}`;
+    },
+
     startDateObjectPreparer(date) {
       return convertDateIntervalToDateObject(
         date,

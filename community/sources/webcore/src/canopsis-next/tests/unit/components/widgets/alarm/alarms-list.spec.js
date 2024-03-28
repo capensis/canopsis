@@ -73,7 +73,7 @@ describe('alarms-list', () => {
   const $socket = mockSocket();
 
   const nowTimestamp = 1386435600000;
-  const nowSubtractOneYearUnix = 1354921200;
+  const nowSubtractOneYearUnix = 1354834800;
 
   mockDateNow(nowTimestamp);
 
