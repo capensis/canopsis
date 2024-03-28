@@ -24,8 +24,9 @@ const (
 	InstructionAssignedInstructions = "instruction_assigned_instructions"
 	InstructionExecutedInstructions = "instruction_executed_instructions"
 
-	EntityMetaData = "entities"
-	UserMetaData   = "users"
+	EntityMetaData         = "entities"
+	UserMetaData           = "users"
+	EntityCategoryMetaData = "entity_categories"
 
 	InstructionExecution             = "instruction_execution"
 	InstructionExecutionHourly       = "instruction_execution_hourly"

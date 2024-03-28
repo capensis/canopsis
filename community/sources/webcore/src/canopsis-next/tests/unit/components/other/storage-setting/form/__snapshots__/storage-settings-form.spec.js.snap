@@ -42,6 +42,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
   <storage-settings-event-filter-failure-form-stub
     form="[object Object]"
   />
+  <storage-settings-alarm-external-tag-form-stub
+    form="[object Object]"
+  />
 </div>
 `;
 
@@ -79,6 +82,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
     form="[object Object]"
   />
   <storage-settings-event-filter-failure-form-stub
+    form="[object Object]"
+  />
+  <storage-settings-alarm-external-tag-form-stub
     form="[object Object]"
   />
 </div>
