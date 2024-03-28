@@ -73,6 +73,8 @@ const (
 	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
 
+	SnmpEngineName = "engine-snmp"
+
 	TechMetricsFlushInterval = time.Second * 10
 
 	DefaultFlushInterval = time.Second * 5
