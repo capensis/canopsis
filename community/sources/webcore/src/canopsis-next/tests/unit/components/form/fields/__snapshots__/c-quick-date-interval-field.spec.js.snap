@@ -16,7 +16,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
     <c-quick-date-interval-type-field-stub
       disabled="true"
       hide-details="hide-details"
-      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       return-object="return-object"
       value="[object Object]"
     />
@@ -38,7 +38,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
   >
     <c-quick-date-interval-type-field-stub
       hide-details="hide-details"
-      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       return-object="return-object"
       value="[object Object]"
     />
@@ -54,7 +54,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
         <hr class="v-divider theme--light">
         <div class="layout mt-2">
           <c-date-interval-field-stub value="[object Object]" disabled="true" is-allowed-from-date="function () { [native code] }" is-allowed-to-date="function () { [native code] }" column="column"></c-date-interval-field-stub>
-          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
+          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
         </div>
       </c-information-block-stub>
     </div>
@@ -70,7 +70,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
         <hr class="v-divider theme--light">
         <div class="layout mt-2">
           <c-date-interval-field-stub value="[object Object]" disabled="true" is-allowed-from-date="function () { [native code] }" is-allowed-to-date="function () { [native code] }" column="column"></c-date-interval-field-stub>
-          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
+          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
         </div>
       </c-information-block-stub>
     </div>
