@@ -40,7 +40,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
   >
     <c-quick-date-interval-type-field-stub
       hide-details=""
-      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       return-object=""
       value="[object Object]"
     />
