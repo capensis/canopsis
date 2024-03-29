@@ -7,9 +7,7 @@
       <v-layout class="timeline-step__main-content pb-2" column>
         <v-layout class="gap-2">
           <div class="timeline-step__icon">
-            <v-icon size="20">
-              $vuetify.icons.webhook
-            </v-icon>
+            <alarm-timeline-step-icon :step="step" />
           </div>
           <c-expand-btn
             v-if="hasChildren"
@@ -25,8 +23,8 @@
             </v-icon>
           </div>
         </v-layout>
-        <div class="grey--text mt-2 pre-wrap">
-          message
+        <div v-if="step.m" class="grey--text mt-2 pre-wrap">
+          {{ step.m }}
         </div>
       </v-layout>
     </v-flex>
@@ -45,7 +43,10 @@ import {
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
+import AlarmTimelineStepIcon from '@/components/widgets/alarm/timeline-2/alarm-timeline-step-icon.vue';
+
 export default {
+  components: { AlarmTimelineStepIcon },
   props: {
     step: {
       type: Object,

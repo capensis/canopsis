@@ -5,12 +5,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-extra-details__badge brown darken-1"
-          v-on="on"
-        >
-          <v-icon color="white" small>center_focus_weak</v-icon>
-        </span>
+        <c-alarm-extra-details-chip :color="color" icon="center_focus_weak" v-on="on" />
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.grouping') }}</strong>
@@ -31,6 +26,8 @@
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 export default {
   props: {
     rules: {
@@ -41,6 +38,13 @@ export default {
       type: Number,
       default: 0,
     },
+  },
+  setup() {
+    const color = COLORS.alarmExtraDetails.parent;
+
+    return {
+      color,
+    };
   },
 };
 </script>
