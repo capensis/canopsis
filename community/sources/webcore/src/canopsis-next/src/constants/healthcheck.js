@@ -17,10 +17,10 @@ export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
   [HEALTHCHECK_SERVICES_NAMES.rabbit]: { x: -1, y: 1 },
   [HEALTHCHECK_SERVICES_NAMES.healthcheck]: { x: -2, y: -0.5 },
   [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
-  [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
 };
 
 export const HEALTHCHECK_ENGINES_NAMES = {
+  snmp: 'engine-snmp',
   webhook: 'engine-webhook',
   fifo: 'engine-fifo',
   axe: 'engine-axe',
@@ -32,69 +32,12 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   remediation: 'engine-remediation',
 };
 
-export const HEALTHCHECK_ENGINES_REFERENCE_EDGES = [
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.fifo,
-    to: HEALTHCHECK_ENGINES_NAMES.che,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.che,
-    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
-    to: HEALTHCHECK_ENGINES_NAMES.axe,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.axe,
-    to: HEALTHCHECK_ENGINES_NAMES.remediation,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.axe,
-    to: HEALTHCHECK_ENGINES_NAMES.action,
-  },
-];
-
-export const HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES = [
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.fifo,
-    to: HEALTHCHECK_ENGINES_NAMES.che,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.che,
-    to: HEALTHCHECK_ENGINES_NAMES.pbehavior,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.pbehavior,
-    to: HEALTHCHECK_ENGINES_NAMES.axe,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.axe,
-    to: HEALTHCHECK_ENGINES_NAMES.remediation,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.axe,
-    to: HEALTHCHECK_ENGINES_NAMES.correlation,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.correlation,
-    to: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
-    to: HEALTHCHECK_ENGINES_NAMES.action,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.action,
-    to: HEALTHCHECK_ENGINES_NAMES.webhook,
-  },
-];
-
 export const PRO_ENGINES = [
   HEALTHCHECK_ENGINES_NAMES.correlation,
   HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
   HEALTHCHECK_ENGINES_NAMES.webhook,
   HEALTHCHECK_ENGINES_NAMES.remediation,
+  HEALTHCHECK_ENGINES_NAMES.snmp,
 ];
 
 export const HEALTHCHECK_NETWORK_GRAPH_OPTIONS = {
