@@ -51,6 +51,7 @@ describe('availability-widget', () => {
     displayParameter: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
     filter: undefined,
     lockedFilter: null,
+    active_columns: widget.parameters.widget_columns.map(({ value }) => value),
     interval: {
       from: QUICK_RANGES.today.start,
       to: QUICK_RANGES.today.stop,

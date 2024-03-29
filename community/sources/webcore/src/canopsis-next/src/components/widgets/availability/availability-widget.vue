@@ -1,6 +1,8 @@
 <template>
   <v-layout class="gap-3" column>
     <availability-widget-filters
+      :search="query.search"
+      :columns="widget.parameters.widget_columns"
       :type="query.showType"
       :display-parameter="query.displayParameter"
       :trend="query.showTrend"
@@ -26,6 +28,7 @@
       @update:type="updateShowType"
       @update:display-parameter="updateDisplayParameter"
       @update:value-filter="updateValueFilter"
+      @update:search="updateSearch"
     />
 
     <availability-list
@@ -178,6 +181,11 @@ export default {
       this.updateQueryField('valueFilter', value);
     },
 
+    updateSearch(value) {
+      this.updateQueryField('search', value);
+      this.updateQueryField('page', 1);
+    },
+
     getQuery() {
       const {
         sortBy = [],
@@ -193,9 +201,9 @@ export default {
 
       const query = {
         ...this.interval,
-        ...pick(this.query, ['page']),
-        limit: itemsPerPage,
+        ...pick(this.query, ['page', 'search', 'active_columns']),
         ...convertSortToRequest(sortBy, sortDesc),
+        limit: itemsPerPage,
         filters: convertFiltersToQuery(filter, lockedFilter),
       };
 

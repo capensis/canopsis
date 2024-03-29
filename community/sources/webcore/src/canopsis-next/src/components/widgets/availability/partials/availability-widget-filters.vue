@@ -4,6 +4,12 @@
     align-end
     wrap
   >
+    <c-advanced-search-field
+      :query.sync="searchQuery"
+      :tooltip="$t('context.advancedSearch')"
+      :columns="columns"
+      class="pa-0 availability-widget-filters__search"
+    />
     <c-quick-date-interval-field
       v-if="showInterval"
       :interval="interval"
@@ -78,7 +84,7 @@
 
 <script>
 import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
@@ -99,6 +105,14 @@ export default {
   props: {
     widgetId: {
       type: String,
+      required: false,
+    },
+    search: {
+      type: String,
+      required: false,
+    },
+    columns: {
+      type: Array,
       required: false,
     },
     interval: {
@@ -174,6 +188,17 @@ export default {
     const localValueFilter = ref();
     const quickRanges = Object.values(AVAILABILITY_QUICK_RANGES);
 
+    const searchQuery = computed({
+      get() {
+        return {
+          search: props.search,
+        };
+      },
+      set({ search }) {
+        emit('update:search', search);
+      },
+    });
+
     watch(
       () => props.valueFilter,
       () => {
@@ -194,6 +219,7 @@ export default {
     };
 
     return {
+      searchQuery,
       localValueFilter,
       quickRanges,
 
@@ -205,6 +231,11 @@ export default {
 
 <style lang="scss" scoped>
 .availability-widget-filters {
+  &__search {
+    width: 400px;
+    flex-shrink: 0;
+  }
+
   &__filter-wrapper {
     flex-grow: 0;
   }
