@@ -198,6 +198,16 @@ export default {
       return get(this.enginesGraph, 'edges') || [];
     },
 
+    hasSNMPNode() {
+      return this.enginesGraphNodes.includes(HEALTHCHECK_ENGINES_NAMES.snmp);
+    },
+
+    hasSNMPEdge() {
+      return this.enginesGraphEdges.some(
+        ({ from, to }) => from === HEALTHCHECK_ENGINES_NAMES.snmp && to === HEALTHCHECK_ENGINES_NAMES.fifo,
+      );
+    },
+
     enginesNodes() {
       const hasFifoNode = this.enginesGraphNodes.includes(HEALTHCHECK_ENGINES_NAMES.fifo);
       const nodes = [...this.enginesGraphNodes];
@@ -409,7 +419,7 @@ export default {
     },
 
     options() {
-      const { servicesElements } = this;
+      const { servicesElements, hasSNMPNode, hasSNMPEdge } = this;
 
       return {
         elements: this.enginesElements,
@@ -444,7 +454,11 @@ export default {
               return element;
             }
 
-            const itemDiffFactors = HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS[element.data.id];
+            let itemDiffFactors = HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS[element.data.id];
+
+            if (!itemDiffFactors && element.data.id === HEALTHCHECK_SERVICES_NAMES.enginesChain) {
+              itemDiffFactors = { x: 0, y: hasSNMPNode && hasSNMPEdge ? -1.5 : -0.5 };
+            }
 
             if (!itemDiffFactors) {
               return element;
