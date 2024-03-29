@@ -44,7 +44,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -52,10 +51,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{
@@ -129,7 +127,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -137,10 +134,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{
@@ -230,7 +226,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -238,10 +233,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{
@@ -329,7 +323,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -337,10 +330,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{{"$match": bson.M{
@@ -416,7 +408,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -424,10 +415,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{{"$match": bson.M{
@@ -503,7 +493,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	computedFields := getComputedFields()
@@ -514,10 +503,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{{"$match": bson.M{
@@ -578,7 +566,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -586,10 +573,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{
@@ -647,7 +633,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -655,10 +640,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
+			"services":    0,
+			"alarm":       0,
+			"event_stats": 0,
 		},
 	})
 	expected := []bson.M{
@@ -776,7 +760,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -784,10 +767,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
-			"services":            0,
+			"alarm":       0,
+			"event_stats": 0,
+			"services":    0,
 		},
 	})
 	expected := []bson.M{
