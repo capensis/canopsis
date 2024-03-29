@@ -51,6 +51,7 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
       default_display_parameter: defaultDisplayParameter,
       default_show_type: defaultShowType,
       default_time_range: defaultTimeRange,
+      widget_columns: widgetColumns,
       mainFilter,
     },
   } = widget;
@@ -58,6 +59,7 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
   const { start, stop } = QUICK_RANGES[defaultTimeRange];
 
   return {
+    active_columns: widgetColumns.map(v => v.value),
     lockedFilter: mainFilter,
     displayParameter: defaultDisplayParameter,
     showType: defaultShowType,
