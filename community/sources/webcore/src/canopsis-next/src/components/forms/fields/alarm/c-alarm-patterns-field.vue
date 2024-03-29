@@ -351,6 +351,15 @@ export default {
       };
     },
 
+    metaAlarmOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.isMetaAlarm,
+          PATTERN_OPERATORS.isNotMetaAlarm,
+        ],
+      };
+    },
+
     initiatorOptions() {
       return {
         operators: [
@@ -531,6 +540,10 @@ export default {
         {
           value: ALARM_PATTERN_FIELDS.totalStateChanges,
           options: this.totalStateChangesOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.meta,
+          options: this.metaAlarmOptions,
         },
       ].map(variable => ({
         ...variable,
