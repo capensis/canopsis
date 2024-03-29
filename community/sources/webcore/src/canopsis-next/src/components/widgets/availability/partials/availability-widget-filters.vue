@@ -1,9 +1,5 @@
 <template>
-  <v-layout
-    class="availability-widget-filters gap-6"
-    align-end
-    wrap
-  >
+  <div class="availability-widget-filters col-gap-6 row-gap-3">
     <c-advanced-search-field
       :query.sync="searchQuery"
       :tooltip="$t('context.advancedSearch')"
@@ -79,7 +75,7 @@
       icon="cloud_download"
       @click="$emit('export')"
     />
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -231,9 +227,12 @@ export default {
 
 <style lang="scss" scoped>
 .availability-widget-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+
   &__search {
     width: 400px;
-    flex-shrink: 0;
   }
 
   &__filter-wrapper {
@@ -241,12 +240,11 @@ export default {
   }
 
   &__show-type, &__filter-selector {
-    max-width: 200px;
+    width: 200px;
   }
 
   &__interval {
-    max-width: 300px;
-    flex-grow: 1;
+    width: 300px;
   }
 
   &__value-filter {
@@ -254,7 +252,7 @@ export default {
   }
 
   &__parameter, &__value {
-    max-width: 150px;
+    width: 150px;
   }
 }
 </style>
