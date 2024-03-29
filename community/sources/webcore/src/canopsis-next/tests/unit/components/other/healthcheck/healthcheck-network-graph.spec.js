@@ -36,15 +36,9 @@ describe('healthcheck-network-graph', () => {
 
     jest.useFakeTimers();
 
-    const wrapper = snapshotFactory({
-      propsData: {
-        // services: [],
-        // enginesGraph: {},
-        // enginesParameters: {},
-      },
-    });
+    const wrapper = snapshotFactory();
 
-    await waitTicks(100);
+    await waitTicks(1);
 
     const nodeCanvas = wrapper.find('canvas[data-id="layer2-node"]');
 
@@ -155,7 +149,7 @@ describe('healthcheck-network-graph', () => {
       },
     });
 
-    await waitTicks(100);
+    await waitTicks(1);
 
     const nodeCanvas = wrapper.find('canvas[data-id="layer2-node"]');
 
@@ -272,7 +266,7 @@ describe('healthcheck-network-graph', () => {
       },
     });
 
-    await waitTicks(100);
+    await waitTicks(1);
 
     const nodeCanvas = wrapper.find('canvas[data-id="layer2-node"]');
 
