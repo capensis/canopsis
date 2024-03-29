@@ -4,14 +4,7 @@
     top
   >
     <template #activator="">
-      <span class="c-extra-details__badge purple lighten-2">
-        <v-icon
-          color="white"
-          small
-        >
-          {{ icon }}
-        </v-icon>
-      </span>
+      <c-alarm-extra-details-chip :icon="icon" :color="color" />
     </template>
     <div class="text-md-center">
       <strong>{{ $t('alarm.actions.iconsTitles.comment') }}</strong>
@@ -26,6 +19,9 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
@@ -39,18 +35,18 @@ export default {
       required: true,
     },
   },
-  computed: {
-    date() {
-      return convertDateToStringWithFormatForToday(this.lastComment.t);
-    },
+  setup(props) {
+    const date = computed(() => convertDateToStringWithFormatForToday(props.lastComment.t));
+    const sanitizedLastComment = computed(() => sanitizeHtml(linkifyHtml(String(props.lastComment?.m ?? ''))));
+    const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.comment);
+    const color = COLORS.alarmExtraDetails.comment;
 
-    icon() {
-      return getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.comment);
-    },
-
-    sanitizedLastComment() {
-      return sanitizeHtml(linkifyHtml(String(this.lastComment?.m ?? '')));
-    },
+    return {
+      date,
+      sanitizedLastComment,
+      icon,
+      color,
+    };
   },
 };
 </script>

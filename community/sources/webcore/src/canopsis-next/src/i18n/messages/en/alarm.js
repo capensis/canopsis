@@ -79,6 +79,8 @@ export default {
   timeline: {
     by: 'by',
     launched: 'launched',
+    junit: 'JUnit',
+    groupItems: 'Group items',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'State decreased',
       [ALARM_LIST_STEPS.stateinc]: 'State increased',
