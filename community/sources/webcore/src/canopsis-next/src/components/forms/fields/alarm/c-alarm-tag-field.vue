@@ -25,7 +25,7 @@
       <c-alarm-action-chip
         :color="item.color"
         :title="item.value"
-        class="c-alarm-tag-field__tag"
+        class="c-alarm-tag-field__tag px-2"
         closable
         ellipsis
         @close="removeItemFromArray(index)"
@@ -41,7 +41,7 @@
       >
         <v-list-item-action>
           <v-checkbox
-            :input-value="attrs.value"
+            :input-value="attrs.inputValue"
             :color="parent.color"
           />
         </v-list-item-action>
@@ -182,11 +182,6 @@ $selectIconsWidth: 56px;
 
   &__list {
     max-width: 400px;
-  }
-
-  &__list-item .v-list-item__action {
-    height: 40px !important;
-    width: 40px !important;
   }
 
   &__list-item .v-list-item {

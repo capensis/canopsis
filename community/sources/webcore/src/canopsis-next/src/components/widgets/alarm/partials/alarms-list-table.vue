@@ -160,11 +160,13 @@
         <template #expanded-item="{ item }">
           <alarms-expand-panel
             :alarm="item"
+            :selected-tag="selectedTag"
             :parent-alarm-id="parentAlarmId"
             :widget="widget"
             :search="search"
             :hide-children="hideChildren"
             @select:tag="$emit('select:tag', $event)"
+            @clear:tag="$emit('clear:tag')"
           />
         </template>
       </v-data-table>
