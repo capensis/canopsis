@@ -24,6 +24,7 @@ type ExternalApiConfig struct {
 	OutputEndpoint    OutputEndpoint `toml:"output_endpoint" bson:"output_endpoint"`
 	ErrOutputEndpoint OutputEndpoint `toml:"err_output_endpoint" bson:"err_output_endpoint"`
 	ResponseErrMsgKey string         `toml:"response_err_msg_key" bson:"response_err_msg_key,omitempty"`
+	SkipVerify        bool           `toml:"-" bson:"-"`
 }
 
 // ResetEndpoint represents API endpoint to reset external job.
