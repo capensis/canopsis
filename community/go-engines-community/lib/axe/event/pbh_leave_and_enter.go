@@ -104,6 +104,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
 			newLeaveStep := NewPbhAlarmStep(types.AlarmStepPbhLeave, event.Parameters, alarm.Value.PbehaviorInfo)
+			newLeaveStep.Message = alarm.Value.PbehaviorInfo.GetStepMessage()
 			newEnterStep := NewPbhAlarmStep(types.AlarmStepPbhEnter, event.Parameters, event.Parameters.PbehaviorInfo)
 			set := bson.M{
 				"v.pbehavior_info": event.Parameters.PbehaviorInfo,
