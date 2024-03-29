@@ -439,6 +439,9 @@ export default {
     [PATTERN_OPERATORS.activated]: 'Activé',
     [PATTERN_OPERATORS.inactive]: 'Inactif',
 
+    [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
+    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
+
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
   eventTypes: {
