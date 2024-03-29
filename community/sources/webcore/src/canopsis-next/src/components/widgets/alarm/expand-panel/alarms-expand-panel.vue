@@ -49,7 +49,9 @@
                 alarms-expand-panel-more-infos(
                   :alarm="alarm",
                   :template="widget.parameters.moreInfoTemplate",
-                  @select:tag="$emit('select:tag', $event)"
+                  :selected-tag="selectedTag",
+                  @select:tag="$emit('select:tag', $event)",
+                  @clear:tag="$emit('clear:tag')"
                 )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine", lazy)
         v-layout.pa-3(row)
@@ -197,6 +199,10 @@ export default {
       default: false,
     },
     search: {
+      type: String,
+      default: '',
+    },
+    selectedTag: {
       type: String,
       default: '',
     },

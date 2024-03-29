@@ -112,11 +112,13 @@
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
+            :selected-tag="selectedTag",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :search="search",
             :hide-children="hideChildren",
-            @select:tag="$emit('select:tag', $event)"
+            @select:tag="$emit('select:tag', $event)",
+            @clear:tag="$emit('clear:tag')"
           )
     c-table-pagination(
       v-if="!hidePagination",
