@@ -5,17 +5,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-extra-details__badge blue-grey"
-          v-on="on"
-        >
-          <v-icon
-            color="white"
-            small
-          >
-            {{ icon }}
-          </v-icon>
-        </span>
+        <c-alarm-extra-details-chip :icon="icon" :color="color" v-on="on" />
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.canceled') }}</strong>
@@ -33,6 +23,9 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
@@ -45,14 +38,16 @@ export default {
       required: true,
     },
   },
-  computed: {
-    date() {
-      return convertDateToStringWithFormatForToday(this.canceled.t);
-    },
+  setup(props) {
+    const date = computed(() => convertDateToStringWithFormatForToday(props.canceled.t));
+    const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.fastCancel);
+    const color = COLORS.alarmExtraDetails.canceled;
 
-    icon() {
-      return getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.fastCancel);
-    },
+    return {
+      date,
+      icon,
+      color,
+    };
   },
 };
 </script>

@@ -5,12 +5,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-extra-details__badge brown darken-1"
-          v-on="on"
-        >
-          <v-icon color="white" small>center_focus_strong</v-icon>
-        </span>
+        <c-alarm-extra-details-chip :color="color" icon="center_focus_strong" v-on="on" />
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.grouping') }}</strong>
@@ -24,6 +19,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { COLORS } from '@/config';
+
 export default {
   props: {
     rule: {
@@ -43,10 +42,14 @@ export default {
       default: 0,
     },
   },
-  computed: {
-    ruleName() {
-      return this.rule?.name ?? '';
-    },
+  setup(props) {
+    const ruleName = computed(() => props.rule?.name ?? '');
+    const color = COLORS.alarmExtraDetails.children;
+
+    return {
+      ruleName,
+      color,
+    };
   },
 };
 </script>

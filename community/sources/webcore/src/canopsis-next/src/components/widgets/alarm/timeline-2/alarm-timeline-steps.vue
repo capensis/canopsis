@@ -1,10 +1,9 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
     <alarm-timeline-step
       v-for="step in steps"
       :key="step.key"
       :step="step"
-      class="my-2"
     />
   </v-layout>
 </template>

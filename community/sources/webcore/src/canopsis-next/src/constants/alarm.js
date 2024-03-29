@@ -318,13 +318,15 @@ export const ALARM_STEPS_ICONS = {
 };
 
 export const ALARM_STEPS_COLORS = {
-  [ALARM_LIST_STEPS.ack]: COLORS.entitiesEvents.ack,
-  [ALARM_LIST_STEPS.ackRemove]: COLORS.entitiesEvents.ackRemove,
-  [ALARM_LIST_STEPS.snooze]: COLORS.entitiesEvents.snooze,
-  [ALARM_LIST_STEPS.pbhenter]: COLORS.entitiesEvents.pbhenter,
-  [ALARM_LIST_STEPS.pbhleave]: COLORS.entitiesEvents.pbhleave,
-  [ALARM_LIST_STEPS.comment]: COLORS.entitiesEvents.comment,
-  [ALARM_LIST_STEPS.metaalarmattach]: COLORS.entitiesEvents.metaalarmattach,
+  [ALARM_LIST_STEPS.ack]: COLORS.alarmSteps.ack,
+  [ALARM_LIST_STEPS.ackRemove]: COLORS.alarmSteps.ackRemove,
+  [ALARM_LIST_STEPS.snooze]: COLORS.alarmSteps.snooze,
+  [ALARM_LIST_STEPS.comment]: COLORS.alarmSteps.comment,
+  [ALARM_LIST_STEPS.junitTestCaseUpdate]: COLORS.alarmSteps.junitTestCaseUpdate,
+  [ALARM_LIST_STEPS.junitTestSuiteUpdate]: COLORS.alarmSteps.junitTestCaseUpdate,
+  [ALARM_LIST_STEPS.metaalarmattach]: COLORS.alarmSteps.metaalarmattach,
+  [ALARM_LIST_STEPS.metaalarmdetach]: COLORS.alarmSteps.metaalarmattach,
+  [ALARM_LIST_STEPS.activate]: COLORS.alarmSteps.activate,
 };
 
 export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
