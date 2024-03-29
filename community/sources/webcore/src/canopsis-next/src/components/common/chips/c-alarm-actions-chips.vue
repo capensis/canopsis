@@ -12,7 +12,7 @@
       :class="itemClass",
       :color="item.color",
       :small="small",
-      :closable="closable",
+      :closable="isClosableItem(item)",
       @click="selectItem(item)",
       @close="closeItem(item)"
     )
@@ -37,7 +37,7 @@
               :key="item[itemValue]",
               :class="itemClass",
               :color="item.color",
-              :closable="closable",
+              :closable="isClosableItem(item)",
               @click="selectItem(item)",
               @close="closeItem(item)"
             )
@@ -63,6 +63,10 @@ export default {
       default: 2,
     },
     closable: {
+      type: Boolean,
+      default: false,
+    },
+    closableActive: {
       type: Boolean,
       default: false,
     },
@@ -135,6 +139,10 @@ export default {
 
     closeItem(item) {
       this.$emit('close', this.returnObject ? item : item[this.itemValue]);
+    },
+
+    isClosableItem(item) {
+      return this.closable || (this.closableActive && this.activeItem === item[this.itemValue]);
     },
   },
 };
