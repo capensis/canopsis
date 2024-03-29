@@ -41,6 +41,8 @@ type AlarmStep struct {
 	Value                  CpsNumber        `bson:"val" json:"val"`
 	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 	PbehaviorCanonicalType string           `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
+	IconName               string           `bson:"icon_name,omitempty" json:"icon_name,omitempty"`
+	Color                  string           `bson:"color,omitempty" json:"color,omitempty"`
 	Initiator              string           `bson:"initiator,omitempty" json:"initiator,omitempty"`
 	// Execution contains id
 	// - of instruction execution for instruction steps
@@ -136,6 +138,20 @@ func NewAlarmStep(
 		Initiator:           initiator,
 		InPbehaviorInterval: inPbehaviorInterval,
 	}
+}
+
+func NewPbhAlarmStep(
+	stepType string,
+	timestamp datetime.CpsTime,
+	author, msg, userID, role, initiator string,
+	pbhCanonicalType, iconName, color string,
+) AlarmStep {
+	step := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator, false)
+	step.PbehaviorCanonicalType = pbhCanonicalType
+	step.IconName = iconName
+	step.Color = color
+
+	return step
 }
 
 // CropCounter provides an explicit way of counting the steps that were cropped.
@@ -387,6 +403,8 @@ type PbehaviorInfo struct {
 	// CanonicalType is Type of pbehavior.Type.
 	CanonicalType string `bson:"canonical_type" json:"canonical_type"`
 
+	IconName string `bson:"icon_name" json:"icon_name"`
+	Color    string `bson:"color" json:"color"`
 	Author   string `bson:"author" json:"author"`
 	RuleName string `bson:"rule_name,omitempty" json:"rule_name,omitempty"`
 }

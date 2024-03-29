@@ -65,6 +65,7 @@ type ResolveResult struct {
 	Name       string
 	ReasonID   string
 	ReasonName string
+	Color      string
 	Created    int64
 }
 
@@ -235,6 +236,7 @@ func (r *typeResolver) getPbehaviorIntervals(
 						Name:       d.computed.Name,
 						ReasonID:   d.computed.ReasonID,
 						ReasonName: d.computed.ReasonName,
+						Color:      d.computed.Color,
 						Created:    d.computed.Created,
 					}
 					break

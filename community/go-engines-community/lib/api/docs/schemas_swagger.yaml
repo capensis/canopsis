@@ -557,6 +557,10 @@ definitions:
         type: string
       a:
         type: string
+      color:
+        type: string
+      icon_name:
+        type: string
       in_pbh:
         type: boolean
       initiator:
@@ -1185,6 +1189,10 @@ definitions:
         type: string
       a:
         type: string
+      color:
+        type: string
+      icon_name:
+        type: string
       in_pbh:
         type: boolean
       initiator:
@@ -1661,6 +1669,8 @@ definitions:
         type: string
       canonical_type:
         description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      color:
         type: string
       icon_name:
         type: string
