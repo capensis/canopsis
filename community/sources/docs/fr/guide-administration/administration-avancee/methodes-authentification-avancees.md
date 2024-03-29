@@ -275,7 +275,7 @@ Intégration de l’authentification avec le protocole OAUTH2
 
 La configuration de l'authentification se fait au travers du fichier de configuration de l'API `/opt/canopsis/share/config/api/security/config.yml`. 
 
-Tout d'abord, vous devez activer le mécanisme d'authentification SAML en lui-même :
+Tout d'abord, vous devez activer le mécanisme d'authentification OAUTH2 en lui-même :
 
 ```yaml
 security:
@@ -295,7 +295,7 @@ Puis vous devez renseigner les différents paramètres d'authentification oauth2
         # issuer field defines OpenID url for a discovery mechanism, if open_id is set to false, the issuer is ignored.
         issuer: your-openid-provider-url
         # fields to setup inactivity interval for canopsis api tokens.
-       inactivity_interval: 24h
+        inactivity_interval: 24h
         # some providers have too long or too short expiration time, set expiration_interval to override token's expiration time.
         expiration_interval: 48h
         # some oauth2 tokens may have a very short expiration time or have undefined expiration time,
@@ -339,20 +339,137 @@ Définition des paramètres :
 | Attribut       |                    Description                               |            Valeur             |
 | -------------- | ------------------------------------------------------------ | ------------------------------ |
 | `open_id`    | Définit si le provider est de type open_id ou non        |   true / false  |
-| `issuer` | Doit être définit dans le cas où le champ `open_id` est à `true`. Permet de vérifier l'identité du provider, elle est fourni par votre provider            | URL                  |
-| `auth_url`  | Adresse d'authentification. A definir uniquement si `open_id` est à `false`, elle est fourni par votre provider  | URL |
-| `token_url`  | Adresse de gestion de token. A definir uniquement si `open_id` est à `false`, elle est fourni par votre provider | URL |
-| `user_url`  | Adresse des profils utilisateurs. A definir uniquement si `open_id` est à `false`, elle est fourni par votre provider | URL |
+| `issuer` | Doit être définie dans le cas où le champ `open_id` est à `true`. Permet de vérifier l'identité du provider; elle est fournie par votre provider            | URL                  |
+| `auth_url`  | Adresse d'authentification. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider  | URL |
+| `token_url`  | Adresse de gestion de token. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider | URL |
+| `user_url`  | Adresse des profils utilisateurs. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider | URL |
 | `client_id`        | Identifiant du client oauth/openid                         | Chaîne de caractères                       |
 | `client_secret`  | Chaîne secrète du client oauth/openid | Chaîne de caractères |
-| `redirect_url`  | Définit une route de rappel vers l'api de Canopsis, doit être ajouter dans votre provider oauth2  | votre.canopsis/api/v4/oauth/votre-nom-de-provider/callback |
-| `pkce`  | Méchanisme qui permet de prévenir des attaques à injectifs de code d'authentifications. A definir sur `false` si votre provider ne le supporte pas | true / false |
-| `default_role`  | Rôle par défaut attribuer aux utilisateurs de votre Canopsis lorsqu'il se connecte avec oauth2 | Chaîne de caractères |
-| `user_id`  | Permet de définit l'identifiant dans Canopsis. A definir uniquement si `open_id` est à `false` | users.votre_champs_id |
-| `attributes_map`  | Permet de remplir les champs utilisateurs canopsis depuis le token OpenID et les informations utilisateurs. Utilisez `token.claim_name` pour récupérer des informations du token et `user.claim_name` pour récupérer les informations utilisateurs. Récupérer des informations depuis le token OpenID n'est possible que si `open_id` est défini à `true` | Liste au format `champ:valeur` |
-| `scopes`  | Les scopes sont des éléments à sélectionner au moment de créer l'application du côté du provider. Doit être définit dans le cas où le champ `open_id` est à `true`  | Liste |
+| `redirect_url`  | Définit une route de rappel vers l'api de Canopsis; doit être ajoutée dans votre provider oauth2  | votre.canopsis/api/v4/oauth/votre-nom-de-provider/callback |
+| `pkce`  | Mécanisme qui permet de prévenir des attaques à injections de code d'authentifications. A definir sur `false` si votre provider ne le supporte pas | true / false |
+| `default_role`  | Rôle par défaut attribué aux utilisateurs de votre Canopsis lorsqu'ils se connectent avec oauth2 | Chaîne de caractères |
+| `user_id`  | Permet de définir l'identifiant dans Canopsis. A definir uniquement si `open_id` est à `false` | users.votre_champs_id |
+| `attributes_map`  | Permet de remplir les champs d'informations utilisateurs sur votre Canopsis avec les informations fourni par le provider. Récupérer des informations depuis le token OpenID n'est possible que si `open_id` est défini à `true` (Exemple plus bas) | Liste au format `champ: valeur` |
+| `scopes`  | Les scopes sont utilisées par une application lors de l'authentification pour autoriser l'accès à certaines données. Ces accès sont à définir côté provider. Doit être définit dans le cas où le champ `open_id` est à `true` (Ex: Le scope `openid` indique au serveur d’interpréter les requêtes faites aux points d’entrée selon les spécifications d’OpenID Connect.) | Liste |
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
+
+### Mettre en place l'attribute_map
+
+Il est possible de mapper des champs utilisateurs `Canopsis` avec des informations provenant des champs utilisateurs `OAuth2/OpenID`. 
+
+    - user_id
+    - name
+    - email
+    - firstname
+    - lastname
+    - role
+
+=== Mapper avec "OAuth2"
+
+    Pour OAuth2, il est explicitement définir le chemin vers l'identifiant utilisateur en utilisant le champ `user_id`. Les autres champs sont optionnels.
+    L'API fait une requête à l'adresse définie dans le `user_url` pour récupérer les informations utilisateurs. Les informations sont utilisables dans le mapping en utilisant comme prefix `user.`.
+
+    Un exemple de réponse:
+
+    ```json
+    {
+      "_id": 123,
+      "profile": {
+          "email": "test@test.com",
+          "name": "test_name",
+          "first_name": "test_first_name",
+          "last_name": "test_last_name"
+      },
+      "role": "test_role"
+    }
+    ```
+
+    Ce qui donnerait pour le mapping:
+    - user.id
+    - user.profile.email
+    - user.profile.name
+    - user.profile.first_name
+    - user.profile.last_name
+    - user.role
+
+    Une fois récupérer vous pouvez les utiliser dans votre configuration:
+
+    ```yaml
+      oauth2:
+        providers:
+          your-oauth2-provider:
+            user_id: user.id
+            attributes_map:
+              email: user.profile.email
+              name: user.profile.name
+              firstname: user.profile.first_name
+              lastname: user.profile.last_name
+              role: user.role
+    ```
+
+=== Mapper avec "OpenID"
+
+    Pour OpenID, il n'est pas possible de définir le `user_id` car l'ID est contenu directement dans le token JWT OpenID `id_token`. 
+    **Note**: le champ `user_id` est ignoré si le champ `open_id` est défini à `true`.
+    La plus grande différence entre OpenID et OAuth2 est la manière dont les informations sont récupérables. Il est possible de récupérer les informations de deux manières; via l'api `token` ou via l'api `user`.
+
+    **Attention:** Pour être en mesure de récupérer les informations de profile, il est important qu'il soit défini dans les `scopes`
+    Pour les exemples ci-dessous, les scopes utilisaient sont:
+
+    ```yml
+      scopes:
+        - openid
+        - email
+        - profile
+    ```
+
+    Un exemple de réponse:
+
+    Token:
+
+    ```json
+      {
+          "sub": 123,
+          "name": "test_name",
+          "email": "test@test.com",
+          "role": "test_role"
+      }
+    ```
+
+    User:
+
+    ```json
+      {
+        "first_name": "test_first_name",
+        "last_name": "test_last_name"
+      }
+    ```
+
+    Ce qui donnerait pour le mapping:
+    - token.sub
+    - token.email
+    - token.name
+    - token.role
+    - user.first_name
+    - user.last_name
+
+    Une fois récupérer vous pouvez les utiliser dans votre configuration:
+
+    ```yaml
+      oauth2:
+        providers:
+          your-openid-provider:
+            open_id: true
+            issuer: your-openid-issuer-url
+            attributes_map:
+              email: token.email
+              name: token.name
+              firstname: user.first_name
+              lastname: user.last_name
+              role: token.role
+    ```
+
 
 ### Exemple de mise en place
 
@@ -361,7 +478,8 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
     Pour cet exemple, nous allons nous servir de GitHub comme provider.
 
     ### Configuration avec GitHub
-    En premier lieu, vous allez devoir vous rendre en étant connecté avec votre compte sur la page [`Developer Settings`](https://github.com/settings/developers) puis appuyer sur `Register a new application`
+
+    RDV sur la page [`Developer Settings`](https://github.com/settings/developers) puis appuyer sur `Register a new application`
 
     ![oauth_login_git1](img/oauth_login_git1.png)
 
@@ -403,7 +521,7 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
     En cliquant dessus vous serez redirigé vers GitHub qui vous proposera de vous connecter avec votre compte.
 
-    Une fois connecté que l'utilisateur s'est connecté, on peut le voir apparaître dans la liste des utilisateurs ainsi que sa méthode d'authentification
+    Une fois que l'utilisateur s'est connecté, on peut le voir apparaître dans la liste des utilisateurs ainsi que sa méthode d'authentification
 
     ![oauth_login_git2](img/oauth_login_git2.png)
 
@@ -413,11 +531,11 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
     ### Configuration avec Gitlab
     
-    En premier lieu, vous allez devoir vous rendre en étant connecté avec votre compte sur la page [`Applications`](https://votre-gitlab/oauth/applications) puis appuyer sur `Register a new application`
+    RDV sur la page [`Applications`](https://votre-gitlab/oauth/applications) puis appuyer sur `Register a new application`
 
     ![oauth_login_git3](img/oauth_login_git3.png)
 
-    Une fois celà fait, il faut remplir les différents champs:
+    Remplissez les différents champs :
 
     | Attribut       |                    Valeur                               |
     | -------------- | ------------------------------------------------------- |
@@ -442,13 +560,13 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
               redirect_url: http://URL-DE-VOTRE-CANOPSIS/api/v4/oauth/NOM-DU-PROVIDER/callback
               pkce: true
               default_role: ROLE PAR DEFAUT SUR VOTRE CANOPSIS
-              attributes_map:
-                email: token.email
-                name: user.name
               scopes:
                 - openid
                 - email
                 - profile
+              attributes_map:
+                email: token.email
+                name: user.name
     ```
 
     Une fois que vous avez redémarré votre API, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
@@ -467,7 +585,7 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
     ### Configuration avec Google
     
-    En premier lieu, vous allez devoir vous rendre sur [`la console Google Cloud`](https://console.cloud.google.com/) puis si ce n'est pas déjà fait, créer un projet.
+    RDV sur [`la console Google Cloud`](https://console.cloud.google.com/) puis créer un projet.
 
     ![oauth_login_google1](img/oauth_login_google1.png)
 
@@ -475,7 +593,7 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
     ![oauth_login_google2](img/oauth_login_google2.png)
 
-    Une fois celà fait, il faut remplir les différents champs:
+    Remplissez les différents champs :
 
     | Attribut       |                    Valeur                               |
     | -------------- | ------------------------------------------------------- |
@@ -541,16 +659,16 @@ systemctl restart canopsis-service@canopsis-api.service
 
 ### Test de connexion
 
-La mire de connexion de Canopsis doit maintenant proposer un nouveau menu de login oauth, avec la liste de tout les providers configurés.
+La mire de connexion de Canopsis doit maintenant proposer un nouveau menu de login oauth, avec la liste de tous les providers configurés.
 
-EN ATTENTE DE LA CAPTURE
+![oauth_login](img/oauth_login.png)
 
-Pour tester l’authentification, il faudra vous authentifier avec un compte valide sur l'un des providers configuré précédement.
+Pour tester l’authentification, il faudra vous authentifier avec un compte valide sur l'un des providers configurés précédement.
 
 
 ### Troubleshooting
 
-Observer les logs du service `api` et vérifier la non présence de pattern de type `ERR`
+Observez les logs du service `api` et vérifiez la non présence de pattern de type `ERR`
 
 Redémarrer le service `api` de Canopsis
 
