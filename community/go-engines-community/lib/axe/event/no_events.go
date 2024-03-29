@@ -196,9 +196,9 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 			alarm.Value.InactiveStart = &now
 		}
 
-		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
-			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, false)
-		newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
+		newStep := types.NewPbhAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
+			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, pbehaviorInfo.CanonicalType,
+			pbehaviorInfo.IconName, pbehaviorInfo.Color)
 		alarm.Value.PbehaviorInfo = pbehaviorInfo
 		err := alarm.Value.Steps.Add(newStep)
 		if err != nil {
