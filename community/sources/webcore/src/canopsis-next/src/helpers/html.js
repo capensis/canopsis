@@ -24,7 +24,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
     font: ['color', 'size', 'face'],
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
-    'c-alarm-tags-chips': [':alarm', 'inline-count', '@select'],
+    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
     'service-entities-list': [
