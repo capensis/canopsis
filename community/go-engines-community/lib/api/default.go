@@ -136,7 +136,7 @@ func Default(
 	}
 
 	cookieOptions := DefaultCookieOptions()
-	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
+	sessionStore := mongostore.NewStore(dbClient, GetSessionKeyVar(logger))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	if p.ApiConfigProvider == nil {
@@ -496,4 +496,13 @@ func newWebsocketHub(
 	}
 
 	return websocketHub, nil
+}
+
+func GetSessionKeyVar(logger zerolog.Logger) []byte {
+	sessionKey := os.Getenv("SESSION_KEY")
+	if sessionKey == "" {
+		logger.Warn().Msg("SESSION_KEY is not set, using default value")
+		sessionKey = "canopsis"
+	}
+	return []byte(sessionKey)
 }

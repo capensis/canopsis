@@ -43,6 +43,10 @@ func GetField(object interface{}, fieldPath string) (interface{}, error) {
 		// Dereference the value if it is a non-nil pointer
 		if (value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface) && !value.IsNil() {
 			value = value.Elem()
+		} else if value.Kind() == reflect.Ptr && value.IsNil() {
+			// The field is a nil pointer, so we cannot dereference it
+			return nil, nil
+
 		}
 	}
 
