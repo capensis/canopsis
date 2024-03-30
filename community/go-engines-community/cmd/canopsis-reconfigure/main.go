@@ -18,7 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/pgx"
+	"github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
