@@ -148,6 +148,7 @@ export default {
       return this.$createElement(VSimpleTable, {
         props: simpleProps,
         class: {
+          'v-data-table--expand': this.showExpand,
           'v-data-table--mobile': this.isMobile,
           'v-data-table--selectable': this.showSelect,
         },

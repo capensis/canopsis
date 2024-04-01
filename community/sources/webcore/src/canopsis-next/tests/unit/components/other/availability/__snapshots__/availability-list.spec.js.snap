@@ -11,7 +11,7 @@ exports[`availability-list Renders \`availability-list\` with custom props 1`] =
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -592,7 +592,7 @@ exports[`availability-list Renders \`availability-list\` with default props 1`] 
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
