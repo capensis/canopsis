@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout
+    v-layout(align-center)
       v-flex
         v-text-field(
           v-field="value",
