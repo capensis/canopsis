@@ -6,6 +6,7 @@
     </v-card>
     <c-fab-btn
       :has-access="creatable"
+      :dark="dark"
       @refresh="$emit('refresh')"
       @create="$emit('create')"
     >
@@ -18,6 +19,10 @@
 export default {
   props: {
     creatable: {
+      type: Boolean,
+      default: false,
+    },
+    dark: {
       type: Boolean,
       default: false,
     },
