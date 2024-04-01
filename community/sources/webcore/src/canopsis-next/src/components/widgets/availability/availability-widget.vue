@@ -202,7 +202,13 @@ export default {
       const query = {
         ...this.interval,
         ...pick(this.query, ['page', 'search', 'active_columns']),
-        ...convertSortToRequest(sortBy, sortDesc),
+        ...convertSortToRequest(
+          /**
+           * We should remove .value, because it's useless for this endpoint
+           */
+          sortBy.map(field => field.replace(/.value$/, '')),
+          sortDesc,
+        ),
         limit: itemsPerPage,
         filters: convertFiltersToQuery(filter, lockedFilter),
       };

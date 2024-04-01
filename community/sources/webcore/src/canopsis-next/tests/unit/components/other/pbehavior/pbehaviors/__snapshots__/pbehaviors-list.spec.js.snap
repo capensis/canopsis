@@ -52,7 +52,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light v-data-table--selectable"
+    class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
     header-text="text"
   >
     <div
@@ -2491,7 +2491,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -2996,7 +2996,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -5126,7 +5126,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
