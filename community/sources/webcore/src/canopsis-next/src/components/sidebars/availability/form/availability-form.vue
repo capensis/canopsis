@@ -149,10 +149,14 @@ export default {
       omit(CONTEXT_WIDGET_COLUMNS, [
         'id',
         'name',
-        'categoryName',
+        'component',
+        'connector',
         'type',
+        'categoryName',
         'impactLevel',
+        'enabled',
         'infos',
+        'componentInfos',
         'links',
       ]),
     ));
