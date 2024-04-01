@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-pbehavior-chip Renders \`c-alarm-pbehavior-chip\` with black color 1`] = `
+<c-alarm-extra-details-chip-stub
+  color="#000"
+  icon="help"
+  icon-color="white"
+/>
+`;
+
+exports[`c-alarm-pbehavior-chip Renders \`c-alarm-pbehavior-chip\` with default props 1`] = `
+<c-alarm-extra-details-chip-stub
+  color="#2b3e4f"
+  icon="pause"
+  icon-color="white"
+/>
+`;
+
+exports[`c-alarm-pbehavior-chip Renders \`c-alarm-pbehavior-chip\` with white color 1`] = `
+<c-alarm-extra-details-chip-stub
+  color="#fff"
+  icon="help"
+  icon-color="black"
+/>
+`;

@@ -34,10 +34,10 @@ export const widgetExpandPanelAlarmTimelineCard = {
 
       return Object.keys(states).reduce((acc, key) => {
         if (key.startsWith(prefix)) {
-          // const stateValue = parseInt(key.replace(prefix, ''), 10);
+          const stateValue = parseInt(key.replace(prefix, ''), 10);
 
           acc.push({
-            text: '',
+            text: stateValue,
             value: states[key],
           });
         }

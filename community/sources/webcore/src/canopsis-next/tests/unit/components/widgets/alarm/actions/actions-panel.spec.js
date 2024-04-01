@@ -212,7 +212,7 @@ describe('actions-panel', () => {
     jest.clearAllMocks();
   });
 
-  it('Ack modal showed after trigger ack action', async () => {
+  test('Ack modal showed after trigger ack action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -258,7 +258,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Fast ack event sent after trigger fast ack action', () => {
+  test('Fast ack event sent after trigger fast ack action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {
@@ -314,7 +314,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Ack remove modal showed after trigger ack remove action', async () => {
+  test('Ack remove modal showed after trigger ack remove action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -366,7 +366,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Create pbehavior modal showed after trigger pbehavior add action', () => {
+  test('Create pbehavior modal showed after trigger pbehavior add action', () => {
     const entity = {
       _id: Faker.datatype.string(),
     };
@@ -403,7 +403,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Snooze modal showed after trigger snooze action', async () => {
+  test('Snooze modal showed after trigger snooze action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -465,7 +465,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Declare ticket modal showed after trigger declare action', async () => {
+  test('Declare ticket modal showed after trigger declare action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -539,7 +539,7 @@ describe('actions-panel', () => {
     });
   });
 
-  it('Associate ticket modal showed after trigger associate ticket action', async () => {
+  test('Associate ticket modal showed after trigger associate ticket action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -594,7 +594,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Change state modal showed after trigger change state action', async () => {
+  test('Change state modal showed after trigger change state action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -649,7 +649,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Cancel modal showed after trigger cancel action', async () => {
+  test('Cancel modal showed after trigger cancel action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -704,7 +704,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Fast cancel event sent after trigger fast cancel action', async () => {
+  test('Fast cancel event sent after trigger fast cancel action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {
@@ -763,7 +763,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Fast cancel and cancel action available when status is flapping and state is ok', async () => {
+  test('Fast cancel and cancel action available when status is flapping and state is ok', async () => {
     const flappingAlarm = {
       ...alarm,
       v: {
@@ -797,7 +797,7 @@ describe('actions-panel', () => {
     expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeTruthy();
   });
 
-  it('Fast cancel and cancel action available when status is closed and state is ok', async () => {
+  test('Fast cancel and cancel action available when status is closed and state is ok', async () => {
     const flappingAlarm = {
       ...alarm,
       v: {
@@ -838,7 +838,7 @@ describe('actions-panel', () => {
     expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeTruthy();
   });
 
-  it('Fast cancel and cancel action doesn\'t available when status is closed and state is ok and isActionsAllowWithOkState is disabled', async () => {
+  test('Fast cancel and cancel action doesn\'t available when status is closed and state is ok and isActionsAllowWithOkState is disabled', async () => {
     const flappingAlarm = {
       ...alarm,
       v: {
@@ -873,7 +873,7 @@ describe('actions-panel', () => {
     expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeFalsy();
   });
 
-  it('Variables modal showed after trigger variables help action', () => {
+  test('Variables modal showed after trigger variables help action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -958,7 +958,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('History modal showed after trigger history action', () => {
+  test('History modal showed after trigger history action', () => {
     const widgetData = prepareAlarmListWidget({
       _id: Faker.datatype.string(),
       parameters: {
@@ -1016,7 +1016,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Comment modal showed after trigger comment action', async () => {
+  test('Comment modal showed after trigger comment action', async () => {
     const commentAlarm = {
       ...alarm,
       v: {
@@ -1083,7 +1083,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
+  test('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -1137,7 +1137,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
+  test('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -1191,7 +1191,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Remove alarms from auto meta alarm modal showed after trigger remove alarms from auto meta alarm action', async () => {
+  test('Remove alarms from auto meta alarm modal showed after trigger remove alarms from auto meta alarm action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -1251,7 +1251,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Execute instruction alarm modal showed after trigger execute instruction action', () => {
+  test('Execute instruction alarm modal showed after trigger execute instruction action', () => {
     const assignedInstruction = assignedInstructionsWithPaused[1];
     const alarmData = {
       ...alarm,
@@ -1307,7 +1307,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(3);
   });
 
-  it('Export PDF action', async () => {
+  test('Export PDF action', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1330,7 +1330,7 @@ describe('actions-panel', () => {
     expect(exportAlarmToPdf).toBeCalled();
   });
 
-  it('Custom action called after trigger button', () => {
+  test('Custom action called after trigger button', () => {
     const customAction = {
       type: 'custom-type',
       icon: 'custom-icon',
@@ -1360,7 +1360,7 @@ describe('actions-panel', () => {
     featureGetSpy.mockClear();
   });
 
-  it('Add bookmark request was sent after trigger add bookmark', async () => {
+  test('Add bookmark request was sent after trigger add bookmark', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -1395,7 +1395,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Remove bookmark request was sent after trigger remove bookmark', async () => {
+  test('Remove bookmark request was sent after trigger remove bookmark', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -1430,7 +1430,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Renders `actions-panel` with manual instruction in running', () => {
+  test('Renders `actions-panel` with manual instruction in running', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1449,7 +1449,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with simple manual instruction in running', () => {
+  test('Renders `actions-panel` with simple manual instruction in running', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1477,7 +1477,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with manual instruction in waiting result', () => {
+  test('Renders `actions-panel` with manual instruction in waiting result', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1496,7 +1496,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with auto instruction in running', () => {
+  test('Renders `actions-panel` with auto instruction in running', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1515,7 +1515,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with paused manual instruction', () => {
+  test('Renders `actions-panel` with paused manual instruction', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1534,7 +1534,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with unresolved alarm and flapping status', () => {
+  test('Renders `actions-panel` with unresolved alarm and flapping status', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1550,7 +1550,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with unresolved alarm and ongoing status', () => {
+  test('Renders `actions-panel` with unresolved alarm and ongoing status', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1573,7 +1573,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with resolved alarm', () => {
+  test('Renders `actions-panel` with resolved alarm', () => {
     const resolvedAlarmData = {
       ...alarm,
       v: {
@@ -1597,7 +1597,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with full unresolved alarm, but without access', () => {
+  test('Renders `actions-panel` with full unresolved alarm, but without access', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -1610,7 +1610,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
+  test('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1634,7 +1634,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
+  test('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1653,7 +1653,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with links in alarm', () => {
+  test('Renders `actions-panel` with links in alarm', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1687,7 +1687,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with links in resolved alarm', () => {
+  test('Renders `actions-panel` with links in resolved alarm', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -1719,7 +1719,7 @@ describe('actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
+  test('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,

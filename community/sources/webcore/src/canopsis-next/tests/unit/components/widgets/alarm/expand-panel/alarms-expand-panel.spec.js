@@ -10,7 +10,7 @@ import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-t
 
 const stubs = {
   'more-infos': true,
-  'alarms-time-line': true,
+  'alarm-timeline': true,
   'alarms-expand-panel-children': true,
   'service-dependencies': true,
   'declared-tickets-list': true,

@@ -5,18 +5,11 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          :style="{ backgroundColor: color }"
-          class="c-extra-details__badge"
+        <c-alarm-pbehavior-chip
+          :color="pbehaviorInfo.color"
+          :icon="pbehaviorInfo.icon_name"
           v-on="on"
-        >
-          <v-icon
-            :color="iconColor"
-            small
-          >
-            {{ pbehaviorInfo.icon_name }}
-          </v-icon>
-        </span>
+        />
       </template>
       <div>
         <strong>{{ $t('alarm.actions.iconsTitles.pbehaviors') }}</strong>
@@ -50,23 +43,11 @@
 </template>
 
 <script>
-import { getMostReadableTextColor } from '@/helpers/color';
-import { getPbehaviorColor } from '@/helpers/entities/pbehavior/form';
-
 export default {
   props: {
     pbehaviorInfo: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  computed: {
-    color() {
-      return getPbehaviorColor(this.pbehaviorInfo);
-    },
-
-    iconColor() {
-      return getMostReadableTextColor(this.color, { level: 'AA', size: 'large' });
     },
   },
 };

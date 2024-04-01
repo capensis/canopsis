@@ -347,13 +347,14 @@ export const COLORS = {
   alarmSteps: {
     ack: '#35485D',
     ackRemove: '#35485D',
-    declareTicket: '#2196f3',
+    declareTicket: '#6A6A6A',
     snooze: '#FF5252',
     comment: '#5B6E7F',
     metaalarmattach: '#8C1D18',
     junitTestCaseUpdate: '#979797',
     activate: '#01579B',
     resolve: '#2FAB63',
+    instruction: '#6A6A6A',
   },
   alarmExtraDetails: {
     ack: '#9c27b0',

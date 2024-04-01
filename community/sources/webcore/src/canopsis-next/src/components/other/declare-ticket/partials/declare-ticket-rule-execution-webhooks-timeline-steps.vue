@@ -1,5 +1,5 @@
 <template>
-  <div class="alarms-timeline-steps">
+  <div class="timeline-steps">
     <ul
       v-for="(groupSteps, day) in groupedSteps"
       :key="day"
@@ -10,17 +10,17 @@
       >
         <div
           v-show="index === 0"
-          class="alarms-timeline-steps-date text--disabled"
+          class="timeline-steps-date text--disabled"
         >
           <div class="date">
             {{ day }}
           </div>
         </div>
-        <div class="alarms-timeline-steps-card">
+        <div class="timeline-steps-card">
           <div class="time text--disabled">
             {{ step.t | date('time') }}
           </div>
-          <alarms-time-line-flag
+          <declare-ticket-rule-execution-webhooks-timeline-flag
             :step="step"
             class="flag"
           />
@@ -37,10 +37,10 @@
 <script>
 import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
 
-import AlarmsTimeLineFlag from './alarms-time-line-flag.vue';
+import DeclareTicketRuleExecutionWebhooksTimelineFlag from './declare-ticket-rule-execution-webhooks-timeline-flag.vue';
 
 export default {
-  components: { AlarmsTimeLineFlag },
+  components: { DeclareTicketRuleExecutionWebhooksTimelineFlag },
   props: {
     steps: {
       type: Array,
@@ -58,7 +58,7 @@ export default {
 <style lang="scss" scoped>
 $borderLine: #DDDDE0;
 
-.alarms-timeline-steps {
+.timeline-steps {
   ul {
     list-style: none;
   }
