@@ -5,6 +5,10 @@ import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
 
+const stubs = {
+  'c-alarm-extra-details-chip': true,
+};
+
 describe('extra-details-ticket', () => {
   const nowTimestamp = 1386435500000;
   const prevDateTimestamp = 1386392400000;
@@ -29,6 +33,7 @@ describe('extra-details-ticket', () => {
   ];
 
   const snapshotFactory = generateRenderer(ExtraDetailsTicket, {
+    stubs,
     attachTo: document.body,
   });
 

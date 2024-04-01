@@ -38,12 +38,13 @@ export default {
 
 <style lang="scss" scoped>
 .c-alarm-extra-details-chip {
+  display: flex;
   height: 22px;
   padding: 3px 7px;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: 10px;
-  display: flex;
+  line-height: 16px;
 }
 </style>

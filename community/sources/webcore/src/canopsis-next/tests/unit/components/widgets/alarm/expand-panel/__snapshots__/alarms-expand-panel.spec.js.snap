@@ -160,8 +160,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -391,8 +393,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -695,8 +699,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -929,8 +935,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>

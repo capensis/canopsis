@@ -5,17 +5,10 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   class="c-clickable-tooltip c-extra-details"
 >
   <div>
-    <span
-      class="c-extra-details__badge purple lighten-2"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        comment
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#ba68c8"
+      icon="comment"
+    />
   </div>
   <span
     class="v-tooltip v-tooltip--top"
@@ -32,17 +25,10 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   class="c-clickable-tooltip c-extra-details"
 >
   <div>
-    <span
-      class="c-extra-details__badge purple lighten-2"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        comment
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#ba68c8"
+      icon="comment"
+    />
   </div>
   <span
     class="v-tooltip v-tooltip--top"

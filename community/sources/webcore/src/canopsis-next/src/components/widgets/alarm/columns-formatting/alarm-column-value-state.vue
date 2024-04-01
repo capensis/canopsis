@@ -28,6 +28,7 @@
 
 <script>
 import { get } from 'lodash';
+import { computed } from 'vue';
 
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
@@ -56,25 +57,21 @@ export default {
       required: false,
     },
   },
-  computed: {
-    classes() {
-      return {
-        'alarm-column-value-state--badge': this.badgeValue,
-        'alarm-column-value-state--small': this.small,
-      };
-    },
+  setup(props) {
+    const badgeValue = computed(() => get(props.alarm, 'v.events_count'));
+    const stateId = computed(() => get(props.alarm, props.propertyKey));
+    const showIcon = computed(() => get(props.alarm, 'v.state._t') === ALARM_LIST_ACTIONS_TYPES.changeState);
+    const classes = computed(() => ({
+      'alarm-column-value-state--badge': badgeValue.value,
+      'alarm-column-value-state--small': props.small,
+    }));
 
-    badgeValue() {
-      return get(this.alarm, 'v.events_count');
-    },
-
-    stateId() {
-      return get(this.alarm, this.propertyKey);
-    },
-
-    showIcon() {
-      return get(this.alarm, 'v.state._t') === ALARM_LIST_ACTIONS_TYPES.changeState;
-    },
+    return {
+      badgeValue,
+      stateId,
+      showIcon,
+      classes,
+    };
   },
 };
 </script>

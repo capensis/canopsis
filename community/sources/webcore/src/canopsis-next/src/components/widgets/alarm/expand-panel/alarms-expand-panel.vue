@@ -248,7 +248,7 @@ import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehav
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
-import AlarmTimeline from '../timeline-2/alarm-timeline.vue';
+import AlarmTimeline from '../timeline/alarm-timeline.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
 
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
