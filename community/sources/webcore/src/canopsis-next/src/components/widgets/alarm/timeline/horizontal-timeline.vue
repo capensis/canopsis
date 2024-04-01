@@ -12,7 +12,7 @@
       />
       <div class="c-horizontal-time-line__cards">
         <template v-for="(step, stepIndex) in group.steps">
-          <horizontal-time-line-card
+          <horizontal-timeline-card
             :key="`card-${stepIndex}`"
             :step="step"
           />
@@ -33,10 +33,10 @@
 <script>
 import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
 
-import HorizontalTimeLineCard from './horizontal-time-line-card.vue';
+import HorizontalTimelineCard from './horizontal-timeline-card.vue';
 
 export default {
-  components: { HorizontalTimeLineCard },
+  components: { HorizontalTimelineCard },
   props: {
     alarm: {
       type: Object,

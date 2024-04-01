@@ -27,7 +27,7 @@ export const DECLARE_TICKET_TIMELINE_STEPS = {
   webhookComplete: 'webhookcomplete',
   webhookFail: 'webhookfail',
   webhookProgress: 'webhookprogress', // TODO: NEW
-  ticketDeclarationRuleProgress: 'ticketdeclatetionruleprogress', // TODO: NEW
-  ticketDeclarationRuleCompleted: 'ticketdeclatetionrulecomplete', // TODO: NEW
-  ticketDeclarationRuleFailed: 'ticketdeclatetionrulefailed', // TODO: NEW
+  declareTicketRuleProgress: 'ticketdeclatetionruleprogress', // TODO: NEW
+  declareTicketRuleComplete: 'ticketdeclatetionrulecomplete', // TODO: NEW
+  declareTicketRuleFailed: 'ticketdeclatetionrulefailed', // TODO: NEW
 };

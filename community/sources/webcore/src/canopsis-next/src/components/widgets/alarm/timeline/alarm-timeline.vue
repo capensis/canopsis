@@ -16,14 +16,14 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { groupAlarmSteps } from '@/helpers/entities/alarm/step/list';
 
 import AlarmTimelineDays from './alarm-timeline-days.vue';
 
 export default {
-  components: {
-    AlarmTimelineDays,
-  },
+  components: { AlarmTimelineDays },
   props: {
     steps: {
       type: Array,
@@ -38,25 +38,18 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    days() {
-      return groupAlarmSteps(this.steps);
-    },
-  },
-  methods: {
-    updateGroup(group) {
-      this.$emit('update:query', {
-        ...this.query,
-        group,
-      });
-    },
+  setup(props, { emit }) {
+    const days = computed(() => groupAlarmSteps(props.steps));
 
-    updatePage(page) {
-      this.$emit('update:query', {
-        ...this.query,
-        page,
-      });
-    },
+    const updateGroup = group => emit('update:query', { ...props.query, group, page: 1 });
+    const updatePage = page => emit('update:query', { ...props.query, page });
+
+    return {
+      days,
+
+      updateGroup,
+      updatePage,
+    };
   },
 };
 </script>

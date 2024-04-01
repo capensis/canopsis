@@ -71,7 +71,7 @@ export const EVENT_ENTITY_TYPES = {
   executeInstruction: 'executeInstruction', // TODO: ServiceWeather
 };
 
-export const ENTITY_INFOS_TYPE = {
+export const ENTITY_INFOS_TYPE = { // TODO: move to alarm
   state: 'state',
   status: 'status',
   action: 'action',

@@ -79,6 +79,8 @@ export default {
   timeline: {
     by: 'par',
     launched: 'lancé',
+    junit: 'JUnit',
+    groupItems: 'Éléments de groupe',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'État diminué',
       [ALARM_LIST_STEPS.stateinc]: 'État augmenté',
@@ -101,9 +103,9 @@ export default {
       [ALARM_LIST_STEPS.webhookFail]: 'Le Webhook a échoué',
       [ALARM_LIST_STEPS.declareTicket]: 'Le ticket est déclaré',
       [ALARM_LIST_STEPS.declareTicketFail]: 'La déclaration du ticket a échoué',
-      [ALARM_LIST_STEPS.ticketDeclarationRuleProgress]: 'Règle de déclaration de ticket lancée par {author} en cours',
-      [ALARM_LIST_STEPS.ticketDeclarationRuleCompleted]: 'La règle de déclaration du ticket est terminée',
-      [ALARM_LIST_STEPS.ticketDeclarationRuleFailed]: 'La règle de déclaration de ticket a échoué',
+      [ALARM_LIST_STEPS.declareTicketRuleProgress]: 'Règle de déclaration de ticket lancée par {author} en cours',
+      [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'La règle de déclaration du ticket est terminée',
+      [ALARM_LIST_STEPS.declareTicketRuleFailed]: 'La règle de déclaration de ticket a échoué',
       [ALARM_LIST_STEPS.instructionStart]: 'L\'instruction est lancée',
       [ALARM_LIST_STEPS.instructionPause]: 'Instruction suspendue',
       [ALARM_LIST_STEPS.instructionResume]: 'Instruction reprise',
