@@ -231,12 +231,12 @@ export default {
   flex-wrap: wrap;
   align-items: end;
 
-  &__search {
-    width: 400px;
+  & > * {
+    flex-grow: 0;
   }
 
-  &__filter-wrapper {
-    flex-grow: 0;
+  &__search {
+    width: 400px;
   }
 
   &__show-type, &__filter-selector {

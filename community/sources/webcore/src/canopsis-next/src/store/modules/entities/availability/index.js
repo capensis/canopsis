@@ -5,27 +5,12 @@ import request from '@/services/request';
 
 import { createWidgetModule } from '@/store/plugins/entities';
 
-const prepareAvailabilityData = ({ data }) => data.map(availability => ({
-  ...availability,
-  entity: {
-    ...availability.entity,
-    infos: availability.entity.infos
-      ? Object.entries(availability.entity.infos).reduce((acc, [name, value]) => {
-        acc[name] = {
-          value,
-          name,
-        };
-
-        return acc;
-      }, {})
-      : {},
-  },
-}));
+import { prepareAvailabilitiesResponse } from '@/helpers/entities/availability/entity';
 
 export default createWidgetModule({
   route: API_ROUTES.metrics.availability,
   method: REQUEST_METHODS.get,
-  dataPreparer: prepareAvailabilityData,
+  dataPreparer: prepareAvailabilitiesResponse,
 }, {
   actions: {
     async fetchAvailabilityWithoutStore(context, { params } = {}) {
