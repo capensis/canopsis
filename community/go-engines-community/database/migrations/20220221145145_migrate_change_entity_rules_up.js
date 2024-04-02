@@ -38,9 +38,9 @@ db.eventfilter.find({
         priority: doc.priority,
         enabled: doc.enabled,
         config: config,
-        external_data: doc.external_data,
+        external_data: doc.external_data || null,
         created: now,
         updated: now,
-        author: doc.author
+        author: doc.author || null
     });
 });
