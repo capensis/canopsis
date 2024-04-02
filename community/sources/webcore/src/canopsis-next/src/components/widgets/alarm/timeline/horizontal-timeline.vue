@@ -13,12 +13,12 @@
       <div class="c-horizontal-time-line__cards">
         <template v-for="(step, stepIndex) in group.steps">
           <horizontal-timeline-card
-            :key="`card-${stepIndex}`"
+            :key="step.key"
             :step="step"
           />
           <v-icon
             v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1"
-            :key="`arrow-${stepIndex}`"
+            :key="`arrow-${step.key}`"
             class="mx-2"
             size="16"
           >
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
+import { groupAlarmSteps } from '@/helpers/entities/alarm/step/list';
 
 import HorizontalTimelineCard from './horizontal-timeline-card.vue';
 

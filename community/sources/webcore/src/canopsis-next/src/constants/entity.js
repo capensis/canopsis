@@ -45,7 +45,7 @@ export const ENTITY_FIELDS = {
   snooze: 'snooze',
 };
 
-export const EVENT_ENTITY_TYPES = {
+export const EVENT_ENTITY_TYPES = { // TODO: remove it in the future
   ack: 'ack', // TODO: ServiceWeather
   fastAck: 'fastAck', // TODO: ServiceWeather
   ackRemove: 'ackremove', // TODO: ServiceWeather, EventPattern

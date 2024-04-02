@@ -3,15 +3,15 @@ import { createSelectInputStub } from '@unit/stubs/input';
 
 import { ALARM_STATUSES } from '@/constants';
 
-import CEntityStatusField from '@/components/forms/fields/entity/c-entity-status-field.vue';
+import CAlarmStatusField from '@/components/forms/fields/alarm/c-alarm-status-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-describe('c-entity-status-field', () => {
-  const factory = generateShallowRenderer(CEntityStatusField, { stubs });
-  const snapshotFactory = generateRenderer(CEntityStatusField);
+describe('c-alarm-status-field', () => {
+  const factory = generateShallowRenderer(CAlarmStatusField, { stubs });
+  const snapshotFactory = generateRenderer(CAlarmStatusField);
 
   it('Value changed after trigger the input', () => {
     const wrapper = factory({
@@ -26,7 +26,7 @@ describe('c-entity-status-field', () => {
     expect(wrapper).toEmitInput(ALARM_STATUSES.cancelled);
   });
 
-  it('Renders `c-entity-status-field` with default props', () => {
+  it('Renders `c-alarm-status-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ALARM_STATUSES.stealthy,
@@ -39,7 +39,7 @@ describe('c-entity-status-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-entity-status-field` with custom props', () => {
+  it('Renders `c-alarm-status-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ALARM_STATUSES.flapping,

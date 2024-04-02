@@ -4,8 +4,8 @@
     column
   >
     <state-setting-threshold-field
-      v-field="thresholds[key]"
       v-for="key in sortedThresholdsKeys"
+      v-field="thresholds[key]"
       :key="key"
       :label="getLabel(key)"
       :name="`${name}.${key}`"
