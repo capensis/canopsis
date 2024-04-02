@@ -10,6 +10,7 @@
     v-icon.cursor-pointer.ml-2(
       v-if="closable",
       color="white",
+      small,
       @click.stop="$emit('close')"
     ) cancel
 </template>
