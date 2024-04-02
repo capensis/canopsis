@@ -251,15 +251,15 @@ export const ALARM_LIST_STEPS = {
   assocTicket: 'assocticket',
 
   webhookStart: 'webhookstart',
-  webhookProgress: 'webhookprogress', // TODO: NEW
+  webhookProgress: 'webhookprogress',
   webhookComplete: 'webhookcomplete',
   webhookFail: 'webhookfail',
 
   declareTicket: 'declareticket',
   declareTicketFail: 'declareticketfail',
-  declareTicketRuleProgress: 'declareticketruleprogress', // TODO: NEW
-  declareTicketRuleComplete: 'declareticketrulecomplete', // TODO: NEW
-  declareTicketRuleFailed: 'declareticketrulefailed', // TODO: NEW
+  declareTicketRuleProgress: 'declareticketruleprogress',
+  declareTicketRuleComplete: 'declareticketrulecomplete',
+  declareTicketRuleFailed: 'declareticketrulefailed',
 
   snooze: 'snooze',
   unsnooze: 'unsnooze',

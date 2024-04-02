@@ -5,7 +5,7 @@
         v-for="childrenStep in childrenSteps"
         :key="childrenStep.key"
         :step="childrenStep"
-        child
+        deep
       />
     </v-layout>
   </v-expand-transition>

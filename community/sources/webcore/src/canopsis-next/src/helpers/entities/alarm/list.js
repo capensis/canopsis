@@ -1,13 +1,4 @@
-import { groupBy } from 'lodash';
-
-import {
-  ALARM_LINK_ICON_CHIP_COLUMN_GAP,
-  ALARM_LINK_ICON_CHIP_WIDTH,
-  ALARM_LINK_TD_PADDINGS,
-  DATETIME_FORMATS,
-} from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
+import { ALARM_LINK_ICON_CHIP_COLUMN_GAP, ALARM_LINK_ICON_CHIP_WIDTH, ALARM_LINK_TD_PADDINGS } from '@/constants';
 
 /**
  * @typedef {0 | 1 | 2} AlarmListWidgetDense
@@ -38,16 +29,6 @@ export const getAlarmDetailsDataPreparer = widgetId => data => (
      */
     _id: generateAlarmDetailsId(item._id, widgetId),
   }))
-);
-
-/**
- * Get grouped steps by date
- *
- * @param {AlarmStep[]} steps
- * @return {Object.<string, AlarmStep[]>}
- */
-export const groupAlarmSteps = steps => ( // TODO: remove
-  groupBy(steps, step => convertDateToString(step.t, DATETIME_FORMATS.short))
 );
 
 /**

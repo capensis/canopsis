@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom props 1`] = `
+exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props 1`] = `
 <div
   class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-select"
 >
@@ -68,9 +68,9 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
 </div>
 `;
 
-exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom props 2`] = `undefined`;
+exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props 2`] = `undefined`;
 
-exports[`c-entity-status-field Renders \`c-entity-status-field\` with default props 1`] = `
+exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default props 1`] = `
 <div
   class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
 >
@@ -137,4 +137,4 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
 </div>
 `;
 
-exports[`c-entity-status-field Renders \`c-entity-status-field\` with default props 2`] = `undefined`;
+exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default props 2`] = `undefined`;

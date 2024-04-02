@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with custom props 1`] = `
+exports[`c-alarm-state-field Renders \`c-alarm-state-field\` with custom props 1`] = `
 <div
   class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-select"
 >
@@ -68,9 +68,9 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with custom props
 </div>
 `;
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with custom props 2`] = `undefined`;
+exports[`c-alarm-state-field Renders \`c-alarm-state-field\` with custom props 2`] = `undefined`;
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with default props 1`] = `
+exports[`c-alarm-state-field Renders \`c-alarm-state-field\` with default props 1`] = `
 <div
   class="v-input v-input--hide-details theme--light v-text-field v-select"
 >
@@ -131,9 +131,9 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default prop
 </div>
 `;
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with default props 2`] = `undefined`;
+exports[`c-alarm-state-field Renders \`c-alarm-state-field\` with default props 2`] = `undefined`;
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with validator error 1`] = `
+exports[`c-alarm-state-field Renders \`c-alarm-state-field\` with validator error 1`] = `
 <div
   class="v-input v-input--has-state v-input--hide-details theme--light v-text-field v-select error--text"
 >

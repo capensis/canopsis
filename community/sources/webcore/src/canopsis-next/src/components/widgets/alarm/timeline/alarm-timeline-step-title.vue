@@ -22,6 +22,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    deep: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const { t } = useI18n();
@@ -31,7 +35,7 @@ export default {
       const hasLaunchedMessage = ALARM_STEPS_WITH_LAUNCHED_IN_TITLE.includes(type);
       const hasConditionForAuthorMessage = ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE.includes(type);
       const hasAuthorMessage = ALARM_STEPS_WITH_AUTHOR_IN_TITLE.includes(type)
-        && ((hasConditionForAuthorMessage && !props.child) || !hasConditionForAuthorMessage);
+        && ((hasConditionForAuthorMessage && !props.deep) || !hasConditionForAuthorMessage);
       const payload = { author };
 
       switch (type) {
