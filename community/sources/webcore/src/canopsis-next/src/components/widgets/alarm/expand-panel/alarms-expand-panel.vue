@@ -71,7 +71,9 @@
                 <alarms-expand-panel-more-infos
                   :alarm="alarm"
                   :template="widget.parameters.moreInfoTemplate"
+                  :selected-tag="selectedTag"
                   @select:tag="$emit('select:tag', $event)"
+                  @clear:tag="$emit('clear:tag')"
                 />
               </v-card-text>
             </v-card>
@@ -286,6 +288,10 @@ export default {
       default: false,
     },
     search: {
+      type: String,
+      default: '',
+    },
+    selectedTag: {
       type: String,
       default: '',
     },
