@@ -9,7 +9,6 @@
   >
     <template #activator="{ on }">
       <v-btn
-        color="secondary"
         icon
         fab
         small
