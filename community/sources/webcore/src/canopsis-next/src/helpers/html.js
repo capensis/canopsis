@@ -26,7 +26,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
     marquee: ['direction'],
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
-    'c-alarm-tags-chips': [':alarm', 'inline-count', '@select'],
+    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
     'v-icon': [
