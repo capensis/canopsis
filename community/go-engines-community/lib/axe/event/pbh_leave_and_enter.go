@@ -73,12 +73,14 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	var prevPbehaviorID string
 	var componentStateChanged bool
 	var newComponentState int
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
+		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -95,10 +97,12 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 
 		alarmChange := types.NewAlarmChange()
 		if alarm.ID == "" {
+			prevPbehaviorID = event.Entity.PbehaviorInfo.ID
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 		} else {
+			prevPbehaviorID = alarm.Value.PbehaviorInfo.ID
 			alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
@@ -189,7 +193,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState, prevPbehaviorID)
 
 	return result, nil
 }
@@ -201,6 +205,7 @@ func (p *pbhLeaveAndEnterProcessor) postProcess(
 	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	componentStateChanged bool,
 	newComponentState int,
+	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -232,15 +237,25 @@ func (p *pbhLeaveAndEnterProcessor) postProcess(
 		}
 	}
 
-	if result.Alarm.ID != "" {
+	if result.Alarm.ID == "" {
+		err := updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Entity.PbehaviorInfo.ID, result.Entity.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+	} else {
 		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
 		}
-	}
 
-	err := updatePbhLastAlarmDate(ctx, result, p.pbehaviorCollection)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot update pbehavior")
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, prevPbehaviorID)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
 	}
 }
