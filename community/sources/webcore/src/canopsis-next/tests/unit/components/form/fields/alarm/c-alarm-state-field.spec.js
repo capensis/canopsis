@@ -3,15 +3,15 @@ import { createSelectInputStub } from '@unit/stubs/input';
 
 import { ALARM_STATES } from '@/constants';
 
-import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
+import CAlarmStateField from '@/components/forms/fields/alarm/c-alarm-state-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-describe('c-entity-state-field', () => {
-  const factory = generateShallowRenderer(CEntityStateField, { stubs });
-  const snapshotFactory = generateRenderer(CEntityStateField);
+describe('c-alarm-state-field', () => {
+  const factory = generateShallowRenderer(CAlarmStateField, { stubs });
+  const snapshotFactory = generateRenderer(CAlarmStateField);
 
   it('State type changed after trigger select field', () => {
     const wrapper = factory({
@@ -27,7 +27,7 @@ describe('c-entity-state-field', () => {
     expect(wrapper).toEmitInput(ALARM_STATES.critical);
   });
 
-  it('Renders `c-entity-state-field` with default props', () => {
+  it('Renders `c-alarm-state-field` with default props', () => {
     const wrapper = snapshotFactory();
 
     const menuContent = wrapper.findMenu();
@@ -36,7 +36,7 @@ describe('c-entity-state-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-entity-state-field` with custom props', () => {
+  it('Renders `c-alarm-state-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ALARM_STATES.major,
@@ -53,7 +53,7 @@ describe('c-entity-state-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-entity-state-field` with validator error', async () => {
+  it('Renders `c-alarm-state-field` with validator error', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         required: true,

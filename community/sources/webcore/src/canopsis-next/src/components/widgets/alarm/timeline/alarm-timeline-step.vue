@@ -10,13 +10,13 @@
             <alarm-timeline-step-icon :step="step" />
           </div>
           <c-expand-btn
-            v-if="hasChildren"
+            v-if="hasSteps"
             :expanded="expanded"
             class="timeline-step__expand-button"
             @expand="expand"
           />
           <div class="timeline-step__title">
-            <alarm-timeline-step-title :step="step" />
+            <alarm-timeline-step-title :step="step" :deep="deep" />
           </div>
           <div v-if="resultIcon" class="timeline-step__result-icon">
             <v-icon :color="resultIcon.color">
@@ -43,14 +43,13 @@ import AlarmTimelineStepIcon from './alarm-timeline-step-icon.vue';
 import AlarmTimelineStepTitle from './alarm-timeline-step-title.vue';
 
 export default {
-  name: 'alarm-timeline-step',
   components: { AlarmTimelineStepIcon, AlarmTimelineStepTitle },
   props: {
     step: {
       type: Object,
       default: () => ({}),
     },
-    child: {
+    deep: {
       type: Boolean,
       default: false,
     },
@@ -59,12 +58,12 @@ export default {
     const expanded = ref(false);
 
     const time = computed(() => convertDateToString(props.step.t, DATETIME_FORMATS.time));
-    const hasChildren = computed(() => !!props.step.steps?.length);
+    const hasSteps = computed(() => !!props.step.steps?.length);
     const wrapperClass = computed(() => ({
       'timeline-step--pbehavior': props.step.in_pbh,
       'timeline-step--pbehavior-enter': props.step._t === ALARM_LIST_STEPS.pbhenter,
       'timeline-step--pbehavior-leave': props.step._t === ALARM_LIST_STEPS.pbhleave,
-      'timeline-step--child': props.child,
+      'timeline-step--deep': props.deep,
     }));
 
     const resultIcon = computed(() => {
@@ -97,7 +96,7 @@ export default {
     return {
       expanded,
 
-      hasChildren,
+      hasSteps,
       wrapperClass,
       time,
       resultIcon,
@@ -135,7 +134,7 @@ $borderColor: #cecece;
         height: calc(100% - 30px);
       }
 
-      .timeline-step--child & {
+      .timeline-step--deep & {
         padding-left: $margins * 2;
       }
     }

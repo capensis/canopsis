@@ -6,7 +6,7 @@
     >
       <li
         v-for="(step, index) in groupSteps"
-        :key="index"
+        :key="step.key"
       >
         <div
           v-show="index === 0"
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
+import { groupAlarmSteps } from '@/helpers/entities/alarm/step/list';
 
 import DeclareTicketRuleExecutionWebhooksTimelineFlag from './declare-ticket-rule-execution-webhooks-timeline-flag.vue';
 

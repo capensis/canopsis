@@ -47,7 +47,11 @@ export default {
   },
   setup(props) {
     const isStateCounter = computed(() => props.step._t === ALARM_LIST_STEPS.stateCounter);
-    const isChangeState = computed(() => props.step._t === ALARM_LIST_STEPS.changeState);
+    const isChangeState = computed(() => [
+      ALARM_LIST_STEPS.changeState,
+      ALARM_LIST_STEPS.stateinc,
+      ALARM_LIST_STEPS.statedec,
+    ].includes(props.step._t));
 
     const isChangeStatus = computed(() => [
       ALARM_LIST_STEPS.statusinc,
