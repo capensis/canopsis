@@ -84,6 +84,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		entity = *event.Entity
 		updatedServiceStates = nil
 
 		alarm := types.Alarm{}
@@ -103,6 +104,10 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		if err != nil {
 			return err
+		}
+
+		if result.Entity.ID != "" {
+			entity = result.Entity
 		}
 
 		if result.Alarm.ID == "" {
