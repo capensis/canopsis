@@ -2,14 +2,14 @@
   <v-layout class="gap-2" column>
     <template v-for="step in steps">
       <alarm-timeline-step
-        :key="step.key"
+        :key="step._id"
         :step="step"
-        @expand="toggleExpandedForStep(step.key, $event)"
+        @expand="toggleExpandedForStep(step._id, $event)"
       />
       <alarm-timeline-step-expand
-        :key="`${step.key}-expand`"
+        :key="`${step._id}-expand`"
         :step="step"
-        :expanded="expandedSteps[step.key]"
+        :expanded="expandedSteps[step._id]"
       />
     </template>
   </v-layout>

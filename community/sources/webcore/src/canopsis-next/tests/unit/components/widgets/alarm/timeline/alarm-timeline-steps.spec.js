@@ -1,8 +1,6 @@
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
-import { addKeyInEntities } from '@/helpers/array';
-
 import AlarmTimelineSteps from '@/components/widgets/alarm/timeline/alarm-timeline-steps.vue';
 
 const stubs = {
@@ -14,8 +12,7 @@ const selectAlarmTimelineSteps = wrapper => wrapper.findAll('alarm-timeline-step
 const selectAlarmTimelineStepExpands = wrapper => wrapper.findAll('alarm-timeline-step-expand-stub');
 
 describe('alarm-timeline-steps', () => {
-  const { steps: { data: stepsData } } = fakeAlarmDetails();
-  const steps = addKeyInEntities(stepsData);
+  const { steps: { data: steps } } = fakeAlarmDetails();
   const factory = generateShallowRenderer(AlarmTimelineSteps, { stubs });
   const snapshotFactory = generateRenderer(AlarmTimelineSteps, { stubs });
 

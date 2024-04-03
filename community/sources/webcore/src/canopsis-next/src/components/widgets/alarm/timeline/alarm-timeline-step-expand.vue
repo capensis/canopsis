@@ -3,7 +3,7 @@
     <v-layout v-if="expanded" class="gap-2" column>
       <alarm-timeline-step
         v-for="childrenStep in childrenSteps"
-        :key="childrenStep.key"
+        :key="childrenStep._id"
         :step="childrenStep"
         deep
       />

@@ -13,12 +13,12 @@
       <div class="c-horizontal-time-line__cards">
         <template v-for="(step, stepIndex) in group.steps">
           <horizontal-timeline-card
-            :key="step.key"
+            :key="stepIndex"
             :step="step"
           />
           <v-icon
             v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1"
-            :key="`arrow-${step.key}`"
+            :key="`arrow-${stepIndex}`"
             class="mx-2"
             size="16"
           >

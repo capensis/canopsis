@@ -63,13 +63,7 @@ describe('alarm-timeline', () => {
       },
     });
 
-    const daysToCompare = Object.entries(groupAlarmSteps(steps)).reduce((acc, [key, items]) => {
-      acc[key] = items.map(item => ({ ...item, key: expect.any(String) }));
-
-      return acc;
-    }, {});
-
-    expect(wrapper.vm.days).toEqual(daysToCompare);
+    expect(wrapper.vm.days).toEqual(groupAlarmSteps(steps));
   });
 
   test('Renders `alarm-timeline` correctly', () => {
