@@ -108,17 +108,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$margins: 35px;
-$borderColor: #cecece;
-
 .timeline-step {
+  --alarm-timeline-step-margins: 35px;
+
   &__main-content {
-    border-bottom: 1px solid $borderColor;
+    border-bottom: 1px solid var(--v-background-darken1);
+
+    .theme--dark & {
+      border-color: var(--v-background-lighten2);
+    }
 
     &-wrapper {
       position: relative;
-      margin-left: $margins;
-      padding: 0 $margins;
+      margin-left: var(--alarm-timeline-step-margins);
+      padding: 0 var(--alarm-timeline-step-margins);
 
       .timeline-step--pbehavior-leave &:before, .timeline-step--pbehavior &:before {
         content: '';
@@ -126,8 +129,12 @@ $borderColor: #cecece;
         width: 1px;
         left: 0;
         bottom: 0;
-        background: $borderColor;
+        background: var(--v-background-darken1);
         height: 100%;
+
+        .theme--dark & {
+          background: var(--v-background-lighten2);
+        }
       }
 
       .timeline-step--pbehavior-leave &:before {
@@ -135,7 +142,7 @@ $borderColor: #cecece;
       }
 
       .timeline-step--deep & {
-        padding-left: $margins * 2;
+        padding-left: calc(var(--alarm-timeline-step-margins) * 2);
       }
     }
   }
