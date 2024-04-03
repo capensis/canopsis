@@ -100,7 +100,7 @@ export const isAckStepType = type => [
  * This function determines whether the given `type` corresponds to either
  * a snooze or unsnooze operation within the alarm list steps.
  *
- * @param {AlarmStepType} type - The type of operation to check.
+ * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is either `snooze` or `unsnooze`, otherwise returns `false`.
  */
 export const isSnoozeStepType = type => [
@@ -114,7 +114,7 @@ export const isSnoozeStepType = type => [
  * This function determines whether the given type corresponds to either an increment or decrement
  * in status by checking if the type is included in the predefined status step types.
  *
- * @param {AlarmStepType} type - The type to check against status step types.
+ * @param {AlarmStepType} type - The step type to check.
  * @return {boolean} Returns `true` if the type is either `statusinc` or `statusdec`, otherwise returns `false`.
  */
 export const isChangeStatusStepType = type => [
@@ -166,7 +166,7 @@ export const isPbehaviorStepType = type => [
 /**
  * Checks if the given type is one of the instruction step types.
  *
- * @param {AlarmStepType} type - The type to check against instruction step types.
+ * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is an instruction step type, otherwise `false`.
  */
 export const isInstructionStepType = type => [
@@ -181,7 +181,7 @@ export const isInstructionStepType = type => [
 /**
  * Checks if the provided type is one of the auto instruction step types.
  *
- * @param {AlarmStepType} type - The type of the step to check.
+ * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is an auto instruction step type, otherwise `false`.
  */
 export const isAutoInstructionStepType = type => [
@@ -207,7 +207,7 @@ export const isDeclareTicketStepType = type => [
 /**
  * Checks if the provided type is a webhook step type.
  *
- * @param {AlarmStepType} type - The type to check against webhook step types.
+ * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is one of the webhook step types, otherwise `false`.
  */
 export const isWebhookStepType = type => [
