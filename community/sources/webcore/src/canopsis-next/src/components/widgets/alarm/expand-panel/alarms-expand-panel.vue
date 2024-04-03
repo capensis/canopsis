@@ -56,6 +56,9 @@
     >
       {{ $t('alarm.tabs.entityGantt') }}
     </v-tab>
+    <v-tab :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.remediation}`">
+      {{ $t('alarm.tabs.remediation') }}
+    </v-tab>
     <v-tabs-items
       v-model="activeTab"
       mandatory
@@ -223,6 +226,17 @@
           </v-flex>
         </v-layout>
       </v-tab-item>
+      <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.remediation">
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <alarms-expand-panel-remediation :alarm="alarm" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
     </v-tabs-items>
   </v-tabs>
 </template>
@@ -253,6 +267,7 @@ import EntityGantt from '../entity-gantt/entity-gantt.vue';
 
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
+import AlarmsExpandPanelRemediation from './alarms-expand-panel-remediation.vue';
 
 export default {
   components: {
@@ -264,6 +279,7 @@ export default {
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
+    AlarmsExpandPanelRemediation,
   },
   mixins: [
     entitiesInfoMixin,

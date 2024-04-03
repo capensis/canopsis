@@ -79,3 +79,15 @@ export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES = [
   TRIGGERS_TYPES.pbhleave,
   TRIGGERS_TYPES.eventscount,
 ];
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES = {
+  job: 0,
+  manual: 1,
+};
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES = {
+  completed: 1,
+  failed: 2,
+  aborted: 3,
+  skipped: 5,
+};
