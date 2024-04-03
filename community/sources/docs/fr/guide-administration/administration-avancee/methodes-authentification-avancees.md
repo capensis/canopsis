@@ -349,8 +349,8 @@ Définition des paramètres :
 | `pkce`  | Mécanisme qui permet de prévenir des attaques à injections de code d'authentifications. A definir sur `false` si votre provider ne le supporte pas | true / false |
 | `default_role`  | Rôle par défaut attribué aux utilisateurs de votre Canopsis lorsqu'ils se connectent avec oauth2 | Chaîne de caractères |
 | `user_id`  | Permet de définir l'identifiant dans Canopsis. A definir uniquement si `open_id` est à `false` | users.votre_champs_id |
-| `attributes_map`  | Permet de remplir les champs d'informations utilisateurs sur votre Canopsis avec les informations fourni par le provider. Récupérer des informations depuis le token OpenID n'est possible que si `open_id` est défini à `true` (Exemple plus bas) | Liste au format `champ: valeur` |
-| `scopes`  | Les scopes sont utilisées par une application lors de l'authentification pour autoriser l'accès à certaines données. Ces accès sont à définir côté provider. Doit être définit dans le cas où le champ `open_id` est à `true` (Ex: Le scope `openid` indique au serveur d’interpréter les requêtes faites aux points d’entrée selon les spécifications d’OpenID Connect.) | Liste |
+| `attributes_map`  | Permet de remplir les champs d'informations utilisateurs sur votre Canopsis avec les informations fournies par le provider. Récupérer des informations depuis le token OpenID n'est possible que si `open_id` est défini à `true` (Exemple plus bas) | Liste au format `champ: valeur` |
+| `scopes`  | Les scopes sont utiliséés par une application lors de l'authentification pour autoriser l'accès à certaines données. Ces accès sont à définir côté provider. Doit être défini dans le cas où le champ `open_id` est à `true` (Ex: Le scope `openid` indique au serveur d’interpréter les requêtes faites aux points d’entrée selon les spécifications d’OpenID Connect.) | Liste |
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
@@ -367,7 +367,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
 
 === Mapper avec "OAuth2"
 
-    Pour OAuth2, il est explicitement définir le chemin vers l'identifiant utilisateur en utilisant le champ `user_id`. Les autres champs sont optionnels.
+    Pour OAuth2, il faut explicitement définir le chemin vers l'identifiant utilisateur en utilisant le champ `user_id`. Les autres champs sont optionnels.
     L'API fait une requête à l'adresse définie dans le `user_url` pour récupérer les informations utilisateurs. Les informations sont utilisables dans le mapping en utilisant comme prefix `user.`.
 
     Un exemple de réponse:
@@ -393,7 +393,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
     - user.profile.last_name
     - user.role
 
-    Une fois récupérer vous pouvez les utiliser dans votre configuration:
+    Une fois récupérés, vous pouvez les utiliser dans votre configuration :
 
     ```yaml
       oauth2:
@@ -414,7 +414,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
     **Note**: le champ `user_id` est ignoré si le champ `open_id` est défini à `true`.
     La plus grande différence entre OpenID et OAuth2 est la manière dont les informations sont récupérables. Il est possible de récupérer les informations de deux manières; via l'api `token` ou via l'api `user`.
 
-    **Attention:** Pour être en mesure de récupérer les informations de profile, il est important qu'il soit défini dans les `scopes`
+    **Attention:** Pour être en mesure de récupérer les informations de profil, il est important qu'il soit défini dans les `scopes`
     Pour les exemples ci-dessous, les scopes utilisaient sont:
 
     ```yml
@@ -454,7 +454,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
     - user.first_name
     - user.last_name
 
-    Une fois récupérer vous pouvez les utiliser dans votre configuration:
+    Une fois récupérés, vous pouvez les utiliser dans votre configuration :
 
     ```yaml
       oauth2:
@@ -488,14 +488,14 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
     | Attribut       |                    Valeur                               |
     | -------------- | ------------------------------------------------------- |
     | `Application name` | Le nom de votre application |
-    | `Homepage URL` | L'adresse URL de la page d'accueil de votre Canopsis |
+    | `Homepage URL` | L'URL de la page d'accueil de Canopsis |
     | `Authorization callback URL` | http://URL-DE-VOTRE-CANOPSIS/api/v4/oauth/NOM-DU-PROVIDER/callback |
 
     Puis vous pouvez appuyer sur `Register application` 
 
     Une fois cela fait, vous allez pouvoir récupérer le `Client ID` et le `Client Secrets`
 
-    Vous pourrez ensuite remplir le fichier de configuration avec vos informations:
+    Vous pourrez ensuite remplir le fichier de configuration avec vos informations :
 
     ```yaml
         oauth2:
@@ -515,7 +515,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
                 name: user.name
     ```
 
-    Une fois que vous avez redémarré votre API, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
+    Une fois que vous avez redémarré l'API de Canopsis, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
 
     ![github_login](img/github_login.png)
 
@@ -547,7 +547,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
 
     Une fois cela fait, vous allez pouvoir récupérer le `Client ID` et le `Client Secrets`
 
-    Vous pourrez ensuite remplir le fichier de configuration avec vos informations:
+    Vous pourrez ensuite remplir le fichier de configuration avec vos informations :
 
     ```yaml
         oauth2:
@@ -569,13 +569,13 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
                 name: user.name
     ```
 
-    Une fois que vous avez redémarré votre API, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
+    Une fois que vous avez redémarré l'API de Canopsis, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
 
     ![gitlab_login](img/gitlab_login.png)
 
     En cliquant dessus vous serez redirigé vers votre GitLab qui vous proposera de vous connecter avec votre compte.
 
-    Une fois connecté que l'utilisateur s'est connecté, on peut le voir apparaître dans la liste des utilisateurs ainsi que sa méthode d'authentification
+    Une fois que l'utilisateur s'est connecté, on peut le voir apparaître dans la liste des utilisateurs ainsi que sa méthode d'authentification
 
     ![oauth_login_git2](img/oauth_login_git4.png)
 
@@ -605,7 +605,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
 
     Une fois cela fait, vous allez pouvoir récupérer le `Client ID` et le `Client Secrets`
 
-    Vous pourrez ensuite remplir le fichier de configuration avec vos informations:
+    Vous pourrez ensuite remplir le fichier de configuration avec vos informations :
 
     ```yaml
         oauth2:
@@ -627,13 +627,13 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
                 name: token.name
     ```
 
-    Une fois que vous avez redémarré votre API, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
+    Une fois que vous avez redémarré l'API de Canopsis, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
 
     ![google_login](img/google_login.png)
 
     En cliquant dessus vous serez redirigé vers votre GitLab qui vous proposera de vous connecter avec votre compte.
 
-    Une fois connecté que l'utilisateur s'est connecté, on peut le voir apparaître dans la liste des utilisateurs ainsi que sa méthode d'authentification
+    Une fois que l'utilisateur s'est connecté, on peut le voir apparaître dans la liste des utilisateurs ainsi que sa méthode d'authentification
 
     ![oauth_login_google3](img/oauth_login_google3.png)
 
