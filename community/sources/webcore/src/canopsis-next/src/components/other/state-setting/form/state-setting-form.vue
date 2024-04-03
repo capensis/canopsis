@@ -149,8 +149,6 @@ export default {
 
 <style lang="scss">
 .state-setting-form {
-  background-color: transparent !important;
-
   .v-stepper__wrapper {
     overflow: unset;
   }

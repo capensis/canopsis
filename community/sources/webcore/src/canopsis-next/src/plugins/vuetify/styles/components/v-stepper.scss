@@ -1,0 +1,5 @@
+.v-stepper {
+  &.theme--light, &.theme--dark {
+    background-color: unset;
+  }
+}

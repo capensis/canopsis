@@ -7,6 +7,7 @@
       <template #text="">
         <meta-alarm-rule-form
           v-model="form"
+          :active-step="activeStep"
           :is-disabled-id-field="config.isDisabledIdField"
         />
       </template>
@@ -61,6 +62,7 @@ export default {
   ],
   data() {
     return {
+      activeStep: 1,
       form: metaAlarmRuleToForm(this.modal.config.rule),
     };
   },
