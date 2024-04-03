@@ -4,6 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -33,32 +34,33 @@ type EntitiesListRequest struct {
 }
 
 type Service struct {
-	ID               string                `json:"_id" bson:"_id"`
-	Name             string                `json:"name" bson:"name"`
-	Infos            map[string]Info       `json:"infos" bson:"infos"`
-	Connector        string                `json:"connector" bson:"connector"`
-	ConnectorName    string                `json:"connector_name" bson:"connector_name"`
-	Component        string                `json:"component" bson:"component"`
-	Resource         string                `json:"resource" bson:"resource"`
-	HasOpenAlarm     bool                  `json:"is_action_required" bson:"has_open_alarm"`
-	State            common.AlarmStep      `json:"state" bson:"state"`
-	Status           common.AlarmStep      `json:"status" bson:"status"`
-	Snooze           *common.AlarmStep     `json:"snooze" bson:"snooze"`
-	Ack              *common.AlarmStep     `json:"ack" bson:"ack"`
-	AlarmLastComment *common.AlarmStep     `json:"alarm_last_comment" bson:"alarm_last_comment"`
-	Tags             []string              `json:"tags" bson:"tags"`
-	Icon             string                `json:"icon" bson:"icon"`
-	SecondaryIcon    string                `json:"secondary_icon" bson:"secondary_icon"`
-	Output           string                `json:"output" bson:"output"`
-	LastUpdateDate   *datetime.CpsTime     `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
-	Counters         Counters              `json:"counters" bson:"counters"`
-	PbehaviorInfo    *entity.PbehaviorInfo `json:"pbehavior_info" bson:"pbehavior_info"`
-	Pbehaviors       []alarm.Pbehavior     `json:"pbehaviors" bson:"pbehaviors"`
-	ImpactLevel      int                   `json:"impact_level" bson:"impact_level"`
-	ImpactState      int                   `json:"impact_state" bson:"impact_state"`
-	Category         *entity.Category      `json:"category" bson:"category"`
-	IsGrey           bool                  `json:"is_grey" bson:"is_grey"`
-	IdleSince        *datetime.CpsTime     `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	ID               string                 `json:"_id" bson:"_id"`
+	Name             string                 `json:"name" bson:"name"`
+	Infos            map[string]Info        `json:"infos" bson:"infos"`
+	Connector        string                 `json:"connector" bson:"connector"`
+	ConnectorName    string                 `json:"connector_name" bson:"connector_name"`
+	Component        string                 `json:"component" bson:"component"`
+	Resource         string                 `json:"resource" bson:"resource"`
+	LastComment      *entitycomment.Comment `json:"last_comment" bson:"last_comment"`
+	HasOpenAlarm     bool                   `json:"is_action_required" bson:"has_open_alarm"`
+	State            common.AlarmStep       `json:"state" bson:"state"`
+	Status           common.AlarmStep       `json:"status" bson:"status"`
+	Snooze           *common.AlarmStep      `json:"snooze" bson:"snooze"`
+	Ack              *common.AlarmStep      `json:"ack" bson:"ack"`
+	AlarmLastComment *common.AlarmStep      `json:"alarm_last_comment" bson:"alarm_last_comment"`
+	Tags             []string               `json:"tags" bson:"tags"`
+	Icon             string                 `json:"icon" bson:"icon"`
+	SecondaryIcon    string                 `json:"secondary_icon" bson:"secondary_icon"`
+	Output           string                 `json:"output" bson:"output"`
+	LastUpdateDate   *datetime.CpsTime      `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
+	Counters         Counters               `json:"counters" bson:"counters"`
+	PbehaviorInfo    *entity.PbehaviorInfo  `json:"pbehavior_info" bson:"pbehavior_info"`
+	Pbehaviors       []alarm.Pbehavior      `json:"pbehaviors" bson:"pbehaviors"`
+	ImpactLevel      int                    `json:"impact_level" bson:"impact_level"`
+	ImpactState      int                    `json:"impact_state" bson:"impact_state"`
+	Category         *entity.Category       `json:"category" bson:"category"`
+	IsGrey           bool                   `json:"is_grey" bson:"is_grey"`
+	IdleSince        *datetime.CpsTime      `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
 }
 
 type Info struct {
@@ -122,6 +124,7 @@ type Entity struct {
 	ConnectorName    string                     `json:"connector_name" bson:"connector_name"`
 	Component        string                     `json:"component" bson:"component"`
 	Resource         string                     `json:"resource" bson:"resource"`
+	LastComment      *entitycomment.Comment     `json:"last_comment" bson:"last_comment"`
 	State            common.AlarmStep           `json:"state" bson:"state"`
 	Status           common.AlarmStep           `json:"status" bson:"status"`
 	Snooze           *common.AlarmStep          `json:"snooze" bson:"snooze"`

@@ -1938,6 +1938,50 @@ definitions:
     required:
     - name
     type: object
+  entitycomment.Comment:
+    properties:
+      author:
+        $ref: '#/definitions/types.Author'
+      message:
+        type: string
+      ts:
+        type: integer
+    type: object
+  entitycomment.Request:
+    properties:
+      entity:
+        type: string
+      message:
+        maxLength: 200
+        type: string
+    required:
+    - entity
+    - message
+    type: object
+  entitycomment.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/types.Author'
+      entity:
+        type: string
+      message:
+        type: string
+      ts:
+        type: integer
+    type: object
+  entitycomment.UpdateRequest:
+    properties:
+      entity:
+        type: string
+      message:
+        maxLength: 200
+        type: string
+    required:
+    - entity
+    - message
+    type: object
   entityinfodictionary.Result:
     properties:
       value:
@@ -4959,6 +5003,8 @@ definitions:
         type: integer
       is_grey:
         type: boolean
+      last_comment:
+        $ref: '#/definitions/entitycomment.Comment'
       last_update_date:
         type: integer
       links:
@@ -5059,6 +5105,8 @@ definitions:
         type: boolean
       is_grey:
         type: boolean
+      last_comment:
+        $ref: '#/definitions/entitycomment.Comment'
       last_update_date:
         type: integer
       name:
@@ -5331,6 +5379,13 @@ definitions:
         items:
           $ref: '#/definitions/validator.WrnReport'
         type: array
+    type: object
+  types.Author:
+    properties:
+      _id:
+        type: string
+      display_name:
+        type: string
     type: object
   types.Coordinates:
     properties:
