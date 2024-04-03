@@ -1190,6 +1190,11 @@ permission:
     _id: api_entitycategory
     name: <Current()._id>
     description: Entity categories
+  permission_api_entitycomment:
+    <<: *permission_crud
+    _id: api_entitycomment
+    name: <Current()._id>
+    description: Entity comments
   permission_api_viewgroup:
     <<: *permission_crud
     _id: api_viewgroup
@@ -1633,6 +1638,7 @@ role:
       "@permission_api_dynamicinfos": 15
       "@permission_api_entityservice": 15
       "@permission_api_entitycategory": 15
+      "@permission_api_entitycomment": 15
       "@permission_api_viewgroup": 15
       "@permission_api_view": 15
       "@permission_api_widgettemplate": 15
