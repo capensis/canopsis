@@ -19,9 +19,7 @@
             <alarm-timeline-step-title :step="step" :deep="deep" />
           </div>
           <div v-if="resultIcon" class="timeline-step__result-icon">
-            <v-icon :color="resultIcon.color">
-              {{ resultIcon.icon }}
-            </v-icon>
+            <c-enabled :value="resultIcon.value" />
           </div>
         </v-layout>
         <div v-if="step.m" class="grey--text mt-2 pre-wrap">
@@ -70,17 +68,11 @@ export default {
       switch (props.step._t) {
         case ALARM_LIST_STEPS.declareTicketRuleComplete:
         case ALARM_LIST_STEPS.webhookComplete:
-          return {
-            icon: 'check_circle',
-            color: 'success',
-          };
+          return { value: true };
 
         case ALARM_LIST_STEPS.declareTicketRuleFailed:
         case ALARM_LIST_STEPS.webhookFail:
-          return {
-            icon: 'cancel',
-            color: 'error',
-          };
+          return { value: false };
 
         default:
           return null;
@@ -114,7 +106,7 @@ export default {
   &__main-content {
     border-bottom: 1px solid var(--v-background-darken1);
 
-    .theme--dark & {
+    .v-application.theme--dark & {
       border-color: var(--v-background-lighten2);
     }
 
@@ -132,7 +124,7 @@ export default {
         background: var(--v-background-darken1);
         height: 100%;
 
-        .theme--dark & {
+        .v-application.theme--dark & {
           background: var(--v-background-lighten2);
         }
       }
