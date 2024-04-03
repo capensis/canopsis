@@ -1,13 +1,30 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.importPbehaviorException.title') }}
-      template(#text="")
-        pbehavior-exception-import-form(v-model="form")
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.importPbehaviorException.title') }}</span>
+      </template>
+      <template #text="">
+        <pbehavior-exception-import-form v-model="form" />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          class="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -46,7 +63,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config?.action(this.form);
+        await this.config?.action?.(this.form);
 
         this.$modals.hide();
       }

@@ -2,13 +2,14 @@
 
 exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] = `
 <div
-  class="dynamic-info-form v-stepper v-stepper--non-linear theme--light"
+  class="v-stepper dynamic-info-form v-stepper--non-linear v-sheet theme--light"
 >
   <div
     class="v-stepper__header"
   >
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
@@ -18,15 +19,18 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
       <div
         class="v-stepper__label"
       >
-        General
+      General
         <!---->
       </div>
     </div>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
@@ -36,15 +40,18 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
       <div
         class="v-stepper__label"
       >
-        Informations
+      Informations
         <!---->
       </div>
     </div>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
@@ -54,7 +61,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
       <div
         class="v-stepper__label"
       >
-        Patterns
+      Patterns
         <!---->
       </div>
     </div>
@@ -123,13 +130,14 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
 
 exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] = `
 <div
-  class="dynamic-info-form v-stepper v-stepper--non-linear theme--light"
+  class="v-stepper dynamic-info-form v-stepper--non-linear v-sheet theme--light"
 >
   <div
     class="v-stepper__header"
   >
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
@@ -139,15 +147,18 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
       <div
         class="v-stepper__label"
       >
-        General
+      General
         <!---->
       </div>
     </div>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
@@ -157,15 +168,18 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
       <div
         class="v-stepper__label"
       >
-        Informations
+      Informations
         <!---->
       </div>
     </div>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
@@ -175,7 +189,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
       <div
         class="v-stepper__label"
       >
-        Patterns
+      Patterns
         <!---->
       </div>
     </div>
@@ -244,20 +258,21 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
 
 exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
 <div
-  class="dynamic-info-form v-stepper v-stepper--non-linear theme--light"
+  class="v-stepper dynamic-info-form v-stepper--non-linear v-sheet theme--light"
 >
   <div
     class="v-stepper__header"
   >
     <div
-      class="py-0 v-stepper__step v-stepper__step--active v-stepper__step--editable v-stepper__step--error error--text"
+      class="v-stepper__step py-0 v-stepper__step--active v-stepper__step--editable v-stepper__step--error error--text"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           warning
         </i>
@@ -265,24 +280,27 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
       <div
         class="v-stepper__label"
       >
-        General
+      General
         <small>
           Invalid
         </small>
       </div>
     </div>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           warning
         </i>
@@ -290,24 +308,27 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
       <div
         class="v-stepper__label"
       >
-        Informations
+      Informations
         <small>
           Invalid
         </small>
       </div>
     </div>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div
-      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
+      tabindex="0"
     >
       <span
         class="v-stepper__step__step"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           warning
         </i>
@@ -315,7 +336,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
       <div
         class="v-stepper__label"
       >
-        Patterns
+      Patterns
         <small>
           Invalid
         </small>

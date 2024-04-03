@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES, DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -18,6 +17,8 @@ const stubs = {
 };
 
 const selectCard = wrapper => wrapper.find('card-with-see-alarms-btn-stub');
+const selectToolbar = wrapper => wrapper.find('.service-weather-item__toolbar');
+const selectToolbarButton = wrapper => selectToolbar(wrapper).find('.v-btn, v-btn-stub');
 
 describe('service-weather-item', () => {
   const service = {
@@ -34,11 +35,21 @@ describe('service-weather-item', () => {
   const factory = generateShallowRenderer(ServiceWeatherItem, {
     stubs,
     attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherItem, {
     stubs,
     attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Alarms list modal showed after click on button', async () => {
@@ -50,9 +61,9 @@ describe('service-weather-item', () => {
       },
     });
 
-    selectCard(wrapper).vm.$emit('show:alarms', new MouseEvent('click'));
+    selectCard(wrapper).triggerCustomEvent('show:alarms', new MouseEvent('click'));
 
-    expect(wrapper).toEmit('show:alarms');
+    expect(wrapper).toHaveBeenEmit('show:alarms');
   });
 
   test('Main information modal showed after click on card', async () => {
@@ -68,7 +79,20 @@ describe('service-weather-item', () => {
 
     await wrapper.find('.custom-template').trigger('click');
 
-    expect(wrapper).toEmit('show:service');
+    expect(wrapper).toHaveBeenEmit('show:service');
+  });
+
+  test('Show root cause emitted after trigger click on show root cause button', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        service,
+        showRootCauseByStateClick: true,
+      },
+    });
+
+    await selectToolbarButton(wrapper).trigger('click');
+
+    expect(wrapper).toHaveBeenEmit('show:root-cause');
   });
 
   test('Modal doesn\'t show after click on link', async () => {
@@ -83,7 +107,7 @@ describe('service-weather-item', () => {
 
     await wrapper.find('.custom-template-link').trigger('click');
 
-    expect(wrapper).not.toEmit('show:service');
+    expect(wrapper).not.toHaveBeenEmit('show:service');
   });
 
   test('Renders `service-weather-item` with custom props', async () => {
@@ -95,7 +119,7 @@ describe('service-weather-item', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-weather-item` with full access', async () => {
@@ -122,11 +146,12 @@ describe('service-weather-item', () => {
         template: DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
         showVariablesHelpButton: true,
         showAlarmsButton: true,
+        showRootCauseByStateClick: true,
       },
     });
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,41 +1,53 @@
-<template lang="pug">
-  c-card-iterator-item.remediation-instruction-step-field(
-    :item-number="stepNumber",
-    offset-left,
+<template>
+  <c-card-iterator-item
+    :item-number="stepNumber"
+    class="remediation-instruction-step-field"
+    offset-left
     @remove="remove"
-  )
-    template(#header="")
-      v-layout.mt-3(row)
-        v-flex(xs9)
-          v-text-field(
-            v-field="step.name",
-            v-validate="'required'",
-            :label="$t('common.name')",
-            :error-messages="errors.collect(nameFieldName)",
-            :name="nameFieldName",
-            :disabled="disabled",
-            box
-          )
-        v-flex.pl-2(xs3)
-          v-text-field.remediation-instruction-step-field__time-to-complete(
-            :value="timeToComplete | duration('refreshFieldFormat')",
-            :label="$t('remediation.instruction.timeToComplete')",
+  >
+    <template #header="">
+      <v-layout class="mt-3">
+        <v-flex xs9>
+          <v-text-field
+            v-field="step.name"
+            v-validate="'required'"
+            :label="$t('common.name')"
+            :error-messages="errors.collect(nameFieldName)"
+            :name="nameFieldName"
+            :disabled="disabled"
+            filled
+          />
+        </v-flex>
+        <v-flex
+          class="pl-2"
+          xs3
+        >
+          <v-text-field
+            :value="timeToComplete | duration('refreshFieldFormat')"
+            :label="$t('remediation.instruction.timeToComplete')"
+            class="remediation-instruction-step-field__time-to-complete"
             readonly
-          )
-
-    c-workflow-field(
-      v-field="step.stop_on_fail",
-      :label="$t('remediation.instruction.workflow')",
-      :continue-label="$t('remediation.instruction.remainingStep')",
+          />
+        </v-flex>
+      </v-layout>
+    </template>
+    <c-workflow-field
+      v-field="step.stop_on_fail"
+      :label="$t('remediation.instruction.workflow')"
+      :continue-label="$t('remediation.instruction.remainingStep')"
       :disabled="disabled"
-    )
-    remediation-instruction-step-endpoint-field(v-field="step.endpoint", :disabled="disabled")
-    remediation-instruction-operations-form(
-      v-field="step.operations",
-      :name="operationFieldName",
-      :step-number="stepNumber",
+    />
+    <remediation-instruction-step-endpoint-field
+      v-field="step.endpoint"
       :disabled="disabled"
-    )
+    />
+    <remediation-instruction-operations-form
+      v-field="step.operations"
+      :name="operationFieldName"
+      :step-number="stepNumber"
+      :disabled="disabled"
+    />
+  </c-card-iterator-item>
 </template>
 
 <script>

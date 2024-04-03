@@ -1,9 +1,13 @@
 <script>
-import VNavigationDrawer from 'vuetify/es5/components/VNavigationDrawer';
+import VNavigationDrawer from 'vuetify/lib/components/VNavigationDrawer';
 
+import ClickOutside from '../../directives/click-outside';
 import overlayableMixin from '../../mixins/overlayable';
 
 export default {
+  directives: {
+    ClickOutside,
+  },
   extends: VNavigationDrawer,
   mixins: [overlayableMixin],
   props: {
@@ -23,26 +27,31 @@ export default {
   },
   methods: {
     genDirectives() {
-      const directives = [{
-        name: 'click-outside',
-        value: () => {
-          /**
-           * We can't move call of customCloseConditional into closeConditional because here this method will call
-           * more than once. But we need only once call
-           */
-          if (this.customCloseConditional && this.customCloseConditional() === false) {
-            return;
-          }
+      const directives = [];
 
-          this.isActive = false;
-        },
-        args: {
-          closeConditional: this.closeConditional,
-          include: this.getOpenDependentElements,
-        },
-      }];
+      if (!this.ignoreClickOutside) {
+        directives.push({
+          name: 'click-outside',
+          value: {
+            handler: () => {
+              /**
+               * We can't move call of customCloseConditional into closeConditional because here this method will call
+               * more than once. But we need only once call
+               */
+              if (this.customCloseConditional && this.customCloseConditional() === false) {
+                return;
+              }
 
-      if (!this.touchless) {
+              this.isActive = false;
+            },
+            closeConditional: this.closeConditional,
+            include: this.getOpenDependentElements,
+          },
+          modifiers: { same: true },
+        });
+      }
+
+      if (!this.touchless && !this.stateless) {
         directives.push({
           name: 'touch',
           value: {

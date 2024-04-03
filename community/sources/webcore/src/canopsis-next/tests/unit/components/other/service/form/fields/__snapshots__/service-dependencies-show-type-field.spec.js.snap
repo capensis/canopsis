@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-dependencies-show-type-field Renders \`service-dependencies-show-type-field\` with custom props 1`] = `
+<div
+  class="v-input mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--row"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+      style="height: auto;"
+    >
+      <div
+        class="v-input--radio-group__input"
+        role="radiogroup"
+      >
+        <div
+          class="v-radio theme--light v-item--active"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
+            <input
+              aria-checked="true"
+              name="opened"
+              role="radio"
+              type="radio"
+              value="0"
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Show all dependencies
+          </label>
+        </div>
+        <div
+          class="v-radio theme--light"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
+            <input
+              aria-checked="false"
+              name="opened"
+              role="radio"
+              type="radio"
+              value="1"
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Show dependencies defining the state
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies-show-type-field Renders \`service-dependencies-show-type-field\` with default props 1`] = `
+<div
+  class="v-input mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--row"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+      style="height: auto;"
+    >
+      <div
+        class="v-input--radio-group__input"
+        role="radiogroup"
+      >
+        <div
+          class="v-radio theme--light v-item--active"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
+            <input
+              aria-checked="true"
+              name="opened"
+              role="radio"
+              type="radio"
+              value="0"
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Show all dependencies
+          </label>
+        </div>
+        <div
+          class="v-radio theme--light"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
+            <input
+              aria-checked="false"
+              name="opened"
+              role="radio"
+              type="radio"
+              value="1"
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Show dependencies defining the state
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

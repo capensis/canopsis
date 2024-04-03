@@ -1,8 +1,11 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModules } from '@unit/utils/store';
+import { createInputStub } from '@unit/stubs/input';
+
+import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import AlarmsListModal from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
 
 const stubs = {
@@ -12,6 +15,7 @@ const stubs = {
   'field-default-elements-per-page': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
+  'field-root-cause-settings': createInputStub('field-root-cause-settings'),
 };
 
 const snapshotStubs = {
@@ -21,12 +25,14 @@ const snapshotStubs = {
   'field-default-elements-per-page': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
+  'field-root-cause-settings': true,
 };
 
 const selectFieldColumns = wrapper => wrapper.find('field-columns-stub');
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('field-default-elements-per-page-stub');
 const selectFieldInfoPopup = wrapper => wrapper.find('field-info-popup-stub');
 const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('field-text-editor-with-template-stub');
+const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 
 describe('alarms-list-modal', () => {
   const form = {
@@ -51,13 +57,11 @@ describe('alarms-list-modal', () => {
   ]);
 
   const factory = generateShallowRenderer(AlarmsListModal, {
-
     store,
     stubs,
   });
 
   const snapshotFactory = generateRenderer(AlarmsListModal, {
-
     store,
     stubs: snapshotStubs,
   });
@@ -74,9 +78,9 @@ describe('alarms-list-modal', () => {
       },
     ];
 
-    selectFieldColumns(wrapper).vm.$emit('input', newColumns);
+    selectFieldColumns(wrapper).triggerCustomEvent('input', newColumns);
 
-    expect(wrapper).toEmit('input', { ...form, widgetColumns: newColumns });
+    expect(wrapper).toEmitInput({ ...form, widgetColumns: newColumns });
   });
 
   test('Items per page changed after trigger items per page field', () => {
@@ -88,9 +92,9 @@ describe('alarms-list-modal', () => {
       min: form.itemsPerPage + 1,
     });
 
-    selectFieldDefaultElementsPerPage(wrapper).vm.$emit('input', newValue);
+    selectFieldDefaultElementsPerPage(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, itemsPerPage: newValue });
+    expect(wrapper).toEmitInput({ ...form, itemsPerPage: newValue });
   });
 
   test('Info popups changed after trigger info popup field', () => {
@@ -105,9 +109,9 @@ describe('alarms-list-modal', () => {
       },
     ];
 
-    selectFieldInfoPopup(wrapper).vm.$emit('input', newInfoPopups);
+    selectFieldInfoPopup(wrapper).triggerCustomEvent('input', newInfoPopups);
 
-    expect(wrapper).toEmit('input', { ...form, infoPopups: newInfoPopups });
+    expect(wrapper).toEmitInput({ ...form, infoPopups: newInfoPopups });
   });
 
   test('More info template changed after trigger text editor field', () => {
@@ -117,15 +121,30 @@ describe('alarms-list-modal', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    selectFieldTextEditorWithTemplate(wrapper).vm.$emit('input', newTemplate);
+    selectFieldTextEditorWithTemplate(wrapper).triggerCustomEvent('input', newTemplate);
 
-    expect(wrapper).toEmit('input', { ...form, moreInfoTemplate: newTemplate });
+    expect(wrapper).toEmitInput({ ...form, moreInfoTemplate: newTemplate });
+  });
+
+  test('Show root cause by state click changed after trigger switcher field', () => {
+    const wrapper = factory({
+      propsData: { form },
+    });
+
+    const newParameters = {
+      ...form,
+      showRootCauseByStateClick: false,
+      rootCauseColorIndicator: COLOR_INDICATOR_TYPES.impactState,
+    };
+    selectFieldRootCauseSettings(wrapper).triggerCustomEvent('input', newParameters);
+
+    expect(wrapper).toEmitInput(newParameters);
   });
 
   test('Renders `alarms-list-modal` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarms-list-modal` with custom props', () => {
@@ -140,6 +159,6 @@ describe('alarms-list-modal', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

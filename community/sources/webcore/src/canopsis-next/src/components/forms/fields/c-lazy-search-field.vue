@@ -1,50 +1,88 @@
-<template lang="pug">
-  c-select-field.c-lazy-search-field(
-    v-validate="rules",
-    v-field="value",
-    :search-input="search",
-    :label="label",
-    :loading="loading",
-    :items="items",
-    :name="name",
-    :item-text="getItemText",
-    :item-value="itemValue",
-    :item-disabled="itemDisabled",
-    :multiple="isMultiple",
-    :deletable-chips="isMultiple",
-    :small-chips="isMultiple",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
-    :menu-props="{ contentClass: 'c-lazy-search-field__list' }",
-    :clearable="clearable",
-    :autocomplete="autocomplete",
-    :combobox="!autocomplete",
-    :return-object="returnObject",
-    :no-data-text="noDataText",
-    no-filter,
-    dense,
-    @focus="onFocus",
-    @blur="onBlur",
-    @update:searchInput="debouncedUpdateSearch"
-  )
-    template(#item="{ item, tile, parent }")
-      slot(name="item", :item="item", :tile="tile", :parent="parent")
-        v-list-tile.c-lazy-search-field--tile(v-bind="tile.props", v-on="tile.on")
-          slot(name="icon", :item="item")
-          v-list-tile-content {{ getItemText(item) }}
-          span.ml-4.grey--text {{ item.type }}
-    template(#append-item="")
-      div.c-lazy-search-field__append(ref="append")
-    template(#selection="{ item, index }")
-      slot(name="selection", :item="item", :index="index")
-        v-chip.c-lazy-search-field__chip(
-          v-if="isMultiple",
-          small,
-          close,
-          @input="removeItemFromArray(index)"
-        )
-          span.ellipsis {{ getItemText(item) }}
-        slot(v-else, name="selection", :item="item") {{ getItemText(item) }}
+<template>
+  <c-select-field
+    v-field="value"
+    v-validate="rules"
+    :search-input="search"
+    :label="label"
+    :loading="loading"
+    :items="items"
+    :name="name"
+    :item-text="getItemText"
+    :item-value="itemValue"
+    :item-disabled="itemDisabled"
+    :multiple="isMultiple"
+    :deletable-chips="isMultiple"
+    :small-chips="isMultiple"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
+    :menu-props="{ contentClass: 'c-lazy-search-field__list', eager: true }"
+    :clearable="clearable"
+    :autocomplete="autocomplete"
+    :combobox="!autocomplete"
+    :return-object="returnObject"
+    :no-data-text="noDataText"
+    class="c-lazy-search-field mt-4"
+    no-filter
+    dense
+    @focus="onFocus"
+    @blur="onBlur"
+    @update:search-input="debouncedUpdateSearch"
+  >
+    <template #item="{ item, attrs, on, parent }">
+      <slot
+        :attrs="attrs"
+        :on="on"
+        :item="item"
+        :parent="parent"
+        name="item"
+      >
+        <v-list-item
+          class="c-lazy-search-field--tile"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <slot
+            :item="item"
+            name="icon"
+          />
+          <v-list-item-content>
+            {{ getItemText(item) }}
+          </v-list-item-content>
+          <span class="ml-4 grey--text">{{ item.type }}</span>
+        </v-list-item>
+      </slot>
+    </template>
+    <template #append-item="">
+      <div
+        ref="append"
+        class="c-lazy-search-field__append"
+      />
+    </template>
+    <template #selection="{ item, index }">
+      <slot
+        :item="item"
+        :index="index"
+        name="selection"
+      >
+        <v-chip
+          v-if="isMultiple"
+          class="c-lazy-search-field__chip"
+          small
+          close
+          @click:close="removeItemFromArray(index)"
+        >
+          <span class="text-truncate">{{ getItemText(item) }}</span>
+        </v-chip>
+        <slot
+          v-else
+          :item="item"
+          name="selection"
+        >
+          {{ getItemText(item) }}
+        </slot>
+      </slot>
+    </template>
+  </c-select-field>
 </template>
 
 <script>
@@ -221,6 +259,10 @@ export default {
 
   .v-select__selections {
     max-width: calc(100% - 24px);
+  }
+
+  &.v-autocomplete:not(.v-input--is-focused).v-select--chips input {
+    max-height: 32px;
   }
 
   &__chip {

@@ -104,8 +104,11 @@ export function alarmTagsHelper() {
   return new Handlebars.SafeString(
     `<c-alarm-tags-chips
       :alarm="alarm"
+      :selected-tag="selectedTag"
       inline-count="${MAX_LIMIT}"
+      closable-active
       @select="$emit('select:tag', $event)"
+      @close="$emit('clear:tag', $event)"
     ></c-alarm-tags-chips>`,
   );
 }

@@ -1,21 +1,37 @@
-<template lang="pug">
-  v-layout(align-center)
-    template(v-if="splitted")
-      v-btn.ml-0(
-        :disabled="disabled",
-        key="splitted",
-        small,
+<template>
+  <v-layout align-center>
+    <template v-if="splitted">
+      <v-btn
+        key="splitted"
+        :disabled="disabled"
+        class="mr-3"
+        small
         @click="showColorPickerModal"
-      ) {{ label }}
-      div.pa-1.text-xs-center(:style="style") {{ color }}
-    v-btn.ml-0(
-      v-else,
-      :style="style",
-      :disabled="disabled",
-      key="not-splitted",
+      >
+        {{ label }}
+      </v-btn>
+      <div
+        :style="style"
+        class="pa-1 text-center"
+      >
+        {{ color }}
+      </div>
+    </template>
+    <v-btn
+      v-else
+      key="not-splitted"
+      :style="style"
+      :disabled="disabled"
       @click="showColorPickerModal"
-    ) {{ label }}
-    v-messages(v-if="errors.has(name)", :value="errors.collect(name)", color="error")
+    >
+      {{ label }}
+    </v-btn>
+    <v-messages
+      v-if="errors.has(name)"
+      :value="errors.collect(name)"
+      color="error"
+    />
+  </v-layout>
 </template>
 
 <script>

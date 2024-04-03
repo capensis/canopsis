@@ -16,17 +16,21 @@ const (
 	ActionDelayedScenarioKey   = "action-delayed-scenario"
 	ActionScenarioExecutionKey = "action-scenario-execution"
 
-	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
-	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
-	AxeInternalTagsPeriodicalLockKey     = "axe-internal-tags-periodical-lock-key"
-	AxeEntityServiceStateLockKey         = "axe-entity-service-state-lock-key"
+	AxePeriodicalLockKey                  = "axe-periodical-lock-key"
+	AxeResolvedArchiverPeriodicalLockKey  = "axe-resolved-archiver-periodical-lock-key"
+	AxeInternalTagsPeriodicalLockKey      = "axe-internal-tags-periodical-lock-key"
+	AxeEntityServiceStateLockKey          = "axe-entity-service-state-lock-key"
+	AxeIdleSincePeriodicalLockKey         = "axe-idle-since-periodical-lock-key"
+	AxeNotAckedMetricsPeriodicalLockKey   = "axe-not-acked-metrics-periodical-lock-key"
+	AxeSliMetricsPeriodicalLockKey        = "axe-sli-metrics-periodical-lock-key"
+	AxeCleanExternalTagsPeriodicalLockKey = "axe-clean-external-tags-periodical-lock-key"
 
 	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
 
-	ChePeriodicalLockKey           = "che-periodical-lock-key"
-	CheSoftDeletePeriodicalLockKey = "che-soft-delete-periodical-lock-key"
-
-	AxeIdleSincePeriodicalLockKey = "axe-periodical-idle-since-lock"
+	ChePeriodicalLockKey                      = "che-periodical-lock-key"
+	CheSoftDeletePeriodicalLockKey            = "che-soft-delete-periodical-lock-key"
+	CheEntityInfosDictionaryPeriodicalLockKey = "che-entity-infos-dictionary-periodical-lock-key"
+	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
 
 	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
 	RemediationStatsPeriodicalLockKey   = "remediation-stats-periodical-lock-key"
@@ -37,14 +41,11 @@ const (
 	PbehaviorDefaultActiveTypeKey = "pbehavior-default-active-type"
 	PbehaviorComputedKey          = "pbehavior-computed-"
 
-	CheEntityInfosDictionaryPeriodicalLockKey = "che-entity-infos-dictionary-periodical-lock-key"
-	DynamicInfosDictionaryPeriodicalLockKey   = "dynamic-infos-dictionary-periodical-lock-key"
-
-	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
-
-	MetricsNotAckedPeriodicalLockKey = "metrics-not-acked-periodical-lock-key"
+	DynamicInfosDictionaryPeriodicalLockKey = "dynamic-infos-dictionary-periodical-lock-key"
 
 	ApiCleanEntitiesLockKey      = "api-clean-entities-lock-key"
 	ApiUserActivityMetricLockKey = "api-user-activity-metric"
 	ApiCacheRequestKey           = "api-cache-request"
+
+	CorrelationInactiveDelayPeriodicalLockKey = "correlation-inactive-delay-periodical-lock-key"
 )

@@ -19,8 +19,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -47,7 +48,7 @@ type Options struct {
 	FifoAckExchange          string
 	PeriodicalWaitTime       time.Duration
 	TagsPeriodicalWaitTime   time.Duration
-	WithRemediation          bool
+	SliPeriodicalWaitTime    time.Duration
 	RecomputeAllOnInit       bool
 	Workers                  int
 }
@@ -61,10 +62,13 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
-	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", 2, "Amount of workers to process main event flow")
+
+	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
+
 	flag.Parse()
 
 	return opts
@@ -74,9 +78,13 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	dbClient mongo.DbClient,
+	amqpConnection amqp.Connection,
 	cfg config.CanopsisConf,
 	metricsSender metrics.Sender,
 	autoInstructionMatcher event.AutoInstructionMatcher,
+	remediationRpcClient libengine.RPCClient,
+	dynamicInfosRpcClient libengine.RPCClient,
+	rpcPublishQueues []string,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -92,7 +100,6 @@ func NewEngine(
 		panic(fmt.Errorf("dependency error: %s: %w", "can't get user interface config", err))
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -101,15 +108,6 @@ func NewEngine(
 
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
-	stateCountersService := statecounters.NewStateCountersService(
-		dbClient,
-		amqpChannel,
-		canopsis.FIFOExchangeName,
-		canopsis.FIFOQueueName,
-		json.NewEncoder(),
-		template.NewExecutor(templateConfigProvider, timezoneConfigProvider),
-		logger,
-	)
 	actionRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
 		canopsis.ActionAxeRPCClientQueueName,
@@ -120,22 +118,6 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
-	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
-	var remediationRpcClient libengine.RPCClient
-	if options.WithRemediation {
-		remediationRpcClient = libengine.NewRPCClient(
-			canopsis.AxeRPCConsumerName,
-			canopsis.RemediationRPCQueueServerName,
-			"",
-			cfg.Global.PrefetchCount,
-			cfg.Global.PrefetchSize,
-			nil,
-			amqpChannel,
-			logger,
-		)
-		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
-	}
-
 	idleSinceService := entityservice.NewService(
 		entityservice.NewAdapter(dbClient),
 		entity.NewAdapter(dbClient),
@@ -152,6 +134,10 @@ func NewEngine(
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName)
+	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
+	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
+
 	eventProcessor := m.EventProcessor(
 		dbClient,
 		alarmConfigProvider,
@@ -159,7 +145,9 @@ func NewEngine(
 		alarmStatusService,
 		pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), logger),
 		autoInstructionMatcher,
-		stateCountersService,
+		entityServiceCountersCalculator,
+		componentCountersCalculator,
+		eventsSender,
 		metaAlarmEventProcessor,
 		metricsSender,
 		statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
@@ -185,7 +173,6 @@ func NewEngine(
 			EntityAdapter:            entityAdapter,
 			AlarmAdapter:             alarmAdapter,
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
-			StateCountersService:     stateCountersService,
 			Decoder:                  json.NewDecoder(),
 			Encoder:                  json.NewEncoder(),
 			Logger:                   logger,
@@ -218,7 +205,13 @@ func NewEngine(
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		libengine.NewInstanceRunInfo(
+			canopsis.AxeEngineName,
+			canopsis.AxeQueueName,
+			options.PublishToQueue,
+			nil,
+			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...),
+		),
 		amqpChannel,
 		logger,
 	)
@@ -238,12 +231,21 @@ func NewEngine(
 				} else {
 					logger.Info().Msg("started to send recompute entity service events")
 
-					err = stateCountersService.RecomputeAllServices(ctx)
+					err = entityServiceCountersCalculator.RecomputeAll(ctx)
 					if err != nil {
 						return fmt.Errorf("failed to send recompute entity service events: %w", err)
 					}
 
 					logger.Info().Msg("finished to send recompute entity service events")
+
+					logger.Info().Msg("started to send recompute components events")
+
+					err = componentCountersCalculator.RecomputeAll(ctx)
+					if err != nil {
+						return fmt.Errorf("failed to send recompute components events: %w", err)
+					}
+
+					logger.Info().Msg("finished to send recompute components events")
 				}
 			}
 
@@ -257,11 +259,6 @@ func NewEngine(
 			return autoInstructionMatcher.Load(ctx)
 		},
 		func(ctx context.Context) {
-			err := amqpConnection.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close amqp connection")
-			}
-
 			err = lockRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
@@ -324,6 +321,7 @@ func NewEngine(
 			EventProcessor:           eventProcessor,
 			ActionRpc:                actionRpcClient,
 			PbhRpc:                   pbhRpcClient,
+			DynamicInfosRpc:          dynamicInfosRpcClient,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
@@ -331,8 +329,12 @@ func NewEngine(
 		logger,
 	))
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	if dynamicInfosRpcClient != nil {
+		engineAxe.AddConsumer(dynamicInfosRpcClient)
+	}
+
+	engineAxe.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAxe.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:      options.PeriodicalWaitTime,
 		AlarmStatusService:      alarmStatusService,
 		AutoInstructionMatcher:  autoInstructionMatcher,
@@ -390,7 +392,19 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("idle since", libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("clean_tags", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeCleanExternalTagsPeriodicalLockKey,
+		&cleanExternalTagPeriodicalWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: dataStorageConfigProvider,
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			Logger:                    logger,
+		},
+		logger,
+	))
+	engineAxe.AddPeriodicalWorker("idle_since", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeIdleSincePeriodicalLockKey,
 		&idleSincePeriodicalWorker{
@@ -439,7 +453,9 @@ func (m DependencyMaker) EventProcessor(
 	alarmStatusService alarmstatus.Service,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher event.AutoInstructionMatcher,
-	stateCountersService statecounters.StateCountersService,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	componentCountersCalculator calculator.ComponentCountersCalculator,
+	eventsSender entitycounters.EventsSender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
@@ -450,31 +466,32 @@ func (m DependencyMaker) EventProcessor(
 	logger zerolog.Logger,
 ) event.Processor {
 	container := event.NewProcessorContainer()
+
 	container.Set(types.EventTypeCheck, event.NewCheckProcessor(dbClient, alarmConfigProvider, alarmStatusService,
-		pbhTypeResolver, autoInstructionMatcher, stateCountersService, metaAlarmEventProcessor, metricsSender,
-		eventStatisticsSender, remediationRpcClient, externalTagUpdater, internalTagAlarmMatcher, json.NewEncoder(), logger))
+		pbhTypeResolver, autoInstructionMatcher, metaAlarmEventProcessor, metricsSender,
+		eventStatisticsSender, remediationRpcClient, externalTagUpdater, internalTagAlarmMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, json.NewEncoder(), logger))
 	container.Set(types.EventTypeNoEvents, event.NewNoEventsProcessor(dbClient, alarmConfigProvider, alarmStatusService,
-		pbhTypeResolver, autoInstructionMatcher, stateCountersService, metaAlarmEventProcessor, metricsSender,
+		pbhTypeResolver, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender,
 		remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeAck, event.NewAckProcessor(dbClient, alarmConfigProvider, stateCountersService, metaAlarmEventProcessor, metricsSender, logger))
-	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, alarmConfigProvider, stateCountersService, metaAlarmEventProcessor, metricsSender, logger))
+	container.Set(types.EventTypeAck, event.NewAckProcessor(dbClient, alarmConfigProvider, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
+	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, alarmConfigProvider, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeActivate, event.NewActivateProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAssocTicket, event.NewAssocTicketProcessor(dbClient, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeCancel, event.NewCancelProcessor(dbClient, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
-		alarmStatusService, autoInstructionMatcher, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+		alarmStatusService, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeComment, event.NewCommentProcessor(dbClient, alarmConfigProvider, metaAlarmEventProcessor, logger))
-	container.Set(types.EventTypePbhEnter, event.NewPbhEnterProcessor(dbClient, autoInstructionMatcher, stateCountersService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypePbhLeave, event.NewPbhLeaveProcessor(dbClient, autoInstructionMatcher, stateCountersService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypePbhLeaveAndEnter, event.NewPbhLeaveAndEnterProcessor(dbClient, autoInstructionMatcher, stateCountersService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypePbhEnter, event.NewPbhEnterProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypePbhLeave, event.NewPbhLeaveProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypePbhLeaveAndEnter, event.NewPbhLeaveAndEnterProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeDeclareTicketWebhook, event.NewDeclareTicketWebhookProcessor(dbClient, metricsSender, amqpPublisher, json.NewEncoder(), logger))
-	container.Set(types.EventTypeResolveCancel, event.NewResolveCancelProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeResolveClose, event.NewResolveCloseProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeResolveDeleted, event.NewResolveDeletedProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeEntityToggled, event.NewEntityToggledProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeRecomputeEntityService, event.NewRecomputeEntityServiceProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeEntityUpdated, event.NewEntityUpdatedProcessor(dbClient, stateCountersService))
-	container.Set(types.EventTypeUpdateCounters, event.NewUpdateCountersProcessor(dbClient, stateCountersService))
+	container.Set(types.EventTypeResolveCancel, event.NewResolveCancelProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResolveClose, event.NewResolveCloseProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResolveDeleted, event.NewResolveDeletedProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeEntityToggled, event.NewEntityToggledProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeRecomputeEntityService, event.NewRecomputeEntityServiceProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeEntityUpdated, event.NewEntityUpdatedProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender))
+	container.Set(types.EventTypeUpdateCounters, event.NewUpdateCountersProcessor(dbClient, entityServiceCountersCalculator, eventsSender))
 	container.Set(types.EventTypeSnooze, event.NewSnoozeProcessor(dbClient, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeUncancel, event.NewUncancelProcessor(dbClient, alarmStatusService, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeUnsnooze, event.NewUnsnoozeProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
@@ -499,6 +516,8 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeInstructionJobCompleted, instructionProcessor)
 	container.Set(types.EventTypeInstructionJobFailed, instructionProcessor)
 	container.Set(types.EventTypeAutoInstructionActivate, event.NewAutoInstructionActivateProcessor(dbClient))
+	container.Set(types.EventTypeMetaAlarmChildActivate, event.NewMetaAlarmChildActivateProcessor(dbClient))
+	container.Set(types.EventTypeMetaAlarmChildDeactivate, event.NewMetaAlarmChildDeactivateProcessor(dbClient))
 	container.Set(types.EventTypeJunitTestSuiteUpdated, event.NewJunitProcessor(dbClient))
 	container.Set(types.EventTypeJunitTestCaseUpdated, event.NewJunitProcessor(dbClient))
 	container.Set(types.EventTypeRunDelayedScenario, event.NewForwardWithAlarmProcessor(dbClient))

@@ -1,19 +1,41 @@
-<template lang="pug">
-  v-menu(v-if="administrationGroupedLinks.length", bottom, offset-y)
-    template(#activator="{ on }")
-      v-btn.white--text(v-on="on", flat) {{ $t('common.administration') }}
-    v-list.py-0
-      template(v-for="(group, index) in administrationGroupedLinks")
-        v-subheader.subheading(:key="`${group.title}-title`", @click.stop="") {{ group.title }}
-        top-bar-menu-link.top-bar-administration-menu-link(
-          v-for="link in group.links",
-          :key="link.title",
+<template>
+  <v-menu
+    v-if="administrationGroupedLinks.length"
+    content-class="administration-menu__content"
+    bottom
+    offset-y
+  >
+    <template #activator="{ on }">
+      <v-btn
+        class="white--text"
+        text
+        v-on="on"
+      >
+        {{ $t('common.administration') }}
+      </v-btn>
+    </template>
+    <v-list class="py-0">
+      <template v-for="(group, index) in administrationGroupedLinks">
+        <v-subheader
+          :key="`${group.title}-title`"
+          class="text-subtitle-1"
+          @click.stop=""
+        >
+          {{ group.title }}
+        </v-subheader>
+        <top-bar-menu-link
+          v-for="link in group.links"
+          :key="link.title"
           :link="link"
-        )
-        v-divider(
-          v-if="index < administrationGroupedLinks.length - 1",
+          class="top-bar-administration-menu-link"
+        />
+        <v-divider
+          v-if="index &lt; administrationGroupedLinks.length - 1"
           :key="`${group.title}-divider`"
-        )
+        />
+      </template>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>
@@ -132,6 +154,16 @@ export default {
           icon: '$vuetify.icons.alt_route',
           permission: USERS_PERMISSIONS.technical.healthcheck,
         },
+        {
+          route: { name: ROUTES_NAMES.adminStorageSettings },
+          icon: '$vuetify.icons.storage',
+          permission: USERS_PERMISSIONS.technical.storageSettings,
+        },
+        {
+          route: { name: ROUTES_NAMES.adminStateSettings },
+          icon: 'add_alert',
+          permission: USERS_PERMISSIONS.technical.stateSetting,
+        },
       ];
     },
 
@@ -147,8 +179,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.top-bar-administration-menu-link ::v-deep span {
-  margin-left: 8px;
+<style lang="scss">
+.administration-menu__content {
+  max-height: 95vh;
+
+  .v-avatar {
+    border-radius: unset;
+  }
 }
 </style>

@@ -5,7 +5,7 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with custom props 1`] = `
   title="Graph type"
 >
   <div
-    class="v-input pt-0 mt-0 v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input pt-0 mt-0 v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
     <div
       class="v-input__control"
@@ -24,9 +24,14 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with custom props 1`] = `
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Separate bars"
                 name="custom_name"
                 role="radio"
                 type="radio"
@@ -35,15 +40,8 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with custom props 1`] = `
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -51,31 +49,29 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with custom props 1`] = `
             </label>
           </div>
           <div
-            class="v-radio theme--light"
+            class="v-radio theme--light v-item--active"
           >
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light primary--text"
+              >
+                radio_button_checked
+              </i>
               <input
-                aria-checked="false"
-                aria-label="Stacked bars"
+                aria-checked="true"
                 name="custom_name"
                 role="radio"
                 type="radio"
                 value="true"
               />
               <div
-                class="v-input--selection-controls__ripple"
+                class="v-input--selection-controls__ripple primary--text"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -94,7 +90,7 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with default props 1`] = `
   title="Graph type"
 >
   <div
-    class="v-input pt-0 mt-0 v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+    class="v-input pt-0 mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
     <div
       class="v-input__control"
@@ -108,31 +104,29 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with default props 1`] = `
           role="radiogroup"
         >
           <div
-            class="v-radio theme--light"
+            class="v-radio theme--light v-item--active"
           >
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light primary--text"
+              >
+                radio_button_checked
+              </i>
               <input
-                aria-checked="false"
-                aria-label="Separate bars"
+                aria-checked="true"
                 name="stacked"
                 role="radio"
                 type="radio"
                 value="false"
               />
               <div
-                class="v-input--selection-controls__ripple"
+                class="v-input--selection-controls__ripple primary--text"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
@@ -145,9 +139,14 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with default props 1`] = `
             <div
               class="v-input--selection-controls__input"
             >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
               <input
                 aria-checked="false"
-                aria-label="Stacked bars"
                 name="stacked"
                 role="radio"
                 type="radio"
@@ -156,15 +155,8 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with default props 1`] = `
               <div
                 class="v-input--selection-controls__ripple"
               />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
             </div>
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >

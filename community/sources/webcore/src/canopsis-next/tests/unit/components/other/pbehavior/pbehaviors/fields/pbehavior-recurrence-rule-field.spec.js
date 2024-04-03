@@ -1,5 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
@@ -38,7 +39,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    selectCreateRruleButton(wrapper).vm.$emit('click');
+    selectCreateRruleButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -64,7 +65,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       exdates: newExdates,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       rrule: newRrule,
       exceptions: newExceptions,
       exdates: newExdates,
@@ -80,7 +81,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    selectRemoveRruleButton(wrapper).vm.$emit('click');
+    selectRemoveRruleButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -94,7 +95,7 @@ describe('pbehavior-recurrence-rule-field', () => {
 
     config.action();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       rrule: '',
     });
   });
@@ -106,7 +107,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-recurrence-rule-field` with custom props', () => {
@@ -119,6 +120,6 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

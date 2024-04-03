@@ -135,7 +135,7 @@ export const addUnitToDate = (date, value = 0, unit = TIME_UNITS.second) => conv
  * Convert date to native date object
  *
  * @param {LocalDate} date
- * @param format
+ * @param {string} [format]
  * @return {Date}
  */
 export const convertDateToDateObject = (date, format) => convertDateToMoment(date, format).toDate();
@@ -446,5 +446,92 @@ export const isValidDateInterval = value => value
   && isNumber(value?.from)
   && isNumber(value?.to)
   && value.from < value.to;
+
+/**
+ * Get days in month
+ *
+ * @param {LocalDate} date
+ * @return {number}
+ */
+export const getDaysInMonth = date => convertDateToMoment(date)
+  .clone()
+  .daysInMonth();
+
+/**
+ * Get start week day
+ *
+ * @param {LocalDate} date
+ * @param {number} week
+ * @return {number}
+ */
+export const getWeekStartDay = (date, week) => convertDateToMoment(date)
+  .clone()
+  .week(week)
+  .startOf(TIME_UNITS.week)
+  .toDate();
+
+/**
+ * Get end week day
+ *
+ * @param {LocalDate} date
+ * @param {number} week
+ * @return {number}
+ */
+export const getWeekEndDay = (date, week) => convertDateToMoment(date)
+  .clone()
+  .week(week)
+  .endOf(TIME_UNITS.week)
+  .toDate();
+
+/**
+ * Check date is same by unit
+ *
+ * @param {LocalDate} leftDate
+ * @param {LocalDate} rightDate
+ * @param {string} unit
+ * @return {number}
+ */
+export const isSameDates = (leftDate, rightDate, unit) => convertDateToMoment(leftDate)
+  .isSame(rightDate, unit);
+
+/**
+ * Check date is same by unit
+ *
+ * @param {LocalDate} date
+ * @return {number}
+ */
+export const getWeekNumber = date => convertDateToMoment(date).week();
+
+/**
+ * Get date by week
+ *
+ * @param {LocalDate} date
+ * @param {number} week
+ * @return {number}
+ */
+export const getDateByWeekNumber = (date, week) => convertDateToMoment(date)
+  .week(week)
+  .toDate();
+
+/**
+ * Get date by month
+ *
+ * @param {LocalDate} date
+ * @param {number} month
+ * @return {number}
+ */
+export const getDateByMonthNumber = (date, month) => convertDateToMoment(date)
+  .month(month)
+  .toDate();
+
+/**
+ * Check is date before target date
+ *
+ * @param {LocalDate} date
+ * @param {LocalDate} targetDate
+ * @return {number}
+ */
+export const isDateBefore = (date, targetDate) => convertDateToMoment(date)
+  .isBefore(targetDate);
 
 export default convertDateToMoment;

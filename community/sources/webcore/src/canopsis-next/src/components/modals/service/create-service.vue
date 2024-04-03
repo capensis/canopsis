@@ -1,23 +1,37 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ config.title }}
-      template(#text="")
-        service-form(v-model="form")
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled || advancedJsonWasChanged",
-          :loading="submitting",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ config.title }}</span>
+      </template>
+      <template #text="">
+        <service-form v-model="form" :prepare-state-setting-form="prepareStateSettingForm" />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled || advancedJsonWasChanged"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
 import { get } from 'lodash';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { ENTITY_TYPES, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/entities/service/form';
 
@@ -54,6 +68,14 @@ export default {
     },
   },
   methods: {
+    prepareStateSettingForm(service) {
+      return {
+        ...formToService(service),
+        type: ENTITY_TYPES.service,
+        _id: service._id,
+      };
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

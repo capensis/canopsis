@@ -1,7 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
+import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
 
 const stubs = {
   'point-icon': true,
@@ -40,7 +41,7 @@ describe('mermaid-point-marker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-point-marker` with custom props', () => {
@@ -57,6 +58,6 @@ describe('mermaid-point-marker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

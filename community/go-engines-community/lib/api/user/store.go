@@ -18,6 +18,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*User, error)
 	Insert(ctx context.Context, r CreateRequest) (*User, error)
 	Update(ctx context.Context, r UpdateRequest) (*User, error)
+	Patch(ctx context.Context, r PatchRequest) (*User, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -186,6 +187,28 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
+	var user *User
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		res, err := s.collection.UpdateOne(ctx,
+			bson.M{"_id": r.ID},
+			bson.M{"$set": r.getBson(s.passwordEncoder)},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *store) Patch(ctx context.Context, r PatchRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil

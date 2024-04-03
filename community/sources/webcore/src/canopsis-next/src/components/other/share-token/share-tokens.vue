@@ -1,13 +1,13 @@
-<template lang="pug">
-  share-tokens-list(
-    :share-tokens="shareTokens",
-    :total-items="shareTokensMeta.total_count",
-    :pagination.sync="pagination",
-    :pending="shareTokensPending",
-    :removable="hasDeleteAnyShareTokenAccess",
-    @remove="showRemoveShareTokenModal",
+<template>
+  <share-tokens-list
+    :share-tokens="shareTokens"
+    :total-items="shareTokensMeta.total_count"
+    :options.sync="options"
+    :pending="shareTokensPending"
+    :removable="hasDeleteAnyShareTokenAccess"
+    @remove="showRemoveShareTokenModal"
     @remove-selected="showRemoveSelectedShareTokensModal"
-  )
+  />
 </template>
 
 <script>

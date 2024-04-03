@@ -1,17 +1,59 @@
-<template lang="pug">
-  v-layout.panzoom(justify-center, @mousewheel="handleScale", @mousemove="handleMove")
-    div(:style="containerStyles")
-      slot
-    v-layout.panzoom__top-left-actions(column)
-      v-btn.secondary.ma-0.mb-1(:disabled="scale === maxZoom", icon, dark, @click="handleScaleIn")
-        v-icon add
-      v-btn.secondary.ma-0(:disabled="scale === minZoom", dark, icon, @click="handleScaleOut")
-        v-icon remove
-    v-layout.panzoom__bottom-right-actions(v-if="helpText", column)
-      v-tooltip(top)
-        template(#activator="{ on }")
-          v-icon.panzoom__help-icon(v-on="on", color="secondary", size="32") help
-        div.pre-wrap(v-html="helpText")
+<template>
+  <v-layout
+    class="panzoom"
+    justify-center
+    @mousewheel="handleScale"
+    @mousemove="handleMove"
+  >
+    <div :style="containerStyles">
+      <slot />
+    </div>
+    <v-layout
+      class="panzoom__top-left-actions"
+      column
+    >
+      <v-btn
+        :disabled="scale === maxZoom"
+        class="secondary ma-0 mb-1"
+        icon
+        dark
+        @click="handleScaleIn"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
+      <v-btn
+        :disabled="scale === minZoom"
+        class="secondary ma-0"
+        dark
+        icon
+        @click="handleScaleOut"
+      >
+        <v-icon>remove</v-icon>
+      </v-btn>
+    </v-layout>
+    <v-layout
+      v-if="helpText"
+      class="panzoom__bottom-right-actions"
+      column
+    >
+      <v-tooltip top>
+        <template #activator="{ on }">
+          <v-icon
+            class="panzoom__help-icon"
+            color="secondary"
+            size="32"
+            v-on="on"
+          >
+            help
+          </v-icon>
+        </template>
+        <div
+          v-html="helpText"
+          class="pre-wrap"
+        />
+      </v-tooltip>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

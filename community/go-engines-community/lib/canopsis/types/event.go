@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
@@ -108,6 +107,9 @@ const (
 	EventTypeTrigger = "trigger"
 	// EventTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
 	EventTypeAutoInstructionActivate = "autoinstructionactivate"
+
+	EventTypeMetaAlarmChildActivate   = "metaalarmchildactivate"
+	EventTypeMetaAlarmChildDeactivate = "metaalarmchilddeactivate"
 )
 
 const (
@@ -203,13 +205,14 @@ type Event struct {
 	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"healthcheck,omitempty"`
+
+	StateSettingUpdated bool `bson:"state_setting_updated,omitempty" json:"state_setting_updated,omitempty"`
 }
 
 // Format an event
 //
 //	"timestamp" is fill with time.Now()
 //	"event_type" is fill with EventTypeCheck
-//	if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
 	now := datetime.NewCpsTime()
@@ -237,6 +240,7 @@ func (e *Event) GetEID() string {
 	if e.Component != "" {
 		return e.Component
 	}
+
 	return e.Connector + "/" + e.ConnectorName
 }
 
@@ -304,10 +308,9 @@ func (e *Event) IsMatched(regex string, fields []string) bool {
 }
 
 // IsValid checks if an Event is valid for Canopsis processing.
-// the error returned, if any, is of type errt.UnknownError
 func (e *Event) IsValid() error {
 	if e.Connector == "" || e.ConnectorName == "" {
-		return errt.NewUnknownError(errors.New("missing connector"))
+		return errors.New("missing connector")
 	}
 
 	switch e.SourceType {
@@ -315,21 +318,21 @@ func (e *Event) IsValid() error {
 		/*do nothing*/
 	case SourceTypeComponent, SourceTypeMetaAlarm, SourceTypeService:
 		if e.Component == "" {
-			return errt.NewUnknownError(errors.New("missing component"))
+			return errors.New("missing component")
 		}
 	case SourceTypeResource:
 		if e.Component == "" {
-			return errt.NewUnknownError(errors.New("missing component"))
+			return errors.New("missing component")
 		}
 		if e.Resource == "" {
-			return errt.NewUnknownError(errors.New("missing resource"))
+			return errors.New("missing resource")
 		}
 	default:
-		return errt.NewUnknownError(fmt.Errorf("wrong source type: %v", e.SourceType))
+		return fmt.Errorf("wrong source type: %v", e.SourceType)
 	}
 
 	if !isValidEventType(e.EventType) {
-		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
+		return fmt.Errorf("wrong event type: %v", e.EventType)
 	}
 
 	return nil
@@ -408,6 +411,7 @@ var cpsTimeType = reflect.TypeOf(datetime.CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
+var mapStringStringType = reflect.TypeOf(map[string]string{})
 
 // SetField sets the value of a field of an event given its name.
 func (e *Event) SetField(name string, value interface{}) (err error) {
@@ -479,6 +483,19 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		}
 		field.Set(reflect.ValueOf(boolValue))
 
+	case mapStringStringType:
+		var err error
+		if m1, ok := value.(map[string]any); ok {
+			err = setMapStringStringField(field, m1)
+		} else if m2, ok := value.(map[string]string); ok {
+			err = setMapStringStringField(field, m2)
+		} else {
+			return fmt.Errorf("%[1]T value cannot be assigned to a map[string]string: %+[1]v", value)
+		}
+		if err != nil {
+			return err
+		}
+
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())
 	}
@@ -511,6 +528,10 @@ func (e *Event) GetStringField(f string) (string, bool) {
 		return e.EventType, true
 	case "source_type":
 		return e.SourceType, true
+	case "author":
+		return e.Author, true
+	case "initiator":
+		return e.Initiator, true
 	default:
 		return "", false
 	}
@@ -533,6 +554,22 @@ func (e *Event) GetExtraInfoVal(f string) (interface{}, bool) {
 	}
 
 	return nil, false
+}
+
+// setMapStringStringField sets the value of a field of type map[string]string
+func setMapStringStringField[T any | string](field reflect.Value, value map[string]T) error {
+	if field.IsNil() {
+		field.Set(reflect.MakeMap(field.Type()))
+	}
+
+	for key, value := range value {
+		stringValue, success := utils.AsString(value)
+		if !success {
+			return fmt.Errorf("value cannot be assigned to a map[string]string under key %q: %+v", key, value)
+		}
+		field.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(stringValue))
+	}
+	return nil
 }
 
 func isValidEventType(t string) bool {
@@ -583,7 +620,9 @@ func isValidEventType(t string) bool {
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
 		EventTypeTrigger,
-		EventTypeAutoInstructionActivate:
+		EventTypeAutoInstructionActivate,
+		EventTypeMetaAlarmChildActivate,
+		EventTypeMetaAlarmChildDeactivate:
 		return true
 	}
 

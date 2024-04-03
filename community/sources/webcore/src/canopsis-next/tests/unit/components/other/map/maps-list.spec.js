@@ -1,6 +1,6 @@
 import { range } from 'lodash';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -11,6 +11,7 @@ import {
 } from '@unit/utils/table';
 
 import { MAP_TYPES } from '@/constants';
+
 import MapsList from '@/components/other/map/maps-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
@@ -18,7 +19,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
@@ -47,23 +47,19 @@ describe('maps-list', () => {
       propsData: {
         maps,
         removable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
     });
 
-    const firstCheckbox = selectRowCheckboxByIndex(wrapper, 0);
-    await firstCheckbox.vm.$emit('change', true);
+    await flushPromises();
 
-    const thirdCheckbox = selectRowCheckboxByIndex(wrapper, 2);
-    await thirdCheckbox.vm.$emit('change', true);
-
-    const massRemoveButton = selectMassRemoveButton(wrapper);
-
-    await massRemoveButton.vm.$emit('click');
+    await selectRowCheckboxByIndex(wrapper, 0).trigger('click');
+    await selectRowCheckboxByIndex(wrapper, 2).trigger('click');
+    await selectMassRemoveButton(wrapper).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('remove-selected', [maps[0], maps[2]]);
   });
@@ -73,9 +69,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         removable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -84,7 +80,7 @@ describe('maps-list', () => {
     const removableRowIndex = 2;
 
     const removeButton = selectRowRemoveButtonByIndex(wrapper, removableRowIndex);
-    await removeButton.vm.$emit('click');
+    await removeButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('remove', maps[removableRowIndex]._id);
   });
@@ -94,9 +90,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         updatable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -105,7 +101,7 @@ describe('maps-list', () => {
     const editableRowIndex = 5;
 
     const editButton = selectRowEditButtonByIndex(wrapper, editableRowIndex);
-    await editButton.vm.$emit('click');
+    await editButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('edit', maps[editableRowIndex]);
   });
@@ -115,9 +111,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         duplicable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -126,7 +122,7 @@ describe('maps-list', () => {
     const editableRowIndex = 5;
 
     const duplicateButton = selectRowDuplicateButtonByIndex(wrapper, editableRowIndex);
-    await duplicateButton.vm.$emit('click');
+    await duplicateButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('duplicate', maps[editableRowIndex]);
   });
@@ -135,23 +131,23 @@ describe('maps-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         maps,
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `maps-list` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         maps,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'updated',
-          descending: true,
+          sortBy: ['updated'],
+          sortDesc: [true],
         },
         totalItems,
         pending: true,
@@ -161,10 +157,8 @@ describe('maps-list', () => {
       },
     });
 
-    const expandButton = selectRowExpandButtonByIndex(wrapper, 1);
+    await selectRowExpandButtonByIndex(wrapper, 1).trigger('click');
 
-    await expandButton.vm.$emit('expand');
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

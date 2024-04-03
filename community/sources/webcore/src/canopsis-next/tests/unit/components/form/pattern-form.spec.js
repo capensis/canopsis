@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
 
 import PatternForm from '@/components/forms/pattern-form.vue';
@@ -38,9 +39,9 @@ describe('pattern-form', () => {
 
     const textField = selectTextField(wrapper);
 
-    textField.vm.$emit('input', title);
+    textField.triggerCustomEvent('input', title);
 
-    expect(wrapper).toEmit('input', { ...form, title });
+    expect(wrapper).toEmitInput({ ...form, title });
   });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
@@ -61,9 +62,9 @@ describe('pattern-form', () => {
 
     const alarmPatternsField = selectAlarmPatternsField(wrapper);
 
-    alarmPatternsField.vm.$emit('input', { ...form, id, groups });
+    alarmPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
-    expect(wrapper).toEmit('input', { ...form, id, groups });
+    expect(wrapper).toEmitInput({ ...form, id, groups });
   });
 
   test('Entity pattern changed after trigger entity patterns field', () => {
@@ -84,9 +85,9 @@ describe('pattern-form', () => {
 
     const entityPatternsField = selectEntityPatternsField(wrapper);
 
-    entityPatternsField.vm.$emit('input', { ...form, id, groups });
+    entityPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
-    expect(wrapper).toEmit('input', { ...form, id, groups });
+    expect(wrapper).toEmitInput({ ...form, id, groups });
   });
 
   test('Pbehavior pattern changed after trigger pbehavior patterns field', () => {
@@ -107,9 +108,9 @@ describe('pattern-form', () => {
 
     const pbehaviorPatternsField = selectPbehaviorPatternsField(wrapper);
 
-    pbehaviorPatternsField.vm.$emit('input', { ...form, id, groups });
+    pbehaviorPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
-    expect(wrapper).toEmit('input', { ...form, id, groups });
+    expect(wrapper).toEmitInput({ ...form, id, groups });
   });
 
   test('Renders `pattern-form` with default props', () => {
@@ -119,7 +120,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with alarm type', () => {
@@ -133,7 +134,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with entity type', () => {
@@ -147,7 +148,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with entity type', () => {
@@ -161,7 +162,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with errors', async () => {
@@ -177,6 +178,6 @@ describe('pattern-form', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

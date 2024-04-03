@@ -1,45 +1,61 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      v-layout(column)
-        v-layout(row, align-center)
-          v-text-field.mr-2(
-            v-field="form.reference",
-            v-validate="'required'",
-            :label="$t('externalData.fields.reference')",
-            :error-messages="errors.collect(referenceFieldName)",
-            :name="referenceFieldName",
+<template>
+  <v-card>
+    <v-card-text>
+      <v-layout column>
+        <v-layout align-center>
+          <v-text-field
+            v-field="form.reference"
+            v-validate="'required'"
+            :label="$t('externalData.fields.reference')"
+            :error-messages="errors.collect(referenceFieldName)"
+            :name="referenceFieldName"
             :disabled="disabled"
-          )
-            template(#append="")
-              c-help-icon(
-                :text="$t('externalData.tooltips.reference')",
-                icon="help",
+            class="mr-2"
+          >
+            <template #append="">
+              <c-help-icon
+                :text="$t('externalData.tooltips.reference')"
+                icon="help"
                 left
-              )
-          v-select.ml-2(
-            v-field="form.type",
-            :items="availableTypes",
-            :label="$t('common.type')",
+              />
+            </template>
+          </v-text-field>
+          <v-select
+            v-field="form.type"
+            :items="availableTypes"
+            :label="$t('common.type')"
             :disabled="disabled"
-          )
-          v-btn.mr-0(v-if="!disabled", icon, @click="remove")
-            v-icon(color="error") delete
-        external-data-mongo-form(
-          v-if="isMongoType",
-          v-field="form",
-          :name="name",
-          :disabled="disabled",
+            class="ml-2"
+          />
+          <v-btn
+            v-if="!disabled"
+            class="mr-0"
+            icon
+            @click="remove"
+          >
+            <v-icon color="error">
+              delete
+            </v-icon>
+          </v-btn>
+        </v-layout>
+        <external-data-mongo-form
+          v-if="isMongoType"
+          v-field="form"
+          :name="name"
+          :disabled="disabled"
           :variables="variables"
-        )
-        request-form(
-          v-else,
-          v-field="form.request",
-          :name="`${name}.request`",
-          :disabled="disabled",
-          :payload-variables="variables",
+        />
+        <request-form
+          v-else
+          v-field="form.request"
+          :name="`${name}.request`"
+          :disabled="disabled"
+          :payload-variables="variables"
           :url-variables="variables"
-        )
+        />
+      </v-layout>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

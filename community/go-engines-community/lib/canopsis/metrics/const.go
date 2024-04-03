@@ -12,6 +12,7 @@ const (
 	AckDuration             = "ack_duration"
 	ResolveDuration         = "resolve_duration"
 	SliDuration             = "sli_duration"
+	AlarmStateChangeNumber  = "alarm_state_change_number"
 
 	UserActivity = "user_activity"
 	UserSessions = "user_sessions"
@@ -23,8 +24,9 @@ const (
 	InstructionAssignedInstructions = "instruction_assigned_instructions"
 	InstructionExecutedInstructions = "instruction_executed_instructions"
 
-	EntityMetaData = "entities"
-	UserMetaData   = "users"
+	EntityMetaData         = "entities"
+	UserMetaData           = "users"
+	EntityCategoryMetaData = "entity_categories"
 
 	InstructionExecution             = "instruction_execution"
 	InstructionExecutionHourly       = "instruction_execution_hourly"
@@ -36,6 +38,9 @@ const (
 
 	PerfData     = "perf_data"
 	PerfDataName = "perf_data_name"
+
+	MessageRate       = "message_rate"
+	MessageRateHourly = "message_rate_hourly"
 )
 
 // criteria type

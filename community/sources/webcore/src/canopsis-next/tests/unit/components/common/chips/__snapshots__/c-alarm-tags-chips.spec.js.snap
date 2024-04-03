@@ -4,9 +4,10 @@ exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` with selectedTag and 
 <c-alarm-actions-chips-stub
   active-item="tag3"
   inline-count="2"
+  item-class="c-alarm-tags-chips__chip"
   item-text="text"
   item-value="text"
   items="[object Object]"
-  row="row"
+  row=""
 />
 `;

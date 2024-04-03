@@ -8,7 +8,7 @@ exports[`periodic-refresh-field Renders \`periodic-refresh-field\` with custom p
     class="flex xs5"
   >
     <c-enabled-field-stub
-      hide-details="hide-details"
+      hide-details=""
       label="Custom label"
       value="true"
     />
@@ -34,7 +34,7 @@ exports[`periodic-refresh-field Renders \`periodic-refresh-field\` with default 
     class="flex xs5"
   >
     <c-enabled-field-stub
-      hide-details="hide-details"
+      hide-details=""
       label=""
       value="true"
     />

@@ -102,7 +102,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
+					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, result.EntityType, event.IsMetaAlarmUpdated)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
@@ -128,17 +128,18 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 	}
 
 	fifoAckEvent := types.Event{
-		EventType:         event.EventType,
-		Connector:         event.Connector,
-		ConnectorName:     event.ConnectorName,
-		Component:         event.Component,
-		Resource:          event.Resource,
-		SourceType:        event.SourceType,
-		Timestamp:         event.Timestamp,
-		ReceivedTimestamp: event.ReceivedTimestamp,
-		Author:            event.Author,
-		UserID:            event.UserID,
-		Initiator:         event.Initiator,
+		EventType:          event.EventType,
+		Connector:          event.Connector,
+		ConnectorName:      event.ConnectorName,
+		Component:          event.Component,
+		Resource:           event.Resource,
+		SourceType:         event.SourceType,
+		Timestamp:          event.Timestamp,
+		ReceivedTimestamp:  event.ReceivedTimestamp,
+		Author:             event.Author,
+		UserID:             event.UserID,
+		Initiator:          event.Initiator,
+		IsMetaAlarmUpdated: event.IsMetaAlarmUpdated,
 	}
 
 	alarm := *event.Alarm
@@ -180,7 +181,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		var activated bool
 		var err error
 		if event.AlarmChange.Type != types.AlarmChangeTypeNone {
-			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
+			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, event.Entity.Type, event.IsMetaAlarmUpdated)
 			if err != nil {
 				return err
 			}

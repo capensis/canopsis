@@ -54,14 +54,9 @@ describe('pattern-rules-field', () => {
 
     const removeSecondRuleButton = selectPatternRemoveRuleButtonByIndex(wrapper, 1);
 
-    removeSecondRuleButton.vm.$emit('click');
+    removeSecondRuleButton.triggerCustomEvent('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       rules[2],
     ]);
@@ -84,14 +79,9 @@ describe('pattern-rules-field', () => {
       key: 'new key',
     };
 
-    lastRule.vm.$emit('input', updatedRule);
+    lastRule.triggerCustomEvent('input', updatedRule);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       rules[1],
       {
@@ -118,14 +108,9 @@ describe('pattern-rules-field', () => {
       attribute: 'new attribute',
     };
 
-    lastRule.vm.$emit('input', updatedRule);
+    lastRule.triggerCustomEvent('input', updatedRule);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
@@ -161,14 +146,9 @@ describe('pattern-rules-field', () => {
       operator: PATTERN_OPERATORS.hasNot,
     };
 
-    lastRule.vm.$emit('input', updatedRule);
+    lastRule.triggerCustomEvent('input', updatedRule);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
@@ -193,14 +173,9 @@ describe('pattern-rules-field', () => {
 
     const addButton = selectAddButton(wrapper);
 
-    addButton.vm.$emit('click');
+    addButton.triggerCustomEvent('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       ...rules,
       {
         attribute: attribute.value,
@@ -231,7 +206,7 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rules-field` with custom props', () => {
@@ -261,6 +236,6 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

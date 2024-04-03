@@ -39,7 +39,7 @@ export { default as CColumnsField } from '@/components/forms/fields/column/c-col
 export { default as CColumnsWithTemplateField } from '@/components/forms/fields/column/c-columns-with-template-field.vue';
 export { default as CUserPickerField } from '@/components/forms/fields/c-user-picker-field.vue';
 export { default as CInstructionTypeField } from '@/components/forms/fields/c-instruction-type-field.vue';
-export { default as CRecordsPerPageField } from '@/components/forms/fields/c-records-per-page-field.vue';
+export { default as CItemsPerPageField } from '@/components/forms/fields/c-items-per-page-field.vue';
 export { default as CEventFilterTypeField } from '@/components/forms/fields/c-event-filter-type-field.vue';
 export { default as CDraggableListField } from '@/components/forms/fields/list/c-draggable-list-field.vue';
 export { default as CColumnSizeField } from '@/components/forms/fields/c-column-size-field.vue';

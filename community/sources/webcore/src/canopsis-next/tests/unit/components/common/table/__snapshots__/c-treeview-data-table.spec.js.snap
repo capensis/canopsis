@@ -5,7 +5,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -14,39 +14,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
             <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
-                >
-                  0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-treeview-node"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
-            >
-              arrow_drop_down
-            </i>
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -55,9 +31,38 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-expanded="true"
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+              type="button"
+            >
+              arrow_drop_down
+            </button>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; min-width: 32px; width: 32px;"
+                >
+              3
                 </div>
               </div>
             </div>
@@ -66,39 +71,18 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
             class="v-treeview-node__children"
           >
             <div
+              aria-expanded="false"
               class="v-treeview-node v-treeview-node--leaf"
             >
               <div
                 class="v-treeview-node__root"
               >
                 <div
-                  class="v-treeview-node__content"
-                >
-                  <div
-                    class="v-treeview-node__label"
-                  >
-                    <div
-                      class="v-avatar white--text primary"
-                      style="height: 32px; width: 32px;"
-                    >
-                      0
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="v-treeview-node"
-            >
-              <div
-                class="v-treeview-node__root"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
-                >
-                  arrow_drop_down
-                </i>
+                  class="v-treeview-node__level"
+                />
+                <div
+                  class="v-treeview-node__level"
+                />
                 <div
                   class="v-treeview-node__content"
                 >
@@ -107,9 +91,41 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   >
                     <div
                       class="v-avatar white--text primary"
-                      style="height: 32px; width: 32px;"
+                      style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      3
+              0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-expanded="true"
+              class="v-treeview-node"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__level"
+                />
+                <button
+                  class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+                  type="button"
+                >
+                  arrow_drop_down
+                </button>
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; min-width: 32px; width: 32px;"
+                    >
+              3
                     </div>
                   </div>
                 </div>
@@ -118,11 +134,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                 class="v-treeview-node__children"
               >
                 <div
+                  aria-expanded="false"
                   class="v-treeview-node v-treeview-node--leaf"
                 >
                   <div
                     class="v-treeview-node__root"
                   >
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
                     <div
                       class="v-treeview-node__content"
                     >
@@ -131,20 +157,30 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                       >
                         <div
                           class="v-avatar white--text primary"
-                          style="height: 32px; width: 32px;"
+                          style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          0
+              0
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div
+                  aria-expanded="false"
                   class="v-treeview-node v-treeview-node--leaf"
                 >
                   <div
                     class="v-treeview-node__root"
                   >
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
                     <div
                       class="v-treeview-node__content"
                     >
@@ -153,20 +189,30 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                       >
                         <div
                           class="v-avatar white--text primary"
-                          style="height: 32px; width: 32px;"
+                          style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          0
+              0
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div
+                  aria-expanded="false"
                   class="v-treeview-node v-treeview-node--leaf"
                 >
                   <div
                     class="v-treeview-node__root"
                   >
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
                     <div
                       class="v-treeview-node__content"
                     >
@@ -175,9 +221,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                       >
                         <div
                           class="v-avatar white--text primary"
-                          style="height: 32px; width: 32px;"
+                          style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          0
+              0
                         </div>
                       </div>
                     </div>
@@ -186,11 +232,18 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
               </div>
             </div>
             <div
+              aria-expanded="false"
               class="v-treeview-node v-treeview-node--leaf"
             >
               <div
                 class="v-treeview-node__root"
               >
+                <div
+                  class="v-treeview-node__level"
+                />
+                <div
+                  class="v-treeview-node__level"
+                />
                 <div
                   class="v-treeview-node__content"
                 >
@@ -199,9 +252,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   >
                     <div
                       class="v-avatar white--text primary"
-                      style="height: 32px; width: 32px;"
+                      style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      0
+              0
                     </div>
                   </div>
                 </div>
@@ -210,11 +263,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -223,9 +280,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -236,95 +293,177 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
               </tr>
             </thead>
             <tbody>
@@ -342,6 +481,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName7
@@ -356,6 +498,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email7
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName73
@@ -370,6 +515,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email73
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName74
@@ -384,6 +532,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email74
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName740
@@ -398,6 +549,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email740
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName741
@@ -412,6 +566,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email741
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName742
@@ -426,6 +583,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email742
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName75
@@ -440,6 +600,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email75
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName8
@@ -454,6 +617,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -468,7 +634,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -477,11 +643,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
         class="v-treeview theme--dark"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -490,26 +660,27 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--dark"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--dark"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -518,20 +689,24 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              3
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -540,9 +715,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -553,90 +728,152 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--dark"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--dark"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
               </tr>
+            </thead>
+            <thead>
               <tr
-                class="v-datatable__progress"
+                class="v-data-table__progress"
               >
                 <th
                   class="column"
@@ -645,35 +882,31 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   <div
                     aria-valuemax="100"
                     aria-valuemin="0"
-                    class="v-progress-linear"
+                    class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--dark"
                     role="progressbar"
                     style="height: 2px;"
                   >
                     <div
                       class="v-progress-linear__background primary"
-                      style="height: 2px; opacity: 0.3; width: 100%;"
+                      style="opacity: 0.3; left: 0%; width: 100%;"
                     />
                     <div
-                      class="v-progress-linear__bar"
+                      class="v-progress-linear__buffer"
+                    />
+                    <transition-stub
+                      name="fade-transition"
                     >
-                      <transition-stub
-                        name="fade-transition"
+                      <div
+                        class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                       >
                         <div
-                          class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                        >
-                          <div
-                            class="v-progress-linear__bar__indeterminate long primary"
-                          />
-                          <div
-                            class="v-progress-linear__bar__indeterminate short primary"
-                          />
-                        </div>
-                      </transition-stub>
-                      <transition-stub
-                        name="slide-x-transition"
-                      />
-                    </div>
+                          class="v-progress-linear__indeterminate long primary"
+                        />
+                        <div
+                          class="v-progress-linear__indeterminate short primary"
+                        />
+                      </div>
+                    </transition-stub>
                   </div>
                 </th>
               </tr>
@@ -693,6 +926,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   internet.email6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName7
@@ -707,6 +943,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   internet.email7
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName8
@@ -721,6 +960,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -735,7 +977,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -744,11 +986,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -766,17 +1012,18 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -794,11 +1041,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -820,95 +1071,147 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
               </tr>
             </thead>
             <tbody>
@@ -926,6 +1229,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   internet.email6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName7
@@ -940,6 +1246,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   internet.email7
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName8
@@ -954,6 +1263,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -968,7 +1280,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -977,11 +1289,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -990,26 +1306,27 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -1018,20 +1335,24 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              3
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -1040,9 +1361,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -1053,77 +1374,119 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
@@ -1138,6 +1501,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   name.lastName6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName7
@@ -1149,6 +1515,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   name.lastName7
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName8
@@ -1160,6 +1529,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   name.lastName8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -1174,7 +1546,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -1183,11 +1555,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -1196,26 +1572,27 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -1224,20 +1601,24 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              3
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -1246,9 +1627,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -1259,95 +1640,147 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
               </tr>
             </thead>
             <tbody>
@@ -1365,6 +1798,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName7
@@ -1378,240 +1814,10 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                 <td>
                   internet.email7
                 </td>
-              </tr>
-              <tr>
-                <td>
-                  internet.userName8
-                </td>
-                <td>
-                  name.firstName8
-                </td>
-                <td>
-                  name.lastName8
-                </td>
-                <td>
-                  internet.email8
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props 2`] = `
-<div
-  class="treeview-data-table v-sheet theme--light"
->
-  <div
-    class="layout row"
-  >
-    <div
-      class="treeview-data-table--tree mr-4"
-    >
-      <div
-        class="v-treeview theme--light"
-      >
-        <div
-          class="v-treeview-node v-treeview-node--leaf"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
-                >
-                  0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-treeview-node"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
-            >
-              arrow_drop_down
-            </i>
-            <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
-                >
-                  3
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-treeview-node v-treeview-node--leaf"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
-                >
-                  0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="flex"
-    >
-      <div>
-        <div
-          class="v-table__overflow"
-        >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
-              <tr>
-                <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
-                  data-value="username"
-                  role="columnheader"
-                  scope="col"
-                  tabindex="0"
-                >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-                <th
-                  aria-label="Firstname: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="column sortable text-xs-left"
-                  data-value="firstname"
-                  role="columnheader"
-                  scope="col"
-                  tabindex="0"
-                >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-                <th
-                  aria-label="Lastname: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="column sortable text-xs-left"
-                  data-value="lastname"
-                  role="columnheader"
-                  scope="col"
-                  tabindex="0"
-                >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
-                <th
-                  aria-label="Email: Not sorted. Activate to sort ascending."
-                  aria-sort="none"
-                  class="column sortable text-xs-left"
-                  data-value="email"
-                  role="columnheader"
-                  scope="col"
-                  tabindex="0"
-                >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </th>
               </tr>
               <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  internet.userName6
-                </td>
-                <td>
-                  name.firstName6
-                </td>
-                <td>
-                  name.lastName6
-                </td>
-                <td>
-                  internet.email6
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  internet.userName7
-                </td>
-                <td>
-                  name.firstName7
-                </td>
-                <td>
-                  name.lastName7
-                </td>
-                <td>
-                  internet.email7
-                </td>
-              </tr>
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName8
@@ -1626,6 +1832,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -1640,7 +1849,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -1649,39 +1858,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
             <div
-              class="v-treeview-node__content"
-            >
-              <div
-                class="v-treeview-node__label"
-              >
-                <div
-                  class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
-                >
-                  0
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-treeview-node"
-        >
-          <div
-            class="v-treeview-node__root"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
-            >
-              arrow_drop_down
-            </i>
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -1690,9 +1875,38 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-expanded="true"
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+              type="button"
+            >
+              arrow_drop_down
+            </button>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; min-width: 32px; width: 32px;"
+                >
+              3
                 </div>
               </div>
             </div>
@@ -1701,39 +1915,18 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
             class="v-treeview-node__children"
           >
             <div
+              aria-expanded="false"
               class="v-treeview-node v-treeview-node--leaf"
             >
               <div
                 class="v-treeview-node__root"
               >
                 <div
-                  class="v-treeview-node__content"
-                >
-                  <div
-                    class="v-treeview-node__label"
-                  >
-                    <div
-                      class="v-avatar white--text primary"
-                      style="height: 32px; width: 32px;"
-                    >
-                      0
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="v-treeview-node"
-            >
-              <div
-                class="v-treeview-node__root"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
-                >
-                  arrow_drop_down
-                </i>
+                  class="v-treeview-node__level"
+                />
+                <div
+                  class="v-treeview-node__level"
+                />
                 <div
                   class="v-treeview-node__content"
                 >
@@ -1742,9 +1935,41 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   >
                     <div
                       class="v-avatar white--text primary"
-                      style="height: 32px; width: 32px;"
+                      style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      3
+              0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-expanded="true"
+              class="v-treeview-node"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__level"
+                />
+                <button
+                  class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+                  type="button"
+                >
+                  arrow_drop_down
+                </button>
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; min-width: 32px; width: 32px;"
+                    >
+              3
                     </div>
                   </div>
                 </div>
@@ -1753,11 +1978,21 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                 class="v-treeview-node__children"
               >
                 <div
+                  aria-expanded="false"
                   class="v-treeview-node v-treeview-node--leaf"
                 >
                   <div
                     class="v-treeview-node__root"
                   >
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
                     <div
                       class="v-treeview-node__content"
                     >
@@ -1766,20 +2001,30 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                       >
                         <div
                           class="v-avatar white--text primary"
-                          style="height: 32px; width: 32px;"
+                          style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          0
+              0
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div
+                  aria-expanded="false"
                   class="v-treeview-node v-treeview-node--leaf"
                 >
                   <div
                     class="v-treeview-node__root"
                   >
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
                     <div
                       class="v-treeview-node__content"
                     >
@@ -1788,20 +2033,30 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                       >
                         <div
                           class="v-avatar white--text primary"
-                          style="height: 32px; width: 32px;"
+                          style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          0
+              0
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div
+                  aria-expanded="false"
                   class="v-treeview-node v-treeview-node--leaf"
                 >
                   <div
                     class="v-treeview-node__root"
                   >
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
+                    <div
+                      class="v-treeview-node__level"
+                    />
                     <div
                       class="v-treeview-node__content"
                     >
@@ -1810,9 +2065,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                       >
                         <div
                           class="v-avatar white--text primary"
-                          style="height: 32px; width: 32px;"
+                          style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          0
+              0
                         </div>
                       </div>
                     </div>
@@ -1821,11 +2076,18 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               </div>
             </div>
             <div
+              aria-expanded="false"
               class="v-treeview-node v-treeview-node--leaf"
             >
               <div
                 class="v-treeview-node__root"
               >
+                <div
+                  class="v-treeview-node__level"
+                />
+                <div
+                  class="v-treeview-node__level"
+                />
                 <div
                   class="v-treeview-node__content"
                 >
@@ -1834,9 +2096,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   >
                     <div
                       class="v-avatar white--text primary"
-                      style="height: 32px; width: 32px;"
+                      style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      0
+              0
                     </div>
                   </div>
                 </div>
@@ -1845,11 +2107,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -1858,9 +2124,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -1871,95 +2137,177 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
               </tr>
             </thead>
             <tbody>
@@ -1977,6 +2325,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName7
@@ -1991,6 +2342,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email7
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName73
@@ -2005,6 +2359,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email73
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName74
@@ -2019,6 +2376,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email74
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName740
@@ -2033,6 +2393,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email740
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName741
@@ -2047,6 +2410,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email741
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName742
@@ -2061,6 +2427,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email742
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName75
@@ -2075,6 +2444,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email75
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   internet.userName8
@@ -2089,6 +2461,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -2103,7 +2478,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -2112,11 +2487,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -2125,26 +2504,27 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -2153,20 +2533,24 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              3
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -2175,9 +2559,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -2188,95 +2572,147 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
               </tr>
             </thead>
             <tbody>
@@ -2284,10 +2720,19 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                 class="items-slot"
               />
               <tr
-                class="items-slot"
+                class="v-data-table__expanded v-data-table__expanded__row"
               />
               <tr
                 class="items-slot"
+              />
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
+              <tr
+                class="items-slot"
+              />
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
               />
             </tbody>
           </table>
@@ -2303,7 +2748,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
   class="treeview-data-table v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -2312,11 +2757,15 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -2325,26 +2774,27 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -2353,20 +2803,24 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  3
+              3
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -2375,9 +2829,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
               >
                 <div
                   class="v-avatar white--text primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  0
+              0
                 </div>
               </div>
             </div>
@@ -2388,95 +2842,147 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="4"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label="Username: Sorted ascending. Activate to sort descending."
-                  aria-sort="ascending"
-                  class="column active asc sortable text-xs-left"
+                  aria-label="Username: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="text-start sortable"
                   data-value="username"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Username
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Username
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Firstname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="firstname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Firstname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Firstname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Lastname: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="lastname"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Lastname
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Lastname
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
                 <th
                   aria-label="Email: Not sorted. Activate to sort ascending."
                   aria-sort="none"
-                  class="column sortable text-xs-left"
+                  class="text-start sortable"
                   data-value="email"
                   role="columnheader"
                   scope="col"
-                  tabindex="0"
                 >
-                  Email
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                    style="font-size: 16px;"
+                  <div
+                    class="layout align-center"
                   >
-                    arrow_upward
-                  </i>
+                    <span
+                      class=""
+                    >
+                      Email
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                      style="font-size: 18px;"
+                    >
+                      arrow_upward
+                    </i>
+                  </div>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="4"
-                />
               </tr>
             </thead>
             <tbody>
@@ -2498,6 +3004,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   internet.email6
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   <span
@@ -2516,6 +3025,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   internet.email7
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   <span
@@ -2534,6 +3046,9 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   internet.email8
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>

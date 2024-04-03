@@ -4,19 +4,17 @@ exports[`service-template Renders \`service-template\` with custom props 1`] = `
 <div
   itemsperpage="10"
 >
-  
     Id: service-id
     Entities: 
-        
   <service-entities-list-stub
+    actionsrequests=""
     entitynamefield="entity._id"
-    pagination="[object Object]"
+    options="[object Object]"
     service="[object Object]"
     serviceentities="[object Object],[object Object]"
     totalitems="20"
     widgetparameters="[object Object]"
   />
-   
   <br />
 </div>
 `;

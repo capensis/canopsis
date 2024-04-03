@@ -1,16 +1,33 @@
-<template lang="pug">
-  div.c-horizontal-time-line
-    div.c-horizontal-time-line__groups(v-for="(group, groupIndex) in groupedSteps", :key="group.day")
-      span.c-horizontal-time-line__day {{ group.day }}
-      v-divider.grey.mr-2(vertical)
-      div.c-horizontal-time-line__cards
-        template(v-for="(step, stepIndex) in group.steps")
-          horizontal-time-line-card(:step="step", :key="`card-${stepIndex}`")
-          v-icon.mx-2(
-            v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1",
-            :key="`arrow-${stepIndex}`",
+<template>
+  <div class="c-horizontal-time-line">
+    <div
+      v-for="(group, groupIndex) in groupedSteps"
+      :key="group.day"
+      class="c-horizontal-time-line__groups"
+    >
+      <span class="c-horizontal-time-line__day">{{ group.day }}</span>
+      <v-divider
+        class="grey mr-2"
+        vertical
+      />
+      <div class="c-horizontal-time-line__cards">
+        <template v-for="(step, stepIndex) in group.steps">
+          <horizontal-time-line-card
+            :key="`card-${stepIndex}`"
+            :step="step"
+          />
+          <v-icon
+            v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1"
+            :key="`arrow-${stepIndex}`"
+            class="mx-2"
             size="16"
-          ) arrow_forward
+          >
+            arrow_forward
+          </v-icon>
+        </template>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

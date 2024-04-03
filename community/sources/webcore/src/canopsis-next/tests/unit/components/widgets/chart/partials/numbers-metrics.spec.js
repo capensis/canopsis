@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
@@ -13,7 +14,7 @@ describe('numbers-metrics', () => {
   test('Renders `numbers-metrics` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics` with custom props', async () => {
@@ -28,6 +29,6 @@ describe('numbers-metrics', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,10 +1,20 @@
-import { getZIndex } from 'vuetify/es5/util/helpers';
 import { get } from 'lodash';
+import { getZIndex } from 'vuetify/lib/util/helpers';
+import { attachedRoot } from 'vuetify/lib/util/dom';
 
 import { MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED } from '@/config';
 
 function defaultConditional() {
   return false;
+}
+
+function handleShadow(el, callback) {
+  const root = attachedRoot(el);
+  callback(document);
+
+  if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot) {
+    callback(root);
+  }
 }
 
 /**
@@ -21,6 +31,45 @@ function defaultConditionalWithZIndex(e, el) {
   return targetZIndex < contentZIndex;
 }
 
+function checkIsActive(e, el, binding) {
+  const { closeConditional } = binding.args ? binding.args : binding.value;
+
+  const defaultCond = get(binding, 'modifiers.zIndex') ? defaultConditionalWithZIndex : defaultConditional;
+
+  const isActive = closeConditional || defaultCond;
+
+  return isActive(e, el);
+}
+
+function checkEvent(e, el, binding) {
+  if (!e || checkIsActive(e, el, binding) === false) return false;
+
+  const root = attachedRoot(el);
+
+  if (
+    typeof ShadowRoot !== 'undefined'
+    && root instanceof ShadowRoot
+    && root.host === e.target
+  ) {
+    return false;
+  }
+
+  const { zIndex } = binding.modifiers;
+
+  const include = binding.args
+    ? binding.args.include
+    : binding.value.include;
+
+  const elements = include ? include() : [];
+
+  elements.push(el);
+
+  const isElementsContainsTarget = elements.some(element => element.contains(e.target));
+  const isClickUnder = zIndex ? defaultConditionalWithZIndex(e, el) : true;
+
+  return !isElementsContainsTarget && isClickUnder;
+}
+
 /**
  * Function for support old logic v-click-outside and new version. We can use now this directive.
  * With zIndex modification. We can use directive as 'v-click-outside.zIndex'.
@@ -29,94 +78,94 @@ function defaultConditionalWithZIndex(e, el) {
  * @param el
  * @param binding
  */
-function directive(e, el, binding) {
+function directive(e, el, binding, vnode) {
   // eslint-disable-next-line no-underscore-dangle
-  const delayAfterRegistered = Date.now() - el._outsideRegistredAt;
+  const clickOutside = el._clickOutside;
+  // eslint-disable-next-line no-underscore-dangle
+  const nodeClickOutside = clickOutside[vnode.context._uid];
+
+  // eslint-disable-next-line no-underscore-dangle
+  const delayAfterRegistered = Date.now() - nodeClickOutside._outsideRegistredAt;
 
   if (delayAfterRegistered < MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED) {
     return;
   }
 
   const handler = typeof binding.value === 'function' ? binding.value : get(binding, 'value.handler');
-  const include = binding.args ? binding.args.include : binding.value.include;
-  const { closeConditional } = binding.args ? binding.args : binding.value;
 
-  const defaultCond = get(binding, 'modifiers.zIndex') ? defaultConditionalWithZIndex : defaultConditional;
-
-  const isActive = closeConditional || defaultCond;
-
-  if (!e || isActive(e, el) === false) return;
-
-  if (('isTrusted' in e && !e.isTrusted) || ('pointerType' in e && !e.pointerType)) {
-    return;
-  }
-
-  const elements = include ? include() : [];
-
-  elements.push(el);
-
-  if (!elements.some(item => item.contains(e.target))) {
-    setTimeout(() => isActive(e, el) && handler && handler(e), 0);
+  if (clickOutside.lastMousedownWasOutside && checkEvent(e, el, binding)) {
+    setTimeout(() => {
+      if (checkIsActive(e, el, binding) && handler) {
+        handler(e);
+      }
+    }, 0);
   }
 }
 
 /* eslint-disable no-underscore-dangle, no-param-reassign */
 export default {
-  inserted(el, binding) {
-    const onClick = e => directive(e, el, binding);
-    const app = document.querySelector('[data-app]') || document.body;
-    const { same, zIndex, contextmenu } = binding.modifiers;
-
-    if (same) {
-      let mousedownWasOnElement = false;
-
-      const mousedownOutside = (e) => {
-        mousedownWasOnElement = el.contains(e.target) || (zIndex && !defaultConditionalWithZIndex(e.target, el));
-      };
-
-      const mouseupOutside = (e) => {
-        if (!mousedownWasOnElement) {
-          onClick(e);
-        }
-      };
-
-      app.addEventListener('mousedown', mousedownOutside, true);
-      app.addEventListener('mouseup', mouseupOutside, true);
-
-      el._mousedownOutside = mousedownOutside;
-      el._mouseupOutside = mouseupOutside;
-    } else {
-      app.addEventListener(contextmenu ? 'contextmenu' : 'click', onClick, true);
-
-      el._clickOutside = onClick;
-    }
-
-    el._outsideRegistredAt = Date.now();
-  },
-
-  unbind(el, binding) {
-    const app = document.querySelector('[data-app]') || document.body; // This is only for unit tests
-
-    if (!app) {
-      return;
-    }
+  inserted(el, binding, vnode) {
+    const onClick = e => directive(e, el, binding, vnode);
+    const onMousedown = (e) => {
+      el._clickOutside.lastMousedownWasOutside = checkEvent(
+        e,
+        el,
+        binding,
+      );
+    };
 
     const { same, contextmenu } = binding.modifiers;
 
-    if (same) {
-      if (el._mousedownOutside) {
-        app.removeEventListener('mousedown', el._mousedownOutside, true);
-        delete el._mousedownOutside;
+    handleShadow(el, (app) => {
+      if (same) {
+        app.addEventListener('mouseup', onClick, true);
+        app.addEventListener('mousedown', onMousedown, true);
+      } else {
+        app.addEventListener(contextmenu ? 'contextmenu' : 'click', onClick, true);
+      }
+    });
+
+    if (!el._clickOutside) {
+      el._clickOutside = {
+        lastMousedownWasOutside: true,
+      };
+    }
+
+    el._clickOutside[vnode.context._uid] = {
+      onClick,
+      onMousedown,
+      _outsideRegistredAt: Date.now(),
+    };
+  },
+
+  unbind(el, binding, vnode) {
+    const { same, contextmenu } = binding.modifiers;
+
+    handleShadow(el, (app) => {
+      const clickOutside = el._clickOutside;
+
+      if (!app || !clickOutside) {
+        return;
       }
 
-      if (el._mouseupOutside) {
-        app.removeEventListener('mouseup', el._mouseupOutside, true);
-        delete el._mouseupOutside;
+      if (!app || !clickOutside[vnode.context._uid]) {
+        return;
       }
-    } else if (el._clickOutside) {
-      app.removeEventListener(contextmenu ? 'contextmenu' : 'click', el._clickOutside, true);
-      delete el._clickOutside;
-    }
+
+      const {
+        onClick,
+        onMousedown,
+      } = el._clickOutside[vnode.context._uid];
+
+      if (same) {
+        app.removeEventListener('mouseup', onClick, true);
+        app.removeEventListener('mousedown', onMousedown, true);
+      } else if (contextmenu) {
+        app.removeEventListener('contextmenu', onClick, true);
+      } else {
+        app.removeEventListener('click', onClick, true);
+      }
+    });
   },
 };
 /* eslint-enable no-underscore-dangle, no-param-reassign */

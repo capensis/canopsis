@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createMockedStoreModules,
@@ -9,15 +8,23 @@ import {
   createServiceModule,
   createUserPreferenceModule,
 } from '@unit/utils/store';
-import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
+import { mockModals } from '@unit/utils/mock-hooks';
+
+import {
+  COLOR_INDICATOR_TYPES,
+  MODALS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  USERS_PERMISSIONS,
+  WIDGET_TYPES,
+} from '@/constants';
+import { DEFAULT_WEATHER_LIMIT } from '@/config';
+
 import {
   generateDefaultServiceWeatherWidget,
   generatePreparedDefaultAlarmListWidget,
 } from '@/helpers/entities/widget/form';
-import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';
-import { mockModals } from '@unit/utils/mock-hooks';
 
 const stubs = {
   'c-entity-category-field': true,
@@ -41,8 +48,8 @@ describe('service-weather', () => {
     category: undefined,
     filter: undefined,
     lockedFilter: null,
-    sortDir: null,
-    sortKey: null,
+    sortDesc: [],
+    sortBy: [],
     limit: DEFAULT_WEATHER_LIMIT,
     hide_grey: false,
   };
@@ -157,7 +164,7 @@ describe('service-weather', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectEntityCategoryField(wrapper).vm.$emit('input', category);
+    selectEntityCategoryField(wrapper).triggerCustomEvent('input', category);
 
     expect(updateUserPreference).toBeCalledWith(
       expect.any(Object),
@@ -206,7 +213,7 @@ describe('service-weather', () => {
       filter: {},
     };
 
-    selectFilterSelectorField(wrapper).vm.$emit('input', selectedFilter._id);
+    selectFilterSelectorField(wrapper).triggerCustomEvent('input', selectedFilter._id);
 
     await flushPromises();
 
@@ -241,7 +248,7 @@ describe('service-weather', () => {
 
     updateQuery.mockClear();
 
-    selectEnabledField(wrapper).vm.$emit('input', true);
+    selectEnabledField(wrapper).triggerCustomEvent('input', true);
 
     await flushPromises();
 
@@ -290,7 +297,7 @@ describe('service-weather', () => {
       },
     });
 
-    selectServiceWeatherItemByIndex(wrapper, 0).vm.$emit('show:alarms');
+    selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:alarms');
 
     const alarmListWidget = generatePreparedDefaultAlarmListWidget();
     alarmListWidget.parameters.serviceDependenciesColumns = widget.parameters.serviceDependenciesColumns;
@@ -351,12 +358,45 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    await selectServiceWeatherItemByIndex(wrapper, 0).vm.$emit('show:service');
+    await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.alarmsList,
         config: expect.any(Object),
+      },
+    );
+  });
+
+  test('Root cause modal showed after trigger show:root-cause event', async () => {
+    const service = {
+      name: Faker.datatype.string(),
+    };
+    getServicesListByWidgetId.mockReturnValueOnce([service]);
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModule,
+        userPreferenceModule,
+        serviceModule,
+        queryModule,
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:root-cause');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity: service,
+          colorIndicator: COLOR_INDICATOR_TYPES.state,
+        },
       },
     );
   });
@@ -385,7 +425,7 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    await selectServiceWeatherItemByIndex(wrapper, 0).vm.$emit('show:service');
+    await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -419,9 +459,9 @@ describe('service-weather', () => {
       },
     });
 
-    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -456,9 +496,9 @@ describe('service-weather', () => {
       ]),
     });
 
-    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -486,9 +526,9 @@ describe('service-weather', () => {
       ]),
     });
 
-    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 });

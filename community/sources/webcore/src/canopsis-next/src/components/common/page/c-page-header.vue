@@ -1,15 +1,49 @@
-<template lang="pug">
-  div
-    h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2
-      slot {{ $t(`pageHeaders.${name}.title`) }}
-      v-btn.mr-0(v-if="hasMessage", icon, @click="toggleMessageVisibility")
-        v-icon(color="info") help_outline
-    v-expand-transition
-      div(v-if="hasMessage && shownMessage")
-        v-layout.pb-2(justify-center)
-          c-compiled-template.subheading.page-header__message.pre-wrap(:template="message")
-        v-layout.pb-2(v-show="!messageWasHidden", justify-center)
-          v-btn(color="primary", @click="hideMessage") {{ $t('pageHeaders.hideMessage') }}
+<template>
+  <div>
+    <h2 class="text-center text-h4 font-weight-medium mt-4 mb-2">
+      <slot>{{ $t(`pageHeaders.${name}.title`) }}</slot>
+      <v-btn
+        v-if="hasMessage"
+        class="ml-2 my-2"
+        icon
+        @click="toggleMessageVisibility"
+      >
+        <v-icon color="info">
+          help_outline
+        </v-icon>
+      </v-btn>
+    </h2>
+    <v-expand-transition>
+      <div
+        v-if="hasMessage"
+        v-show="shownMessage"
+      >
+        <v-layout
+          class="pb-2"
+          justify-center
+        >
+          <c-compiled-template
+            :template="message"
+            class="text-subtitle-1 page-header__message pre-wrap"
+          />
+        </v-layout>
+        <v-layout
+          v-if="!messageWasHidden"
+          class="pb-2"
+          justify-center
+        >
+          <v-btn
+            :loading="isHidePending"
+            class="my-2"
+            color="primary"
+            @click="hideMessage"
+          >
+            {{ $t('pageHeaders.hideMessage') }}
+          </v-btn>
+        </v-layout>
+      </div>
+    </v-expand-transition>
+  </div>
 </template>
 
 <script>
@@ -39,6 +73,7 @@ export default {
   data() {
     return {
       shownMessage: false,
+      isHidePending: false,
     };
   },
   computed: {
@@ -78,10 +113,13 @@ export default {
     },
 
     async hideMessage() {
+      this.isHidePending = true;
+
       if (!this.messageWasHidden) {
         await this.finishTourByName(this.name);
       }
 
+      this.isHidePending = false;
       this.shownMessage = false;
     },
   },

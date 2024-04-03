@@ -1,27 +1,41 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        v-list.widget-settings.widget-settings--divider.widget-settings__list.py-0(expand)
-          component(
-            v-model="form",
-            :is="formComponent",
-            :only-external="onlyExternal",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <v-list
+          class="widget-settings widget-settings--divider widget-settings__list py-0"
+          expand
+        >
+          <component
+            :is="formComponent"
+            v-model="form"
+            :only-external="onlyExternal"
             required-title
-          )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+          />
+        </v-list>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -83,7 +97,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config?.action(formToAlarmListChart(this.form));
+        await this.config?.action?.(formToAlarmListChart(this.form));
 
         this.$modals.hide();
       }

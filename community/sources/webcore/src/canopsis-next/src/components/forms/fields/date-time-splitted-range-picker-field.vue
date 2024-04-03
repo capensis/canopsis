@@ -1,30 +1,36 @@
-<template lang="pug">
-  v-layout.date-time-splitted-range-picker-field(row)
-    v-flex.date-time-splitted-range-picker-field__start
-      date-time-splitted-picker-field(
-        v-validate="startRules",
-        :value="start",
-        :full-day="fullDay",
-        :disabled="disabled",
-        :label="startLabel",
-        :name="`${name}_start`",
+<template>
+  <v-layout class="date-time-splitted-range-picker-field">
+    <v-flex class="date-time-splitted-range-picker-field__start">
+      <date-time-splitted-picker-field
+        v-validate="startRules"
+        :value="start"
+        :full-day="fullDay"
+        :disabled="disabled"
+        :label="startLabel"
+        :name="`${name}_start`"
         @input="$emit('update:start', $event)"
-      )
-    template(v-if="!noEnding")
-      div.date-time-splitted-range-picker-field__time-dash –
-      v-flex.date-time-splitted-range-picker-field__end
-        date-time-splitted-picker-field(
-          v-validate="endRules",
-          :value="end",
-          :full-day="fullDay",
-          :disabled="disabled",
-          :label="endLabel",
-          :name="`${name}_end`",
-          :min="endMin",
-          :max="endMax",
-          reverse,
+      />
+    </v-flex>
+    <template v-if="!noEnding">
+      <div class="date-time-splitted-range-picker-field__time-dash">
+        –
+      </div>
+      <v-flex class="date-time-splitted-range-picker-field__end">
+        <date-time-splitted-picker-field
+          v-validate="endRules"
+          :value="end"
+          :full-day="fullDay"
+          :disabled="disabled"
+          :label="endLabel"
+          :name="`${name}_end`"
+          :min="endMin"
+          :max="endMax"
+          reverse
           @input="$emit('update:end', $event)"
-        )
+        />
+      </v-flex>
+    </template>
+  </v-layout>
 </template>
 
 <script>

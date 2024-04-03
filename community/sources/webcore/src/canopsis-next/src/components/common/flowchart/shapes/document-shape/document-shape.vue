@@ -1,26 +1,27 @@
-<template lang="pug">
-  g(@dblclick.stop="enableEditingMode")
-    document-figure(
-      v-bind="shape.properties",
-      v-on="$listeners",
-      :width="shape.width",
-      :height="shape.height",
-      :x="shape.x",
-      :y="shape.y",
-      :offset="shape.offset",
+<template>
+  <g @dblclick.stop="enableEditingMode">
+    <document-figure
+      v-bind="shape.properties"
+      :width="shape.width"
+      :height="shape.height"
+      :x="shape.x"
+      :y="shape.y"
+      :offset="shape.offset"
       :cursor="readonly ? '' : 'move'"
-    )
-    text-editor(
-      ref="editor",
-      v-bind="shape.textProperties",
-      :value="shape.text",
-      :y="shape.y",
-      :x="shape.x",
-      :width="shape.width",
-      :height="shape.height",
-      :editable="editing",
+      v-on="$listeners"
+    />
+    <text-editor
+      ref="editor"
+      v-bind="shape.textProperties"
+      :value="shape.text"
+      :y="shape.y"
+      :x="shape.x"
+      :width="shape.width"
+      :height="shape.height"
+      :editable="editing"
       @blur="disableEditingMode"
-    )
+    />
+  </g>
 </template>
 
 <script>

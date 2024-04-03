@@ -2,7 +2,7 @@
 
 exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-remediation-instructions-filters\` with access, but without filters filters props 1`] = `
 <div
-  class="layout row wrap align-center"
+  class="layout wrap align-center"
 >
   <remediation-instructions-filters-list-stub
     closable="true"
@@ -13,34 +13,32 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     editable="true"
     filters=""
   />
+  <span
+    class="v-tooltip v-tooltip--bottom"
+  >
+    <!---->
+  </span>
   <button
-    class="mx-1 my-0 v-btn v-btn--icon theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
       >
         assignment
       </i>
-    </div>
+    </span>
   </button>
-  <span
-    class="v-tooltip v-tooltip--bottom"
-  >
-    <transition-stub
-      name="slide-y-transition"
-    />
-  </span>
 </div>
 `;
 
 exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-remediation-instructions-filters\` with custom props 1`] = `
 <div
-  class="layout row wrap align-center"
+  class="layout wrap align-center"
 >
   <remediation-instructions-filters-list-stub
     closable="true"
@@ -51,34 +49,32 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     editable="true"
     filters="[object Object],[object Object]"
   />
+  <span
+    class="v-tooltip v-tooltip--bottom"
+  >
+    <!---->
+  </span>
   <button
-    class="mx-1 my-0 v-btn v-btn--icon theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light primary--text"
+        class="v-icon notranslate material-icons theme--light primary--text"
       >
         assignment
       </i>
-    </div>
+    </span>
   </button>
-  <span
-    class="v-tooltip v-tooltip--bottom"
-  >
-    <transition-stub
-      name="slide-y-transition"
-    />
-  </span>
 </div>
 `;
 
 exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-remediation-instructions-filters\` with default props 1`] = `
 <div
-  class="layout row wrap align-center"
+  class="layout wrap align-center"
 >
   <remediation-instructions-filters-list-stub
     filters=""
@@ -92,7 +88,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
 
 exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-remediation-instructions-filters\` with locked filters props 1`] = `
 <div
-  class="layout row wrap align-center"
+  class="layout wrap align-center"
 >
   <remediation-instructions-filters-list-stub
     filters="[object Object],[object Object]"
@@ -100,27 +96,25 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
   <remediation-instructions-filters-list-stub
     filters=""
   />
+  <span
+    class="v-tooltip v-tooltip--bottom"
+  >
+    <!---->
+  </span>
   <button
-    class="mx-1 my-0 v-btn v-btn--icon theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light primary--text"
+        class="v-icon notranslate material-icons theme--light primary--text"
       >
         assignment
       </i>
-    </div>
+    </span>
   </button>
-  <span
-    class="v-tooltip v-tooltip--bottom"
-  >
-    <transition-stub
-      name="slide-y-transition"
-    />
-  </span>
 </div>
 `;

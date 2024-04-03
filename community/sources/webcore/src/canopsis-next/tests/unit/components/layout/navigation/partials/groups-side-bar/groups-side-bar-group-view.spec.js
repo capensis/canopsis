@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules, createNavigationModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { CRUD_ACTIONS, MODALS } from '@/constants';
 
 import GroupsSideBarGroupView from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group-view.vue';
@@ -40,7 +41,7 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: '' } } },
     });
 
-    selectGroupViewPanel(wrapper).vm.$emit('duplicate');
+    selectGroupViewPanel(wrapper).triggerCustomEvent('duplicate');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createView,
@@ -72,7 +73,7 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: '' } } },
     });
 
-    selectGroupViewPanel(wrapper).vm.$emit('change');
+    selectGroupViewPanel(wrapper).triggerCustomEvent('change');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createView,
@@ -97,7 +98,7 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: '' } } },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar-group-view` with custom data', () => {
@@ -117,6 +118,6 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: viewId } } },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

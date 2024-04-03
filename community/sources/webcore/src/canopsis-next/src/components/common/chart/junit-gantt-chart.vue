@@ -1,23 +1,31 @@
-<template lang="pug">
-  div
-    v-layout.position-relative(justify-center)
-      horizontal-bar(
-        ref="horizontalBar",
-        :labels="labels",
-        :datasets="datasets",
-        :options="options",
-        :width="width",
+<template>
+  <div>
+    <v-layout
+      class="position-relative"
+      justify-center
+    >
+      <horizontal-bar
+        ref="horizontalBar"
+        :labels="labels"
+        :datasets="datasets"
+        :options="options"
+        :width="width"
         :height="height"
-      )
-      div.v-tooltip__content.menuable__content__active(ref="tooltip")
-    c-table-pagination(
-      :total-items="totalItems",
-      :rows-per-page="query.rowsPerPage",
-      :rows-per-page-items="rowsPerPageItems",
-      :page="query.page",
-      @update:page="updatePage",
-      @update:rows-per-page="updateRowsPerPage"
-    )
+      />
+      <div
+        ref="tooltip"
+        class="v-tooltip__content menuable__content__active"
+      />
+    </v-layout>
+    <c-table-pagination
+      :total-items="totalItems"
+      :items-per-page="query.itemsPerPage"
+      :items="itemsPerPageItems"
+      :page="query.page"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+    />
+  </div>
 </template>
 
 <script>
@@ -82,7 +90,7 @@ export default {
     },
   },
   computed: {
-    rowsPerPageItems() {
+    itemsPerPageItems() {
       return [5, 10, 20];
     },
 
@@ -279,8 +287,8 @@ export default {
       tooltipEl.style.pointerEvents = 'none';
     },
 
-    updateRowsPerPage(rowsPerPage) {
-      this.$emit('update:query', { ...this.query, rowsPerPage, page: 1 });
+    updateItemsPerPage(itemsPerPage) {
+      this.$emit('update:query', { ...this.query, itemsPerPage, page: 1 });
     },
 
     updatePage(page) {

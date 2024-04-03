@@ -1,49 +1,90 @@
-<template lang="pug">
-  tr.alarm-list-row(v-on="listeners", :class="classes")
-    td.alarm-list-row__icons.pr-0(v-if="hasRowActions")
-      v-layout(row, align-center, justify-space-between)
-        v-layout.alarm-list-row__checkbox
-          template(v-if="selectable")
-            v-checkbox-functional.ma-0(v-if="isAlarmSelectable", v-field="selected", hide-details)
-            v-checkbox-functional(v-else, disabled, hide-details)
-        v-layout(v-if="hasAlarmInstruction", align-center)
-          alarms-list-row-instructions-icon(:alarm="alarm")
-        v-layout(v-if="hasBookmark", align-center)
-          alarms-list-row-bookmark-icon
-        alarms-expand-panel-btn(
-          v-if="expandable",
-          :expanded="expanded",
-          :alarm="alarm",
-          :widget="widget",
-          :small="small",
-          :search="search",
+<template>
+  <tr
+    :class="classes"
+    class="alarm-list-row"
+    v-on="listeners"
+  >
+    <td
+      v-if="hasRowActions"
+      class="alarm-list-row__icons pr-0"
+    >
+      <v-layout
+        align-center
+        justify-space-between
+      >
+        <v-layout class="alarm-list-row__checkbox">
+          <template v-if="selectable">
+            <v-simple-checkbox
+              v-if="isAlarmSelectable"
+              v-field="selected"
+              class="ma-0"
+              color="primary"
+              hide-details
+            />
+            <v-simple-checkbox
+              v-else
+              disabled
+              hide-details
+            />
+          </template>
+        </v-layout>
+        <v-layout
+          v-if="hasAlarmInstruction"
+          align-center
+        >
+          <alarms-list-row-instructions-icon :alarm="alarm" />
+        </v-layout>
+        <v-layout
+          v-if="hasBookmark"
+          align-center
+        >
+          <alarms-list-row-bookmark-icon />
+        </v-layout>
+        <alarms-expand-panel-btn
+          v-if="expandable"
+          :expanded="expanded"
+          :alarm="alarm"
+          :widget="widget"
+          :small="small"
+          :search="search"
           @input="$emit('expand', $event)"
-        )
-    td.alarm-list-row__cell(v-for="header in availableHeaders", :key="header.value")
-      actions-panel(
-        v-if="header.value === 'actions'",
-        :item="alarm",
-        :widget="widget",
-        :parent-alarm="parentAlarm",
-        :refresh-alarms-list="refreshAlarmsList",
-        :small="small",
-        :wrap="wrapActions"
-      )
-      alarm-column-value(
-        v-else,
-        :alarm="alarm",
-        :widget="widget",
-        :column="header",
-        :selected-tag="selectedTag",
-        :small="small",
-        @activate="activateRow",
+        />
+      </v-layout>
+    </td>
+    <td
+      v-for="header in availableHeaders"
+      :key="header.value"
+      class="alarm-list-row__cell"
+    >
+      <actions-panel
+        v-if="header.value === 'actions'"
+        :item="alarm"
+        :widget="widget"
+        :parent-alarm="parentAlarm"
+        :refresh-alarms-list="refreshAlarmsList"
+        :small="small"
+        :ignore-media-query="actionsIgnoreMediaQuery"
+        :inline-count="actionsInlineCount"
+      />
+      <alarm-column-value
+        v-else
+        :alarm="alarm"
+        :widget="widget"
+        :column="header"
+        :selected-tag="selectedTag"
+        :small="small"
+        @activate="activateRow"
         @select:tag="$emit('select:tag', $event)"
-      )
-      span.alarms-list-table__resize-handler(
-        v-if="resizing",
-        @mousedown.prevent="$emit('start:resize', header.value)",
+        @click:state="$emit('click:state', $event)"
+      />
+      <span
+        v-if="resizing"
+        class="alarms-list-table__resize-handler"
+        @mousedown.prevent="$emit('start:resize', header.value)"
         @click.stop=""
-      )
+      />
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -137,10 +178,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    wrapActions: {
-      type: Boolean,
-      default: false,
-    },
     showInstructionIcon: {
       type: Boolean,
       default: false,
@@ -148,6 +185,14 @@ export default {
     search: {
       type: String,
       default: '',
+    },
+    actionsInlineCount: {
+      type: Number,
+      required: false,
+    },
+    actionsIgnoreMediaQuery: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -178,7 +223,7 @@ export default {
     },
 
     isAlarmSelectable() {
-      return isActionAvailableForAlarm(this.alarm);
+      return isActionAvailableForAlarm(this.alarm, this.widget);
     },
 
     isNotFiltered() {

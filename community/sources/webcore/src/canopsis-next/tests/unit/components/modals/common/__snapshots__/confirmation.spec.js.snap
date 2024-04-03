@@ -12,24 +12,24 @@ exports[`confirmation Renders \`confirmation\` with empty modal 1`] = `
     class="layout wrap justify-center"
   >
     <button
-      class="v-btn theme--light error"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default error"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         No
-      </div>
+      </span>
     </button>
     <button
-      class="primary v-btn theme--light"
+      class="ml-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         Yes
-      </div>
+      </span>
     </button>
   </div>
 </modal-wrapper-stub>
@@ -41,7 +41,7 @@ exports[`confirmation Renders \`confirmation\` with hidden title 1`] = `
   titlecolor="var(--v-primary-base)"
 >
   <span
-    class="subheading pre-wrap"
+    class="text-subtitle-1 pre-wrap"
   >
     Confirmation text
   </span>
@@ -49,24 +49,24 @@ exports[`confirmation Renders \`confirmation\` with hidden title 1`] = `
     class="layout wrap justify-center"
   >
     <button
-      class="v-btn theme--light error"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default error"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         No
-      </div>
+      </span>
     </button>
     <button
-      class="primary v-btn theme--light"
+      class="ml-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         Yes
-      </div>
+      </span>
     </button>
   </div>
 </modal-wrapper-stub>
@@ -81,7 +81,7 @@ exports[`confirmation Renders \`confirmation\` with text, title and actions 1`] 
     Confirmation title
   </span>
   <span
-    class="subheading pre-wrap"
+    class="text-subtitle-1 pre-wrap"
   >
     Confirmation text
   </span>
@@ -89,24 +89,24 @@ exports[`confirmation Renders \`confirmation\` with text, title and actions 1`] 
     class="layout wrap justify-center"
   >
     <button
-      class="v-btn theme--light error"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default error"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         No
-      </div>
+      </span>
     </button>
     <button
-      class="primary v-btn theme--light"
+      class="ml-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         Yes
-      </div>
+      </span>
     </button>
   </div>
 </modal-wrapper-stub>

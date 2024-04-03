@@ -1,0 +1,219 @@
+@import "~vuetify/src/styles/settings/_colors.scss";
+
+$default-font-size: 14px;
+
+@function unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+@function rem($value) {
+  @return #{unit($value) / unit($default-font-size)}rem;
+}
+
+// Font sizes
+$font-size-root: var(--v-font-size-root, $default-font-size);
+$border-radius-root: 2px;
+
+$expansion-panel-header-font-size: $font-size-root;
+
+$alert-font-size: $font-size-root;
+$alert-prominent-icon-font-size: rem(16px);
+$alert-margin: 4px;
+
+$badge-font-size: rem(14px);
+
+$breadcrumbs-item-font-size: rem(14px);
+$breadcrumbs-item-large-font-size: rem(16px);
+
+$time-picker-ampm-title-font-size: rem(16px);
+$time-picker-number-font-size: rem(16px);
+
+$calendar-daily-weekday-font-size: rem(11px);
+$calendar-daily-day-font-size: rem(40px);
+$calendar-daily-interval-gutter-font-size: rem(10px);
+$calendar-weekly-weekday-font-size: rem(11px);
+$calendar-weekly-day-label-font-size: rem(12px);
+$calendar-event-font-size: rem(12px);
+
+$card-title-font-size: rem(16px);
+$card-subtitle-padding: rem(16px);
+$card-adjacent-sibling-text-padding-top: $card-subtitle-padding;
+
+$pagination-item-font-size: rem(14px);
+$pagination-border-radius: 4px;
+
+$list-item-title-font-size: rem(16px);
+
+$tooltip-font-size: 12px;
+$tooltip-padding: 5px 8px !default;
+
+$btn-letter-spacing: normal;
+$btn-toggle-btn-opacity: 0.4;
+$btn-font-sizes: (
+  'x-small': .625rem,
+  'small': rem(13px),
+  'default': rem(14px),
+  'large': .875rem,
+  'x-large': 1rem
+);
+$btn-sizes: (
+  'x-small': 20,
+  'small': 28,
+  'default': 36,
+  'large': 44,
+  'x-large': 52
+);
+
+$tabs-bar-background-color: 'unset';
+$tabs-item-letter-spacing: normal;
+
+$dialog-card-text-padding: 16px;
+
+$card-title-font-weight: 400;
+
+$expansion-panel-content-padding: 0;
+$expansion-panel-header-min-height: 48px;
+$expansion-panel-active-header-min-height: $expansion-panel-header-min-height;
+
+$data-table-border-radius: 0;
+
+$text-field-dense-padding: 8px 0;
+$text-field-dense-append-prepend-margin: 4px;
+
+$headings: (
+  'h1': (
+    'size': rem(112px),
+    'weight': 300,
+    'line-height': 1,
+    'letter-spacing': -.04em
+  ),
+  'h2': (
+    'size': rem(56px),
+    'weight': 400,
+    'line-height': 1.35,
+    'letter-spacing': -.02em
+  ),
+  'h3': (
+    'size': rem(45px),
+    'weight': 400,
+    'line-height': rem(48px),
+    'letter-spacing': normal
+  ),
+  'h4': (
+    'size': rem(34px),
+    'weight': 400,
+    'line-height': rem(40px),
+    'letter-spacing': normal
+  ),
+  'h5': (
+    'size': rem(24px),
+    'weight': 400,
+    'line-height': rem(32px),
+    'letter-spacing': normal
+  ),
+  'h6': (
+    'size': rem(20px),
+    'weight': 500,
+    'line-height': 1,
+    'letter-spacing': .02em
+  ),
+  'body-1': (
+    'size': rem(14px),
+    'weight': 400,
+    'line-height': 1.5,
+  ),
+  'body-2': (
+    'size': rem(14px),
+    'weight': 500,
+    'line-height': 1.5,
+  ),
+  'subtitle-1': (
+    'size': rem(16px),
+    'weight': 400,
+    'line-height': rem(24px),
+  ),
+  'subtitle-2': (
+    'size': rem(14px),
+    'weight': 500,
+    'line-height': rem(24px),
+  ),
+  caption: (
+    'size': rem(12px),
+    'line-height': rem(18px)
+  )
+);
+
+$container-padding-x: 24px;
+
+$dense-padding: 6px;
+$ultra-dense-padding: 6px;
+
+$dense-cell-height: 32px;
+$ultra-dense-cell-height: 24px;
+$dense-treeview-cell-height: 32px;
+
+$dense-color-indicator-padding: 1px 5px;
+
+// Light backgrounds
+$text-light: (
+  primary: var(--v-text-light-primary, rgba(map-get($shades, 'black'), 0.87)),
+  secondary: var(--v-text-light-secondary, rgba(map-get($shades, 'black'), 0.6)),
+  disabled: var(--v-text-light-disabled, rgba(map-get($shades, 'black'), 0.38))
+);
+$icons-light: (
+  active: map-get($text-light, 'primary'),
+  inactive: map-get($text-light, 'disabled'),
+);
+$buttons-light: (
+  disabled: var(--v-button-light-disabled, rgba(map-get($shades, 'black'), 0.26)),
+  focused: var(--v-button-light-focused, rgba(map-get($shades, 'black'), 0.12)),
+);
+$stepper-light: (
+  active: var(--v-stepper-active, rgba(map-get($shades, 'white'), 1)),
+  completed: var(--v-stepper-completed, rgba(map-get($shades, 'black'), 0.87)),
+  hover: var(--v-stepper-hover, rgba(map-get($shades, 'black'), 0.54)),
+);
+
+$material-light: (
+  'bg-color': var(--v-application-background-base, map-get($shades, 'white')),
+  'background': var(--v-application-background-base, map-get($shades, 'white')),
+  'cards': var(--v-background-base, map-get($shades, 'white')),
+  text: $text-light,
+  icons: $icons-light,
+  buttons: $buttons-light,
+  stepper: $stepper-light,
+  tabs: var(--v-text-light-primary, rgba(0, 0, 0, 0.54)),
+  'item-divider-border-color': rgba(0, 0, 0, 0.12)
+);
+
+// Dark backgrounds
+$text-dark: (
+  primary: var(--v-text-dark-primary, map-get($shades, 'white')),
+  secondary: var(--v-text-dark-secondary, rgba(map-get($shades, 'white'), 0.7)),
+  disabled: var(--v-text-dark-disabled, rgba(map-get($shades, 'white'), 0.5))
+);
+$icons-dark: (
+  active: map-get($text-dark, 'primary'),
+  inactive: map-get($text-dark, 'disabled'),
+);
+$buttons-dark: (
+  disabled: var(--v-button-dark-disabled, rgba(map-get($shades, 'white'), 0.3)),
+  focused: var(--v-button-dark-focused, rgba(map-get($shades, 'white'), 0.12)),
+);
+$stepper-dark: (
+  active: var(--v-stepper-active, rgba(map-get($shades, 'white'), 1)),
+  completed: var(--v-stepper-completed, rgba(map-get($shades, 'white'), 0.87)),
+  hover: var(--v-stepper-hover, rgba(map-get($shades, 'white'), 0.75)),
+);
+
+$material-dark: (
+  'bg-color': var(--v-application-background-base, #303030),
+  'background': var(--v-application-background-base, #121212),
+  'cards': var(--v-background-base, #1E1E1E),
+  text: $text-dark,
+  icons: $icons-dark,
+  buttons: $buttons-dark,
+  stepper: $stepper-dark,
+  tabs: var(--v-text-dark-primary, rgba(map-get($shades, 'white'), 0.6)),
+  'item-divider-border-color': rgba(255, 255, 255, 0.12)
+)

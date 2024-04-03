@@ -48,7 +48,7 @@ describe('modal-wrapper', () => {
   test('Renders `modal-wrapper` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `modal-wrapper` with custom props and slots', () => {
@@ -67,7 +67,7 @@ describe('modal-wrapper', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `modal-wrapper` with minimized modal', () => {
@@ -87,6 +87,6 @@ describe('modal-wrapper', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

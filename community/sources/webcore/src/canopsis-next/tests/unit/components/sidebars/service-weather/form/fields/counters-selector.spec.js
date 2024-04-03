@@ -48,9 +48,9 @@ describe('field-counters-selector', () => {
       },
     });
 
-    selectPbehaviorEnabledField(wrapper).vm.$emit('input', true);
+    selectPbehaviorEnabledField(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       pbehavior_enabled: true,
     });
@@ -65,9 +65,9 @@ describe('field-counters-selector', () => {
 
     const newPbehaviorTypes = [Faker.datatype.string()];
 
-    selectPbehaviorTypeField(wrapper).vm.$emit('input', newPbehaviorTypes);
+    selectPbehaviorTypeField(wrapper).triggerCustomEvent('input', newPbehaviorTypes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       pbehavior_types: newPbehaviorTypes,
     });
@@ -80,9 +80,9 @@ describe('field-counters-selector', () => {
       },
     });
 
-    selectStateEnabledField(wrapper).vm.$emit('input', true);
+    selectStateEnabledField(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       state_enabled: true,
     });
@@ -97,9 +97,9 @@ describe('field-counters-selector', () => {
 
     const newStateTypes = [Faker.datatype.string()];
 
-    selectServiceWeatherStateCounterField(wrapper).vm.$emit('input', newStateTypes);
+    selectServiceWeatherStateCounterField(wrapper).triggerCustomEvent('input', newStateTypes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       state_types: newStateTypes,
     });
@@ -117,7 +117,7 @@ describe('field-counters-selector', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-counters-selector` with custom props', () => {
@@ -132,6 +132,6 @@ describe('field-counters-selector', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -8,7 +8,7 @@ describe('c-enabled', () => {
   it('Renders `c-enabled` correctly.', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-enabled` with enabled prop correctly.', () => {
@@ -16,6 +16,6 @@ describe('c-enabled', () => {
       propsData: { value: true },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

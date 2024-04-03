@@ -1,6 +1,7 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('kpi.calculationMethod')")
-    c-alarm-metric-aggregate-function-field(v-field="value")
+<template>
+  <widget-settings-item :title="$t('kpi.calculationMethod')">
+    <c-alarm-metric-aggregate-function-field v-field="value" />
+  </widget-settings-item>
 </template>
 
 <script>

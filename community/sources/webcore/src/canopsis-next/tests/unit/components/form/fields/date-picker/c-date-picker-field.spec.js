@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { COLORS } from '@/config';
 import { DATETIME_FORMATS } from '@/constants';
 
@@ -18,14 +17,18 @@ const stubs = {
 const selectDatePicker = wrapper => wrapper.find('.v-date-picker');
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 
+const mockDatePickerCurrentTime = async (wrapper) => {
+  wrapper.findComponent({ name: 'VDatePicker' }).vm.now = new Date(123456789);
+
+  await flushPromises();
+};
+
 describe('c-date-picker-field', () => {
   const factory = generateShallowRenderer(CDatePickerField, {
-
     stubs,
     attachTo: document.body,
   });
   const snapshotFactory = generateRenderer(CDatePickerField, {
-
     attachTo: document.body,
   });
 
@@ -38,9 +41,9 @@ describe('c-date-picker-field', () => {
 
     const newValue = '2022-10-04';
 
-    selectDatePicker(wrapper).vm.$emit('input', newValue);
+    selectDatePicker(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Value cleared after trigger text field', () => {
@@ -50,9 +53,9 @@ describe('c-date-picker-field', () => {
       },
     });
 
-    selectTextField(wrapper).vm.$emit('click:append');
+    selectTextField(wrapper).triggerCustomEvent('click:append');
 
-    expect(wrapper).toEmit('input', null);
+    expect(wrapper).toEmitInput(null);
   });
 
   test('Change event emitted after trigger date picker', () => {
@@ -64,24 +67,30 @@ describe('c-date-picker-field', () => {
 
     const newValue = '2022-10-04';
 
-    selectDatePicker(wrapper).vm.$emit('change', newValue);
+    selectDatePicker(wrapper).triggerCustomEvent('change', newValue);
 
     expect(wrapper).toEmit('change', newValue);
   });
 
   test('Renders `c-date-picker-field` with default props', async () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: '2018-08-13',
+      },
+    });
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `c-date-picker-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 123123123,
+        value: '2022-01-12',
         label: 'Custom label',
         name: 'customName',
         color: COLORS.secondary,
@@ -96,22 +105,29 @@ describe('c-date-picker-field', () => {
       },
     });
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `c-date-picker-field` with slots', async () => {
     const wrapper = snapshotFactory({
+      propsData: {
+        value: '2016-09-16',
+      },
       slots: {
         append: '<div class="append-slot" />',
       },
     });
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -136,9 +152,11 @@ describe('c-date-picker-field', () => {
       },
     ]);
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

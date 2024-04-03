@@ -1,8 +1,13 @@
-<template lang="pug">
-  v-layout.pattern-operator-information(row, align-center)
-    c-pattern-operator-chip.mr-4
-      slot
-    div.pattern-operator-information__bracket
+<template>
+  <v-layout
+    class="pattern-operator-information"
+    align-center
+  >
+    <c-pattern-operator-chip class="mr-4">
+      <slot />
+    </c-pattern-operator-chip>
+    <div class="pattern-operator-information__bracket" />
+  </v-layout>
 </template>
 
 <style lang="scss" scoped>

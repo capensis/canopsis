@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { KPI_SLI_GRAPH_DATA_TYPE } from '@/constants';
 
 import KpiSliShowModeField from '@/components/other/kpi/charts/form/fields/kpi-sli-show-mode-field.vue';
@@ -20,16 +20,9 @@ describe('kpi-sli-show-mode-field', () => {
       },
     });
 
-    const valueElement = wrapper.find('select.v-select');
+    wrapper.find('select.v-select').setValue(KPI_SLI_GRAPH_DATA_TYPE.percent);
 
-    valueElement.setValue(KPI_SLI_GRAPH_DATA_TYPE.percent);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(KPI_SLI_GRAPH_DATA_TYPE.percent);
+    expect(wrapper).toEmitInput(KPI_SLI_GRAPH_DATA_TYPE.percent);
   });
 
   it('Renders `kpi-sli-show-mode-field` without props', () => {
@@ -41,7 +34,7 @@ describe('kpi-sli-show-mode-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

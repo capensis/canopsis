@@ -9,6 +9,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// loadTimerDuration is needed to avoid flood from mongo change stream when a lot of documents are updated in the same time.
 const loadTimerDuration = 200 * time.Millisecond
 
 type RuleChangesWatcher interface {

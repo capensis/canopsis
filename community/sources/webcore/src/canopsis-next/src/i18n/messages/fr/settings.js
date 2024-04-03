@@ -41,6 +41,7 @@ export default {
   groupColumnNames: 'Nom des colonnes des méta-alarmes',
   trackColumnNames: 'Colonnes pour le suivi de cause racine',
   treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
+  treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
@@ -70,7 +71,11 @@ export default {
   criticityLevels: 'Niveaux de criticité',
   isPriorityEnabled: 'Afficher la priorité',
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
+  isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
+  showRootCauseByStateClick: 'Afficher le diagramme de cause racine à partir de la colonne Criticité',
+  rootCauseSettings: 'Paramètres du diagramme de cause racine',
+  entitiesColorIndicator: 'Indicateur de couleur des entités',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
   activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',
@@ -113,7 +118,7 @@ export default {
   },
   moreInfosModal: 'Fenêtre "Plus d\'infos"',
   exportPdfTemplate: 'Modèle pour l\'export PDF',
-  expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
+  expandGridRangeSize: 'Largeur-position "Plus d\'infos"',
   weatherTemplate: 'Template - Tuiles',
   modalTemplate: 'Template - Modale',
   entityTemplate: 'Template - Entités',
@@ -176,8 +181,8 @@ export default {
   colorIndicator: {
     title: 'Indicateur de couleur',
     fields: {
-      displayAsSeverity: 'Afficher comme gravité',
-      displayAsPriority: 'Afficher en priorité',
+      displayAsSeverity: 'Afficher comme sévérité',
+      displayAsPriority: 'Afficher comme priorité',
     },
   },
   receiveByApi: 'Réponse de l\'API',
@@ -294,4 +299,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Diviser les données par chemin de valeur',
   },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
 };

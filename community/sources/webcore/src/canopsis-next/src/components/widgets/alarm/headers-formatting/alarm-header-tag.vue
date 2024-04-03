@@ -1,12 +1,16 @@
-<template lang="pug">
-  span
-    slot
-    c-alarm-action-chip(
-      v-if="selectedTag",
-      :color="getTagColor(selectedTag)",
-      closable,
+<template>
+  <span>
+    <slot />
+    <c-alarm-action-chip
+      v-if="selectedTag"
+      :color="getTagColor(selectedTag)"
+      class="px-2"
+      closable
       @close="$emit('clear')"
-    ) {{ selectedTag }}
+    >
+      {{ selectedTag }}
+    </c-alarm-action-chip>
+  </span>
 </template>
 
 <script>

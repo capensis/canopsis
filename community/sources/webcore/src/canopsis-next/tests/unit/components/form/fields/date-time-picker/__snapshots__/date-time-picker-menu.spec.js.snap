@@ -1,17 +1,68 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with default props 1`] = `
-<div class="v-menu" content-class="date-time-picker" transition="slide-y-transition" max-width="290" right="right" lazy-with-unmount="lazy-with-unmount" lazy="lazy"><button type="button" class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary">
-    <div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">calendar_today</i></div>
+<div
+  class="v-menu"
+  content-class="date-time-picker"
+  max-width="290"
+  right=""
+  transition="slide-y-transition"
+>
+  <button
+    class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        calendar_today
+      </i>
+    </span>
   </button>
-  <date-time-picker-stub value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)" label="" dateformat="DD/MM/YYYY"></date-time-picker-stub>
+  <date-time-picker-stub
+    dateformat="DD/MM/YYYY"
+    label=""
+    value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+  />
 </div>
 `;
 
+exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with default props 2`] = `undefined`;
+
 exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened menu 1`] = `
-<div class="v-menu" content-class="date-time-picker" transition="slide-y-transition" max-width="290" right="right" lazy-with-unmount="lazy-with-unmount" lazy="lazy"><button type="button" class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary">
-    <div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">calendar_today</i></div>
+<div
+  class="v-menu"
+  content-class="date-time-picker"
+  max-width="290"
+  right=""
+  transition="slide-y-transition"
+>
+  <button
+    class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        calendar_today
+      </i>
+    </span>
   </button>
-  <date-time-picker-stub value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)" label="label" dateformat="DD/MM/YYYY" roundhours="true"></date-time-picker-stub>
+  <date-time-picker-stub
+    dateformat="DD/MM/YYYY"
+    label="label"
+    roundhours="true"
+    value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+  />
 </div>
 `;
+
+exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened menu 2`] = `undefined`;

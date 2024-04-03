@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ALARM_PATTERN_FIELDS } from '@/constants';
 
 import PatternAttributeField from '@/components/forms/fields/pattern/pattern-attribute-field.vue';
@@ -31,14 +31,9 @@ describe('pattern-attribute-field', () => {
     });
     const selectElement = selectSelectField(wrapper);
 
-    selectElement.vm.$emit('input', value);
+    selectElement.triggerCustomEvent('input', value);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(value);
+    expect(wrapper).toEmitInput(value);
   });
 
   it('Renders `pattern-attribute-field` with default props', () => {
@@ -54,7 +49,7 @@ describe('pattern-attribute-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -80,7 +75,7 @@ describe('pattern-attribute-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

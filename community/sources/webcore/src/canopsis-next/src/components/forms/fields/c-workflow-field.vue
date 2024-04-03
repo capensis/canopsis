@@ -1,22 +1,24 @@
-<template lang="pug">
-  v-radio-group.mt-0(
-    v-field="value",
-    :label="label",
-    :disabled="disabled",
-    color="primary",
-    hide-details,
+<template>
+  <v-radio-group
+    v-field="value"
+    :label="label"
+    :disabled="disabled"
+    class="mt-0"
+    color="primary"
+    hide-details
     mandatory
-  )
-    v-radio(
-      :label="stopLabel",
-      :value="stopValue",
+  >
+    <v-radio
+      :label="stopLabel"
+      :value="stopValue"
       color="primary"
-    )
-    v-radio(
-      :label="continueLabel",
-      :value="continueValue",
+    />
+    <v-radio
+      :label="continueLabel"
+      :value="continueValue"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

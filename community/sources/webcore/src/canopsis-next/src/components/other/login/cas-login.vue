@@ -1,8 +1,8 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
-      v-btn(:href="casHref", color="primary") {{ title }}
+<template>
+  <third-party-login
+    :title="$t('login.loginWithCAS')"
+    :links="links"
+  />
 </template>
 
 <script>
@@ -15,7 +15,10 @@ import { removeTrailingSlashes } from '@/helpers/url';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
+import ThirdPartyLogin from './partials/third-party-login.vue';
+
 export default {
+  components: { ThirdPartyLogin },
   mixins: [entitiesInfoMixin],
   computed: {
     title() {
@@ -32,6 +35,13 @@ export default {
       });
 
       return `${loginUrl}?${query}`;
+    },
+
+    links() {
+      return [{
+        title: this.title,
+        href: this.casHref,
+      }];
     },
   },
 };

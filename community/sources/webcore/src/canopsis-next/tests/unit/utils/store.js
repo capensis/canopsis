@@ -6,6 +6,7 @@ import Faker from 'faker';
 import { CANOPSIS_EDITION } from '@/constants';
 
 import request from '@/services/request';
+
 import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
 /**
@@ -540,6 +541,16 @@ export const createServiceModule = () => {
     data: [],
     meta: { total_count: 0 },
   });
+  const fetchDependenciesWithoutStore = jest.fn()
+    .mockResolvedValue({
+      data: [],
+      meta: {},
+    });
+  const fetchImpactsWithoutStore = jest.fn()
+    .mockResolvedValue({
+      data: [],
+      meta: {},
+    });
   const fetchServiceAlarmsWithoutStore = jest.fn();
   const fetchServicesList = jest.fn();
   const getServicesPendingByWidgetId = jest.fn().mockReturnValue(false);
@@ -556,6 +567,8 @@ export const createServiceModule = () => {
     actions: {
       fetchInfosKeysWithoutStore: fetchEntityInfosKeysWithoutStore,
       fetchAlarmsWithoutStore: fetchServiceAlarmsWithoutStore,
+      fetchDependenciesWithoutStore,
+      fetchImpactsWithoutStore,
       fetchList: fetchServicesList,
     },
   };
@@ -567,7 +580,25 @@ export const createServiceModule = () => {
     fetchEntityInfosKeysWithoutStore,
     fetchServicesList,
     fetchServiceAlarmsWithoutStore,
+    fetchDependenciesWithoutStore,
+    fetchImpactsWithoutStore,
     serviceModule,
+  };
+};
+
+export const createEntityModule = () => {
+  const fetchStateSettingWithoutStore = jest.fn();
+
+  const entityModule = {
+    name: 'entity',
+    actions: {
+      fetchStateSettingWithoutStore,
+    },
+  };
+
+  return {
+    fetchStateSettingWithoutStore,
+    entityModule,
   };
 };
 
@@ -1145,11 +1176,14 @@ export const createInfoModule = () => {
   const footer = jest.fn().mockReturnValue('');
   const casConfig = jest.fn().mockReturnValue({});
   const samlConfig = jest.fn().mockReturnValue({});
+  const oauthConfig = jest.fn().mockReturnValue({});
   const edition = jest.fn().mockReturnValue(CANOPSIS_EDITION.community);
   const version = jest.fn().mockReturnValue();
+  const isBasicAuthEnabled = jest.fn().mockReturnValue(false);
   const isCASAuthEnabled = jest.fn().mockReturnValue(false);
   const isSAMLAuthEnabled = jest.fn().mockReturnValue(false);
   const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
+  const isOauthAuthEnabled = jest.fn().mockReturnValue(false);
 
   afterEach(() => {
     maintenance.mockClear();
@@ -1159,9 +1193,11 @@ export const createInfoModule = () => {
     samlConfig.mockClear();
     edition.mockClear();
     version.mockClear();
+    isBasicAuthEnabled.mockClear();
     isCASAuthEnabled.mockClear();
     isSAMLAuthEnabled.mockClear();
     isLDAPAuthEnabled.mockClear();
+    isOauthAuthEnabled.mockClear();
   });
 
   const infoModule = {
@@ -1172,11 +1208,14 @@ export const createInfoModule = () => {
       footer,
       casConfig,
       samlConfig,
+      oauthConfig,
       edition,
       version,
+      isBasicAuthEnabled,
       isCASAuthEnabled,
       isSAMLAuthEnabled,
       isLDAPAuthEnabled,
+      isOauthAuthEnabled,
     },
   };
 
@@ -1187,11 +1226,14 @@ export const createInfoModule = () => {
     footer,
     casConfig,
     samlConfig,
+    oauthConfig,
     edition,
     version,
+    isBasicAuthEnabled,
     isCASAuthEnabled,
     isSAMLAuthEnabled,
     isLDAPAuthEnabled,
+    isOauthAuthEnabled,
   };
 };
 

@@ -1,18 +1,30 @@
-<template lang="pug">
-  c-information-block(
-    :title="$t('storageSetting.entity.title')",
-    :help-text="$t('storageSetting.entity.titleHelp')",
+<template>
+  <c-information-block
+    :title="$t('storageSetting.entity.title')"
+    :help-text="$t('storageSetting.entity.titleHelp')"
     help-icon-color="info"
-  )
-    template(v-if="history", #subtitle="")
-      storage-settings-history-message(
-        :history="history",
-        archived-count-message-key="storageSetting.history.entity.archivedCount",
-        deleted-count-message-key="storageSetting.history.entity.deletedCount",
+  >
+    <template
+      v-if="history"
+      #subtitle=""
+    >
+      <storage-settings-history-message
+        :history="history"
+        archived-count-message-key="storageSetting.history.entity.archivedCount"
+        deleted-count-message-key="storageSetting.history.entity.deletedCount"
         hide-deleted
-      )
-    v-flex
-      v-btn.ma-0.my-4(color="primary", @click="$emit('archive')") {{ $t('storageSetting.entity.archiveDisabled') }}
+      />
+    </template>
+    <v-flex>
+      <v-btn
+        class="ma-0 my-4"
+        color="primary"
+        @click="$emit('archive')"
+      >
+        {{ $t('storageSetting.entity.archiveDisabled') }}
+      </v-btn>
+    </v-flex>
+  </c-information-block>
 </template>
 
 <script>

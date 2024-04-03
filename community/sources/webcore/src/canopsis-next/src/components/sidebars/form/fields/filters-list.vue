@@ -1,14 +1,14 @@
-<template lang="pug">
-  filters-list(
-    v-field="filters",
-    :addable="addable",
-    :editable="editable",
-    :name="name",
-    :required="required",
-    @add="showCreateFilterModal",
-    @edit="showEditFilterModal",
+<template>
+  <filters-list
+    v-field="filters"
+    :addable="addable"
+    :editable="editable"
+    :name="name"
+    :required="required"
+    @add="showCreateFilterModal"
+    @edit="showEditFilterModal"
     @delete="showDeleteFilterModal"
-  )
+  />
 </template>
 
 <script>
@@ -20,12 +20,10 @@ import { uuid } from '@/helpers/uuid';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersList from '@/components/other/filter/filters-list.vue';
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
-  components: { WidgetSettingsItem, FilterSelector, FiltersList },
+  components: { FiltersList },
   mixins: [formArrayMixin],
   model: {
     prop: 'filters',

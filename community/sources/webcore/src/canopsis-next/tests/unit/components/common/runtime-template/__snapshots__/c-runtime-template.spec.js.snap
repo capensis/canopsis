@@ -2,7 +2,6 @@
 
 exports[`c-runtime-template Renders \`c-runtime-template\` props 1`] = `
 <div>
-  
           prop-one
           prop-two:prop-three
           override-mixin-computed-property
@@ -11,7 +10,6 @@ exports[`c-runtime-template Renders \`c-runtime-template\` props 1`] = `
           template-property-text
           method-text
           mixin-method-property
-          
   <div
     class="custom-component"
   >
@@ -22,7 +20,6 @@ exports[`c-runtime-template Renders \`c-runtime-template\` props 1`] = `
 
 exports[`c-runtime-template Renders \`c-runtime-template\` updated props 1`] = `
 <div>
-  
           prop-one-updated
           prop-two-updated:prop-three-updated
           override-mixin-computed-property
@@ -31,7 +28,6 @@ exports[`c-runtime-template Renders \`c-runtime-template\` updated props 1`] = `
           template-property-text
           method-text
           mixin-method-property
-          
   <div
     class="custom-component"
   >

@@ -48,6 +48,7 @@ export const getIdFromEntity = (entity, idField = '_id') => (isObject(entity) ? 
  *
  * @param {Array} entities
  * @param {string} [idKey = '_id']
+ * @return Array
  */
 export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
 
@@ -77,3 +78,12 @@ export const filterById = (items, item, idKey = '_id') => items
  * @param {string | number} removingValue
  */
 export const filterValue = (items, removingValue) => items.filter(item => item !== removingValue);
+
+/**
+ * Create range number array
+ *
+ * @param {number} length
+ * @param {number} [start = 0]
+ * @return {number[]}
+ */
+export const createRangeArray = (length, start = 0) => Array.from({ length }, (_, index) => start + index);

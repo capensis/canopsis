@@ -1,4 +1,3 @@
-import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 import { kebabCase, merge } from 'lodash';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
@@ -55,7 +54,8 @@ export const systemThemeMixin = {
       document.head.removeChild(this.styleElement);
     },
 
-    setTheme({ colors, font_size: fontSize }) {
+    setTheme(theme) {
+      const { colors, font_size: fontSize } = theme;
       const { main, table, state } = colors;
 
       const white = '#fff';
@@ -72,7 +72,9 @@ export const systemThemeMixin = {
 
       const variables = themePropertiesToCSSVariables(vuetifyVariables);
 
-      this.$vuetify.theme = theme(variables);
+      this.$vuetify.theme.dark = isDark;
+      this.$vuetify.theme.themes.dark = variables;
+      this.$vuetify.theme.themes.light = variables;
 
       const lightBaseColor = isDark ? black : main.active_color;
       const darkBaseColor = isDark ? main.active_color : white;
@@ -106,6 +108,10 @@ export const systemThemeMixin = {
         hover: colorToRgba(completed, isDark ? 0.75 : 0.54),
       };
 
+      const divider = {
+        borderColor: colorToRgba(isDark ? darkBaseColor : lightBaseColor, 0.12),
+      };
+
       this.otherVariables = {
         fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[fontSize]}px`,
         textLight,
@@ -113,8 +119,10 @@ export const systemThemeMixin = {
         buttonsLight,
         buttonsDark,
         stepper,
+        divider,
       };
       this.system.dark = isDark;
+      this.system.theme = theme;
     },
   },
 };

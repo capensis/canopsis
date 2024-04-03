@@ -104,7 +104,7 @@ export default {
   link: 'Lien | Liens',
   stack: 'Pile',
   edition: 'Édition',
-  icon: 'Icône',
+  icon: 'Icône | Icônes',
   fullscreen: 'Plein écran',
   interval: 'Période',
   status: 'Statut',
@@ -287,6 +287,8 @@ export default {
   regexp: 'Expression régulière',
   archive: 'Archive',
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
+  event: 'Événement | Événements',
+  showMore: 'Afficher plus ({current} sur {total})',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -339,6 +341,15 @@ export default {
     saturday: 'Samedi',
     sunday: 'Dimanche',
   },
+  shortWeekDays: {
+    monday: 'lun.',
+    tuesday: 'mar.',
+    wednesday: 'mer.',
+    thursday: 'jeu.',
+    friday: 'ven.',
+    saturday: 'sam.',
+    sunday: 'dim.',
+  },
   months: {
     january: 'Janvier',
     february: 'Février',
@@ -352,6 +363,20 @@ export default {
     october: 'Octobre',
     november: 'Novembre',
     december: 'Décembre',
+  },
+  shortMonths: {
+    january: 'janv.',
+    february: 'févr.',
+    march: 'mars',
+    april: 'avr.',
+    may: 'mai',
+    june: 'juin',
+    july: 'juil.',
+    august: 'août',
+    september: 'sep.',
+    october: 'oct',
+    november: 'nov.',
+    december: 'déc.',
   },
   stateTypes: {
     [ENTITIES_STATES.ok]: 'Ok',
@@ -413,6 +438,9 @@ export default {
 
     [PATTERN_OPERATORS.activated]: 'Activé',
     [PATTERN_OPERATORS.inactive]: 'Inactif',
+
+    [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
+    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
@@ -531,5 +559,15 @@ export default {
       + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
       + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
       + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+  },
+
+  fileSelector: {
+    dragAndDrop: {
+      label: 'Glisser-déposer pour télécharger',
+      labelAction: 'ou parcourir',
+    },
+    fileTypes: {
+      svg: 'fichier SVG',
+    },
   },
 };

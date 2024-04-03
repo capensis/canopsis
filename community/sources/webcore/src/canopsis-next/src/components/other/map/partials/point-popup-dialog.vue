@@ -1,21 +1,22 @@
-<template lang="pug">
-  v-menu(
-    :value="true",
-    :position-x="positionX",
-    :position-y="positionY",
-    :close-on-content-click="false",
-    ignore-click-outside,
-    absolute,
+<template>
+  <v-menu
+    :value="true"
+    :position-x="positionX"
+    :position-y="positionY"
+    :close-on-content-click="false"
+    ignore-click-outside
+    absolute
     top
-  )
-    point-popup(
-      v-on="$listeners",
-      v-click-outside="clickOutsideDirective",
-      :point="point",
-      :template="popupTemplate",
-      :color-indicator="colorIndicator",
+  >
+    <point-popup
+      v-click-outside="clickOutsideDirective"
+      :point="point"
+      :template="popupTemplate"
+      :color-indicator="colorIndicator"
       :actions="popupActions"
-    )
+      v-on="$listeners"
+    />
+  </v-menu>
 </template>
 
 <script>

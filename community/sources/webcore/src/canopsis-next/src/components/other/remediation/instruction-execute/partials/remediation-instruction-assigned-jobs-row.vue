@@ -1,49 +1,101 @@
-<template lang="pug">
-  tr
-    td.pa-0
-      v-layout(row, align-center)
-        v-btn.primary(
-          v-if="executable",
-          :disabled="isRunningJob || isFailedJob",
-          round,
-          small,
-          block,
+<template>
+  <tr>
+    <td class="pa-0">
+      <v-layout align-center>
+        <v-btn
+          v-if="executable"
+          :disabled="isRunningJob || isFailedJob"
+          class="primary"
+          rounded
+          small
+          block
           @click="$emit('execute-job', job)"
-        ) {{ job.name }}
-        span.body-1(v-else) {{ job.name }}
-
-        v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!hasStatusMessage", max-width="400", right)
-          template(#activator="{ on }")
-            v-btn.mr-1(
-              v-on="on",
-              :loading="outputPending",
-              icon,
-              small,
+        >
+          {{ job.name }}
+        </v-btn>
+        <span
+          v-else
+          class="text-body-1"
+        >
+          {{ job.name }}
+        </span>
+        <v-tooltip
+          v-if="isFailedJob || isCompletedJob"
+          :disabled="!hasStatusMessage"
+          max-width="400"
+          right
+        >
+          <template #activator="{ on }">
+            <v-btn
+              :loading="outputPending"
+              class="mr-1"
+              icon
+              small
+              v-on="on"
               @click="toggleExpanded"
-            )
-              v-icon(:color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
-          div(v-if="job.fail_reason")
-            span {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
-            span.pre-wrap(v-html="job.fail_reason")
-        v-tooltip(v-if="cancelable && isRunningJob && hasJobsInQueue", top)
-          template(#activator="{ on }")
-            v-btn.error.ml-2(
-              v-on="on",
-              round,
-              small,
-              block,
+            >
+              <v-icon :color="isFailedJob ? 'error' : 'success'">
+                {{ statusIcon }}
+              </v-icon>
+            </v-btn>
+          </template>
+          <div v-if="job.fail_reason">
+            <span>{{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;</span>
+            <span
+              v-html="job.fail_reason"
+              class="pre-wrap"
+            />
+          </div>
+        </v-tooltip>
+        <v-tooltip
+          v-if="cancelable && isRunningJob && hasJobsInQueue"
+          top
+        >
+          <template #activator="{ on }">
+            <v-btn
+              class="error ml-2"
+              rounded
+              small
+              block
+              v-on="on"
               @click="$emit('cancel-job-execution', job)"
-            ) {{ $t('common.cancel') }}
-          span {{ queueNumberTooltip }}
-    td(v-if="rowMessage", colspan="3")
-      div.error--text.text-xs-center {{ rowMessage }}
-    template(v-else)
-      progress-cell.text-xs-center(:pending="isRunningJob && !job.started_at")
-        span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
-      progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
-        span {{ job.launched_at | date('long', '-') }}
-      progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
-        span {{ job.completed_at | date('long', '-') }}
+            >
+              {{ $t('common.cancel') }}
+            </v-btn>
+          </template>
+          <span>{{ queueNumberTooltip }}</span>
+        </v-tooltip>
+      </v-layout>
+    </td>
+    <td
+      v-if="rowMessage"
+      colspan="3"
+    >
+      <div class="error--text text-center">
+        {{ rowMessage }}
+      </div>
+    </td>
+    <template v-else>
+      <progress-cell
+        :pending="isRunningJob && !job.started_at"
+        class="text-center"
+      >
+        <span v-if="!isCancelledJob">{{ job.started_at | date('long', '-') }}</span>
+      </progress-cell>
+      <progress-cell
+        :pending="shownLaunchedPendingJob"
+        class="text-center"
+      >
+        <span>{{ job.launched_at | date('long', '-') }}</span>
+      </progress-cell>
+      <progress-cell
+        :pending="shownCompletedPendingJob"
+        class="text-center"
+      >
+        <span>{{ job.completed_at | date('long', '-') }}</span>
+      </progress-cell>
+    </template>
+  </tr>
 </template>
 
 <script>

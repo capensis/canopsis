@@ -1,21 +1,23 @@
-<template lang="pug">
-  div.d-inline-flex
-    date-time-picker-field(
-      v-validate="rules",
-      v-field="value.from",
-      :label="$t('common.from')",
-      :disabled="disabled",
-      :name="fromFieldName",
+<template>
+  <div class="d-inline-flex">
+    <date-time-picker-field
+      v-validate="rules"
+      v-field="value.from"
+      :label="$t('common.from')"
+      :disabled="disabled"
+      :name="fromFieldName"
       :hide-details="hideDetails"
-    )
-    date-time-picker-field.pl-3(
-      v-validate="rules",
-      v-field="value.to",
-      :label="$t('common.to')",
-      :disabled="disabled",
-      :name="toFieldName",
+    />
+    <date-time-picker-field
+      v-validate="rules"
+      v-field="value.to"
+      :label="$t('common.to')"
+      :disabled="disabled"
+      :name="toFieldName"
       :hide-details="hideDetails"
-    )
+      class="pl-3"
+    />
+  </div>
 </template>
 
 <script>

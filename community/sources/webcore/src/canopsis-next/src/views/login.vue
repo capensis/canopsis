@@ -1,14 +1,30 @@
-<template lang="pug">
-  div.login(:class="{ 'login--maintenance': maintenance }")
-    div.login__image(v-if="maintenance")
-      v-icon(size="120", color="white") $vuetify.icons.miscellaneous_services
-    div.login__description
-      c-compiled-template(:template="description")
-    div.login__container
-      base-login
-      cas-login.mt-2(v-if="isCASAuthEnabled", key="cas")
-      saml-login.mt-2(v-if="isSAMLAuthEnabled", key="saml")
-    login-footer
+<template>
+  <div
+    :class="{ 'login--maintenance': maintenance }"
+    class="login"
+  >
+    <div
+      v-if="maintenance"
+      class="login__image"
+    >
+      <v-icon
+        size="120"
+        color="white"
+      >
+        $vuetify.icons.miscellaneous_services
+      </v-icon>
+    </div>
+    <div class="login__description">
+      <c-compiled-template :template="description" />
+    </div>
+    <login-card
+      :basic="isBasicAuthEnabled"
+      :cas="isCASAuthEnabled"
+      :saml="isSAMLAuthEnabled"
+      :oauth="isOauthAuthEnabled"
+    />
+    <login-footer />
+  </div>
 </template>
 
 <script>
@@ -17,16 +33,12 @@ import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import BaseLogin from '@/components/other/login/base-login.vue';
-import CasLogin from '@/components/other/login/cas-login.vue';
-import SamlLogin from '@/components/other/login/saml-login.vue';
+import LoginCard from '@/components/other/login/login-card.vue';
 import LoginFooter from '@/components/other/login/login-footer.vue';
 
 export default {
   components: {
-    BaseLogin,
-    CasLogin,
-    SamlLogin,
+    LoginCard,
     LoginFooter,
   },
   mixins: [authMixin, entitiesInfoMixin],

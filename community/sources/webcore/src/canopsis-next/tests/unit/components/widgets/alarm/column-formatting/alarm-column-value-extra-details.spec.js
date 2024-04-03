@@ -64,7 +64,7 @@ describe('alarm-column-value-extra-details', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value-extra-details` with full alarm (only parent)', () => {
@@ -92,7 +92,7 @@ describe('alarm-column-value-extra-details', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value-extra-details` with full alarm (only children)', () => {
@@ -112,6 +112,6 @@ describe('alarm-column-value-extra-details', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

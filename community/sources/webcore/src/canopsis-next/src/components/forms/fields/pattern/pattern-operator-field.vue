@@ -1,13 +1,13 @@
-<template lang="pug">
-  c-select-field(
-    v-field="value",
-    v-validate="rules",
-    :items="availableOperators",
-    :error-messages="errors.collect(name)",
-    :label="label || $tc('common.condition')",
-    :disabled="disabled",
+<template>
+  <c-select-field
+    v-field="value"
+    v-validate="rules"
+    :items="availableOperators"
+    :error-messages="errors.collect(name)"
+    :label="label || $tc('common.condition')"
+    :disabled="disabled"
     :name="name"
-  )
+  />
 </template>
 
 <script>

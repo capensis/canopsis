@@ -1,26 +1,38 @@
-<template lang="pug">
-  v-menu(offset-y)
-    template(#activator="{ on }")
-      v-btn.ma-0(
-        v-on="on",
-        icon,
+<template>
+  <v-menu offset-y>
+    <template #activator="{ on }">
+      <v-btn
+        icon
         small
-      )
-        v-icon(small) more_horiz
-    v-list(dense)
-      v-list-tile(@click="showSettings")
-        div {{ $t('common.edit') }}
-      v-list-tile(@click="showSelectViewTabModal")
-        div {{ $t('common.duplicate') }}
-      v-list-tile(
-        v-clipboard:copy="widget._id",
-        v-clipboard:success="addWidgetIdCopiedSuccessPopup",
-        v-clipboard:error="addWidgetIdCopiedErrorPopup",
-        @click=""
-      )
-        div {{ $t('view.copyWidgetId') }}
-      v-list-tile(@click="showDeleteWidgetModal")
-        v-list-tile-title.error--text {{ $t('common.delete') }}
+        v-on="on"
+      >
+        <v-icon small>
+          more_horiz
+        </v-icon>
+      </v-btn>
+    </template>
+    <v-list dense>
+      <v-list-item @click="showSettings">
+        <div>{{ $t('common.edit') }}</div>
+      </v-list-item>
+      <v-list-item @click="showSelectViewTabModal">
+        <div>{{ $t('common.duplicate') }}</div>
+      </v-list-item>
+      <v-list-item
+        v-clipboard:copy="widget._id"
+        v-clipboard:success="addWidgetIdCopiedSuccessPopup"
+        v-clipboard:error="addWidgetIdCopiedErrorPopup"
+        @click.stop=""
+      >
+        <div>{{ $t('view.copyWidgetId') }}</div>
+      </v-list-item>
+      <v-list-item @click="showDeleteWidgetModal">
+        <div class="error--text">
+          {{ $t('common.delete') }}
+        </div>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

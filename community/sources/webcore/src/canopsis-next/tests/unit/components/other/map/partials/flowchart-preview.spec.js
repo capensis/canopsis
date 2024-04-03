@@ -1,6 +1,7 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
+
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { getImpactStateColor } from '@/helpers/entities/entity/color';
 
@@ -153,7 +154,7 @@ describe('flowchart-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-preview` with custom props', async () => {
@@ -167,6 +168,6 @@ describe('flowchart-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

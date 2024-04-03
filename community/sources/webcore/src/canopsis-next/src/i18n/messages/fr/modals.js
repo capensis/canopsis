@@ -200,6 +200,7 @@ export default {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
     massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
+    actionInQueue: 'action en file d\'attente|actions en file d\'attente',
     entity: {
       tabs: {
         info: 'Info',
@@ -647,8 +648,28 @@ export default {
       title: 'Dépendances pour {name}',
     },
   },
-  stateSetting: {
-    title: 'Configuration d\'état du test JUnit',
+  createStateSetting: {
+    create: {
+      title: 'Créer une méthode de calcul d\'état',
+      success: 'Méthode de calcul d\'état créée !',
+    },
+    edit: {
+      title: 'Modifier la méthode de calcul de l\'état',
+      success: 'Méthode de calcul d\'état modifiée !',
+    },
+    duplicate: {
+      title: 'Méthode de calcul d\'état en double',
+      success: 'Méthode de calcul d\'état dupliquée !',
+    },
+    remove: {
+      success: 'Méthode de calcul d\'état supprimée !',
+    },
+  },
+  createJunitStateSetting: {
+    edit: {
+      title: 'Paramètres d\'état de la suite de tests JUnit',
+      success: 'Paramètre d\'état de la suite de tests JUnit modifié !',
+    },
   },
   defineStorage: {
     title: 'Définir le stockage des résultats',
@@ -676,6 +697,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Approbation des consignes',
+    dismissed: 'a rejeté vos mises à jour',
     requested: 'vous a sollicité pour une pour approbation',
     tabs: {
       updated: 'Mise à jour',
@@ -887,7 +909,7 @@ export default {
     title: 'Sélectionner le type de modèle de widget',
   },
   entityDependenciesList: {
-    title: 'Entités Centreon impactées',
+    title: 'Diagramme de cause racine',
   },
   createDeclareTicketRule: {
     create: {
@@ -986,5 +1008,14 @@ export default {
   },
   archiveDisabledEntities: {
     text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
+  },
+  createIcon: {
+    create: {
+      title: 'Icône de téléchargement',
+      success: 'L\'icône a été téléchargée',
+    },
+    remove: {
+      success: 'L\'icône a été supprimée',
+    },
   },
 };

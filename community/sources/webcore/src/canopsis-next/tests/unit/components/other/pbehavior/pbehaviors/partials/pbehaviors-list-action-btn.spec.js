@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import PbehaviorsListActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-action-btn.vue';
@@ -64,7 +65,7 @@ describe('pbehaviors-list-action-btn', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-action-btn` with access', () => {
@@ -79,6 +80,6 @@ describe('pbehaviors-list-action-btn', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

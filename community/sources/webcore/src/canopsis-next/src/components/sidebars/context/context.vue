@@ -1,80 +1,82 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-default-sort-column(
-        v-model="form.parameters.sort",
-        :columns="sortablePreparedWidgetColumns",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-default-sort-column
+        v-model="form.parameters.sort"
+        :columns="sortablePreparedWidgetColumns"
         :columns-label="$t('settings.columnName')"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.widgetColumns",
-        :template="form.parameters.widgetColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.columnNames')",
-        :type="$constants.ENTITIES_TYPES.entity",
+      />
+      <field-columns
+        v-model="form.parameters.widgetColumns"
+        :template="form.parameters.widgetColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
         @update:template="updateWidgetColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.serviceDependenciesColumns",
-        :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.treeOfDependenciesColumnNames')",
-        :type="$constants.ENTITIES_TYPES.entity",
-        with-color-indicator,
+      />
+      <field-columns
+        v-model="form.parameters.serviceDependenciesColumns"
+        :template="form.parameters.serviceDependenciesColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.treeOfDependenciesColumnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
+        with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.activeAlarmsColumns",
-        :template="form.parameters.activeAlarmsColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.activeAlarmsColumns')",
-        :type="$constants.ENTITIES_TYPES.alarm",
+      />
+      <field-tree-of-dependencies-settings v-model="form.parameters.treeOfDependenciesShowType" />
+      <field-root-cause-settings v-model="form.parameters" />
+      <field-columns
+        v-model="form.parameters.activeAlarmsColumns"
+        :template="form.parameters.activeAlarmsColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.activeAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateActiveAlarmsColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.resolvedAlarmsColumns",
-        :template="form.parameters.resolvedAlarmsColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.resolvedAlarmsColumns')",
-        :type="$constants.ENTITIES_TYPES.alarm",
+      />
+      <field-columns
+        v-model="form.parameters.resolvedAlarmsColumns"
+        :template="form.parameters.resolvedAlarmsColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.resolvedAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateResolvedAlarmsColumnsTemplate"
-      )
-      v-divider
-      template(v-if="hasAccessToListFilters")
-        field-filters(
-          v-model="form.parameters.mainFilter",
-          :filters.sync="form.filters",
-          :widget-id="widget._id",
-          :addable="hasAccessToAddFilter",
-          :editable="hasAccessToEditFilter",
-          with-alarm,
-          with-entity,
-          with-pbehavior,
-          entity-counters-type
-        )
-        v-divider
-      field-context-entities-types-filter(v-model="form.parameters.selectedTypes")
-      v-divider
-      export-csv-form(
-        v-model="form.parameters",
-        :type="$constants.ENTITIES_TYPES.entity",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
+      />
+      <field-filters
+        v-if="hasAccessToListFilters"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        :addable="hasAccessToAddFilter"
+        :editable="hasAccessToEditFilter"
+        with-alarm
+        with-entity
+        with-pbehavior
+        entity-counters-type
+      />
+      <field-context-entities-types-filter v-model="form.parameters.selectedTypes" />
+      <field-grid-range-size
+        v-model="form.parameters.expandGridRangeSize"
+        :title="$t('settings.expandGridRangeSize')"
+      />
+      <export-csv-form
+        v-model="form.parameters"
+        :type="$constants.ENTITIES_TYPES.entity"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
         without-infos-attributes
-      )
-    v-divider
-    charts-form(v-model="form.parameters.charts")
-    v-divider
+      />
+    </widget-settings-group>
+    <charts-form v-model="form.parameters.charts" />
+  </widget-settings>
 </template>
 
 <script>
@@ -89,10 +91,14 @@ import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 
+import FieldTreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
+
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
 import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
 import FieldColumns from '../form/fields/columns.vue';
 import FieldFilters from '../form/fields/filters.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
@@ -103,6 +109,9 @@ import FieldContextEntitiesTypesFilter from './form/fields/context-entities-type
 export default {
   name: SIDE_BARS.contextSettings,
   components: {
+    FieldGridRangeSize,
+    FieldRootCauseSettings,
+    FieldTreeOfDependenciesSettings,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,

@@ -1,16 +1,31 @@
-<template lang="pug">
-  v-layout(column)
-    c-draggable-list-field(v-field="actions", handle=".action-drag-handler")
-      event-filter-enrichment-action-form.mb-3(
-        v-for="(action, index) in actions",
-        v-field="actions[index]",
-        :name="`${name}.${action.key}`",
-        :key="action.key",
-        :variables="variables",
+<template>
+  <v-layout column>
+    <c-draggable-list-field
+      v-field="actions"
+      handle=".action-drag-handler"
+    >
+      <event-filter-enrichment-action-form
+        v-field="actions[index]"
+        v-for="(action, index) in actions"
+        :key="action.key"
+        :name="`${name}.${action.key}`"
+        :variables="variables"
+        :set-tags-items="setTagsItems"
+        class="mb-3"
         @remove="removeItemFromArray(index)"
-      )
-      v-flex
-        v-btn.ml-0.my-0(color="primary", outline, @click="addAction") {{ $t('eventFilter.addAction') }}
+      />
+      <v-flex>
+        <v-btn
+          class="ml-0 my-0"
+          color="primary"
+          outlined
+          @click="addAction"
+        >
+          {{ $t('eventFilter.addAction') }}
+        </v-btn>
+      </v-flex>
+    </c-draggable-list-field>
+  </v-layout>
 </template>
 
 <script>
@@ -40,6 +55,10 @@ export default {
     name: {
       type: String,
       default: 'actions',
+    },
+    setTagsItems: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

@@ -1,12 +1,16 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    field-text-editor(
-      v-model="form.parameters.template",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <field-text-editor
+      v-model="form.parameters.template"
       :title="$t('common.template')"
-    )
-    v-divider
+    />
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>

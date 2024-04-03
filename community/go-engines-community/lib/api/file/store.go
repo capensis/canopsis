@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -165,10 +166,7 @@ func (s *store) validateFormRequest(form *multipart.Form) ([]*multipart.FileHead
 	for field, headers := range form.File {
 		for i, header := range headers {
 			if s.maxSize > 0 && header.Size > s.maxSize {
-				return nil, ValidationError{
-					field: fmt.Sprintf("%s[%d]", field, i),
-					error: fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.maxSize),
-				}
+				return nil, common.NewValidationError(fmt.Sprintf("%s[%d]", field, i), fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.maxSize))
 			}
 
 			files = append(files, header)

@@ -1,26 +1,39 @@
-<template lang="pug">
-  v-layout(row, wrap)
-    v-tooltip(v-for="action in actions", :key="action.type", top)
-      template(#activator="{ on }")
-        span(v-on="on")
-          service-entity-alarm-instruction-menu(
-            v-if="action.type === $constants.WEATHER_ACTIONS_TYPES.executeInstruction",
-            :icon="action.icon",
-            :entity="entity",
-            :assigned-instructions="assignedInstructions",
+<template>
+  <v-layout
+    class="gap-4 ml-2"
+    wrap
+  >
+    <v-tooltip
+      v-for="action in actions"
+      :key="action.type"
+      top
+    >
+      <template #activator="{ on }">
+        <span v-on="on">
+          <service-entity-alarm-instruction-menu
+            v-if="action.type === $constants.WEATHER_ACTIONS_TYPES.executeInstruction"
+            :icon="action.icon"
+            :entity="entity"
+            :assigned-instructions="assignedInstructions"
             @execute="$listeners.execute"
-          )
-          v-btn(
-            v-else,
-            :disabled="action.disabled",
-            :loading="action.loading",
-            depressed,
-            small,
-            light,
+          />
+          <v-btn
+            v-else
+            :disabled="action.disabled"
+            :loading="action.loading"
+            class="ml-2"
+            depressed
+            small
+            light
             @click.stop="$emit('apply', action)"
-          )
-            v-icon {{ action.icon }}
-      span {{ $t(`serviceWeather.actions.${action.type}`) }}
+          >
+            <v-icon>{{ action.icon }}</v-icon>
+          </v-btn>
+        </span>
+      </template>
+      <span>{{ $t(`serviceWeather.actions.${action.type}`) }}</span>
+    </v-tooltip>
+  </v-layout>
 </template>
 
 <script>

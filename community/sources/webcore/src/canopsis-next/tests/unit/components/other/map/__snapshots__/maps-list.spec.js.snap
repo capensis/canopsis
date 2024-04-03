@@ -5,7 +5,7 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -18,392 +18,378 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <c-action-btn-stub
+            type="delete"
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light v-data-table--selectable"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table v-datatable--expand v-datatable--select-all theme--light"
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
       >
-        <thead>
+        <div
+          class="v-data-table__expanded__content"
+        >
+          <div
+            class="secondary lighten-2"
+          >
+            <maps-list-expand-item-stub
+              map="[object Object]"
+            />
+          </div>
+        </div>
+      </transition-group-stub>
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="7"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
-            <th>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-select"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
               <div
-                class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
                 <div
-                  class="v-input__control"
+                  class="v-input--selection-controls__input"
                 >
-                  <div
-                    class="v-input__slot"
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
                   >
-                    <div
-                      class="v-input--selection-controls__input"
-                    >
-                      <input
-                        aria-checked="false"
-                        role="checkbox"
-                        type="checkbox"
-                        value=""
-                      />
-                      <div
-                        class="v-input--selection-controls__ripple"
-                      />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        check_box_outline_blank
-                      </i>
-                    </div>
-                  </div>
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
                 </div>
+              </div>
+            </th>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
               </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="type"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Type
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Sorted descending. Activate to remove sorting."
               aria-sort="descending"
-              class="column active desc sortable text-xs-left"
+              class="text-start sortable active desc"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified by
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified by
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
           </tr>
+        </thead>
+        <thead>
           <tr
-            class="v-datatable__progress"
+            class="v-data-table__progress"
           >
             <th
               class="column"
-              colspan="6"
+              colspan="7"
             >
               <div
                 aria-valuemax="100"
                 aria-valuemin="0"
-                class="v-progress-linear"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
                 role="progressbar"
                 style="height: 2px;"
               >
                 <div
                   class="v-progress-linear__background primary"
-                  style="height: 2px; opacity: 0.3; width: 100%;"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
                 />
                 <div
-                  class="v-progress-linear__bar"
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
                 >
-                  <transition-stub
-                    name="fade-transition"
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                   >
                     <div
-                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate long primary"
-                      />
-                      <div
-                        class="v-progress-linear__bar__indeterminate short primary"
-                      />
-                    </div>
-                  </transition-stub>
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
-                </div>
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
               </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              
-            </td>
-            <td>
-              <span>
-                Flowchart
-              </span>
-            </td>
-            <td>
-              04/03/2021 13:44:48
-            </td>
-            <td>
-              author-0
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  tooltip="Delete"
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
           <tr
-            class="v-datatable__expand-row"
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                  expanded="true"
-                />
-              </div>
-            </td>
-            <td>
-              
-            </td>
-            <td>
-              <span>
-                Mermaid
-              </span>
-            </td>
-            <td>
-              04/03/2021 13:44:49
-            </td>
-            <td>
-              author-1
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  tooltip="Delete"
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
+            <td
+              class="text-start"
             >
               <div
-                class="v-datatable__expand-content"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
                 <div
-                  class="secondary lighten-2"
+                  class="v-input--selection-controls__input"
                 >
-                  <maps-list-expand-item-stub
-                    map="[object Object]"
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
-            </transition-group-stub>
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            </td>
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
-              <span>
-                Geo
-              </span>
-            </td>
-            <td>
-              04/03/2021 13:44:50
-            </td>
-            <td>
-              author-2
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  tooltip="Delete"
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              
-            </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
-              author-3
+            <td
+              class="text-start"
+            >
+        author-0
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -419,46 +405,68 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light v-data-table__expand-icon--active"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
               <span>
                 Mermaid
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
-              author-4
+            <td
+              class="text-start"
+            >
+        author-1
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -474,46 +482,68 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
               <span>
                 Geo
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
-              author-5
+            <td
+              class="text-start"
+            >
+        author-2
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -529,46 +559,68 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
-              author-6
+            <td
+              class="text-start"
+            >
+        author-3
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -584,46 +636,68 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
               <span>
                 Mermaid
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
-              author-7
+            <td
+              class="text-start"
+            >
+        author-4
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -639,46 +713,68 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
               <span>
                 Geo
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
-              author-8
+            <td
+              class="text-start"
+            >
+        author-5
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -694,46 +790,68 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
-              author-9
+            <td
+              class="text-start"
+            >
+        author-6
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -749,21 +867,246 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Mermaid
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
+            </td>
+            <td
+              class="text-start"
+            >
+        author-7
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  tooltip="Delete"
+                  type="delete"
+                />
+              </div>
+            </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Geo
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
+            </td>
+            <td
+              class="text-start"
+            >
+        author-8
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  tooltip="Delete"
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Flowchart
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
+            </td>
+            <td
+              class="text-start"
+            >
+        author-9
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  tooltip="Delete"
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
         </tbody>
       </table>
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="2"
-    rows-per-page="10"
     total-items="11"
   />
 </div>
@@ -774,7 +1117,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -785,154 +1128,277 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <c-action-btn-stub
+            style="display: none;"
+            type="delete"
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table v-datatable--expand theme--light"
-      >
-        <thead>
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="6"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
               role="columnheader"
               scope="col"
-              width="20"
+              style="width: 1px; min-width: 1px;"
             >
-              
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                />
+              </div>
             </th>
             <th
-              aria-label="Name: Sorted ascending. Activate to sort descending."
-              aria-sort="ascending"
-              class="column active asc sortable text-xs-left"
+              aria-label="Name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
               data-value="name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="type"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Type
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified on
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified by
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Last modified by
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="6"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
-              author-0
+            <td
+              class="text-start"
+            >
+        author-0
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -941,42 +1407,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Mermaid
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
-              author-1
+            <td
+              class="text-start"
+            >
+        author-1
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -985,42 +1456,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Geo
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
-              author-2
+            <td
+              class="text-start"
+            >
+        author-2
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1029,42 +1505,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
-              author-3
+            <td
+              class="text-start"
+            >
+        author-3
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1073,42 +1554,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Mermaid
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
-              author-4
+            <td
+              class="text-start"
+            >
+        author-4
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1117,42 +1603,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Geo
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
-              author-5
+            <td
+              class="text-start"
+            >
+        author-5
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1161,42 +1652,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
-              author-6
+            <td
+              class="text-start"
+            >
+        author-6
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1205,42 +1701,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Mermaid
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
-              author-7
+            <td
+              class="text-start"
+            >
+        author-7
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1249,42 +1750,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Geo
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
-              author-8
+            <td
+              class="text-start"
+            >
+        author-8
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1293,42 +1799,47 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              
+            <td
+              class="text-start"
+            >
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <span>
                 Flowchart
               </span>
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
-              author-9
+            <td
+              class="text-start"
+            >
+        author-9
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1337,58 +1848,8 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              
-            </td>
-            <td>
-              <span>
-                Mermaid
-              </span>
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
         </tbody>
       </table>
     </div>

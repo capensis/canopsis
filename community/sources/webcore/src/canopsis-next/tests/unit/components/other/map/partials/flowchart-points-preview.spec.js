@@ -1,7 +1,9 @@
 import { keyBy } from 'lodash';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
 import { COLOR_INDICATOR_TYPES, SHAPES } from '@/constants';
+
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartPointsPreview from '@/components/other/map/partials/flowchart-points-preview.vue';
@@ -55,7 +57,7 @@ describe('flowchart-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:alarms');
+    pointPopupDialog.triggerCustomEvent('show:alarms');
 
     expect(wrapper).toEmit('show:alarms', firstPoint);
   });
@@ -71,7 +73,7 @@ describe('flowchart-points-preview', () => {
     await triggerPointClick(wrapper, 1);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:map');
+    pointPopupDialog.triggerCustomEvent('show:map');
 
     expect(wrapper).toEmit('show:map', secondPoint.map);
   });
@@ -87,7 +89,7 @@ describe('flowchart-points-preview', () => {
     await triggerPointClick(wrapper, 1);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    await pointPopupDialog.vm.$emit('close');
+    await pointPopupDialog.triggerCustomEvent('close');
 
     expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
   });
@@ -100,7 +102,7 @@ describe('flowchart-points-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-points-preview` with custom props', async () => {
@@ -122,6 +124,6 @@ describe('flowchart-points-preview', () => {
       width: 5,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

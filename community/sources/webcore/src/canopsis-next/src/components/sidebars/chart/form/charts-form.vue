@@ -1,27 +1,48 @@
-<template lang="pug">
-  widget-settings-group(:title="$tc('common.chart', 2)")
-    v-layout.pa-3(column)
-      field-draggable-list(
-        v-field="charts",
-        @edit="showEditChartModal",
+<template>
+  <widget-settings-group :title="$tc('common.chart', 2)">
+    <v-layout
+      class="pa-3"
+      column
+    >
+      <field-draggable-list
+        v-field="charts"
+        @edit="showEditChartModal"
         @remove="showRemoveChartModal"
-      )
-        template(#title="{ item }")
-          v-layout(row, align-center)
-            v-icon(large) {{ $constants.WIDGET_ICONS[item.type] }}
-            span.ml-3 {{ item.title }}
-      v-menu(bottom)
-        template(#activator="{ on }")
-          v-flex
-            v-btn.ml-0.mt-3(v-on="on", color="primary") {{ $t('common.add') }}
-        v-list
-          v-list-tile(
-            v-for="{ type, text, icon } in chartTypes",
-            :key="text",
+      >
+        <template #title="{ item }">
+          <v-layout align-center>
+            <v-icon large>
+              {{ $constants.WIDGET_ICONS[item.type] }}
+            </v-icon>
+            <span class="ml-3">{{ item.title }}</span>
+          </v-layout>
+        </template>
+      </field-draggable-list>
+      <v-menu bottom>
+        <template #activator="{ on }">
+          <v-flex>
+            <v-btn
+              class="ml-0 mt-3"
+              color="primary"
+              v-on="on"
+            >
+              {{ $t('common.add') }}
+            </v-btn>
+          </v-flex>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="{ type, text, icon } in chartTypes"
+            :key="text"
             @click="showCreateChartModal(type)"
-          )
-            v-icon {{ icon }}
-            span.ml-3 {{ text }}
+          >
+            <v-icon>{{ icon }}</v-icon>
+            <span class="ml-3">{{ text }}</span>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-layout>
+  </widget-settings-group>
 </template>
 
 <script>

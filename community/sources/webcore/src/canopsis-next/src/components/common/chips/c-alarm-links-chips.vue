@@ -1,24 +1,49 @@
-<template lang="pug">
-  c-alarm-actions-chips.c-alarm-links-chips(
-    v-if="hasAccessToLinks",
-    :items="links",
-    :small="small",
-    :inline-count="inlineCount",
-    item-text="text",
-    item-value="url",
-    item-class="c-alarm-links-chips__chip",
-    return-object,
-    @select="select",
+<template>
+  <c-alarm-actions-chips
+    v-if="hasAccessToLinks"
+    :class="{ 'my-1': !small }"
+    :items="links"
+    :small="small"
+    :inline-count="inlineCount"
+    class="c-alarm-links-chips"
+    item-text="text"
+    item-value="url"
+    item-class="c-alarm-links-chips__chip"
+    text-color=""
+    return-object
+    outlined
+    @select="select"
     @activate="activate"
-  )
-    template(#item="{ item }")
-      v-tooltip(v-if="onlyIcon", top, custom-activator)
-        template(#activator="{ on }")
-          v-icon(v-on="on", color="white", small) {{ item.icon }}
-        span {{ item.text }}
-      template(v-else)
-        v-icon.mr-1(color="white", small) {{ item.icon }}
-        span {{ item.text }}
+  >
+    <template #item="{ item }">
+      <v-tooltip
+        v-if="onlyIcon"
+        top
+      >
+        <template #activator="{ on }">
+          <v-icon
+            small
+            v-on="on"
+          >
+            {{ item.icon }}
+          </v-icon>
+        </template>
+        <span>{{ item.text }}</span>
+      </v-tooltip>
+      <v-layout
+        v-else
+        align-center
+      >
+        <v-icon
+          class="mr-1"
+          small
+        >
+          {{ item.icon }}
+        </v-icon>
+        <span>{{ item.text }}</span>
+      </v-layout>
+    </template>
+  </c-alarm-actions-chips>
 </template>
 
 <script>
@@ -35,6 +60,7 @@ import { writeTextToClipboard } from '@/helpers/clipboard';
 import { authMixin } from '@/mixins/auth';
 
 export default {
+  inject: ['$system'],
   mixins: [authMixin],
   props: {
     alarm: {
@@ -73,7 +99,7 @@ export default {
         icon: link.icon_name,
         url: link.url,
         action: link.action,
-        color: 'grey',
+        color: `blue-grey${this.$system.dark ? ' lighten-1' : ''}`,
       }));
     },
   },

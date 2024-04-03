@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -93,6 +94,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 			"v.resource":       {},
 			"v.display_name":   {},
 			"v.output":         {},
+			"v.ticket.ticket":  {},
 		},
 		availableSearchByEntityFields: map[string]struct{}{
 			"entity.name":        {},
@@ -155,6 +157,57 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
+}
+
+func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
+	q.clear(now, "")
+
+	err := q.handlePatterns(FilterRequest{
+		BaseFilterRequest: BaseFilterRequest{
+			AlarmPattern:     r.AlarmPattern,
+			EntityPattern:    r.EntityPattern,
+			PbehaviorPattern: r.PbehaviorPattern,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	match := bson.M{"v.resolved": nil}
+
+	if r.Search != "" {
+		match["v.display_name"] = primitive.Regex{
+			Pattern: fmt.Sprintf(".*%s.*", r.Search),
+			Options: "i",
+		}
+	}
+
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+
+	sortDir := 1
+	if r.Sort == common.SortDesc {
+		sortDir = -1
+	}
+
+	q.sort = bson.M{"$sort": bson.M{"v.display_name": sortDir}}
+
+	// maps are not used need to call functions below
+	addedLookups := make(map[string]bool)
+	addedComputedFields := make(map[string]bool)
+
+	pipeline := make([]bson.M, 0)
+	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &pipeline)
+	pipeline = append(pipeline, q.alarmMatch...)
+
+	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &pipeline)
+	pipeline = append(pipeline, q.additionalMatch...)
+
+	return pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		q.sort,
+		[]bson.M{{"$project": bson.M{"_id": 1, "display_name": "$v.display_name"}}},
+	), nil
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime, userID string) ([]bson.M, error) {
@@ -897,10 +950,10 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 				continue
 			}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"type": bson.M{"$in": instructionFilter.ExcludeTypes}},
-			)
+			filters, err := q.getInstructionsFilters(ctx, bson.M{
+				"type":    bson.M{"$in": instructionFilter.ExcludeTypes},
+				"enabled": true,
+			})
 			if err != nil {
 				return err
 			}
@@ -959,10 +1012,10 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 				continue
 			}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"type": bson.M{"$in": instructionFilter.IncludeTypes}},
-			)
+			filters, err := q.getInstructionsFilters(ctx, bson.M{
+				"type":    bson.M{"$in": instructionFilter.IncludeTypes},
+				"enabled": true,
+			})
 			if err != nil {
 				return err
 			}
@@ -1198,6 +1251,7 @@ func (q *MongoQueryBuilder) handleOpened(opened int) {
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
 	if withDependencies {
 		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.depends_counts", pipeline: getDependsCountPipeline()})
 	}
 }
 
@@ -1300,6 +1354,29 @@ func getPbehaviorInfoTypeLookup() []bson.M {
 				"else": nil,
 			}},
 		}},
+	}
+}
+
+func getEntityPbehaviorInfoTypeLookup() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "entity.pbehavior_info.type",
+			"as":           "entity.pbehavior_info_type",
+		}},
+		{"$unwind": bson.M{"path": "$entity.pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"entity.pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$entity.pbehavior_info",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$entity.pbehavior_info",
+					bson.M{"icon_name": "$entity.pbehavior_info_type.icon_name"},
+				}},
+				"else": nil,
+			}},
+		}},
+		{"$project": bson.M{"entity.pbehavior_info_type": 0}},
 	}
 }
 
@@ -1476,45 +1553,92 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	return bson.M{"$and": and}, nil
 }
 
+func getDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "entity.service_depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "component",
+			"as":           "entity.component_depends",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"type": types.EntityTypeResource}},
+				{"$project": bson.M{"_id": 1}},
+			},
+		}},
+		{"$addFields": bson.M{
+			"entity.depends_count": bson.M{"$cond": bson.A{
+				bson.M{"$and": []bson.M{
+					{"$eq": bson.A{"$entity.type", types.EntityTypeComponent}},
+					{"$eq": bson.A{bson.M{"$type": "$entity.state_info._id"}, "string"}},
+					{"$ne": bson.A{"$entity.state_info._id", ""}},
+				}},
+				bson.M{"$size": "$entity.component_depends"},
+				bson.M{"$size": "$entity.service_depends"},
+			}},
+		}},
+		{"$project": bson.M{"entity.service_depends": 0, "entity.component_depends": 0}},
+	}
+}
+
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let": bson.M{"services": bson.M{"$cond": bson.M{
-				"if":   "$entity.services",
-				"then": "$entity.services",
-				"else": bson.A{},
-			}}},
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "entity.service_impacts",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
-				}},
 				{"$project": bson.M{"_id": 1}},
 			},
-			"as": "service_impacts",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let":  bson.M{"service": "$entity._id"},
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.component",
+			"foreignField": "_id",
+			"as":           "entity.component_impacts",
 			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$and": []bson.M{
-						{"$isArray": "$services"},
-						{"$in": bson.A{"$$service", "$services"}},
-					}},
+				{"$project": bson.M{
+					"hasStateSettings": bson.M{
+						"$cond": []interface{}{bson.M{
+							"$and": []bson.M{
+								{"$eq": []interface{}{
+									bson.M{"$type": "$state_info._id"},
+									"string",
+								}},
+								{"$ne": []string{"$state_info._id", ""}},
+							}},
+							true,
+							false,
+						},
+					},
 				}},
-				{"$project": bson.M{"_id": 1}},
 			},
-			"as": "depends",
 		}},
+		{"$unwind": bson.M{"path": "$entity.component_impacts", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"entity.depends_count": bson.M{"$size": "$depends"},
-			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
+			"entity.impacts_count": bson.M{
+				"$cond": []interface{}{
+					bson.M{"$and": []interface{}{
+						bson.M{"$eq": []string{
+							"$entity.type", "resource"},
+						},
+						"$entity.component_impacts.hasStateSettings",
+					}},
+					bson.M{"$sum": bson.A{1, bson.M{"$size": "$entity.service_impacts"}}},
+					bson.M{"$size": "$entity.service_impacts"},
+				},
+			},
 		}},
-		{"$project": bson.M{
-			"service_impacts": 0,
-			"depends":         0,
-		}},
+		{"$project": bson.M{"entity.service_impacts": 0, "entity.component_impacts": 0}},
 	}
 }
 

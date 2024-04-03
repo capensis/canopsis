@@ -1,20 +1,36 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mt-3(row)
-      v-flex(xs12)
-        slot(name="no-data", v-if="!exdates.length")
-        pbehavior-exception-field.mb-3(
-          v-for="(exdate, index) in exdates",
-          v-field="exdates[index]",
-          :key="exdate.key",
-          :disabled="disabled",
-          :with-type="withExdateType",
+<template>
+  <v-layout column>
+    <v-layout class="mt-3">
+      <v-flex xs12>
+        <slot
+          v-if="!exdates.length"
+          name="no-data"
+        />
+        <pbehavior-exception-field
+          v-field="exdates[index]"
+          v-for="(exdate, index) in exdates"
+          :key="exdate.key"
+          :disabled="disabled"
+          :with-type="withExdateType"
+          class="mb-3"
           @delete="removeItemFromArray(index)"
-        )
-    v-layout(v-if="!disabled", row)
-      slot(name="actions")
-        v-flex
-          v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
+        />
+      </v-flex>
+    </v-layout>
+    <v-layout v-if="!disabled">
+      <slot name="actions">
+        <v-flex>
+          <v-btn
+            class="ml-0"
+            color="secondary"
+            @click="addExceptionDate"
+          >
+            {{ $t('modals.createPbehaviorException.addDate') }}
+          </v-btn>
+        </v-flex>
+      </slot>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

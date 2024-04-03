@@ -1,34 +1,65 @@
-<template lang="pug">
-  div.healthcheck
-    c-progress-overlay(:pending="pending")
-    c-page-header
-    div.mb-3.text-xs-center(v-if="hasAnyError")
-      v-chip(color="error", dark)
-        span.subheading {{ $t('healthcheck.systemStatusChipError') }}
-    v-sheet
-      v-tabs(v-model="activeTab", slider-color="primary", centered)
-        v-tab {{ $t('common.systemStatus') }}
-        v-tab {{ $tc('common.graph', 2) }}
-        v-tab {{ $tc('common.parameter', 2) }}
-        v-tab(v-if="hasAccessToTechMetrics") {{ $t('common.enginesMetrics') }}
-      v-tabs-items.healthcheck__tabs(v-model="activeTab")
-        v-tab-item.healthcheck__graph-tab
-          healthcheck-network-graph.healthcheck__graph(
-            v-if="!pending && !hasServerError",
-            :services="services",
-            :engines-graph="enginesGraph",
-            :engines-parameters="enginesParameters",
-            :has-invalid-engines-order="hasInvalidEnginesOrder",
-            :max-queue-length="maxQueueLength",
+<template>
+  <div class="healthcheck">
+    <c-progress-overlay :pending="pending" />
+    <c-page-header />
+    <div
+      v-if="hasAnyError"
+      class="mb-3 text-center"
+    >
+      <v-chip
+        color="error"
+        dark
+      >
+        <span class="text-subtitle-1">{{ $t('healthcheck.systemStatusChipError') }}</span>
+      </v-chip>
+    </div>
+    <v-sheet>
+      <v-tabs
+        v-model="activeTab"
+        slider-color="primary"
+        centered
+      >
+        <v-tab>{{ $t('common.systemStatus') }}</v-tab>
+        <v-tab>{{ $tc('common.graph', 2) }}</v-tab>
+        <v-tab>{{ $tc('common.parameter', 2) }}</v-tab>
+        <v-tab v-if="hasAccessToTechMetrics">
+          {{ $t('common.enginesMetrics') }}
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items
+        v-model="activeTab"
+        class="healthcheck__tabs"
+      >
+        <v-tab-item class="healthcheck__graph-tab">
+          <healthcheck-network-graph
+            v-if="!pending && !hasServerError"
+            :services="services"
+            :engines-graph="enginesGraph"
+            :engines-parameters="enginesParameters"
+            :has-invalid-engines-order="hasInvalidEnginesOrder"
+            :max-queue-length="maxQueueLength"
+            class="healthcheck__graph"
             show-description
-          )
-          h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
-        v-tab-item(lazy)
-          healthcheck-graphs(:max-messages-per-minute="maxMessagesLength")
-        v-tab-item(lazy)
-          healthcheck-parameters
-        v-tab-item(lazy)
-          healthcheck-engines-metrics
+          />
+          <h2
+            v-else-if="hasServerError"
+            class="my-4 text-h5 text-center"
+          >
+            {{ $t('healthcheck.systemStatusServerError') }}
+          </h2>
+        </v-tab-item>
+        <v-tab-item>
+          <healthcheck-graphs :max-messages-per-minute="maxMessagesLength" />
+        </v-tab-item>
+        <v-tab-item>
+          <healthcheck-parameters />
+        </v-tab-item>
+        <v-tab-item>
+          <healthcheck-engines-metrics />
+        </v-tab-item>
+      </v-tabs-items>
+    </v-sheet>
+  </div>
 </template>
 
 <script>

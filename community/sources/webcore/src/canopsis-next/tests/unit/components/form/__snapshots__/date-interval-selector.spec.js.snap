@@ -16,7 +16,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
           label="Start date"
           name="tstart"
           roundhours="true"
-          value="today-2d"
+          value="today-1d"
         />
         <date-time-picker-text-field-stub
           dateobjectpreparer="[Function]"
@@ -31,24 +31,26 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
       class="flex pl-1 xs6"
     >
       <c-quick-date-interval-type-field-stub
-        return-object="return-object"
+        item-value="function () { [native code] }"
+        return-object=""
         value="[object Object]"
       />
       <div
-        class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-        role="combobox"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
         <div
           class="v-input__control"
         >
           <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
             class="v-input__slot"
+            role="button"
           >
             <div
               class="v-select__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
@@ -63,9 +65,8 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
                   Creation date
                 </div>
                 <input
-                  aria-label="Time field"
                   aria-readonly="false"
-                  autocomplete="on"
+                  autocomplete="off"
                   readonly="readonly"
                   type="text"
                 />
@@ -76,12 +77,14 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
                 <div
                   class="v-input__icon v-input__icon--clear"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon v-icon--link material-icons theme--light"
+                  <button
+                    aria-label="Clear Time field"
+                    class="v-icon notranslate v-icon--link material-icons theme--light"
+                    tabindex="-1"
+                    type="button"
                   >
                     clear
-                  </i>
+                  </button>
                 </div>
               </div>
               <div
@@ -92,16 +95,22 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
                 >
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon notranslate material-icons theme--light"
                   >
                     arrow_drop_down
                   </i>
                 </div>
               </div>
+              <input
+                type="hidden"
+                value="t"
+              />
             </div>
             <div
               class="v-menu"
-            />
+            >
+              <!---->
+            </div>
           </div>
           <div
             class="v-text-field__details"
@@ -109,8 +118,10 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -150,24 +161,26 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
       class="flex pl-1 xs6"
     >
       <c-quick-date-interval-type-field-stub
-        return-object="return-object"
+        item-value="function () { [native code] }"
+        return-object=""
         value="[object Object]"
       />
       <div
-        class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-        role="combobox"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
         <div
           class="v-input__control"
         >
           <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
             class="v-input__slot"
+            role="button"
           >
             <div
               class="v-select__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
@@ -182,9 +195,8 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
                   Creation date
                 </div>
                 <input
-                  aria-label="Time field"
                   aria-readonly="false"
-                  autocomplete="on"
+                  autocomplete="off"
                   readonly="readonly"
                   type="text"
                 />
@@ -195,12 +207,14 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
                 <div
                   class="v-input__icon v-input__icon--clear"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon v-icon--link material-icons theme--light"
+                  <button
+                    aria-label="Clear Time field"
+                    class="v-icon notranslate v-icon--link material-icons theme--light"
+                    tabindex="-1"
+                    type="button"
                   >
                     clear
-                  </i>
+                  </button>
                 </div>
               </div>
               <div
@@ -211,16 +225,22 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
                 >
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon notranslate material-icons theme--light"
                   >
                     arrow_drop_down
                   </i>
                 </div>
               </div>
+              <input
+                type="hidden"
+                value="t"
+              />
             </div>
             <div
               class="v-menu"
-            />
+            >
+              <!---->
+            </div>
           </div>
           <div
             class="v-text-field__details"
@@ -228,8 +248,10 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>

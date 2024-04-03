@@ -134,6 +134,8 @@ EventsCountTriggerDefaultThreshold = 10
 # Local storage for Upload artifacts. Upload artifacts are used in Administration -> Parameters.
 Upload = "/opt/canopsis/var/lib/upload-files"
 UploadMaxSize = 314572800 # 300Mb
+Icon = "/opt/canopsis/var/lib/icons"
+IconMaxSize = 10240 # 10Kb
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
@@ -192,6 +194,19 @@ Enabled = true
 NoColor = false
 TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
+
+[Canopsis.metrics]
+Enabled = true
+# FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
+FlushInterval = "10s"
+# Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
+# Lower value provides more accurate metrics but requires more disk space.
+# Higher value provides less accurate metrics but requires less disk space.
+# 1h is recommended value since Canopsis UI lowest time sampling 1 hour.
+# Change value for external tools if more accurate metrics are required.
+SliInterval = "1h"
+# UserSessionGapInterval splitts user activity by sessions.
+UserSessionGapInterval = "1h"
 
 [Canopsis.tech_metrics]
 Enabled = false

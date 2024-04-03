@@ -86,30 +86,6 @@ export default {
     title: 'Playlists',
     message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
   },
-  [USERS_PERMISSIONS.technical.healthcheck]: {
-    title: 'Healthcheck',
-    message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
-  },
-  [USERS_PERMISSIONS.technical.engine]: {
-    title: 'Engines',
-    message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-  },
-  [USERS_PERMISSIONS.technical.kpi]: {
-    title: 'KPI',
-    message: '', // TODO: add correct message
-  },
-  [USERS_PERMISSIONS.technical.map]: {
-    title: 'Maps',
-    message: '', // TODO: add correct message
-  },
-  [USERS_PERMISSIONS.technical.maintenance]: {
-    title: 'Maintenance mode',
-    message: '', // TODO: add correct message
-  },
-  [USERS_PERMISSIONS.technical.tag]: {
-    title: 'Tags management',
-    message: '', // TODO: add correct message
-  },
 
   /**
    * Admin general
@@ -125,6 +101,38 @@ export default {
     title: 'Instructions',
     message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
+  [USERS_PERMISSIONS.technical.healthcheck]: {
+    title: 'Healthcheck',
+    message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+  },
+  [USERS_PERMISSIONS.technical.engine]: {
+    title: 'Engines',
+    message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
+  },
+  [USERS_PERMISSIONS.technical.kpi]: {
+    title: 'KPI',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.map]: {
+    title: 'Maps',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.maintenance]: {
+    title: 'Maintenance mode',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.tag]: {
+    title: 'Tags management',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.storageSettings]: {
+    title: 'Storage settings',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.stateSetting]: {
+    title: 'State settings',
+    // message: '', // TODO: add correct message
+  },
 
   /**
    * Notifications
@@ -139,6 +147,6 @@ export default {
    */
   [USERS_PERMISSIONS.technical.profile.theme]: {
     title: 'Theme',
-    message: '', // TODO: add correct message
+    // message: '', // TODO: add correct message
   },
 };

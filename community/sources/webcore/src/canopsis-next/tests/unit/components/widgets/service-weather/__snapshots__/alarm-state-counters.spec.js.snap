@@ -4,261 +4,286 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
 <span
   class="v-tooltip v-tooltip--top"
 >
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
+  <!---->
   <div
     class="layout alarm-counters fill-height column"
   >
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         build
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         11
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
-      <svg
-        aria-hidden="true"
-        class="v-icon v-icon--is-component theme--light"
-        fill="none"
-        style="font-size: 18px; height: 18px; color: white; caret-color: white;"
-        viewBox="0 0 14 14"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g
-          clip-path="url(#clip0_7153_11843)"
-        >
-          <path
-            d="M2.33337 5.83333H9.33337V7H2.33337V5.83333ZM2.33337 3.5H9.33337V4.66667H2.33337V3.5ZM2.33337 8.16667H7.00004V9.33333H2.33337V8.16667Z"
-            fill="white"
-          />
-           
-          <path
-            d="M8.07858 9.90412L10.5567 7.41098C10.3116 6.78085 10.4478 6.04113 10.9652 5.52059C11.5098 4.97265 12.3268 4.86306 12.9803 5.16443L11.8094 6.3425L12.6263 7.16441L13.8245 5.98634C14.1513 6.64387 14.0151 7.46578 13.4705 8.01372C12.9531 8.53426 12.2178 8.67125 11.5915 8.42468L9.11339 10.9178C9.00446 11.0274 8.84107 11.0274 8.73214 10.9178L8.10581 10.2877C7.96965 10.1781 7.96965 9.98631 8.07858 9.90412Z"
-            fill="white"
-          />
-        </g>
-         
-        <defs>
-          <clippath
-            id="clip0_7153_11843"
-          >
-            <rect
-              fill="white"
-              height="14"
-              width="14"
-            />
-          </clippath>
-        </defs>
-      </svg>
       <span
-        class="caption"
+        aria-hidden="true"
+        class="v-icon notranslate theme--light"
+        style="font-size: 18px; height: 18px; width: 18px; color: white; caret-color: white;"
+      >
+        <svg
+          class="v-icon__component theme--light"
+          fill="none"
+          style="font-size: 18px; height: 18px; width: 18px;"
+          viewBox="0 0 14 14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g
+            clip-path="url(#clip0_7153_11843)"
+          >
+            <path
+              d="M2.33337 5.83333H9.33337V7H2.33337V5.83333ZM2.33337 3.5H9.33337V4.66667H2.33337V3.5ZM2.33337 8.16667H7.00004V9.33333H2.33337V8.16667Z"
+              fill="white"
+            />
+            <path
+              d="M8.07858 9.90412L10.5567 7.41098C10.3116 6.78085 10.4478 6.04113 10.9652 5.52059C11.5098 4.97265 12.3268 4.86306 12.9803 5.16443L11.8094 6.3425L12.6263 7.16441L13.8245 5.98634C14.1513 6.64387 14.0151 7.46578 13.4705 8.01372C12.9531 8.53426 12.2178 8.67125 11.5915 8.42468L9.11339 10.9178C9.00446 11.0274 8.84107 11.0274 8.73214 10.9178L8.10581 10.2877C7.96965 10.1781 7.96965 9.98631 8.07858 9.90412Z"
+              fill="white"
+            />
+          </g>
+          <defs>
+            <clippath
+              id="clip0_7153_11843"
+            >
+              <rect
+                fill="white"
+                height="14"
+                width="14"
+              />
+            </clippath>
+          </defs>
+        </svg>
+      </span>
+      <span
+        class="text-caption"
       >
         10
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         playlist_play
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         9
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         playlist_add_check
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         8
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
-      <svg
-        aria-hidden="true"
-        class="v-icon v-icon--is-component theme--light"
-        fill="none"
-        style="font-size: 18px; height: 18px; caret-color: var(--v-state-critical-base);"
-        viewBox="0 0 14 14"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0.150661 11.9993L-0.28385 12.7498H0.583374H13.4167H14.2839L13.8494 11.9993L7.43275 0.915986L7.00004 0.168572L6.56733 0.915986L0.150661 11.9993ZM6.91671 9.99984V9.83317H7.08337V9.99984H6.91671ZM6.91671 7.6665V6.33317H7.08337V7.6665H6.91671Z"
-          fill="currentColor"
-          stroke="white"
-        />
-      </svg>
       <span
-        class="caption"
+        aria-hidden="true"
+        class="v-icon notranslate theme--light"
+        style="font-size: 18px; height: 18px; width: 18px; caret-color: var(--v-state-critical-base);"
+      >
+        <svg
+          class="v-icon__component theme--light"
+          fill="none"
+          style="font-size: 18px; height: 18px; width: 18px;"
+          viewBox="0 0 14 14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.150661 11.9993L-0.28385 12.7498H0.583374H13.4167H14.2839L13.8494 11.9993L7.43275 0.915986L7.00004 0.168572L6.56733 0.915986L0.150661 11.9993ZM6.91671 9.99984V9.83317H7.08337V9.99984H6.91671ZM6.91671 7.6665V6.33317H7.08337V7.6665H6.91671Z"
+            fill="currentColor"
+            stroke="white"
+          />
+        </svg>
+      </span>
+      <span
+        class="text-caption"
       >
         7
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
-      <svg
-        aria-hidden="true"
-        class="v-icon v-icon--is-component theme--light"
-        fill="none"
-        style="font-size: 18px; height: 18px; caret-color: var(--v-state-major-base);"
-        viewBox="0 0 14 14"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0.150661 11.9993L-0.28385 12.7498H0.583374H13.4167H14.2839L13.8494 11.9993L7.43275 0.915986L7.00004 0.168572L6.56733 0.915986L0.150661 11.9993ZM6.91671 9.99984V9.83317H7.08337V9.99984H6.91671ZM6.91671 7.6665V6.33317H7.08337V7.6665H6.91671Z"
-          fill="currentColor"
-          stroke="white"
-        />
-      </svg>
       <span
-        class="caption"
+        aria-hidden="true"
+        class="v-icon notranslate theme--light"
+        style="font-size: 18px; height: 18px; width: 18px; caret-color: var(--v-state-major-base);"
+      >
+        <svg
+          class="v-icon__component theme--light"
+          fill="none"
+          style="font-size: 18px; height: 18px; width: 18px;"
+          viewBox="0 0 14 14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.150661 11.9993L-0.28385 12.7498H0.583374H13.4167H14.2839L13.8494 11.9993L7.43275 0.915986L7.00004 0.168572L6.56733 0.915986L0.150661 11.9993ZM6.91671 9.99984V9.83317H7.08337V9.99984H6.91671ZM6.91671 7.6665V6.33317H7.08337V7.6665H6.91671Z"
+            fill="currentColor"
+            stroke="white"
+          />
+        </svg>
+      </span>
+      <span
+        class="text-caption"
       >
         6
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
-      <svg
-        aria-hidden="true"
-        class="v-icon v-icon--is-component theme--light"
-        fill="none"
-        style="font-size: 18px; height: 18px; caret-color: var(--v-state-minor-base);"
-        viewBox="0 0 14 14"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0.150661 11.9993L-0.28385 12.7498H0.583374H13.4167H14.2839L13.8494 11.9993L7.43275 0.915986L7.00004 0.168572L6.56733 0.915986L0.150661 11.9993ZM6.91671 9.99984V9.83317H7.08337V9.99984H6.91671ZM6.91671 7.6665V6.33317H7.08337V7.6665H6.91671Z"
-          fill="currentColor"
-          stroke="white"
-        />
-      </svg>
       <span
-        class="caption"
+        aria-hidden="true"
+        class="v-icon notranslate theme--light"
+        style="font-size: 18px; height: 18px; width: 18px; caret-color: var(--v-state-minor-base);"
+      >
+        <svg
+          class="v-icon__component theme--light"
+          fill="none"
+          style="font-size: 18px; height: 18px; width: 18px;"
+          viewBox="0 0 14 14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.150661 11.9993L-0.28385 12.7498H0.583374H13.4167H14.2839L13.8494 11.9993L7.43275 0.915986L7.00004 0.168572L6.56733 0.915986L0.150661 11.9993ZM6.91671 9.99984V9.83317H7.08337V9.99984H6.91671ZM6.91671 7.6665V6.33317H7.08337V7.6665H6.91671Z"
+            fill="currentColor"
+            stroke="white"
+          />
+        </svg>
+      </span>
+      <span
+        class="text-caption"
       >
         5
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         check_circle
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         4
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
-      <svg
-        aria-hidden="true"
-        class="v-icon v-icon--is-component theme--light"
-        fill="none"
-        style="font-size: 18px; height: 18px; caret-color: var(--v-error-base);"
-        viewBox="0 0 12 14"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0.979821 10.1466L0.833374 10.2931V10.5002V11.0835V11.5835H1.33337H4.33337V11.6668C4.33337 12.583 5.07477 13.3335 6.00004 13.3335C6.91785 13.3335 7.66671 12.5846 7.66671 11.6668V11.5835H10.6667H11.1667V11.0835V10.5002V10.2931L11.0203 10.1466L10 9.12639V6.41683C10 4.58481 9.07511 2.94437 7.37504 2.35547V2.3335C7.37504 1.57319 6.76035 0.958496 6.00004 0.958496C5.23973 0.958496 4.62504 1.57319 4.62504 2.3335V2.35503C2.91992 2.94305 2.00004 4.57951 2.00004 6.41683V9.12639L0.979821 10.1466ZM5.91671 8.8335V8.66683H6.08337V8.8335H5.91671ZM5.91671 6.50016V5.16683H6.08337V6.50016H5.91671Z"
-          fill="currentColor"
-          stroke="white"
-        />
-      </svg>
       <span
-        class="caption"
+        aria-hidden="true"
+        class="v-icon notranslate theme--light"
+        style="font-size: 18px; height: 18px; width: 18px; caret-color: var(--v-error-base);"
+      >
+        <svg
+          class="v-icon__component theme--light"
+          fill="none"
+          style="font-size: 18px; height: 18px; width: 18px;"
+          viewBox="0 0 12 14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.979821 10.1466L0.833374 10.2931V10.5002V11.0835V11.5835H1.33337H4.33337V11.6668C4.33337 12.583 5.07477 13.3335 6.00004 13.3335C6.91785 13.3335 7.66671 12.5846 7.66671 11.6668V11.5835H10.6667H11.1667V11.0835V10.5002V10.2931L11.0203 10.1466L10 9.12639V6.41683C10 4.58481 9.07511 2.94437 7.37504 2.35547V2.3335C7.37504 1.57319 6.76035 0.958496 6.00004 0.958496C5.23973 0.958496 4.62504 1.57319 4.62504 2.3335V2.35503C2.91992 2.94305 2.00004 4.57951 2.00004 6.41683V9.12639L0.979821 10.1466ZM5.91671 8.8335V8.66683H6.08337V8.8335H5.91671ZM5.91671 6.50016V5.16683H6.08337V6.50016H5.91671Z"
+            fill="currentColor"
+            stroke="white"
+          />
+        </svg>
+      </span>
+      <span
+        class="text-caption"
       >
         3
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; caret-color: var(--v-error-base);"
       >
         notification_important
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         2
       </span>
     </div>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
-      <svg
-        aria-hidden="true"
-        class="v-icon v-icon--is-component theme--light"
-        fill="none"
-        style="font-size: 18px; height: 18px; color: white; caret-color: white;"
-        viewBox="0 0 14 14"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g
-          clip-path="url(#clip0_7152_11827)"
-        >
-          <path
-            d="M12.8333 7.00016L10.5 9.3335L9.67746 8.511L10.5991 7.5835H7.54829C7.34996 9.39183 6.22996 10.9202 4.66663 11.696C4.64329 12.6527 3.87329 13.4168 2.91663 13.4168C1.94829 13.4168 1.16663 12.6352 1.16663 11.6668C1.16663 10.6985 1.94829 9.91683 2.91663 9.91683C3.47079 9.91683 3.95496 10.1793 4.27579 10.5818C5.38413 9.981 6.17746 8.88433 6.36413 7.5835H4.55579C4.31663 8.26016 3.67496 8.75016 2.91663 8.75016C1.94829 8.75016 1.16663 7.9685 1.16663 7.00016C1.16663 6.03183 1.94829 5.25016 2.91663 5.25016C3.67496 5.25016 4.31663 5.74016 4.56163 6.41683H6.36996C6.18329 5.116 5.38413 4.02516 4.27579 3.4185C3.95496 3.821 3.47079 4.0835 2.91663 4.0835C1.94829 4.0835 1.16663 3.30183 1.16663 2.3335C1.16663 1.36516 1.94829 0.583496 2.91663 0.583496C3.87329 0.583496 4.64329 1.34766 4.66079 2.30433C6.22413 3.08016 7.34413 4.6085 7.54246 6.41683H10.5933L9.67163 5.48933L10.5 4.66683L12.8333 7.00016Z"
-            fill="currentColor"
-          />
-        </g>
-         
-        <defs>
-          <clippath
-            id="clip0_7152_11827"
-          >
-            <rect
-              fill="white"
-              height="14"
-              width="14"
-            />
-          </clippath>
-        </defs>
-      </svg>
       <span
-        class="caption"
+        aria-hidden="true"
+        class="v-icon notranslate theme--light"
+        style="font-size: 18px; height: 18px; width: 18px; color: white; caret-color: white;"
+      >
+        <svg
+          class="v-icon__component theme--light"
+          fill="none"
+          style="font-size: 18px; height: 18px; width: 18px;"
+          viewBox="0 0 14 14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g
+            clip-path="url(#clip0_7152_11827)"
+          >
+            <path
+              d="M12.8333 7.00016L10.5 9.3335L9.67746 8.511L10.5991 7.5835H7.54829C7.34996 9.39183 6.22996 10.9202 4.66663 11.696C4.64329 12.6527 3.87329 13.4168 2.91663 13.4168C1.94829 13.4168 1.16663 12.6352 1.16663 11.6668C1.16663 10.6985 1.94829 9.91683 2.91663 9.91683C3.47079 9.91683 3.95496 10.1793 4.27579 10.5818C5.38413 9.981 6.17746 8.88433 6.36413 7.5835H4.55579C4.31663 8.26016 3.67496 8.75016 2.91663 8.75016C1.94829 8.75016 1.16663 7.9685 1.16663 7.00016C1.16663 6.03183 1.94829 5.25016 2.91663 5.25016C3.67496 5.25016 4.31663 5.74016 4.56163 6.41683H6.36996C6.18329 5.116 5.38413 4.02516 4.27579 3.4185C3.95496 3.821 3.47079 4.0835 2.91663 4.0835C1.94829 4.0835 1.16663 3.30183 1.16663 2.3335C1.16663 1.36516 1.94829 0.583496 2.91663 0.583496C3.87329 0.583496 4.64329 1.34766 4.66079 2.30433C6.22413 3.08016 7.34413 4.6085 7.54246 6.41683H10.5933L9.67163 5.48933L10.5 4.66683L12.8333 7.00016Z"
+              fill="currentColor"
+            />
+          </g>
+          <defs>
+            <clippath
+              id="clip0_7152_11827"
+            >
+              <rect
+                fill="white"
+                height="14"
+                width="14"
+              />
+            </clippath>
+          </defs>
+        </svg>
+      </span>
+      <span
+        class="text-caption"
       >
         1
       </span>
@@ -269,8 +294,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
 
 exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props 2`] = `
 <div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
   <div
     class="layout column"
@@ -316,16 +341,17 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with default prop
 <span
   class="v-tooltip v-tooltip--top"
 >
-  <transition-stub
-    name="slide-y-reverse-transition"
+  <!---->
+  <div
+    class="layout alarm-counters fill-height column"
   />
 </span>
 `;
 
 exports[`alarm-state-counters Renders \`alarm-state-counters\` with default props 2`] = `
 <div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
   <div
     class="layout column"

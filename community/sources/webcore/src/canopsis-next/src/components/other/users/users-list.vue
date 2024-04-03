@@ -1,42 +1,56 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="users",
-    :loading="pending",
-    :total-items="totalItems",
-    :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-    :pagination="pagination",
-    :select-all="removable",
-    advanced-pagination,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="users"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    advanced-pagination
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#name="{ item }") {{ item.display_name }}
-    template(#enable="{ item }")
-      c-enabled(:value="item.enable")
-    template(#active="{ item }")
-      c-enabled(:value="item.active_connects > 0")
-    template(#source="{ item }") {{ item.source || $constants.AUTH_METHODS.local }}
-    template(#roles="{ item }")
-      v-chip-group(:items="item.roles", item-text="name", item-value="_id")
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+      />
+    </template>
+    <template #enable="{ item }">
+      <c-enabled :value="item.enable" />
+    </template>
+    <template #active="{ item }">
+      <c-enabled :value="item.active_connects > 0" />
+    </template>
+    <template #source="{ item }">
+      {{ item.source || $constants.AUTH_METHODS.local }}
+    </template>
+    <template #roles="{ item }">
+      <v-chip-group>
+        <v-chip
+          v-for="role in item.roles"
+          :key="role._id"
+        >
+          {{ role.name }}
+        </v-chip>
+      </v-chip-group>
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click.stop="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click.stop="$emit('remove', item)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -54,7 +68,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -73,6 +87,10 @@ export default {
         {
           text: this.$t('common.username'),
           value: 'name',
+        },
+        {
+          text: this.$t('user.displayName'),
+          value: 'display_name',
         },
         {
           text: this.$t('user.firstName'),

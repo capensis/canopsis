@@ -1,37 +1,68 @@
-<template lang="pug">
-  v-expansion-panel(:value="openedPanels", readonly, hide-actions, expand, dark, focusable)
-    group-panel(
-      v-for="group in groups",
-      :group="group",
-      :key="group._id",
+<template>
+  <v-expansion-panels
+    :value="openedPanels"
+    accordion
+    readonly
+    hide-actions
+    multiple
+    dark
+    focusable
+  >
+    <group-panel
+      v-for="group in groups"
+      :key="group._id"
+      :group="group"
       hide-actions
-    )
-      template(#title="")
-        v-checkbox.group-checkbox.mt-0.pt-0(
-          :input-value="selected.groups",
-          :value="group._id",
-          color="primary",
-          @change="changeGroup(group, $event)"
-        )
-        span.group-title {{ group.title }}
-      group-view-panel(
-        v-for="view in group.views",
-        :key="view._id",
+    >
+      <template #title>
+        <v-layout align-center>
+          <v-checkbox
+            :input-value="selected.groups"
+            :value="group._id"
+            class="group-checkbox mt-0 pt-0"
+            color="primary"
+            @change="changeGroup(group, $event)"
+          />
+        </v-layout>
+      </template>
+      <group-view-panel
+        v-for="view in group.views"
+        :key="view._id"
         :view="view"
-      )
-        template(#title="")
-          v-layout(align-center, row, justify-space-between)
-            v-checkbox(
-              v-field="selected.views",
-              :value="view._id",
+      >
+        <template #title>
+          <v-layout
+            align-center
+            justify-space-between
+          >
+            <v-checkbox
+              v-field="selected.views"
+              :value="view._id"
               color="primary"
-            )
-            span.ellipsis.fill-width {{ view.title }}
-              span.ml-1(v-show="view.description") ({{ view.description }})
+            >
+              <template #label>
+                <span class="text-truncate fill-width">
+                  {{ view.title }}
+                  <span
+                    v-show="view.description"
+                    class="ml-1"
+                  >
+                    ({{ view.description }})
+                  </span>
+                </span>
+              </template>
+            </v-checkbox>
+          </v-layout>
+        </template>
+      </group-view-panel>
+    </group-panel>
+  </v-expansion-panels>
 </template>
 
 <script>
 import { difference } from 'lodash';
+
+import { createRangeArray } from '@/helpers/array';
 
 import { formMixin } from '@/mixins/form';
 
@@ -57,7 +88,7 @@ export default {
   },
   computed: {
     openedPanels() {
-      return new Array(this.groups.length).fill(true);
+      return createRangeArray(this.groups.length);
     },
   },
   methods: {

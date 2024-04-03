@@ -1,13 +1,13 @@
-<template lang="pug">
-  c-number-field(
-    v-field="value",
-    :label="label || $t('common.priority')",
-    :disabled="disabled",
-    :loading="loading",
-    :name="name",
-    :min="min",
+<template>
+  <c-number-field
+    v-field="value"
+    :label="label || $t('common.priority')"
+    :disabled="disabled"
+    :loading="loading"
+    :name="name"
+    :min="min"
     :required="required"
-  )
+  />
 </template>
 
 <script>

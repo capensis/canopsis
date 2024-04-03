@@ -1,5 +1,9 @@
-<template lang="pug">
-  div.mermaid-code-preview(:class="{ 'mermaid-preview--error': !parsed }", v-html="svg")
+<template>
+  <div
+    v-html="svg"
+    :class="{ 'mermaid-preview--error': !parsed }"
+    class="mermaid-code-preview"
+  />
 </template>
 
 <script>

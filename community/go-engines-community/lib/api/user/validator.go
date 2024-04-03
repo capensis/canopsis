@@ -15,6 +15,7 @@ import (
 type Validator interface {
 	ValidateCreateRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
+	ValidatePatchRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel)
 }
 
@@ -70,6 +71,34 @@ func (v *baseValidator) ValidateUpdateRequest(ctx context.Context, sl validator.
 
 	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
 	v.validatePassword(sl, r.EditRequest, r.ID)
+}
+
+func (v *baseValidator) ValidatePatchRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(PatchRequest)
+
+	// to avoid code duplication, use validation functions for EditRequest
+	editReq := EditRequest{
+		Roles: r.Roles,
+	}
+
+	if r.Name != nil {
+		editReq.Name = *r.Name
+	}
+
+	if r.DefaultView != nil {
+		editReq.DefaultView = *r.DefaultView
+	}
+
+	if r.UITheme != nil {
+		editReq.UITheme = *r.UITheme
+	}
+
+	if r.Password != nil {
+		editReq.Password = *r.Password
+	}
+
+	v.validateEditRequest(ctx, sl, r.ID, editReq)
+	v.validatePassword(sl, editReq, r.ID)
 }
 
 func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {

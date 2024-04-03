@@ -55,6 +55,9 @@ export const PATTERN_OPERATORS = {
   activated: 'activated',
   inactive: 'inactive',
 
+  isMetaAlarm: 'is_meta_alarm',
+  isNotMetaAlarm: 'is_not_meta_alarm',
+
   regexp: 'regexp',
 };
 
@@ -106,6 +109,8 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.isGrey,
   PATTERN_OPERATORS.activated,
   PATTERN_OPERATORS.inactive,
+  PATTERN_OPERATORS.isMetaAlarm,
+  PATTERN_OPERATORS.isNotMetaAlarm,
 ];
 
 export const PATTERN_RULE_TYPES = {
@@ -167,7 +172,7 @@ export const PATTERN_NULL_OPERATORS = [
   PATTERN_OPERATORS.notEqual,
 ];
 
-export const PATTERN_INFOS_NAME_OPERATORS = [
+export const PATTERN_EXISTS_OPERATORS = [
   PATTERN_OPERATORS.exist,
   PATTERN_OPERATORS.notExist,
 ];

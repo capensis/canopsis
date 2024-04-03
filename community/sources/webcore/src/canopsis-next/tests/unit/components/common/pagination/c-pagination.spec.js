@@ -26,14 +26,9 @@ describe('c-pagination', () => {
     const page = 2;
     const wrapper = factory({ propsData: { page, limit: 5, total: 10, type: 'top' } });
 
-    const prevButton = wrapper.findAll('button').at(0);
+    wrapper.findAll('button').at(0).trigger('click');
 
-    prevButton.trigger('click');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([page - 1]);
+    expect(wrapper).toEmitInput(page - 1);
   });
 
   it('Pagination on the top. Check prev page button is disabled, when first page.', () => {
@@ -48,14 +43,9 @@ describe('c-pagination', () => {
     const page = 1;
     const wrapper = factory({ propsData: { page, total: 10, limit: 5, type: 'top' } });
 
-    const nextButton = wrapper.findAll('button').at(1);
+    wrapper.findAll('button').at(1).trigger('click');
 
-    nextButton.trigger('click');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([page + 1]);
+    expect(wrapper).toEmitInput(page + 1);
   });
 
   it('Pagination on the top. Check next page button is disabled, when last page.', () => {
@@ -71,14 +61,9 @@ describe('c-pagination', () => {
     const page = Faker.datatype.number();
     const wrapper = factory({ propsData: { total: 1 } });
 
-    const pagination = wrapper.find('.v-pagination');
+    wrapper.find('.v-pagination').setValue(page);
 
-    pagination.setValue(page);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([page]);
+    expect(wrapper).toEmitInput(page);
   });
 
   it('Renders `c-pagination` with default props correctly', () => {
@@ -87,7 +72,7 @@ describe('c-pagination', () => {
       propsData: { total: 1 },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` with default props correctly', () => {
@@ -95,7 +80,7 @@ describe('c-pagination', () => {
       propsData: { total: 1 },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` on the top with disabled prev button correctly', () => {
@@ -103,7 +88,7 @@ describe('c-pagination', () => {
       propsData: { page: 1, total: 2, limit: 1, type: 'top' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` on the top with disabled next button correctly', () => {
@@ -112,7 +97,7 @@ describe('c-pagination', () => {
       propsData: { page: 2, total: 2, limit: 1, type: 'top' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` on the top with disabled buttons correctly', () => {
@@ -121,7 +106,7 @@ describe('c-pagination', () => {
       propsData: { page: 1, total: 1, limit: 1, type: 'top' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` with default props on the top correctly', () => {
@@ -130,7 +115,7 @@ describe('c-pagination', () => {
       propsData: { total: 1, type: 'top' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` on the bottom correctly', () => {
@@ -139,7 +124,7 @@ describe('c-pagination', () => {
       propsData: { page: 3, total: 100 },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-pagination` on the top correctly', () => {
@@ -148,6 +133,6 @@ describe('c-pagination', () => {
       propsData: { page: 3, total: 100, type: 'top' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

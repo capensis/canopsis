@@ -1,41 +1,45 @@
-<template lang="pug">
-  v-layout(column)
-    kpi-rating-metric-field(
-      v-field="column.metric",
-      :metrics="availableMetrics",
-      :type="type",
-      :label="$tc('common.column')",
-      :name="`${name}.column`",
+<template>
+  <v-layout column>
+    <kpi-rating-metric-field
+      v-field="column.metric"
+      :metrics="availableMetrics"
+      :type="type"
+      :label="$tc('common.column')"
+      :name="`${name}.column`"
       required
-    )
-    c-enabled-field.pa-0.my-2(
-      v-model="customLabel",
-      :label="$t('settings.columns.customLabel')",
+    />
+    <c-enabled-field
+      v-model="customLabel"
+      :label="$t('settings.columns.customLabel')"
+      class="pa-0 my-2"
+      hide-details
       @change="updateCustomLabel"
-    )
-    v-text-field(
-      v-if="customLabel",
-      v-field="column.label",
-      v-validate="'required'",
-      :label="$t('common.label')",
-      :error-messages="errors.collect(`${name}.label`)",
+    />
+    <v-text-field
+      v-if="customLabel"
+      v-field="column.label"
+      v-validate="'required'"
+      :label="$t('common.label')"
+      :error-messages="errors.collect(`${name}.label`)"
       :name="`${name}.label`"
-    )
-    c-enabled-field(
-      v-field="column.split",
-      :label="$t('settings.statisticsWidgetColumn.split')",
+    />
+    <c-enabled-field
+      v-field="column.split"
+      :label="$t('settings.statisticsWidgetColumn.split')"
       :disabled="!hasPossibilityToSplit"
-    )
-    c-select-field(
-      v-if="column.split",
-      v-field="column.criteria",
-      :items="ratingSettings",
-      :label="$t('common.infos')",
-      :name="`${name}.infos`",
-      item-text="label",
-      item-value="id",
+      hide-details
+    />
+    <c-select-field
+      v-if="column.split"
+      v-field="column.criteria"
+      :items="ratingSettings"
+      :label="$t('common.infos')"
+      :name="`${name}.infos`"
+      item-text="label"
+      item-value="id"
       required
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,105 +1,130 @@
-<template lang="pug">
-  v-layout(justify-center, column)
-    v-text-field(
-      v-if="withField",
-      v-validate="'required'",
-      v-field="column.column",
-      :label="$t('common.field')",
-      :error-messages="columnValueErrorMessages",
+<template>
+  <v-layout
+    justify-center
+    column
+  >
+    <v-text-field
+      v-if="withField"
+      v-validate="'required'"
+      v-field="column.column"
+      :label="$t('common.field')"
+      :error-messages="columnValueErrorMessages"
       :name="columnValueFieldName"
-    )
-    template(v-if="!withoutInfosAttributes")
-      c-alarm-infos-attribute-field(
-        v-if="isAlarmInfos",
-        v-field="column",
-        :rules="alarmInfosRules",
-        :pending="infosPending",
-        :name="`${name}.column`",
+    />
+    <template v-if="!withoutInfosAttributes">
+      <c-alarm-infos-attribute-field
+        v-if="isAlarmInfos"
+        v-field="column"
+        :rules="alarmInfosRules"
+        :pending="infosPending"
+        :name="`${name}.column`"
         :required="!optionalInfosAttributes"
-      )
-      c-infos-attribute-field(
-        v-else-if="isInfos",
-        v-field="column",
-        :items="infosItems",
-        :pending="infosPending",
-        :name="`${name}.column`",
-        combobox,
+      />
+      <c-infos-attribute-field
+        v-else-if="isInfos"
+        v-field="column"
+        :items="infosItems"
+        :pending="infosPending"
+        :name="`${name}.column`"
+        combobox
         column
-      )
-    template(v-if="isLinks")
-      column-links-category-field(v-field="column.field")
-      c-number-field(
-        v-field="column.inlineLinksCount",
+      />
+    </template>
+    <template v-if="isLinks">
+      <column-links-category-field v-field="column.field" />
+      <c-number-field
+        v-field="column.inlineLinksCount"
         :label="$t('settings.columns.inlineLinksCount')"
-      )
-      v-switch.pa-0.my-2(
-        v-field="column.onlyIcon",
-        :label="$t('settings.columns.onlyIcon')",
-        color="primary",
+      />
+      <v-switch
+        v-field="column.onlyIcon"
+        :label="$t('settings.columns.onlyIcon')"
+        class="pa-0 my-2"
+        color="primary"
         hide-details
-      )
-      c-number-field(
-        v-if="column.onlyIcon",
-        v-field="column.linksInRowCount",
+      />
+      <c-number-field
+        v-if="column.onlyIcon"
+        v-field="column.linksInRowCount"
         :label="$t('settings.columns.linksInRowCount')"
-      )
-        template(#append="")
-          c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
-    template(v-if="withLabel")
-      v-switch.pa-0.my-2(
-        v-model="customLabel",
-        :label="$t('settings.columns.customLabel')",
-        color="primary",
-        hide-details,
+      >
+        <template #append="">
+          <c-help-icon
+            :text="$t('settings.columns.linksInRowCountTooltip')"
+            left
+          />
+        </template>
+      </c-number-field>
+    </template>
+    <template v-if="withLabel">
+      <v-switch
+        v-model="customLabel"
+        :label="$t('settings.columns.customLabel')"
+        class="pa-0 my-2"
+        color="primary"
+        hide-details
         @change="updateCustomLabel"
-      )
-      v-text-field(
-        v-if="customLabel",
-        v-field="column.label",
-        v-validate="'required'",
-        :label="$t('common.label')",
-        :error-messages="errors.collect(`${name}.label`)",
+      />
+      <v-text-field
+        v-if="customLabel"
+        v-field="column.label"
+        v-validate="'required'"
+        :label="$t('common.label')"
+        :error-messages="errors.collect(`${name}.label`)"
         :name="`${name}.label`"
-      )
-    v-layout(v-if="withTemplate || withSimpleTemplate", row, align-center)
-      v-switch.pa-0.my-2(
-        :label="$t('settings.columns.withTemplate')",
-        :input-value="!!column.template",
-        :true-value="true",
-        :false-value="false",
-        :value-comparator="isCustomTemplate",
-        color="primary",
-        hide-details,
+      />
+    </template>
+    <v-layout
+      v-if="withTemplate || withSimpleTemplate"
+      align-center
+      justify-space-between
+    >
+      <v-switch
+        :label="$t('settings.columns.withTemplate')"
+        :input-value="!!column.template"
+        :true-value="true"
+        :false-value="false"
+        :value-comparator="isCustomTemplate"
+        class="pa-0 my-2"
+        color="primary"
+        hide-details
         @change="switchChangeTemplate($event)"
-      )
-      v-btn.primary(
-        v-if="column.template",
-        small,
+      />
+      <v-btn
+        v-if="column.template"
+        class="primary"
+        small
         @click="showEditTemplateModal"
-      )
-        span {{ $t('common.edit') }}
-    v-switch.pa-0.my-2(
-      v-if="withHtml",
-      v-field="column.isHtml",
-      :label="$t('settings.columns.isHtml')",
-      :disabled="!!column.template",
-      color="primary",
+      >
+        <span>{{ $t('common.edit') }}</span>
+      </v-btn>
+    </v-layout>
+    <v-switch
+      v-if="withHtml"
+      v-field="column.isHtml"
+      :label="$t('settings.columns.isHtml')"
+      :disabled="!!column.template"
+      class="pa-0 my-2"
+      color="primary"
       hide-details
-    )
-    v-switch.pa-0.my-2(
-      v-if="withColorIndicator",
-      :label="$t('settings.colorIndicator.title')",
-      :input-value="!!column.colorIndicator",
-      :disabled="!!column.template",
-      color="primary",
-      hide-details,
+    />
+    <v-switch
+      v-if="withColorIndicator"
+      :label="$t('settings.colorIndicator.title')"
+      :input-value="!!column.colorIndicator"
+      :disabled="!!column.template"
+      class="pa-0 my-2"
+      color="primary"
+      hide-details
       @change="switchChangeColorIndicator($event)"
-    )
-    v-layout(v-if="column.colorIndicator", row)
-      c-color-indicator-field(
-        v-field="column.colorIndicator",
+    />
+    <v-layout v-if="column.colorIndicator">
+      <c-color-indicator-field
+        v-field="column.colorIndicator"
         :disabled="!!column.template"
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -263,7 +288,7 @@ export default {
 
         template,
         isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
-        colorIndicator: checked && this.column.isHtml ? null : this.column.isHtml,
+        colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
       });
     },
 

@@ -1,24 +1,38 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.pbehaviorPlanning.title') }}
-      template(#text="")
-        pbehavior-planning-calendar(
-          :pbehaviors-by-id.sync="form.pbehaviorsById",
-          :added-pbehaviors-by-id.sync="form.addedPbehaviorsById",
-          :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById",
-          :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById",
-          :read-only="readOnly",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.pbehaviorPlanning.title') }}</span>
+      </template>
+      <template #text="">
+        <pbehavior-planning-calendar
+          :pbehaviors-by-id.sync="form.pbehaviorsById"
+          :added-pbehaviors-by-id.sync="form.addedPbehaviorsById"
+          :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById"
+          :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById"
+          :read-only="readOnly"
           :entity-pattern="entityPattern"
-        )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
