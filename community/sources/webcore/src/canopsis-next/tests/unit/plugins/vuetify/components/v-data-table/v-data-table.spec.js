@@ -1,4 +1,4 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import VDataTable from '@/plugins/vuetify/components/v-data-table/v-data-table.vue';
 
@@ -13,486 +13,435 @@ describe('v-data-table', () => {
     { value: 'column3', sortable: true },
   ];
   const [sortableHeader, , sortableHeaderTwo] = headers;
-  const rowsPerPage = 5;
+  const itemsPerPage = 5;
   const page = 1;
   const totalItems = 0;
 
-  const factory = generateShallowRenderer(VDataTable, { stubs });
   const snapshotFactory = generateRenderer(VDataTable, { stubs });
 
-  it('Column sorted by DESC after click on the header', () => {
-    const wrapper = factory({
+  test('Column sorted by DESC after click on the header', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        headers,
+        items: [],
+        options: {},
+      },
+    });
+
+    expect(wrapper).toEmit('update:options', {
+      page,
+      itemsPerPage: 10,
+
+      multiSort: false,
+      mustSort: false,
+      sortDesc: [false],
+      sortBy: [],
+
+      groupBy: [],
+      groupDesc: [],
+    });
+
+    await selectTableHeader(wrapper).at(0).trigger('click');
+
+    expect(wrapper).toEmit(
+      'update:options',
+      expect.any(Object),
+      {
+        page,
+        itemsPerPage: 10,
+
+        multiSort: false,
+        mustSort: false,
+        sortDesc: [false],
+        sortBy: [sortableHeader.value],
+
+        groupBy: [],
+        groupDesc: [],
+      },
+    );
+  });
+
+  test('Other column sorted by ASC after click on the header', async () => {
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual({
+    expect(wrapper).toEmit('update:options', {
       page,
-      rowsPerPage,
-      totalItems,
+      itemsPerPage: 10,
 
-      descending: false,
-      sortBy: sortableHeader.value,
+      multiSort: false,
+      mustSort: false,
+      sortDesc: [false],
+      sortBy: [],
+
+      groupBy: [],
+      groupDesc: [],
     });
 
-    const tableHeader = selectTableHeader(wrapper).at(0);
+    await selectTableHeader(wrapper).at(2).trigger('click');
 
-    tableHeader.trigger('click');
+    expect(wrapper).toEmit(
+      'update:options',
+      expect.any(Object),
+      {
+        page,
+        itemsPerPage: 10,
 
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      page,
-      rowsPerPage,
-      totalItems,
+        multiSort: false,
+        mustSort: false,
+        sortDesc: [false],
+        sortBy: [sortableHeaderTwo.value],
 
-      descending: true,
-      sortBy: sortableHeader.value,
-    });
-  });
-
-  it('Other column sorted by ASC after click on the header', () => {
-    const wrapper = factory({
-      propsData: {
-        headers,
-        items: [],
+        groupBy: [],
+        groupDesc: [],
       },
-    });
-
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual({
-      page,
-      rowsPerPage,
-      totalItems,
-
-      descending: false,
-      sortBy: sortableHeader.value,
-    });
-
-    const tableHeader = selectTableHeader(wrapper).at(2);
-
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      page,
-      rowsPerPage,
-      totalItems,
-
-      descending: false,
-      sortBy: sortableHeaderTwo.value,
-    });
+    );
   });
 
-  it('Column sorted by ASC after trigger keydown on the header', () => {
-    const wrapper = factory({
+  test('Column sort reset after click on the header', async () => {
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
-      },
-    });
-
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual({
-      page,
-      rowsPerPage,
-      totalItems,
-
-      descending: false,
-      sortBy: sortableHeader.value,
-    });
-
-    const tableHeader = selectTableHeader(wrapper).at(2);
-
-    tableHeader.trigger('keydown', { keyCode: 32 });
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      page,
-      rowsPerPage,
-      totalItems,
-
-      descending: false,
-      sortBy: sortableHeaderTwo.value,
-    });
-  });
-
-  it('Column sort reset after click on the header', () => {
-    const pagination = {
-      page,
-      rowsPerPage,
-      totalItems,
-
-      descending: true,
-      sortBy: sortableHeaderTwo.value,
-    };
-    const wrapper = factory({
-      propsData: {
-        headers,
-        items: [],
-        pagination: {
+        options: {
           page,
-          rowsPerPage,
+          itemsPerPage,
           totalItems,
 
-          descending: true,
-          sortBy: sortableHeaderTwo.value,
+          sortDesc: [false],
+          sortBy: [sortableHeaderTwo.value],
         },
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
-    const tableHeader = selectTableHeader(wrapper).at(2);
-
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      descending: null,
-      sortBy: null,
-    });
-  });
-
-  it('Column sorted by DESC after click on the header with must sort', () => {
-    const pagination = {
+    const newOptions = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: true,
-      sortBy: sortableHeaderTwo.value,
+      sortDesc: [false],
+      sortBy: [sortableHeaderTwo.value],
+      multiSort: false,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+
+    await selectTableHeader(wrapper).at(2).trigger('click');
+    await selectTableHeader(wrapper).at(2).trigger('click');
+
+    expect(wrapper).toEmit(
+      'update:options',
+      newOptions,
+      {
+        ...newOptions,
+
+        sortDesc: [true],
+      },
+      {
+        ...newOptions,
+
+        sortBy: [],
+        sortDesc: [],
+      },
+    );
+  });
+
+  test('Column sorted by DESC after click on the header with must sort', async () => {
+    const pagination = {
+      page,
+      itemsPerPage,
+      totalItems,
+
+      sortDesc: [true],
+      sortBy: [sortableHeaderTwo.value],
+      multiSort: false,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
+    };
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         mustSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(2);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-      descending: false,
-    });
+        sortBy: [],
+        sortDesc: [],
+      },
+    );
   });
 
-  it('First column sorted by DESC after click on the header with multi sort', () => {
+  test('First column sorted by DESC after click on the header with multi sort', async () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: true,
-      sortBy: sortableHeader.value,
+      sortDesc: [true],
+      sortBy: [sortableHeaderTwo.value],
+      multiSort: true,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         multiSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(0);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-      ],
-    });
+        sortBy: [
+          sortableHeaderTwo.value,
+          sortableHeader.value,
+        ],
+        sortDesc: [
+          true,
+          false,
+        ],
+      },
+    );
   });
 
-  it('First column sorted by ASC after click on the header with multi sort', () => {
+  test('First column sorted by ASC after click on the header with multi sort', async () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-      ],
+      sortDesc: [false],
+      sortBy: [sortableHeader.value],
+      multiSort: true,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         multiSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(0);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      multiSortBy: [
-        {
-          descending: true,
-          sortBy: sortableHeader.value,
-        },
-      ],
-    });
+        sortDesc: [
+          true,
+        ],
+      },
+    );
   });
 
-  it('Second column sorted by DESC after click on the header with multi sort', () => {
+  test('Second column sorted by DESC after click on the header with multi sort', async () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-      ],
+      sortDesc: [false],
+      sortBy: [sortableHeader.value],
+      multiSort: true,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         multiSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(2);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-        {
-          descending: false,
-          sortBy: sortableHeaderTwo.value,
-        },
-      ],
-    });
+        sortBy: [sortableHeader.value, sortableHeaderTwo.value],
+        sortDesc: [false, false],
+      },
+    );
   });
 
-  it('Second column sorted by ASC after click on the header with multi sort', () => {
+  test('Second column sorted by ASC after click on the header with multi sort', async () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-        {
-          descending: false,
-          sortBy: sortableHeaderTwo.value,
-        },
+      sortBy: [
+        sortableHeader.value,
+        sortableHeaderTwo.value,
       ],
+      sortDesc: [false, false],
+      multiSort: true,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         multiSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(2);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-        {
-          descending: true,
-          sortBy: sortableHeaderTwo.value,
-        },
-      ],
-    });
+        sortBy: [
+          sortableHeader.value,
+          sortableHeaderTwo.value,
+        ],
+        sortDesc: [false, true],
+      },
+    );
   });
 
-  it('Second column sort reset after click on the header with multi sort', () => {
+  test('Second column sort reset after click on the header with multi sort', async () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-        {
-          descending: true,
-          sortBy: sortableHeaderTwo.value,
-        },
+      sortBy: [
+        sortableHeader.value,
+        sortableHeaderTwo.value,
       ],
+      sortDesc: [false, true],
+      multiSort: true,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         multiSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(2);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      multiSortBy: [
-        {
-          descending: false,
-          sortBy: sortableHeader.value,
-        },
-      ],
-    });
+        sortBy: [
+          sortableHeader.value,
+        ],
+        sortDesc: [false],
+      },
+    );
   });
 
-  it('Column sort reset after click on the header with multi sort', () => {
+  test('Column sort reset after click on the header with multi sort', async () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
-      multiSortBy: [
-        {
-          descending: true,
-          sortBy: sortableHeader.value,
-        },
+      sortBy: [
+        sortableHeader.value,
       ],
+      sortDesc: [true],
+      multiSort: true,
+      mustSort: false,
+
+      groupBy: [],
+      groupDesc: [],
     };
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       propsData: {
         headers,
         items: [],
         multiSort: true,
-        pagination,
+        options: pagination,
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:pagination');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
+    await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const tableHeader = selectTableHeader(wrapper).at(0);
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    tableHeader.trigger('click');
-
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
-
-      multiSortBy: [],
-    });
+        sortBy: [],
+        sortDesc: [],
+      },
+    );
   });
 
-  it('Renders `v-data-table` with required props', () => {
+  test('Renders `v-data-table` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with hidden headers', () => {
+  test('Renders `v-data-table` with hidden headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -500,10 +449,10 @@ describe('v-data-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with custom headers', () => {
+  test('Renders `v-data-table` with custom headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -518,10 +467,10 @@ describe('v-data-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with select all', () => {
+  test('Renders `v-data-table` with select all', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [],
@@ -529,10 +478,10 @@ describe('v-data-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `v-data-table` with data and headers', () => {
+  test('Renders `v-data-table` with items and headers', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [{ property1: 'Property 1', property2: 'Property 2' }],
@@ -548,6 +497,26 @@ describe('v-data-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `v-data-table` with items, headers and ellipsis headers', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        items: [{ property1: 'Property 1', property2: 'Property 2' }],
+        headers: [
+          { value: 'property1', text: 'Header 1' },
+          { value: 'property2', text: 'Header 2', sortable: true },
+        ],
+        ellipsisHeaders: true,
+      },
+      scopedSlots: {
+        items(props) {
+          return this.$createElement('tr', `Row${JSON.stringify(props)}`);
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

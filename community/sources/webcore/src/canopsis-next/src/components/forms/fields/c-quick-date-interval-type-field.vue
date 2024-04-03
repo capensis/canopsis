@@ -1,13 +1,14 @@
-<template lang="pug">
-  v-select(
-    :value="range",
-    :items="quickRanges",
-    :label="$t('quickRanges.title')",
-    :hide-details="hideDetails",
-    :disabled="disabled",
-    :return-object="returnObject",
+<template>
+  <v-select
+    v-bind="$attrs"
+    :value="range"
+    :items="quickRanges"
+    :label="$t('quickRanges.title')"
+    :hide-details="hideDetails"
+    :disabled="disabled"
+    :return-object="returnObject"
     @input="updateModel($event)"
-  )
+  />
 </template>
 
 <script>
@@ -21,6 +22,7 @@ import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',

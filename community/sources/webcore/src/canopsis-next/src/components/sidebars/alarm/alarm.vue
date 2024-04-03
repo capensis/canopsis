@@ -1,207 +1,186 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    field-periodic-refresh(v-model="form.parameters", with-live-watching)
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-default-sort-column(
-        v-model="form.parameters.sort",
-        :columns="sortablePreparedWidgetColumns",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <field-periodic-refresh
+      v-model="form.parameters"
+      with-live-watching
+    />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-default-sort-column
+        v-model="form.parameters.sort"
+        :columns="sortablePreparedWidgetColumns"
         :columns-label="$t('settings.columnName')"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.widgetColumns",
-        :template="form.parameters.widgetColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.columnNames')",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        with-template,
-        with-html,
-        with-color-indicator,
+      />
+      <field-columns
+        v-model="form.parameters.widgetColumns"
+        :template="form.parameters.widgetColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        with-template
+        with-html
+        with-color-indicator
         @update:template="updateWidgetColumnsTemplate"
-      )
-      v-divider
-      field-resize-column-behavior(v-model="form.parameters.columns")
-      v-divider
-      field-columns(
-        v-model="form.parameters.widgetGroupColumns",
-        :template="form.parameters.widgetGroupColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.groupColumnNames')",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        with-html,
-        with-color-indicator,
+      />
+      <field-resize-column-behavior v-model="form.parameters.columns" />
+      <field-columns
+        v-model="form.parameters.widgetGroupColumns"
+        :template="form.parameters.widgetGroupColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.groupColumnNames')"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        with-html
+        with-color-indicator
         @update:template="updateWidgetGroupColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.serviceDependenciesColumns",
-        :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.trackColumnNames')",
-        :type="$constants.ENTITIES_TYPES.entity",
-        with-color-indicator,
+      />
+      <field-columns
+        v-model="form.parameters.serviceDependenciesColumns"
+        :template="form.parameters.serviceDependenciesColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.trackColumnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
+        with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
-      )
-      v-divider
-      field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
-      v-divider
-      field-density(v-model="form.parameters.dense")
-      v-divider
-      field-opened-resolved-filter(v-model="form.parameters.opened")
-      v-divider
-      template(v-if="hasAccessToListFilters")
-        field-filters(
-          v-model="form.parameters.mainFilter",
-          :filters.sync="form.filters",
-          :widget-id="widget._id",
-          :addable="hasAccessToAddFilter",
-          :editable="hasAccessToEditFilter",
-          with-alarm,
-          with-entity,
-          with-pbehavior
-        )
-        v-divider
-      template(v-if="hasAccessToListRemediationInstructionsFilters")
-        field-remediation-instructions-filters(
-          v-model="form.parameters.remediationInstructionsFilters",
-          :addable="hasAccessToAddRemediationInstructionsFilter",
-          :editable="hasAccessToEditRemediationInstructionsFilter"
-        )
-        v-divider
-      field-switcher(
-        v-model="form.parameters.clearFilterDisabled",
+      />
+      <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
+      <field-density v-model="form.parameters.dense" />
+      <field-opened-resolved-filter v-model="form.parameters.opened" />
+      <field-filters
+        v-if="hasAccessToListFilters"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        :addable="hasAccessToAddFilter"
+        :editable="hasAccessToEditFilter"
+        with-alarm
+        with-entity
+        with-pbehavior
+      />
+      <field-remediation-instructions-filters
+        v-if="hasAccessToListRemediationInstructionsFilters"
+        v-model="form.parameters.remediationInstructionsFilters"
+        :addable="hasAccessToAddRemediationInstructionsFilter"
+        :editable="hasAccessToEditRemediationInstructionsFilter"
+      />
+      <field-switcher
+        v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
-      )
-      v-divider
-      field-live-reporting(v-model="form.parameters.liveReporting")
-      v-divider
-      field-info-popup(
-        v-model="form.parameters.infoPopups",
+      />
+      <field-root-cause-settings v-model="form.parameters" />
+      <field-live-reporting v-model="form.parameters.liveReporting" />
+      <field-info-popup
+        v-model="form.parameters.infoPopups"
         :columns="preparedWidgetColumns"
-      )
-      v-divider
-      field-text-editor-with-template(
-        :value="form.parameters.moreInfoTemplate",
-        :template="form.parameters.moreInfoTemplateTemplate",
-        :title="$t('settings.moreInfosModal')",
-        :variables="alarmVariables",
-        :templates="alarmMoreInfosWidgetTemplates",
-        addable,
-        removable,
+      />
+      <field-text-editor-with-template
+        :value="form.parameters.moreInfoTemplate"
+        :template="form.parameters.moreInfoTemplateTemplate"
+        :title="$t('settings.moreInfosModal')"
+        :variables="alarmVariables"
+        :templates="alarmMoreInfosWidgetTemplates"
+        addable
+        removable
         @input="updateMoreInfo"
-      )
-      v-divider
-      field-text-editor-with-template(
-        :value="form.parameters.exportPdfTemplate",
-        :template="form.parameters.exportPdfTemplateTemplate",
-        :title="$t('settings.exportPdfTemplate')",
-        :variables="exportPdfAlarmVariables",
-        :default-value="defaultExportPdfTemplateValue",
-        :dialog-props="{ maxWidth: 1070 }",
-        :templates="alarmExportToPdfWidgetTemplates",
-        addable,
-        removable,
+      />
+      <field-text-editor-with-template
+        :value="form.parameters.exportPdfTemplate"
+        :template="form.parameters.exportPdfTemplateTemplate"
+        :title="$t('settings.exportPdfTemplate')"
+        :variables="exportPdfAlarmVariables"
+        :default-value="defaultExportPdfTemplateValue"
+        :dialog-props="{ maxWidth: 1070 }"
+        :templates="alarmExportToPdfWidgetTemplates"
+        addable
+        removable
         @input="updateExportPdf"
-      )
-      v-divider
-      field-grid-range-size(
-        v-model="form.parameters.expandGridRangeSize",
+      />
+      <field-grid-range-size
+        v-model="form.parameters.expandGridRangeSize"
         :title="$t('settings.expandGridRangeSize')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isHtmlEnabledOnTimeLine",
+      />
+      <field-switcher
+        v-model="form.parameters.isHtmlEnabledOnTimeLine"
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
-      )
-      v-divider
-      widget-settings-group(:title="$t('common.ack')")
-        field-switcher(
-          v-model="form.parameters.isAckNoteRequired",
+      />
+      <widget-settings-group :title="$t('common.ack')">
+        <field-switcher
+          v-model="form.parameters.isAckNoteRequired"
           :title="$t('settings.isAckNoteRequired')"
-        )
-        v-divider
-        field-switcher(
-          v-model="form.parameters.isMultiAckEnabled",
+        />
+        <field-switcher
+          v-model="form.parameters.isMultiAckEnabled"
           :title="$t('settings.isMultiAckEnabled')"
-        )
-        v-divider
-        field-fast-action-output(
-          v-model="form.parameters.fastAckOutput",
+        />
+        <field-fast-action-output
+          v-model="form.parameters.fastAckOutput"
           :label="$t('settings.fastAckOutput')"
-        )
-      v-divider
-      widget-settings-group(:title="$t('common.cancel')")
-        field-fast-action-output(
-          v-model="form.parameters.fastCancelOutput",
+        />
+      </widget-settings-group>
+      <widget-settings-group :title="$t('common.cancel')">
+        <field-fast-action-output
+          v-model="form.parameters.fastCancelOutput"
           :label="$t('settings.fastCancelOutput')"
-        )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isSnoozeNoteRequired",
+        />
+      </widget-settings-group>
+      <field-switcher
+        v-model="form.parameters.isSnoozeNoteRequired"
         :title="$t('settings.isSnoozeNoteRequired')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired",
+      />
+      <field-switcher
+        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired"
         :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isUncancelAlarmsCommentRequired",
+      />
+      <field-switcher
+        v-model="form.parameters.isUncancelAlarmsCommentRequired"
         :title="$t('settings.isUncancelAlarmsCommentRequired')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isMultiDeclareTicketEnabled",
+      />
+      <field-switcher
+        v-model="form.parameters.isMultiDeclareTicketEnabled"
         :title="$t('settings.isMultiDeclareTicketEnabled')"
-      )
-      v-divider
-      export-csv-form(
-        v-model="form.parameters",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :variables="columnsVariables",
-        datetime-format,
-        with-instructions,
-        with-simple-template,
+      />
+      <export-csv-form
+        v-model="form.parameters"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :variables="columnsVariables"
+        datetime-format
+        with-instructions
+        with-simple-template
         optional-infos-attributes
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.sticky_header",
+      />
+      <field-switcher
+        v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
-      )
-      v-divider
-      widget-settings-group(:title="$t('settings.kioskMode')")
-        field-switcher(
-          v-model="form.parameters.kiosk.hideActions",
+      />
+      <widget-settings-group :title="$t('settings.kioskMode')">
+        <field-switcher
+          v-model="form.parameters.kiosk.hideActions"
           :title="$t('settings.kiosk.hideActions')"
-        )
-        v-divider
-        field-switcher(
-          v-model="form.parameters.kiosk.hideMassSelection",
+        />
+        <field-switcher
+          v-model="form.parameters.kiosk.hideMassSelection"
           :title="$t('settings.kiosk.hideMassSelection')"
-        )
-        v-divider
-        field-switcher(
-          v-model="form.parameters.kiosk.hideToolbar",
+        />
+        <field-switcher
+          v-model="form.parameters.kiosk.hideToolbar"
           :title="$t('settings.kiosk.hideToolbar')"
-        )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isActionsAllowWithOkState",
+        />
+      </widget-settings-group>
+      <field-switcher
+        v-model="form.parameters.isActionsAllowWithOkState"
         :title="$t('settings.isActionsAllowWithOkState')"
-      )
-    v-divider
-    charts-form(v-model="form.parameters.charts")
-    v-divider
+      />
+    </widget-settings-group>
+    <charts-form v-model="form.parameters.charts" />
+  </widget-settings>
 </template>
 
 <script>
@@ -227,17 +206,16 @@ import WidgetSettings from '../partials/widget-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
 import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
 import FieldColumns from '../form/fields/columns.vue';
-import FieldTextEditor from '../form/fields/text-editor.vue';
 import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-page.vue';
 import FieldFilters from '../form/fields/filters.vue';
 import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
-import FieldNumber from '../form/fields/number.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
-import FieldGridRangeSize from './form/fields/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
 import FieldDensity from './form/fields/density.vue';
 import FieldLiveReporting from './form/fields/live-reporting.vue';
@@ -252,6 +230,7 @@ import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue'
 export default {
   name: SIDE_BARS.alarmSettings,
   components: {
+    FieldRootCauseSettings,
     WidgetSettingsGroup,
     WidgetSettings,
     FieldTitle,
@@ -262,7 +241,6 @@ export default {
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,
     FieldFilters,
-    FieldTextEditor,
     FieldTextEditorWithTemplate,
     FieldSwitcher,
     FieldFastActionOutput,
@@ -270,7 +248,6 @@ export default {
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
     FieldDensity,
-    FieldNumber,
     ExportCsvForm,
     ChartsForm,
     FieldResizeColumnBehavior,

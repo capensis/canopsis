@@ -1,5 +1,8 @@
+import { registerCustomProtocol } from 'linkifyjs';
 import linkifyHtmlLib from 'linkify-html';
 import sanitizeHtmlLib from 'sanitize-html';
+
+import { LINKIFY_PROTOCOLS } from '@/config';
 
 const DEFAULT_SANITIZE_OPTIONS = {
   allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat([
@@ -10,6 +13,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-copy-wrapper', 'c-links-list', 'service-entities-list',
+    'v-icon',
   ]),
   allowedAttributes: {
     '*': [
@@ -19,20 +23,33 @@ const DEFAULT_SANITIZE_OPTIONS = {
     a: ['href', 'name', 'target'],
     img: ['src', 'alt'],
     font: ['color', 'size', 'face'],
+    marquee: ['direction'],
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
-    'c-alarm-tags-chips': [':alarm', 'inline-count', '@select'],
+    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
+    'v-icon': [
+      'color', 'dark', 'dense', 'disabled', 'large', 'light', 'right', 'size', 'small', 'tag', 'x-large', 'x-small',
+    ],
     'service-entities-list': [
-      ':service', ':service-entities', ':widget-parameters', ':pagination', ':total-items', 'entity-name-field',
-      '@refresh', '@update:pagination',
+      ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',
+      'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
   },
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
 };
 
-const DEFAULT_LINKIFY_OPTIONS = { target: '_blank' };
+const DEFAULT_LINKIFY_OPTIONS = {
+  target: '_blank',
+  ignoreTags: ['script', 'style'],
+  validate: (str, type, token) => token.hasProtocol(),
+};
+
+/**
+ * Register custom protocols for linkify
+ */
+LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
 
 /**
  * Sanitize HTML document

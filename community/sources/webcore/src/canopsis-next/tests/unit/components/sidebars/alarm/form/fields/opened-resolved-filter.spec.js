@@ -31,23 +31,16 @@ describe('opened-resolved-filter', () => {
         },
       });
 
-      const radioElement = selectRadioElementsByValue(wrapper, value);
+      selectRadioElementsByValue(wrapper, value).trigger('change');
 
-      radioElement.trigger('change');
-
-      const inputEvents = wrapper.emitted('input');
-
-      expect(inputEvents).toHaveLength(1);
-
-      const [eventData] = inputEvents[0];
-      expect(eventData).toBe(value);
+      expect(wrapper).toEmitInput(value);
     },
   );
 
   it('Renders `opened-resolved-filter` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `opened-resolved-filter` with custom props', () => {
@@ -57,6 +50,6 @@ describe('opened-resolved-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -5,6 +5,7 @@ import (
 	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
@@ -37,8 +38,11 @@ type MetaAlarmState struct {
 	ParentsEntityIDs  []string `bson:"parents_entity_ids"`
 	ParentsTimestamps []int64  `bson:"parents_timestamps"`
 
-	// CreatedAt should be set only for archive state, time.Time for ttl index.
-	CreatedAt time.Time `bson:"created_at,omitempty"`
+	// ExpiredAt is used to remove expired state.
+	// Type should be time.Time for ttl index.
+	ExpiredAt time.Time `bson:"expired_at,omitempty"`
+
+	ChildInactiveExpireAt *datetime.CpsTime `bson:"child_inactive_expire_at,omitempty"`
 }
 
 func (s *MetaAlarmState) Reset(id string) {
@@ -54,6 +58,17 @@ func (s *MetaAlarmState) Reset(id string) {
 	}
 }
 
+func (s *MetaAlarmState) ResetExpireAt(timeIntervalInSeconds int64) {
+	s.ExpiredAt = time.Now().Add(time.Duration(timeIntervalInSeconds) * time.Second)
+}
+
+func (s *MetaAlarmState) ResetChildInactiveExpireAt(childInactiveDelay *datetime.DurationWithUnit) {
+	if childInactiveDelay != nil && childInactiveDelay.Value > 0 {
+		childInactiveExpireAt := childInactiveDelay.AddTo(datetime.NewCpsTime())
+		s.ChildInactiveExpireAt = &childInactiveExpireAt
+	}
+}
+
 func (s *MetaAlarmState) IsOutdated(alarmLastUpdate, timeInterval int64) bool {
 	openTime := s.GetParentOpenTime()
 	childOpenTime := s.GetChildrenOpenTime()
@@ -64,7 +79,7 @@ func (s *MetaAlarmState) IsOutdated(alarmLastUpdate, timeInterval int64) bool {
 	return s.ID == "" || alarmLastUpdate > openTime+timeInterval && s.State != Opened
 }
 
-func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInterval int64) {
+func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInterval int64) []string {
 	for idx, v := range s.ChildrenEntityIDs {
 		if v == entityID {
 			s.ChildrenTimestamps = append(s.ChildrenTimestamps[:idx], s.ChildrenTimestamps[idx+1:]...)
@@ -79,7 +94,7 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 		s.ChildrenTimestamps = []int64{timestamp}
 		s.ChildrenEntityIDs = []string{entityID}
 
-		return
+		return nil
 	}
 
 	// times is always sorted, so the 0 element is always open timestamp
@@ -89,14 +104,14 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 	if timestamp < openTimestamp {
 		//check if interval can be shifted, if any alarm in the Group will be lost => then we cannot shift time
 		if s.ChildrenTimestamps[len(s.ChildrenTimestamps)-1] > timestamp+ruleTimeInterval {
-			return
+			return nil
 		}
 
 		// Push to front, because it's new minimal value
 		s.ChildrenTimestamps = append([]int64{timestamp}, s.ChildrenTimestamps...)
 		s.ChildrenEntityIDs = append([]string{entityID}, s.ChildrenEntityIDs...)
 
-		return
+		return nil
 	}
 
 	newAlarmRuleStartTime := timestamp - ruleTimeInterval
@@ -105,11 +120,14 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 			return s.ChildrenTimestamps[i] >= newAlarmRuleStartTime
 		})
 
+		removedEntityIDs := make([]string, idx)
+		copy(removedEntityIDs, s.ChildrenEntityIDs[:idx])
+
 		//remove outdated from front, push to the end, because it's the oldest value
 		s.ChildrenTimestamps = append(s.ChildrenTimestamps[idx:], timestamp)
 		s.ChildrenEntityIDs = append(s.ChildrenEntityIDs[idx:], entityID)
 
-		return
+		return removedEntityIDs
 	}
 
 	//insert to insertIdx to keep sort
@@ -119,6 +137,8 @@ func (s *MetaAlarmState) PushChild(entityID string, timestamp int64, ruleTimeInt
 
 	s.ChildrenTimestamps = append(s.ChildrenTimestamps[:insertIdx], append([]int64{timestamp}, s.ChildrenTimestamps[insertIdx:]...)...)
 	s.ChildrenEntityIDs = append(s.ChildrenEntityIDs[:insertIdx], append([]string{entityID}, s.ChildrenEntityIDs[insertIdx:]...)...)
+
+	return nil
 }
 
 func (s *MetaAlarmState) PushParent(entityID string, timestamp int64, ruleTimeInterval int64) {

@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, EVENT_FILTER_TYPES, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
@@ -62,9 +63,9 @@ describe('event-filter-form', () => {
 
     const newId = Faker.datatype.string();
 
-    idField.vm.$emit('input', newId);
+    idField.triggerCustomEvent('input', newId);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       _id: newId,
     });
@@ -79,9 +80,9 @@ describe('event-filter-form', () => {
 
     const eventFilterTypeField = selectEventFilterTypeField(wrapper);
 
-    eventFilterTypeField.vm.$emit('input', EVENT_FILTER_TYPES.enrichment);
+    eventFilterTypeField.triggerCustomEvent('input', EVENT_FILTER_TYPES.enrichment);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       type: EVENT_FILTER_TYPES.enrichment,
     });
@@ -98,9 +99,9 @@ describe('event-filter-form', () => {
 
     const description = Faker.datatype.string();
 
-    descriptionField.vm.$emit('input', description);
+    descriptionField.triggerCustomEvent('input', description);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       description,
     });
@@ -117,9 +118,9 @@ describe('event-filter-form', () => {
 
     const priority = Faker.datatype.string();
 
-    priorityField.vm.$emit('input', priority);
+    priorityField.triggerCustomEvent('input', priority);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       priority,
     });
@@ -140,9 +141,9 @@ describe('event-filter-form', () => {
 
     const newEnabled = !enabled;
 
-    enabledField.vm.$emit('input', newEnabled);
+    enabledField.triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       enabled: newEnabled,
     });
@@ -161,9 +162,9 @@ describe('event-filter-form', () => {
       id: Faker.datatype.string(),
     };
 
-    patternsField.vm.$emit('input', newPatterns);
+    patternsField.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       patterns: newPatterns,
     });
@@ -192,9 +193,9 @@ describe('event-filter-form', () => {
       connector_name: Faker.datatype.string(),
     };
 
-    eventFilterChangeEntityForm.vm.$emit('input', newConfig);
+    eventFilterChangeEntityForm.triggerCustomEvent('input', newConfig);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...changeEntityForm,
       config: newConfig,
     });
@@ -223,9 +224,9 @@ describe('event-filter-form', () => {
       external_data: [],
     };
 
-    eventFilterEnrichmentForm.vm.$emit('input', updatedForm);
+    eventFilterEnrichmentForm.triggerCustomEvent('input', updatedForm);
 
-    expect(wrapper).toEmit('input', updatedForm);
+    expect(wrapper).toEmitInput(updatedForm);
   });
 
   test('Drop intervals fields changed after trigger', () => {
@@ -243,15 +244,15 @@ describe('event-filter-form', () => {
       exceptions: [],
     };
 
-    eventFilterDropIntervalsField.vm.$emit('input', newData);
+    eventFilterDropIntervalsField.triggerCustomEvent('input', newData);
 
-    expect(wrapper).toEmit('input', newData);
+    expect(wrapper).toEmitInput(newData);
   });
 
   test('Renders `event-filter-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `event-filter-form` with custom props', () => {
@@ -261,7 +262,7 @@ describe('event-filter-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test.each(
@@ -276,6 +277,6 @@ describe('event-filter-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

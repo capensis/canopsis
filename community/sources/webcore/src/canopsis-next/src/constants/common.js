@@ -17,6 +17,8 @@ export const ROUTES_NAMES = {
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
   adminTags: 'admin-tags',
+  adminStorageSettings: 'admin-storage-settings',
+  adminStateSettings: 'admin-state-settings',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -53,6 +55,8 @@ export const ROUTES = {
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
   adminTags: '/admin/tags',
+  adminStorageSettings: '/admin/storage-settings',
+  adminStateSettings: '/admin/state-settings',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -155,19 +159,28 @@ export const QUICK_RANGES = {
     start: 'now-24h',
     stop: 'now',
   },
+  /**
+   * We've changed start from 'today-2d' to current to avoid problem with more bars on KPI
+   */
   last2Days: {
     value: 'last2Days',
-    start: 'today-2d',
+    start: 'today-1d',
     stop: 'today',
   },
+  /**
+   * We've changed start from 'today-7d' to current to avoid problem with more bars on KPI
+   */
   last7Days: {
     value: 'last7Days',
-    start: 'today-7d',
+    start: 'today-6d',
     stop: 'today',
   },
+  /**
+   * We've changed start from 'today-30d' to current to avoid problem with more bars on KPI
+   */
   last30Days: {
     value: 'last30Days',
-    start: 'today-30d',
+    start: 'today-29d',
     stop: 'today',
   },
   last1Year: {
@@ -262,6 +275,15 @@ export const METRICS_QUICK_RANGES = {
   [QUICK_RANGES.custom.value]: QUICK_RANGES.custom,
 };
 
+export const HEALTHCHECK_QUICK_RANGES = {
+  [QUICK_RANGES.last3Hour.value]: QUICK_RANGES.last3Hour,
+  [QUICK_RANGES.last6Hour.value]: QUICK_RANGES.last6Hour,
+  [QUICK_RANGES.last12Hour.value]: QUICK_RANGES.last12Hour,
+  [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
+
+  ...METRICS_QUICK_RANGES,
+};
+
 export const GRID_SIZES = {
   min: 0,
   max: 12,
@@ -288,6 +310,13 @@ export const PATTERNS_TYPES = {
 
 export const AUTH_METHODS = {
   local: 'local',
+};
+
+export const AUTH_SOURCES_WITH_PASSWORD_CHANGING = {
+  basic: '',
+  ldap: 'ldap',
+  cas: 'cas',
+  saml: 'saml',
 };
 
 export const ASSOCIATIVE_TABLES_NAMES = {

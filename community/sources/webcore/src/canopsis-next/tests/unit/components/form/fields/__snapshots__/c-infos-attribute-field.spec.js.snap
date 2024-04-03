@@ -8,30 +8,30 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
     class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active v-autocomplete"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="combobox"
         >
           <div
             class="v-select__slot"
           >
             <label
-              aria-hidden="true"
-              class="v-label v-label--active v-label--is-disabled theme--light"
+              class="v-label v-label--active v-label--is-disabled theme--light primary--text"
               style="left: 0px; position: absolute;"
             >
               Custom label
             </label>
             <input
-              aria-label="Custom label"
+              aria-activedescendant="list-item-66-0"
               autocomplete="off"
               disabled="disabled"
-              name="custom_filter_infos_attribute_name.dictionary"
-              role="combobox"
               type="text"
             />
             <div
@@ -42,12 +42,17 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon v-icon--disabled material-icons theme--light"
+                  class="v-icon notranslate v-icon--disabled material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              name="custom_filter_infos_attribute_name.dictionary"
+              type="hidden"
+              value="Test text"
+            />
           </div>
           <div
             class="v-menu"
@@ -73,21 +78,22 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
     class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--is-disabled theme--light"
-      role="combobox"
+      class="v-input v-input--is-disabled v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
           >
             <label
-              aria-hidden="true"
-              class="v-label v-label--is-disabled theme--light"
+              class="v-label v-label--active v-label--is-disabled theme--light primary--text"
               style="left: 0px; position: absolute;"
             >
               Custom label
@@ -96,11 +102,9 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               class="v-select__selections"
             >
               <input
-                aria-label="Custom label"
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 disabled="disabled"
-                name="custom_filter_infos_attribute_name.field"
                 readonly="readonly"
                 type="text"
               />
@@ -113,16 +117,25 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon v-icon--disabled material-icons theme--light"
+                  class="v-icon notranslate v-icon--disabled material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              name="custom_filter_infos_attribute_name.field"
+              type="hidden"
+              value="test"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <transition-stub
+              name="v-menu-transition"
+            />
+          </div>
         </div>
         <div
           class="v-text-field__details"
@@ -130,8 +143,10 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
           <div
             class="v-messages theme--light"
           >
-            <div
+            <transition-group-stub
               class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
             />
           </div>
         </div>
@@ -143,33 +158,28 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Test text
-            </div>
-          </div>
-        </a>
+          Test text
+        </div>
       </div>
     </div>
   </div>
@@ -184,30 +194,30 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
     class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active v-autocomplete"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="combobox"
         >
           <div
             class="v-select__slot"
           >
             <label
-              aria-hidden="true"
-              class="v-label v-label--active v-label--is-disabled theme--light"
+              class="v-label v-label--active v-label--is-disabled theme--light primary--text"
               style="left: 0px; position: absolute;"
             >
               Custom label
             </label>
             <input
-              aria-label="Custom label"
+              aria-activedescendant="list-item-89-0"
               autocomplete="off"
               disabled="disabled"
-              name="custom_filter_infos_attribute_name.dictionary"
-              role="combobox"
               type="text"
             />
             <div
@@ -218,12 +228,17 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon v-icon--disabled material-icons theme--light"
+                  class="v-icon notranslate v-icon--disabled material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              name="custom_filter_infos_attribute_name.dictionary"
+              type="hidden"
+              value="Test text"
+            />
           </div>
           <div
             class="v-menu"
@@ -249,21 +264,22 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
     class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--is-disabled theme--light"
-      role="combobox"
+      class="v-input v-input--is-disabled v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
           >
             <label
-              aria-hidden="true"
-              class="v-label v-label--is-disabled theme--light"
+              class="v-label v-label--active v-label--is-disabled theme--light primary--text"
               style="left: 0px; position: absolute;"
             >
               Custom label
@@ -272,11 +288,9 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               class="v-select__selections"
             >
               <input
-                aria-label="Custom label"
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 disabled="disabled"
-                name="custom_filter_infos_attribute_name.field"
                 readonly="readonly"
                 type="text"
               />
@@ -289,16 +303,25 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon v-icon--disabled material-icons theme--light"
+                  class="v-icon notranslate v-icon--disabled material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              name="custom_filter_infos_attribute_name.field"
+              type="hidden"
+              value="test"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <transition-stub
+              name="v-menu-transition"
+            />
+          </div>
         </div>
         <div
           class="v-text-field__details"
@@ -306,8 +329,10 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
           <div
             class="v-messages theme--light"
           >
-            <div
+            <transition-group-stub
               class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
             />
           </div>
         </div>
@@ -319,33 +344,28 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 4`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Test text
-            </div>
-          </div>
-        </a>
+          Test text
+        </div>
       </div>
     </div>
   </div>
@@ -360,7 +380,7 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
     class="flex"
   >
     <div
-      class="v-input v-text-field theme--light"
+      class="v-input theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -372,207 +392,16 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: absolute;"
             >
               Dictionary
             </label>
             <input
-              aria-label="Dictionary"
               name="infos.dictionary"
               type="text"
             />
           </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="flex"
-  >
-    <div
-      class="v-input v-text-field v-select v-input--is-disabled theme--light"
-      role="combobox"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-select__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--is-disabled theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Field
-            </label>
-            <div
-              class="v-select__selections"
-            >
-              <input
-                aria-label="Field"
-                aria-readonly="false"
-                autocomplete="on"
-                disabled="disabled"
-                name="infos.field"
-                readonly="readonly"
-                type="text"
-              />
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--append"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-icon--disabled material-icons theme--light"
-                >
-                  arrow_drop_down
-                </i>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-menu"
-          />
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Name
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Value
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 1`] = `
-<div
-  class="layout"
->
-  <div
-    class="flex"
-  >
-    <div
-      class="v-input v-text-field v-select v-autocomplete theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-select__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Dictionary
-            </label>
-            <input
-              aria-label="Dictionary"
-              autocomplete="off"
-              name="infos.dictionary"
-              role="combobox"
-              type="text"
-            />
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--append"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  arrow_drop_down
-                </i>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-menu"
-          />
         </div>
         <div
           class="v-text-field__details"
@@ -594,21 +423,22 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
     class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--is-disabled theme--light"
-      role="combobox"
+      class="v-input v-input--is-disabled v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
           >
             <label
-              aria-hidden="true"
-              class="v-label v-label--is-disabled theme--light"
+              class="v-label v-label--active v-label--is-disabled theme--light primary--text"
               style="left: 0px; position: absolute;"
             >
               Field
@@ -617,11 +447,9 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               class="v-select__selections"
             >
               <input
-                aria-label="Field"
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 disabled="disabled"
-                name="infos.field"
                 readonly="readonly"
                 type="text"
               />
@@ -634,12 +462,140 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon v-icon--disabled material-icons theme--light"
+                  class="v-icon notranslate v-icon--disabled material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              name="infos.field"
+              type="hidden"
+            />
+          </div>
+          <div
+            class="v-menu"
+          >
+            <transition-stub
+              name="v-menu-transition"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
+  >
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          Name
+        </div>
+      </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          Value
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="flex"
+  >
+    <div
+      class="v-input v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active v-autocomplete primary--text"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
+          class="v-input__slot"
+          role="combobox"
+        >
+          <div
+            class="v-select__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light primary--text"
+              style="left: 0px; position: absolute;"
+            >
+              Dictionary
+            </label>
+            <input
+              autocomplete="off"
+              type="text"
+            />
+            <div
+              class="v-input__append-inner"
+            >
+              <div
+                class="v-input__icon v-input__icon--append"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light primary--text"
+                >
+                  arrow_drop_down
+                </i>
+              </div>
+            </div>
+            <input
+              name="infos.dictionary"
+              type="hidden"
+            />
           </div>
           <div
             class="v-menu"
@@ -649,10 +605,90 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
           class="v-text-field__details"
         >
           <div
+            class="v-messages theme--light primary--text"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex"
+  >
+    <div
+      class="v-input v-input--is-disabled v-input--is-focused theme--light v-text-field v-select v-select--is-menu-active"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          aria-expanded="true"
+          aria-haspopup="listbox"
+          class="v-input__slot"
+          role="button"
+        >
+          <div
+            class="v-select__slot"
+          >
+            <label
+              class="v-label v-label--active v-label--is-disabled theme--light primary--text"
+              style="left: 0px; position: absolute;"
+            >
+              Field
+            </label>
+            <div
+              class="v-select__selections"
+            >
+              <input
+                aria-readonly="false"
+                autocomplete="off"
+                disabled="disabled"
+                readonly="readonly"
+                type="text"
+              />
+            </div>
+            <div
+              class="v-input__append-inner"
+            >
+              <div
+                class="v-input__icon v-input__icon--append"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-icon--disabled material-icons theme--light"
+                >
+                  arrow_drop_down
+                </i>
+              </div>
+            </div>
+            <input
+              name="infos.field"
+              type="hidden"
+            />
+          </div>
+          <div
+            class="v-menu"
+          >
+            <transition-stub
+              name="v-menu-transition"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
             class="v-messages theme--light"
           >
-            <div
+            <transition-group-stub
               class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
             />
           </div>
         </div>
@@ -664,31 +700,25 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
 
 exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 2`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      class="v-list-item theme--light"
+      tabindex="-1"
     >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
         <div
-          class="v-list__tile theme--light"
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No data available
-            </div>
-          </div>
+          No data available
         </div>
       </div>
     </div>

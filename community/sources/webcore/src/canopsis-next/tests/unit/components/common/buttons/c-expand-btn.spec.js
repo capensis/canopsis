@@ -22,33 +22,23 @@ describe('c-expand-btn', () => {
   it('Expand button expand is worked.', () => {
     const wrapper = factory({ propsData: { expanded: false } });
 
-    const buttonElement = wrapper.find('button.v-btn');
+    wrapper.find('button.v-btn').trigger('click');
 
-    buttonElement.trigger('click');
-
-    const expandEvents = wrapper.emitted('expand');
-
-    expect(expandEvents).toHaveLength(1);
-    expect(expandEvents[0]).toEqual([true]);
+    expect(wrapper).toEmit('expand', true);
   });
 
   it('Expand button collapse is worked.', () => {
     const wrapper = factory({ propsData: { expanded: true } });
 
-    const buttonElement = wrapper.find('button.v-btn');
+    wrapper.find('button.v-btn').trigger('click');
 
-    buttonElement.trigger('click');
-
-    const expandEvents = wrapper.emitted('expand');
-
-    expect(expandEvents).toHaveLength(1);
-    expect(expandEvents[0]).toEqual([false]);
+    expect(wrapper).toEmit('expand', false);
   });
 
   it('Renders `c-expand-btn` correctly.', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-expand-btn` expanded correctly.', () => {
@@ -56,7 +46,7 @@ describe('c-expand-btn', () => {
       propsData: { expanded: true },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-expand-btn` with custom color correctly.', () => {
@@ -64,6 +54,6 @@ describe('c-expand-btn', () => {
       propsData: { color: 'custom-color' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

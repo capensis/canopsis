@@ -1,4 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import AlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';
@@ -25,9 +26,9 @@ describe('alarm-metric-presets', () => {
       metric: ALARM_METRIC_PARAMETERS.ackActiveAlarms,
     }];
 
-    selectAlarmMetricPresetsField(wrapper).vm.$emit('input', newValue);
+    selectAlarmMetricPresetsField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `alarm-metric-presets` with default props', () => {
@@ -37,7 +38,7 @@ describe('alarm-metric-presets', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm-metric-presets` with custom props', () => {
@@ -51,6 +52,6 @@ describe('alarm-metric-presets', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,25 +1,38 @@
-<template lang="pug">
-  v-layout(row, wrap, align-center)
-    remediation-instructions-filters-list(
-      :filters="lockedFilters",
-      :closable="editable",
+<template>
+  <v-layout
+    wrap
+    align-center
+  >
+    <remediation-instructions-filters-list
+      :filters="lockedFilters"
+      :closable="editable"
       @input="$listeners['update:lockedFilters']"
-    )
-    remediation-instructions-filters-list(
-      :filters="filters",
-      :editable="editable",
-      :closable="editable",
+    />
+    <remediation-instructions-filters-list
+      :filters="filters"
+      :editable="editable"
+      :closable="editable"
       @input="$listeners['update:filters']"
-    )
-    v-tooltip(v-if="addable", bottom)
-      template(#activator="{ on }")
-        v-btn.mx-1.my-0(
-          v-on="on",
-          icon,
+    />
+    <v-tooltip
+      v-if="addable"
+      bottom
+    >
+      <template #activator="{ on }">
+        <v-btn
+          class="mx-1 my-0"
+          icon
+          v-on="on"
           @click="showCreateFilterModal"
-        )
-          v-icon(:color="buttonIconColor") assignment
-      span {{ $t('remediation.instructionsFilter.button') }}
+        >
+          <v-icon :color="buttonIconColor">
+            assignment
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('remediation.instructionsFilter.button') }}</span>
+    </v-tooltip>
+  </v-layout>
 </template>
 
 <script>

@@ -1,13 +1,14 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import ClickOutside from '@/services/click-outside';
+
 import { ENTITIES_STATES } from '@/constants';
+
+import ClickOutside from '@/services/click-outside';
 
 import CreateManualMetaAlarm from '@/components/modals/alarm/create-manual-meta-alarm.vue';
 
@@ -129,7 +130,7 @@ describe('create-manual-meta-alarm', () => {
       auto_resolve: true,
     };
 
-    manualMetaAlarmForm.vm.$emit('input', newData);
+    manualMetaAlarmForm.triggerCustomEvent('input', newData);
 
     submitButton.trigger('click');
 
@@ -195,9 +196,7 @@ describe('create-manual-meta-alarm', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -220,6 +219,6 @@ describe('create-manual-meta-alarm', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

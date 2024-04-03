@@ -2,7 +2,7 @@
 
 exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` with custom props 1`] = `
 <div
-  class="layout row justify-space-between align-center"
+  class="layout justify-space-between align-center"
 >
   <label
     aria-hidden="true"
@@ -15,14 +15,16 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
     class="flex xs3"
   >
     <div
-      class="v-input mt-0 pt-0 v-text-field v-select v-input--hide-details theme--light"
-      role="combobox"
+      class="v-input mt-0 pt-0 v-input--hide-details theme--light v-text-field v-select"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="false"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
@@ -32,7 +34,7 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
             >
               <input
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 readonly="readonly"
                 type="text"
               />
@@ -45,16 +47,22 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon notranslate material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              type="hidden"
+              value="line"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <!---->
+          </div>
         </div>
       </div>
     </div>
@@ -64,59 +72,54 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
 
 exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
     >
-      <div
-        role="listitem"
+      <svg
+        height="4"
+        width="50"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="4"
-            width="50"
-          >
-            <line
-              stroke="currentColor"
-              stroke-width="4"
-              x1="0"
-              x2="100%"
-              y1="0"
-              y2="0"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
+        <line
+          stroke="currentColor"
+          stroke-width="4"
+          x1="0"
+          x2="100%"
+          y1="0"
+          y2="0"
+        />
+      </svg>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <svg
+        height="4"
+        width="50"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="4"
-            width="50"
-          >
-            <line
-              stroke="currentColor"
-              stroke-dasharray="4 4"
-              stroke-width="4"
-              x1="0"
-              x2="100%"
-              y1="0"
-              y2="0"
-            />
-          </svg>
-        </a>
-      </div>
+        <line
+          stroke="currentColor"
+          stroke-dasharray="4 4"
+          stroke-width="4"
+          x1="0"
+          x2="100%"
+          y1="0"
+          y2="0"
+        />
+      </svg>
     </div>
   </div>
 </div>
@@ -124,27 +127,27 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
 
 exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` with default props 1`] = `
 <div
-  class="layout row justify-space-between align-center"
+  class="layout justify-space-between align-center"
 >
   <label
     aria-hidden="true"
     class="v-label theme--light"
     style="left: 0px; position: relative;"
-  >
-    
-  </label>
+  />
   <div
     class="flex xs3"
   >
     <div
-      class="v-input mt-0 pt-0 v-text-field v-select v-input--hide-details theme--light"
-      role="combobox"
+      class="v-input mt-0 pt-0 v-input--hide-details theme--light v-text-field v-select"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="false"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
@@ -154,7 +157,7 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
             >
               <input
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 readonly="readonly"
                 type="text"
               />
@@ -167,16 +170,21 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon notranslate material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              type="hidden"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <!---->
+          </div>
         </div>
       </div>
     </div>
@@ -186,59 +194,54 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
 
 exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
     >
-      <div
-        role="listitem"
+      <svg
+        height="4"
+        width="50"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="4"
-            width="50"
-          >
-            <line
-              stroke="currentColor"
-              stroke-width="4"
-              x1="0"
-              x2="100%"
-              y1="0"
-              y2="0"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
+        <line
+          stroke="currentColor"
+          stroke-width="4"
+          x1="0"
+          x2="100%"
+          y1="0"
+          y2="0"
+        />
+      </svg>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <svg
+        height="4"
+        width="50"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="4"
-            width="50"
-          >
-            <line
-              stroke="currentColor"
-              stroke-dasharray="4 4"
-              stroke-width="4"
-              x1="0"
-              x2="100%"
-              y1="0"
-              y2="0"
-            />
-          </svg>
-        </a>
-      </div>
+        <line
+          stroke="currentColor"
+          stroke-dasharray="4 4"
+          stroke-width="4"
+          x1="0"
+          x2="100%"
+          y1="0"
+          y2="0"
+        />
+      </svg>
     </div>
   </div>
 </div>

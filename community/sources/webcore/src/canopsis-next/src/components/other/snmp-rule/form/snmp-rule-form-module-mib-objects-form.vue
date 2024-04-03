@@ -1,47 +1,65 @@
-<template lang="pug">
-  div
-    snmp-rule-form-field(:label="label")
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-menu(
-          :items="items",
-          max-height="200",
-          full-width,
+<template>
+  <div>
+    <snmp-rule-form-field :label="label" />
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-menu
+          :items="items"
+          max-height="200"
           offset-y
-        )
-          template(#activator="{ on }")
-            v-text-field.vars-input.pt-0(
-              v-on="on",
-              v-field="form.value",
-              :label="$t('snmpRule.moduleMibObjects')",
+        >
+          <template #activator="{ on }">
+            <v-text-field
+              v-field="form.value"
+              :label="$t('snmpRule.moduleMibObjects')"
+              class="vars-input pt-0"
               hide-details
-            )
-              template(v-if="large", #append="")
-                v-btn(
-                  :class="{ active: isVisible }",
-                  icon,
+              v-on="on"
+            >
+              <template
+                v-if="large"
+                #append=""
+              >
+                <v-btn
+                  :class="{ active: isVisible }"
+                  icon
                   @click.stop="toggleVisibility"
-                )
-                  v-icon attach_file
-          v-list
-            v-list-tile(
-              v-for="(item, index) in items",
-              :key="index",
+                >
+                  <v-icon>attach_file</v-icon>
+                </v-btn>
+              </template>
+            </v-text-field>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
               @click="updateSelectableInput(item)"
-            )
-              v-list-tile-title {{ item }}
-      v-expand-transition(v-if="large")
-        v-flex(v-show="isVisible", xs12)
-          v-text-field(
-            v-field="form.regex",
-            :label="$t('snmpRule.regex')",
+            >
+              <v-list-item-title>{{ item }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-flex>
+      <v-expand-transition v-if="large">
+        <v-flex
+          v-show="isVisible"
+          xs12
+        >
+          <v-text-field
+            v-field="form.regex"
+            :label="$t('snmpRule.regex')"
             hide-details
-          )
-          v-text-field(
-            v-field="form.formatter",
-            :label="$t('snmpRule.formatter')",
+          />
+          <v-text-field
+            v-field="form.formatter"
+            :label="$t('snmpRule.formatter')"
             hide-details
-          )
+          />
+        </v-flex>
+      </v-expand-transition>
+    </v-layout>
+  </div>
 </template>
 
 <script>

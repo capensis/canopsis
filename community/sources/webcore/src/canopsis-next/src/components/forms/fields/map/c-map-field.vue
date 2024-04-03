@@ -1,18 +1,18 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="rules",
-    :items="items",
-    :label="label || $tc('common.map')",
-    :loading="pending",
-    :disabled="disabled",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :hide-details="hideDetails",
-    item-text="name",
-    item-value="_id",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="rules"
+    :items="items"
+    :label="label || $tc('common.map')"
+    :loading="pending"
+    :disabled="disabled"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :hide-details="hideDetails"
+    item-text="name"
+    item-value="_id"
     clearable
-  )
+  />
 </template>
 
 <script>

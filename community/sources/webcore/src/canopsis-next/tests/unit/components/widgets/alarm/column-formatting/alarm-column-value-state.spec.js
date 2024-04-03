@@ -1,4 +1,4 @@
-import { generateRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
@@ -8,8 +8,23 @@ const stubs = {
   'c-alarm-chip': true,
 };
 
+const selectAlarmChip = wrapper => wrapper.find('c-alarm-chip-stub');
+
 describe('alarm-column-value-state', () => {
   const snapshotFactory = generateRenderer(AlarmColumnValueState, { stubs });
+  const factory = generateShallowRenderer(AlarmColumnValueState, { stubs });
+
+  it('Click emitted after trigger click on chip', () => {
+    const wrapper = factory({
+      propsData: {
+        alarm: {},
+      },
+    });
+
+    selectAlarmChip(wrapper).triggerCustomEvent('click');
+
+    expect(wrapper).toHaveBeenEmit('click');
+  });
 
   it('Renders `alarm-column-value-state` with default props', () => {
     const wrapper = snapshotFactory({
@@ -18,7 +33,7 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value-state` with alarm state', () => {
@@ -36,7 +51,7 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value-state` with custom propertyKey', () => {
@@ -49,6 +64,6 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

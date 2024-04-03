@@ -4,30 +4,22 @@ exports[`login-form Renders \`login-form\` with custom props 1`] = `
 <div
   class="layout column"
 >
-  <div
-    class="flex mt-1"
-  >
-    <input
-      autofocus="autofocus"
-      class="v-text-field"
-      clearable="clearable"
-      color="primary"
-      error-messages=""
-      label="Username"
-      name="username"
-      outline="outline"
-    />
-  </div>
-  <div
-    class="flex"
-  >
-    <c-password-field-stub
-      clearable="clearable"
-      outline="outline"
-      required="required"
-      value="password"
-    />
-  </div>
+  <input
+    autofocus="autofocus"
+    class="v-text-field"
+    clearable=""
+    color="primary"
+    error-messages=""
+    label="Username"
+    name="username"
+    outlined=""
+  />
+  <c-password-field-stub
+    clearable=""
+    outlined=""
+    required=""
+    value="password"
+  />
 </div>
 `;
 
@@ -35,28 +27,20 @@ exports[`login-form Renders \`login-form\` with default props 1`] = `
 <div
   class="layout column"
 >
-  <div
-    class="flex mt-1"
-  >
-    <input
-      autofocus="autofocus"
-      class="v-text-field"
-      clearable="clearable"
-      color="primary"
-      error-messages=""
-      label="Username"
-      name="username"
-      outline="outline"
-    />
-  </div>
-  <div
-    class="flex"
-  >
-    <c-password-field-stub
-      clearable="clearable"
-      outline="outline"
-      required="required"
-    />
-  </div>
+  <input
+    autofocus="autofocus"
+    class="v-text-field"
+    clearable=""
+    color="primary"
+    error-messages=""
+    label="Username"
+    name="username"
+    outlined=""
+  />
+  <c-password-field-stub
+    clearable=""
+    outlined=""
+    required=""
+  />
 </div>
 `;

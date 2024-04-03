@@ -104,7 +104,7 @@ export default {
   link: 'Link | Links',
   stack: 'Stack',
   edition: 'Edition',
-  icon: 'Icon',
+  icon: 'Icon | Icons',
   fullscreen: 'Fullscreen',
   interval: 'Interval',
   status: 'Status',
@@ -287,6 +287,8 @@ export default {
   regexp: 'Regexp',
   archive: 'Archive',
   convertToCustomColumn: 'Convert column to custom',
+  event: 'Event | Events',
+  showMore: 'Show more ({current} of {total})',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -339,6 +341,15 @@ export default {
     saturday: 'Saturday',
     sunday: 'Sunday',
   },
+  shortWeekDays: {
+    monday: 'Mon',
+    tuesday: 'Tue',
+    wednesday: 'Wed',
+    thursday: 'Thu',
+    friday: 'Fri',
+    saturday: 'Sat',
+    sunday: 'Sun',
+  },
   months: {
     january: 'January',
     february: 'February',
@@ -352,6 +363,20 @@ export default {
     october: 'October',
     november: 'November',
     december: 'December',
+  },
+  shortMonths: {
+    january: 'Jan',
+    february: 'Feb',
+    march: 'Mar',
+    april: 'Apr',
+    may: 'May',
+    june: 'Jun',
+    july: 'Jul',
+    august: 'Aug',
+    september: 'Sep',
+    october: 'Oct',
+    november: 'Nov',
+    december: 'Dec',
   },
   stateTypes: {
     [ENTITIES_STATES.ok]: 'Ok',
@@ -413,6 +438,9 @@ export default {
 
     [PATTERN_OPERATORS.activated]: 'Activated',
     [PATTERN_OPERATORS.inactive]: 'Inactive',
+
+    [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
+    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
   },
@@ -531,5 +559,15 @@ export default {
       + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
       + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
       + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+  },
+
+  fileSelector: {
+    dragAndDrop: {
+      label: 'Drag&drop to upload',
+      labelAction: 'or browse',
+    },
+    fileTypes: {
+      svg: 'SVG file',
+    },
   },
 };

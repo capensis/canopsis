@@ -17,8 +17,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -57,7 +60,8 @@ func NewEngine(
 	periodicalLockClient := redis.NewLockClient(redisSession)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
-	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater, logger)
+	stateSettingsService := statesetting.NewService(mongoClient, logger)
+	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), stateSettingsService, logger)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
@@ -178,21 +182,25 @@ func NewEngine(
 		return nil
 	})
 
+	eventProcessor := event.NewProcessorContainer()
+	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(mongoClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(mongoClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(mongoClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(mongoClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeMetaAlarm, event.NewMetaAlarmProcessor())
+
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,
-		DbClient:                 mongoClient,
-
-		AlarmConfigProvider: alarmConfigProvider,
-		EventFilterService:  eventFilterService,
-		ContextGraphManager: contextGraphManager,
-		TechMetricsSender:   techMetricsSender,
-		MetricsSender:       metricsSender,
-		AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
-		MetaUpdater:         metricsEntityMetaUpdater,
-		EntityCollection:    mongoClient.Collection(mongo.EntityMongoCollection),
-		Encoder:             json.NewEncoder(),
-		Decoder:             json.NewDecoder(),
-		Logger:              logger,
+		AlarmConfigProvider:      alarmConfigProvider,
+		TechMetricsSender:        techMetricsSender,
+		MetricsSender:            metricsSender,
+		AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
+		MetaUpdater:              metricsEntityMetaUpdater,
+		EntityCollection:         mongoClient.Collection(mongo.EntityMongoCollection),
+		EventProcessorContainer:  eventProcessor,
+		Encoder:                  json.NewEncoder(),
+		Decoder:                  json.NewDecoder(),
+		Logger:                   logger,
 	}
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheConsumerName,
@@ -209,18 +217,18 @@ func NewEngine(
 		mainMessageProcessor,
 		logger,
 	))
-	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engine.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventFilterService,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 		LoadRules:          !mongoClient.IsDistributed(),
 	})
-	engine.AddPeriodicalWorker("soft delete", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("soft_delete", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.CheSoftDeletePeriodicalLockKey,
 		&softDeletePeriodicalWorker{
 			entityCollection:          mongoClient.Collection(mongo.EntityMongoCollection),
-			serviceCountersCollection: mongoClient.Collection(mongo.EntityServiceCountersCollection),
+			serviceCountersCollection: mongoClient.Collection(mongo.EntityCountersCollection),
 			periodicalInterval:        options.PeriodicalWaitTime,
 			eventPublisher:            communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			softDeleteWaitTime:        options.SoftDeleteWaitTime,
@@ -228,8 +236,8 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
-	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("eventfilter_intervals", eventfilterIntervalsPeriodicalWorker)
+	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
@@ -240,7 +248,7 @@ func NewEngine(
 		templateConfigProvider,
 		dataStorageConfigProvider,
 	))
-	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("impacted_services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
@@ -250,7 +258,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
+	engine.AddPeriodicalWorker("entity_infos_dictionary", infosDictLockedPeriodicalWorker)
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
 			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventFilterService)
@@ -269,7 +277,21 @@ func NewEngine(
 				}
 			}
 		})
+		engine.AddRoutine(func(ctx context.Context) error {
+			w := statesetting.NewRulesChangesWatcher(mongoClient, stateSettingsService)
+
+			logger.Debug().Msg("Loading state settings rules")
+
+			err := w.Watch(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to state settings collection")
+				return err
+			}
+
+			return nil
+		})
 	}
+
 	engine.AddPeriodicalWorker("clean", &cleanPeriodicalWorker{
 		PeriodicalInterval:        time.Hour,
 		TimezoneConfigProvider:    timezoneConfigProvider,

@@ -1,48 +1,59 @@
-<template lang="pug">
-  v-layout.c-alarm-metric-preset-field(column)
-    c-alarm-external-metric-parameters-field(
-      v-if="preset.external || preset.auto",
-      :value="preset.metric",
-      :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')",
-      :addable="preset.auto",
-      :name="`${name}.metric`",
-      required,
+<template>
+  <v-layout
+    class="c-alarm-metric-preset-field"
+    column
+  >
+    <c-alarm-external-metric-parameters-field
+      v-if="preset.external || preset.auto"
+      :value="preset.metric"
+      :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')"
+      :addable="preset.auto"
+      :name="`${name}.metric`"
+      required
       @input="updateMetric"
-    )
-    c-alarm-metric-parameters-field(
-      v-else,
-      :value="preset.metric",
-      :label="$t('kpi.selectMetric')",
-      :parameters="parameters",
-      :disabled-parameters="disabledParameters",
-      :name="`${name}.metric`",
-      required,
+    />
+    <c-alarm-metric-parameters-field
+      v-else
+      :value="preset.metric"
+      :label="$t('kpi.selectMetric')"
+      :parameters="parameters"
+      :disabled-parameters="disabledParameters"
+      :name="`${name}.metric`"
+      required
       @input="updateMetric"
-    )
-    c-name-field(
-      v-if="!preset.auto && preset.metric && preset.external",
-      v-field="preset.label",
-      :label="$t('kpi.displayedLabel')",
+    />
+    <c-name-field
+      v-if="!preset.auto && preset.metric && preset.external"
+      v-field="preset.label"
+      :label="$t('kpi.displayedLabel')"
       :name="`${name}.label`"
-    )
-    template(v-if="preset.metric")
-      v-layout(v-if="withColor && !preset.auto", align-center, justify-space-between)
-        v-switch(
-          :label="$t('kpi.customColor')",
-          :input-value="!!preset.color",
-          color="primary",
+    />
+    <template v-if="preset.metric">
+      <v-layout
+        v-if="withColor && !preset.auto"
+        align-center
+        justify-space-between
+      >
+        <v-switch
+          :label="$t('kpi.customColor')"
+          :input-value="!!preset.color"
+          color="primary"
           @change="enableColor($event)"
-        )
-        c-color-picker-field.c-alarm-metric-preset-field__color-picker(
-          v-show="preset.color",
+        />
+        <c-color-picker-field
+          v-show="preset.color"
           v-field="preset.color"
-        )
-      c-alarm-metric-aggregate-function-field(
-        v-if="withAggregateFunction || isExternalMetric",
-        v-field="preset.aggregate_func",
-        :aggregate-functions="aggregateFunctions",
+          class="c-alarm-metric-preset-field__color-picker"
+        />
+      </v-layout>
+      <c-alarm-metric-aggregate-function-field
+        v-if="withAggregateFunction || isExternalMetric"
+        v-field="preset.aggregate_func"
+        :aggregate-functions="aggregateFunctions"
         :label="$t('kpi.calculationMethod')"
-      )
+      />
+    </template>
+  </v-layout>
 </template>
 
 <script>

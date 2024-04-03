@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createActiveViewModule,
   createAlarmModule,
@@ -14,6 +13,7 @@ import {
 } from '@unit/utils/store';
 import { randomArrayItem } from '@unit/utils/array';
 import { mockDateNow } from '@unit/utils/mock-hooks';
+
 import {
   AGGREGATE_FUNCTIONS,
   ALARM_METRIC_PARAMETERS,
@@ -177,7 +177,7 @@ describe('pie-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pie-chart-widget` with custom props', async () => {
@@ -196,6 +196,6 @@ describe('pie-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

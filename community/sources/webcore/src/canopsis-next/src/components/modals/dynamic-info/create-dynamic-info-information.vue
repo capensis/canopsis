@@ -1,26 +1,44 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createDynamicInfoInformation.create.title') }}
-      template(#text="")
-        div
-          v-text-field(
-            v-model="form.name",
-            v-validate="nameRules",
-            :label="$t('common.name')",
-            :error-messages="errors.collect('name')",
-            name="name"
-          )
-          c-mixed-field(
-            v-model="form.value",
-            :label="$t('common.value')",
-            name="value",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createDynamicInfoInformation.create.title') }}</span>
+      </template>
+      <template #text="">
+        <div>
+          <v-text-field
+            v-model="form.name"
+            v-validate="nameRules"
+            :label="$t('common.name')"
+            :error-messages="errors.collect('name')"
+            name
+          />
+          <c-mixed-field
+            v-model="form.value"
+            :label="$t('common.value')"
+            name="value"
             required
-          )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
+          />
+        </div>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          class="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

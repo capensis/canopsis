@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
@@ -70,12 +69,12 @@ describe('corporate-patterns', () => {
   });
 
   it('Filters fetched after change query', async () => {
-    const initialRowsPerPage = Faker.datatype.number();
+    const initialItemsPerPage = Faker.datatype.number();
     const wrapper = factory({
       data() {
         return {
           query: {
-            rowsPerPage: initialRowsPerPage,
+            itemsPerPage: initialItemsPerPage,
           },
         };
       },
@@ -89,11 +88,11 @@ describe('corporate-patterns', () => {
 
     const patternsListNode = selectPattersListNode(wrapper);
 
-    const rowsPerPage = Faker.datatype.number({ max: initialRowsPerPage });
+    const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    patternsListNode.$emit('update:pagination', {
-      rowsPerPage,
+    patternsListNode.$emit('update:options', {
+      itemsPerPage,
       page,
     });
 
@@ -104,7 +103,7 @@ describe('corporate-patterns', () => {
       expect.any(Object),
       {
         params: {
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           page,
         },
       },
@@ -178,7 +177,7 @@ describe('corporate-patterns', () => {
   it('Renders `corporate-patterns` without patterns', () => {
     const wrapper = snapshotFactory({ store, listeners });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `corporate-patterns` with patterns', () => {
@@ -196,6 +195,6 @@ describe('corporate-patterns', () => {
       listeners,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

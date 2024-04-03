@@ -1,30 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`v-data-table Renders \`v-data-table\` with custom headers 1`] = `
-<div>
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+>
   <div
-    class="v-table__overflow"
+    class="v-data-table__wrapper"
   >
-    <table
-      class="v-datatable v-table theme--light"
-    >
-      <thead>
-        <tr>
-          Custom headers{"headers":[],"indeterminate":false,"all":0}
-        </tr>
-        <tr
-          class="v-datatable__progress"
-        >
-          <th
-            class="column"
-            colspan="0"
-          />
-        </tr>
+    <table>
+      <colgroup />
+      <thead
+        class="v-data-table-header"
+      >
+        <tr />
       </thead>
       <tbody>
-        <tr>
+        <tr
+          class="v-data-table__empty-wrapper"
+        >
           <td
-            class="text-xs-center"
             colspan="0"
           >
             No data available
@@ -34,298 +28,142 @@ exports[`v-data-table Renders \`v-data-table\` with custom headers 1`] = `
     </table>
   </div>
   <div
-    class="v-datatable v-table theme--light"
+    class="v-data-footer"
   >
     <div
-      class="v-datatable__actions"
+      class="v-data-footer__select"
     >
+      Rows per page:
       <div
-        class="v-datatable__actions__select"
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
-        Rows per page:
         <div
-          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-input__control"
         >
           <div
-            class="v-input__control"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
           >
             <div
-              class="v-input__slot"
+              class="v-select__slot"
             >
               <div
-                class="v-select__slot"
+                class="v-select__selections"
               >
                 <div
-                  class="v-select__selections"
+                  class="v-select__selection v-select__selection--comma"
                 >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    5
-                  </div>
-                  <input
-                    aria-label="Rows per page:"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
+                  10
                 </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
               </div>
               <div
-                class="v-menu"
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
               />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
             </div>
           </div>
         </div>
-      </div>
-      <div
-        class="v-datatable__actions__range-controls"
-      >
-        <div
-          class="v-datatable__actions__pagination"
-        >
-          –
-        </div>
-        <button
-          aria-label="Previous page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_left
-            </i>
-          </div>
-        </button>
-        <button
-          aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_right
-            </i>
-          </div>
-        </button>
       </div>
     </div>
-  </div>
-</div>
-`;
-
-exports[`v-data-table Renders \`v-data-table\` with data and headers 1`] = `
-<div>
-  <div
-    class="v-table__overflow"
-  >
-    <table
-      class="v-datatable v-table theme--light"
-    >
-      <thead>
-        <tr>
-          <th
-            aria-label="Header 1: Sorted ascending. Activate to sort descending."
-            aria-sort="ascending"
-            class="column active asc sortable text-xs-left"
-            data-value="property1"
-            role="columnheader"
-            scope="col"
-            tabindex="0"
-          >
-            Header 1
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              arrow_upward
-            </i>
-          </th>
-          <th
-            aria-label="Header 2: Not sorted. Activate to sort ascending."
-            aria-sort="none"
-            class="column sortable text-xs-left"
-            data-value="property2"
-            role="columnheader"
-            scope="col"
-            tabindex="0"
-          >
-            Header 2
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              arrow_upward
-            </i>
-          </th>
-        </tr>
-        <tr
-          class="v-datatable__progress"
-        >
-          <th
-            class="column"
-            colspan="2"
-          />
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          Row{"item":{"property1":"Property 1","property2":"Property 2"},"index":0}
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div
-    class="v-datatable v-table theme--light"
-  >
     <div
-      class="v-datatable__actions"
+      class="v-data-footer__pagination"
     >
-      <div
-        class="v-datatable__actions__select"
+      –
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-        Rows per page:
-        <div
-          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+        <span
+          class="v-btn__content"
         >
-          <div
-            class="v-input__control"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
           >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    5
-                  </div>
-                  <input
-                    aria-label="Rows per page:"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="v-datatable__actions__range-controls"
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-        <div
-          class="v-datatable__actions__pagination"
+        <span
+          class="v-btn__content"
         >
-          1-1 of 1
-        </div>
-        <button
-          aria-label="Previous page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_left
-            </i>
-          </div>
-        </button>
-        <button
-          aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_right
-            </i>
-          </div>
-        </button>
-      </div>
+            chevron_right
+          </i>
+        </span>
+      </button>
     </div>
   </div>
 </div>
 `;
 
 exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
-<div>
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+  hideheaders="true"
+>
   <div
-    class="v-table__overflow"
+    class="v-data-table__wrapper"
   >
-    <table
-      class="v-datatable v-table theme--light"
-    >
+    <table>
+      <colgroup />
+      <thead
+        class="v-data-table-header"
+      >
+        <tr />
+      </thead>
       <tbody>
-        <tr>
+        <tr
+          class="v-data-table__empty-wrapper"
+        >
           <td
-            class="text-xs-center"
             colspan="0"
           >
             No data available
@@ -335,137 +173,557 @@ exports[`v-data-table Renders \`v-data-table\` with hidden headers 1`] = `
     </table>
   </div>
   <div
-    class="v-datatable v-table theme--light"
+    class="v-data-footer"
   >
     <div
-      class="v-datatable__actions"
+      class="v-data-footer__select"
     >
+      Rows per page:
       <div
-        class="v-datatable__actions__select"
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
-        Rows per page:
         <div
-          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-input__control"
         >
           <div
-            class="v-input__control"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
           >
             <div
-              class="v-input__slot"
+              class="v-select__slot"
             >
               <div
-                class="v-select__slot"
+                class="v-select__selections"
               >
                 <div
-                  class="v-select__selections"
+                  class="v-select__selection v-select__selection--comma"
                 >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    5
-                  </div>
-                  <input
-                    aria-label="Rows per page:"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
+                  10
                 </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
               </div>
               <div
-                class="v-menu"
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
               />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div
+      class="v-data-footer__pagination"
+    >
+      –
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+>
+  <div
+    class="v-data-table__wrapper"
+  >
+    <table>
+      <colgroup>
+        <col
+          class=""
+        />
+        <col
+          class=""
+        />
+      </colgroup>
+      <thead
+        class="v-data-table-header"
+      >
+        <tr>
+          <th
+            aria-label="Header 1: Not sorted. Activate to sort ascending."
+            aria-sort="none"
+            class="text-start sortable"
+            data-value="property1"
+            role="columnheader"
+            scope="col"
+          >
+            <div
+              class="layout align-center"
+            >
+              <span
+                class=""
+              >
+                Header 1
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </th>
+          <th
+            aria-label="Header 2: Not sorted. Activate to sort ascending."
+            aria-sort="none"
+            class="text-start sortable"
+            data-value="property2"
+            role="columnheader"
+            scope="col"
+          >
+            <div
+              class="layout align-center"
+            >
+              <span
+                class=""
+              >
+                Header 2
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class=""
+        >
+          <td
+            class="text-start"
+          >
+            Property 1
+          </td>
+          <td
+            class="text-start"
+          >
+            Property 2
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="v-data-footer"
+  >
+    <div
+      class="v-data-footer__select"
+    >
+      Rows per page:
       <div
-        class="v-datatable__actions__range-controls"
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
         <div
-          class="v-datatable__actions__pagination"
+          class="v-input__control"
         >
-          –
+          <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
+          >
+            <div
+              class="v-select__slot"
+            >
+              <div
+                class="v-select__selections"
+              >
+                <div
+                  class="v-select__selection v-select__selection--comma"
+                >
+                  10
+                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
+              </div>
+              <div
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
+              />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
+            </div>
+          </div>
         </div>
-        <button
-          aria-label="Previous page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_left
-            </i>
-          </div>
-        </button>
-        <button
-          aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_right
-            </i>
-          </div>
-        </button>
       </div>
+    </div>
+    <div
+      class="v-data-footer__pagination"
+    >
+      1-1 of 1
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis headers 1`] = `
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+>
+  <div
+    class="v-data-table__wrapper"
+  >
+    <table>
+      <colgroup>
+        <col
+          class=""
+        />
+        <col
+          class=""
+        />
+      </colgroup>
+      <thead
+        class="v-data-table-header"
+      >
+        <tr>
+          <th
+            aria-label="Header 1: Not sorted. Activate to sort ascending."
+            aria-sort="none"
+            class="text-start sortable"
+            data-value="property1"
+            role="columnheader"
+            scope="col"
+          >
+            <div
+              class="layout align-center"
+            >
+              <span
+                class="v-data-table-header-span--ellipsis"
+                title="Header 1"
+              >
+                Header 1
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </th>
+          <th
+            aria-label="Header 2: Not sorted. Activate to sort ascending."
+            aria-sort="none"
+            class="text-start sortable"
+            data-value="property2"
+            role="columnheader"
+            scope="col"
+          >
+            <div
+              class="layout align-center"
+            >
+              <span
+                class="v-data-table-header-span--ellipsis"
+                title="Header 2"
+              >
+                Header 2
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class=""
+        >
+          <td
+            class="text-start"
+          >
+            Property 1
+          </td>
+          <td
+            class="text-start"
+          >
+            Property 2
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="v-data-footer"
+  >
+    <div
+      class="v-data-footer__select"
+    >
+      Rows per page:
+      <div
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
+          >
+            <div
+              class="v-select__slot"
+            >
+              <div
+                class="v-select__selections"
+              >
+                <div
+                  class="v-select__selection v-select__selection--comma"
+                >
+                  10
+                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
+              </div>
+              <div
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
+              />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-data-footer__pagination"
+    >
+      1-1 of 1
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            chevron_right
+          </i>
+        </span>
+      </button>
     </div>
   </div>
 </div>
 `;
 
 exports[`v-data-table Renders \`v-data-table\` with required props 1`] = `
-<div>
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+>
   <div
-    class="v-table__overflow"
+    class="v-data-table__wrapper"
   >
-    <table
-      class="v-datatable v-table theme--light"
-    >
-      <thead>
+    <table>
+      <colgroup />
+      <thead
+        class="v-data-table-header"
+      >
         <tr />
-        <tr
-          class="v-datatable__progress"
-        >
-          <th
-            class="column"
-            colspan="0"
-          />
-        </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr
+          class="v-data-table__empty-wrapper"
+        >
           <td
-            class="text-xs-center"
             colspan="0"
           >
             No data available
@@ -475,173 +733,143 @@ exports[`v-data-table Renders \`v-data-table\` with required props 1`] = `
     </table>
   </div>
   <div
-    class="v-datatable v-table theme--light"
+    class="v-data-footer"
   >
     <div
-      class="v-datatable__actions"
+      class="v-data-footer__select"
     >
+      Rows per page:
       <div
-        class="v-datatable__actions__select"
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
-        Rows per page:
         <div
-          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-input__control"
         >
           <div
-            class="v-input__control"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
           >
             <div
-              class="v-input__slot"
+              class="v-select__slot"
             >
               <div
-                class="v-select__slot"
+                class="v-select__selections"
               >
                 <div
-                  class="v-select__selections"
+                  class="v-select__selection v-select__selection--comma"
                 >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    5
-                  </div>
-                  <input
-                    aria-label="Rows per page:"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
+                  10
                 </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
               </div>
               <div
-                class="v-menu"
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
               />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
             </div>
           </div>
         </div>
       </div>
-      <div
-        class="v-datatable__actions__range-controls"
+    </div>
+    <div
+      class="v-data-footer__pagination"
+    >
+      –
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-        <div
-          class="v-datatable__actions__pagination"
+        <span
+          class="v-btn__content"
         >
-          –
-        </div>
-        <button
-          aria-label="Previous page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_left
-            </i>
-          </div>
-        </button>
-        <button
-          aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
         >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_right
-            </i>
-          </div>
-        </button>
-      </div>
+            chevron_right
+          </i>
+        </span>
+      </button>
     </div>
   </div>
 </div>
 `;
 
 exports[`v-data-table Renders \`v-data-table\` with select all 1`] = `
-<div>
+<div
+  class="v-data-table v-data-table--has-bottom theme--light"
+  selectall="true"
+>
   <div
-    class="v-table__overflow"
+    class="v-data-table__wrapper"
   >
-    <table
-      class="v-datatable v-table v-datatable--select-all theme--light"
-    >
-      <thead>
-        <tr>
-          <th>
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      disabled="disabled"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </th>
-        </tr>
-        <tr
-          class="v-datatable__progress"
-        >
-          <th
-            class="column"
-            colspan="1"
-          />
-        </tr>
+    <table>
+      <colgroup />
+      <thead
+        class="v-data-table-header"
+      >
+        <tr />
       </thead>
       <tbody>
-        <tr>
+        <tr
+          class="v-data-table__empty-wrapper"
+        >
           <td
-            class="text-xs-center"
-            colspan="1"
+            colspan="0"
           >
             No data available
           </td>
@@ -650,109 +878,117 @@ exports[`v-data-table Renders \`v-data-table\` with select all 1`] = `
     </table>
   </div>
   <div
-    class="v-datatable v-table v-datatable--select-all theme--light"
+    class="v-data-footer"
   >
     <div
-      class="v-datatable__actions"
+      class="v-data-footer__select"
     >
+      Rows per page:
       <div
-        class="v-datatable__actions__select"
+        class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
-        Rows per page:
         <div
-          class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-input__control"
         >
           <div
-            class="v-input__control"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="v-input__slot"
+            role="button"
           >
             <div
-              class="v-input__slot"
+              class="v-select__slot"
             >
               <div
-                class="v-select__slot"
+                class="v-select__selections"
               >
                 <div
-                  class="v-select__selections"
+                  class="v-select__selection v-select__selection--comma"
                 >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    5
-                  </div>
-                  <input
-                    aria-label="Rows per page:"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
+                  10
                 </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
+                <input
+                  aria-label="Rows per page:"
+                  aria-readonly="false"
+                  autocomplete="off"
+                  readonly="readonly"
+                  type="text"
+                />
               </div>
               <div
-                class="v-menu"
+                class="v-input__append-inner"
+              >
+                <div
+                  class="v-input__icon v-input__icon--append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    arrow_drop_down
+                  </i>
+                </div>
+              </div>
+              <input
+                type="hidden"
+                value="10"
               />
+            </div>
+            <div
+              class="v-menu"
+            >
+              <!---->
             </div>
           </div>
         </div>
       </div>
-      <div
-        class="v-datatable__actions__range-controls"
+    </div>
+    <div
+      class="v-data-footer__pagination"
+    >
+      –
+    </div>
+    <div
+      class="v-data-footer__icons-before"
+    >
+      <button
+        aria-label="Previous page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-        <div
-          class="v-datatable__actions__pagination"
+        <span
+          class="v-btn__content"
         >
-          –
-        </div>
-        <button
-          aria-label="Previous page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_left
-            </i>
-          </div>
-        </button>
-        <button
-          aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
+            chevron_left
+          </i>
+        </span>
+      </button>
+    </div>
+    <div
+      class="v-data-footer__icons-after"
+    >
+      <button
+        aria-label="Next page"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+        disabled="disabled"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
         >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              chevron_right
-            </i>
-          </div>
-        </button>
-      </div>
+            chevron_right
+          </i>
+        </span>
+      </button>
     </div>
   </div>
 </div>

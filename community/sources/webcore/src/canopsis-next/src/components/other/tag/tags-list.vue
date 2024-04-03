@@ -1,51 +1,64 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="tags",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    :is-disabled-item="isDisabledTag",
-    :is-expandable-item="isCreatedTag",
-    advanced-pagination,
-    expand,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-show="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="tags"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    :is-disabled-item="isDisabledTag"
+    :is-expandable-item="isCreatedTag"
+    advanced-pagination
+    expand
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-show="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#value="{ item }")
-      c-alarm-action-chip(:color="item.color") {{ item.value }}
-    template(#type="{ item }")
-      span {{ $t(`tag.types.${item.type}`) }}
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+      />
+    </template>
+    <template #value="{ item }">
+      <c-alarm-action-chip :color="item.color" class="px-2">
+        {{ item.value }}
+      </c-alarm-action-chip>
+    </template>
+    <template #type="{ item }">
+      <span>{{ $t(`tag.types.${item.type}`) }}</span>
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('tag.importedTag')",
-          :disabled="!item.deletable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          :tooltip="item.deletable ? $t('common.delete') : $t('tag.importedTag')"
+          :disabled="!item.deletable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      tags-list-expand-panel(:tag="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <tags-list-expand-panel :tag="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -68,7 +81,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

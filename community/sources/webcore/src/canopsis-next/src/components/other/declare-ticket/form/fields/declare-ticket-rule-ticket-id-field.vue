@@ -1,19 +1,22 @@
-<template lang="pug">
-  v-text-field.declare-ticket-rule-ticket-id-field(
-    v-field="value",
-    v-validate="rules",
-    :label="$t('declareTicket.ticketID')",
-    :error-messages="errors.collect(name)",
-    :name="name",
+<template>
+  <v-text-field
+    v-field="value"
+    v-validate="rules"
+    :label="$t('declareTicket.ticketID')"
+    :error-messages="errors.collect(name)"
+    :name="name"
     :disabled="disabled"
-  )
-    template(#append="")
-      c-help-icon(
-        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') })",
-        icon="help",
-        color="grey darken-1",
+    class="declare-ticket-rule-ticket-id-field"
+  >
+    <template #append="">
+      <c-help-icon
+        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') })"
+        icon="help"
+        color="grey darken-1"
         left
-      )
+      />
+    </template>
+  </v-text-field>
 </template>
 
 <script>

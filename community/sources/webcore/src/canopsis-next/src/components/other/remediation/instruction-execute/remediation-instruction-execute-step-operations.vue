@@ -1,19 +1,20 @@
-<template lang="pug">
-  v-layout(column)
-    remediation-instruction-execute-step-operation(
-      v-for="(operation, index) in operations",
-      :key="operation.operation_id",
-      :operation="operation",
-      :operation-number="getOperationNumber(index)",
-      :is-first-operation="!index",
-      :is-first-step="isFirstStep",
-      :next-pending="nextPending",
-      :previous-pending="previousPending",
-      @next="nextOperation(index)",
-      @previous="previousOperation",
-      @execute-job="executeJob",
+<template>
+  <v-layout column>
+    <remediation-instruction-execute-step-operation
+      v-for="(operation, index) in operations"
+      :key="operation.operation_id"
+      :operation="operation"
+      :operation-number="getOperationNumber(index)"
+      :is-first-operation="!index"
+      :is-first-step="isFirstStep"
+      :next-pending="nextPending"
+      :previous-pending="previousPending"
+      @next="nextOperation(index)"
+      @previous="previousOperation"
+      @execute-job="executeJob"
       @cancel-job-execution="cancelJobExecution"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

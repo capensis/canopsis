@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createQueryModule,
   createActiveViewModule,
@@ -205,7 +204,7 @@ describe('view-tab-widgets', () => {
       newHeightForThirdWidgetOnDesktop,
     );
 
-    gridLayoutElement.vm.$emit('input', newLayouts);
+    gridLayoutElement.triggerCustomEvent('input', newLayouts);
 
     await flushPromises();
     await wrapper.vm.updatePositions();
@@ -239,7 +238,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with editing mode', () => {
@@ -259,7 +258,7 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with widgets', () => {
@@ -273,7 +272,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(['m', 't', 'l', 'xl'])('Renders `view-tab-widgets` with widgets on \'%s\' window size', async (size) => {
@@ -296,7 +295,7 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with widgets with editing mode', () => {
@@ -316,6 +315,6 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

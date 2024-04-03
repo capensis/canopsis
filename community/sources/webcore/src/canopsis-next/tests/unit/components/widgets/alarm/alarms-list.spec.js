@@ -1,11 +1,11 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
+
 import { API_HOST, API_ROUTES } from '@/config';
 import {
   CANOPSIS_EDITION,
@@ -73,9 +73,9 @@ describe('alarms-list', () => {
   const $socket = mockSocket();
 
   const nowTimestamp = 1386435600000;
-  const nowSubtractOneYearUnix = 1354921200;
+  const nowSubtractOneYearUnix = 1354834800;
 
-  mockDateNow(nowTimestamp);
+  jest.useFakeTimers({ now: nowTimestamp });
 
   const totalItems = 10;
   const alarms = fakeStaticAlarms({
@@ -107,12 +107,15 @@ describe('alarms-list', () => {
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
   const defaultQuery = {
+    page: 1,
     filters: [],
+    sortBy: [],
+    sortDesc: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
-    limit: userPreferences.content.itemsPerPage,
+    itemsPerPage: userPreferences.content.itemsPerPage,
     tstart: QUICK_RANGES.last1Year.start,
     tstop: QUICK_RANGES.last1Year.stop,
     opened: null,
@@ -313,7 +316,6 @@ describe('alarms-list', () => {
           ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
-          multiSortBy: [],
           page: 1,
           with_instructions: true,
           with_declare_tickets: true,
@@ -346,7 +348,6 @@ describe('alarms-list', () => {
           ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
-          multiSortBy: [],
           page: 1,
           with_instructions: true,
           with_declare_tickets: true,
@@ -389,7 +390,7 @@ describe('alarms-list', () => {
 
     const correlationField = selectVSwitch(wrapper);
 
-    correlationField.vm.$emit('change', !userPreferences.content.isCorrelationEnabled);
+    correlationField.triggerCustomEvent('change', !userPreferences.content.isCorrelationEnabled);
 
     await flushPromises();
 
@@ -451,7 +452,7 @@ describe('alarms-list', () => {
 
     const filterByBookmarkField = selectVSwitch(wrapper);
 
-    filterByBookmarkField.vm.$emit('change', !userPreferences.content.onlyBookmarks);
+    filterByBookmarkField.triggerCustomEvent('change', !userPreferences.content.onlyBookmarks);
 
     await flushPromises();
 
@@ -519,7 +520,7 @@ describe('alarms-list', () => {
       filter: {},
     };
 
-    filterSelectorField.vm.$emit('input', selectedFilter._id);
+    filterSelectorField.triggerCustomEvent('input', selectedFilter._id);
 
     await flushPromises();
 
@@ -597,7 +598,7 @@ describe('alarms-list', () => {
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
-    instructionsFiltersField.vm.$emit('update:filters', newRemediationInstructionsFilters);
+    instructionsFiltersField.triggerCustomEvent('update:filters', newRemediationInstructionsFilters);
 
     await flushPromises();
 
@@ -622,7 +623,10 @@ describe('alarms-list', () => {
           instructions: [
             {
               exclude: [manualInstructionFilter.instructions[0]._id],
-              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.simpleManual],
+              exclude_types: [
+                REMEDIATION_INSTRUCTION_TYPES.manual,
+                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              ],
             },
             {
               exclude: [autoInstructionFilter.instructions[0]._id],
@@ -634,7 +638,11 @@ describe('alarms-list', () => {
                 allAndWithInstructionFilter.instructions[0]._id,
                 allAndWithInstructionFilter.instructions[1]._id,
               ],
-              include_types: [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual],
+              include_types: [
+                REMEDIATION_INSTRUCTION_TYPES.auto,
+                REMEDIATION_INSTRUCTION_TYPES.manual,
+                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              ],
               running: false,
             },
           ],
@@ -681,7 +689,7 @@ describe('alarms-list', () => {
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
-    instructionsFiltersField.vm.$emit('update:locked-filters', newRemediationInstructionsFilters);
+    instructionsFiltersField.triggerCustomEvent('update:locked-filters', newRemediationInstructionsFilters);
 
     await flushPromises();
 
@@ -730,7 +738,7 @@ describe('alarms-list', () => {
 
     const removeHistoryButton = selectRemoveHistoryButton(wrapper);
 
-    removeHistoryButton.vm.$emit('input');
+    removeHistoryButton.triggerCustomEvent('click:close');
 
     await flushPromises();
 
@@ -765,7 +773,7 @@ describe('alarms-list', () => {
 
     const liveReportingButton = selectLiveReportingButton(wrapper);
 
-    liveReportingButton.vm.$emit('click');
+    liveReportingButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -839,7 +847,7 @@ describe('alarms-list', () => {
       _id: Faker.datatype.string(),
     };
 
-    categoryField.vm.$emit('input', newCategory);
+    categoryField.triggerCustomEvent('input', newCategory);
 
     await flushPromises();
 
@@ -883,7 +891,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
 
     const newLimit = Faker.datatype.number();
-    selectAlarmsListTable(wrapper).vm.$emit('update:rows-per-page', newLimit);
+    selectAlarmsListTable(wrapper).triggerCustomEvent('update:items-per-page', newLimit);
 
     await flushPromises();
 
@@ -905,7 +913,9 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          limit: newLimit,
+
+          page: 1,
+          itemsPerPage: newLimit,
         },
       },
       undefined,
@@ -925,7 +935,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
 
     const newPage = Faker.datatype.number();
-    selectAlarmsListTable(wrapper).vm.$emit('update:page', newPage);
+    selectAlarmsListTable(wrapper).triggerCustomEvent('update:page', newPage);
 
     await flushPromises();
 
@@ -945,8 +955,6 @@ describe('alarms-list', () => {
   it('Widget exported after trigger export button', async () => {
     const originalWindowOpen = window.open;
     window.open = jest.fn();
-
-    jest.useFakeTimers('legacy');
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -978,7 +986,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(
       expect.any(Object),
@@ -995,6 +1003,7 @@ describe('alarms-list', () => {
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
+            template: undefined,
           })),
           separator: widget.parameters.exportCsvSeparator,
           time_format: widget.parameters.exportCsvDatetimeFormat,
@@ -1024,7 +1033,6 @@ describe('alarms-list', () => {
       '_blank',
     );
 
-    jest.useRealTimers();
     window.open = originalWindowOpen;
   });
 
@@ -1069,7 +1077,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1086,6 +1094,7 @@ describe('alarms-list', () => {
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
+            template: undefined,
           })),
           separator: widget.parameters.exportCsvSeparator,
           time_format: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
@@ -1135,7 +1144,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1152,6 +1161,7 @@ describe('alarms-list', () => {
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,
+            template: undefined,
           })),
           separator: widget.parameters.exportCsvSeparator,
           time_format: widget.parameters.exportCsvDatetimeFormat,
@@ -1167,7 +1177,6 @@ describe('alarms-list', () => {
   it('Widget exported after trigger export button with long request time', async () => {
     const originalWindowOpen = window.open;
     window.open = jest.fn();
-    jest.useFakeTimers('legacy');
 
     const longFetchAlarmsListExport = jest.fn()
       .mockReturnValueOnce({
@@ -1212,7 +1221,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1244,7 +1253,6 @@ describe('alarms-list', () => {
 
     expect(window.open).toHaveBeenCalled();
 
-    jest.useRealTimers();
     window.open = originalWindowOpen;
   });
 
@@ -1284,7 +1292,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1331,7 +1339,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1342,8 +1350,6 @@ describe('alarms-list', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: 'Failed to export alarms list in CSV format',
     });
-
-    jest.useRealTimers();
   });
 
   it('Error popup showed exported after trigger export button with failed status fetch export', async () => {
@@ -1384,7 +1390,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1395,8 +1401,6 @@ describe('alarms-list', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: 'Failed to export alarms list in CSV format',
     });
-
-    jest.useRealTimers();
   });
 
   it('Alarms not fetched after change query without columns', async () => {
@@ -1467,8 +1471,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1518,8 +1523,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1574,20 +1580,20 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
       },
       undefined,
     );
-
-    jest.useRealTimers();
   });
 
   it('Interval cleared after update periodic refresh', async () => {
-    jest.useFakeTimers('legacy');
+    jest.spyOn(global, 'setInterval');
+    jest.spyOn(global, 'clearInterval');
 
     const expanded = {};
     const wrapper = factory({
@@ -1638,12 +1644,11 @@ describe('alarms-list', () => {
       expect.any(Function),
       120000,
     );
-
-    jest.useRealTimers();
   });
 
   it('Interval cleared after destroy', async () => {
-    jest.useFakeTimers('legacy');
+    jest.spyOn(global, 'setInterval');
+    jest.spyOn(global, 'clearInterval');
 
     const expanded = {};
     const wrapper = factory({
@@ -1675,8 +1680,6 @@ describe('alarms-list', () => {
     wrapper.destroy();
 
     expect(clearInterval).toHaveBeenCalledTimes(1);
-
-    jest.useRealTimers();
   });
 
   it('Renders `alarms-list` with default props', async () => {
@@ -1689,7 +1692,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
@@ -1721,7 +1724,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list` with clear filter disabled props', async () => {
@@ -1770,6 +1773,6 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

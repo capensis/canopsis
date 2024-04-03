@@ -6,66 +6,73 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
 >
   <!---->
   <div
-    class="v-tabs"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-tabs__bar theme--light"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
-      <transition-stub
-        name="fade-transition"
-      />
       <div
-        class="v-tabs__wrapper"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs__container v-tabs__container--centered"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs__slider-wrapper"
+            class="v-tabs-slider-wrapper"
             style="transition: none;"
           >
             <div
-              class="v-tabs__slider primary"
+              class="v-tabs-slider primary"
             />
           </div>
-          <div
-            class="v-tabs__div"
+          <a
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            href="#simple"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item"
-              href="#simple"
-            >
-              Simple editor
-            </a>
-          </div>
-          <div
-            class="v-tabs__div"
+      Simple editor
+          </a>
+          <a
+            aria-selected="false"
+            class="v-tab"
+            href="#advanced"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item v-tabs__item--active"
-              href="#advanced"
-            >
-              Advanced editor
-            </a>
-          </div>
+      Advanced editor
+          </a>
         </div>
       </div>
-      <transition-stub
-        name="fade-transition"
-      />
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
     </div>
     <div
-      class="v-window"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
       <div
         class="v-window__container"
       >
         <transition-stub
-          name="v-window-x-transition"
+          name=""
         >
           <div
-            class="v-window-item"
-            style="display: none;"
+            class="v-window-item v-window-item--active"
+            id="simple"
           >
             <pattern-groups-field-stub
               attributes=""
@@ -76,50 +83,71 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
           </div>
         </transition-stub>
         <transition-stub
-          name="v-window-x-transition"
+          name=""
         >
-          <div
-            class="v-window-item"
-            style=""
-          >
-            <pattern-advanced-editor-field-stub
-              attributes=""
-              disabled="true"
-              name="patterns.json"
-              value=""
-            />
-          </div>
+          <!---->
         </transition-stub>
       </div>
     </div>
   </div>
   <div
-    class="layout row align-center justify-end"
+    class="layout align-center justify-end"
   >
     <!---->
     <!---->
   </div>
   <div
-    class="flex"
+    class="flex mt-2"
   >
-    <!---->
+    <transition-stub
+      class="pre-wrap"
+      name="fade-transition"
+    >
+      <div
+        class="v-alert v-sheet theme--dark error"
+        role="alert"
+        style="display: none;"
+      >
+        <div
+          class="v-alert__wrapper"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            warning
+          </i>
+          <div
+            class="v-alert__content"
+          >
+          </div>
+        </div>
+      </div>
+    </transition-stub>
     <transition-stub
       name="fade-transition"
     >
       <div
-        class="v-alert warning"
+        class="v-alert v-sheet theme--dark warning"
+        role="alert"
         style="display: none;"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light v-alert__icon"
+        <div
+          class="v-alert__wrapper"
         >
-          priority_high
-        </i>
-        <div>
-          <span>
-            The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
-          </span>
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            priority_high
+          </i>
+          <div
+            class="v-alert__content"
+          >
+            <span>
+              The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
+            </span>
+          </div>
         </div>
       </div>
     </transition-stub>
@@ -134,62 +162,69 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
   <c-pattern-field-stub
     class="mb-2"
     disabled="true"
-    required="required"
-    return-object="return-object"
+    required=""
+    return-object=""
     type="alarm"
     value="pattern-id"
   />
   <div
-    class="v-tabs"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-tabs__bar theme--light"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
-      <transition-stub
-        name="fade-transition"
-      />
       <div
-        class="v-tabs__wrapper"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs__container v-tabs__container--centered"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs__slider-wrapper"
+            class="v-tabs-slider-wrapper"
             style="transition: none;"
           >
             <div
-              class="v-tabs__slider primary"
+              class="v-tabs-slider primary"
             />
           </div>
-          <div
-            class="v-tabs__div"
+          <a
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            href="#simple"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item v-tabs__item--active"
-              href="#simple"
-            >
-              Simple editor
-            </a>
-          </div>
-          <div
-            class="v-tabs__div"
+      Simple editor
+          </a>
+          <a
+            aria-selected="false"
+            class="v-tab"
+            href="#advanced"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item"
-              href="#advanced"
-            >
-              Advanced editor
-            </a>
-          </div>
+      Advanced editor
+          </a>
         </div>
       </div>
-      <transition-stub
-        name="fade-transition"
-      />
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
     </div>
     <div
-      class="v-window"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
       <div
         class="v-window__container"
@@ -198,7 +233,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
           name=""
         >
           <div
-            class="v-window-item"
+            class="v-window-item v-window-item--active"
+            id="simple"
           >
             <pattern-groups-field-stub
               attributes="[object Object]"
@@ -215,10 +251,7 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
         <transition-stub
           name=""
         >
-          <div
-            class="v-window-item"
-            style="display: none;"
-          />
+          <!---->
         </transition-stub>
       </div>
     </div>
@@ -233,56 +266,63 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
 >
   <!---->
   <div
-    class="v-tabs"
+    class="v-tabs v-tabs--centered theme--light"
   >
     <div
-      class="v-tabs__bar theme--light"
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
     >
-      <transition-stub
-        name="fade-transition"
-      />
       <div
-        class="v-tabs__wrapper"
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
       >
         <div
-          class="v-tabs__container v-tabs__container--centered"
+          class="v-slide-group__content v-tabs-bar__content"
         >
           <div
-            class="v-tabs__slider-wrapper"
+            class="v-tabs-slider-wrapper"
             style="transition: none;"
           >
             <div
-              class="v-tabs__slider primary"
+              class="v-tabs-slider primary"
             />
           </div>
-          <div
-            class="v-tabs__div"
+          <a
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            href="#simple"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item v-tabs__item--active"
-              href="#simple"
-            >
-              Simple editor
-            </a>
-          </div>
-          <div
-            class="v-tabs__div"
+      Simple editor
+          </a>
+          <a
+            aria-selected="false"
+            class="v-tab"
+            href="#advanced"
+            role="tab"
+            tabindex="0"
           >
-            <a
-              class="v-tabs__item"
-              href="#advanced"
-            >
-              Advanced editor
-            </a>
-          </div>
+      Advanced editor
+          </a>
         </div>
       </div>
-      <transition-stub
-        name="fade-transition"
-      />
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
     </div>
     <div
-      class="v-window"
+      class="v-window v-item-group theme--light v-tabs-items"
     >
       <div
         class="v-window__container"
@@ -291,7 +331,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
           name=""
         >
           <div
-            class="v-window-item"
+            class="v-window-item v-window-item--active"
+            id="simple"
           >
             <pattern-groups-field-stub
               attributes=""
@@ -304,41 +345,69 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
         <transition-stub
           name=""
         >
-          <div
-            class="v-window-item"
-            style="display: none;"
-          />
+          <!---->
         </transition-stub>
       </div>
     </div>
   </div>
   <div
-    class="layout row align-center justify-end"
+    class="layout align-center justify-end"
   >
     <!---->
     <!---->
   </div>
   <div
-    class="flex"
+    class="flex mt-2"
   >
-    <!---->
+    <transition-stub
+      class="pre-wrap"
+      name="fade-transition"
+    >
+      <div
+        class="v-alert v-sheet theme--dark error"
+        role="alert"
+        style="display: none;"
+      >
+        <div
+          class="v-alert__wrapper"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            warning
+          </i>
+          <div
+            class="v-alert__content"
+          >
+          </div>
+        </div>
+      </div>
+    </transition-stub>
     <transition-stub
       name="fade-transition"
     >
       <div
-        class="v-alert warning"
+        class="v-alert v-sheet theme--dark warning"
+        role="alert"
         style="display: none;"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light v-alert__icon"
+        <div
+          class="v-alert__wrapper"
         >
-          priority_high
-        </i>
-        <div>
-          <span>
-            The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
-          </span>
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            priority_high
+          </i>
+          <div
+            class="v-alert__content"
+          >
+            <span>
+              The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
+            </span>
+          </div>
         </div>
       </div>
     </transition-stub>

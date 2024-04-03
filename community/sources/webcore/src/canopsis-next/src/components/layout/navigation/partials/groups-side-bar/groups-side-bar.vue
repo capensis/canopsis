@@ -1,53 +1,94 @@
-<template lang="pug">
-  div
-    v-navigation-drawer.side-bar.secondary(
-      v-model="isOpen",
-      :width="$config.SIDE_BAR_WIDTH",
-      :class="{ 'side-bar--editing': isNavigationEditingMode }",
-      :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal",
+<template>
+  <div>
+    <v-navigation-drawer
+      v-model="isOpen"
+      :width="$config.SIDE_BAR_WIDTH"
+      :class="{ 'side-bar--editing': isNavigationEditingMode }"
+      :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal"
+      class="side-bar secondary"
       app
-    )
-      div.side-bar__brand.ma-0.secondary.lighten-1
-        app-logo.logo
-        logged-users-count
-        app-version.version
-      section.side-bar__links
-        v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
-          v-progress-circular(color="primary", indeterminate)
-        c-draggable-list-field.groups-panel(
-          v-else,
-          v-model="mutatedGroups",
-          :class="{ 'groups-panel--ordering': isGroupsOrderChanged }",
-          :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-          :disabled="!isNavigationEditingMode",
-          draggable=".groups-panel__item--public",
-          component="v-expansion-panel"
-        )
-          groups-side-bar-group.groups-panel__item--public(
-            v-for="(group, index) in mutatedGroups",
-            :key="group._id",
-            :group.sync="mutatedGroups[index]",
+    >
+      <template #prepend>
+        <div class="side-bar__brand ma-0 secondary lighten-1">
+          <app-logo class="logo" />
+          <logged-users-count />
+          <app-version class="version" />
+        </div>
+      </template>
+      <section :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]">
+        <v-layout
+          v-if="!mutatedGroups.length && groupsPending"
+          class="pa-2"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <c-draggable-list-field
+          v-else
+          v-model="mutatedGroups"
+          :component-data="{ props: expansionPanelsProps }"
+          :disabled="!isNavigationEditingMode"
+          class="groups-panel"
+          draggable=".groups-panel__item--public"
+          component="v-expansion-panels"
+        >
+          <groups-side-bar-group
+            v-for="(group, index) in mutatedGroups"
+            :key="group._id"
+            :group.sync="mutatedGroups[index]"
             :is-groups-order-changed="isGroupsOrderChanged"
-          )
-          template(v-if="hasAccessToPrivateView", #footer="")
-            groups-side-bar-group(
-              v-for="privateGroup in privateGroups",
-              :key="privateGroup._id",
-              :group="privateGroup",
+            class="groups-panel__item--public"
+          />
+          <template
+            v-if="hasAccessToPrivateView"
+            #footer=""
+          >
+            <groups-side-bar-group
+              v-for="privateGroup in privateGroups"
+              :key="privateGroup._id"
+              :group="privateGroup"
               :is-groups-order-changed="isGroupsOrderChanged"
-            )
-        v-divider
-        groups-side-bar-playlists
-      groups-settings-button(
-        tooltip-right,
+            />
+          </template>
+        </c-draggable-list-field>
+        <v-divider />
+        <groups-side-bar-playlists />
+      </section>
+      <groups-settings-button
+        tooltip-right
         @toggleEditingMode="toggleNavigationEditingMode"
-      )
-      v-fade-transition
-        div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
-          v-btn.primary(@click="submit") {{ $t('common.submit') }}
-          v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
-    v-fade-transition
-      div.v-overlay.v-overlay--active.content-overlay(v-show="isGroupsOrderChanged")
+      />
+      <v-fade-transition>
+        <v-overlay
+          :value="isGroupsOrderChanged"
+          class="side-bar__overlay"
+        >
+          <v-btn
+            class="primary ma-2"
+            @click="submit"
+          >
+            {{ $t('common.submit') }}
+          </v-btn>
+          <v-btn
+            class="ma-2"
+            light
+            @click="resetMutatedGroups"
+          >
+            {{ $t('common.cancel') }}
+          </v-btn>
+        </v-overlay>
+      </v-fade-transition>
+    </v-navigation-drawer>
+    <v-fade-transition>
+      <v-overlay
+        :value="isGroupsOrderChanged"
+        z-index="8"
+      />
+    </v-fade-transition>
+  </div>
 </template>
 
 <script>
@@ -112,6 +153,16 @@ export default {
           this.$emit('input', value);
         }
       },
+    },
+
+    expansionPanelsProps() {
+      return {
+        multiple: true,
+        dark: true,
+        accordion: true,
+        flat: true,
+        tile: true,
+      };
     },
 
     privateGroups() {
@@ -183,23 +234,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .content-overlay {
-    z-index: 6;
-  }
-
   .groups-panel {
     position: relative;
     box-shadow: none;
-
-    &--ordering {
-      position: absolute;
-      z-index: 9;
-    }
+    transition: none;
   }
 
   .side-bar {
     position: fixed;
-    height: 100vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -218,9 +260,39 @@ export default {
       }
     }
 
+    .v-navigation-drawer__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+    }
+
+    &__brand {
+      max-height: 48px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0.5em 0;
+
+      & ::v-deep .logged-users-count {
+        right: 0;
+      }
+    }
+
     &__links {
       overflow: auto;
       padding-bottom: 100px;
+      width: 100%;
+
+      &--ordering {
+        position: absolute;
+        z-index: 9;
+      }
+    }
+
+    &__overlay {
+      align-items: flex-start;
+      justify-content: flex-start;
     }
 
     &--editing {

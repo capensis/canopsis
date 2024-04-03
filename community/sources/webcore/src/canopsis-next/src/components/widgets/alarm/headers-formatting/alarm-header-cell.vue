@@ -1,9 +1,11 @@
-<template lang="pug">
-  component(
-    v-on="component.on",
-    v-bind="component.bind",
+<template>
+  <component
+    v-bind="component.bind"
     :is="component.is"
-  ) {{ component.text }}
+    v-on="component.on"
+  >
+    {{ component.text }}
+  </component>
 </template>
 
 <script>
@@ -34,6 +36,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ellipsisHeaders: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     component() {
@@ -55,10 +61,14 @@ export default {
       };
 
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];
+      const bind = this.ellipsisHeaders
+        ? { class: 'v-data-table-header-span--ellipsis', title: this.header.text }
+        : { style: { 'white-space': 'normal' } };
 
       return {
         is: component || 'span',
         text: this.header.text,
+        bind,
       };
     },
   },

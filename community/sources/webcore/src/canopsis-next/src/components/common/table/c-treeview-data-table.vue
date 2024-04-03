@@ -1,38 +1,74 @@
-<template lang="pug">
-  v-sheet.treeview-data-table
-    v-layout(row)
-      div.treeview-data-table--tree.mr-4
-        v-treeview(
-          :open.sync="opened",
-          :items="items",
-          :item-children="itemChildren",
-          :item-key="itemKey",
-          :open-all="openAll",
-          :load-children="loadChildren",
-          :dark="dark",
+<template>
+  <v-sheet class="treeview-data-table">
+    <v-layout>
+      <div class="treeview-data-table--tree mr-4">
+        <v-treeview
+          :open.sync="opened"
+          :items="items"
+          :item-children="itemChildren"
+          :item-key="itemKey"
+          :open-all="openAll"
+          :load-children="loadChildren"
+          :dark="dark"
           :light="light"
-        )
-          template(#label="{ item }")
-            slot(name="expand", :item="item")
-              v-avatar.white--text(color="primary", size="32") {{ item | get(`${itemChildren}.length`, 0) }}
-            slot(name="expand-append", :item="item")
-      v-flex
-        v-data-table(
-          :headers="headers",
-          :items="openedItems",
-          :loading="loading",
-          :total-items="totalItems",
-          :header-text="headerText",
-          :item-key="itemKey",
-          :dark="dark",
-          :light="light",
-          hide-actions
-        )
-          template(#items="props")
-            slot(v-bind="props", name="items")
-              tr(:key="props.item[itemKey]")
-                td(v-for="header in headers", :key="header.value")
-                  slot(:name="header.value", v-bind="props") {{ props.item | get(header.value) }}
+        >
+          <template #label="{ item }">
+            <slot
+              :item="item"
+              name="expand"
+            >
+              <v-avatar
+                class="white--text"
+                color="primary"
+                size="32"
+              >
+                {{ item | get(`${itemChildren}.length`, 0) }}
+              </v-avatar>
+            </slot>
+            <slot
+              :item="item"
+              name="expand-append"
+            />
+          </template>
+        </v-treeview>
+      </div>
+      <v-flex>
+        <v-data-table
+          :headers="headers"
+          :items="openedItems"
+          :loading="loading"
+          :server-items-length="totalItems"
+          :header-text="headerText"
+          :item-key="itemKey"
+          :dark="dark"
+          :light="light"
+          loader-height="2"
+          hide-default-footer
+        >
+          <template #item="props">
+            <slot
+              v-bind="props"
+              name="items"
+            >
+              <tr :key="props.item[itemKey]">
+                <td
+                  v-for="header in headers"
+                  :key="header.value"
+                >
+                  <slot
+                    :name="header.value"
+                    v-bind="props"
+                  >
+                    {{ props.item | get(header.value) }}
+                  </slot>
+                </td>
+              </tr>
+            </slot>
+          </template>
+        </v-data-table>
+      </v-flex>
+    </v-layout>
+  </v-sheet>
 </template>
 
 <script>
@@ -116,6 +152,10 @@ export default {
         && this.isDependencyOpen(this.itemsById[item.parentKey], [...parentKeys, item.key])
       );
     },
+
+    clearOpened() {
+      this.opened = [];
+    },
   },
 };
 </script>
@@ -123,12 +163,6 @@ export default {
 <style lang="scss" scoped>
 .treeview-data-table {
   ::v-deep .v-treeview-node {
-    margin-left: 34px;
-
-    &--leaf {
-      margin-left: 58px;
-    }
-
     &__root {
       height: 48px;
     }
@@ -138,10 +172,6 @@ export default {
         padding-right: 0;
       }
     }
-  }
-
-  ::v-deep .v-treeview > .v-treeview-node {
-    margin-left: 0;
   }
 
   &--tree {

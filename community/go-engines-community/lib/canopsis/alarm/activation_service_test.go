@@ -1,7 +1,6 @@
 package alarm
 
 import (
-	"bytes"
 	"context"
 	"testing"
 	"time"
@@ -13,7 +12,6 @@ import (
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/rs/zerolog"
 )
 
 func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *testing.T) {
@@ -23,13 +21,11 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	queueName := "testQueue"
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
 		queueName,
-		logger,
 	)
 	alarm := types.Alarm{}
 
@@ -55,7 +51,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		).
 		Times(1)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource, false)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -68,12 +64,10 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
 		"testQueue",
-		logger,
 	)
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
@@ -121,7 +115,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 			gomock.Any(),
 		)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource, false)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -134,12 +128,10 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
 		"testQueue",
-		logger,
 	)
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
@@ -165,7 +157,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource, false)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -178,12 +170,10 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
 		"testQueue",
-		logger,
 	)
 	alarm := types.Alarm{
 		EntityID: "testID",
@@ -208,7 +198,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource, false)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -221,12 +211,10 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
-	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
 		"testQueue",
-		logger,
 	)
 
 	now := datetime.NewCpsTime()
@@ -252,7 +240,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource, false)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}

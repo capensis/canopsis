@@ -12,9 +12,8 @@ import (
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -24,15 +23,14 @@ import (
 )
 
 type Options struct {
-	Version                  bool
-	PrintEventOnError        bool
-	ModeDebug                bool
-	ConsumeFromQueue         string
-	PublishToQueue           string
-	LockTtl                  int
-	EventsStatsFlushInterval time.Duration
-	PeriodicalWaitTime       time.Duration
-	ExternalDataApiTimeout   time.Duration
+	Version                bool
+	PrintEventOnError      bool
+	ModeDebug              bool
+	ConsumeFromQueue       string
+	PublishToQueue         string
+	LockTtl                int
+	PeriodicalWaitTime     time.Duration
+	ExternalDataApiTimeout time.Duration
 }
 
 func ParseOptions() Options {
@@ -43,10 +41,11 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
-	flag.DurationVar(&opts.EventsStatsFlushInterval, "eventsStatsFlushInterval", 60*time.Second, "Interval between saving statistics from redis to mongo")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
+
+	flag.Duration("eventsStatsFlushInterval", 60*time.Second, "Deprecated: interval between saving statistics from redis to mongo")
 
 	flag.Parse()
 
@@ -61,8 +60,10 @@ func Default(
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
+	metricsConfigProvider *config.BaseMetricsSettingsConfigProvider,
 	eventFilterEventCounter eventfilter.EventCounter,
 	eventFilterFailureService eventfilter.FailureService,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	var m depmake.DependencyMaker
@@ -73,7 +74,6 @@ func Default(
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
-	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	scheduler := libscheduler.NewSchedulerService(
 		lockRedisClient,
@@ -85,19 +85,6 @@ func Default(
 		json.NewDecoder(),
 		json.NewEncoder(),
 	)
-	statsCh := make(chan statistics.Message)
-	statsSender := ratelimit.NewStatsSender(statsCh, logger)
-	statsListener := statistics.NewStatsListener(
-		mongoClient,
-		statsRedisClient,
-		options.EventsStatsFlushInterval,
-		map[string]int64{
-			mongo.MessageRateStatsMinuteCollectionName: 1,  // 1 minute
-			mongo.MessageRateStatsHourCollectionName:   60, // 60 minutes
-		},
-		logger,
-	)
-
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
@@ -128,13 +115,9 @@ func Default(
 				}
 			}
 
-			go statsListener.Listen(ctx, statsCh)
-
 			return nil
 		},
 		func(ctx context.Context) {
-			close(statsCh)
-
 			scheduler.Stop(ctx)
 			err := mongoClient.Disconnect(ctx)
 			if err != nil {
@@ -152,11 +135,6 @@ func Default(
 			}
 
 			err = queueRedisClient.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			err = statsRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -180,7 +158,7 @@ func Default(
 		EventFilterService: eventfilterService,
 		TechMetricsSender:  techMetricsSender,
 		Scheduler:          scheduler,
-		StatsSender:        statsSender,
+		MetricsSender:      metricsSender,
 		Decoder:            json.NewDecoder(),
 		Logger:             logger,
 	}
@@ -219,8 +197,8 @@ func Default(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("outdated_rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,
 		&deleteOutdatedRatesWorker{
@@ -240,6 +218,7 @@ func Default(
 		techMetricsConfigProvider,
 		dataStorageConfigProvider,
 		templateConfigProvider,
+		metricsConfigProvider,
 	))
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
@@ -260,7 +239,7 @@ func Default(
 			}
 		})
 	} else {
-		engine.AddPeriodicalWorker("local cache", &periodicalWorker{
+		engine.AddPeriodicalWorker("local_cache", &periodicalWorker{
 			RuleService:        eventfilterService,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,
