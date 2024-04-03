@@ -535,6 +535,16 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes2(in, out.LastComment)
 			}
+		case "change_state":
+			if in.IsNull() {
+				in.Skip()
+				out.ChangeState = nil
+			} else {
+				if out.ChangeState == nil {
+					out.ChangeState = new(types.AlarmStep)
+				}
+				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes2(in, out.ChangeState)
+			}
 		case "tickets":
 			if in.IsNull() {
 				in.Skip()
@@ -912,6 +922,16 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString(prefix)
 		}
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes2(out, *in.LastComment)
+	}
+	if in.ChangeState != nil {
+		const prefix string = ",\"change_state\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes2(out, *in.ChangeState)
 	}
 	if len(in.Tickets) != 0 {
 		const prefix string = ",\"tickets\":"
