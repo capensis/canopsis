@@ -21,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
@@ -679,6 +680,28 @@ func RegisterRoutes(
 				"/entityservice-impacts",
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer),
 				entityserviceAPI.GetImpacts,
+			)
+		}
+
+		entityCommentRouter := protected.Group("/entity-comments")
+		{
+			entityCommentAPI := entitycomment.NewApi(entitycomment.NewStore(dbClient, logger))
+			entityCommentRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				entityCommentAPI.Create,
+			)
+			entityCommentRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				entityCommentAPI.Update,
+			)
+			entityCommentRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionRead, enforcer),
+				entityCommentAPI.List,
 			)
 		}
 
