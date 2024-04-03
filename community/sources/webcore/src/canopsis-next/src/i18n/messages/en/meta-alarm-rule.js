@@ -27,6 +27,11 @@ export default {
     + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
   removeConfirmationText: 'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n'
     + 'Are you sure to proceed with it?\n',
+  steps: {
+    basics: 'Basics',
+    defineType: 'Define type',
+    addParameters: 'Add parameters',
+  },
   errors: {
     noValuePaths: 'You have to add at least 1 value path',
   },
