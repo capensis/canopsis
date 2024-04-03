@@ -1,7 +1,6 @@
 <template>
   <v-stepper
     v-model="stepper"
-    class="dynamic-info-form"
     non-linear
   >
     <v-stepper-header>
@@ -132,9 +131,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.dynamic-info-form {
-  background-color: transparent !important;
-}
-</style>
