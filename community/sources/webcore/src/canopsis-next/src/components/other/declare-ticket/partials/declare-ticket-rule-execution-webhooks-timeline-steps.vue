@@ -6,7 +6,7 @@
     >
       <li
         v-for="(step, index) in groupSteps"
-        :key="step.key"
+        :key="index"
       >
         <div
           v-show="index === 0"
