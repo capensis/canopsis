@@ -228,7 +228,11 @@ type StepDetails struct {
 
 type Step struct {
 	common.AlarmStep `bson:",inline"`
-	Steps            []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
+	ID               string `bson:"_id" json:"_id"`
+	Steps            []struct {
+		common.AlarmStep `bson:",inline"`
+		ID               string `bson:"_id" json:"_id"`
+	} `bson:"steps,omitempty" json:"steps,omitempty"`
 }
 
 type ChildrenDetails struct {

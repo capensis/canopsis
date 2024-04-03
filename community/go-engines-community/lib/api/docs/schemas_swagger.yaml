@@ -553,6 +553,8 @@ definitions:
     type: object
   alarm.Step:
     properties:
+      _id:
+        type: string
       _t:
         type: string
       a:
@@ -569,7 +571,48 @@ definitions:
         type: string
       steps:
         items:
-          $ref: '#/definitions/common.AlarmStep'
+          properties:
+            _id:
+              type: string
+            _t:
+              type: string
+            a:
+              type: string
+            color:
+              type: string
+            icon_name:
+              type: string
+            in_pbh:
+              type: boolean
+            initiator:
+              type: string
+            m:
+              type: string
+            t:
+              type: integer
+            ticket:
+              type: string
+            ticket_comment:
+              type: string
+            ticket_data:
+              additionalProperties:
+                type: string
+              type: object
+            ticket_meta_alarm_id:
+              type: string
+            ticket_rule_id:
+              type: string
+            ticket_rule_name:
+              type: string
+            ticket_system_name:
+              type: string
+            ticket_url:
+              type: string
+            user_id:
+              type: string
+            val:
+              type: integer
+          type: object
         type: array
       t:
         type: integer
