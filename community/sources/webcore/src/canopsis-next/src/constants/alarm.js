@@ -304,7 +304,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.pbhleave]: 'pause',
   [ALARM_LIST_STEPS.comment]: 'comment',
   [ALARM_LIST_STEPS.metaalarmattach]: 'center_focus_weak',
-  [ALARM_LIST_STEPS.instructionStart]: 'manual_instruction',
+  [ALARM_LIST_STEPS.instructionStart]: '$vuetify.icons.manual_instruction',
   [ALARM_LIST_STEPS.instructionPause]: '$vuetify.icons.manual_instruction',
   [ALARM_LIST_STEPS.instructionResume]: '$vuetify.icons.manual_instruction',
   [ALARM_LIST_STEPS.instructionComplete]: '$vuetify.icons.manual_instruction',

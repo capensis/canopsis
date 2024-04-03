@@ -191,7 +191,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    manual_instruction
+    $vuetify.icons.manual_instruction
   </v-icon-stub>
 </div>
 `;
