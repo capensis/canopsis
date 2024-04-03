@@ -9,7 +9,7 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
     style="background-color: red;"
   >
     <div
-      class="modal-wrapper__title headline"
+      class="modal-wrapper__title text-h5"
     >
       <div>
         <div>
@@ -32,17 +32,15 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
-    class="v-card__actions"
+    class="v-card__actions justify-end align-center px-2 py-3"
   >
-    <div
-      class="layout py-1 justify-end"
-    >
-      <div>
-        Actions
-      </div>
+    <div>
+      Actions
     </div>
   </div>
 </div>
@@ -62,7 +60,7 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with minimized modal 1`] = `
     class="v-card__title white--text"
   >
     <div
-      class="modal-wrapper__title headline"
+      class="modal-wrapper__title text-h5"
     >
       <div>
         <div>

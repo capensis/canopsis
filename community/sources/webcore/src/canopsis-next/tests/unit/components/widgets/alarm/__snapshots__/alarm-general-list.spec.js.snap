@@ -7,154 +7,218 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
   >
     General
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="4"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label="Author: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Author"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Author
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
-              aria-label="Connector: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Connector"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Connector
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
-              aria-label="Component: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Component"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Component
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
-              aria-label="Resource: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Resource"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Resource
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="4"
-            />
           </tr>
         </thead>
         <tbody>
           <tr>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              author-0
+          author-0
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              connector-0
+          connector-0
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              component-0
+          component-0
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              resource-0
+          resource-0
             </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
           <tr>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              author-1
+          author-1
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              connector-1
+          connector-1
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              component-1
+          component-1
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              resource-1
+          resource-1
             </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
           <tr>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              author-2
+          author-2
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              connector-2
+          connector-2
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              component-2
+          component-2
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              resource-2
+          resource-2
             </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
           <tr>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              author-3
+          author-3
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              connector-3
+          connector-3
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              component-3
+          component-3
             </td>
             <td
-              class="text-xs-left"
+              class="text-left"
             >
-              resource-3
+          resource-3
             </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__row"
+          />
         </tbody>
       </table>
     </div>
@@ -169,69 +233,102 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
   >
     General
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label="Author: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Author"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Author
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
-              aria-label="Connector: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Connector"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Connector
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
-              aria-label="Component: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Component"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Component
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
-              aria-label="Resource: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label="Resource"
+              class="text-start"
               role="columnheader"
               scope="col"
             >
-              Resource
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="4"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="4"
             >
               No data available

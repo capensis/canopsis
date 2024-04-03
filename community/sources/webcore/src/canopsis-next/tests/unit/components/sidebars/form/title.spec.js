@@ -38,24 +38,17 @@ describe('title', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textField.setValue(newValue);
+    selectTextField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `title` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `title` with custom props', () => {
@@ -66,6 +59,6 @@ describe('title', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,15 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with custom props 1`] = `
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom props 1`] = `
 <div
-  class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details theme--light"
-  role="combobox"
+  class="v-input select v-input--hide-details v-input--dense theme--light v-text-field v-text-field--single-line v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
@@ -19,7 +21,7 @@ exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with cust
         >
           <input
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -32,99 +34,102 @@ exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with cust
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="itemsPerPage"
+          type="hidden"
+          value="10"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with custom props 2`] = `
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list v-list--dense theme--light"
-      role="list"
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
     >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              2
-            </div>
-          </div>
-        </a>
+          2
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              4
-            </div>
-          </div>
-        </a>
+          4
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              6
-            </div>
-          </div>
-        </a>
+          6
+        </div>
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with default props 1`] = `
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 1`] = `
 <div
-  class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--dense theme--light v-text-field v-text-field--single-line v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
@@ -139,7 +144,7 @@ exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with defa
           </div>
           <input
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -152,118 +157,116 @@ exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with defa
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="itemsPerPage"
+          type="hidden"
+          value="10"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with default props 2`] = `
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list v-list--dense theme--light"
-      role="list"
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
     >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              5
-            </div>
-          </div>
-        </a>
+          5
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
+      role="option"
+      tabindex="0"
+    >
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              10
-            </div>
-          </div>
-        </a>
+          10
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              20
-            </div>
-          </div>
-        </a>
+          20
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              50
-            </div>
-          </div>
-        </a>
+          50
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              100
-            </div>
-          </div>
-        </a>
+          100
+        </div>
       </div>
     </div>
   </div>

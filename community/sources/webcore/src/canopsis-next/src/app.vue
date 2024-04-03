@@ -1,18 +1,24 @@
-<template lang="pug">
-  v-app#app(:dark="system.dark")
-    c-progress-overlay(
-      :pending="wholePending",
-      :transition="false",
+<template>
+  <v-app id="app">
+    <c-progress-overlay
+      :pending="wholePending"
+      :transition="false"
       color="gray"
-    )
-    v-layout(v-if="!wholePending")
-      the-navigation#main-navigation(v-if="currentUser && shownHeader")
-      v-content#main-content
-        active-broadcast-message
-        router-view(:key="routeViewKey")
-    the-sidebar
-    the-modals
-    the-popups
+    />
+    <v-layout v-if="!wholePending">
+      <the-navigation
+        id="main-navigation"
+        v-if="currentUser && shownHeader"
+      />
+      <v-main id="main-content">
+        <active-broadcast-message />
+        <router-view :key="routeViewKey" />
+      </v-main>
+    </v-layout>
+    <the-sidebar />
+    <the-modals />
+    <the-popups />
+  </v-app>
 </template>
 
 <script>
@@ -34,6 +40,7 @@ import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
+import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -53,6 +60,7 @@ export default {
     entitiesInfoMixin,
     entitiesUserMixin,
     entitiesTemplateVarsMixin,
+    vuetifyCustomIconsRegisterMixin,
   ],
   data() {
     return {
@@ -82,14 +90,15 @@ export default {
   },
   created() {
     this.registerCurrentUserOnceWatcher();
+    this.socketConnectWithErrorHandling();
   },
   async mounted() {
-    this.socketConnectWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
 
     await Promise.all([
       this.fetchCurrentUserWithErrorHandling(),
-      this.fetchTemplateVars(),
+      this.fetchTemplateVarsWithErrorHandling(),
+      this.fetchIconsWithRegistering(),
     ]);
 
     await this.fetchAppInfoWithErrorHandling();
@@ -230,6 +239,14 @@ export default {
         console.error(err);
       } finally {
         this.appInfoLocalPending = false;
+      }
+    },
+
+    async fetchTemplateVarsWithErrorHandling() {
+      try {
+        await this.fetchTemplateVars();
+      } catch (err) {
+        console.error(err);
       }
     },
   },

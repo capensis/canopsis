@@ -1,323 +1,210 @@
 <script>
-import { VDataTable } from 'vuetify/es5/components/VDataTable';
-import { VIcon } from 'vuetify/es5/components/VIcon';
-import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
-import { consoleWarn } from 'vuetify/es5/util/console';
-import { getObjectValueByPath } from 'vuetify/es5/util/helpers';
+import { VDataTable } from 'vuetify/lib/components/VDataTable';
+import { getObjectValueByPath, getSlot, getPrefixedScopedSlots } from 'vuetify/lib/util/helpers';
+import ExpandTransitionGenerator from 'vuetify/lib/components/transitions/expand-transition';
 
-import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
-
-import { isDarkColor } from '@/helpers/color';
-
-import ExpandTransitionGenerator from '../transitions/expand-transition';
+import VSimpleTable from './v-simple-table.vue';
+import VDataTableHeader from './v-data-table-header.vue';
 
 export default {
+  components: { VSimpleTable, VDataTableHeader },
   extends: VDataTable,
   props: {
-    isDisabledItem: {
-      type: Function,
-      default: item => !item,
-    },
-    multiSort: {
-      type: Boolean,
-      default: false,
-    },
-    tableClass: {
-      type: String,
-      required: false,
-    },
-    dense: {
-      type: Boolean,
-      default: false,
-    },
     ultraDense: {
       type: Boolean,
       default: false,
     },
+    itemSelectable: {
+      type: Function,
+      required: false,
+    },
+    ellipsisHeaders: {
+      type: Boolean,
+      default: false,
+    },
   },
-  computed: {
-    isDark() {
-      return isDarkColor(this.$vuetify.theme['table-background']);
-    },
+  watch: {
+    /**
+     * We've added watcher for resetting page if page is out of range
+     */
+    serverItemsLength(serverItemsLength) {
+      const page = this.options?.page ?? 1;
+      const pageCount = Math.ceil(serverItemsLength / this.computedItemsPerPage) || 1;
 
-    activeItems() {
-      return this.filteredItems.filter(item => !this.isDisabledItem(item));
-    },
+      if (page > pageCount) {
+        this.$emit('update:options', {
+          ...this.options,
 
-    everyItem() {
-      return this.activeItems.length && this.activeItems.every(this.isSelected);
-    },
-
-    classes() {
-      return {
-        'v-datatable v-table': true,
-        'v-datatable--expand': this.expand,
-        'v-datatable--select-all': this.selectAll !== false,
-        'v-datatable--dense': this.dense,
-        'v-datatable--ultra-dense': this.ultraDense,
-        [this.tableClass]: !!this.tableClass,
-        ...this.themeClasses,
-      };
+          page: pageCount,
+        });
+      }
     },
   },
   methods: {
-    genExpandedRow(props) {
-      const children = [];
-      if (this.isExpanded(props.item)) {
-        const expand = this.$createElement('div', {
-          class: 'v-datatable__expand-content',
-          key: getObjectValueByPath(props.item, this.itemKey),
-        }, [this.$scopedSlots.expand(props)]);
-        children.push(expand);
+    /**
+     * We've added expand transition here
+     */
+    genScopedRows(items) {
+      const rows = [];
+
+      for (let i = 0; i < items.length; i += 1) {
+        const item = items[i];
+        let children = [];
+
+        rows.push(this.$scopedSlots.item({
+          ...this.createItemProps(item, i),
+          isMobile: this.isMobile,
+        }));
+
+        if (this.isExpanded(item)) {
+          children = this.$createElement('div', {
+            class: 'v-data-table__expanded__content',
+            key: `expand-${getObjectValueByPath(item, this.itemKey)}`,
+          }, this.$scopedSlots['expanded-item']({
+            headers: this.computedHeaders,
+            isMobile: this.isMobile,
+            index: i,
+            item,
+          }));
+        }
+
+        const transition = this.$createElement('transition-group', {
+          class: 'v-data-table__expanded__col',
+          attrs: { colspan: this.computedHeaders.length },
+          props: {
+            tag: 'td',
+          },
+          on: ExpandTransitionGenerator('v-data-table__expanded__col'),
+        }, [children]);
+
+        rows.push(this.$createElement('tr', { class: 'v-data-table__expanded v-data-table__expanded__row' }, [transition]));
+      }
+
+      return rows;
+    },
+
+    genDefaultExpandedRow(item, index) {
+      const isExpanded = this.isExpanded(item);
+      const classes = {
+        'v-data-table__expanded v-data-table__expanded__row': isExpanded,
+      };
+      let children = [];
+
+      const headerRow = this.genDefaultSimpleRow(item, index, classes);
+
+      if (isExpanded) {
+        children = this.$createElement('div', {
+          class: 'v-data-table__expanded__content',
+          key: `expand-${getObjectValueByPath(item, this.itemKey)}`,
+        }, this.$scopedSlots['expanded-item']({
+          headers: this.computedHeaders,
+          isMobile: this.isMobile,
+          index,
+          item,
+        }));
       }
 
       const transition = this.$createElement('transition-group', {
-        class: 'v-datatable__expand-col',
-        attrs: { colspan: this.headerColumns },
+        class: 'v-data-table__expanded__col',
+        attrs: { colspan: this.computedHeaders.length },
         props: {
           tag: 'td',
         },
-        on: ExpandTransitionGenerator('v-datatable__expand-col--expanded'),
-      }, children);
+        on: ExpandTransitionGenerator('v-data-table__expanded__col'),
+      }, [children]);
 
-      return this.genTR([transition], {
-        class: 'v-datatable__expand-row',
-        key: `${getObjectValueByPath(props.item, this.itemKey) || props.index}-row`,
-      });
+      const expandedRow = this.$createElement('tr', {
+        staticClass: 'v-data-table__expanded v-data-table__expanded__content',
+      }, [transition]);
+
+      return [headerRow, expandedRow];
     },
 
-    genHeaderData(header, children, key) {
-      const classes = ['column'];
+    genDefaultScopedSlot(props) {
+      const simpleProps = {
+        height: this.height,
+        fixedHeader: this.fixedHeader,
+        dense: this.dense,
+        ultraDense: this.ultraDense,
+      };
+      // if (this.virtualRows) {
+      //   return this.$createElement(VVirtualTable, {
+      //     props: Object.assign(simpleProps, {
+      //       items: props.items,
+      //       height: this.height,
+      //       rowHeight: this.dense ? 24 : 48,
+      //       headerHeight: this.dense ? 32 : 48,
+      //       // TODO: expose rest of props from virtual table?
+      //     }),
+      //     scopedSlots: {
+      //       items: ({ items }) => this.genItems(items, props) as any,
+      //     },
+      //   }, [
+      //     this.proxySlot('body.before', [this.genCaption(props), this.genHeaders(props)]),
+      //     this.proxySlot('bottom', this.genFooters(props)),
+      //   ])
+      // }
+
+      return this.$createElement(VSimpleTable, {
+        props: simpleProps,
+        class: {
+          'v-data-table--mobile': this.isMobile,
+          'v-data-table--selectable': this.showSelect,
+        },
+      }, [
+        this.proxySlot('top', getSlot(this, 'top', {
+          ...props,
+          isMobile: this.isMobile,
+        }, true)),
+        this.genCaption(props),
+        this.genColgroup(props),
+        this.genHeaders(props),
+        this.genBody(props),
+        this.genFoot(props),
+        this.proxySlot('bottom', this.genFooters(props)),
+      ]);
+    },
+    genHeaders(props) {
       const data = {
-        key,
-        attrs: {
-          role: 'columnheader',
-          scope: 'col',
-          width: header.width || null,
-          'aria-label': header[this.headerText] || '',
-          'data-value': header.value || '',
-          'aria-sort': 'none',
-        },
-      };
-
-      if (header.sortable == null || header.sortable) {
-        this.genHeaderSortingData(header, children, data, classes);
-      } else {
-        data.attrs['aria-label'] += ': Not sorted.'; // TODO: Localization
-      }
-
-      classes.push(`text-xs-${header.align || 'left'}`);
-      if (Array.isArray(header.class)) {
-        classes.push(...header.class);
-      } else if (header.class) {
-        classes.push(header.class);
-      }
-      data.class = classes;
-
-      return [data, children];
-    },
-    /**
-     * Get thead element for a table
-     *
-     * @note Was replaced for disabling select all checkbox if all items is disabled
-     */
-    genTHead() {
-      if (this.hideHeaders) {
-        return null;
-      }
-
-      let children = [];
-
-      if (this.$scopedSlots.headers) {
-        const row = this.$scopedSlots.headers({
-          headers: this.headers,
-          indeterminate: this.indeterminate,
-          all: this.everyItem,
-        });
-
-        children = [this.hasTag(row, 'th') ? this.genTR(row) : row, this.genTProgress()];
-      } else {
-        const row = this.headers.map((o, i) => this.genHeader(o, this.headerKey ? o[this.headerKey] : i));
-        const checkbox = this.$createElement(VCheckbox, {
-          props: {
-            dark: this.dark,
-            light: this.light,
-            color: this.selectAll === true ? '' : this.selectAll,
-            hideDetails: true,
-            inputValue: this.everyItem,
-            indeterminate: this.indeterminate,
-
-            /**
-             * disabled added for case with all inactive items
-             */
-            disabled: !this.activeItems.length,
-          },
-          on: { change: this.toggle },
-        });
-
-        if (this.hasSelectAll) {
-          row.unshift(this.$createElement('th', [checkbox]));
-        }
-
-        children = [this.genTR(row), this.genTProgress()];
-      }
-
-      return this.$createElement('thead', [children]);
-    },
-
-    /* eslint-disable no-param-reassign */
-    /**
-     * Get header sorting data.
-     *
-     * @note Was replaced for multi sort support
-     *
-     * @param {Object} header
-     * @param {Object[]} children
-     * @param {Object} data
-     * @param {string[]} classes
-     */
-    genHeaderSortingData(header, children, data, classes) {
-      if (!('value' in header)) {
-        consoleWarn('Headers must have a value property that corresponds to a value in the v-model array', this);
-      }
-
-      /**
-       * Add data attributes into header item
-       *
-       * @param {string | number} sortBy
-       * @param {boolean} descending
-       */
-      const addDataAttributes = (sortBy, descending) => {
-        const beingSorted = sortBy === header.value;
-
-        if (beingSorted) {
-          classes.push('active');
-          if (descending) {
-            classes.push('desc');
-            data.attrs['aria-sort'] = 'descending';
-            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.';
-          } else {
-            classes.push('asc');
-            data.attrs['aria-sort'] = 'ascending';
-            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.';
-          }
-        } else {
-          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.';
-        }
-      };
-
-      const pagination = this.computedPagination;
-
-      /**
-       * Added multi sort support
-       */
-      if (this.multiSort) {
-        const { multiSortBy = [] } = pagination;
-        const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === header.value);
-        const sortItem = multiSortBy[sortItemIndex];
-
-        if (sortItem) {
-          const sortPriority = this.$createElement('span', {
-            class: 'v-datatable-header__sort-badge',
-          }, `${sortItemIndex + 1}`);
-
-          children.push(sortPriority);
-
-          addDataAttributes(sortItem.sortBy, sortItem.descending);
-        } else if (multiSortBy.length >= DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT) {
-          /**
-           * This condition was added for compliance with max multiSort limit
-           */
-          return;
-        }
-      } else {
-        addDataAttributes(pagination.sortBy, pagination.descending);
-      }
-
-      data.attrs.tabIndex = 0;
-      data.on = {
-        click: () => {
-          this.expanded = {};
-          this.sort(header.value);
-        },
-        keydown: (e) => {
-          // check for space
-          if (e.keyCode === 32) {
-            e.preventDefault();
-            this.sort(header.value);
-          }
-        },
-      };
-
-      classes.push('sortable');
-
-      const icon = this.$createElement(VIcon, {
         props: {
-          small: true,
+          ...this.sanitizedHeaderProps,
+
+          headers: this.computedHeaders,
+          options: props.options,
+          mobile: this.isMobile,
+          showGroupBy: this.showGroupBy,
+          checkboxColor: this.checkboxColor,
+          someItems: this.someItems,
+          everyItem: this.everyItem,
+          singleSelect: this.singleSelect,
+          ellipsisHeaders: this.ellipsisHeaders,
+          disableSort: this.disableSort,
+          disableSelect: this.selectableItems.length === 0,
         },
-      }, this.sortIcon);
-      if (!header.align || header.align === 'left') {
-        children.push(icon);
-      } else {
-        children.unshift(icon);
-      }
-    },
-    /* eslint-enable no-param-reassign */
+        on: {
+          sort: props.sort,
+          group: props.group,
+          'toggle-select-all': this.toggleSelectAll,
+        },
+      }; // TODO: rename to 'head'? (thead, tbody, tfoot)
 
-    /**
-     * Update pagination parameters for the sorting
-     *
-     * @note Was replaced for multi sort support
-     *
-     * @param {string | number} index
-     */
-    sort(index) {
-      if (this.multiSort) {
-        this.updateMultiSort(index);
+      const children = [getSlot(this, 'header', { ...data, isMobile: this.isMobile })];
 
-        return;
+      if (!this.hideDefaultHeader) {
+        const scopedSlots = getPrefixedScopedSlots('header.', this.$scopedSlots);
+        children.push(this.$createElement(VDataTableHeader, { ...data, scopedSlots }));
       }
 
-      const { sortBy, descending } = this.computedPagination;
-
-      if (sortBy === null) {
-        this.updatePagination({ sortBy: index, descending: false });
-      } else if (sortBy === index && !descending) {
-        this.updatePagination({ descending: true });
-      } else if (sortBy !== index) {
-        this.updatePagination({ sortBy: index, descending: false });
-      } else if (!this.mustSort) {
-        this.updatePagination({ sortBy: null, descending: null });
-      } else {
-        this.updatePagination({ sortBy: index, descending: false });
-      }
+      if (this.loading) children.push(this.genLoading());
+      return children;
     },
 
-    /**
-     * Update pagination parameters for the multi sorting
-     *
-     * @note New method
-     *
-     * @param {string | number} index
-     */
-    updateMultiSort(index) {
-      const { multiSortBy = [] } = this.computedPagination;
-      let newMultiSortBy = [...multiSortBy];
-
-      const sortItemIndex = multiSortBy.findIndex(item => item.sortBy === index);
-      const sortItem = multiSortBy[sortItemIndex];
-
-      if (sortItem) {
-        if (!sortItem.descending) {
-          newMultiSortBy[sortItemIndex] = { ...sortItem, descending: true };
-        } else {
-          newMultiSortBy = newMultiSortBy.filter(item => item.sortBy !== index);
-        }
-      } else {
-        newMultiSortBy.push({ sortBy: index, descending: false });
+    isSelectable(item) {
+      if (this.itemSelectable) {
+        return this.itemSelectable(item);
       }
 
-      this.updatePagination({ multiSortBy: newMultiSortBy });
+      return getObjectValueByPath(item, this.selectableKey) !== false;
     },
   },
 };

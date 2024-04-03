@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
@@ -51,7 +50,7 @@ describe('line-chart-metrics', () => {
   test('Renders `line-chart-metrics` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `line-chart-metrics` with custom props', async () => {
@@ -70,7 +69,7 @@ describe('line-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -88,7 +87,7 @@ describe('line-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -108,7 +107,7 @@ describe('line-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });

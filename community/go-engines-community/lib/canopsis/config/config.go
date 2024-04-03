@@ -68,6 +68,8 @@ type SectionFile struct {
 	Junit         string   `toml:"Junit"`
 	JunitApi      string   `toml:"JunitApi"`
 	SnmpMib       []string `toml:"SnmpMib"`
+	Icon          string   `toml:"Icon"`
+	IconMaxSize   int64    `toml:"IconMaxSize"`
 }
 
 type SectionDataStorage struct {
@@ -97,6 +99,7 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
+	Enabled                bool   `toml:"Enabled"`
 	FlushInterval          string `toml:"FlushInterval"`
 	SliInterval            string `toml:"SliInterval"`
 	UserSessionGapInterval string `toml:"UserSessionGapInterval"`

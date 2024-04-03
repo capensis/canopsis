@@ -1,21 +1,34 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createSnoozeEvent.title') }}
-      template(#text="")
-        snooze-event-form(v-model="form", :is-note-required="config.isNoteRequired")
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createSnoozeEvent.title') }}</span>
+      </template>
+      <template #text="">
+        <snooze-event-form
+          v-model="form"
+          :is-note-required="config.isNoteRequired"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -58,7 +71,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config?.action(this.form);
+        await this.config?.action?.(this.form);
 
         this.$modals.hide();
       }

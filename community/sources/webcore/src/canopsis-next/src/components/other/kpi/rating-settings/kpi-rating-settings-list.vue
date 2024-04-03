@@ -1,38 +1,52 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :pagination="pagination",
-    :items="ratingSettings",
-    :loading="pending",
-    :headers="headers",
-    :total-items="totalItems",
-    item-key="id",
-    search,
-    advanced-pagination,
-    hide-actions,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#toolbar="")
-      v-flex(xs12)
-        v-expand-transition
-          v-layout.ml-3(v-if="changedIds.length")
-            v-btn(
-              outline,
-              color="primary",
+<template>
+  <c-advanced-data-table
+    :options="options"
+    :items="ratingSettings"
+    :loading="pending"
+    :headers="headers"
+    :total-items="totalItems"
+    item-key="id"
+    search
+    advanced-pagination
+    hide-actions
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #toolbar="">
+      <v-flex xs12>
+        <v-expand-transition>
+          <v-layout
+            v-if="changedIds.length"
+            class="ml-3 mt-3"
+          >
+            <v-btn
+              color="primary"
+              outlined
               @click="resetEnabledRatingSettings"
-            ) {{ $t('common.cancel') }}
-            v-btn(
-              color="primary",
+            >
+              {{ $t('common.cancel') }}
+            </v-btn>
+            <v-btn
+              class="ml-2"
+              color="primary"
               @click="submit"
-            ) {{ $t('common.submit') }}
-
-    template(#enabled="{ item }")
-      v-layout(row, align-center)
-        v-checkbox-functional(
-          :input-value="isEnabledRatingSetting(item)",
-          :disabled="!updatable",
-          hide-details,
-          @change="enableRatingSetting(item, $event)"
-        )
+            >
+              {{ $t('common.submit') }}
+            </v-btn>
+          </v-layout>
+        </v-expand-transition>
+      </v-flex>
+    </template>
+    <template #enabled="{ item }">
+      <v-layout align-center>
+        <v-simple-checkbox
+          :value="isEnabledRatingSetting(item)"
+          :disabled="!updatable"
+          hide-details
+          @input="enableRatingSetting(item, $event)"
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -42,7 +56,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

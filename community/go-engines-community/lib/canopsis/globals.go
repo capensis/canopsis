@@ -14,12 +14,14 @@ const (
 	ActionConsumerName          = "action"
 	ActionRPCConsumerName       = "action_rpc"
 
-	AxeEngineName                  = "engine-axe"
-	AxeQueueName                   = "Engine_axe"
-	AxePbehaviorRPCClientQueueName = "Engine_axe_pbehavior_rpc_client"
-	AxeRPCQueueServerName          = "Engine_axe_rpc_server"
-	AxeConsumerName                = "axe"
-	AxeRPCConsumerName             = "axe_rpc"
+	AxeEngineName                     = "engine-axe"
+	AxeQueueName                      = "Engine_axe"
+	AxePbehaviorRPCClientQueueName    = "Engine_axe_pbehavior_rpc_client"
+	AxeDynamicInfosRPCClientQueueName = "Engine_axe_dynamic_infos_rpc_client"
+	AxeRPCQueueServerName             = "Engine_axe_rpc_server"
+	AxeConsumerName                   = "axe"
+	AxeRPCConsumerName                = "axe_rpc"
+	AxeConnector                      = "axe"
 
 	CheExchangeName = ""
 	CheEngineName   = "engine-che"
@@ -54,9 +56,12 @@ const (
 	FIFOConsumerName    = "fifo"
 	FIFOAckConsumerName = "fifo_ack"
 
-	CorrelationEngineName   = "engine-correlation"
-	CorrelationQueueName    = "Engine_correlation"
-	CorrelationConsumerName = "correlation"
+	CorrelationEngineName            = "engine-correlation"
+	CorrelationQueueName             = "Engine_correlation"
+	CorrelationAxeRPCClientQueueName = "Engine_correlation_axe_rpc_client"
+	CorrelationConsumerName          = "correlation"
+	CorrelationRPCConsumerName       = "correlation_rpc"
+	CorrelationConnector             = "correlation"
 
 	PeriodicalWaitTime     = time.Minute
 	JsonContentType        = "application/json"
@@ -67,6 +72,8 @@ const (
 	RemediationRPCConsumerName       = "remediation_rpc"
 	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
+
+	SnmpEngineName = "engine-snmp"
 
 	TechMetricsFlushInterval = time.Second * 10
 

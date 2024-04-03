@@ -1,25 +1,37 @@
-<template lang="pug">
-  modal-wrapper
-    template(#title="")
-      span {{ $t('modals.clickOutsideConfirmation.title') }}
-    template(#text="")
-      span.subheading {{ $t('modals.clickOutsideConfirmation.text') }}
-    template(#actions="")
-      v-btn(
-        depressed,
-        flat,
+<template>
+  <modal-wrapper>
+    <template #title="">
+      <span>{{ $t('modals.clickOutsideConfirmation.title') }}</span>
+    </template>
+    <template #text="">
+      <span class="text-subtitle-1">{{ $t('modals.clickOutsideConfirmation.text') }}</span>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
         @click="$modals.hide"
-      ) {{ $t('modals.clickOutsideConfirmation.buttons.backToForm') }}
-      v-btn.warning(
-        :loading="submitting",
-        :disabled="isDisabled",
+      >
+        {{ $t('modals.clickOutsideConfirmation.buttons.backToForm') }}
+      </v-btn>
+      <v-btn
+        :loading="submitting"
+        :disabled="isDisabled"
+        class="warning"
         @click.prevent="submit(false)"
-      ) {{ $t('modals.clickOutsideConfirmation.buttons.dontSave') }}
-      v-btn.primary(
-        :loading="submitting",
-        :disabled="isDisabled",
+      >
+        {{ $t('modals.clickOutsideConfirmation.buttons.dontSave') }}
+      </v-btn>
+      <v-btn
+        :loading="submitting"
+        :disabled="isDisabled"
+        class="primary"
         @click.prevent="submit(true)"
-      ) {{ $t('modals.clickOutsideConfirmation.buttons.save') }}
+      >
+        {{ $t('modals.clickOutsideConfirmation.buttons.save') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

@@ -7,7 +7,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -16,7 +16,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         Ack
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -24,10 +23,8 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         class="layout column"
       >
         <alarm-general-table-stub
+          class="mb-4"
           items="[object Object]"
-        />
-        <hr
-          class="v-divider theme--light"
         />
         <ack-event-form-stub
           form="[object Object]"
@@ -35,7 +32,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
           isnoterequired="true"
         />
         <div
-          class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+          class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
         >
           <div
             class="v-input__control"
@@ -48,39 +45,36 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
                 class="v-input--radio-group__input"
                 role="radiogroup"
               >
-                <label
-                  aria-hidden="true"
+                <legend
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
                   Actions required
-                </label>
+                </legend>
                 <div
-                  class="v-radio theme--light"
+                  class="v-radio theme--light v-item--active"
                 >
                   <div
                     class="v-input--selection-controls__input"
                   >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light primary--text"
+                    >
+                      radio_button_checked
+                    </i>
                     <input
-                      aria-checked="false"
-                      aria-label="Acknowledge"
+                      aria-checked="true"
                       name="actionType"
                       role="radio"
                       type="radio"
                       value="0"
                     />
                     <div
-                      class="v-input--selection-controls__ripple"
+                      class="v-input--selection-controls__ripple primary--text"
                     />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      radio_button_unchecked
-                    </i>
                   </div>
                   <label
-                    aria-hidden="true"
                     class="v-label theme--light"
                     style="left: 0px; position: relative;"
                   >
@@ -93,9 +87,14 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
                   <div
                     class="v-input--selection-controls__input"
                   >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
+                    >
+                      radio_button_unchecked
+                    </i>
                     <input
                       aria-checked="false"
-                      aria-label="Acknowledge and associate ticket"
                       name="actionType"
                       role="radio"
                       type="radio"
@@ -104,15 +103,8 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
                     <div
                       class="v-input--selection-controls__ripple"
                     />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      radio_button_unchecked
-                    </i>
                   </div>
                   <label
-                    aria-hidden="true"
                     class="v-label theme--light"
                     style="left: 0px; position: relative;"
                   >
@@ -125,29 +117,28 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>
@@ -161,7 +152,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -170,7 +161,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         Ack
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -178,17 +168,15 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         class="layout column"
       >
         <alarm-general-table-stub
+          class="mb-4"
           items="[object Object]"
-        />
-        <hr
-          class="v-divider theme--light"
         />
         <ack-event-form-stub
           form="[object Object]"
           hideackresources="true"
         />
         <div
-          class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+          class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
         >
           <div
             class="v-input__control"
@@ -201,39 +189,36 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
                 class="v-input--radio-group__input"
                 role="radiogroup"
               >
-                <label
-                  aria-hidden="true"
+                <legend
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
                   Actions required
-                </label>
+                </legend>
                 <div
-                  class="v-radio theme--light"
+                  class="v-radio theme--light v-item--active"
                 >
                   <div
                     class="v-input--selection-controls__input"
                   >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light primary--text"
+                    >
+                      radio_button_checked
+                    </i>
                     <input
-                      aria-checked="false"
-                      aria-label="Acknowledge"
+                      aria-checked="true"
                       name="actionType"
                       role="radio"
                       type="radio"
                       value="0"
                     />
                     <div
-                      class="v-input--selection-controls__ripple"
+                      class="v-input--selection-controls__ripple primary--text"
                     />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      radio_button_unchecked
-                    </i>
                   </div>
                   <label
-                    aria-hidden="true"
                     class="v-label theme--light"
                     style="left: 0px; position: relative;"
                   >
@@ -246,9 +231,14 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
                   <div
                     class="v-input--selection-controls__input"
                   >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
+                    >
+                      radio_button_unchecked
+                    </i>
                     <input
                       aria-checked="false"
-                      aria-label="Acknowledge and associate ticket"
                       name="actionType"
                       role="radio"
                       type="radio"
@@ -257,15 +247,8 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
                     <div
                       class="v-input--selection-controls__ripple"
                     />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      radio_button_unchecked
-                    </i>
                   </div>
                   <label
-                    aria-hidden="true"
                     class="v-label theme--light"
                     style="left: 0px; position: relative;"
                   >
@@ -278,29 +261,28 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>

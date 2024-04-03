@@ -1,10 +1,9 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { KPI_RATING_CRITERIA, MAX_LIMIT } from '@/constants';
 
 import KpiRatingCriteriaField from '@/components/other/kpi/charts/form/fields/kpi-rating-criteria-field.vue';
@@ -93,13 +92,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual(ratingSetting);
+    expect(wrapper).toEmitInput(ratingSetting);
   });
 
   it('First rating not set after fetch without value, if data is empty', async () => {
@@ -122,9 +115,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   it('First rating settled after fetch, if items doesn\'t includes value', async () => {
@@ -154,13 +145,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toBe(ratingSetting);
+    expect(wrapper).toEmitInput(ratingSetting);
   });
 
   it('First rating not settled after fetch, if items includes value', async () => {
@@ -187,9 +172,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   it('First rating settled after fetch, if value is undefined', async () => {
@@ -215,13 +198,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toBe(ratingSettings[0]);
+    expect(wrapper).toEmitInput(ratingSettings[0]);
   });
 
   it('Criteria changed after trigger select field', () => {
@@ -240,16 +217,9 @@ describe('kpi-rating-criteria-field', () => {
       }]),
     });
 
-    const valueElement = wrapper.find('select.v-select');
+    wrapper.find('select.v-select').triggerCustomEvent('input', KPI_RATING_CRITERIA.role);
 
-    valueElement.vm.$emit('input', KPI_RATING_CRITERIA.role);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(KPI_RATING_CRITERIA.role);
+    expect(wrapper).toEmitInput(KPI_RATING_CRITERIA.role);
   });
 
   it('Renders `kpi-rating-criteria-field` without props', async () => {
@@ -272,7 +242,7 @@ describe('kpi-rating-criteria-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -301,7 +271,7 @@ describe('kpi-rating-criteria-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

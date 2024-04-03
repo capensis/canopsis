@@ -1,0 +1,117 @@
+.v-data-table {
+  &__wrapper {
+    padding-top: 8px;
+  }
+
+  &__expanded {
+    &__content {
+      transition: height .3s cubic-bezier(.25, .8, .5, 1);
+      box-shadow: none!important;
+    }
+
+    &__col {
+      padding: 0!important;
+      height: 0!important;
+      border: none!important;
+    }
+
+    &__row {
+      border: none!important;
+      height: 0;
+      padding: 0;
+    }
+  }
+
+  &--dense > .v-data-table__wrapper > table {
+    thead > tr > th {
+      height: $dense-cell-height;
+    }
+
+    tbody, thead {
+      tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        td {
+          height: $ultra-dense-cell-height;
+        }
+      }
+    }
+  }
+
+  &--ultra-dense > .v-data-table__wrapper > table {
+    thead > tr > th {
+      height: $ultra-dense-cell-height;
+    }
+
+    tbody, thead {
+      tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        td, th {
+          padding: 0 $ultra-dense-padding !important;
+        }
+
+        td {
+          height: $ultra-dense-cell-height;
+        }
+      }
+    }
+  }
+
+  &--dense, &--ultra-dense {
+    & > .v-data-table__wrapper > table {
+      tbody, thead {
+        tr:not(.v-data-table__expanded) {
+          td, th {
+            padding: 0 $dense-padding !important;
+          }
+
+          .color-indicator {
+            padding: $dense-color-indicator-padding !important
+          }
+
+          .c-action-btn__button {
+            margin: 0 !important;
+          }
+        }
+
+        .service-dependencies {
+          .v-data-table__wrapper {
+            padding-top: 0;
+          }
+
+          thead, tbody {
+            tr:not(.v-data-table__progress, .v-data-table__expanded) {
+              td, th {
+                height: $dense-treeview-cell-height !important;
+              }
+            }
+          }
+
+          .treeview-data-table--tree {
+            margin-top: $dense-treeview-cell-height;
+          }
+
+          .v-treeview-node__root {
+            min-height: $dense-treeview-cell-height;
+            height: $dense-treeview-cell-height;
+          }
+
+          .v-treeview-node__label {
+            .v-chip.v-size--default {
+              height: unset;
+            }
+          }
+
+          .v-btn {
+            width: $dense-treeview-cell-height - 4;
+            height: $dense-treeview-cell-height - 4;
+            margin: 2px;
+          }
+        }
+      }
+    }
+  }
+
+  &-header-span--ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}

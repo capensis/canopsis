@@ -1,9 +1,8 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockRequestAnimationFrame, mockModals, mockSidebar } from '@unit/utils/mock-hooks';
+
 import { SIDE_BARS } from '@/constants';
 
 import SidebarWrapper from '@/plugins/sidebar/components/sidebar-wrapper.vue';
@@ -174,7 +173,7 @@ describe('sidebar-wrapper', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `sidebar-wrapper` with default slot', async () => {
@@ -193,7 +192,7 @@ describe('sidebar-wrapper', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `sidebar-wrapper` without sidebar name', async () => {
@@ -215,6 +214,6 @@ describe('sidebar-wrapper', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,12 +1,25 @@
-<template lang="pug">
-  v-card.grid-item(
-    :class="cardClass",
+<template>
+  <v-card
+    :class="cardClass"
     :style="style"
-  )
-    div(ref="defaultSlotWrapper")
-      slot(:on="slotOn", :item="item")
-    div.grid-item__resize-handler(v-if="!disabled", v-on="resizeHandlerOn")
-      v-icon(small) $vuetify.icons.resize_right
+    class="grid-item"
+  >
+    <div ref="defaultSlotWrapper">
+      <slot
+        :on="slotOn"
+        :item="item"
+      />
+    </div>
+    <div
+      v-if="!disabled"
+      class="grid-item__resize-handler"
+      v-on="resizeHandlerOn"
+    >
+      <v-icon small>
+        $vuetify.icons.resize_right
+      </v-icon>
+    </div>
+  </v-card>
 </template>
 
 <script>

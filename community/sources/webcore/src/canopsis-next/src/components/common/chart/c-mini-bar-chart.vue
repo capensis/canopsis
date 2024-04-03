@@ -1,17 +1,23 @@
-<template lang="pug">
-  div.mini-bar-chart
-    div.mini-bar-chart--bars
-      span.mini-bar-chart--bar(
-        v-for="(bar, index) in bars",
-        :style="{ height: bar.height }",
-        :key="index",
-        :title="bar.title",
+<template>
+  <div class="mini-bar-chart">
+    <div class="mini-bar-chart--bars">
+      <span
+        v-for="(bar, index) in bars"
+        :key="index"
+        :style="{ height: bar.height }"
+        :title="bar.title"
         :class="color"
-      )
-    span.ml-1.font-weight-bold(
-      v-if="lastHistory",
+        class="mini-bar-chart--bar"
+      />
+    </div>
+    <span
+      v-if="lastHistory"
       :class="`${color}--text`"
-    ) {{ lastHistory | fixed(digits) }}{{ unit }}
+      class="ml-1 font-weight-bold"
+    >
+      {{ lastHistory | fixed(digits) }}{{ unit }}
+    </span>
+  </div>
 </template>
 
 <script>

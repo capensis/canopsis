@@ -1,53 +1,70 @@
-<template lang="pug">
-  div.c-quick-interval(:class="{ 'c-quick-interval--reverse': reverse, 'c-quick-interval--short': short }")
-    template(v-if="short")
-      v-menu(offset-y, :close-on-content-click="false")
-        template(#activator="{ on }")
-          v-text-field(
-            v-on="on",
-            :value="shortValue",
-            :label="$t('common.interval')",
-            readonly,
+<template>
+  <div
+    :class="{ 'c-quick-interval--reverse': reverse, 'c-quick-interval--short': short }"
+    class="c-quick-interval"
+  >
+    <template v-if="short">
+      <v-menu
+        :close-on-content-click="false"
+        offset-y
+      >
+        <template #activator="{ on }">
+          <v-text-field
+            :value="shortValue"
+            :label="$t('common.interval')"
+            readonly
             hide-details
-          )
-        v-card(width="400px")
-          v-card-text
-            c-information-block(:title="$t('common.interval')")
-              v-divider
-              v-layout.mt-2
-                c-date-interval-field(
-                  :value="intervalObject",
-                  :disabled="disabled",
-                  :is-allowed-from-date="isAllowedFromDate",
-                  :is-allowed-to-date="isAllowedToDate",
-                  column,
+            v-on="on"
+          />
+        </template>
+        <v-card width="400px">
+          <v-card-text>
+            <c-information-block :title="$t('common.interval')">
+              <v-divider />
+              <v-layout class="mt-2">
+                <c-date-interval-field
+                  :value="intervalObject"
+                  :disabled="disabled"
+                  :is-allowed-from-date="isAllowedFromDate"
+                  :is-allowed-to-date="isAllowedToDate"
+                  column
                   @input="updateModel($event)"
-                )
-                c-quick-date-interval-type-field.c-quick-interval__range.ml-4(
-                  :value="range",
-                  :ranges="availableQuickRanges",
-                  :disabled="disabled",
-                  hide-details,
-                  return-object,
+                />
+                <c-quick-date-interval-type-field
+                  :value="range"
+                  :ranges="availableQuickRanges"
+                  :disabled="disabled"
+                  class="c-quick-interval__range ml-4"
+                  hide-details
+                  return-object
                   @input="updateIntervalRange"
-                )
-    template(v-else)
-      c-date-interval-field(
-        :value="intervalObject",
-        :disabled="disabled",
-        :is-allowed-from-date="isAllowedFromDate",
-        :is-allowed-to-date="isAllowedToDate",
+                />
+              </v-layout>
+            </c-information-block>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </template>
+    <template v-else>
+      <c-date-interval-field
+        :value="intervalObject"
+        :disabled="disabled"
+        :is-allowed-from-date="isAllowedFromDate"
+        :is-allowed-to-date="isAllowedToDate"
         @input="updateModel($event)"
-      )
-      div.c-quick-interval__range
-        c-quick-date-interval-type-field(
-          :value="range",
-          :ranges="availableQuickRanges",
-          :disabled="disabled",
-          hide-details,
-          return-object,
+      />
+      <div class="c-quick-interval__range">
+        <c-quick-date-interval-type-field
+          :value="range"
+          :ranges="availableQuickRanges"
+          :disabled="disabled"
+          hide-details
+          return-object
           @input="updateIntervalRange"
-        )
+        />
+      </div>
+    </template>
+  </div>
 </template>
 
 <script>

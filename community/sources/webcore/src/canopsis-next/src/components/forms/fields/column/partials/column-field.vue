@@ -1,70 +1,96 @@
-<template lang="pug">
-  v-card.column-field
-    v-tooltip(left)
-      template(#activator="{ on }")
-        v-btn.column-field__remove-btn(
-          v-on="on",
-          small,
-          flat,
-          icon,
+<template>
+  <v-card class="column-field">
+    <v-tooltip left>
+      <template #activator="{ on }">
+        <v-btn
+          class="column-field__remove-btn"
+          small
+          text
+          icon
+          v-on="on"
           @click="$emit('remove')"
-        )
-          v-icon(color="error", small) close
-      span {{ $t('common.delete') }}
-    v-card-text
-      v-layout(row, align-center)
-        span.handler.mr-1
-          v-icon.draggable(:class="dragHandleClass") drag_indicator
-        c-expand-btn.mr-1(
-          v-model="expanded",
+        >
+          <v-icon
+            color="error"
+            small
+          >
+            close
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('common.delete') }}</span>
+    </v-tooltip>
+    <v-card-text>
+      <v-layout align-center>
+        <span class="handler mr-1">
+          <v-icon
+            :class="dragHandleClass"
+            class="draggable"
+          >
+            drag_indicator
+          </v-icon>
+        </span>
+        <c-expand-btn
+          v-model="expanded"
           :color="hasChildrenError ? 'error' : ''"
-        )
-        c-name-field(
-          v-if="isCustom",
-          v-field="column.label",
-          :name="columnLabelFieldName",
-          :label="$t('common.label')",
-          :error-messages="columnLabelErrorMessages",
+          class="mr-1"
+        />
+        <c-name-field
+          v-if="isCustom"
+          v-field="column.label"
+          :name="columnLabelFieldName"
+          :label="$t('common.label')"
+          :error-messages="columnLabelErrorMessages"
           required
-        )
-        v-select(
-          v-else,
-          v-validate="'required'",
-          :value="column.column",
-          :items="availableColumns",
-          :label="$tc('common.column', 1)",
-          :error-messages="errors.collect(`${name}.column`)",
-          :name="`${name}.column`",
+        />
+        <v-select
+          v-else
+          v-validate="'required'"
+          :value="column.column"
+          :items="availableColumns"
+          :label="$tc('common.column', 1)"
+          :error-messages="errors.collect(`${name}.column`)"
+          :name="`${name}.column`"
           @change="changeColumn"
-        )
-        v-tooltip(left)
-          template(#activator="{ on }")
-            v-btn.mr-0(
-              v-on="on",
-              :class="isCustom ? 'text--primary' : 'text--disabled'",
-              small,
-              flat,
-              icon,
+        />
+        <v-tooltip left>
+          <template #activator="{ on }">
+            <v-btn
+              :class="`mr-0 ${isCustom ? 'text--primary' : 'text--disabled'}`"
+              small
+              text
+              icon
+              v-on="on"
               @click="convertToCustom"
-            )
-              v-icon(small) tune
-          span {{ $t('common.convertToCustomColumn') }}
-      v-expand-transition(mode="out-in")
-        column-field-expand-panel.pl-1(
-          v-show="expanded",
-          v-field="column",
-          :name="name",
-          :with-label="!isCustom",
-          :with-field="isCustom",
-          :with-html="withHtml",
-          :with-template="withTemplate",
-          :with-color-indicator="withColorIndicator",
-          :with-instructions="withInstructions",
-          :with-simple-template="withSimpleTemplate",
-          :optional-infos-attributes="optionalInfosAttributes",
-          :without-infos-attributes="withoutInfosAttributes",
+            >
+              <v-icon small>
+                tune
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('common.convertToCustomColumn') }}</span>
+        </v-tooltip>
+      </v-layout>
+      <v-expand-transition mode="out-in">
+        <column-field-expand-panel
+          v-show="expanded"
+          v-field="column"
+          :name="name"
+          :with-label="!isCustom"
+          :with-field="isCustom"
+          :with-html="withHtml"
+          :with-template="withTemplate"
+          :with-color-indicator="withColorIndicator"
+          :with-instructions="withInstructions"
+          :with-simple-template="withSimpleTemplate"
+          :optional-infos-attributes="optionalInfosAttributes"
+          :without-infos-attributes="withoutInfosAttributes"
           :variables="variables"
-        )
+          class="pl-1"
+        />
+      </v-expand-transition>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

@@ -47,6 +47,8 @@ export const ALARM_FIELDS = {
   ticketInitiator: 'v.ticket.initiator',
   ticketValue: 'v.ticket.ticket',
   ticketCreatedAt: 'v.ticket.t',
+  changeState: 'v.change_state',
+  meta: 'v.meta',
   entityId: 'entity._id',
   entityName: 'entity.name',
   entityCategoryName: 'entity.category.name',
@@ -315,6 +317,8 @@ export const ALARM_PATTERN_FIELDS = {
   ticketMessage: ALARM_FIELDS.ticketMessage,
   ticketInitiator: ALARM_FIELDS.ticketInitiator,
   ticketData: ALARM_FIELDS.ticketData,
+  changeState: ALARM_FIELDS.changeState,
+  meta: ALARM_FIELDS.meta,
 };
 
 export const ALARM_EVENT_INITIATORS = {
@@ -463,6 +467,8 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityInfos]: 'alarm.fields.entityInfos',
   [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
   [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
+  [ALARM_FIELDS.changeState]: 'alarm.fields.changeState',
+  [ALARM_FIELDS.meta]: 'alarm.metaAlarm',
 
   /**
    * OBJECTS
@@ -547,3 +553,23 @@ export const ALARM_LINK_TD_PADDINGS = {
 };
 
 export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
+
+export const ALARM_ACTION_BUTTON_WIDTHS = {
+  [ALARM_DENSE_TYPES.large]: 36,
+  [ALARM_DENSE_TYPES.medium]: 36,
+  [ALARM_DENSE_TYPES.small]: 24,
+};
+
+export const ALARM_ACTION_BUTTON_MARGINS = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 0,
+  [ALARM_DENSE_TYPES.small]: 0,
+};
+
+export const ALARM_ACTIONS_PADDINGS = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 6,
+  [ALARM_DENSE_TYPES.small]: 6,
+};
+
+export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;

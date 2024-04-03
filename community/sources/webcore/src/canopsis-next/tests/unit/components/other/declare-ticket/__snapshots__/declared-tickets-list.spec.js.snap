@@ -3,198 +3,287 @@
 exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant alarm id 1`] = `
 <div
   class="c-advanced-data-table"
+  disable-initial-sort=""
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <!---->
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
               aria-label="Ticket URL: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_url"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Ticket URL
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ticket URL
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ticket ID: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Ticket ID
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ticket ID
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_system_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              System name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  System name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Rule name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_rule_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Rule name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Rule name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="t"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="_t"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Status
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Meta alarm: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="metaalarm"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Meta alarm
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Meta alarm
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="a"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Author
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Comment: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_comment"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Comment
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Comment
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="9"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="9"
             >
               No data available
@@ -211,180 +300,261 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
 exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`] = `
 <div
   class="c-advanced-data-table"
+  disable-initial-sort=""
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <!---->
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
               aria-label="Ticket URL: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_url"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Ticket URL
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ticket URL
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ticket ID: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Ticket ID
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ticket ID
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_system_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              System name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  System name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Rule name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_rule_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Rule name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Rule name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="t"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="_t"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Status
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="a"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Author
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Comment: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_comment"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Comment
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Comment
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="8"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <a
                 href="https://ticket-url.com/0"
                 target="_blank"
@@ -392,70 +562,104 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 https://ticket-url.com/0
               </a>
             </td>
-            <td>
-              ticket-0
+            <td
+              class="text-start"
+            >
+        ticket-0
             </td>
-            <td>
-              ticket-system-name-0
+            <td
+              class="text-start"
+            >
+        ticket-system-name-0
             </td>
-            <td>
-              ticket-rule-name-0
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-0
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="primary"
                 icon="check_circle"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-0
+            <td
+              class="text-start"
+            >
+        author-0
             </td>
-            <td>
-              ticket-comment-0
+            <td
+              class="text-start"
+            >
+        ticket-comment-0
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <span>
                 ticket-url-1
               </span>
             </td>
-            <td>
-              ticket-1
+            <td
+              class="text-start"
+            >
+        ticket-1
             </td>
-            <td>
-              ticket-system-name-1
+            <td
+              class="text-start"
+            >
+        ticket-system-name-1
             </td>
-            <td>
-              ticket-rule-name-1
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-1
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="error"
                 icon="error"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-1
+            <td
+              class="text-start"
+            >
+        author-1
             </td>
-            <td>
-              ticket-comment-1
+            <td
+              class="text-start"
+            >
+        ticket-comment-1
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <a
                 href="https://ticket-url.com/2"
                 target="_blank"
@@ -463,70 +667,104 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 https://ticket-url.com/2
               </a>
             </td>
-            <td>
-              ticket-2
+            <td
+              class="text-start"
+            >
+        ticket-2
             </td>
-            <td>
-              ticket-system-name-2
+            <td
+              class="text-start"
+            >
+        ticket-system-name-2
             </td>
-            <td>
-              ticket-rule-name-2
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-2
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="primary"
                 icon="check_circle"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-2
+            <td
+              class="text-start"
+            >
+        author-2
             </td>
-            <td>
-              ticket-comment-2
+            <td
+              class="text-start"
+            >
+        ticket-comment-2
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <span>
                 ticket-url-3
               </span>
             </td>
-            <td>
-              ticket-3
+            <td
+              class="text-start"
+            >
+        ticket-3
             </td>
-            <td>
-              ticket-system-name-3
+            <td
+              class="text-start"
+            >
+        ticket-system-name-3
             </td>
-            <td>
-              ticket-rule-name-3
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-3
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="error"
                 icon="error"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-3
+            <td
+              class="text-start"
+            >
+        author-3
             </td>
-            <td>
-              ticket-comment-3
+            <td
+              class="text-start"
+            >
+        ticket-comment-3
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <a
                 href="https://ticket-url.com/4"
                 target="_blank"
@@ -534,70 +772,104 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 https://ticket-url.com/4
               </a>
             </td>
-            <td>
-              ticket-4
+            <td
+              class="text-start"
+            >
+        ticket-4
             </td>
-            <td>
-              ticket-system-name-4
+            <td
+              class="text-start"
+            >
+        ticket-system-name-4
             </td>
-            <td>
-              ticket-rule-name-4
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-4
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="primary"
                 icon="check_circle"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-4
+            <td
+              class="text-start"
+            >
+        author-4
             </td>
-            <td>
-              ticket-comment-4
+            <td
+              class="text-start"
+            >
+        ticket-comment-4
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <span>
                 ticket-url-5
               </span>
             </td>
-            <td>
-              ticket-5
+            <td
+              class="text-start"
+            >
+        ticket-5
             </td>
-            <td>
-              ticket-system-name-5
+            <td
+              class="text-start"
+            >
+        ticket-system-name-5
             </td>
-            <td>
-              ticket-rule-name-5
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-5
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="error"
                 icon="error"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-5
+            <td
+              class="text-start"
+            >
+        author-5
             </td>
-            <td>
-              ticket-comment-5
+            <td
+              class="text-start"
+            >
+        ticket-comment-5
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <a
                 href="https://ticket-url.com/6"
                 target="_blank"
@@ -605,70 +877,104 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 https://ticket-url.com/6
               </a>
             </td>
-            <td>
-              ticket-6
+            <td
+              class="text-start"
+            >
+        ticket-6
             </td>
-            <td>
-              ticket-system-name-6
+            <td
+              class="text-start"
+            >
+        ticket-system-name-6
             </td>
-            <td>
-              ticket-rule-name-6
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-6
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="primary"
                 icon="check_circle"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-6
+            <td
+              class="text-start"
+            >
+        author-6
             </td>
-            <td>
-              ticket-comment-6
+            <td
+              class="text-start"
+            >
+        ticket-comment-6
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <span>
                 ticket-url-7
               </span>
             </td>
-            <td>
-              ticket-7
+            <td
+              class="text-start"
+            >
+        ticket-7
             </td>
-            <td>
-              ticket-system-name-7
+            <td
+              class="text-start"
+            >
+        ticket-system-name-7
             </td>
-            <td>
-              ticket-rule-name-7
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-7
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="error"
                 icon="error"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-7
+            <td
+              class="text-start"
+            >
+        author-7
             </td>
-            <td>
-              ticket-comment-7
+            <td
+              class="text-start"
+            >
+        ticket-comment-7
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <a
                 href="https://ticket-url.com/8"
                 target="_blank"
@@ -676,102 +982,96 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 https://ticket-url.com/8
               </a>
             </td>
-            <td>
-              ticket-8
+            <td
+              class="text-start"
+            >
+        ticket-8
             </td>
-            <td>
-              ticket-system-name-8
+            <td
+              class="text-start"
+            >
+        ticket-system-name-8
             </td>
-            <td>
-              ticket-rule-name-8
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-8
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="primary"
                 icon="check_circle"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-8
+            <td
+              class="text-start"
+            >
+        author-8
             </td>
-            <td>
-              ticket-comment-8
+            <td
+              class="text-start"
+            >
+        ticket-comment-8
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <span>
                 ticket-url-9
               </span>
             </td>
-            <td>
-              ticket-9
+            <td
+              class="text-start"
+            >
+        ticket-9
             </td>
-            <td>
-              ticket-system-name-9
+            <td
+              class="text-start"
+            >
+        ticket-system-name-9
             </td>
-            <td>
-              ticket-rule-name-9
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-9
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-help-icon-stub
                 color="error"
                 icon="error"
                 maxwidth="400"
-                top="top"
+                top=""
               />
             </td>
-            <td>
-              author-9
+            <td
+              class="text-start"
+            >
+        author-9
             </td>
-            <td>
-              ticket-comment-9
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              <a
-                href="https://ticket-url.com/10"
-                target="_blank"
-              >
-                https://ticket-url.com/10
-              </a>
-            </td>
-            <td>
-              ticket-10
-            </td>
-            <td>
-              ticket-system-name-10
-            </td>
-            <td>
-              ticket-rule-name-10
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              <c-help-icon-stub
-                color="primary"
-                icon="check_circle"
-                maxwidth="400"
-                top="top"
-              />
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              ticket-comment-10
+            <td
+              class="text-start"
+            >
+        ticket-comment-9
             </td>
           </tr>
         </tbody>
@@ -785,180 +1085,259 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
 exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets 1`] = `
 <div
   class="c-advanced-data-table"
+  disable-initial-sort=""
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <!---->
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
               aria-label="Ticket URL: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_url"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Ticket URL
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ticket URL
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Ticket ID: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Ticket ID
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Ticket ID
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_system_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              System name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  System name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Rule name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_rule_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Rule name
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Rule name
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="t"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Date
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Status: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="_t"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Status
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Status
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="a"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Author
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
             <th
               aria-label="Comment: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="ticket_comment"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Comment
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+              <div
+                class="layout align-center"
               >
-                arrow_upward
-              </i>
+                <span
+                  class=""
+                >
+                  Comment
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="8"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="8"
             >
               No data available

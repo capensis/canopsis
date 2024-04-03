@@ -1,14 +1,16 @@
-<template lang="pug">
-  c-alarm-actions-chips(
-    v-on="$listeners",
-    :items="tags",
-    :active-item="selectedTag",
-    :small="small",
-    :inline-count="inlineCount",
-    item-text="text",
-    item-value="text",
+<template>
+  <c-alarm-actions-chips
+    :items="tags"
+    :active-item="selectedTag"
+    :small="small"
+    :inline-count="inlineCount"
+    :closable-active="closableActive"
+    item-class="c-alarm-tags-chips__chip"
+    item-text="text"
+    item-value="text"
     row
-  )
+    v-on="$listeners"
+  />
 </template>
 
 <script>
@@ -33,6 +35,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    closableActive: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     tags() {
@@ -44,3 +50,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-alarm-tags-chips__chip .v-chip__content {
+  padding: 0 4px;
+}
+</style>

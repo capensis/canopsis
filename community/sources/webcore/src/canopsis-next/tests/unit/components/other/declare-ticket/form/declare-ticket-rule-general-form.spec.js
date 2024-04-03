@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
 import { REQUEST_METHODS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/declare-ticket/form/declare-ticket-rule-general-form.vue';
@@ -39,9 +40,9 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectNameField(wrapper).vm.$emit('input', newName);
+    selectNameField(wrapper).triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', { ...form, name: newName });
+    expect(wrapper).toEmitInput({ ...form, name: newName });
   });
 
   test('System name changed after trigger name field', () => {
@@ -53,9 +54,9 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectSystemNameField(wrapper).vm.$emit('input', newName);
+    selectSystemNameField(wrapper).triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', { ...form, system_name: newName });
+    expect(wrapper).toEmitInput({ ...form, system_name: newName });
   });
 
   test('Enabled changed after trigger enabled field', () => {
@@ -67,9 +68,9 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newEnabled = !form.enabled;
 
-    selectEnabledField(wrapper).vm.$emit('input', newEnabled);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
   });
 
   test('Emit trigger field changed after trigger enabled field', () => {
@@ -81,9 +82,9 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newEnabled = !form.emit_trigger;
 
-    selectEmitTriggerField(wrapper).vm.$emit('input', newEnabled);
+    selectEmitTriggerField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, emit_trigger: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, emit_trigger: newEnabled });
   });
 
   test('Webhooks field changed after trigger webhooks field', () => {
@@ -98,9 +99,9 @@ describe('declare-ticket-rule-general-form', () => {
       url: 'url',
     }];
 
-    selectDeclareTicketRuleWebhooksField(wrapper).vm.$emit('input', newWebhooks);
+    selectDeclareTicketRuleWebhooksField(wrapper).triggerCustomEvent('input', newWebhooks);
 
-    expect(wrapper).toEmit('input', { ...form, webhooks: newWebhooks });
+    expect(wrapper).toEmitInput({ ...form, webhooks: newWebhooks });
   });
 
   test('Renders `declare-ticket-rule-general-form` with empty form', () => {
@@ -116,7 +117,7 @@ describe('declare-ticket-rule-general-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `declare-ticket-rule-general-form` with filled form', () => {
@@ -135,6 +136,6 @@ describe('declare-ticket-rule-general-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

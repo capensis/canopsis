@@ -1,23 +1,52 @@
-<template lang="pug">
-  v-layout.c-responsive-list
-    div.c-responsive-list__container(
-      v-resize="setContainerWidth",
-      :class="layoutClass",
+<template>
+  <v-layout class="c-responsive-list">
+    <div
+      v-resize="setContainerWidth"
       ref="listContainer"
-    )
-      div(
-        v-for="item in visibleItems",
-        :key="item.key",
+      :class="layoutClass"
+      class="c-responsive-list__container"
+    >
+      <div
+        v-for="item in visibleItems"
+        :key="item.key"
         :ref="`item:${item.key}`"
-      )
-        slot(:item="item") {{ getValue(item) }}
-
-    v-menu(v-if="shownMenu", bottom, offset-y)
-      template(#activator="{ on }")
-        v-btn.ma-1(v-on="on", icon, small)
-          v-icon(small, color="white") more_vert
-      div.white(v-for="item in hiddenItems", :key="item.key")
-        slot(:item="item") {{ getValue(item) }}
+      >
+        <slot :item="item">
+          {{ getValue(item) }}
+        </slot>
+      </div>
+    </div>
+    <v-menu
+      v-if="shownMenu"
+      bottom
+      offset-y
+    >
+      <template #activator="{ on }">
+        <v-btn
+          class="ma-1"
+          icon
+          small
+          v-on="on"
+        >
+          <v-icon
+            color="white"
+            small
+          >
+            more_vert
+          </v-icon>
+        </v-btn>
+      </template>
+      <div
+        v-for="item in hiddenItems"
+        :key="item.key"
+        class="white"
+      >
+        <slot :item="item">
+          {{ getValue(item) }}
+        </slot>
+      </div>
+    </v-menu>
+  </v-layout>
 </template>
 
 <script>

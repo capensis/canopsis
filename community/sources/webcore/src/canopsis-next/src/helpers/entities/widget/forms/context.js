@@ -14,6 +14,9 @@ import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   ALARM_UNSORTABLE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
+  TREE_OF_DEPENDENCIES_SHOW_TYPES,
+  COLOR_INDICATOR_TYPES,
+  GRID_SIZES,
 } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
@@ -38,10 +41,14 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
  * @property {WidgetColumn[]} resolvedAlarmsColumns
  * @property {WidgetColumn[]} activeAlarmsColumns
  * @property {string[]} selectedTypes
+ * @property {number[]} expandGridRangeSize
  * @property {WidgetSort} sort
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
  * @property {AlarmChart[]} charts
+ * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
+ * @property {number} treeOfDependenciesShowType
  */
 
 /**
@@ -86,10 +93,16 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   selectedTypes: parameters.selectedTypes
     ? cloneDeep(parameters.selectedTypes)
     : [],
+  expandGridRangeSize: parameters.expandGridRangeSize
+    ? [...parameters.expandGridRangeSize]
+    : [GRID_SIZES.min, GRID_SIZES.max],
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   charts: addKeyInEntities(parameters.charts),
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
+  treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
 });
 
 /**

@@ -1,11 +1,12 @@
 import { removeTrailingSlashes } from '@/helpers/url';
 
 export const {
-  BASE_URL,
-  VUE_APP_API_HOST,
-  VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
-  VUE_APP_PAGINATION_LIMIT,
-  VUE_APP_OPEN_STREET_LAYER_URL,
+  BASE_URL = '',
+  VUE_APP_API_HOST = '',
+  VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY = '',
+  VUE_APP_PAGINATION_LIMIT = '',
+  VUE_APP_OPEN_STREET_LAYER_URL = '',
+  VUE_APP_LINKIFY_PROTOCOLS = '',
 } = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
@@ -32,11 +33,22 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
+export const LINKIFY_PROTOCOLS = [
+  ...VUE_APP_LINKIFY_PROTOCOLS.split(',').map(protocol => protocol.trim()).filter(Boolean),
+
+  'ssh',
+];
+
 export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
 
 export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
+
+export const LOCALES = {
+  en: 'en',
+  fr: 'fr',
+};
 
 export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
 
@@ -85,6 +97,7 @@ export const SOCKET_ROOMS = {
   declareticket: 'declareticket',
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
+  icons: 'icons',
 };
 
 export const API_ROUTES = {
@@ -102,8 +115,11 @@ export const API_ROUTES = {
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
   alarmLinks: '/api/v4/alarm-links',
+  alarmDisplayNames: '/api/v4/alarm-display-names',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
+  entityCheckStateSetting: '/api/v4/entities/check-state-setting',
+  entityStateSetting: '/api/v4/entities/state-setting',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
@@ -186,6 +202,9 @@ export const API_ROUTES = {
   saml: {
     auth: '/api/v4/saml/auth',
   },
+  oauth: {
+    login: '/api/v4/oauth/',
+  },
   scenario: {
     scenarios: '/api/v4/scenarios',
   },
@@ -213,6 +232,7 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  icons: '/api/v4/icons',
   themes: {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',

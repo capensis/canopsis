@@ -89,6 +89,11 @@ func (s *store) updateRetentionPolicy(ctx context.Context, data datastorage.Data
 		return err
 	}
 
+	err = s.updateMessageRateRetentionPolicy(ctx, data, pgPool)
+	if err != nil {
+		return err
+	}
+
 	return s.updatePerfDataRetentionPolicy(ctx, data, pgPool)
 }
 
@@ -174,6 +179,23 @@ func (s *store) updatePerfDataRetentionPolicy(ctx context.Context, data datastor
 	deleteAfter := data.Config.PerfDataMetrics.DeleteAfter
 	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.PerfData, deleteAfter.String())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updateMessageRateRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
+	err := s.deleteRetentionPolicy(ctx, pgPool, metrics.MessageRateHourly)
+	if err != nil {
+		return err
+	}
+
+	deleteAfter := data.Config.HealthCheck.DeleteAfter
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
+		err = s.addRetentionPolicy(ctx, pgPool, metrics.MessageRateHourly, deleteAfter.String())
 		if err != nil {
 			return err
 		}

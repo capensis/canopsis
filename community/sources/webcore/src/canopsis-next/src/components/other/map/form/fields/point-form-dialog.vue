@@ -1,39 +1,66 @@
-<template lang="pug">
-  v-form(v-click-outside.zIndex="showConfirmationModal", @submit.prevent.stop="submit")
-    v-card(width="400")
-      v-card-title.primary.pa-2.white--text
-        v-layout(justify-space-between, align-center)
-          h4 {{ title }}
-          v-btn.ma-0.ml-3(icon, small, @click="close")
-            v-icon(color="white") close
-      v-card-text
-        point-form(
-          v-model="form",
-          :coordinates="coordinates",
-          :exists-entities="existsEntities",
+<template>
+  <v-form
+    v-click-outside.zIndex="showConfirmationModal"
+    @submit.prevent.stop="submit"
+  >
+    <v-card width="400">
+      <v-card-title class="primary pa-2 white--text">
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <h4>{{ title }}</h4>
+          <v-btn
+            class="ma-0 ml-3"
+            icon
+            small
+            @click="close"
+          >
+            <v-icon color="white">
+              close
+            </v-icon>
+          </v-btn>
+        </v-layout>
+      </v-card-title>
+      <v-card-text>
+        <point-form
+          v-model="form"
+          :coordinates="coordinates"
+          :exists-entities="existsEntities"
           @fly:coordinates="$emit('fly:coordinates', $event)"
-        )
-      v-layout(justify-end)
-        v-btn(
-          :disabled="submitting",
-          depressed,
-          flat,
+        />
+      </v-card-text>
+      <v-card-actions class="v-layout justify-end">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
           @click="close"
-        ) {{ $t('common.cancel') }}
-        v-btn(
-          v-if="editing",
-          :disabled="submitting",
-          :outline="$system.dark",
-          color="error",
-          depressed,
-          flat,
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          v-if="editing"
+          :disabled="submitting"
+          :outlined="$system.dark"
+          color="error"
+          depressed
+          text
           @click.stop="$emit('remove')"
-        ) {{ $t('common.delete') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.delete') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-form>
 </template>
 
 <script>

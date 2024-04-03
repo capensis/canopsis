@@ -1,33 +1,53 @@
-<template lang="pug">
-  v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form", :no-pattern="!!entityPattern")
-    v-layout(row, justify-end)
-      v-btn.error(
-        v-show="pbehavior",
-        :outline="$system.dark",
+<template>
+  <v-form
+    v-click-outside.zIndex="clickOutsideDirective"
+    class="pbehavior-form"
+    @submit.prevent="submitHandler"
+  >
+    <pbehavior-form
+      v-model="form"
+      :no-pattern="!!entityPattern"
+      class="py-3"
+    />
+    <v-layout
+      class="pbehavior-form__actions"
+      justify-end
+    >
+      <v-btn
+        v-show="pbehavior"
+        :outlined="$system.dark"
+        class="error"
         @click="remove"
-      ) {{ $t('common.delete') }}
-      v-btn.mr-0.mb-0(
-        depressed,
-        flat,
+      >
+        {{ $t('common.delete') }}
+      </v-btn>
+      <v-btn
+        depressed
+        text
         @click="cancel"
-      ) {{ $t('common.cancel') }}
-      v-btn.mr-0.mb-0(
-        :disabled="errors.any()",
-        color="primary",
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        :disabled="errors.any()"
+        color="primary"
         type="submit"
-      ) {{ $t('common.submit') }}
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+    </v-layout>
+  </v-form>
 </template>
 
 <script>
-import { get, cloneDeep } from 'lodash';
-import dependentMixin from 'vuetify/es5/mixins/dependent';
+import { cloneDeep } from 'lodash';
+import dependentMixin from 'vuetify/lib/mixins/dependent';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
 import { isOmitEqual } from '@/helpers/collection';
-import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
@@ -40,7 +60,7 @@ export default {
   components: { PbehaviorForm },
   mixins: [dependentMixin],
   props: {
-    calendarEvent: {
+    event: {
       type: Object,
       required: false,
     },
@@ -52,18 +72,21 @@ export default {
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent, this.entityPattern, this.$system.timezone),
+      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.$system.timezone),
     };
   },
   computed: {
     pbehavior() {
-      return get(this.calendarEvent, 'data.pbehavior');
+      return this.event?.data?.pbehavior;
     },
 
     clickOutsideDirective() {
       const selectorsForInclude = [
-        '.ds-calendar-app-action',
-        `.${getMenuClassByCalendarEvent(this.calendarEvent)}`,
+        '.c-calendar__today-btn',
+        '.c-calendar__pagination',
+        '.c-calendar__menu-right',
+        '.v-event',
+        `.${getMenuClassByCalendarEvent(this.event.id)}`,
       ];
 
       return {
@@ -72,6 +95,7 @@ export default {
           ...this.getOpenDependentElements(),
           ...document.querySelectorAll(selectorsForInclude.join(',')),
         ],
+        closeConditional: () => true,
       };
     },
   },
@@ -81,7 +105,7 @@ export default {
   beforeDestroy() {
     if (this.manualClose) {
       // eslint-disable-next-line vue/no-mutating-props
-      delete this.calendarEvent.data.cachedForm;
+      delete this.event.data.cachedForm;
     } else {
       this.cacheForm();
     }
@@ -89,14 +113,14 @@ export default {
   methods: {
     cacheForm() {
       // eslint-disable-next-line vue/no-mutating-props
-      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+      this.event.data.cachedForm = cloneDeep(this.form);
     },
 
     async submitHandler(event) {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
+        const calendarEvent = formToCalendarEvent(this.form, this.event, this.$system.timezone);
 
         this.manualClose = true;
 
@@ -105,7 +129,7 @@ export default {
     },
 
     cancel(event) {
-      const { cachedForm } = this.calendarEvent.data;
+      const { cachedForm } = this.event.data;
 
       if (isOmitEqual(cachedForm, this.form, ['_id'])) {
         return this.close(event, true);
@@ -136,7 +160,10 @@ export default {
 
 <style lang="scss" scoped>
   .pbehavior-form {
-    overflow: auto;
     width: 100%;
+
+    &__actions {
+      gap: 6px;
+    }
   }
 </style>

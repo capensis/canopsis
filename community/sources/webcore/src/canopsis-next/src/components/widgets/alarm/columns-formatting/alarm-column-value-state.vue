@@ -1,7 +1,29 @@
-<template lang="pug">
-  v-layout(:class="classes", align-center)
-    c-alarm-chip(:value="stateId", :badge-value="badgeValue", :small="small")
-    v-icon.d-block(v-if="showIcon", :size="small ? 14 : undefined", color="purple") account_circle
+<template>
+  <v-layout
+    :class="classes"
+    align-center
+  >
+    <c-alarm-chip
+      :value="stateId"
+      :badge-value="badgeValue"
+      :small="small"
+      @click="$emit('click', $event)"
+    >
+      <template v-if="appendIconName" #append>
+        <v-icon color="white" size="14">
+          {{ appendIconName }}
+        </v-icon>
+      </template>
+    </c-alarm-chip>
+    <v-icon
+      v-if="showIcon"
+      :size="small ? 14 : undefined"
+      class="d-block"
+      color="purple"
+    >
+      account_circle
+    </v-icon>
+  </v-layout>
 </template>
 
 <script>
@@ -26,6 +48,10 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },
+    appendIconName: {
+      type: String,
+      required: false,
     },
   },
   computed: {

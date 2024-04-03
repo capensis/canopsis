@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 
@@ -35,19 +34,20 @@ describe('c-pbehavior-type-field', () => {
       },
     });
 
-    selectSelectField(wrapper).vm.$emit('input', type._id);
+    selectSelectField(wrapper).triggerCustomEvent('input', type._id);
 
-    expect(wrapper).toEmit('input', type._id);
+    expect(wrapper).toEmitInput(type._id);
   });
 
-  test('Renders `c-pbehavior-type-field` with default props', () => {
+  test('Renders `c-pbehavior-type-field` with default props', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         pbehaviorTypesModule,
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -76,7 +76,8 @@ describe('c-pbehavior-type-field', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -99,7 +100,8 @@ describe('c-pbehavior-type-field', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

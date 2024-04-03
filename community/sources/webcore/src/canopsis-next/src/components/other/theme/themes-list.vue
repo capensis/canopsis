@@ -1,44 +1,50 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="themes",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    :is-disabled-item="isDisabledMap",
-    advanced-pagination,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-show="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="themes"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    :is-disabled-item="isDisabledMap"
+    advanced-pagination
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-show="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :tooltip="item.deletable ? $t('common.edit') : $t('theme.defaultTheme')",
-          :disabled="!item.deletable",
-          type="edit",
+      />
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          :tooltip="item.deletable ? $t('common.edit') : $t('theme.defaultTheme')"
+          :disabled="!item.deletable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('theme.defaultTheme')",
-          :disabled="!item.deletable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          :tooltip="item.deletable ? $t('common.delete') : $t('theme.defaultTheme')"
+          :disabled="!item.deletable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -56,7 +62,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

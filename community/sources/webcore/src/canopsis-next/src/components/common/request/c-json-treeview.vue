@@ -1,10 +1,19 @@
-<template lang="pug">
-  v-treeview.json-treeview(:items="items", :class="{ 'json-treeview--array': isArray }")
-    template(#prepend="{ item }")
-      i.caption.mr-1(v-if="item.children") ({{ $t(`common.variableTypes.${item.isArray ? 'array' : 'object'}`) }})
-
-    template(#label="{ item }")
-      request-information-content-row(:row="item")
+<template>
+  <v-treeview
+    :items="items"
+    :class="{ 'json-treeview--array': isArray }"
+    class="json-treeview"
+  >
+    <template #prepend="{ item }">
+      <i
+        v-if="item.children"
+        class="text-caption mr-1"
+      >({{ $t(`common.variableTypes.${item.isArray ? 'array' : 'object'}`) }})</i>
+    </template>
+    <template #label="{ item }">
+      <request-information-content-row :row="item" />
+    </template>
+  </v-treeview>
 </template>
 
 <script>
