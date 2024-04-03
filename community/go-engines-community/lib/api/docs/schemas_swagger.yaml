@@ -889,6 +889,8 @@ definitions:
     type: object
   appinfo.LoginConf:
     properties:
+      basic:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
       casconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
       ldapconfig:
