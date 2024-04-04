@@ -74,7 +74,7 @@
       </template>
 
       <template
-        v-for="header in headersConsideringItemSlot"
+        v-for="header in headers"
         #[getItemSlotName(header)]="props"
       >
         <slot
@@ -309,10 +309,6 @@ export default {
 
     shownSearch() {
       return this.search || this.advancedSearch;
-    },
-
-    headersConsideringItemSlot() {
-      return this.hasItemSlot ? [] : this.headers;
     },
   },
   watch: {
