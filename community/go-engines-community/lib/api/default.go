@@ -338,7 +338,7 @@ func Default(
 	if flags.EnableDocs {
 		api.AddRouter(func(router *gin.Engine) {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
-				c.FileFromFS(fmt.Sprintf("swaggerui/%s", c.Param("filepath")), http.FS(docsUiFile))
+				c.FileFromFS("swaggerui/"+c.Param("filepath"), http.FS(docsUiFile))
 			})
 		})
 		if !overrideDocs {

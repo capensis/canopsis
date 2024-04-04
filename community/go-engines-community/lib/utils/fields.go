@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fmt"
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -32,12 +32,12 @@ func GetField(object interface{}, fieldPath string) (interface{}, error) {
 		case reflect.Map:
 			value = value.MapIndex(reflect.ValueOf(fieldName))
 		default:
-			return nil, fmt.Errorf("unable to get field from object that is neither a struct nor a map")
+			return nil, errors.New("unable to get field from object that is neither a struct nor a map")
 		}
 
 		if !value.IsValid() {
 			// There is no such field in the struct or the map
-			return nil, fmt.Errorf("field does not exist")
+			return nil, errors.New("field does not exist")
 		}
 
 		// Dereference the value if it is a non-nil pointer
