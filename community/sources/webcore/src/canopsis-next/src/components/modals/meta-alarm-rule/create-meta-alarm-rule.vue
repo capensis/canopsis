@@ -8,7 +8,7 @@
         <meta-alarm-rule-form
           v-model="form"
           :active-step="activeStep"
-          :is-disabled-id-field="config.isDisabledIdField"
+          :disabled-id-field="config.isDisabledIdField"
         />
       </template>
       <template #actions="">

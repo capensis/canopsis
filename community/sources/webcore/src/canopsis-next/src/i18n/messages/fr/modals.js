@@ -155,9 +155,6 @@ export default {
         label: 'Utiliser une couleur spéciale pour cet événement ?',
       },
     },
-    errors: {
-      invalid: 'Invalide',
-    },
     success: {
       create: 'Comportement périodique créé avec succès !',
     },
@@ -409,7 +406,6 @@ export default {
       success: 'Information dynamique supprimée avec succès !',
     },
     errors: {
-      invalid: 'Invalide',
       emptyInfos: 'Au moins une information doit être ajoutée.',
     },
     steps: {

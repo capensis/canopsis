@@ -12,7 +12,7 @@
         editable
       >
         {{ $t('common.general') }}
-        <small v-if="hasGeneralFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
+        <small v-if="hasGeneralFormAnyError">{{ $t('errors.invalid') }}</small>
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
@@ -23,7 +23,7 @@
         editable
       >
         {{ $t('modals.createDynamicInfo.steps.infos.title') }}
-        <small v-if="hasInfosFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
+        <small v-if="hasInfosFormAnyError">{{ $t('errors.invalid') }}</small>
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
@@ -34,7 +34,7 @@
         editable
       >
         {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
-        <small v-if="hasPatternsFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
+        <small v-if="hasPatternsFormAnyError">{{ $t('errors.invalid') }}</small>
       </v-stepper-step>
     </v-stepper-header>
     <v-stepper-items>
