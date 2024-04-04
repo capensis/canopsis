@@ -4,18 +4,44 @@ package parser
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/schema"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+const DefaultArgsLen = 6
 
 type Expression struct {
 	Or []*OrCondition `@@ { "OR" @@ }`
 }
 
-func (e *Expression) Query() bson.M {
+func (e *Expression) PostgresQuery(prefix string) (string, pgx.NamedArgs) {
+	orQueries := make([]string, len(e.Or))
+	orArgs := make(map[string]any)
+
+	var args map[string]any
+	for i, cond := range e.Or {
+		orQueries[i], args = cond.PostgresQuery(prefix)
+
+		for k, v := range args {
+			orArgs[k] = v
+		}
+	}
+
+	if len(orQueries) == 1 {
+		return "WHERE " + orQueries[0], orArgs
+	}
+
+	return "WHERE (" + strings.Join(orQueries, " OR ") + ")", orArgs
+}
+
+func (e *Expression) MongoQuery() bson.M {
 	or := make([]bson.M, len(e.Or))
 	for i, v := range e.Or {
-		or[i] = v.Query()
+		or[i] = v.MongoQuery()
 	}
 
 	if len(or) == 1 {
@@ -25,10 +51,10 @@ func (e *Expression) Query() bson.M {
 	return bson.M{"$or": or}
 }
 
-func (e *Expression) ExprQuery() bson.M {
+func (e *Expression) MongoExprQuery() bson.M {
 	or := make([]bson.M, len(e.Or))
 	for i, v := range e.Or {
-		or[i] = v.ExprQuery()
+		or[i] = v.MongoExprQuery()
 	}
 
 	if len(or) == 1 {
@@ -51,10 +77,30 @@ type OrCondition struct {
 	And []*Condition `@@ { "AND" @@ }`
 }
 
-func (c *OrCondition) Query() bson.M {
+func (c *OrCondition) PostgresQuery(prefix string) (string, pgx.NamedArgs) {
+	andQueries := make([]string, len(c.And))
+	andArgs := make(map[string]any)
+
+	var args map[string]any
+	for i, v := range c.And {
+		andQueries[i], args = v.PostgresQuery(prefix)
+
+		for k, v := range args {
+			andArgs[k] = v
+		}
+	}
+
+	if len(andQueries) == 1 {
+		return andQueries[0], andArgs
+	}
+
+	return strings.Join(andQueries, " AND "), andArgs
+}
+
+func (c *OrCondition) MongoQuery() bson.M {
 	and := make([]bson.M, len(c.And))
 	for i, v := range c.And {
-		and[i] = v.Query()
+		and[i] = v.MongoQuery()
 	}
 
 	if len(and) == 1 {
@@ -64,10 +110,10 @@ func (c *OrCondition) Query() bson.M {
 	return bson.M{"$and": and}
 }
 
-func (c *OrCondition) ExprQuery() bson.M {
+func (c *OrCondition) MongoExprQuery() bson.M {
 	and := make([]bson.M, len(c.And))
 	for i, v := range c.And {
-		and[i] = v.ExprQuery()
+		and[i] = v.MongoExprQuery()
 	}
 
 	if len(and) == 1 {
@@ -91,20 +137,31 @@ type Condition struct {
 	Not     *Condition        `| "NOT" @@`
 }
 
-func (c *Condition) Query() bson.M {
+func (c *Condition) PostgresQuery(prefix string) (string, pgx.NamedArgs) {
 	if c.Operand != nil {
-		return c.Operand.Query()
+		return c.Operand.PostgresQuery(prefix)
 	}
 	if c.Not != nil {
-		return c.Not.Operand.NotQuery()
+		return c.Not.Operand.NotPostgresQuery(prefix)
+	}
+
+	return "", nil
+}
+
+func (c *Condition) MongoQuery() bson.M {
+	if c.Operand != nil {
+		return c.Operand.MongoQuery()
+	}
+	if c.Not != nil {
+		return c.Not.Operand.NotMongoQuery()
 	}
 
 	return nil
 }
 
-func (c *Condition) ExprQuery() bson.M {
+func (c *Condition) MongoExprQuery() bson.M {
 	if c.Operand != nil {
-		return c.Operand.ExprQuery()
+		return c.Operand.MongoExprQuery()
 	}
 	if c.Not != nil {
 		return c.Not.Operand.NotExprQuery()
@@ -130,20 +187,38 @@ type ConditionOperand struct {
 	ConditionRHS *ConditionRHS `[ @@ ]`
 }
 
-func (o *ConditionOperand) Query() bson.M {
+func (o *ConditionOperand) PostgresQuery(prefix string) (string, pgx.NamedArgs) {
 	left := ""
-	var right interface{}
+	var right string
+	var args pgx.NamedArgs
+	if o.Operand != nil {
+		left, _ = o.Operand.Val().(string)
+	}
+
+	if o.ConditionRHS != nil {
+		right, args = o.ConditionRHS.PostgresQuery()
+		if o.ConditionRHS.NotContains != nil {
+			return "NOT " + schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+		}
+	}
+
+	return schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+}
+
+func (o *ConditionOperand) MongoQuery() bson.M {
+	left := ""
+	var right any
 	if o.Operand != nil {
 		left, _ = o.Operand.Val().(string)
 	}
 	if o.ConditionRHS != nil {
-		right = o.ConditionRHS.Query()
+		right = o.ConditionRHS.MongoQuery()
 	}
 
 	return bson.M{left: right}
 }
 
-func (o *ConditionOperand) ExprQuery() bson.M {
+func (o *ConditionOperand) MongoExprQuery() bson.M {
 	op := ""
 	var res bson.M
 	if o.Operand != nil {
@@ -165,14 +240,33 @@ func (o *ConditionOperand) GetFields() []string {
 	return nil
 }
 
-func (o *ConditionOperand) NotQuery() bson.M {
+func (o *ConditionOperand) NotPostgresQuery(prefix string) (string, pgx.NamedArgs) {
 	left := ""
-	var right interface{}
+	var right string
+	var args pgx.NamedArgs
+	if o.Operand != nil {
+		left, _ = o.Operand.Val().(string)
+	}
+
+	if o.ConditionRHS != nil {
+		right, args = o.ConditionRHS.PostgresQuery()
+		if o.ConditionRHS.NotContains != nil {
+			// there should be NOT and NOT, but NOT and NOT are eliminating each other.
+			return schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+		}
+	}
+
+	return "NOT " + schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+}
+
+func (o *ConditionOperand) NotMongoQuery() bson.M {
+	left := ""
+	var right any
 	if o.Operand != nil {
 		left, _ = o.Operand.Val().(string)
 	}
 	if o.ConditionRHS != nil {
-		right = o.ConditionRHS.NotQuery()
+		right = o.ConditionRHS.NotMongoQuery()
 	}
 
 	return bson.M{left: right}
@@ -199,21 +293,41 @@ type ConditionRHS struct {
 	NotContains *NotContains `| "NOT" "CONTAINS" @@`
 }
 
-func (r *ConditionRHS) Query() bson.M {
+func (r *ConditionRHS) PostgresQuery() (string, pgx.NamedArgs) {
 	if r.Compare != nil {
-		return r.Compare.Query()
+		return r.Compare.PostgresQuery()
 	}
 	if r.Like != nil {
-		return r.Like.Query()
+		return r.Like.PostgresQuery()
 	}
 	if r.NotLike != nil {
-		return r.NotLike.Query()
+		return r.NotLike.PostgresQuery()
 	}
 	if r.Contains != nil {
-		return r.Contains.Query()
+		return r.Contains.PostgresQuery()
 	}
 	if r.NotContains != nil {
-		return r.NotContains.Query()
+		return r.NotContains.PostgresQuery()
+	}
+
+	return "", nil
+}
+
+func (r *ConditionRHS) MongoQuery() bson.M {
+	if r.Compare != nil {
+		return r.Compare.MongoQuery()
+	}
+	if r.Like != nil {
+		return r.Like.MongoQuery()
+	}
+	if r.NotLike != nil {
+		return r.NotLike.MongoQuery()
+	}
+	if r.Contains != nil {
+		return r.Contains.MongoQuery()
+	}
+	if r.NotContains != nil {
+		return r.NotContains.MongoQuery()
 	}
 
 	return nil
@@ -239,8 +353,8 @@ func (r *ConditionRHS) ExprQuery(op string) bson.M {
 	return nil
 }
 
-func (r *ConditionRHS) NotQuery() bson.M {
-	q := r.Query()
+func (r *ConditionRHS) NotMongoQuery() bson.M {
+	q := r.MongoQuery()
 	if len(q) == 0 {
 		return q
 	}
@@ -263,8 +377,34 @@ type Compare struct {
 	Select   *Operand ` | @@ )`
 }
 
-func (c *Compare) Query() bson.M {
-	var operand interface{}
+func (c *Compare) PostgresQuery() (string, pgx.NamedArgs) {
+	var operand any
+	if c.Operand != nil {
+		operand = c.Operand.Val()
+	}
+	if c.Select != nil {
+		operand = c.Select.Val()
+	}
+
+	if operand == nil {
+		switch c.Operator {
+		case "=":
+			return "IS NULL", nil
+		case "!=":
+			return "IS NOT NULL", nil
+		}
+
+		// no default after switch, other operators don't cause any errors with null value.
+		// so keep them as is.
+	}
+
+	argName := randArgumentName()
+
+	return c.Operator + " @" + argName, pgx.NamedArgs{argName: operand}
+}
+
+func (c *Compare) MongoQuery() bson.M {
+	var operand any
 	if c.Operand != nil {
 		operand = c.Operand.Val()
 	}
@@ -285,7 +425,7 @@ func (c *Compare) Query() bson.M {
 }
 
 func (c *Compare) ExprQuery(op string) bson.M {
-	var operand interface{}
+	var operand any
 	if c.Operand != nil {
 		operand = c.Operand.Val()
 	}
@@ -309,8 +449,8 @@ type Like struct {
 	Operand *Operand `@@`
 }
 
-func (l *Like) Query() bson.M {
-	var operand interface{}
+func (l *Like) MongoQuery() bson.M {
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
 	}
@@ -318,8 +458,19 @@ func (l *Like) Query() bson.M {
 	return bson.M{"$regex": fmt.Sprintf("%v", operand)}
 }
 
+func (l *Like) PostgresQuery() (string, pgx.NamedArgs) {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	argName := randArgumentName()
+
+	return "~ @" + argName, pgx.NamedArgs{argName: fmt.Sprintf("%v", operand)}
+}
+
 func (l *Like) ExprQuery(op string) bson.M {
-	var operand interface{}
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
 	}
@@ -334,8 +485,8 @@ type NotLike struct {
 	Operand *Operand `@@`
 }
 
-func (l *NotLike) Query() bson.M {
-	var operand interface{}
+func (l *NotLike) MongoQuery() bson.M {
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
 	}
@@ -343,8 +494,19 @@ func (l *NotLike) Query() bson.M {
 	return bson.M{"$not": bson.M{"$regex": fmt.Sprintf("%v", operand)}}
 }
 
+func (l *NotLike) PostgresQuery() (string, pgx.NamedArgs) {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	argName := randArgumentName()
+
+	return "!~ @" + argName, pgx.NamedArgs{argName: fmt.Sprintf("%v", operand)}
+}
+
 func (l *NotLike) ExprQuery(op string) bson.M {
-	var operand interface{}
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
 	}
@@ -359,24 +521,43 @@ type Contains struct {
 	Operand *Operand `@@`
 }
 
-func (l *Contains) Query() bson.M {
-	var operand interface{}
+func (l *Contains) MongoQuery() bson.M {
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
-		if reflect.TypeOf(operand).Kind() != reflect.Array {
-			operand = []interface{}{operand}
+		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+			operand = []any{operand}
 		}
 	}
 
 	return bson.M{"$in": operand}
 }
 
-func (l *Contains) ExprQuery(op string) bson.M {
-	var operand interface{}
+func (l *Contains) PostgresQuery() (string, pgx.NamedArgs) {
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
-		if reflect.TypeOf(operand).Kind() != reflect.Array {
-			operand = []interface{}{operand}
+		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+			operand = []any{fmt.Sprintf("%v", operand)}
+		} else {
+			operandSlice, _ := operand.([]any)
+			for i, v := range operandSlice {
+				operandSlice[i] = fmt.Sprintf("%v", v)
+			}
+		}
+	}
+
+	argName := randArgumentName()
+
+	return "= ANY (@" + argName + ")", pgx.NamedArgs{argName: operand}
+}
+
+func (l *Contains) ExprQuery(op string) bson.M {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+			operand = []any{operand}
 		}
 	}
 
@@ -387,24 +568,44 @@ type NotContains struct {
 	Operand *Operand `@@`
 }
 
-func (l *NotContains) Query() bson.M {
-	var operand interface{}
+func (l *NotContains) MongoQuery() bson.M {
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
-		if reflect.TypeOf(operand).Kind() != reflect.Array {
-			operand = []interface{}{operand}
+		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+			operand = []any{operand}
 		}
 	}
 
 	return bson.M{"$nin": operand}
 }
 
-func (l *NotContains) ExprQuery(op string) bson.M {
-	var operand interface{}
+func (l *NotContains) PostgresQuery() (string, pgx.NamedArgs) {
+	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
-		if reflect.TypeOf(operand).Kind() != reflect.Array {
-			operand = []interface{}{operand}
+		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+			operand = []any{fmt.Sprintf("%v", operand)}
+		} else {
+			operandSlice, _ := operand.([]any)
+			for i, v := range operandSlice {
+				operandSlice[i] = fmt.Sprintf("%v", v)
+			}
+		}
+	}
+
+	argName := randArgumentName()
+
+	// it's the same as Contains query, it's negated in the caller function above.
+	return "= ANY (@" + argName + ")", pgx.NamedArgs{argName: operand}
+}
+
+func (l *NotContains) ExprQuery(op string) bson.M {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+			operand = []any{operand}
 		}
 	}
 
@@ -415,8 +616,8 @@ type Operand struct {
 	Terms []*Term `@@ { @@ }`
 }
 
-func (o *Operand) Val() interface{} {
-	terms := make([]interface{}, len(o.Terms))
+func (o *Operand) Val() any {
+	terms := make([]any, len(o.Terms))
 	for i, v := range o.Terms {
 		terms[i] = v.Val()
 	}
@@ -437,7 +638,7 @@ type Term struct {
 	Null        bool     ` | @"NULL" )`
 }
 
-func (t *Term) Val() interface{} {
+func (t *Term) Val() any {
 	if t.Name != nil {
 		return *t.Name
 	}
@@ -465,4 +666,9 @@ type Boolean bool
 func (b *Boolean) Capture(values []string) error {
 	*b = values[0] == "TRUE"
 	return nil
+}
+
+func randArgumentName() string {
+	// a little hack here, postgres named arguments can't start from number, so just add some letter prefix
+	return "a" + utils.RandString(DefaultArgsLen)
 }
