@@ -27,9 +27,9 @@
       height: $dense-cell-height;
     }
 
-    tbody, thead {
-      tr:not(.v-data-table__progress, .v-data-table__expanded) {
-        td {
+    & > tbody, thead {
+      & > tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        & > td {
           height: $ultra-dense-cell-height;
         }
       }
@@ -37,17 +37,17 @@
   }
 
   &--ultra-dense > .v-data-table__wrapper > table {
-    thead > tr > th {
+    & > thead > tr > th {
       height: $ultra-dense-cell-height;
     }
 
-    tbody, thead {
-      tr:not(.v-data-table__progress, .v-data-table__expanded) {
-        td, th {
+    & > tbody, thead {
+      & > tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        & > td, & > th {
           padding: 0 $ultra-dense-padding !important;
         }
 
-        td {
+        & > td {
           height: $ultra-dense-cell-height;
         }
       }
