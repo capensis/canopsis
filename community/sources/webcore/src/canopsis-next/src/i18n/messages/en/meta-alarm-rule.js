@@ -1,3 +1,5 @@
+import { META_ALARMS_RULE_TYPES } from '@/constants';
+
 export default {
   outputTemplate: 'Output template',
   thresholdType: 'Threshold type',
@@ -27,10 +29,37 @@ export default {
     + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
   removeConfirmationText: 'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n'
     + 'Are you sure to proceed with it?\n',
+  selectType: 'Select meta alarm rule type',
   steps: {
     basics: 'Basics',
     defineType: 'Define type',
     addParameters: 'Add parameters',
+  },
+  types: {
+    [META_ALARMS_RULE_TYPES.relation]: {
+      text: 'Parent-child relationship',
+      helpText: 'All alarms raised on dependent entities are grouped',
+    },
+    [META_ALARMS_RULE_TYPES.timebased]: {
+      text: 'Grouping by time interval',
+      helpText: 'All alarms raised during a defined time interval are grouped',
+    },
+    [META_ALARMS_RULE_TYPES.attribute]: {
+      text: 'Grouping by attribute',
+      helpText: 'All alarms that fit a pattern with defined attributes are grouped',
+    },
+    [META_ALARMS_RULE_TYPES.complex]: {
+      text: 'Complex grouping with trigger threshold or rate',
+      helpText: 'All alarms that fit a pattern with defined attributes during the defined time interval are grouped',
+    },
+    [META_ALARMS_RULE_TYPES.valuegroup]: {
+      text: 'Grouping by group of values',
+      helpText: 'It is a complex grouping with value paths as additional parameters for grouping',
+    },
+    [META_ALARMS_RULE_TYPES.corel]: {
+      text: 'Grouping by correlation identifiers',
+      helpText: 'Grouping for already correlated alarms: all alarms of the same correlation identifier are grouped',
+    },
   },
   errors: {
     noValuePaths: 'You have to add at least 1 value path',
