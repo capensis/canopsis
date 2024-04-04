@@ -323,10 +323,14 @@ export default {
       return this.widget.parameters.isHtmlEnabledOnTimeLine;
     },
 
+    entity() {
+      return this.alarmDetails?.entity ?? {};
+    },
+
     dependency() {
       const alarmWithDependenciesCounts = setField(this.alarm, 'entity', entity => ({
         ...entity,
-        ...this.alarmDetails.entity,
+        ...this.entity,
       }));
 
       return alarmToServiceDependency(alarmWithDependenciesCounts);
@@ -345,11 +349,11 @@ export default {
     },
 
     hasServiceDependencies() {
-      return this.alarm.entity.type === ENTITY_TYPES.service;
+      return this.entity.type === ENTITY_TYPES.service;
     },
 
     hasImpactsDependencies() {
-      const { impacts_count: impactsCount } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.entity;
 
       return impactsCount > 0;
     },
@@ -360,7 +364,7 @@ export default {
        */
       return this.isProVersion
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
-        && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
+        && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.entity.type);
     },
 
     hasWidgetCharts() {
