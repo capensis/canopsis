@@ -4,32 +4,37 @@
     :headers="headers"
     hide-actions
   >
-    <template #icon="{ item }">
-      {{ item.completed_at | date('long', '-') }}
-    </template>
-    <template #completed_at="{ item }">
-      {{ item.completed_at | date('long', '-') }}
+    <template #item="props">
+      <remediation-instruction-executions-expand-panel-row :step="props.item" />
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
+import RemediationInstructionExecutionsExpandPanelRow from './remediation-instruction-executions-expand-panel-row.vue';
+
 export default {
+  components: { RemediationInstructionExecutionsExpandPanelRow },
   props: {
     steps: {
       type: Array,
       default: () => [],
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: '', value: 'icon', sortable: false },
-        { text: this.$t('common.step'), value: 'name', sortable: false },
-        { text: this.$t('common.output'), value: 'fail_reason', sortable: false },
-        { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at', sortable: false },
-      ];
-    },
+  setup() {
+    const { t } = useI18n();
+    const headers = computed(() => [
+      { text: '', value: 'icon', sortable: false },
+      { text: t('common.step'), value: 'name', sortable: false },
+      { text: t('common.output'), value: 'fail_reason', sortable: false },
+      { text: t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at', sortable: false },
+    ]);
+
+    return { headers };
   },
 };
 </script>

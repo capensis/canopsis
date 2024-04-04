@@ -464,6 +464,15 @@ export const COLORS = {
     noteBkgColor: '#75818c',
     noteTextColor: '#fdfdfd',
   },
+  remediation: {
+    executionStatus: {
+      running: '#5A6D80',
+      paused: '#323232',
+      completed: '#2FAB63',
+      aborted: '#979797',
+      failed: '#FF5252',
+    },
+  },
   flowchart: {
     selection: '#5b6e7f',
     shapes: [
