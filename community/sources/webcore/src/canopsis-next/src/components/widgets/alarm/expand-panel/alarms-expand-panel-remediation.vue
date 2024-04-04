@@ -10,6 +10,8 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import Observer from '@/services/observer';
+
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import RemediationInstructionExecutionsList
@@ -18,6 +20,13 @@ import RemediationInstructionExecutionsList
 const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
+  inject: {
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   components: { RemediationInstructionExecutionsList },
   mixins: [localQueryMixin],
   props: {
@@ -35,6 +44,11 @@ export default {
   },
   mounted() {
     this.fetchList();
+
+    this.$periodicRefresh.register(this.fetchList);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.fetchList);
   },
   methods: {
     ...mapActions({

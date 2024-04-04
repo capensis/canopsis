@@ -10,6 +10,9 @@
     expand
     @update:options="$emit('update:options', $event)"
   >
+    <template #type="{ item }">
+      {{ $t(`remediation.instruction.types.${item.type}`) }}
+    </template>
     <template #launched_at="{ item }">
       {{ item.launched_at | date('long', '-') }}
     </template>
@@ -17,7 +20,7 @@
       {{ item.completed_at | date('long', '-') }}
     </template>
     <template #status="{ item }">
-      <c-enabled :value="item.enabled" />
+      <remediation-instruction-execution-status-icon :status="item.status" />
     </template>
     <template #expand="{ item }">
       <v-layout class="pa-3 secondary lighten-1">
@@ -34,11 +37,15 @@
 </template>
 
 <script>
+import RemediationInstructionExecutionStatusIcon from './partials/remediation-instruction-execution-status-icon.vue';
 import RemediationInstructionExecutionsExpandPanel
   from './partials/remediation-instruction-executions-expand-panel.vue';
 
 export default {
-  components: { RemediationInstructionExecutionsExpandPanel },
+  components: {
+    RemediationInstructionExecutionStatusIcon,
+    RemediationInstructionExecutionsExpandPanel,
+  },
   props: {
     executions: {
       type: Array,
@@ -60,11 +67,11 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t('common.instructionName'), value: 'name' },
+        { text: this.$t('remediation.instruction.name'), value: 'name' },
         { text: this.$t('common.type'), value: 'type' },
         { text: this.$t('remediation.instructionExecute.jobs.launchedAt'), value: 'launched_at' },
         { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at' },
-        { text: this.$t('common.launchedBy'), value: 'author.display_name' },
+        { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'author.display_name' },
         { text: this.$t('common.status'), value: 'status' },
       ];
     },

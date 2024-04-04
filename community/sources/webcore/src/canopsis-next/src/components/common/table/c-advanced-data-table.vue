@@ -69,8 +69,12 @@
       checkbox-color="primary"
       @update:options="updateOptions"
     >
+      <template v-if="hasItemSlot" #item="props">
+        <slot name="item" v-bind="props" />
+      </template>
+
       <template
-        v-for="header in headers"
+        v-for="header in headersConsideringItemSlot"
         #[getItemSlotName(header)]="props"
       >
         <slot
@@ -291,6 +295,10 @@ export default {
       return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
     },
 
+    hasItemSlot() {
+      return this.$slots.item || this.$scopedSlots.item;
+    },
+
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
     },
@@ -301,6 +309,10 @@ export default {
 
     shownSearch() {
       return this.search || this.advancedSearch;
+    },
+
+    headersConsideringItemSlot() {
+      return this.hasItemSlot ? [] : this.headers;
     },
   },
   watch: {

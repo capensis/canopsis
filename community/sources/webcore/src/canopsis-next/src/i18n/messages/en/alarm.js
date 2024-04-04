@@ -131,6 +131,7 @@ export default {
     impactChain: 'Impact chain',
     entityGantt: 'Gantt chart',
     ticketsDeclared: 'Tickets declared',
+    remediation: 'Remediation',
   },
   moreInfos: {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',
