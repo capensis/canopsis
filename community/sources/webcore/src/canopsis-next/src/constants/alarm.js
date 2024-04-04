@@ -150,26 +150,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   removeBookmark: 'removeBookmark',
 };
 
-export const META_ALARMS_RULE_TYPES = {
-  relation: 'relation',
-  timebased: 'timebased',
-  attribute: 'attribute',
-  complex: 'complex',
-  valuegroup: 'valuegroup',
-  corel: 'corel',
-
-  /**
-   * Manual group type doesn't use in the form
-   * We are using it only inside alarms list widget
-   */
-  manualgroup: 'manualgroup',
-};
-
-export const META_ALARMS_THRESHOLD_TYPES = {
-  thresholdRate: 'thresholdRate',
-  thresholdCount: 'thresholdCount',
-};
-
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
