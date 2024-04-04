@@ -115,7 +115,7 @@ func (api *api) Send(c *gin.Context) {
 			sentIdx++
 		}
 	default:
-		err = fmt.Errorf("the body should be an object or an array")
+		err = errors.New("the body should be an object or an array")
 	}
 
 	if err != nil {

@@ -62,7 +62,7 @@ func (m *runInfoManager) GetEngines(ctx context.Context) ([]RunInfo, error) {
 	processedKeys := make(map[string]bool)
 
 	for {
-		res := m.client.Scan(ctx, cursor, fmt.Sprintf("%s*", m.key), 50)
+		res := m.client.Scan(ctx, cursor, m.key+"*", 50)
 		if err := res.Err(); err != nil {
 			return nil, fmt.Errorf("cannot scan cache keys: %w", err)
 		}
