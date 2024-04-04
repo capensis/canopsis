@@ -175,7 +175,7 @@ func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
 
 func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, logger zerolog.Logger) error {
 	if f.mongoFixtureDirectory == "" {
-		return fmt.Errorf("-mongo-fixture-directory is not set")
+		return errors.New("-mongo-fixture-directory is not set")
 	}
 
 	collections, err := dbClient.ListCollectionNames(ctx, bson.M{})
@@ -267,7 +267,7 @@ func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger 
 	}
 
 	if f.mongoMigrationDirectory == "" {
-		return fmt.Errorf("-mongo-migration-directory is not set")
+		return errors.New("-mongo-migration-directory is not set")
 	}
 
 	logger.Info().Msg("start mongo migrations")
@@ -285,7 +285,7 @@ func migratePostgres(f flags, logger zerolog.Logger) error {
 		return nil
 	}
 	if f.postgresMigrationDirectory == "" {
-		return fmt.Errorf("-postgres-migration-directory is not set")
+		return errors.New("-postgres-migration-directory is not set")
 	}
 
 	logger.Info().Msg("start postgres migrations")
@@ -309,7 +309,7 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 		return nil
 	}
 	if f.techPostgresMigrationDirectory == "" {
-		return fmt.Errorf("-tech-postgres-migration-directory is not set")
+		return errors.New("-tech-postgres-migration-directory is not set")
 	}
 
 	logger.Info().Msg("start tech postgres migrations")
@@ -335,7 +335,7 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr s
 		return err
 	}
 
-	m, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", migrationDirectory), "pgx", driver)
+	m, err := migrate.NewWithDatabaseInstance("file://"+migrationDirectory, "pgx", driver)
 	if err != nil {
 		return err
 	}
