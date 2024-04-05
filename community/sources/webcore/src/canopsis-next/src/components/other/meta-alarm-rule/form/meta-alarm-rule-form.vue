@@ -15,10 +15,12 @@
       <v-stepper-step
         :complete="activeStep > META_ALARMS_FORM_STEPS.type"
         :step="META_ALARMS_FORM_STEPS.type"
+        :rules="[() => !hasTypeError]"
         class="py-0"
         editable
       >
         {{ $t('metaAlarmRule.steps.defineType') }}
+        <small v-if="hasTypeError">{{ $t('errors.invalid') }}</small>
       </v-stepper-step>
       <v-divider />
       <v-stepper-step
@@ -46,6 +48,7 @@
         />
       </v-stepper-content>
       <v-stepper-content
+        ref="typeStepElement"
         :step="META_ALARMS_FORM_STEPS.type"
         class="pa-0"
       >
@@ -71,7 +74,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { META_ALARMS_FORM_STEPS } from '@/constants';
 
@@ -114,30 +117,25 @@ export default {
       validateChildren: validateGeneralChildren,
     } = useElementChildrenValidation(generalStepElement);
 
+    const typeStepElement = ref(null);
+    const {
+      hasChildrenError: hasTypeError,
+      validateChildren: validateTypeChildren,
+    } = useElementChildrenValidation(typeStepElement);
+
     const parametersStepElement = ref(null);
     const {
       hasChildrenError: hasParametersError,
       validateChildren: validateParametersChildren,
     } = useElementChildrenValidation(parametersStepElement);
 
-    const isStepValid = computed(() => ({
-      [META_ALARMS_FORM_STEPS.general]: !hasGeneralError.value,
-      [META_ALARMS_FORM_STEPS.type]: true,
-      [META_ALARMS_FORM_STEPS.parameters]: !hasParametersError.value,
-    }[props.activeStep]));
-
-    const validateStep = () => {
-      const func = {
-        [META_ALARMS_FORM_STEPS.general]: validateGeneralChildren,
-        [META_ALARMS_FORM_STEPS.parameters]: validateParametersChildren,
-      }[props.activeStep];
-
-      return func ? func() : true;
-    };
-
     expose({
-      validateStep,
-      isStepValid,
+      hasGeneralError,
+      hasTypeError,
+      hasParametersError,
+      validateGeneralChildren,
+      validateTypeChildren,
+      validateParametersChildren,
     });
 
     return {
@@ -145,6 +143,8 @@ export default {
       hasGeneralError,
       parametersStepElement,
       hasParametersError,
+      typeStepElement,
+      hasTypeError,
       META_ALARMS_FORM_STEPS,
     };
   },
