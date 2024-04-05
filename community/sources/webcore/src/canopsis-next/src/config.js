@@ -116,6 +116,7 @@ export const API_ROUTES = {
   openAlarms: '/api/v4/open-alarms',
   alarmLinks: '/api/v4/alarm-links',
   alarmDisplayNames: '/api/v4/alarm-display-names',
+  alarmExecutions: '/api/v4/cat/alarm-executions',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   entityCheckStateSetting: '/api/v4/entities/check-state-setting',
@@ -462,6 +463,15 @@ export const COLORS = {
     lineColor: '#323232',
     noteBkgColor: '#75818c',
     noteTextColor: '#fdfdfd',
+  },
+  remediation: {
+    executionStatus: {
+      running: '#5A6D80',
+      paused: '#323232',
+      completed: '#2FAB63',
+      aborted: '#979797',
+      failed: '#FF5252',
+    },
   },
   flowchart: {
     selection: '#5b6e7f',
