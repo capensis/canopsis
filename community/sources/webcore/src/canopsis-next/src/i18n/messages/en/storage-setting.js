@@ -73,6 +73,10 @@ export default {
     deleteAfter: 'Clear error messages older than',
     deleteAfterHelpText: 'All error messages older than the defined time period will be deleted',
   },
+  alarmExternalTag: {
+    title: 'Alarm external tags data storage',
+    deleteAfter: 'Clear external tags after',
+  },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
     alarm: {
@@ -82,6 +86,9 @@ export default {
     entity: {
       deletedCount: 'Entities deleted: {count}.',
       archivedCount: 'Entities archived: {count}.',
+    },
+    alarmExternalTag: {
+      deletedCount: 'Alarm external tags deleted: {count}.',
     },
   },
 };

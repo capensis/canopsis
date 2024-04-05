@@ -261,6 +261,10 @@ export default {
     max-width: calc(100% - 24px);
   }
 
+  &.v-autocomplete:not(.v-input--is-focused).v-select--chips input {
+    max-height: 32px;
+  }
+
   &__chip {
     max-width: 100%;
 

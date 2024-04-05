@@ -3,6 +3,7 @@ export default {
   LDAP: 'LDAP',
   loginWithCAS: 'Login with CAS',
   loginWithSAML: 'Login with SAML',
+  loginWithOauth: 'Login with OAuth2/OpenID',
   documentation: 'Documentation',
   forum: 'Forum',
   website: 'Canopsis.com',

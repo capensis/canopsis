@@ -91,7 +91,6 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
@@ -120,7 +119,6 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
 		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()},
@@ -208,7 +206,6 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	q.addHideGreyFilter(r, &additionalMatch)
 	if len(additionalMatch) > 0 {
 		q.lookupsForAdditionalMatch["alarm"] = true
-		q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
 		q.lookupsForAdditionalMatch["counters"] = true
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": additionalMatch}})
 	}
@@ -299,7 +296,6 @@ func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern vi
 		if weatherServicePattern.HasField("is_grey") ||
 			weatherServicePattern.HasField("icon") ||
 			weatherServicePattern.HasField("secondary_icon") {
-			q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
 			q.lookupsForAdditionalMatch["counters"] = true
 		}
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})

@@ -24,34 +24,6 @@ func GetCategoryLookup(prefixArg ...string) []bson.M {
 	}
 }
 
-func GetPbehaviorInfoTypeLookup(prefixArg ...string) []bson.M {
-	prefix := ""
-	if len(prefixArg) > 0 && prefixArg[0] != "" {
-		prefix = prefixArg[0] + "."
-	}
-
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   prefix + "pbehavior_info.type",
-			"as":           prefix + "pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$" + prefix + "pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			prefix + "pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$" + prefix + "pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$" + prefix + "pbehavior_info",
-					bson.M{"icon_name": "$" + prefix + "pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-		{"$project": bson.M{prefix + "pbehavior_info_type": 0}},
-	}
-}
-
 func GetPbehaviorInfoLastCommentLookup(authorProvider author.Provider, prefixArg ...string) []bson.M {
 	prefix := ""
 	if len(prefixArg) > 0 && prefixArg[0] != "" {

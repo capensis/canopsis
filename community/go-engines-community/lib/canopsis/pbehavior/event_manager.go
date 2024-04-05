@@ -72,6 +72,11 @@ func NewPBehaviorInfo(time datetime.CpsTime, result ResolveResult) types.Pbehavi
 		return types.PbehaviorInfo{}
 	}
 
+	color := result.Color
+	if color == "" {
+		color = result.Type.Color
+	}
+
 	pbhInfo := types.PbehaviorInfo{
 		Timestamp:     &time,
 		ID:            result.ID,
@@ -81,6 +86,8 @@ func NewPBehaviorInfo(time datetime.CpsTime, result ResolveResult) types.Pbehavi
 		TypeID:        result.Type.ID,
 		TypeName:      result.Type.Name,
 		CanonicalType: result.Type.Type,
+		IconName:      result.Type.IconName,
+		Color:         color,
 		Author:        canopsis.DefaultEventAuthor,
 	}
 

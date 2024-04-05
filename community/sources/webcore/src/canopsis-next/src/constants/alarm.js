@@ -48,6 +48,7 @@ export const ALARM_FIELDS = {
   ticketValue: 'v.ticket.ticket',
   ticketCreatedAt: 'v.ticket.t',
   changeState: 'v.change_state',
+  meta: 'v.meta',
   entityId: 'entity._id',
   entityName: 'entity.name',
   entityCategoryName: 'entity.category.name',
@@ -317,6 +318,7 @@ export const ALARM_PATTERN_FIELDS = {
   ticketInitiator: ALARM_FIELDS.ticketInitiator,
   ticketData: ALARM_FIELDS.ticketData,
   changeState: ALARM_FIELDS.changeState,
+  meta: ALARM_FIELDS.meta,
 };
 
 export const ALARM_EVENT_INITIATORS = {
@@ -466,6 +468,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
   [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
   [ALARM_FIELDS.changeState]: 'alarm.fields.changeState',
+  [ALARM_FIELDS.meta]: 'alarm.metaAlarm',
 
   /**
    * OBJECTS

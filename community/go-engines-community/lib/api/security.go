@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/cas"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/oauth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/saml"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -23,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 )
 
@@ -36,7 +38,7 @@ type Security interface {
 	// GetAuthProviders creates providers which are used in auth API request.
 	GetAuthProviders() []libsecurity.Provider
 	// RegisterCallbackRoutes registers callback routes for auth methods.
-	RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient)
+	RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient, sessionStore sessions.Store)
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
 	// GetFileAuthMiddleware returns auth middleware for files.
@@ -64,6 +66,7 @@ func DefaultCookieOptions() CookieOptions {
 
 type security struct {
 	config       libsecurity.Config
+	globalConfig config.CanopsisConf
 	dbClient     mongo.DbClient
 	sessionStore libsession.Store
 	enforcer     libsecurity.Enforcer
@@ -78,6 +81,7 @@ type security struct {
 // NewSecurity creates new security.
 func NewSecurity(
 	config libsecurity.Config,
+	globalConfig config.CanopsisConf,
 	dbClient mongo.DbClient,
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
@@ -88,6 +92,7 @@ func NewSecurity(
 ) Security {
 	return &security{
 		config:       config,
+		globalConfig: globalConfig,
 		dbClient:     dbClient,
 		sessionStore: sessionStore,
 		enforcer:     enforcer,
@@ -135,36 +140,54 @@ func (s *security) GetAuthProviders() []libsecurity.Provider {
 	return res
 }
 
-func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient) {
+func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient, sessionStore sessions.Store) {
 	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodCas:
 			casConfig := s.config.Security.Cas
 			p := httpprovider.NewCasProvider(
+				s.dbClient,
 				http.DefaultClient,
 				casConfig,
 				s.newUserProvider(),
 			)
-			router.GET("/cas/login", cas.SessionLoginHandler(casConfig))
-			router.GET("/cas/loggedin", cas.SessionCallbackHandler(p, s.enforcer, s.sessionStore))
+
 			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
 			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter)) //nolint: contextcheck
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(ctx, s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
+			p, err := saml.NewServiceProvider(ctx, s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
 				s.enforcer, s.config, s.GetTokenService(), s.maintenanceAdapter, s.logger)
 			if err != nil {
 				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
 				panic(err)
 			}
 
-			router.GET("/saml/metadata", sp.SamlMetadataHandler())
-			router.GET("/saml/auth", sp.SamlAuthHandler())
-			router.POST("/saml/acs", sp.SamlAcsHandler())
-			router.GET("/saml/slo", sp.SamlSloHandler())
-			router.GET("/api/v4/saml/metadata", sp.SamlMetadataHandler())
-			router.GET("/api/v4/saml/auth", sp.SamlAuthHandler())
-			router.POST("/api/v4/saml/acs", sp.SamlAcsHandler())
-			router.GET("/api/v4/saml/slo", sp.SamlSloHandler())
+			router.GET("/api/v4/saml/metadata", p.SamlMetadataHandler())
+			router.GET("/api/v4/saml/auth", p.SamlAuthHandler())
+			router.POST("/api/v4/saml/acs", p.SamlAcsHandler())
+			router.GET("/api/v4/saml/slo", p.SamlSloHandler())
+		case libsecurity.AuthMethodOAuth2:
+			for name, conf := range s.config.Security.OAuth2.Providers {
+				p, err := oauth.NewOauth2Provider(
+					ctx,
+					name,
+					s.dbClient,
+					conf,
+					sessionStore,
+					s.newUserProvider(),
+					s.maintenanceAdapter,
+					s.enforcer,
+					s.GetTokenService(),
+					s.globalConfig.Global.MaxExternalResponseSize,
+				)
+				if err != nil {
+					s.logger.Err(err).Str("provider", name).Msg("RegisterCallbackRoutes: failed to create oauth2 provider")
+					panic(err)
+				}
+
+				router.GET("/api/v4/oauth/"+name+"/login", p.Login)
+				router.GET("/api/v4/oauth/"+name+"/callback", p.Callback)
+			}
 		}
 	}
 }
@@ -224,6 +247,7 @@ func (s *security) newBaseAuthProvider() libsecurity.Provider {
 
 func (s *security) newLdapAuthProvider() libsecurity.Provider {
 	return provider.NewLdapProvider(
+		s.dbClient,
 		s.config.Security.Ldap,
 		s.newUserProvider(),
 		provider.NewLdapDialer(),
