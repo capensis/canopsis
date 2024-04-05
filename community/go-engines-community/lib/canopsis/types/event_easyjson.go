@@ -781,6 +781,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.TypeName = string(in.String())
 		case "canonical_type":
 			out.CanonicalType = string(in.String())
+		case "icon_name":
+			out.IconName = string(in.String())
+		case "color":
+			out.Color = string(in.String())
 		case "author":
 			out.Author = string(in.String())
 		case "rule_name":
@@ -842,6 +846,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"canonical_type\":"
 		out.RawString(prefix)
 		out.String(string(in.CanonicalType))
+	}
+	{
+		const prefix string = ",\"icon_name\":"
+		out.RawString(prefix)
+		out.String(string(in.IconName))
+	}
+	{
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
 	}
 	{
 		const prefix string = ",\"author\":"
@@ -3098,6 +3112,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(in, &out.StateCounter)
 		case "pbehavior_canonical_type":
 			out.PbehaviorCanonicalType = string(in.String())
+		case "icon_name":
+			out.IconName = string(in.String())
+		case "color":
+			out.Color = string(in.String())
 		case "initiator":
 			out.Initiator = string(in.String())
 		case "exec":
@@ -3198,6 +3216,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"pbehavior_canonical_type\":"
 		out.RawString(prefix)
 		out.String(string(in.PbehaviorCanonicalType))
+	}
+	if in.IconName != "" {
+		const prefix string = ",\"icon_name\":"
+		out.RawString(prefix)
+		out.String(string(in.IconName))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
 	}
 	if in.Initiator != "" {
 		const prefix string = ",\"initiator\":"

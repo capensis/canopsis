@@ -68,8 +68,7 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.pbehavior_info.id"] = bson.M{"$in": bson.A{nil, ""}}
-	newStep := NewAlarmStep(types.AlarmStepPbhEnter, event.Parameters, false)
-	newStep.PbehaviorCanonicalType = event.Parameters.PbehaviorInfo.CanonicalType
+	newStep := NewPbhAlarmStep(types.AlarmStepPbhEnter, event.Parameters, event.Parameters.PbehaviorInfo)
 	var update any
 	if event.Parameters.PbehaviorInfo.IsActive() {
 		update = bson.M{

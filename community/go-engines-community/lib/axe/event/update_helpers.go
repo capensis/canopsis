@@ -31,6 +31,11 @@ func NewAlarmStep(t string, params rpc.AxeParameters, inPbehaviorInterval bool) 
 		params.Initiator, inPbehaviorInterval)
 }
 
+func NewPbhAlarmStep(t string, params rpc.AxeParameters, pbehaviorInfo types.PbehaviorInfo) types.AlarmStep {
+	return types.NewPbhAlarmStep(t, params.Timestamp, params.Author, params.Output, params.User, params.Role,
+		params.Initiator, pbehaviorInfo.CanonicalType, pbehaviorInfo.IconName, pbehaviorInfo.Color)
+}
+
 func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now datetime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
 	result, err := pbhTypeResolver.Resolve(ctx, entity, now.Time)
 	if err != nil {

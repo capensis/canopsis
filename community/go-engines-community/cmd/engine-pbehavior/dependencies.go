@@ -179,7 +179,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
+	enginePbehavior.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
 	enginePbehavior.AddPeriodicalWorker("alarms", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,

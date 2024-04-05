@@ -45,7 +45,7 @@ type ComputedPbehavior struct {
 	ReasonID   string         `json:"r"`
 	Types      []ComputedType `json:"t"`
 	Created    int64          `json:"c"`
-	Color      string         `json:"-"`
+	Color      string         `json:"clr"`
 
 	EntityPattern pattern.Entity `json:"p,omitempty"`
 }

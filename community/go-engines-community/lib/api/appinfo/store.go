@@ -34,36 +34,45 @@ type store struct {
 	configCollection     mongo.DbCollection
 	colorThemeCollection mongo.DbCollection
 	maintenanceAdapter   config.MaintenanceAdapter
-
-	authProviders       []string
-	casTitle, samlTitle string
+	securityConfig       security.Config
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
+func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, securityConfig security.Config) Store {
 	return &store{
 		dbClient:             db,
 		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
 		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
 		maintenanceAdapter:   maintenanceAdapter,
-		authProviders:        authProviders,
-		casTitle:             casTitle,
-		samlTitle:            samlTitle,
+		securityConfig:       securityConfig,
 	}
 }
 
 func (s *store) RetrieveLoginConfig() LoginConf {
 	var login = LoginConf{}
-	for _, p := range s.authProviders {
+	for _, p := range s.securityConfig.Security.AuthProviders {
 		switch p {
+		case security.AuthMethodBasic:
+			login.BasicConfig.Enable = true
 		case security.AuthMethodLdap:
 			login.LdapConfig.Enable = true
 		case security.AuthMethodCas:
 			login.CasConfig.Enable = true
-			login.CasConfig.Title = s.casTitle
+			login.CasConfig.Title = s.securityConfig.Security.Cas.Title
 		case security.AuthMethodSaml:
 			login.SamlConfig.Enable = true
-			login.SamlConfig.Title = s.samlTitle
+			login.SamlConfig.Title = s.securityConfig.Security.Saml.Title
+		case security.AuthMethodOAuth2:
+			providersLen := len(s.securityConfig.Security.OAuth2.Providers)
+			if providersLen == 0 {
+				continue
+			}
+
+			login.OAuth2Config.Enable = true
+			login.OAuth2Config.Providers = make([]string, 0, providersLen)
+			for name := range s.securityConfig.Security.OAuth2.Providers {
+				login.OAuth2Config.Providers = append(login.OAuth2Config.Providers, name)
+			}
 		}
 	}
 

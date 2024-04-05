@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cas-login Renders \`cas-login\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <!---->
+</div>
+`;
+
+exports[`cas-login Renders \`cas-login\` with title and links 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <div
+    class="text-body-2"
+  >
+    Title
+  </div>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="Link href"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Link title
+    </span>
+  </a>
+  <a
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+    href="Link href 2"
+  >
+    <span
+      class="v-btn__content"
+    >
+    Link title 2
+    </span>
+  </a>
+</div>
+`;

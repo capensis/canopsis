@@ -1,6 +1,7 @@
 <template>
   <c-help-icon
     icon="help"
+    color="secondary"
     right
   >
     <v-layout wrap>

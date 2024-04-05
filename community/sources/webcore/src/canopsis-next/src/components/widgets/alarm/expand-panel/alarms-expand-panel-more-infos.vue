@@ -5,6 +5,7 @@
       :template="template"
       :context="templateContext"
       @select:tag="$emit('select:tag', $event)"
+      @clear:tag="$emit('clear:tag')"
     />
     <v-layout
       v-else
@@ -40,6 +41,10 @@ export default {
     template: {
       type: String,
       required: false,
+    },
+    selectedTag: {
+      type: String,
+      default: '',
     },
   },
   computed: {

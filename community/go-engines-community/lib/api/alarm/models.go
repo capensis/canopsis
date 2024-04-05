@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -228,7 +229,11 @@ type StepDetails struct {
 
 type Step struct {
 	common.AlarmStep `bson:",inline"`
-	Steps            []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
+	ID               string `bson:"_id" json:"_id"`
+	Steps            []struct {
+		common.AlarmStep `bson:",inline"`
+		ID               string `bson:"_id" json:"_id"`
+	} `bson:"steps,omitempty" json:"steps,omitempty"`
 }
 
 type ChildrenDetails struct {
@@ -361,6 +366,8 @@ type Pbehavior struct {
 	Stop   *datetime.CpsTime `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Type   *pbehavior.Type   `bson:"type" json:"type"`
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
+
+	LastComment *pbehaviorcomment.Response `bson:"last_comment" json:"last_comment"`
 }
 
 type Instruction struct {
