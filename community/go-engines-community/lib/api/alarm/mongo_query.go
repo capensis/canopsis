@@ -155,7 +155,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
-	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior.last_comment", "entity.services"}
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "entity.services"}
 }
 
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {

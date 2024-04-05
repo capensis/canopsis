@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -365,6 +366,8 @@ type Pbehavior struct {
 	Stop   *datetime.CpsTime `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Type   *pbehavior.Type   `bson:"type" json:"type"`
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
+
+	LastComment *pbehaviorcomment.Response `bson:"last_comment" json:"last_comment"`
 }
 
 type Instruction struct {
