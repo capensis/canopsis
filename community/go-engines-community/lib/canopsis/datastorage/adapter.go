@@ -83,6 +83,22 @@ func (a *adapter) UpdateHistoryAlarm(ctx context.Context, history HistoryWithCou
 	return nil
 }
 
+func (a *adapter) UpdateHistoryAlarmExternalTag(ctx context.Context, history HistoryWithCount) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.alarm_external_tag": history,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
+
 func (a *adapter) UpdateHistoryEntityDisabled(ctx context.Context, history HistoryWithCount) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{

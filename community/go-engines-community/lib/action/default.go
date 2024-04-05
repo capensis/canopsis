@@ -211,13 +211,13 @@ func NewEngineAction(
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engineAction.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAction.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
 	})
-	engineAction.AddPeriodicalWorker("abandon executions", engine.NewLockedPeriodicalWorker(
+	engineAction.AddPeriodicalWorker("abandon_executions", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.ActionPeriodicalLockKey,
 		&scenarioPeriodicalWorker{

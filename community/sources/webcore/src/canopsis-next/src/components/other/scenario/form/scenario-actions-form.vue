@@ -19,6 +19,7 @@
           :action-number="index + 1"
           :has-previous-webhook="hasPreviousWebhook(index)"
           @remove="removeItemFromArray(index)"
+          @duplicate="duplicateAction(action)"
         />
       </template>
     </c-card-iterator-field>
@@ -42,7 +43,10 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { actionToForm, isWebhookActionType } from '@/helpers/entities/action';
+import { uid } from '@/helpers/uid';
 
 import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -122,6 +126,12 @@ export default {
 
     hasPreviousWebhook(index) {
       return this.webhookIndexes.indexOf(index) > 0;
+    },
+
+    duplicateAction(action) {
+      const clonedAction = cloneDeep(action);
+
+      this.addItemIntoArray({ ...clonedAction, key: uid() });
     },
   },
 };

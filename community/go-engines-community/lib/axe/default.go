@@ -335,8 +335,8 @@ func NewEngine(
 		engineAxe.AddConsumer(dynamicInfosRpcClient)
 	}
 
-	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engineAxe.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAxe.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:      options.PeriodicalWaitTime,
 		AlarmStatusService:      alarmStatusService,
 		AutoInstructionMatcher:  autoInstructionMatcher,
@@ -395,7 +395,19 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("idle since", libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("clean_tags", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeCleanExternalTagsPeriodicalLockKey,
+		&cleanExternalTagPeriodicalWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: dataStorageConfigProvider,
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			Logger:                    logger,
+		},
+		logger,
+	))
+	engineAxe.AddPeriodicalWorker("idle_since", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeIdleSincePeriodicalLockKey,
 		&idleSincePeriodicalWorker{

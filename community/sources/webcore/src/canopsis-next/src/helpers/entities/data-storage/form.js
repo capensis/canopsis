@@ -52,6 +52,11 @@ import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/durati
  */
 
 /**
+ * @typedef {Object} DataStorageAlarmExternalTagConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -63,6 +68,7 @@ import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/durati
  * @property {DataStorageMetricsConfig} metrics
  * @property {DataStorageMetricsConfig} perf_data_metrics
  * @property {DataStorageEventFilterFailureConfig} errors
+ * @property {DataStorageAlarmExternalTagConfig} alarm_external_tag
  */
 
 /**
@@ -224,6 +230,18 @@ export const dataStorageEventFilterFailureToForm = (errors = {}) => ({
 });
 
 /**
+ * Convert data storage alarm external tag config to form object
+ *
+ * @param {DataStorageAlarmExternalTagConfig} alarmExternalTag
+ * @return {DataStorageAlarmExternalTagConfig}
+ */
+export const dataStorageAlarmExternalTagToForm = (alarmExternalTag = {}) => ({
+  delete_after: alarmExternalTag.delete_after
+    ? durationWithEnabledToForm(alarmExternalTag.delete_after)
+    : { value: 30, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -240,4 +258,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   metrics: dataStorageMetricsToForm(dataStorage.metrics),
   perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
   event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.errors),
+  alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
 });
