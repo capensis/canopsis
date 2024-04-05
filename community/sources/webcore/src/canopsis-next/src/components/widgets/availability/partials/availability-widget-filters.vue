@@ -2,7 +2,7 @@
   <div class="availability-widget-filters col-gap-6 row-gap-3">
     <c-advanced-search-field
       :query.sync="searchQuery"
-      :tooltip="$t('context.advancedSearch')"
+      :tooltip="$t('availability.advancedSearch')"
       :columns="columns"
       class="pa-0 availability-widget-filters__search"
     />
