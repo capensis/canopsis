@@ -7,7 +7,8 @@
       <template #text="">
         <meta-alarm-rule-form
           v-model="form"
-          :active-step="activeStep"
+          ref="formElement"
+          :active-step.sync="activeStep"
           :disabled-id-field="config.isDisabledIdField"
         />
       </template>
@@ -20,6 +21,8 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
+          v-if="isLastStep"
+          key="submit"
           :disabled="isDisabled"
           :loading="submitting"
           class="primary"
@@ -27,13 +30,23 @@
         >
           {{ $t('common.submit') }}
         </v-btn>
+        <v-btn
+          v-else
+          key="next"
+          :disabled="!isStepValid"
+          type="button"
+          class="primary"
+          @click="next"
+        >
+          {{ $t('common.next') }}
+        </v-btn>
       </template>
     </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, VALIDATION_DELAY, META_ALARMS_FORM_STEPS } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
@@ -62,7 +75,8 @@ export default {
   ],
   data() {
     return {
-      activeStep: 1,
+      activeStep: META_ALARMS_FORM_STEPS.general,
+      isStepValid: false,
       form: metaAlarmRuleToForm(this.modal.config.rule),
     };
   },
@@ -70,8 +84,25 @@ export default {
     title() {
       return this.config.title ?? this.$t('modals.metaAlarmRule.create.title');
     },
+
+    isLastStep() {
+      return this.activeStep === META_ALARMS_FORM_STEPS.parameters;
+    },
+  },
+  mounted() {
+    this.$watch(() => this.$refs.formElement.isStepValid, (value) => {
+      this.isStepValid = value;
+    }, { immediate: true });
   },
   methods: {
+    async next() {
+      const isValid = await this.$refs.formElement.validateStep();
+
+      if (isValid) {
+        this.activeStep += 1;
+      }
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

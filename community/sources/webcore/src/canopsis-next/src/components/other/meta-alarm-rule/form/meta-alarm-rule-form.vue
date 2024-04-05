@@ -58,28 +58,33 @@
         :step="META_ALARMS_FORM_STEPS.parameters"
         class="pa-0"
       >
-        <meta-alarm-rule-parameters-form
-          v-field="form"
+        <c-information-block
+          :title="$t(`metaAlarmRule.parametersTitle.${form.type}`)"
           class="pa-4"
-        />
+        >
+          <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
+          <meta-alarm-rule-parameters-form v-field="form" />
+        </c-information-block>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { META_ALARMS_FORM_STEPS } from '@/constants';
 
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
+import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
 import { useElementChildrenValidation } from '@/hooks/form/useValidationChildren';
 
 export default {
   components: {
+    CInformationBlock,
     MetaAlarmRuleParametersForm,
     MetaAlarmRuleTypeField,
     MetaAlarmRuleGeneralForm,
@@ -102,12 +107,38 @@ export default {
       default: 0,
     },
   },
-  setup() {
+  setup(props, { expose }) {
     const generalStepElement = ref(null);
-    const { hasChildrenError: hasGeneralError } = useElementChildrenValidation(generalStepElement);
+    const {
+      hasChildrenError: hasGeneralError,
+      validateChildren: validateGeneralChildren,
+    } = useElementChildrenValidation(generalStepElement);
 
     const parametersStepElement = ref(null);
-    const { hasChildrenError: hasParametersError } = useElementChildrenValidation(parametersStepElement);
+    const {
+      hasChildrenError: hasParametersError,
+      validateChildren: validateParametersChildren,
+    } = useElementChildrenValidation(parametersStepElement);
+
+    const isStepValid = computed(() => ({
+      [META_ALARMS_FORM_STEPS.general]: !hasGeneralError.value,
+      [META_ALARMS_FORM_STEPS.type]: true,
+      [META_ALARMS_FORM_STEPS.parameters]: !hasParametersError.value,
+    }[props.activeStep]));
+
+    const validateStep = () => {
+      const func = {
+        [META_ALARMS_FORM_STEPS.general]: validateGeneralChildren,
+        [META_ALARMS_FORM_STEPS.parameters]: validateParametersChildren,
+      }[props.activeStep];
+
+      return func ? func() : true;
+    };
+
+    expose({
+      validateStep,
+      isStepValid,
+    });
 
     return {
       generalStepElement,
