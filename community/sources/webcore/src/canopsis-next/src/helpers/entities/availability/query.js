@@ -3,6 +3,7 @@ import { isUndefined } from 'lodash';
 import { AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE, AVAILABILITY_TREND_TYPES, QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeByInterval } from '@/helpers/date/date-intervals';
+import { getInfosWidgetColumn } from '@/helpers/entities/widget/column/form';
 
 /**
  * This function converts userPreference with widget availability type to query Object
@@ -40,6 +41,16 @@ export const convertAvailabilityUserPreferenceToQuery = (userPreference) => {
 };
 
 /**
+ * Remove useless part of infos value
+ *
+ * We should remove .value, because it's useless for this endpoint
+ *
+ * @param {string} value
+ * @return {string}
+ */
+export const prepareAvailabilityWidgetColumnValue = value => (getInfosWidgetColumn(value) ? value.replace(/.value$/, '') : value);
+
+/**
  * This function converts availability widgets default parameters to query Object
  *
  * @param {Widget} widget
@@ -59,7 +70,7 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
   const { start, stop } = QUICK_RANGES[defaultTimeRange];
 
   return {
-    active_columns: widgetColumns.map(v => v.value),
+    active_columns: widgetColumns.map(column => prepareAvailabilityWidgetColumnValue(column.value)),
     lockedFilter: mainFilter,
     displayParameter: defaultDisplayParameter,
     showType: defaultShowType,

@@ -55,7 +55,10 @@ import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_VALUE_FILTER_METHODS, TIM
 import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
-import { getAvailabilitiesTrendByInterval } from '@/helpers/entities/availability/query';
+import {
+  getAvailabilitiesTrendByInterval,
+  prepareAvailabilityWidgetColumnValue,
+} from '@/helpers/entities/availability/query';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { isOmitEqual } from '@/helpers/collection';
@@ -203,10 +206,7 @@ export default {
         ...this.interval,
         ...pick(this.query, ['page', 'search', 'active_columns']),
         ...convertSortToRequest(
-          /**
-           * We should remove .value, because it's useless for this endpoint
-           */
-          sortBy.map(field => field.replace(/.value$/, '')),
+          sortBy.map(prepareAvailabilityWidgetColumnValue),
           sortDesc,
         ),
         limit: itemsPerPage,
