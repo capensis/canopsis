@@ -243,15 +243,25 @@ func (p *pbhEnterProcessor) postProcess(
 		}
 	}
 
-	if result.Alarm.ID != "" {
+	if result.Alarm.ID == "" {
+		err := updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Entity.PbehaviorInfo.ID, result.Entity.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+	} else {
 		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
 		}
-	}
 
-	err := updatePbhLastAlarmDate(ctx, result, p.pbehaviorCollection)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot update pbehavior")
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
 	}
 }
