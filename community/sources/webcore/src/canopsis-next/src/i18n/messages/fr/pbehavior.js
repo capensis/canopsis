@@ -5,7 +5,7 @@ export default {
   begins: 'Débute',
   ends: 'Se termine',
   lastAlarmDate: 'Date de la dernière alarme',
-  alarmCount: 'Les alarmes comptent',
+  alarmCount: 'Nombre d\'alarmes',
   massRemove: 'Supprimer les comportements périodiques',
   massEnable: 'Activer les comportements périodiques',
   massDisable: 'Désactiver les comportements périodiques',
