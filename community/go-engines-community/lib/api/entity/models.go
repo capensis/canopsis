@@ -183,7 +183,6 @@ func (i *Infos) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 type PbehaviorInfo struct {
 	types.PbehaviorInfo `bson:",inline"`
 
-	IconName    string `bson:"icon_name" json:"icon_name"`
 	LastComment *struct {
 		ID        string           `bson:"_id" json:"_id"`
 		Author    string           `bson:"author" json:"author"`

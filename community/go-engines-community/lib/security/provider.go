@@ -31,7 +31,7 @@ type UserProvider interface {
 	// FindByID returns user with ID or nil.
 	FindByID(ctx context.Context, id string) (*User, error)
 	// FindByExternalSource returns user with ID from source or nil.
-	FindByExternalSource(ctx context.Context, externalID string, source Source) (*User, error)
+	FindByExternalSource(ctx context.Context, externalID, source string) (*User, error)
 	// FindWithoutPermission returns users without permission.
 	FindWithoutPermission(ctx context.Context, perm string) ([]User, error)
 	// Save updates user or inserts user if not exist.

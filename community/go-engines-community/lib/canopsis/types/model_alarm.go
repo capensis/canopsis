@@ -542,6 +542,11 @@ func (a *Alarm) GetRefField(f string) (interface{}, bool) {
 			return nil, true
 		}
 		return a.Value.ChangeState, true
+	case "v.meta":
+		if a.Value.Meta == "" {
+			return nil, true
+		}
+		return a.Value.Meta, true
 	default:
 		return nil, false
 	}

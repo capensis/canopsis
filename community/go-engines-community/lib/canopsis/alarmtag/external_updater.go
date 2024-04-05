@@ -76,9 +76,25 @@ func (u *externalUpdater) update(ctx context.Context, tags map[string]string) er
 	now := datetime.NewCpsTime()
 
 	return u.client.WithTransaction(ctx, func(ctx context.Context) error {
-		internalTagsToRemove, err := u.keepNewTags(ctx, tags)
-		if err != nil || len(tags) == 0 {
+		var existedTags, internalTagsToRemove []string
+		tags, existedTags, internalTagsToRemove, err = u.keepNewTags(ctx, tags)
+		if err != nil {
 			return err
+		}
+
+		if len(existedTags) > 0 {
+			_, err = u.alarmTagCollection.UpdateMany(ctx, bson.M{"value": bson.M{"$in": existedTags}}, bson.M{
+				"$set": bson.M{
+					"last_event_date": now,
+				},
+			})
+			if err != nil {
+				return err
+			}
+		}
+
+		if len(tags) == 0 {
+			return nil
 		}
 
 		err = u.removeInternalTags(ctx, internalTagsToRemove)
@@ -129,31 +145,34 @@ func (u *externalUpdater) update(ctx context.Context, tags map[string]string) er
 			}
 
 			models = append(models, AlarmTag{
-				ID:      utils.NewID(),
-				Type:    TypeExternal,
-				Value:   t,
-				Label:   label,
-				Color:   color,
-				Created: now,
-				Updated: now,
+				ID:            utils.NewID(),
+				Type:          TypeExternal,
+				Value:         t,
+				Label:         label,
+				Color:         color,
+				Created:       now,
+				Updated:       now,
+				LastEventDate: now,
 			})
 		}
 
 		_, err = u.alarmTagCollection.InsertMany(ctx, models)
+
 		return err
 	})
 }
 
-func (u *externalUpdater) keepNewTags(ctx context.Context, tags map[string]string) ([]string, error) {
+func (u *externalUpdater) keepNewTags(ctx context.Context, tags map[string]string) (map[string]string, []string, []string, error) {
 	values := make([]string, 0, len(tags))
 	for t := range tags {
 		values = append(values, t)
 	}
 
+	existedTags := make([]string, 0)
 	internalTagsToRemove := make([]string, 0)
 	cursor, err := u.alarmTagCollection.Find(ctx, bson.M{"value": bson.M{"$in": values}})
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	defer cursor.Close(ctx)
@@ -166,18 +185,19 @@ func (u *externalUpdater) keepNewTags(ctx context.Context, tags map[string]strin
 
 		err = cursor.Decode(&tag)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 
 		switch tag.Type {
 		case TypeExternal:
 			delete(tags, tag.Value)
+			existedTags = append(existedTags, tag.Value)
 		case TypeInternal:
 			internalTagsToRemove = append(internalTagsToRemove, tag.Value)
 		}
 	}
 
-	return internalTagsToRemove, nil
+	return tags, existedTags, internalTagsToRemove, nil
 }
 
 func (u *externalUpdater) getLabelColors(ctx context.Context, tags map[string]string) (map[string]string, error) {

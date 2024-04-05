@@ -198,8 +198,8 @@ func Default(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("outdated_rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,
 		&deleteOutdatedRatesWorker{
@@ -240,7 +240,7 @@ func Default(
 			}
 		})
 	} else {
-		engine.AddPeriodicalWorker("local cache", &periodicalWorker{
+		engine.AddPeriodicalWorker("local_cache", &periodicalWorker{
 			RuleService:        eventfilterService,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,
