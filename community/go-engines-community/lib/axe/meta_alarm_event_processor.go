@@ -745,7 +745,7 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 						return nil
 					}
 
-					err = parentAlarm.Alarm.PartialUpdateResolve(types.NewCpsTime())
+					err = parentAlarm.Alarm.PartialUpdateResolve(timestamp)
 					if err != nil {
 						return fmt.Errorf("cannot update alarm: %w", err)
 					}
