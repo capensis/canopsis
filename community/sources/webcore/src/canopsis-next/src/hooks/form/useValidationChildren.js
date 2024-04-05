@@ -34,7 +34,7 @@ export const useElementChildrenValidation = (parent) => {
     return false;
   });
 
-  const validateChildren = () => validator?.validateAll?.(childrenFields.value);
+  const validateChildren = options => validator?.validateAll?.(childrenFields.value, options);
 
   return {
     childrenFields,

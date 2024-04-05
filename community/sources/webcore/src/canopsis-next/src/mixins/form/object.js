@@ -4,6 +4,7 @@ import { formBaseMixin, modelPropKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
+ * @deprecated Should be used useModelField
  */
 export const formMixin = {
   mixins: [formBaseMixin],
