@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ title }}</span>
+        {{ title }}
       </template>
       <template #text="">
         <meta-alarm-rule-form
@@ -90,13 +90,45 @@ export default {
     },
   },
   mounted() {
-    this.$watch(() => this.$refs.formElement.isStepValid, (value) => {
-      this.isStepValid = value;
-    }, { immediate: true });
+    const handleValidationChanged = () => {
+      this.isStepValid = this.isCurrentStepValid();
+    };
+
+    handleValidationChanged();
+
+    this.$watch(() => this.$refs.formElement.hasGeneralError, handleValidationChanged);
+    this.$watch(() => this.$refs.formElement.hasTypeError, handleValidationChanged);
+    this.$watch(() => this.$refs.formElement.hasParametersError, handleValidationChanged);
   },
   methods: {
+    isCurrentStepValid() {
+      const { hasGeneralError, hasTypeError, hasParametersError } = this.$refs.formElement ?? {};
+
+      return {
+        [META_ALARMS_FORM_STEPS.general]: !hasGeneralError,
+        [META_ALARMS_FORM_STEPS.type]: !hasTypeError,
+        [META_ALARMS_FORM_STEPS.parameters]: !hasParametersError,
+      }[this.activeStep];
+    },
+
+    validateCurrentStepValid() {
+      const {
+        validateGeneralChildren,
+        validateTypeChildren,
+        validateParametersChildren,
+      } = this.$refs.formElement ?? {};
+
+      const func = {
+        [META_ALARMS_FORM_STEPS.general]: validateGeneralChildren,
+        [META_ALARMS_FORM_STEPS.type]: validateTypeChildren,
+        [META_ALARMS_FORM_STEPS.parameters]: validateParametersChildren,
+      }[this.activeStep];
+
+      return func?.();
+    },
+
     async next() {
-      const isValid = await this.$refs.formElement.validateStep();
+      const isValid = await this.validateCurrentStepValid();
 
       if (isValid) {
         this.activeStep += 1;
