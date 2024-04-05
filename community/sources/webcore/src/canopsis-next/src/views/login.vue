@@ -17,19 +17,12 @@
     <div class="login__description">
       <c-compiled-template :template="description" />
     </div>
-    <div class="login__container">
-      <base-login />
-      <cas-login
-        v-if="isCASAuthEnabled"
-        key="cas"
-        class="mt-2"
-      />
-      <saml-login
-        v-if="isSAMLAuthEnabled"
-        key="saml"
-        class="mt-2"
-      />
-    </div>
+    <login-card
+      :basic="isBasicAuthEnabled"
+      :cas="isCASAuthEnabled"
+      :saml="isSAMLAuthEnabled"
+      :oauth="isOauthAuthEnabled"
+    />
     <login-footer />
   </div>
 </template>
@@ -40,16 +33,12 @@ import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import BaseLogin from '@/components/other/login/base-login.vue';
-import CasLogin from '@/components/other/login/cas-login.vue';
-import SamlLogin from '@/components/other/login/saml-login.vue';
+import LoginCard from '@/components/other/login/login-card.vue';
 import LoginFooter from '@/components/other/login/login-footer.vue';
 
 export default {
   components: {
-    BaseLogin,
-    CasLogin,
-    SamlLogin,
+    LoginCard,
     LoginFooter,
   },
   mixins: [authMixin, entitiesInfoMixin],

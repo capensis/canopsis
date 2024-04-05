@@ -8,7 +8,7 @@ import { mockRouter } from '@unit/utils/mock-hooks';
 
 import { ROUTES_NAMES } from '@/constants';
 
-import BaseLogin from '@/components/other/login/base-login.vue';
+import BasicLogin from '@/components/other/login/basic-login.vue';
 
 const stubs = {
   'ldap-login-information': true,
@@ -30,7 +30,7 @@ const selectSubmitButton = wrapper => wrapper.find('button.v-btn');
 const selectLoginForm = wrapper => wrapper.find('login-form-stub');
 const selectAlert = wrapper => wrapper.find('c-alert-stub');
 
-describe('base-login', () => {
+describe('basic-login', () => {
   const $router = mockRouter();
 
   const { authModule, currentUser, login } = createAuthModule();
@@ -40,12 +40,12 @@ describe('base-login', () => {
     infoModule,
   ]);
 
-  const factory = generateShallowRenderer(BaseLogin, {
+  const factory = generateShallowRenderer(BasicLogin, {
     stubs,
     attachTo: document.body,
     mocks: { $router },
   });
-  const snapshotFactory = generateRenderer(BaseLogin, { stubs: snapshotStubs });
+  const snapshotFactory = generateRenderer(BasicLogin, { stubs: snapshotStubs });
 
   it('Form submitted after trigger submit button', async () => {
     const wrapper = factory({

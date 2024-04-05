@@ -2,6 +2,7 @@ package security
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -90,37 +91,30 @@ func (s *tokenService) Create(ctx context.Context, user security.User, provider 
 	return accessToken, nil
 }
 
-func (s *tokenService) CreateWithExpiration(ctx context.Context, user security.User, provider string, expired time.Time) (string, error) {
-	expirationInterval, inactivityInterval, err := s.getIntervals(ctx, user, provider)
+func (s *tokenService) CreateWithExpiration(ctx context.Context, user security.User, provider string, expiredAt time.Time) (string, error) {
+	_, inactivityInterval, err := s.getIntervals(ctx, user, provider)
 	if err != nil {
 		return "", err
 	}
 
-	now := datetime.NewCpsTime()
-	minExpired := datetime.CpsTime{Time: expired}
-	if expirationInterval.Value > 0 {
-		expiredByInterval := expirationInterval.AddTo(now)
-		if expiredByInterval.Before(minExpired) {
-			minExpired = expiredByInterval
-		}
-	}
-	accessToken, err := s.tokenGenerator.Generate(user.ID, minExpired.Time)
+	accessToken, err := s.tokenGenerator.Generate(user.ID, expiredAt)
 	if err != nil {
 		return "", err
 	}
 
+	expired := datetime.NewCpsTime(expiredAt.Unix())
 	t := token.Token{
 		ID:       accessToken,
 		User:     user.ID,
 		Provider: provider,
-		Created:  now,
+		Created:  datetime.NewCpsTime(),
+		Expired:  &expired,
 	}
+
 	if inactivityInterval.Value > 0 {
 		t.MaxInactiveInterval = &inactivityInterval
 	}
-	if !minExpired.IsZero() {
-		t.Expired = &minExpired
-	}
+
 	err = s.tokenStore.Save(ctx, t)
 	if err != nil {
 		return "", err
@@ -189,7 +183,13 @@ func (s *tokenService) getIntervals(ctx context.Context, user security.User, pro
 		case security.AuthMethodSaml:
 			expirationIntervalStr = s.config.Security.Saml.ExpirationInterval
 			inactivityIntervalStr = s.config.Security.Saml.InactivityInterval
-
+		default:
+			if config, ok := s.config.Security.OAuth2.Providers[provider]; ok {
+				expirationIntervalStr = config.ExpirationInterval
+				inactivityIntervalStr = config.InactivityInterval
+			} else {
+				return expirationInterval, inactivityInterval, fmt.Errorf("provider %s is not defined", provider)
+			}
 		}
 
 		if expirationInterval.Value == 0 && expirationIntervalStr != "" {
