@@ -2,15 +2,6 @@ import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 export const widgetFilterSelectMixin = {
   mixins: [entitiesWidgetMixin],
-  computed: {
-    mainFilter() {
-      return this.userPreference.content.mainFilter;
-    },
-
-    lockedFilter() {
-      return this.widget.parameters.mainFilter;
-    },
-  },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
       if (this.hasAccessToUserFilter) {
