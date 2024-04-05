@@ -131,6 +131,7 @@ export default {
     impactChain: 'Chaîne d\'impact',
     entityGantt: 'Diagramme de Gantt',
     ticketsDeclared: 'Tickets déclarés',
+    remediation: 'Remédiation',
   },
   moreInfos: {
     defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
