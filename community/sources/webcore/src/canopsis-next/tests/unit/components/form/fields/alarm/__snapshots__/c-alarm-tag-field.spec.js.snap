@@ -31,7 +31,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
           class="v-select__selections"
         >
           <c-alarm-action-chip-stub
-            class="c-alarm-tag-field__tag"
+            class="c-alarm-tag-field__tag px-2"
             closable=""
             ellipsis=""
             title="Tag 1"
@@ -123,7 +123,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
         class="v-list-item__action"
       >
         <div
-          class="v-input theme--light v-input--selection-controls v-input--checkbox"
+          class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--checkbox primary--text"
         >
           <div
             class="v-input__control"
@@ -136,23 +136,23 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light"
+                  class="v-icon notranslate material-icons theme--light primary--text"
                 >
-                  check_box_outline_blank
+                  check_box
                 </i>
                 <input
-                  aria-checked="false"
+                  aria-checked="true"
                   role="checkbox"
                   type="checkbox"
                   value=""
                 />
                 <div
-                  class="v-input--selection-controls__ripple"
+                  class="v-input--selection-controls__ripple primary--text"
                 />
               </div>
             </div>
             <div
-              class="v-messages theme--light"
+              class="v-messages theme--light primary--text"
             >
               <transition-group-stub
                 class="v-messages__wrapper"

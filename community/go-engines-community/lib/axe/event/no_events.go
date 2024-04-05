@@ -95,6 +95,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		entity = *event.Entity
 		updatedServiceStates = nil
 
 		alarm := types.Alarm{}
@@ -114,6 +115,10 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		if err != nil {
 			return err
+		}
+
+		if result.Entity.ID != "" {
+			entity = result.Entity
 		}
 
 		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
@@ -196,9 +201,9 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 			alarm.Value.InactiveStart = &now
 		}
 
-		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
-			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, false)
-		newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
+		newStep := types.NewPbhAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
+			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, pbehaviorInfo.CanonicalType,
+			pbehaviorInfo.IconName, pbehaviorInfo.Color)
 		alarm.Value.PbehaviorInfo = pbehaviorInfo
 		err := alarm.Value.Steps.Add(newStep)
 		if err != nil {

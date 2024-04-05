@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`login Renders \`login\` with custom state 1`] = `
+exports[`login Renders \`login\` with all auths enabled 1`] = `
 <div
   class="login"
 >
@@ -12,22 +12,17 @@ exports[`login Renders \`login\` with custom state 1`] = `
       template="description"
     />
   </div>
-  <div
-    class="login__container"
-  >
-    <base-login-stub />
-    <cas-login-stub
-      class="mt-2"
-    />
-    <saml-login-stub
-      class="mt-2"
-    />
-  </div>
+  <login-card-stub
+    basic="true"
+    cas="true"
+    oauth="true"
+    saml="true"
+  />
   <login-footer-stub />
 </div>
 `;
 
-exports[`login Renders \`login\` with default state 1`] = `
+exports[`login Renders \`login\` without auth enabled 1`] = `
 <div
   class="login"
 >
@@ -39,13 +34,7 @@ exports[`login Renders \`login\` with default state 1`] = `
       template=""
     />
   </div>
-  <div
-    class="login__container"
-  >
-    <base-login-stub />
-    <!---->
-    <!---->
-  </div>
+  <login-card-stub />
   <login-footer-stub />
 </div>
 `;

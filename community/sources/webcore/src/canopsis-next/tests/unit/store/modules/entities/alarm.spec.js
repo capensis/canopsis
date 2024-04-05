@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, keyBy } from 'lodash';
 import Vue from 'vue';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
@@ -7,13 +7,14 @@ import { fakeAlarm, fakeAlarms, fakeAlarmsResponse } from '@unit/data/alarm';
 import { fakeMeta, fakeParams } from '@unit/data/request-data';
 
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import SetSeveralPlugin from '@/plugins/set-several';
 
 import request from '@/services/request';
 
 import alarmModule, { types } from '@/store/modules/entities/alarm';
+
+import { mapIds } from '@/helpers/array';
 
 const { actions, state: initialState, mutations, getters } = alarmModule;
 
@@ -62,6 +63,7 @@ describe('Entities alarm module', () => {
     fetchList(state, { widgetId, params });
 
     expect(state).toEqual({
+      alarmsById: {},
       widgets: {
         [widgetId]: { pending: true, fetchingParams: params },
       },
@@ -107,48 +109,50 @@ describe('Entities alarm module', () => {
   });
 
   it('Get alarms data by widget id. Getter: getListByWidgetId', () => {
-    const { alarms, widgetId, allIds } = mockData;
-    const getList = jest.fn(() => alarms);
-    const rootGetters = {
-      'entities/getList': getList,
-    };
+    const { alarms, widgetId } = mockData;
     const state = {
+      alarmsById: keyBy(alarms, '_id'),
       widgets: {
-        [widgetId]: { allIds },
+        [widgetId]: { allIds: mapIds(alarms) },
       },
     };
 
-    const data = getters.getListByWidgetId(state, getters, {}, rootGetters)(widgetId);
+    const data = getters.getListByWidgetId(state, {
+      ...getters,
+      getList: getters.getList(state, {
+        getItem: getters.getItem(state),
+      }),
+    })(widgetId);
 
     expect(data).toEqual(alarms);
-    expect(getList).toHaveBeenCalledWith(ENTITIES_TYPES.alarm, allIds);
   });
 
-  it('Get alarm data by alarm id. Getter: getItem', () => {
+  it('Get alarms data by ids. Getter: getList', () => {
     const { alarms } = mockData;
-    const ids = Faker.datatype.array();
-    const getList = jest.fn(() => alarms);
-    const rootGetters = {
-      'entities/getList': getList,
+    const ids = mapIds(alarms);
+    const state = {
+      ...initialState,
+      alarmsById: keyBy(alarms, '_id'),
     };
 
-    const data = getters.getList(initialState, getters, {}, rootGetters)(ids);
+    const data = getters.getList(state, {
+      getItem: getters.getItem(state),
+    })(ids);
 
     expect(data).toEqual(alarms);
-    expect(getList).toHaveBeenCalledWith(ENTITIES_TYPES.alarm, ids);
   });
 
   it('Get alarm data by alarm id. Getter: getItem', () => {
-    const { alarmId, alarm } = mockData;
-    const getItem = jest.fn(() => alarm);
-    const rootGetters = {
-      'entities/getItem': getItem,
-    };
+    const { alarm } = mockData;
 
-    const data = getters.getItem(initialState, getters, {}, rootGetters)(alarmId);
+    const data = getters.getItem({
+      ...initialState,
+      alarmsById: {
+        [alarm._id]: alarm,
+      },
+    })(alarm._id);
 
     expect(data).toEqual(alarm);
-    expect(getItem).toHaveBeenCalledWith(ENTITIES_TYPES.alarm, alarmId);
   });
 
   it('Get meta data by widget id. Getter: getPendingByWidgetId', () => {
@@ -209,15 +213,20 @@ describe('Entities alarm module', () => {
   });
 
   it('Fetch alarm by id. Action: fetchItem', async () => {
-    const dispatch = jest.fn();
-    const { alarmId, params } = mockData;
+    const { params, alarm } = mockData;
+
+    axiosMockAdapter
+      .onGet(`${API_ROUTES.alarms.list}/${alarm._id}`)
+      .reply(200, alarm);
+
+    const commit = jest.fn();
 
     const data = await actions.fetchItem(
-      { dispatch },
-      { id: alarmId, params },
+      { commit },
+      { id: alarm._id, params },
     );
 
-    expect(data).toBeUndefined();
-    expect(dispatch).toHaveBeenCalled();
+    expect(data).toEqual(alarm);
+    expect(commit).toHaveBeenCalledWith(types.SET_ALARMS, { data: [alarm] });
   });
 });
