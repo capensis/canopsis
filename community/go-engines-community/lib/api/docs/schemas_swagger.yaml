@@ -538,6 +538,8 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      last_comment:
+        $ref: '#/definitions/pbehaviorcomment.Response'
       name:
         type: string
       reason:

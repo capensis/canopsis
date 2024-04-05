@@ -55,11 +55,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -148,11 +147,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -251,11 +249,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -344,11 +341,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -452,11 +448,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -531,11 +526,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -676,11 +670,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -793,11 +786,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -903,11 +895,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -983,11 +974,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -1073,12 +1063,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
-			"resolved_children":      0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
+			"resolved_children":  0,
 		}},
 	)
 	expected := getOnlyParentsSearchPipeline(bson.M{
@@ -1172,12 +1161,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
-			"resolved_children":      0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
+			"resolved_children":  0,
 		}},
 	)
 	expected := getOnlyParentsSearchPipeline(bson.M{
@@ -1253,11 +1241,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -1332,11 +1319,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -1412,11 +1398,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
@@ -1552,11 +1537,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
-			"entity.services":        0,
+			"bookmarks":          0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
+			"entity.services":    0,
 		}},
 	)
 	expected := []bson.M{
@@ -1666,11 +1650,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 			"entity.pbehavior_info": "$v.pbehavior_info",
 		}},
 		bson.M{"$project": bson.M{
-			"bookmarks":              0,
-			"entity.services":        0,
-			"v.steps":                0,
-			"pbehavior.comments":     0,
-			"pbehavior.last_comment": 0,
+			"bookmarks":          0,
+			"entity.services":    0,
+			"v.steps":            0,
+			"pbehavior.comments": 0,
 		}},
 	)
 	expected := []bson.M{
