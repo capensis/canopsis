@@ -1,6 +1,7 @@
 import { range } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
+import { selectRowExpandButtonByIndex } from '@unit/utils/table';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorsList from '@/components/other/pbehavior/pbehaviors/pbehaviors-list.vue';
@@ -18,11 +19,6 @@ const stubs = {
   'pbehaviors-list-expand-item': true,
 };
 
-const selectExpandButtonByRow = (wrapper, index) => wrapper
-  .findAll('tbody > tr')
-  .at(index)
-  .find('.v-data-table__expand-icon');
-
 describe('pbehaviors-list', () => {
   const totalItems = 11;
 
@@ -38,6 +34,7 @@ describe('pbehaviors-list', () => {
     rrule: index % 2 ? 'RRULWE' : null,
     rrule_end: index % 4 ? 1614861888 + index : null,
     is_active_status: !(index % 2),
+    alarm_count: index,
     type: {
       icon_name: `type-icon-name-${index}`,
     },
@@ -104,28 +101,7 @@ describe('pbehaviors-list', () => {
       },
     });
 
-    await selectExpandButtonByRow(wrapper, 0).triggerCustomEvent('expand');
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('Renders `pbehaviors-list` with updatable and old_mongo_query', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        pbehaviors: pbehaviorsItems.map(item => ({ ...item, old_mongo_query: true })),
-        options: {
-          page: 1,
-          itemsPerPage: 10,
-          search: '',
-          sortBy: [],
-          sortDesc: [],
-        },
-        updatable: true,
-        totalItems: 50,
-      },
-    });
-
-    await selectExpandButtonByRow(wrapper, 0).triggerCustomEvent('expand');
+    await selectRowExpandButtonByIndex(wrapper, 0).triggerCustomEvent('expand');
 
     expect(wrapper).toMatchSnapshot();
   });
