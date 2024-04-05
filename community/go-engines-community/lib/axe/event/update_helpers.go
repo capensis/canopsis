@@ -102,31 +102,48 @@ func sendRemediationEvent(
 	return nil
 }
 
-func updatePbhLastAlarmDate(ctx context.Context, result Result, pbehaviorCollection mongo.DbCollection) error {
-	switch result.AlarmChange.Type {
-	case types.AlarmChangeTypeCreateAndPbhEnter,
-		types.AlarmChangeTypePbhEnter,
-		types.AlarmChangeTypePbhLeaveAndEnter:
-	default:
-		return nil
+func updatePbehaviorLastAlarmDate(
+	ctx context.Context,
+	pbehaviorCollection mongo.DbCollection,
+	pbhId string,
+	lastAlarmDate *datetime.CpsTime,
+) error {
+	_, err := pbehaviorCollection.UpdateOne(ctx, bson.M{"_id": pbhId}, bson.M{"$set": bson.M{
+		"last_alarm_date": lastAlarmDate,
+	}})
+
+	return err
+}
+
+func updatePbehaviorAlarmCount(
+	ctx context.Context,
+	pbehaviorCollection mongo.DbCollection,
+	pbhId, prevPbhId string,
+) error {
+	writeModels := make([]mongodriver.WriteModel, 0, 2)
+	if pbhId != "" {
+		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": pbhId}).
+			SetUpdate(bson.M{"$inc": bson.M{
+				"alarm_count": 1,
+			}}))
 	}
 
-	pbhId := ""
-	var lastAlarmDate *datetime.CpsTime
-	if result.Alarm.ID == "" {
-		pbhId = result.Entity.PbehaviorInfo.ID
-		lastAlarmDate = result.Entity.PbehaviorInfo.Timestamp
-	} else {
-		pbhId = result.Alarm.Value.PbehaviorInfo.ID
-		lastAlarmDate = result.Alarm.Value.PbehaviorInfo.Timestamp
+	if prevPbhId != "" && pbhId != prevPbhId {
+		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": prevPbhId}).
+			SetUpdate(bson.M{
+				"$inc": bson.M{
+					"alarm_count": -1,
+				},
+			}))
 	}
 
-	_, err := pbehaviorCollection.UpdateOne(ctx,
-		bson.M{"_id": pbhId},
-		bson.M{"$set": bson.M{"last_alarm_date": lastAlarmDate}},
-	)
-	if err != nil {
-		return fmt.Errorf("cannot update pbehavior: %w", err)
+	if len(writeModels) > 0 {
+		_, err := pbehaviorCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return fmt.Errorf("cannot update pbehaviors: %w", err)
+		}
 	}
 
 	return nil
@@ -413,6 +430,7 @@ func postProcessResolve(
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	pbehaviorCollection mongo.DbCollection,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) {
@@ -452,6 +470,13 @@ func postProcessResolve(
 	err = sendRemediationEvent(ctx, event, result, remediationRpcClient, encoder)
 	if err != nil {
 		logger.Err(err).Msg("cannot send event to engine-remediation")
+	}
+
+	if !result.Alarm.Value.PbehaviorInfo.IsDefaultActive() {
+		err = updatePbehaviorAlarmCount(ctx, pbehaviorCollection, "", result.Alarm.Value.PbehaviorInfo.ID)
+		if err != nil {
+			logger.Err(err).Msg("cannot update pbehavior")
+		}
 	}
 }
 
