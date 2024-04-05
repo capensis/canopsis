@@ -4,17 +4,7 @@
     class="text-fields"
     wrap
   >
-    <v-flex
-      v-show="title"
-      xs12
-    >
-      <h4>{{ title }}</h4>
-    </v-flex>
     <v-flex xs12>
-      <slot
-        v-if="!items.length"
-        name="no-data"
-      />
       <v-layout
         v-for="(item, index) in items"
         :key="item[itemKey]"
@@ -24,22 +14,11 @@
       >
         <v-flex xs12>
           <v-text-field
-            v-if="!mixed"
             v-validate="validationRules"
             :value="item[itemValue]"
             :label="label"
             :disabled="disabled"
             :name="getFieldName(item[itemKey])"
-            :error-messages="errors.collect(getFieldName(item[itemKey]))"
-            @input="updateFieldInArrayItem(index, itemValue, $event)"
-          />
-          <c-mixed-field
-            v-else
-            v-validate="validationRules"
-            :value="item[itemValue]"
-            :label="label"
-            :name="getFieldName(item[itemKey])"
-            :disabled="disabled"
             :error-messages="errors.collect(getFieldName(item[itemKey]))"
             @input="updateFieldInArrayItem(index, itemValue, $event)"
           />
@@ -61,20 +40,27 @@
       v-if="!disabled"
       xs12
     >
-      <v-layout>
+      <v-layout class="gap-2" align-center>
         <v-btn
-          class="ml-0"
-          color="primary"
+          :color="error ? 'error' : 'primary'"
           @click="addNewItem"
         >
-          {{ addButtonLabel || $t('common.add') }}
+          {{ $t('common.add') }}
         </v-btn>
+        <span
+          v-show="error"
+          class="error--text"
+        >
+          {{ $t('metaAlarmRule.errors.noValuePaths') }}
+        </span>
       </v-layout>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { defaultPrimitiveArrayItemCreator } from '@/helpers/entities/shared/form';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -87,10 +73,6 @@ export default {
     event: 'input',
   },
   props: {
-    title: {
-      type: String,
-      default: null,
-    },
     items: {
       type: Array,
       default: () => [],
@@ -111,26 +93,27 @@ export default {
       type: String,
       default: 'item',
     },
-    validationRules: {
-      type: String,
-      default: null,
-    },
-    addButtonLabel: {
-      type: String,
-      default: null,
+    required: {
+      type: Boolean,
+      default: false,
     },
     disabled: {
       type: Boolean,
       default: false,
     },
-    mixed: {
+    error: {
       type: Boolean,
       default: false,
     },
-    itemCreator: {
-      type: Function,
-      default: defaultPrimitiveArrayItemCreator,
-    },
+  },
+  computed(props) {
+    const validationRules = computed(() => ({
+      required: props.required,
+    }));
+
+    return {
+      validationRules,
+    };
   },
   methods: {
     getNamePrefix(key) {
@@ -146,7 +129,7 @@ export default {
     },
 
     addNewItem() {
-      this.addItemIntoArray(this.itemCreator());
+      this.addItemIntoArray(defaultPrimitiveArrayItemCreator());
     },
   },
 };
