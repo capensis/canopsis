@@ -246,6 +246,7 @@ systemd_install: systemd_install-common
 	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
 	install -c -m 755 -p -- $(foreach systemd_units,$(SYSTEMD_UNITS),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@$(systemd_units).service") "$(DESTDIR)/usr/lib/systemd/system/"
 	install -c -m 755 -p -- $(foreach services,$(SERVICES),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@$(services).service") "$(DESTDIR)/usr/lib/systemd/system/"
+	install -c -m 655 -p -- "$(CURRENT_ROOT_DIR)/systemd/canopsis-reconfigure.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-reconfigure.service"
 
 #
 # TESTS
