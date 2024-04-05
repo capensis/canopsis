@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"net/url"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -83,7 +82,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -2254,19 +2252,4 @@ func RegisterRoutes(
 			maintenanceApi.Maintenance,
 		)
 	}
-}
-
-func GetProxy(
-	legacyUrl *url.URL,
-	security Security,
-	enforcer libsecurity.Enforcer,
-	accessConfig proxy.AccessConfig,
-) []gin.HandlerFunc {
-	authMiddleware := security.GetAuthMiddleware()
-
-	return append(
-		authMiddleware,
-		middleware.ProxyAuthorize(enforcer, accessConfig),
-		ReverseProxyHandler(legacyUrl),
-	)
 }
