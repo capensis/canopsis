@@ -207,6 +207,10 @@ export default {
       return request.get(API_ROUTES.alarmDisplayNames, { params });
     },
 
+    fetchExecutionsWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.alarmExecutions}/${id}`, { params });
+    },
+
     updateItemInStore({ commit }, alarm) {
       commit(types.SET_ALARMS, { data: [alarm] });
 
