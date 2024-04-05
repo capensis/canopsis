@@ -324,7 +324,10 @@ export default {
     },
 
     entity() {
-      return this.alarmDetails?.entity ?? {};
+      return {
+        ...this.alarm.entity,
+        ...this.alarmDetails?.entity,
+      };
     },
 
     dependency() {
