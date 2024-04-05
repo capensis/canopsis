@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-alarm-external-tag-form Renders \`storage-settings-alarm-external-tag-form\` with custom form and history 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="text-subtitle-1 font-weight-bold"
+    >
+      Alarm external tags data storage
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout mt-2"
+  >
+    <span
+      class="text--secondary"
+    >
+      <storage-settings-history-message-stub
+        deletedcountmessagekey="storageSetting.history.alarmExternalTag.deletedCount"
+        hidearchived="true"
+        history="[object Object]"
+      />
+    </span>
+  </div>
+  <c-enabled-duration-field-stub
+    label="Clear external tags after"
+    name="alarm_external_tag.delete_after"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`storage-settings-alarm-external-tag-form Renders \`storage-settings-alarm-external-tag-form\` with default form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="text-subtitle-1 font-weight-bold"
+    >
+      Alarm external tags data storage
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    label="Clear external tags after"
+    name="alarm_external_tag.delete_after"
+    value="[object Object]"
+  />
+</div>
+`;

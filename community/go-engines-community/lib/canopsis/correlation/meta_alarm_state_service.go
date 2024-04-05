@@ -63,6 +63,19 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 	previousState int,
 	upsert bool,
 ) (bool, error) {
+	set := bson.M{
+		"expired_at":          state.ExpiredAt,
+		"children_entity_ids": state.ChildrenEntityIDs,
+		"children_timestamps": state.ChildrenTimestamps,
+		"parents_entity_ids":  state.ParentsEntityIDs,
+		"parents_timestamps":  state.ParentsTimestamps,
+		"meta_alarm_name":     state.MetaAlarmName,
+		"state":               Opened,
+	}
+	if state.ChildInactiveExpireAt != nil {
+		set["child_inactive_expire_at"] = state.ChildInactiveExpireAt
+	}
+
 	res, err := a.metaAlarmStatesCollection.UpdateOne(
 		ctx,
 		bson.M{
@@ -74,16 +87,7 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 			"$inc": bson.M{
 				"version": 1,
 			},
-			"$set": bson.M{
-				"expired_at":               state.ExpiredAt,
-				"children_entity_ids":      state.ChildrenEntityIDs,
-				"children_timestamps":      state.ChildrenTimestamps,
-				"parents_entity_ids":       state.ParentsEntityIDs,
-				"parents_timestamps":       state.ParentsTimestamps,
-				"meta_alarm_name":          state.MetaAlarmName,
-				"state":                    Opened,
-				"child_inactive_expire_at": state.ChildInactiveExpireAt,
-			},
+			"$set": set,
 		},
 		options.Update().SetUpsert(upsert),
 	)

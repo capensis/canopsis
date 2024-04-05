@@ -1,5 +1,11 @@
 package security
 
+const (
+	SourceLdap = "ldap"
+	SourceCas  = "cas"
+	SourceSaml = "saml"
+)
+
 // User represents user model.
 type User struct {
 	ID             string   `bson:"_id"`
@@ -17,11 +23,5 @@ type User struct {
 	} `bson:"contact"`
 	IsEnabled  bool   `bson:"enable"`
 	ExternalID string `bson:"external_id"`
-	Source     Source `bson:"source"`
+	Source     string `bson:"source"`
 }
-
-type Source string
-
-const SourceLdap Source = "ldap"
-const SourceCas Source = "cas"
-const SourceSaml Source = "saml"

@@ -6,9 +6,22 @@ class PerformanceMetrics {
     this.data = JSON.parse(data.toString());
   }
 
+  filterTasks(callback) {
+    return this.data.traceEvents.filter(callback);
+  }
+
+  getTasksByName(name) {
+    return this.filterTasks(task => task.name === name);
+  }
+
+  findFinishXHRTaskByUrl(url) {
+    return this.getTasksByName('XHRReadyStateChange').find(
+      task => task.args.data.url.includes(url) && task.args.data.readyState === 4,
+    );
+  }
+
   findLongestPerformanceTask() {
-    const allAnimationTasks = this.data.traceEvents.filter(({ name, ph }) => name === 'LongAnimationFrame'
-      && ph === 'b');
+    const allAnimationTasks = this.getTasksByName('LongAnimationFrame').filter(({ ph }) => ph === 'b');
 
     return allAnimationTasks.reduce((acc, task) => {
       if (acc.args.data.duration < task.args.data.duration) {

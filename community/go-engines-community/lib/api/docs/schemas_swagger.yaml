@@ -538,6 +538,8 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      last_comment:
+        $ref: '#/definitions/pbehaviorcomment.Response'
       name:
         type: string
       reason:
@@ -553,9 +555,15 @@ definitions:
     type: object
   alarm.Step:
     properties:
+      _id:
+        type: string
       _t:
         type: string
       a:
+        type: string
+      color:
+        type: string
+      icon_name:
         type: string
       in_pbh:
         type: boolean
@@ -565,7 +573,48 @@ definitions:
         type: string
       steps:
         items:
-          $ref: '#/definitions/common.AlarmStep'
+          properties:
+            _id:
+              type: string
+            _t:
+              type: string
+            a:
+              type: string
+            color:
+              type: string
+            icon_name:
+              type: string
+            in_pbh:
+              type: boolean
+            initiator:
+              type: string
+            m:
+              type: string
+            t:
+              type: integer
+            ticket:
+              type: string
+            ticket_comment:
+              type: string
+            ticket_data:
+              additionalProperties:
+                type: string
+              type: object
+            ticket_meta_alarm_id:
+              type: string
+            ticket_rule_id:
+              type: string
+            ticket_rule_name:
+              type: string
+            ticket_system_name:
+              type: string
+            ticket_url:
+              type: string
+            user_id:
+              type: string
+            val:
+              type: integer
+          type: object
         type: array
       t:
         type: integer
@@ -930,10 +979,14 @@ definitions:
     type: object
   appinfo.LoginConf:
     properties:
+      basic:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
       casconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
       ldapconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
+      oauth2config:
+        $ref: '#/definitions/appinfo.Oauth2LoginConfigMethod'
       saml2config:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
     type: object
@@ -943,6 +996,15 @@ definitions:
         type: boolean
       title:
         type: string
+    type: object
+  appinfo.Oauth2LoginConfigMethod:
+    properties:
+      enable:
+        type: boolean
+      providers:
+        items:
+          type: string
+        type: array
     type: object
   appinfo.PopupTimeout:
     properties:
@@ -1185,6 +1247,10 @@ definitions:
         type: string
       a:
         type: string
+      color:
+        type: string
+      icon_name:
+        type: string
       in_pbh:
         type: boolean
       initiator:
@@ -1319,6 +1385,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      alarm_external_tag:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
       event_filter_failure:
         properties:
           delete_after:
@@ -1376,6 +1447,8 @@ definitions:
   datastorage.History:
     properties:
       alarm:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      alarm_external_tag:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       entity_cleaned:
         $ref: '#/definitions/datastorage.HistoryWithCount'
@@ -1661,6 +1734,8 @@ definitions:
         type: string
       canonical_type:
         description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      color:
         type: string
       icon_name:
         type: string
