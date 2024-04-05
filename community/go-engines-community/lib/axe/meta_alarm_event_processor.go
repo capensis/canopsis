@@ -976,7 +976,7 @@ func (p *metaAlarmEventProcessor) resolveParents(
 						return nil
 					}
 
-					update := resolveMetaAlarm(&parentAlarm.Alarm, datetime.NewCpsTime())
+					update := resolveMetaAlarm(&parentAlarm.Alarm, timestamp)
 					_, err = p.alarmCollection.UpdateOne(ctx, bson.M{"_id": parentAlarm.Alarm.ID}, update)
 					if err != nil {
 						return fmt.Errorf("cannot update alarm: %w", err)
