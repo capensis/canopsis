@@ -395,7 +395,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-0
               </c-alarm-action-chip-stub>
             </td>
@@ -480,7 +482,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-1
               </c-alarm-action-chip-stub>
             </td>
@@ -565,7 +569,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-2
               </c-alarm-action-chip-stub>
             </td>
@@ -650,7 +656,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-3
               </c-alarm-action-chip-stub>
             </td>
@@ -735,7 +743,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-4
               </c-alarm-action-chip-stub>
             </td>
@@ -820,7 +830,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-5
               </c-alarm-action-chip-stub>
             </td>
@@ -905,7 +917,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-6
               </c-alarm-action-chip-stub>
             </td>
@@ -990,7 +1004,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-7
               </c-alarm-action-chip-stub>
             </td>
@@ -1075,7 +1091,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-8
               </c-alarm-action-chip-stub>
             </td>
@@ -1160,7 +1178,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-9
               </c-alarm-action-chip-stub>
             </td>
@@ -1512,7 +1532,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-0
               </c-alarm-action-chip-stub>
             </td>
@@ -1569,7 +1591,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-1
               </c-alarm-action-chip-stub>
             </td>
@@ -1626,7 +1650,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-2
               </c-alarm-action-chip-stub>
             </td>
@@ -1683,7 +1709,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-3
               </c-alarm-action-chip-stub>
             </td>
@@ -1740,7 +1768,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-4
               </c-alarm-action-chip-stub>
             </td>
@@ -1797,7 +1827,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-5
               </c-alarm-action-chip-stub>
             </td>
@@ -1854,7 +1886,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-6
               </c-alarm-action-chip-stub>
             </td>
@@ -1911,7 +1945,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-7
               </c-alarm-action-chip-stub>
             </td>
@@ -1968,7 +2004,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-8
               </c-alarm-action-chip-stub>
             </td>
@@ -2025,7 +2063,9 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <c-alarm-action-chip-stub>
+              <c-alarm-action-chip-stub
+                class="px-2"
+              >
       pattern-value-9
               </c-alarm-action-chip-stub>
             </td>
