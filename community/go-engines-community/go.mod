@@ -57,8 +57,9 @@ require (
 )
 
 require (
+	github.com/coreos/go-oidc/v3 v3.6.0
 	github.com/jellydator/ttlcache/v2 v2.11.1
-	github.com/prometheus/procfs v0.12.0
+	golang.org/x/oauth2 v0.13.0
 )
 
 require (
@@ -74,10 +75,12 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
+	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gofrs/uuid v4.3.1+incompatible // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
@@ -124,9 +127,10 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 

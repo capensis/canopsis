@@ -240,6 +240,8 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "c":
 			out.Created = int64(in.Int64())
+		case "clr":
+			out.Color = string(in.String())
 		case "p":
 			if in.IsNull() {
 				in.Skip()
@@ -333,6 +335,11 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"c\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Created))
+	}
+	{
+		const prefix string = ",\"clr\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
 	}
 	if len(in.EntityPattern) != 0 {
 		const prefix string = ",\"p\":"

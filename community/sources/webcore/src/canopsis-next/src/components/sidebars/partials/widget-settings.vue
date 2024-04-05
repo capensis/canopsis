@@ -40,15 +40,7 @@ export default {
 
 <style lang="scss">
 .widget-settings {
-  --item-divider-border: 1px solid var(--item-divider-border-color);
-
-  .theme--light & {
-    --item-divider-border-color: rgba(0, 0, 0, 0.12);
-  }
-
-  .theme--dark & {
-    --item-divider-border-color: rgba(255, 255, 255, 0.12);
-  }
+  --item-divider-border: 1px solid var(--v-divider-border-color);
 
   &--divider {
     .v-list-group, .widget-settings-flat-item {
