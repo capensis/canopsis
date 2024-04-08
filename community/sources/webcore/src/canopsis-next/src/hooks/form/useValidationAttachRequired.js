@@ -28,6 +28,7 @@ export const useValidationAttachRequired = (name) => {
   const detachRequiredRule = () => validator.detach(name);
 
   return {
+    validator,
     attachRequiredRule,
     detachRequiredRule,
     validateRequiredRule,
