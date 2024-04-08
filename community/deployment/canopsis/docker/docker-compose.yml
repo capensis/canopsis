@@ -158,7 +158,7 @@ services:
 
   action:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}community/engine-action:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-action:${CANOPSIS_IMAGE_TAG}
 
   axe:
     <<: *app_service_base
