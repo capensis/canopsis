@@ -307,27 +307,47 @@ func getParsePostgresDataSets() []postgresDataSet {
 		},
 		{
 			Expression:    "NOT connector=\"test_connector\"",
-			ExpectedQuery: "WHERE NOT connector = 'test_connector'",
+			ExpectedQuery: "WHERE (connector IS NULL OR connector != 'test_connector')",
 		},
 		{
 			Expression:    "connector!=\"test_connector\"",
-			ExpectedQuery: "WHERE connector != 'test_connector'",
+			ExpectedQuery: "WHERE (connector IS NULL OR connector != 'test_connector')",
+		},
+		{
+			Expression:    "NOT connector!=\"test_connector\"",
+			ExpectedQuery: "WHERE connector = 'test_connector'",
 		},
 		{
 			Expression:    "connector<=\"test_connector\"",
 			ExpectedQuery: "WHERE connector <= 'test_connector'",
 		},
 		{
+			Expression:    "NOT connector<=\"test_connector\"",
+			ExpectedQuery: "WHERE connector > 'test_connector'",
+		},
+		{
 			Expression:    "connector>=\"test_connector\"",
 			ExpectedQuery: "WHERE connector >= 'test_connector'",
+		},
+		{
+			Expression:    "NOT connector>=\"test_connector\"",
+			ExpectedQuery: "WHERE connector < 'test_connector'",
 		},
 		{
 			Expression:    "connector<\"test_connector\"",
 			ExpectedQuery: "WHERE connector < 'test_connector'",
 		},
 		{
+			Expression:    "NOT connector<\"test_connector\"",
+			ExpectedQuery: "WHERE connector >= 'test_connector'",
+		},
+		{
 			Expression:    "connector>\"test_connector\"",
 			ExpectedQuery: "WHERE connector > 'test_connector'",
+		},
+		{
+			Expression:    "NOT connector>\"test_connector\"",
+			ExpectedQuery: "WHERE connector <= 'test_connector'",
 		},
 		{
 			Expression:    "connector LIKE \"test_connector\"",
@@ -350,12 +370,20 @@ func getParsePostgresDataSets() []postgresDataSet {
 			ExpectedQuery: "WHERE component_infos->>'name' = 'criticité'",
 		},
 		{
+			Expression:    "NOT connector LIKE \"test_connector\"",
+			ExpectedQuery: "WHERE (connector IS NULL OR connector !~ 'test_connector')",
+		},
+		{
 			Expression:    "connector NOT LIKE \"test_connector\"",
-			ExpectedQuery: "WHERE connector !~ 'test_connector'",
+			ExpectedQuery: "WHERE (connector IS NULL OR connector !~ 'test_connector')",
 		},
 		{
 			Expression:    "connector NOT LIKE 10",
-			ExpectedQuery: "WHERE connector !~ '10'",
+			ExpectedQuery: "WHERE (connector IS NULL OR connector !~ '10')",
+		},
+		{
+			Expression:    "NOT connector NOT LIKE \"test_connector\"",
+			ExpectedQuery: "WHERE connector ~ 'test_connector'",
 		},
 		{
 			Expression:    "connector CONTAINS \"test_connector\"",
@@ -366,27 +394,24 @@ func getParsePostgresDataSets() []postgresDataSet {
 			ExpectedQuery: "WHERE connector = ANY (ARRAY ['123'])",
 		},
 		{
+			Expression:    "NOT connector CONTAINS \"test_connector\"",
+			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector']))",
+		},
+		// 24
+		{
 			Expression:    "connector NOT CONTAINS \"test_connector\"",
-			ExpectedQuery: "WHERE NOT connector = ANY (ARRAY ['test_connector'])",
+			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector']))",
 		},
 		{
 			Expression:    "connector NOT CONTAINS 123",
-			ExpectedQuery: "WHERE NOT connector = ANY (ARRAY ['123'])",
+			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['123']))",
+		},
+		{
+			Expression:    "NOT connector NOT CONTAINS \"test_connector\"",
+			ExpectedQuery: "WHERE connector = ANY (ARRAY ['test_connector'])",
 		},
 		{
 			Expression:    "connector CONTAINS \"test_connector\" \"test_connector_2\"",
-			ExpectedQuery: "WHERE connector = ANY (ARRAY ['test_connector','test_connector_2'])",
-		},
-		{
-			Expression:    "connector NOT CONTAINS \"test_connector\" \"test_connector_2\"",
-			ExpectedQuery: "WHERE NOT connector = ANY (ARRAY ['test_connector','test_connector_2'])",
-		},
-		{
-			Expression:    "NOT connector CONTAINS \"test_connector\" \"test_connector_2\"",
-			ExpectedQuery: "WHERE NOT connector = ANY (ARRAY ['test_connector','test_connector_2'])",
-		},
-		{
-			Expression:    "NOT connector NOT CONTAINS \"test_connector\" \"test_connector_2\"",
 			ExpectedQuery: "WHERE connector = ANY (ARRAY ['test_connector','test_connector_2'])",
 		},
 		{
@@ -394,12 +419,20 @@ func getParsePostgresDataSets() []postgresDataSet {
 			ExpectedQuery: "WHERE connector = ANY (ARRAY ['test_connector','123'])",
 		},
 		{
-			Expression:    "connector NOT CONTAINS \"test_connector\" 123",
-			ExpectedQuery: "WHERE NOT connector = ANY (ARRAY ['test_connector','123'])",
+			Expression:    "NOT connector CONTAINS \"test_connector\" 123",
+			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector','123']))",
 		},
 		{
-			Expression:    "NOT connector=\"test_connector\"",
-			ExpectedQuery: "WHERE NOT connector = 'test_connector'",
+			Expression:    "connector NOT CONTAINS \"test_connector\" \"test_connector_2\"",
+			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector','test_connector_2']))",
+		},
+		{
+			Expression:    "connector NOT CONTAINS \"test_connector\" 123",
+			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector','123']))",
+		},
+		{
+			Expression:    "NOT connector NOT CONTAINS \"test_connector\" 123",
+			ExpectedQuery: "WHERE connector = ANY (ARRAY ['test_connector','123'])",
 		},
 		{
 			Expression:    "connector=\"test_connector1\" AND connector=\"test_connector2\"",
@@ -418,16 +451,36 @@ func getParsePostgresDataSets() []postgresDataSet {
 			ExpectedQuery: "WHERE (connector = 'test_connector' OR name = 'test_resource1' AND name = 'test_resource2')",
 		},
 		{
-			Expression:    "name=0",
-			ExpectedQuery: "WHERE name = 0",
+			Expression:    "infos.val>1.5",
+			ExpectedQuery: "WHERE infos->>'val' > 1.5",
 		},
 		{
-			Expression:    "name=1",
-			ExpectedQuery: "WHERE name = 1",
+			Expression:    "NOT infos.val>1.5",
+			ExpectedQuery: "WHERE infos->>'val' <= 1.5",
 		},
 		{
-			Expression:    "name>1.5",
-			ExpectedQuery: "WHERE name > 1.5",
+			Expression:    "infos.val<1",
+			ExpectedQuery: "WHERE infos->>'val' < 1",
+		},
+		{
+			Expression:    "NOT infos.val<1",
+			ExpectedQuery: "WHERE infos->>'val' >= 1",
+		},
+		{
+			Expression:    "infos.val>=1.5",
+			ExpectedQuery: "WHERE infos->>'val' >= 1.5",
+		},
+		{
+			Expression:    "NOT infos.val>=1.5",
+			ExpectedQuery: "WHERE infos->>'val' < 1.5",
+		},
+		{
+			Expression:    "infos.val<=1",
+			ExpectedQuery: "WHERE infos->>'val' <= 1",
+		},
+		{
+			Expression:    "NOT infos.val<=1",
+			ExpectedQuery: "WHERE infos->>'val' > 1",
 		},
 		{
 			Expression:    "category=NULL",
@@ -436,6 +489,14 @@ func getParsePostgresDataSets() []postgresDataSet {
 		{
 			Expression:    "category!=NULL",
 			ExpectedQuery: "WHERE category IS NOT NULL",
+		},
+		{
+			Expression:    "NOT category=NULL",
+			ExpectedQuery: "WHERE category IS NOT NULL",
+		},
+		{
+			Expression:    "NOT category!=NULL",
+			ExpectedQuery: "WHERE category IS NULL",
 		},
 		{
 			Expression:    "name=TRUE",
@@ -447,7 +508,11 @@ func getParsePostgresDataSets() []postgresDataSet {
 		},
 		{
 			Expression:    "NOT connector=\"test_connector1\" OR connector=\"test_connector2\" AND connector LIKE \"test_connector3\"",
-			ExpectedQuery: "WHERE (NOT connector = 'test_connector1' OR connector = 'test_connector2' AND connector ~ 'test_connector3')",
+			ExpectedQuery: "WHERE ((connector IS NULL OR connector != 'test_connector1') OR connector = 'test_connector2' AND connector ~ 'test_connector3')",
+		},
+		{
+			Expression:    "NOT connector=\"test_connector1\" OR NOT connector=\"test_connector2\" AND NOT connector NOT LIKE \"test_connector3\"",
+			ExpectedQuery: "WHERE ((connector IS NULL OR connector != 'test_connector1') OR (connector IS NULL OR connector != 'test_connector2') AND connector ~ 'test_connector3')",
 		},
 		{
 			Expression:    "connector=\"test_connector\"",
@@ -456,7 +521,7 @@ func getParsePostgresDataSets() []postgresDataSet {
 		},
 		{
 			Expression:    "NOT connector=\"test_connector1\" OR connector=\"test_connector2\" AND connector LIKE \"test_connector3\"",
-			ExpectedQuery: "WHERE (NOT e.connector = 'test_connector1' OR e.connector = 'test_connector2' AND e.connector ~ 'test_connector3')",
+			ExpectedQuery: "WHERE ((e.connector IS NULL OR e.connector != 'test_connector1') OR e.connector = 'test_connector2' AND e.connector ~ 'test_connector3')",
 			Prefix:        "e",
 		},
 		{

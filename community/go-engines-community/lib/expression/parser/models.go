@@ -195,14 +195,18 @@ func (o *ConditionOperand) PostgresQuery(prefix string) (string, pgx.NamedArgs) 
 		left, _ = o.Operand.Val().(string)
 	}
 
+	left = schema.TransformToEntityMetaField(left, prefix)
+
 	if o.ConditionRHS != nil {
 		right, args = o.ConditionRHS.PostgresQuery()
-		if o.ConditionRHS.NotContains != nil {
-			return "NOT " + schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+		if args != nil && o.ConditionRHS.Compare != nil && o.ConditionRHS.Compare.Operator == "!=" || o.ConditionRHS.NotLike != nil {
+			return "(" + left + " IS NULL OR " + left + " " + right + ")", args
+		} else if o.ConditionRHS.NotContains != nil {
+			return "(" + left + " IS NULL OR NOT " + left + " " + right + ")", args
 		}
 	}
 
-	return schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+	return left + " " + right, args
 }
 
 func (o *ConditionOperand) MongoQuery() bson.M {
@@ -248,15 +252,18 @@ func (o *ConditionOperand) NotPostgresQuery(prefix string) (string, pgx.NamedArg
 		left, _ = o.Operand.Val().(string)
 	}
 
+	left = schema.TransformToEntityMetaField(left, prefix)
+
 	if o.ConditionRHS != nil {
-		right, args = o.ConditionRHS.PostgresQuery()
-		if o.ConditionRHS.NotContains != nil {
-			// there should be NOT and NOT, but NOT and NOT are eliminating each other.
-			return schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+		right, args = o.ConditionRHS.NotPostgresQuery()
+		if args != nil && o.ConditionRHS.Compare != nil && o.ConditionRHS.Compare.Operator == "!=" || o.ConditionRHS.Like != nil {
+			return "(" + left + " IS NULL OR " + left + " " + right + ")", args
+		} else if o.ConditionRHS.Contains != nil {
+			return "(" + left + " IS NULL OR NOT " + left + " " + right + ")", args
 		}
 	}
 
-	return "NOT " + schema.TransformToEntityMetaField(left, prefix) + " " + right, args
+	return left + " " + right, args
 }
 
 func (o *ConditionOperand) NotMongoQuery() bson.M {
@@ -303,6 +310,27 @@ func (r *ConditionRHS) PostgresQuery() (string, pgx.NamedArgs) {
 	if r.NotLike != nil {
 		return r.NotLike.PostgresQuery()
 	}
+	if r.Contains != nil {
+		return r.Contains.PostgresQuery()
+	}
+	if r.NotContains != nil {
+		return r.NotContains.PostgresQuery()
+	}
+
+	return "", nil
+}
+
+func (r *ConditionRHS) NotPostgresQuery() (string, pgx.NamedArgs) {
+	if r.Compare != nil {
+		return r.Compare.NotPostgresQuery()
+	}
+	if r.Like != nil {
+		return r.Like.NotPostgresQuery()
+	}
+	if r.NotLike != nil {
+		return r.NotLike.NotPostgresQuery()
+	}
+	// There are no NotPostgresQuery() functions for contains and not contains.
 	if r.Contains != nil {
 		return r.Contains.PostgresQuery()
 	}
@@ -377,6 +405,26 @@ type Compare struct {
 	Select   *Operand ` | @@ )`
 }
 
+func (c *Compare) NotPostgresQuery() (string, pgx.NamedArgs) {
+	// invert operators for NOT statement
+	switch c.Operator {
+	case "<=":
+		c.Operator = ">"
+	case "<":
+		c.Operator = ">="
+	case "=":
+		c.Operator = "!="
+	case "!=":
+		c.Operator = "="
+	case ">=":
+		c.Operator = "<"
+	case ">":
+		c.Operator = "<="
+	}
+
+	return c.PostgresQuery()
+}
+
 func (c *Compare) PostgresQuery() (string, pgx.NamedArgs) {
 	var operand any
 	if c.Operand != nil {
@@ -449,15 +497,6 @@ type Like struct {
 	Operand *Operand `@@`
 }
 
-func (l *Like) MongoQuery() bson.M {
-	var operand any
-	if l.Operand != nil {
-		operand = l.Operand.Val()
-	}
-
-	return bson.M{"$regex": fmt.Sprintf("%v", operand)}
-}
-
 func (l *Like) PostgresQuery() (string, pgx.NamedArgs) {
 	var operand any
 	if l.Operand != nil {
@@ -467,6 +506,26 @@ func (l *Like) PostgresQuery() (string, pgx.NamedArgs) {
 	argName := randArgumentName()
 
 	return "~ @" + argName, pgx.NamedArgs{argName: fmt.Sprintf("%v", operand)}
+}
+
+func (l *Like) NotPostgresQuery() (string, pgx.NamedArgs) {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	argName := randArgumentName()
+
+	return "!~ @" + argName, pgx.NamedArgs{argName: fmt.Sprintf("%v", operand)}
+}
+
+func (l *Like) MongoQuery() bson.M {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	return bson.M{"$regex": fmt.Sprintf("%v", operand)}
 }
 
 func (l *Like) ExprQuery(op string) bson.M {
@@ -485,13 +544,15 @@ type NotLike struct {
 	Operand *Operand `@@`
 }
 
-func (l *NotLike) MongoQuery() bson.M {
+func (l *NotLike) NotPostgresQuery() (string, pgx.NamedArgs) {
 	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
 	}
 
-	return bson.M{"$not": bson.M{"$regex": fmt.Sprintf("%v", operand)}}
+	argName := randArgumentName()
+
+	return "~ @" + argName, pgx.NamedArgs{argName: fmt.Sprintf("%v", operand)}
 }
 
 func (l *NotLike) PostgresQuery() (string, pgx.NamedArgs) {
@@ -503,6 +564,15 @@ func (l *NotLike) PostgresQuery() (string, pgx.NamedArgs) {
 	argName := randArgumentName()
 
 	return "!~ @" + argName, pgx.NamedArgs{argName: fmt.Sprintf("%v", operand)}
+}
+
+func (l *NotLike) MongoQuery() bson.M {
+	var operand any
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	return bson.M{"$not": bson.M{"$regex": fmt.Sprintf("%v", operand)}}
 }
 
 func (l *NotLike) ExprQuery(op string) bson.M {
