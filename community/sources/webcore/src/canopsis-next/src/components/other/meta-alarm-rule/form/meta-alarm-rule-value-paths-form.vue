@@ -16,15 +16,14 @@
 <script>
 import { computed, nextTick, onBeforeUnmount } from 'vue';
 
-import TextFields from '@/components/forms/fields/text-fields.vue';
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
+import TextFields from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-value-paths-field.vue';
 
 import { useInjectValidator } from '@/hooks/form/useValidationChildren';
 import { useValidationAttachRequired } from '@/hooks/form/useValidationAttachRequired';
 
 export default {
   inject: ['$validator'],
-  components: { CInformationBlock, TextFields },
+  components: { TextFields },
   model: {
     prop: 'form',
     event: 'input',

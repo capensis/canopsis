@@ -1,7 +1,6 @@
 <template>
   <v-layout
-    :class="{ 'text-fields__disabled': disabled }"
-    class="text-fields"
+    class="meta-alarm-value-paths-field"
     wrap
   >
     <v-flex xs12>
@@ -17,29 +16,16 @@
             v-validate="validationRules"
             :value="item[itemValue]"
             :label="label"
-            :disabled="disabled"
             :name="getFieldName(item[itemKey])"
             :error-messages="errors.collect(getFieldName(item[itemKey]))"
             @input="updateFieldInArrayItem(index, itemValue, $event)"
           />
         </v-flex>
-        <div class="text-fields__delete-button">
-          <v-btn
-            v-if="!disabled"
-            icon
-            @click="removeItemFromArray(index)"
-          >
-            <v-icon color="error">
-              delete
-            </v-icon>
-          </v-btn>
-        </div>
+        <c-action-btn type="delete" @click="removeItemFromArray(index)" />
+        <c-help-icon :text="$t('metaAlarmRule.valuePathHelpText')" icon="help" top />
       </v-layout>
     </v-flex>
-    <v-flex
-      v-if="!disabled"
-      xs12
-    >
+    <v-flex xs12>
       <v-layout class="gap-2" align-center>
         <v-btn
           :color="error ? 'error' : 'primary'"
@@ -63,11 +49,14 @@ import { computed } from 'vue';
 
 import { defaultPrimitiveArrayItemCreator } from '@/helpers/entities/shared/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
+
+import { useArrayModelField } from '@/hooks/form/useArrayModelField';
+import { useInjectValidator } from '@/hooks/form/useValidationChildren';
 
 export default {
   inject: ['$validator'],
-  mixins: [formArrayMixin],
+  components: { CHelpIcon },
   model: {
     prop: 'items',
     event: 'input',
@@ -97,56 +86,39 @@ export default {
       type: Boolean,
       default: false,
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     error: {
       type: Boolean,
       default: false,
     },
   },
-  computed(props) {
+  setup(props, { emit }) {
+    const validator = useInjectValidator();
+    const { addItemIntoArray, updateFieldInArrayItem, removeItemFromArray } = useArrayModelField(props, emit);
+
     const validationRules = computed(() => ({
       required: props.required,
     }));
 
-    return {
-      validationRules,
+    const getNamePrefix = key => `${props.name}[${key}]`;
+    const getFieldName = key => `${getNamePrefix(key)}.${props.itemValue}`;
+
+    const addNewItem = () => {
+      addItemIntoArray(defaultPrimitiveArrayItemCreator());
     };
-  },
-  methods: {
-    getNamePrefix(key) {
-      return `${this.name}[${key}]`;
-    },
 
-    getTextFieldName(key) {
-      return `${this.getNamePrefix(key)}.${this.itemText}`;
-    },
-
-    getFieldName(key) {
-      return `${this.getNamePrefix(key)}.${this.itemValue}`;
-    },
-
-    addNewItem() {
-      this.addItemIntoArray(defaultPrimitiveArrayItemCreator());
-    },
+    return {
+      errors: validator.errors,
+      validationRules,
+      addNewItem,
+      getFieldName,
+      updateFieldInArrayItem,
+      removeItemFromArray,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.text-fields {
-  &:not(.text-fields__disabled) .text-pair {
-    position: relative;
-    padding-right: 50px;
-
-    &__delete-button {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
+.meta-alarm-value-paths-field {
 }
 </style>
