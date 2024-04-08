@@ -6,7 +6,6 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 
 *  [Utilisation de l'interface](interface/index.md)
 *  [La remédiation](remediation/index.md)
-*  [Les services](services/index.md)
 *  [Cas d'usage](cas-d-usage/index.md)
 *  [Vocabulaire](vocabulaire/index.md)
 *  [Formats et syntaxe](formats-et-syntaxe/index.md)
@@ -39,6 +38,4 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [KPI](menu-administration/kpi.md)
   * [Mode Maintenance](menu-administration/mode-maintenance.md)
   * [Paramètres](menu-administration/parametres.md)
-  * [Paramètres de calcul d'état/sévérité](menu-administration/parametres-de-calculd-etat-sévérité.md)
-  * [Paramètres de stockage](menu-administration/parametres-de-stockage.md)
   * [Planification](menu-administration/planification.md) 
