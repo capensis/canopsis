@@ -1,4 +1,4 @@
-import { computed, inject, isRef } from 'vue';
+import { computed, inject, unref } from 'vue';
 
 import { isParent } from '@/helpers/vue-base';
 
@@ -33,7 +33,7 @@ export const useElementChildrenFields = (parent) => {
       return EMPTY_VALIDATOR_FIELDS;
     }
 
-    const node = isRef(parent) ? parent.value : parent;
+    const node = unref(parent);
 
     return validator.fields.items.filter(({ vm }) => isParent(vm, node));
   });
