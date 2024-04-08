@@ -5,6 +5,7 @@
       :key="chip.value"
       :input-value="chip.active"
       :label="chip.text"
+      class="mt-0 pt-0"
       color="primary"
       hide-details
       @change="updateActive(chip.value)"

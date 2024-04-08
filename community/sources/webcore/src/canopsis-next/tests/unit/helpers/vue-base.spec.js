@@ -1,13 +1,13 @@
 import { cloneDeep } from 'lodash';
 
-import { mergeChangedProperties } from '@/helpers/collection';
+import { mergeReactiveChangedProperties } from '@/helpers/vue-base';
 
-describe('mergeChangedProperties', () => {
+describe('mergeReactiveChangedProperties', () => {
   it('shouldn\'t change link to empty object', () => {
     const original = {};
     const updated = {};
 
-    const result = mergeChangedProperties(original, updated);
+    const result = mergeReactiveChangedProperties(original, updated);
 
     expect(result === original).toBeTruthy();
     expect(result).toEqual(updated);
@@ -52,7 +52,7 @@ describe('mergeChangedProperties', () => {
       newProperty: '123',
     };
 
-    const result = mergeChangedProperties(original, updated);
+    const result = mergeReactiveChangedProperties(original, updated);
 
     expect(result === original).toBeTruthy();
     expect(result.arrayProperty === original.arrayProperty).toBeTruthy();
@@ -64,7 +64,7 @@ describe('mergeChangedProperties', () => {
   });
 
   it('should return null when receive null as new object', () => {
-    expect(mergeChangedProperties({}, null)).toEqual(null);
-    expect(mergeChangedProperties([1], undefined)).toEqual(undefined);
+    expect(mergeReactiveChangedProperties({}, null)).toEqual(null);
+    expect(mergeReactiveChangedProperties([1], undefined)).toEqual(undefined);
   });
 });

@@ -70,7 +70,7 @@ export default {
         case ALARM_LIST_STEPS.webhookComplete:
           return { value: true };
 
-        case ALARM_LIST_STEPS.declareTicketRuleFailed:
+        case ALARM_LIST_STEPS.declareTicketRuleFail:
         case ALARM_LIST_STEPS.webhookFail:
           return { value: false };
 
