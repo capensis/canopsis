@@ -81,13 +81,11 @@ import { META_ALARMS_FORM_STEPS } from '@/constants';
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
 import { useElementChildrenValidation } from '@/hooks/form/useValidationChildren';
 
 export default {
   components: {
-    CInformationBlock,
     MetaAlarmRuleParametersForm,
     MetaAlarmRuleTypeField,
     MetaAlarmRuleGeneralForm,

@@ -38,6 +38,9 @@ export const useModelField = (props, emit) => {
   const updateField = (fieldName, value) => updateModel(setField(props[prop], fieldName, value));
 
   return {
+    modelEvent: event,
+    modelProp: prop,
+
     updateModel,
     updateField,
   };

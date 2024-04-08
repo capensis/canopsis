@@ -33,6 +33,7 @@ export default {
   removeConfirmationText: 'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n'
     + 'Are you sure to proceed with it?\n',
   selectType: 'Select meta alarm rule type',
+  valuePathHelpText: 'Custom attribute for grouping alarms defined by a value path',
   steps: {
     basics: 'Basics',
     defineType: 'Define type',
