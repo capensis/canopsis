@@ -251,15 +251,15 @@ export const ALARM_LIST_STEPS = {
   assocTicket: 'assocticket',
 
   webhookStart: 'webhookstart',
-  webhookProgress: 'webhookprogress',
+  webhookInProgress: 'webhookinprogress',
   webhookComplete: 'webhookcomplete',
   webhookFail: 'webhookfail',
 
   declareTicket: 'declareticket',
   declareTicketFail: 'declareticketfail',
-  declareTicketRuleProgress: 'declareticketruleprogress',
+  declareTicketRuleInProgress: 'declareticketruleinprogress',
   declareTicketRuleComplete: 'declareticketrulecomplete',
-  declareTicketRuleFailed: 'declareticketrulefailed',
+  declareTicketRuleFail: 'declareticketrulefail',
 
   snooze: 'snooze',
   unsnooze: 'unsnooze',
@@ -292,12 +292,12 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.declareTicket]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketFail]: 'note_add',
   [ALARM_LIST_STEPS.webhookStart]: '$vuetify.icons.webhook',
-  [ALARM_LIST_STEPS.webhookProgress]: '$vuetify.icons.webhook',
+  [ALARM_LIST_STEPS.webhookInProgress]: '$vuetify.icons.webhook',
   [ALARM_LIST_STEPS.webhookComplete]: '$vuetify.icons.webhook',
   [ALARM_LIST_STEPS.webhookFail]: '$vuetify.icons.webhook',
-  [ALARM_LIST_STEPS.declareTicketRuleProgress]: 'note_add',
+  [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'note_add',
   [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'note_add',
-  [ALARM_LIST_STEPS.declareTicketRuleFailed]: 'note_add',
+  [ALARM_LIST_STEPS.declareTicketRuleFail]: 'note_add',
   [ALARM_LIST_STEPS.snooze]: 'alarm',
   [ALARM_LIST_STEPS.unsnooze]: 'alarm_off',
   [ALARM_LIST_STEPS.pbhenter]: 'pause',
@@ -339,13 +339,13 @@ export const ALARM_STEPS_COLORS = {
   [ALARM_LIST_STEPS.declareTicket]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketFail]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.webhookStart]: COLORS.alarmSteps.declareTicket,
-  [ALARM_LIST_STEPS.webhookProgress]: COLORS.alarmSteps.declareTicket,
+  [ALARM_LIST_STEPS.webhookInProgress]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.webhookComplete]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.webhookFail]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.webhookFail]: COLORS.alarmSteps.declareTicket,
-  [ALARM_LIST_STEPS.declareTicketRuleProgress]: COLORS.alarmSteps.declareTicket,
+  [ALARM_LIST_STEPS.declareTicketRuleInProgress]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleComplete]: COLORS.alarmSteps.declareTicket,
-  [ALARM_LIST_STEPS.declareTicketRuleFailed]: COLORS.alarmSteps.declareTicket,
+  [ALARM_LIST_STEPS.declareTicketRuleFail]: COLORS.alarmSteps.declareTicket,
 };
 
 export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
@@ -366,7 +366,7 @@ export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
   ALARM_LIST_STEPS.webhookComplete,
   ALARM_LIST_STEPS.webhookFail,
   ALARM_LIST_STEPS.declareTicketRuleComplete,
-  ALARM_LIST_STEPS.declareTicketRuleFailed,
+  ALARM_LIST_STEPS.declareTicketRuleFail,
   ALARM_LIST_STEPS.instructionStart,
   ALARM_LIST_STEPS.instructionPause,
   ALARM_LIST_STEPS.instructionResume,
@@ -382,7 +382,7 @@ export const ALARM_STEPS_WITH_LAUNCHED_IN_TITLE = [
   ALARM_LIST_STEPS.webhookComplete,
   ALARM_LIST_STEPS.webhookFail,
   ALARM_LIST_STEPS.declareTicketRuleComplete,
-  ALARM_LIST_STEPS.declareTicketRuleFailed,
+  ALARM_LIST_STEPS.declareTicketRuleFail,
 ];
 
 export const ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE = [
