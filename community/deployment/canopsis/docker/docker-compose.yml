@@ -79,7 +79,7 @@ services:
     <<: *service_base
     image: mongo:${MONGO_TAG}
     ports:
-      - "27027:27017"
+      - "27017:27017"
     env_file:
       - compose.env
     volumes:
