@@ -22,23 +22,15 @@
         />
       </template>
     </c-card-iterator-field>
-    <v-layout align-center>
-      <v-btn
-        :color="hasStepsErrors ? 'error' : 'primary'"
-        :disabled="disabled"
-        class="mr-2"
-        outlined
-        @click="addStep"
-      >
-        {{ $t('remediation.instruction.addStep') }}
-      </v-btn>
-      <span
-        v-show="hasStepsErrors"
-        class="error--text"
-      >
-        {{ $t('remediation.instruction.errors.stepRequired') }}
-      </span>
-    </v-layout>
+
+    <c-btn-with-error
+      :error="hasStepsErrors ? $t('remediation.instruction.errors.stepRequired') : ''"
+      :disabled="disabled"
+      outlined
+      @click="addStep"
+    >
+      {{ $t('remediation.instruction.addStep') }}
+    </c-btn-with-error>
   </v-layout>
 </template>
 

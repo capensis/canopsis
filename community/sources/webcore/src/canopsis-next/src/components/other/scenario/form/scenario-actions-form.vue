@@ -23,22 +23,13 @@
         />
       </template>
     </c-card-iterator-field>
-    <v-layout align-center>
-      <v-btn
-        :color="hasActionsErrors ? 'error' : 'primary'"
-        class="ml-0"
-        outlined
-        @click="addAction"
-      >
-        {{ $t('scenario.addAction') }}
-      </v-btn>
-      <span
-        v-show="hasActionsErrors"
-        class="error--text"
-      >
-        {{ $t('scenario.errors.actionRequired') }}
-      </span>
-    </v-layout>
+    <c-btn-with-error
+      :error="hasActionsErrors ? $t('scenario.errors.actionRequired') : ''"
+      outlined
+      @click="addAction"
+    >
+      {{ $t('scenario.addAction') }}
+    </c-btn-with-error>
   </v-layout>
 </template>
 

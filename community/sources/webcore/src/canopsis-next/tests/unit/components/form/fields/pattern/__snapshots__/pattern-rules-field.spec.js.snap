@@ -102,27 +102,13 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
       type="delete"
     />
   </div>
-  <div
-    class="layout mt-2 align-center"
+  <c-btn-with-error-stub
+    disabled="true"
+    error=""
+    outlined=""
   >
-    <button
-      class="mr-2 v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
-      disabled="disabled"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-      Add rule
-      </span>
-    </button>
-    <span
-      class="error--text"
-      style="display: none;"
-    >
-      The rules include excluded rule.
-    </span>
-  </div>
+    Add rule
+  </c-btn-with-error-stub>
 </div>
 `;
 
@@ -130,25 +116,11 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with default props 
 <div
   class="layout column"
 >
-  <div
-    class="layout mt-2 align-center"
+  <c-btn-with-error-stub
+    error=""
+    outlined=""
   >
-    <button
-      class="mr-2 v-btn v-btn--outlined theme--light v-size--default primary--text"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-      Add rule
-      </span>
-    </button>
-    <span
-      class="error--text"
-      style="display: none;"
-    >
-      The rules include excluded rule.
-    </span>
-  </div>
+    Add rule
+  </c-btn-with-error-stub>
 </div>
 `;
