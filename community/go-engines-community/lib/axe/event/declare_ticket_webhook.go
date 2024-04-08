@@ -6,6 +6,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -20,6 +21,7 @@ func NewDeclareTicketWebhookProcessor(
 	client mongo.DbClient,
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -27,6 +29,7 @@ func NewDeclareTicketWebhookProcessor(
 		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 		metricsSender:   metricsSender,
 		amqpPublisher:   amqpPublisher,
+		eventGenerator:  eventGenerator,
 		encoder:         encoder,
 		logger:          logger,
 	}
@@ -36,6 +39,7 @@ type declareTicketWebhookProcessor struct {
 	alarmCollection mongo.DbCollection
 	metricsSender   metrics.Sender
 	amqpPublisher   libamqp.Publisher
+	eventGenerator  event.Generator
 	encoder         encoding.Encoder
 	logger          zerolog.Logger
 }
@@ -47,17 +51,14 @@ func (p *declareTicketWebhookProcessor) Process(ctx context.Context, event rpc.A
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newTicketStep := types.NewTicketStep(types.AlarmStepDeclareTicket, event.Parameters.Timestamp, event.Parameters.Author,
-		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-		event.Parameters.TicketInfo)
-	update := bson.M{
-		"$set": bson.M{
-			"v.ticket": newTicketStep,
-		},
-		"$push": bson.M{
-			"v.tickets": newTicketStep,
-			"v.steps":   newTicketStep,
-		},
+	newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket, "",
+		event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.ticket":  newTicketStepQuery,
+			"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
+			"v.steps":   addStepUpdateQuery(newTicketStepQuery),
+		}},
 	}
 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
@@ -98,5 +99,5 @@ func (p *declareTicketWebhookProcessor) postProcess(
 		"",
 	)
 
-	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.logger)
+	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
 }
