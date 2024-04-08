@@ -9,6 +9,7 @@
           :value="isLastFailed"
           class="time-line-flag"
           color="transparent"
+          offset-y="15px"
           overlap
         >
           <template #badge="">

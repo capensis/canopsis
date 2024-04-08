@@ -96,7 +96,7 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 </span>
 `;
 
-exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketrulefailed\` correctly 1`] = `
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketrulefail\` correctly 1`] = `
 <span
   class="text-subtitle-2"
 >
@@ -104,7 +104,7 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 </span>
 `;
 
-exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketruleprogress\` correctly 1`] = `
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketruleinprogress\` correctly 1`] = `
 <span
   class="text-subtitle-2"
 >
@@ -368,7 +368,7 @@ exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for ste
 </span>
 `;
 
-exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookprogress\` correctly 1`] = `
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookinprogress\` correctly 1`] = `
 <span
   class="text-subtitle-2"
 >

@@ -199,9 +199,9 @@ export const isAutoInstructionStepType = type => [
 export const isDeclareTicketStepType = type => [
   ALARM_LIST_STEPS.declareTicket,
   ALARM_LIST_STEPS.declareTicketFail,
-  ALARM_LIST_STEPS.declareTicketRuleProgress,
+  ALARM_LIST_STEPS.declareTicketRuleInProgress,
   ALARM_LIST_STEPS.declareTicketRuleComplete,
-  ALARM_LIST_STEPS.declareTicketRuleFailed,
+  ALARM_LIST_STEPS.declareTicketRuleFail,
 ].includes(type);
 
 /**
@@ -212,7 +212,7 @@ export const isDeclareTicketStepType = type => [
  */
 export const isWebhookStepType = type => [
   ALARM_LIST_STEPS.webhookStart,
-  ALARM_LIST_STEPS.webhookProgress,
+  ALARM_LIST_STEPS.webhookInProgress,
   ALARM_LIST_STEPS.webhookComplete,
   ALARM_LIST_STEPS.webhookFail,
 ].includes(type);

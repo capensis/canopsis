@@ -116,7 +116,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 </div>
 `;
 
-exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketrulefailed\` correctly 1`] = `
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketrulefail\` correctly 1`] = `
 <div>
   <v-icon-stub
     color="#6A6A6A"
@@ -126,7 +126,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 </div>
 `;
 
-exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketruleprogress\` correctly 1`] = `
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketruleinprogress\` correctly 1`] = `
 <div>
   <v-icon-stub
     color="#6A6A6A"
@@ -405,7 +405,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 </div>
 `;
 
-exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`webhookprogress\` correctly 1`] = `
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`webhookinprogress\` correctly 1`] = `
 <div>
   <v-icon-stub
     color="#6A6A6A"
