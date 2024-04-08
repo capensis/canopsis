@@ -32,6 +32,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	linkv1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v1"
@@ -39,6 +40,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -162,13 +164,13 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
 	}
 	// Create pbehavior computer.
-	pbhComputeChan := make(chan []string, chanBuf)
+	pbhComputeChan := make(chan rpc.PbehaviorRecomputeEvent, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
-		canopsis.JsonContentType, canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger)
+		canopsis.JsonContentType, canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, canopsis.ApiConnector, logger)
 
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
@@ -178,6 +180,7 @@ func Default(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
+			canopsis.ApiConnector,
 			logger,
 		),
 		logger,
@@ -345,6 +348,7 @@ func Default(
 			tplExecutor,
 			stateSettingsUpdatesChan,
 			flags.EnableSameServiceNames,
+			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			logger,
 		)
 	})
@@ -391,7 +395,7 @@ func Default(
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 
-	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, json.NewEncoder(), logger)
+	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
 	})

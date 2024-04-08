@@ -252,13 +252,13 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 	}, nil).Times(2)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
 	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
-		Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsWithEntityByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
+		Do(func(_ context.Context, ids []string, alarms *[]types.AlarmWithEntity) {
 			if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 				t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 			}
 
-			*alarms = []types.Alarm{expectedAlarm}
+			*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
 		}).Return(nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -312,12 +312,12 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 	mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
 	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsWithEntityByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.AlarmWithEntity) {
 		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 			t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 		}
 
-		*alarms = []types.Alarm{expectedAlarm}
+		*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
 	}).Return(nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
