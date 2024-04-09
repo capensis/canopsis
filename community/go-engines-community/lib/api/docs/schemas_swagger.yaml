@@ -4623,9 +4623,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4647,7 +4644,6 @@ definitions:
     required:
     - _id
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4660,9 +4656,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4683,7 +4676,6 @@ definitions:
         type: array
     required:
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4694,9 +4686,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4717,7 +4706,6 @@ definitions:
         type: array
     required:
     - actions
-    - author
     - enabled
     - name
     - triggers

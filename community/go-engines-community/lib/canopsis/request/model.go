@@ -33,3 +33,46 @@ type ParsedParameters struct {
 	RetryCount int64
 	RetryDelay *datetime.DurationWithUnit
 }
+
+type TemplateErr struct {
+	field string
+	err   error
+}
+
+func (e TemplateErr) Error() string {
+	return e.err.Error()
+}
+
+func (e TemplateErr) Field() string {
+	return e.field
+}
+
+func ExecuteTemplates(
+	params Parameters,
+	templateExecutor template.Executor,
+	tplData any,
+) (Parameters, error) {
+	processedParams := params
+	var err error
+	processedParams.URL, err = templateExecutor.Execute(processedParams.URL, tplData)
+	if err != nil {
+		return processedParams, TemplateErr{field: "URL", err: err}
+	}
+
+	processedParams.Payload, err = templateExecutor.Execute(processedParams.Payload, tplData)
+	if err != nil {
+		return processedParams, TemplateErr{field: "Payload", err: err}
+	}
+
+	headers := make(map[string]string, len(processedParams.Headers))
+	for k, v := range processedParams.Headers {
+		headers[k], err = templateExecutor.Execute(v, tplData)
+		if err != nil {
+			return processedParams, TemplateErr{field: "Headers." + k, err: err}
+		}
+	}
+
+	processedParams.Headers = headers
+
+	return processedParams, nil
+}

@@ -46,4 +46,10 @@ type History struct {
 	CreatedAt       datetime.CpsTime              `bson:"created_at" json:"created_at"`
 	LaunchedAt      datetime.CpsTime              `bson:"launched_at,omitempty" json:"launched_at,omitempty"`
 	CompletedAt     datetime.CpsTime              `bson:"completed_at,omitempty" json:"completed_at,omitempty"`
+
+	EventInitiator string `bson:"event_initiator,omitempty" json:"event_initiator,omitempty"`
+	EventOutput    string `bson:"event_output,omitempty" json:"event_output,omitempty"`
+	Trigger        string `bson:"trigger,omitempty" json:"trigger,omitempty"`
+
+	IsTest bool `bson:"is_test,omitempty" json:"is_test,omitempty"`
 }
