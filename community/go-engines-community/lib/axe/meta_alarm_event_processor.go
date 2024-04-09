@@ -220,12 +220,6 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 			}
 		}
 
-		_, _, err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState,
-			event.Parameters.Output, p.alarmStatusService)
-		if err != nil {
-			return err
-		}
-
 		output := ""
 		if rule.IsManual() {
 			output = event.Parameters.Output
@@ -241,6 +235,12 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 		}
 
 		metaAlarm.Value.Output = output
+		_, _, err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState,
+			output, p.alarmStatusService)
+		if err != nil {
+			return err
+		}
+
 		metaAlarm.Value.EventsCount = eventsCount
 		writeModels = append(writeModels, mongodriver.NewInsertOneModel().SetDocument(metaAlarm))
 		_, err = p.alarmCollection.BulkWrite(ctx, writeModels)
@@ -368,31 +368,6 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(
 			return nil
 		}
 
-		var setUpdate, pushUpdate bson.M
-		if worstState > metaAlarm.CurrentState() {
-			setUpdate, pushUpdate, err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp,
-				worstState, metaAlarm.Value.Output, p.alarmStatusService)
-			if err != nil {
-				return err
-			}
-		}
-
-		if setUpdate == nil {
-			setUpdate = bson.M{}
-		}
-
-		if metaAlarm.Value.Meta == "" {
-			metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
-			setUpdate["v.meta"] = event.Parameters.MetaAlarmRuleID
-			metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
-			setUpdate["v.meta_value_path"] = event.Parameters.MetaAlarmValuePath
-		}
-
-		if metaAlarm.Value.LastEventDate.Unix() != lastEventDate.Unix() {
-			metaAlarm.Value.LastEventDate = lastEventDate
-			setUpdate["v.last_event_date"] = lastEventDate
-		}
-
 		childrenCount, err := p.adapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 		if err != nil {
 			return err
@@ -412,8 +387,32 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(
 			}
 		}
 
+		var setUpdate, pushUpdate bson.M
+		if worstState > metaAlarm.CurrentState() {
+			setUpdate, pushUpdate, err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp,
+				worstState, output, p.alarmStatusService)
+			if err != nil {
+				return err
+			}
+		}
+
+		if setUpdate == nil {
+			setUpdate = bson.M{}
+		}
+
 		metaAlarm.Value.Output = output
 		setUpdate["v.output"] = output
+		if metaAlarm.Value.Meta == "" {
+			metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
+			setUpdate["v.meta"] = event.Parameters.MetaAlarmRuleID
+			metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
+			setUpdate["v.meta_value_path"] = event.Parameters.MetaAlarmValuePath
+		}
+
+		if metaAlarm.Value.LastEventDate.Unix() != lastEventDate.Unix() {
+			metaAlarm.Value.LastEventDate = lastEventDate
+			setUpdate["v.last_event_date"] = lastEventDate
+		}
 
 		update := bson.M{
 			"$set":      setUpdate,
@@ -539,18 +538,6 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(
 			}
 		}
 
-		setUpdate, pushUpdate, err := updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp,
-			worstState, metaAlarm.Value.Output, p.alarmStatusService)
-		if err != nil {
-			return err
-		}
-
-		if setUpdate == nil {
-			setUpdate = bson.M{}
-		}
-
-		metaAlarm.Value.LastEventDate = lastEventDate
-		setUpdate["v.last_event_date"] = lastEventDate
 		infos := correlation.EventExtraInfosMeta{
 			Rule:  rule,
 			Count: int64(len(metaAlarmChildren)),
@@ -569,8 +556,24 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(
 			}
 		}
 
+		if output == "" {
+			output = metaAlarm.Value.Output
+		}
+
+		setUpdate, pushUpdate, err := updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp,
+			worstState, output, p.alarmStatusService)
+		if err != nil {
+			return err
+		}
+
+		if setUpdate == nil {
+			setUpdate = bson.M{}
+		}
+
 		metaAlarm.Value.Output = output
 		setUpdate["v.output"] = output
+		metaAlarm.Value.LastEventDate = lastEventDate
+		setUpdate["v.last_event_date"] = lastEventDate
 		update := bson.M{
 			"$set":  setUpdate,
 			"$inc":  bson.M{"v.events_count": eventsCount},
