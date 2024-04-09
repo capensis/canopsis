@@ -164,7 +164,7 @@ func (s *componentCountersCalculator) RecomputeAll(ctx context.Context) error {
 			return fmt.Errorf("unable to decode entity service document: %w", err)
 		}
 
-		err = s.eventsSender.RecomputeComponent(ctx, comp.ID, comp.Connector)
+		err = s.eventsSender.RecomputeComponent(ctx, comp.ID)
 		if err != nil {
 			return err
 		}

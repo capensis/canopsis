@@ -5,6 +5,7 @@ export default {
   begins: 'Begins',
   ends: 'Ends',
   lastAlarmDate: 'Last alarm date',
+  alarmCount: 'Alarms count',
   massRemove: 'Remove pbehaviors',
   massEnable: 'Enable pbehaviors',
   massDisable: 'Disable pbehaviors',

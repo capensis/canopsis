@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -35,6 +34,7 @@ func NewPbhLeaveProcessor(
 		client:                          client,
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
 		autoInstructionMatcher:          autoInstructionMatcher,
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
@@ -50,6 +50,7 @@ type pbhLeaveProcessor struct {
 	client                          mongo.DbClient
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
+	pbehaviorCollection             mongo.DbCollection
 	autoInstructionMatcher          AutoInstructionMatcher
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
@@ -71,12 +72,14 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	var prevPbehaviorID string
 	var componentStateChanged bool
 	var newComponentState int
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
+		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -93,17 +96,17 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		alarmChange := types.NewAlarmChange()
 		if alarm.ID == "" {
+			prevPbehaviorID = event.Entity.PbehaviorInfo.ID
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 		} else {
+			prevPbehaviorID = alarm.Value.PbehaviorInfo.ID
 			alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
-			newStep := types.NewAlarmStep(types.AlarmStepPbhLeave, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-			newStep.PbehaviorCanonicalType = alarm.Value.PbehaviorInfo.CanonicalType
+			newStep := NewPbhAlarmStep(types.AlarmStepPbhLeave, event.Parameters, alarm.Value.PbehaviorInfo)
 			update := bson.M{
 				"$push":  bson.M{"v.steps": newStep},
 				"$unset": bson.M{"v.pbehavior_info": ""},
@@ -187,7 +190,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState, prevPbehaviorID)
 
 	return result, nil
 }
@@ -199,6 +202,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	componentStateChanged bool,
 	newComponentState int,
+	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -224,7 +228,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}
@@ -235,46 +239,10 @@ func (p *pbhLeaveProcessor) postProcess(
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
 		}
-	}
-}
 
-func resolveSnoozeAfterPbhLeave(timestamp datetime.CpsTime, alarm types.Alarm) int64 {
-	if alarm.Value.Snooze == nil || alarm.Value.Snooze.Initiator == types.InitiatorUser {
-		return 0
-	}
-
-	steps := alarm.Value.Steps
-	var snoozeDuration int64
-	var snoozeElapsed int64
-	var lastEnterTime int64
-
-Loop:
-	for i := len(steps) - 1; i >= 0; i-- {
-		step := steps[i]
-		switch step.Type {
-		case types.AlarmStepSnooze:
-			// this means, that snooze step is happened after pbh_enter step,
-			// it's possible to do with a scenario feature, so if it happens,
-			// then elapsed time = 0
-			if lastEnterTime == 0 {
-				snoozeElapsed = 0
-			} else {
-				snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
-			}
-
-			snoozeDuration = int64(step.Value) - step.Timestamp.Unix()
-
-			break Loop
-		case types.AlarmStepPbhEnter:
-			if step.PbehaviorCanonicalType != pbehavior.TypeActive {
-				lastEnterTime = step.Timestamp.Unix()
-			}
-		case types.AlarmStepPbhLeave:
-			if step.PbehaviorCanonicalType != pbehavior.TypeActive {
-				snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
-			}
+		err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, "", prevPbehaviorID)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
 		}
 	}
-
-	return timestamp.Unix() + snoozeDuration - snoozeElapsed
 }

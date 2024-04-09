@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -58,7 +57,6 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbeha
 		PbhService:          mockService,
 		PbehaviorCollection: mockPbhDbCollection,
 		EntityCollection:    mockEntityDbCollection,
-		EventGenerator:      libevent.NewGenerator("", ""),
 		EventManager:        mockEventManager,
 		Encoder:             mockEncoder,
 		Decoder:             mockDecoder,
@@ -95,7 +93,6 @@ func TestRecomputeMessageProcessor_Process_GivenEmptyPbehaviorID_ShouldRecompute
 		PbhService:          mockService,
 		PbehaviorCollection: mockPbhDbCollection,
 		EntityCollection:    mockEntityDbCollection,
-		EventGenerator:      libevent.NewGenerator("", ""),
 		EventManager:        mockEventManager,
 		Encoder:             mockEncoder,
 		Decoder:             mockDecoder,
@@ -131,11 +128,11 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 		Component: "test-component",
 	}
 	resolveResult := pbehavior.ResolveResult{
-		ResolvedType: pbehavior.Type{
+		Type: pbehavior.Type{
 			ID:   "test-type-id",
 			Type: pbehavior.TypeMaintenance,
 		},
-		ResolvedPbhID: pbehaviorID,
+		ID: pbehaviorID,
 	}
 	event := types.Event{EventType: types.EventTypePbhEnter}
 	body := []byte("test-body")
@@ -172,8 +169,8 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 	mockEntityCursor2.EXPECT().Next(gomock.Any()).Return(false)
 	mockEntityCursor2.EXPECT().Close(gomock.Any())
 
-	mockEventManager.EXPECT().GetEventType(gomock.Eq(resolveResult), gomock.Any()).
-		Return(event.EventType, event.Output)
+	mockEventManager.EXPECT().GetEvent(gomock.Eq(resolveResult), gomock.Any(), gomock.Any()).
+		Return(event, nil)
 
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(body, nil)
 
@@ -188,7 +185,6 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 		PbhService:          mockService,
 		PbehaviorCollection: mockPbhDbCollection,
 		EntityCollection:    mockEntityDbCollection,
-		EventGenerator:      libevent.NewGenerator("", ""),
 		EventManager:        mockEventManager,
 		Encoder:             mockEncoder,
 		Decoder:             mockDecoder,

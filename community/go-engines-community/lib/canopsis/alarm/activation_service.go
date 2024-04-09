@@ -15,7 +15,11 @@ import (
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
-	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime, entityType string, isMetaAlarmUpdated bool) (bool, error)
+	Process(
+		ctx context.Context,
+		alarm types.Alarm,
+		fifoAckEvent types.Event,
+	) (bool, error)
 }
 
 type baseActivationService struct {
@@ -39,12 +43,11 @@ func NewActivationService(
 func (s *baseActivationService) Process(
 	ctx context.Context,
 	alarm types.Alarm,
-	eventRealTimestamp datetime.MicroTime,
-	entityType string,
-	isMetaAlarmUpdated bool,
+	fifoAckEvent types.Event,
 ) (bool, error) {
 	if alarm.CanActivate() {
-		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp, entityType, isMetaAlarmUpdated)
+		err := s.sendActivationEvent(ctx, fifoAckEvent)
+
 		if err != nil {
 			return false, err
 		}
@@ -57,21 +60,19 @@ func (s *baseActivationService) Process(
 
 func (s *baseActivationService) sendActivationEvent(
 	ctx context.Context,
-	alarm types.Alarm,
-	eventReceivedTimestamp datetime.MicroTime,
-	entityType string,
-	isMetaAlarmUpdated bool,
+	fifoAckEvent types.Event,
 ) error {
 	event := types.Event{
-		Connector:          alarm.Value.Connector,
-		ConnectorName:      alarm.Value.ConnectorName,
-		Component:          alarm.Value.Component,
-		Resource:           alarm.Value.Resource,
+		Connector:          fifoAckEvent.Connector,
+		ConnectorName:      fifoAckEvent.ConnectorName,
+		Component:          fifoAckEvent.Component,
+		Resource:           fifoAckEvent.Resource,
 		Timestamp:          datetime.NewCpsTime(),
-		ReceivedTimestamp:  eventReceivedTimestamp,
-		SourceType:         entityType,
-		IsMetaAlarmUpdated: isMetaAlarmUpdated,
+		ReceivedTimestamp:  fifoAckEvent.ReceivedTimestamp,
+		SourceType:         fifoAckEvent.SourceType,
+		IsMetaAlarmUpdated: fifoAckEvent.IsMetaAlarmUpdated,
 		EventType:          types.EventTypeActivate,
+		Author:             canopsis.DefaultEventAuthor,
 		Initiator:          types.InitiatorSystem,
 	}
 
