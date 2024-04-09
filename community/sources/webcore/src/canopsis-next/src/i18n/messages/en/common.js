@@ -11,6 +11,7 @@ export default {
   ok: 'Ok',
   undefined: 'Not defined',
   entity: 'Entity | Entities',
+  alarm: 'Alarm | Alarms',
   service: 'Service',
   widget: 'Widget',
   addWidget: 'Add widget',

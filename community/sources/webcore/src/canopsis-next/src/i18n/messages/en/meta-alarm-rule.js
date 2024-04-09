@@ -15,13 +15,13 @@ export default {
   autoResolve: 'Auto resolve',
   idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   corelId: 'Corel ID',
-  corelIdHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-    + '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+  corelIdHelpText: 'Alarms with the same selected attribute are grouped',
   corelStatus: 'Corel status',
-  corelStatusHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-    + '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+  corelStatusHelpText: 'By this parameter alarms are devided into parents and children',
   corelParent: 'Corel parent',
+  corelParentHelpText: 'Alarms with this value of the Corel Status field are defined as parents',
   corelChild: 'Corel child',
+  corelChildHelpText: 'Alarms with this value of the Corel Status field are defined as children',
   outputTemplateHelp: '<p>The accessible variables are:</p>'
     + '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>'
     + '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>'

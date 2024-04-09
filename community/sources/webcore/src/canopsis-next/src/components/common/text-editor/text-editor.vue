@@ -16,6 +16,7 @@
         :value="variablesMenuValue"
         :position-x="variablesMenuPosition.x"
         :position-y="variablesMenuPosition.y"
+        dense
         @input="pasteVariable"
         @close="closeVariablesMenu"
       />

@@ -12,6 +12,7 @@
     <variables-list
       :variables="variables"
       :value="value"
+      :dense="dense"
       :z-index="submenuZIndex"
       :show-value="showValue"
       @input="$emit('input', $event)"
@@ -50,6 +51,10 @@ export default {
       default: false,
     },
     ignoreClickOutside: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },

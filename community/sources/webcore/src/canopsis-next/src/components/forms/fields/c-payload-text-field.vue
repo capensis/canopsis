@@ -8,7 +8,7 @@
     :items="availableVariables"
     :disabled="disabled"
     :return-object="false"
-    :menu-props="{ value: !!variables.length && variablesShown, offsetY: true }"
+    :menu-props="{ value: !!variables.length && variablesShown, offsetY: true, minWidth: 200 }"
     :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"
@@ -19,6 +19,9 @@
     <template #append="">
       <slot name="append" />
     </template>
+    <template #append-outer="">
+      <slot name="append-outer" />
+    </template>
     <template #item="{ item, attrs }">
       <v-list-item
         v-bind="{ ...attrs, value: item.value === variablesMenuValue }"
@@ -28,14 +31,20 @@
         <span class="ml-4 grey--text">{{ item.value }}</span>
       </v-list-item>
     </template>
+    <template #list>
+      <variables-list :variables="availableVariables" show-value @input="pasteVariable" />
+    </template>
   </v-combobox>
 </template>
 
 <script>
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
+
 export default {
   inject: ['$validator'],
+  components: { VariablesList },
   mixins: [payloadFieldMixin],
   props: {
     name: {

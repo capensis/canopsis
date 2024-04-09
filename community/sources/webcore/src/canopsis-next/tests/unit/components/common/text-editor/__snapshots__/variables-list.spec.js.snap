@@ -2,7 +2,7 @@
 
 exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 <div
-  class="v-list pa-0 v-sheet theme--light v-list--dense"
+  class="v-list pa-0 v-sheet theme--light"
   role="list"
 >
   <div
@@ -41,7 +41,7 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 
 exports[`variables-list Renders \`variables-list\` with default props 1`] = `
 <div
-  class="v-list pa-0 v-sheet theme--light v-list--dense"
+  class="v-list pa-0 v-sheet theme--light"
   role="list"
 />
 `;

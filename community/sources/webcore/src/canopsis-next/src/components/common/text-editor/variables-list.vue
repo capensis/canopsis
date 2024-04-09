@@ -1,7 +1,7 @@
 <template>
   <v-list
+    :dense="dense"
     class="pa-0"
-    dense
   >
     <v-list-item
       v-for="variable in variables"
@@ -37,7 +37,8 @@
         :variables="parentVariable.variables"
         :value="subVariableValue"
         :z-index="zIndex + 1"
-        @input="selectSubVariable(parentVariable, $event)"
+        :show-value="showValue"
+        @input="selectSubVariable"
       />
     </v-menu>
   </v-list>
@@ -63,6 +64,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -84,8 +89,8 @@ export default {
       this.$emit('input', variable.value);
     },
 
-    selectSubVariable(parentVariable, value) {
-      this.$emit('input', `${parentVariable.value}.${value}`);
+    selectSubVariable(value) {
+      this.$emit('input', value);
     },
 
     isActiveVariable(variable) {
