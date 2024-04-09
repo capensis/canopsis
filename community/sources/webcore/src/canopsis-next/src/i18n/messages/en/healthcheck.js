@@ -68,6 +68,10 @@ export default {
       name: 'Healthcheck',
     },
 
+    [HEALTHCHECK_ENGINES_NAMES.snmp]: {
+      name: 'SNMP',
+    },
+
     [HEALTHCHECK_ENGINES_NAMES.webhook]: {
       name: 'Webhook',
       description: 'Triggers the webhooks launch',

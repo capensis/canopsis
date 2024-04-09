@@ -78,7 +78,6 @@ export default {
 .login-card {
   grid-area: form;
   width: 100%;
-  min-height: 500px;
   display: flex;
   flex-flow: column;
   justify-content: space-between;
