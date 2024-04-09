@@ -414,3 +414,8 @@ export const EXCLUDED_SERVER_ERROR_STATUSES = [
   RESPONSE_STATUSES.unauthorized,
   RESPONSE_STATUSES.forbidden,
 ];
+
+export const PAYLOADS_INFO_VARIABLES = {
+  value: '.Value',
+  description: '.Description',
+};

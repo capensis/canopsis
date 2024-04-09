@@ -17,6 +17,7 @@
     <meta-alarm-rule-corel-form
       v-if="isCorelFormShown"
       v-field="form.config"
+      :variables="variables"
     />
     <meta-alarm-rule-patterns-form
       v-field="form.patterns"
@@ -60,6 +61,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    variables: {
+      type: Array,
+      required: false,
     },
   },
   setup(props) {

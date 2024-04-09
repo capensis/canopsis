@@ -489,6 +489,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   connectorName: '.Value.ConnectorName',
   resource: '.Value.Resource',
   infos: '.Value.Infos',
+  infosName: '.Value.Infos.%name%',
   initialOutput: '.Value.InitialOutput',
   output: '.Value.Output',
   parents: '.Value.Parents',

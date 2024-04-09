@@ -8,7 +8,7 @@
     :items="availableVariables"
     :disabled="disabled"
     :return-object="false"
-    :menu-props="{ value: !!variables.length && variablesShown, offsetY: true, minWidth: 200 }"
+    :menu-props="menuProps"
     :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"
@@ -31,7 +31,7 @@
         <span class="ml-4 grey--text">{{ item.value }}</span>
       </v-list-item>
     </template>
-    <template #list>
+    <template #list="">
       <variables-list :variables="availableVariables" show-value @input="pasteVariable" />
     </template>
   </v-combobox>
@@ -74,8 +74,18 @@ export default {
         required: this.required,
       };
     },
+
     errorMessages() {
       return this.errors.collect(this.name);
+    },
+
+    menuProps() {
+      return {
+        value: !!this.variables.length && this.variablesShown,
+        offsetY: true,
+        closeOnContentClick: false,
+        minWidth: 200,
+      };
     },
   },
   methods: {
