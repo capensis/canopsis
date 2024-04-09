@@ -215,8 +215,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.ReasonName = string(in.String())
 		case "r":
 			out.ReasonID = string(in.String())
-		case "f":
-			out.Filter = string(in.String())
 		case "t":
 			if in.IsNull() {
 				in.Skip()
@@ -242,6 +240,8 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "c":
 			out.Created = int64(in.Int64())
+		case "clr":
+			out.Color = string(in.String())
 		case "p":
 			if in.IsNull() {
 				in.Skip()
@@ -316,11 +316,6 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.ReasonID))
 	}
 	{
-		const prefix string = ",\"f\":"
-		out.RawString(prefix)
-		out.String(string(in.Filter))
-	}
-	{
 		const prefix string = ",\"t\":"
 		out.RawString(prefix)
 		if in.Types == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
@@ -340,6 +335,11 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"c\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Created))
+	}
+	{
+		const prefix string = ",\"clr\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
 	}
 	if len(in.EntityPattern) != 0 {
 		const prefix string = ",\"p\":"

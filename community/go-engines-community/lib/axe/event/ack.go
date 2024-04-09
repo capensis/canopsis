@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -63,17 +62,17 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.ack"] = nil
 	conf := p.configProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepAck, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$set":  bson.M{"v.ack": newStep},
-		"$push": bson.M{"v.steps": newStep},
-		"$unset": bson.M{
-			"not_acked_metric_type":      "",
-			"not_acked_metric_send_time": "",
-			"not_acked_since":            "",
-		},
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAck, event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.ack":   newStepQuery,
+			"v.steps": addStepUpdateQuery(newStepQuery),
+		}},
+		{"$unset": bson.A{
+			"not_acked_metric_type",
+			"not_acked_metric_send_time",
+			"not_acked_since",
+		}},
 	}
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
@@ -192,31 +191,4 @@ func (p *ackProcessor) postProcess(
 	if err != nil {
 		p.logger.Err(err).Msg("cannot process meta alarm")
 	}
-}
-
-func getOpenAlarmMatch(event rpc.AxeEvent) bson.M {
-	if event.Alarm != nil {
-		return bson.M{
-			"_id":        event.Alarm.ID,
-			"v.resolved": nil,
-		}
-	}
-
-	if event.AlarmID != "" {
-		return bson.M{
-			"_id":        event.AlarmID,
-			"v.resolved": nil,
-		}
-	}
-
-	return bson.M{
-		"d":          event.Entity.ID,
-		"v.resolved": nil,
-	}
-}
-
-func getOpenAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
-	match := getOpenAlarmMatch(event)
-	match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
-	return match
 }
