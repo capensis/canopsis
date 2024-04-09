@@ -1938,6 +1938,7 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
       {{ test.test }}
     </div>
     <variables-menu-stub
+      dense="true"
       positionx="112"
       positiony="189"
       value=""
