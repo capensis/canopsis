@@ -435,7 +435,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
   [ALARM_FIELDS.ticketInitiator]: 'alarm.fields.ticketInitiator',
   [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
-  [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
+  [ALARM_FIELDS.entityId]: 'common.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
   [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',
   [ALARM_FIELDS.entityType]: 'alarm.fields.entityType',
