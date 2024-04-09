@@ -17,7 +17,7 @@ export default {
   corelId: 'Corel ID',
   corelIdHelpText: 'Alarms with the same selected attribute are grouped',
   corelStatus: 'Corel status',
-  corelStatusHelpText: 'By this parameter alarms are devided into parents and children',
+  corelStatusHelpText: 'By this parameter alarms are divided into parents and children',
   corelParent: 'Corel parent',
   corelParentHelpText: 'Alarms with this value of the Corel Status field are defined as parents',
   corelChild: 'Corel child',
