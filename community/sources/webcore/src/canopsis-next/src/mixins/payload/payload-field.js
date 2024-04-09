@@ -63,15 +63,15 @@ export const payloadFieldMixin = {
     document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
   methods: {
-    prepareSubVariables(variables, parentVariable) {
-      return variables.map(variable => this.prepareVariable(variable, parentVariable));
-    },
+    prepareVariable(variable, prefix) {
+      const value = `${prefix ?? ''}${variable.value}`;
 
-    prepareVariable(variable, parentVariable) {
       return {
         ...variable,
-        variables: variable.variables ? this.prepareSubVariables(variable.variables, variable) : variable.variables,
-        value: `{{ ${parentVariable ? parentVariable.value : ''}${variable.value} }}`,
+        value: `{{ ${value} }}`,
+        variables: variable.variables
+          ? this.prepareVariables(variable.variables, value)
+          : variable.variables,
       };
     },
 
@@ -84,12 +84,12 @@ export const payloadFieldMixin = {
       }));
     },
 
-    prepareVariables(variables) {
+    prepareVariables(variables, prefix) {
       return variables.reduce((acc, variable) => {
         if (variable.enumerable) {
           acc.push(...this.prepareVariableWithEnumerable(variable));
         } else {
-          acc.push(this.prepareVariable(variable));
+          acc.push(this.prepareVariable(variable, prefix));
         }
 
         return acc;

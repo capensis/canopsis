@@ -10,6 +10,8 @@
           ref="formElement"
           :active-step.sync="activeStep"
           :disabled-id-field="config.isDisabledIdField"
+          :alarm-infos="alarmInfos"
+          :entity-infos="entityInfos"
         />
       </template>
       <template #actions="">
@@ -53,6 +55,7 @@ import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/met
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
@@ -70,6 +73,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
+    entitiesInfosMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -90,6 +94,8 @@ export default {
     },
   },
   mounted() {
+    this.fetchInfos();
+
     const handleValidationChanged = () => {
       this.isStepValid = this.isCurrentStepValid();
     };
