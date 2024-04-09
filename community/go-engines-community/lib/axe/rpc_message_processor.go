@@ -45,9 +45,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		case types.EventTypeAutoWebhookCompleted,
 			types.EventTypeAutoWebhookFailed:
 			body, err := p.Encoder.Encode(rpc.AxeResultEvent{
-				Alarm:           alarm,
-				WebhookHeader:   event.Parameters.WebhookHeader,
-				WebhookResponse: event.Parameters.WebhookResponse,
+				Alarm: alarm,
 			})
 			if err != nil {
 				p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-action", msg)
@@ -65,6 +63,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			return nil, nil
 		default:
 			p.logError(err, "RPC Message Processor: cannot update resolved alarm", msg)
+
 			return p.getErrRpcEvent(errors.New("cannot update resolved alarm"), alarm), nil
 		}
 	}
@@ -182,8 +181,6 @@ func (p *rpcMessageProcessor) sendEventToAction(
 	body, err := p.Encoder.Encode(rpc.AxeResultEvent{
 		Alarm:           &alarm,
 		AlarmChangeType: alarmChange.Type,
-		WebhookHeader:   event.Parameters.WebhookHeader,
-		WebhookResponse: event.Parameters.WebhookResponse,
 		Error:           event.Parameters.WebhookError,
 	})
 	if err != nil {
