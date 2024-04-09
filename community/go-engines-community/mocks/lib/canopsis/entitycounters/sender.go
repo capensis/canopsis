@@ -36,17 +36,17 @@ func (m *MockEventsSender) EXPECT() *MockEventsSenderMockRecorder {
 }
 
 // RecomputeComponent mocks base method.
-func (m *MockEventsSender) RecomputeComponent(arg0 context.Context, arg1, arg2 string) error {
+func (m *MockEventsSender) RecomputeComponent(arg0 context.Context, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RecomputeComponent", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "RecomputeComponent", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RecomputeComponent indicates an expected call of RecomputeComponent.
-func (mr *MockEventsSenderMockRecorder) RecomputeComponent(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockEventsSenderMockRecorder) RecomputeComponent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeComponent", reflect.TypeOf((*MockEventsSender)(nil).RecomputeComponent), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeComponent", reflect.TypeOf((*MockEventsSender)(nil).RecomputeComponent), arg0, arg1)
 }
 
 // RecomputeService mocks base method.
@@ -64,17 +64,17 @@ func (mr *MockEventsSenderMockRecorder) RecomputeService(arg0, arg1 interface{})
 }
 
 // UpdateComponentState mocks base method.
-func (m *MockEventsSender) UpdateComponentState(arg0 context.Context, arg1, arg2 string, arg3 int) error {
+func (m *MockEventsSender) UpdateComponentState(arg0 context.Context, arg1 string, arg2 int) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateComponentState", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "UpdateComponentState", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateComponentState indicates an expected call of UpdateComponentState.
-func (mr *MockEventsSenderMockRecorder) UpdateComponentState(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockEventsSenderMockRecorder) UpdateComponentState(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateComponentState", reflect.TypeOf((*MockEventsSender)(nil).UpdateComponentState), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateComponentState", reflect.TypeOf((*MockEventsSender)(nil).UpdateComponentState), arg0, arg1, arg2)
 }
 
 // UpdateServiceState mocks base method.
