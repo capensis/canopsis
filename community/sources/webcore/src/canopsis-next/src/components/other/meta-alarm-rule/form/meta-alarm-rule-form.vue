@@ -66,7 +66,10 @@
           class="pa-4"
         >
           <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
-          <meta-alarm-rule-parameters-form v-field="form" />
+          <meta-alarm-rule-parameters-form
+            v-field="form"
+            :variables="variables"
+          />
         </c-information-block>
       </v-stepper-content>
     </v-stepper-items>
@@ -74,15 +77,18 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
-import { META_ALARMS_FORM_STEPS } from '@/constants';
+import { ALARM_PAYLOADS_VARIABLES, ENTITY_PAYLOADS_VARIABLES, META_ALARMS_FORM_STEPS } from '@/constants';
 
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 
 import { useElementChildrenValidation } from '@/hooks/form/useValidationChildren';
+import { useI18n } from '@/hooks/i18n';
+import { useEntityServerVariables } from '@/hooks/entities/entity/useEntityServerVariables';
+import { useAlarmServerVariables } from '@/hooks/entities/alarm/useAlarmServerVariables';
 
 export default {
   components: {
@@ -107,8 +113,21 @@ export default {
       type: Number,
       default: 0,
     },
+    alarmInfos: {
+      type: Array,
+      required: false,
+    },
+    entityInfos: {
+      type: Array,
+      required: false,
+    },
   },
   setup(props, { expose }) {
+    const { tc } = useI18n();
+
+    const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
+    const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
+
     const generalStepElement = ref(null);
     const {
       hasChildrenError: hasGeneralError,
@@ -127,6 +146,19 @@ export default {
       validateChildren: validateParametersChildren,
     } = useElementChildrenValidation(parametersStepElement);
 
+    const variables = computed(() => [
+      {
+        value: ENTITY_PAYLOADS_VARIABLES.entity,
+        text: tc('common.entity'),
+        variables: entityPayloadVariables.value,
+      },
+      {
+        value: ALARM_PAYLOADS_VARIABLES.alarm,
+        text: tc('common.alarm'),
+        variables: alarmPayloadVariables.value,
+      },
+    ]);
+
     expose({
       hasGeneralError,
       hasTypeError,
@@ -143,6 +175,7 @@ export default {
       hasParametersError,
       typeStepElement,
       hasTypeError,
+      variables,
       META_ALARMS_FORM_STEPS,
     };
   },

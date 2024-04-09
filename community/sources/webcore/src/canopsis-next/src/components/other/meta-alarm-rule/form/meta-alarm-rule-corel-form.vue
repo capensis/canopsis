@@ -23,6 +23,7 @@
     <c-payload-text-field
       v-field="config.corel_id"
       :label="$t('metaAlarmRule.corelId')"
+      :variables="variables"
       name="corelId"
       required
     >
@@ -38,6 +39,7 @@
     <c-payload-text-field
       v-field="config.corel_status"
       :label="$t('metaAlarmRule.corelStatus')"
+      :variables="variables"
       name="corelStatus"
       required
     >
@@ -53,6 +55,7 @@
     <c-payload-text-field
       v-field="config.corel_parent"
       :label="$t('metaAlarmRule.corelParent')"
+      :variables="variables"
       name="corelParent"
       required
     >
@@ -85,12 +88,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { ALARM_PAYLOADS_VARIABLES, ENTITY_PAYLOADS_VARIABLES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
 
 export default {
@@ -104,102 +101,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    entityInfos: {
+    variables: {
       type: Array,
       default: () => [],
     },
-  },
-  setup() {
-    const { t, tc } = useI18n();
-
-    const entityPayloadVariables = computed(() => []);
-    const alarmPayloadVariables = computed(() => [
-      {
-        value: ALARM_PAYLOADS_VARIABLES.id,
-        text: t('common.alarmId'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.displayName,
-        text: t('alarm.fields.displayName'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.stateValue,
-        text: t('common.state'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.statusValue,
-        text: t('common.status'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.connector,
-        text: t('common.connector'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.component,
-        text: t('common.component'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.connectorName,
-        text: t('common.connectorName'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.resource,
-        text: t('common.resource'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.infos,
-        text: t('common.infos'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.initialOutput,
-        text: t('alarm.fields.initialOutput'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.output,
-        text: t('alarm.fields.output'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.parents,
-        text: tc('alarm.fields.parent'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.children,
-        text: tc('alarm.fields.children'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.totalStateChanges,
-        text: tc('alarm.fields.totalStateChanges'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.eventsCount,
-        text: tc('alarm.fields.eventsCount'),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.tags,
-        text: tc('common.tag', 2),
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.impactState,
-        text: t('common.impactState'),
-      },
-    ]);
-
-    const variables = computed(() => [
-      {
-        value: ENTITY_PAYLOADS_VARIABLES.entity,
-        text: tc('common.entity'),
-        variables: entityPayloadVariables.value,
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.alarm,
-        text: tc('common.alarm'),
-        variables: alarmPayloadVariables.value,
-      },
-    ]);
-
-    return {
-      variables,
-    };
   },
 };
 </script>

@@ -253,6 +253,7 @@ export default {
   failed: 'Failed',
   close: 'Close',
   alarmId: 'Alarm ID',
+  entityId: 'Entity ID',
   longOutput: 'Long output',
   timestamp: 'Timestamp',
   countOfMax: '{count} of {total}',
