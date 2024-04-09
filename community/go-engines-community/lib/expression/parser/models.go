@@ -607,10 +607,10 @@ func (l *Contains) PostgresQuery() (string, pgx.NamedArgs) {
 	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
-		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+		operandSlice, ok := operand.([]any)
+		if !ok {
 			operand = []any{fmt.Sprintf("%v", operand)}
 		} else {
-			operandSlice, _ := operand.([]any)
 			for i, v := range operandSlice {
 				operandSlice[i] = fmt.Sprintf("%v", v)
 			}
@@ -654,10 +654,10 @@ func (l *NotContains) PostgresQuery() (string, pgx.NamedArgs) {
 	var operand any
 	if l.Operand != nil {
 		operand = l.Operand.Val()
-		if reflect.TypeOf(operand).Kind() != reflect.Slice {
+		operandSlice, ok := operand.([]any)
+		if !ok {
 			operand = []any{fmt.Sprintf("%v", operand)}
 		} else {
-			operandSlice, _ := operand.([]any)
 			for i, v := range operandSlice {
 				operandSlice[i] = fmt.Sprintf("%v", v)
 			}

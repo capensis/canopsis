@@ -9,11 +9,11 @@ func TransformToEntityMetaField(v, prefix string) string {
 
 	infosKey, found := strings.CutPrefix(v, "infos.")
 	if found {
-		return prefix + "infos->>" + "'" + infosKey + "'"
+		return prefix + "infos->>'" + infosKey + "'"
 	} else {
 		infosKey, found = strings.CutPrefix(v, "component_infos.")
 		if found {
-			return prefix + "component_infos->>" + "'" + infosKey + "'"
+			return prefix + "component_infos->>'" + infosKey + "'"
 		}
 	}
 
