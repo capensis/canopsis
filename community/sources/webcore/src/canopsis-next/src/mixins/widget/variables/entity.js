@@ -40,7 +40,7 @@ export const entityVariablesMixin = {
         { value: ENTITY_TEMPLATE_FIELDS.name },
         {
           value: ENTITY_TEMPLATE_FIELDS.infos,
-          variables: this.infosVariables,
+          variables: this.infosVariables.length ? this.infosVariables : undefined,
         },
         { value: ENTITY_TEMPLATE_FIELDS.connector },
         { value: ENTITY_TEMPLATE_FIELDS.connectorName },
