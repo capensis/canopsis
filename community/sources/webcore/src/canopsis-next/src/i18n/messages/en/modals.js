@@ -155,9 +155,6 @@ export default {
         label: 'Use special color for this event?',
       },
     },
-    errors: {
-      invalid: 'Invalid',
-    },
     success: {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
     },
@@ -409,7 +406,6 @@ export default {
       success: 'Dynamic information successfully removed!',
     },
     errors: {
-      invalid: 'Invalid',
       emptyInfos: 'At least one info must be added.',
     },
     steps: {

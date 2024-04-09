@@ -79,7 +79,12 @@
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { ALARM_PAYLOADS_VARIABLES, ENTITY_PAYLOADS_VARIABLES, META_ALARMS_FORM_STEPS } from '@/constants';
+import {
+  ALARM_PAYLOADS_VARIABLES,
+  ENTITY_PAYLOADS_VARIABLES,
+  META_ALARMS_FORM_STEPS,
+  META_ALARMS_RULE_TYPES,
+} from '@/constants';
 
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
@@ -103,7 +108,9 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        type: META_ALARMS_RULE_TYPES.attribute,
+      }),
     },
     disabledIdField: {
       type: Boolean,
@@ -115,11 +122,11 @@ export default {
     },
     alarmInfos: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     entityInfos: {
       type: Array,
-      required: false,
+      default: () => [],
     },
   },
   setup(props, { expose }) {

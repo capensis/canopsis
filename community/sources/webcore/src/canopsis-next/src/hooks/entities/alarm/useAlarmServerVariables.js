@@ -58,15 +58,15 @@ export const useAlarmServerVariables = ({ infos } = {}) => {
     },
     {
       value: ALARM_PAYLOADS_VARIABLES.output,
-      text: t('alarm.fields.output'),
+      text: t('common.output'),
     },
     {
       value: ALARM_PAYLOADS_VARIABLES.parents,
-      text: tc('alarm.fields.parent'),
+      text: tc('common.parent'),
     },
     {
       value: ALARM_PAYLOADS_VARIABLES.children,
-      text: tc('alarm.fields.children'),
+      text: tc('common.children'),
     },
     {
       value: ALARM_PAYLOADS_VARIABLES.totalStateChanges,
