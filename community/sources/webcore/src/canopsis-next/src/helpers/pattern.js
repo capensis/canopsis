@@ -396,13 +396,15 @@ export const getFieldType = (value) => {
 export const isValidRuleValueWithFieldType = (rule) => {
   const { field, cond, field_type: fieldType } = rule;
 
-  if (isStringArrayFieldType(fieldType)) {
+  if ([PATTERN_FIELD_TYPES.stringArray, PATTERN_FIELD_TYPES.string].includes(fieldType)) {
     if (isArrayCondition(cond.type)) {
       return (isArray(cond.value) && cond.value.every(isString))
         || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
     }
 
-    return false;
+    if (fieldType === PATTERN_FIELD_TYPES.stringArray) {
+      return false;
+    }
   }
 
   const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);
@@ -511,10 +513,9 @@ export const getOperatorsByRule = (rule, ruleType) => {
     return PATTERN_INFOS_NAME_OPERATORS;
   }
 
-  const fieldType = getFieldType(rule.value);
-  let operators = getOperatorsByFieldType(fieldType);
+  let operators = getOperatorsByFieldType(rule.fieldType);
 
-  if (isAnyInfosType || isObjectRuleType(ruleType)) {
+  if (rule.fieldType === PATTERN_FIELD_TYPES.string || isObjectRuleType(ruleType)) {
     operators = [
       ...operators,
       PATTERN_OPERATORS.isOneOf,
@@ -565,10 +566,11 @@ export const getValueTypesByOperator = (operator) => {
  * @return {PatternValue|undefined|*}
  */
 export const convertValueByOperator = (value, operator) => {
-  const valueType = getFieldType(value);
+  const fieldType = getFieldType(value);
+
   const operatorsValueType = getValueTypesByOperator(operator);
 
-  if (operatorsValueType.includes(valueType)) {
+  if (operatorsValueType.includes(fieldType)) {
     return value;
   }
 

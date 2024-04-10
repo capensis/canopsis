@@ -198,6 +198,15 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       type="delete"
     />
   </div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <button
     class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
     type="button"
@@ -213,6 +222,15 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
 
 exports[`c-array-text-field Renders \`c-array-text-field\` with default props correctly 1`] = `
 <div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <button
     class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
     type="button"
@@ -323,6 +341,15 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
       </div>
     </div>
     <!---->
+  </div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
   </div>
   <button
     class="mx-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"

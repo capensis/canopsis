@@ -48,7 +48,7 @@
         template(v-else)
           v-flex.pl-3(v-if="isInfosValueField", xs1)
             c-input-type-field(
-              :value="inputType",
+              :value="rule.fieldType",
               :label="$t('common.type')",
               :types="inputTypes",
               :disabled="disabled",
@@ -286,7 +286,12 @@ export default {
     },
 
     updateType(type) {
-      this.updateValue(convertValueByType(this.rule.value, type));
+      this.updateModel({
+        ...this.rule,
+
+        fieldType: type,
+        value: convertValueByType(this.rule.value, type),
+      });
     },
   },
 };
