@@ -21,3 +21,4 @@ export { default as CCollapsePanel } from '@/components/common/block/c-collapse-
 export { default as CContextmenu } from '@/components/common/contextmenu/c-contextmenu.vue';
 export { default as CCircleBadge } from '@/components/common/badge/c-circle-badge.vue';
 export { default as CCalendar } from '@/components/common/calendar/c-calendar.vue';
+export { default as CAdvancedSearch } from '@/components/common/search/c-advanced-search.vue';
