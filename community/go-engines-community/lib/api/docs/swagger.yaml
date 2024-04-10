@@ -10401,7 +10401,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,
@@ -10973,7 +10973,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,
