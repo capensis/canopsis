@@ -107,9 +107,6 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | UploadMaxSize  | 314572800 # 300Mb                        | Taille maximale d'un fichier à uploader (en octet) |
 | Junit          | "/opt/canopsis/var/lib/junit-files"      | Emplacement des fichiers traités par le module Junit |
 | JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
-| SnmpMib        | ["/usr/share/snmp/mibs"]                 | Emplacement des fichiers MIB qui seront utilisés par le module SNMP |
-| Icon           | "/opt/canopsis/var/lib/icons"            | Emplacement des fichiers d'icônes |
-| IconMaxSize    | 10240 # 10Kb                             | Taille max des fichiers d'icônes |
 
 
 ### Section [Canopsis.alarm]

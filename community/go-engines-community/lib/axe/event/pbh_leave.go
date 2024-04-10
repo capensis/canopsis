@@ -34,6 +34,7 @@ func NewPbhLeaveProcessor(
 		client:                          client,
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
 		autoInstructionMatcher:          autoInstructionMatcher,
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
@@ -49,6 +50,7 @@ type pbhLeaveProcessor struct {
 	client                          mongo.DbClient
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
+	pbehaviorCollection             mongo.DbCollection
 	autoInstructionMatcher          AutoInstructionMatcher
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
@@ -70,12 +72,14 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	var prevPbehaviorID string
 	var componentStateChanged bool
 	var newComponentState int
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
+		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -92,10 +96,12 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		alarmChange := types.NewAlarmChange()
 		if alarm.ID == "" {
+			prevPbehaviorID = event.Entity.PbehaviorInfo.ID
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 		} else {
+			prevPbehaviorID = alarm.Value.PbehaviorInfo.ID
 			alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
@@ -184,7 +190,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState, prevPbehaviorID)
 
 	return result, nil
 }
@@ -196,6 +202,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	componentStateChanged bool,
 	newComponentState int,
+	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -231,6 +238,11 @@ func (p *pbhLeaveProcessor) postProcess(
 		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
+		}
+
+		err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, "", prevPbehaviorID)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
 		}
 	}
 }
