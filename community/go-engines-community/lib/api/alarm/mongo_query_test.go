@@ -1803,7 +1803,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
-	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -1823,15 +1822,14 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now, ""),
+		"$addFields": getComputedFields(now),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1840,11 +1838,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.infos_array": bson.M{"$objectToArray": "$v.infos"}}},
-		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
-	expected = append(expected, getPbehaviorLookup(authorProvider)...)
+	expected = append(expected, getPbehaviorLookup()...)
 	expected = append(expected, getPbehaviorTypeLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$and": []bson.M{
@@ -1864,8 +1861,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
+	b := NewMongoQueryBuilder(mockDbClient)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
