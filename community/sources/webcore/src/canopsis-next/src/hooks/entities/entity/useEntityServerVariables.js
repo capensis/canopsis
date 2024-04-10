@@ -49,24 +49,8 @@ export const useEntityServerVariables = ({ infos } = {}) => {
       text: t('common.resource'),
     },
     {
-      value: ENTITY_PAYLOADS_VARIABLES.state,
-      text: t('common.state'),
-    },
-    {
-      value: ENTITY_PAYLOADS_VARIABLES.status,
-      text: t('common.status'),
-    },
-    {
-      value: ENTITY_PAYLOADS_VARIABLES.stateOutput,
-      text: tc('entity.fields.stateOutput'),
-    },
-    {
       value: ENTITY_PAYLOADS_VARIABLES.impactLevel,
       text: tc('common.impactLevel'),
-    },
-    {
-      value: ENTITY_PAYLOADS_VARIABLES.impactState,
-      text: tc('common.impactState'),
     },
     {
       value: ENTITY_PAYLOADS_VARIABLES.category,
