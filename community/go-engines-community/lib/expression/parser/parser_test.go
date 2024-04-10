@@ -397,7 +397,6 @@ func getParsePostgresDataSets() []postgresDataSet {
 			Expression:    "NOT connector CONTAINS \"test_connector\"",
 			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector']))",
 		},
-		// 24
 		{
 			Expression:    "connector NOT CONTAINS \"test_connector\"",
 			ExpectedQuery: "WHERE (connector IS NULL OR NOT connector = ANY (ARRAY ['test_connector']))",
