@@ -3817,6 +3817,8 @@ definitions:
     properties:
       _id:
         type: string
+      alarm_count:
+        type: integer
       author:
         $ref: '#/definitions/author.Author'
       color:
