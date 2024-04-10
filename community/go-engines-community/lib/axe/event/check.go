@@ -613,9 +613,18 @@ func (p *checkProcessor) postProcess(
 		p.logger.Err(err).Msg("cannot send event to engine-remediation")
 	}
 
-	err = updatePbhLastAlarmDate(ctx, result, p.pbehaviorCollection)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot update pbehavior")
+	if result.AlarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		if event.Entity.PbehaviorInfo.IsDefaultActive() {
+			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
+			if err != nil {
+				p.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
 	}
 }
 

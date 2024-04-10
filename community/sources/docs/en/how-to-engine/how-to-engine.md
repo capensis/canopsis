@@ -502,7 +502,7 @@ func main() {
 Let's try to run it. Since we have mongo and rabbit connections, we need to specify `CPS_MONGO_URL` and `CPS_AMQP_URL` env variables:
 
 ```
-CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27027/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis go run ./cmd/engine-logger
+CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27017/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis go run ./cmd/engine-logger
 ```
 
 And then send some events:
@@ -540,7 +540,7 @@ And then send some events:
 ```
 
 ```
-$ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27027/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis go run ./cmd/engine-logger
+$ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27017/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis go run ./cmd/engine-logger
 2021-11-24T13:35:43+07:00 INF lib\canopsis\engine\engine.go:47 > engine started consumers=1 periodical workers=1
 2021-11-24T13:35:43+07:00 INF cmd\engine-logger\main.go:25 > init func
 2021-11-24T13:35:46+07:00 INF cmd\engine-logger\message_processor.go:37 > log alarm_id=cdf3ee36-70e3-4ef5-bc7c-ca944b2c3d51 entity_id=test_resource_1/test
@@ -855,7 +855,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 Then run engine-axe and engine-logs and send events:
 ```go
-$ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27027/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis CPS_REDIS_URL=redis://localhost:6379/0 go run ./cmd/engine-axe
+$ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27017/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis CPS_REDIS_URL=redis://localhost:6379/0 go run ./cmd/engine-axe
 2021-11-24T16:46:53+07:00 INF cmd\engine-axe\main.go:51 > Statistic Events DISABLED
 2021-11-24T16:46:53+07:00 INF lib\canopsis\debug\trace.go:162 > Profiling DISABLED
 2021-11-24T16:46:53+07:00 INF lib\canopsis\debug\trace.go:177 > Tracing DISABLED
@@ -875,7 +875,7 @@ $ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27027/canopsis CPS_AMQP_UR
 2021-11-24T16:46:57+07:00 INF cmd\engine-axe\logs_client_message_processor.go:23 > receive rpc message alarm_id=1666005b-90ce-4d2c-b41d-92d33de7d695 logged_at=1637747217
 ```
 ```go
-$ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27027/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis go run ./cmd/engine-logger
+$ CPS_MONGO_URL=mongodb://cpsmongo:canopsis@localhost:27017/canopsis CPS_AMQP_URL=amqp://cpsrabbit:canopsis@localhost:5672/canopsis go run ./cmd/engine-logger
 2021-11-24T16:46:55+07:00 INF lib\canopsis\engine\engine.go:47 > engine started consumers=1 periodical workers=1
 2021-11-24T16:46:55+07:00 INF cmd\engine-logger\main.go:33 > init func
 2021-11-24T16:46:57+07:00 INF cmd\engine-logger\message_processor.go:27 > log alarm_id=d31115a2-2af6-43fe-b7e5-8dc21f342349 entity_id=test_resource_10/test
