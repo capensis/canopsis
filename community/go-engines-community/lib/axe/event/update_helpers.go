@@ -199,7 +199,7 @@ func processComponentAndServiceCounters(
 	entity *types.Entity,
 	alarmChange types.AlarmChange,
 ) (bool, map[string]entitycounters.UpdatedServicesInfo, bool, int, error) {
-	countersUpdated, updatedServiceStates, err := entityServiceCountersCalculator.CalculateCounters(ctx, entity, alarm, alarmChange)
+	serviceCountersUpdated, updatedServiceStates, err := entityServiceCountersCalculator.CalculateCounters(ctx, entity, alarm, alarmChange)
 	if err != nil {
 		return false, nil, false, 0, err
 	}
@@ -207,19 +207,14 @@ func processComponentAndServiceCounters(
 	var componentCountersUpdated bool
 	var componentStateChanged bool
 	var newComponentState int
-
 	if entity.Type == types.EntityTypeResource {
 		componentCountersUpdated, componentStateChanged, newComponentState, err = componentCountersCalculator.CalculateCounters(ctx, entity, alarm, alarmChange)
 		if err != nil {
 			return false, nil, false, 0, err
 		}
-
-		if componentCountersUpdated {
-			countersUpdated = true
-		}
 	}
 
-	return countersUpdated, updatedServiceStates, componentStateChanged, newComponentState, nil
+	return serviceCountersUpdated || componentCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, nil
 }
 
 func sendTriggerEvent(

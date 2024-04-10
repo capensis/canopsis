@@ -270,7 +270,7 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 	alarm *types.Alarm,
 	alarmChange types.AlarmChange,
 	strategy EntityServiceCountersStrategy,
-) (bool, map[string]entitycounters.UpdatedServicesInfo, error) {
+) (isAnyServiceCountersUpdated bool, updatedServicesInfos map[string]entitycounters.UpdatedServicesInfo, _ error) {
 	// Some services data may be changed if another event for the same entity was processed or because of transaction retry.
 	// Always get the fresh data.
 	info, err := s.getServicesInfo(ctx, entity.ID)
@@ -370,18 +370,13 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 			return false, nil, err
 		}
 
-		diff := newCounters.Sub(counters)
-		if len(diff) == 0 {
-			continue
-		}
-
 		countersUpdated = true
 		updateCountersModels = append(
 			updateCountersModels,
 			mongodriver.
 				NewUpdateOneModel().
 				SetFilter(bson.M{"_id": newCounters.ID}).
-				SetUpdate(bson.M{"$inc": diff, "$set": bson.M{"output": newOutput}}).
+				SetUpdate(bson.M{"$inc": newCounters.Sub(counters), "$set": bson.M{"output": newOutput}}).
 				SetUpsert(true),
 		)
 		newWorstState := newCounters.GetWorstState()
