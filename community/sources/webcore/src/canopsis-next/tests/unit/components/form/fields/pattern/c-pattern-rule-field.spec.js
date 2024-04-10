@@ -58,6 +58,7 @@ describe('c-pattern-rule-field', () => {
     operator: '',
     value: '',
     field: '',
+    fieldType: PATTERN_FIELD_TYPES.string,
     dictionary: '',
     range: {
       type: '',

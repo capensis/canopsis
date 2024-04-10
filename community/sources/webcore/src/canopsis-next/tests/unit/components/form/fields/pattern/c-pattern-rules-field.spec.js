@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
+import { PATTERN_FIELD_TYPES, PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
 
@@ -38,18 +38,21 @@ describe('c-pattern-rules-field', () => {
       attribute: 'attribute 1',
       operator: PATTERN_OPERATORS.equal,
       value: 'attribute value',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 1',
     },
     {
       attribute: 'attribute 2',
       operator: PATTERN_OPERATORS.notEqual,
       value: 'attribute value 2',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 2',
     },
     {
       attribute: 'attribute 3',
       operator: PATTERN_OPERATORS.contains,
       value: 'attribute contains',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 3',
     },
   ];
@@ -149,10 +152,18 @@ describe('c-pattern-rules-field', () => {
   });
 
   test('Value changed to array after update rule with array operator', () => {
+    const attribute = {
+      text: 'Attribute text',
+      value: rules[1].attribute,
+      options: {
+        operators: [PATTERN_OPERATORS.notEqual, PATTERN_OPERATORS.hasNot],
+      },
+    };
+
     const wrapper = factory({
       propsData: {
         rules,
-        attributes: [],
+        attributes: [attribute],
       },
     });
 
@@ -208,6 +219,7 @@ describe('c-pattern-rules-field', () => {
         attribute: attribute.value,
         dictionary: '',
         field: '',
+        fieldType: PATTERN_FIELD_TYPES.string,
         operator: '',
         value: '',
         range: {
@@ -250,6 +262,7 @@ describe('c-pattern-rules-field', () => {
           ...rules,
           {
             attribute: attribute.value,
+            fieldType: PATTERN_FIELD_TYPES.string,
           },
         ],
         attributes: [
