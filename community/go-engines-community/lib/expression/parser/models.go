@@ -255,11 +255,16 @@ func (o *ConditionOperand) NotPostgresQuery(prefix string) (string, pgx.NamedArg
 	left = schema.TransformToEntityMetaField(left, prefix)
 
 	if o.ConditionRHS != nil {
-		right, args = o.ConditionRHS.NotPostgresQuery()
-		if args != nil && o.ConditionRHS.Compare != nil && o.ConditionRHS.Compare.Operator == "!=" || o.ConditionRHS.Like != nil {
-			return "(" + left + " IS NULL OR " + left + " " + right + ")", args
-		} else if o.ConditionRHS.Contains != nil {
-			return "(" + left + " IS NULL OR NOT " + left + " " + right + ")", args
+		if o.ConditionRHS.Contains != nil || o.ConditionRHS.NotContains != nil {
+			right, args = o.ConditionRHS.PostgresQuery()
+			if o.ConditionRHS.Contains != nil {
+				return "(" + left + " IS NULL OR NOT " + left + " " + right + ")", args
+			}
+		} else {
+			right, args = o.ConditionRHS.NotPostgresQuery()
+			if args != nil && o.ConditionRHS.Compare != nil && o.ConditionRHS.Compare.Operator == "!=" || o.ConditionRHS.Like != nil {
+				return "(" + left + " IS NULL OR " + left + " " + right + ")", args
+			}
 		}
 	}
 
@@ -329,13 +334,6 @@ func (r *ConditionRHS) NotPostgresQuery() (string, pgx.NamedArgs) {
 	}
 	if r.NotLike != nil {
 		return r.NotLike.NotPostgresQuery()
-	}
-	// There are no NotPostgresQuery() functions for contains and not contains.
-	if r.Contains != nil {
-		return r.Contains.PostgresQuery()
-	}
-	if r.NotContains != nil {
-		return r.NotContains.PostgresQuery()
 	}
 
 	return "", nil
