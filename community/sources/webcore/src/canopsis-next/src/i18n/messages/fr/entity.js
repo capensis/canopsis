@@ -26,7 +26,6 @@ export default {
     alarmCreationDate: 'Date de création de l\'alarme',
     importSource: 'Source d\'import',
     imported: 'Date d\'import',
-    stateOutput: 'Sortie d\'état',
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Afficher toutes les dépendances',

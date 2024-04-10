@@ -290,8 +290,6 @@ export default {
   archive: 'Archive',
   convertToCustomColumn: 'Convert column to custom',
   event: 'Event | Events',
-  parent: 'Parent | Parents',
-  children: 'Children',
   showMore: 'Show more ({current} of {total})',
   variableTypes: {
     string: 'String',

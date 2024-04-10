@@ -12,8 +12,8 @@ import { useInfosServerVariables } from '@/hooks/entities/common/useInfosServerV
  */
 export const useAlarmServerVariables = ({ infos } = {}) => {
   const { t, tc } = useI18n();
-  const { variables: infosVariables } = useInfosServerVariables(infos);
 
+  const { variables: infosVariables } = useInfosServerVariables(infos);
   const variables = computed(() => [
     {
       value: ALARM_PAYLOADS_VARIABLES.id,
@@ -57,32 +57,8 @@ export const useAlarmServerVariables = ({ infos } = {}) => {
       text: t('alarm.fields.initialOutput'),
     },
     {
-      value: ALARM_PAYLOADS_VARIABLES.output,
-      text: t('common.output'),
-    },
-    {
-      value: ALARM_PAYLOADS_VARIABLES.parents,
-      text: tc('common.parent'),
-    },
-    {
-      value: ALARM_PAYLOADS_VARIABLES.children,
-      text: tc('common.children'),
-    },
-    {
-      value: ALARM_PAYLOADS_VARIABLES.totalStateChanges,
-      text: tc('alarm.fields.totalStateChanges'),
-    },
-    {
-      value: ALARM_PAYLOADS_VARIABLES.eventsCount,
-      text: tc('alarm.fields.eventsCount'),
-    },
-    {
       value: ALARM_PAYLOADS_VARIABLES.tags,
       text: tc('common.tag', 2),
-    },
-    {
-      value: ALARM_PAYLOADS_VARIABLES.impactState,
-      text: t('common.impactState'),
     },
   ]);
 

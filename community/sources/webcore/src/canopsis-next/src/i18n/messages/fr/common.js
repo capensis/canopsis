@@ -290,8 +290,6 @@ export default {
   archive: 'Archive',
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
   event: 'Événement | Événements',
-  parent: 'Parente | Parentes',
-  children: 'Enfants',
   showMore: 'Afficher plus ({current} sur {total})',
   variableTypes: {
     string: 'Chaîne de caractères',
