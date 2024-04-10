@@ -8,6 +8,7 @@
       align-end
     >
       <v-flex>
+        <c-advanced-search :fields="advancedSearchFields" />
         <c-advanced-search-field
           :query.sync="query"
           :columns="widget.parameters.widgetColumns"
@@ -146,7 +147,7 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, USERS_PERMISSIONS } from '@/constants';
+import { ALARM_ADVANCED_SEARCH_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -245,6 +246,13 @@ export default {
     };
   },
   computed: {
+    advancedSearchFields() {
+      return ALARM_ADVANCED_SEARCH_FIELDS.map(field => ({
+        value: field,
+        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
+      }));
+    },
+
     activeRange() {
       const { tstart, tstop } = this.query;
 
