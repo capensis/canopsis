@@ -171,14 +171,14 @@ func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.Struct
 	}
 	field := sl.Current().FieldByName(v.field)
 	if !field.IsValid() {
-		panic("request does not have field s" + v.field)
+		panic("request does not have field " + v.field)
 	}
 	if field.IsZero() {
 		return
 	}
 	fieldType, ok := sl.Current().Type().FieldByName(v.field)
 	if !ok {
-		panic("request does not have field %" + v.field)
+		panic("request does not have field " + v.field)
 	}
 	val := field.Interface()
 	var found struct {
