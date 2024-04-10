@@ -6,7 +6,7 @@ function genID() {
         hex = UUID().toString('hex'); // mongosh
     }
 
-    return hex.match(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/).slice(1,6).join('-')
+    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
 }
 
 db.eventfilter.find({
