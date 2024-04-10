@@ -528,14 +528,10 @@ func (h *hub) stop(ctx context.Context) {
 	for _, c := range h.conns {
 		conn := c.conn
 		err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(writeWait))
-		if err != nil {
-			if errors.Is(err, websocket.ErrCloseSent) {
-				h.logger.Warn().Err(err).Str("addr", conn.RemoteAddr().String()).Msg("connection closed")
-			} else {
-				h.logger.Err(err).
-					Str("addr", conn.RemoteAddr().String()).
-					Msg("cannot close connection")
-			}
+		if err != nil && !errors.Is(err, websocket.ErrCloseSent) {
+			h.logger.Err(err).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot close connection")
 		}
 	}
 
@@ -596,14 +592,10 @@ func (h *hub) disconnectConnections(ctx context.Context, connIds ...string) {
 		if c, ok := h.conns[connId]; ok {
 			conn := c.conn
 			err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(writeWait))
-			if err != nil {
-				if errors.Is(err, websocket.ErrCloseSent) {
-					h.logger.Warn().Err(err).Str("conn", connId).Str("addr", conn.RemoteAddr().String()).Msg("connection closed")
-				} else {
-					h.logger.Err(err).
-						Str("addr", conn.RemoteAddr().String()).
-						Msg("connection close failed")
-				}
+			if err != nil && !errors.Is(err, websocket.ErrCloseSent) {
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("connection close failed")
 			}
 
 			delete(h.conns, connId)
