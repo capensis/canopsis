@@ -52,27 +52,27 @@ func ExecuteTemplates(
 	templateExecutor template.Executor,
 	tplData any,
 ) (Parameters, error) {
-	processedParams := params
-	var err error
-	processedParams.URL, err = templateExecutor.Execute(processedParams.URL, tplData)
+	url, err := templateExecutor.Execute(params.URL, tplData)
 	if err != nil {
-		return processedParams, TemplateErr{field: "URL", err: err}
+		return params, TemplateErr{field: "URL", err: err}
 	}
 
-	processedParams.Payload, err = templateExecutor.Execute(processedParams.Payload, tplData)
+	payload, err := templateExecutor.Execute(params.Payload, tplData)
 	if err != nil {
-		return processedParams, TemplateErr{field: "Payload", err: err}
+		return params, TemplateErr{field: "Payload", err: err}
 	}
 
-	headers := make(map[string]string, len(processedParams.Headers))
-	for k, v := range processedParams.Headers {
+	headers := make(map[string]string, len(params.Headers))
+	for k, v := range params.Headers {
 		headers[k], err = templateExecutor.Execute(v, tplData)
 		if err != nil {
-			return processedParams, TemplateErr{field: "Headers." + k, err: err}
+			return params, TemplateErr{field: "Headers." + k, err: err}
 		}
 	}
 
-	processedParams.Headers = headers
+	params.URL = url
+	params.Payload = payload
+	params.Headers = headers
 
-	return processedParams, nil
+	return params, nil
 }
