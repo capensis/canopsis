@@ -72,15 +72,15 @@ func NewServiceProvider(
 	logger zerolog.Logger,
 ) (ServiceProvider, error) {
 	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
-		return nil, fmt.Errorf("should provide only idp metadata url or xml, not both")
+		return nil, errors.New("should provide only idp metadata url or xml, not both")
 	}
 
 	if config.Security.Saml.CanopsisSSOBinding != BindingRedirect && config.Security.Saml.CanopsisSSOBinding != BindingPOST {
-		return nil, fmt.Errorf("wrong canopsis_sso_binding value, should be post or redirect")
+		return nil, errors.New("wrong canopsis_sso_binding value, should be post or redirect")
 	}
 
 	if config.Security.Saml.CanopsisACSBinding != BindingRedirect && config.Security.Saml.CanopsisACSBinding != BindingPOST {
-		return nil, fmt.Errorf("wrong canopsis_acs_binding value, should be post or redirect")
+		return nil, errors.New("wrong canopsis_acs_binding value, should be post or redirect")
 	}
 
 	keyPair, err := tls.LoadX509KeyPair(config.Security.Saml.X509Cert, config.Security.Saml.X509Key)
@@ -285,19 +285,19 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("SAMLResponse doesn't exist")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("SAMLResponse doesn't exist")))
 			return
 		}
 
 		relayState, exists := c.GetPostForm("RelayState")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState doesn't exist")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("RelayState doesn't exist")))
 			return
 		}
 
 		relayUrl, err := url.Parse(relayState)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState is not a valid url")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("RelayState is not a valid url")))
 			return
 		}
 
@@ -309,13 +309,13 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		}
 
 		if assertionInfo.WarningInfo.InvalidTime {
-			sp.logger.Err(fmt.Errorf("invalid time")).Msg("Assertion is not valid")
+			sp.logger.Err(errors.New("invalid time")).Msg("Assertion is not valid")
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
 		if assertionInfo.WarningInfo.NotInAudience {
-			sp.logger.Err(fmt.Errorf("not in audience")).Msg("Assertion is not valid")
+			sp.logger.Err(errors.New("not in audience")).Msg("Assertion is not valid")
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
@@ -394,13 +394,13 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 
 		samlRequest, exists := c.GetQuery("SAMLRequest")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("SAMLRequest doesn't exist")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("SAMLRequest doesn't exist")))
 			return
 		}
 
 		relayState, exists := c.GetQuery("RelayState")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState doesn't exist")))
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("RelayState doesn't exist")))
 			return
 		}
 
