@@ -30,6 +30,7 @@ func NewRecomputeEntityServiceProcessor(
 		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -46,6 +47,7 @@ type recomputeEntityServiceProcessor struct {
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
 	resolvedAlarmCollection         mongo.DbCollection
+	pbehaviorCollection             mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -115,6 +117,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 		p.metaAlarmEventProcessor,
 		p.metricsSender,
 		p.remediationRpcClient,
+		p.pbehaviorCollection,
 		p.encoder,
 		p.logger,
 	)

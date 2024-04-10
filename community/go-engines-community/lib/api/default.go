@@ -35,9 +35,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
-	linkv1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v1"
-	linkv2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -49,7 +46,6 @@ import (
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
@@ -60,7 +56,6 @@ import (
 )
 
 const chanBuf = 10
-const linkFetchTimeout = 30 * time.Second
 
 //go:embed swaggerui/*
 var docsUiFile embed.FS
@@ -159,10 +154,6 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
 	}
 
-	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
-	if err != nil {
-		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
-	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan rpc.PbehaviorRecomputeEvent, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
@@ -286,19 +277,11 @@ func Default(
 		logger,
 	)
 
-	legacyUrl := GetLegacyURL(logger)
 	if linkGenerator == nil {
-		linkGenerators := []link.Generator{
-			linkv2.NewGenerator(dbClient, tplExecutor, logger),
-		}
-		if legacyUrl != nil {
-			linkGenerators = append(linkGenerators, linkv1.NewGenerator(legacyUrl.String(), dbClient, &http.Client{Timeout: linkFetchTimeout}, json.NewEncoder(), json.NewDecoder()))
-		}
-		linkGenerator = wrapper.NewGenerator(linkGenerators...)
+		linkGenerator = link.NewGenerator(dbClient, tplExecutor, logger)
 	}
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
-
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.CacheControl())
 
@@ -372,13 +355,10 @@ func Default(
 			})
 		}
 	}
-	if legacyUrl == nil {
-		api.AddNoRoute(func(c *gin.Context) {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		})
-	} else {
-		api.AddNoRoute(GetProxy(legacyUrl, security, enforcer, proxyAccessConfig)...)
-	}
+
+	api.AddNoRoute(func(c *gin.Context) {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+	})
 	api.AddNoMethod(func(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
 	})
