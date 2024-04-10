@@ -1,5 +1,12 @@
 function genID() {
-    return UUID().toString().split('"')[1];
+    var hex;
+    try {
+        hex = UUID().hex(); // mongo
+    } catch (e) {
+        hex = UUID().toString('hex'); // mongosh
+    }
+
+    return hex.match(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/).slice(1,6).join('-')
 }
 
 db.eventfilter.find({
