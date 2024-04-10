@@ -1,13 +1,13 @@
 package types
 
 import (
-	"fmt"
+	"errors"
 	"math"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var ErrInvalidInfoType = fmt.Errorf("info value should be int, string, bool or array of strings")
+var ErrInvalidInfoType = errors.New("info value should be int, string, bool or array of strings")
 
 func IsInfoValueValid(value interface{}) bool {
 	switch val := value.(type) {
