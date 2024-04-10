@@ -391,6 +391,7 @@ func (s *sender) collectGoMetrics(ctx context.Context) {
 	conf := s.configProvider.Get()
 	if !conf.Enabled {
 		s.closePgPool()
+
 		return
 	}
 
@@ -403,6 +404,16 @@ func (s *sender) collectGoMetrics(ctx context.Context) {
 		return
 	}
 
+	rows := s.getGoMetrics(conf)
+	if len(rows) > 0 {
+		_, err := pool.CopyFrom(ctx, pgx.Identifier{GoMetrics}, []string{"time", "metric", "value", "source"}, pgx.CopyFromRows(rows))
+		if err != nil {
+			s.logger.Err(err).Msg("cannot update go metrics")
+		}
+	}
+}
+
+func (s *sender) getGoMetrics(conf config.TechMetricsConfig) [][]any {
 	samples := make([]metrics.Sample, 0, len(conf.GoMetrics))
 	descs := metrics.All()
 	for _, desc := range descs {
@@ -427,14 +438,16 @@ func (s *sender) collectGoMetrics(ctx context.Context) {
 			case metrics.KindFloat64Histogram:
 				v, err := s.medianBucket(value.Float64Histogram())
 				if err != nil {
-					s.logger.Err(err).Msg("cannot update go metrics")
-					return
+					s.logger.Debug().Err(err).Msg("cannot update go metrics")
+
+					continue
 				}
 
 				rows[i] = []any{now, name, v, s.instanceId}
 			default:
-				s.logger.Error().Msgf("unexpected %q metric kind: %v\n", name, value.Kind())
-				return
+				s.logger.Debug().Msgf("unexpected %q metric kind: %v", name, value.Kind())
+
+				continue
 			}
 		}
 	}
@@ -442,14 +455,16 @@ func (s *sender) collectGoMetrics(ctx context.Context) {
 	pid := os.Getpid()
 	proc, err := procfs.NewProc(pid)
 	if err != nil {
-		s.logger.Err(err).Msg("cannot update get proc metrics")
-		return
+		s.logger.Debug().Err(err).Int("pid", pid).Msg("cannot update get proc metrics")
+
+		return rows
 	}
 
 	procStat, err := proc.Stat()
 	if err != nil {
-		s.logger.Err(err).Msg("cannot update get proc metrics")
-		return
+		s.logger.Debug().Err(err).Int("pid", pid).Msg("cannot update get proc metrics")
+
+		return rows
 	}
 
 	if slices.Contains(conf.GoMetrics, "proc_cpu_total") {
@@ -467,21 +482,15 @@ func (s *sender) collectGoMetrics(ctx context.Context) {
 	if slices.Contains(conf.GoMetrics, "proc_file_descriptors") {
 		fileDescriptors, err := proc.FileDescriptorsLen()
 		if err != nil {
-			s.logger.Err(err).Msg("cannot update get proc metrics")
-			return
+			s.logger.Debug().Err(err).Int("pid", pid).Msg("cannot update get proc metrics")
+
+			return rows
 		}
 
 		rows = append(rows, []any{now, "proc_file_descriptors", fileDescriptors, s.instanceId})
 	}
 
-	if len(rows) == 0 {
-		return
-	}
-
-	_, err = pool.CopyFrom(ctx, pgx.Identifier{GoMetrics}, []string{"time", "metric", "value", "source"}, pgx.CopyFromRows(rows))
-	if err != nil {
-		s.logger.Err(err).Msg("cannot update go metrics")
-	}
+	return rows
 }
 
 func (s *sender) medianBucket(h *metrics.Float64Histogram) (float64, error) {
