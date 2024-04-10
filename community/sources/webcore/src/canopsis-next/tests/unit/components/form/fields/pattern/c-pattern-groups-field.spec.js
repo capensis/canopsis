@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { QUICK_RANGES, TIME_UNITS } from '@/constants';
+import { PATTERN_FIELD_TYPES, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 
@@ -120,6 +120,7 @@ describe('c-pattern-groups-field', () => {
             attribute: attributeItem.value,
             dictionary: '',
             field: '',
+            fieldType: PATTERN_FIELD_TYPES.string,
             operator: '',
             value: '',
             range: {
