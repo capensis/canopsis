@@ -57,7 +57,7 @@ func (mr *MockEnforcerMockRecorder) Enforce(arg0 ...interface{}) *gomock.Call {
 }
 
 // GetPermissionsForUser mocks base method.
-func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) [][]string {
+func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) ([][]string, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -65,7 +65,8 @@ func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) [][]st
 	}
 	ret := m.ctrl.Call(m, "GetPermissionsForUser", varargs...)
 	ret0, _ := ret[0].([][]string)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetPermissionsForUser indicates an expected call of GetPermissionsForUser.

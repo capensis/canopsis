@@ -63,7 +63,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, fmt.Errorf("unexpected empty entity")
+		return nil, nil, eventMetric, errors.New("unexpected empty entity")
 	}
 
 	eventMetric.EntityType = event.Entity.Type
@@ -111,7 +111,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 		err := p.dbCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&connector)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				return fmt.Errorf("connector was deleted during event processing")
+				return errors.New("connector was deleted during event processing")
 			}
 
 			return err

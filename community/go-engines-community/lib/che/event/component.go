@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -64,7 +65,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, fmt.Errorf("unexpected empty entity")
+		return nil, nil, eventMetric, errors.New("unexpected empty entity")
 	}
 
 	eventMetric.EntityType = event.Entity.Type
@@ -151,7 +152,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		if component.ID == "" {
-			return fmt.Errorf("component was deleted during event processing")
+			return errors.New("component was deleted during event processing")
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache

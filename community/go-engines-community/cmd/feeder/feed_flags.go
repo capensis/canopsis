@@ -1,8 +1,8 @@
 package main
 
 import (
+	"errors"
 	"flag"
-	"fmt"
 	"os"
 	"time"
 
@@ -55,7 +55,7 @@ func (f *Flags) ParseArgs() error {
 	f.Loop = *flagLoop
 
 	if f.PubAMQP && f.PubHTTP {
-		return fmt.Errorf("-amqp and -http given")
+		return errors.New("-amqp and -http given")
 	}
 
 	return nil

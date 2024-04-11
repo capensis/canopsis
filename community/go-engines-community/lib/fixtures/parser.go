@@ -2,6 +2,7 @@ package fixtures
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -115,7 +116,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 					docs = append(docs, doc)
 				}
 
-				references[fmt.Sprintf("%s*", refKey)] = ids
+				references[refKey+"*"] = ids
 
 				continue
 			}
@@ -242,7 +243,7 @@ func (p *parser) processMethod(val string, fieldVal interface{}, index int, rang
 		return index + 1, nil
 	case methodRangeIndex:
 		if rangeIndex == nil {
-			return nil, fmt.Errorf("cannot use range index")
+			return nil, errors.New("cannot use range index")
 		}
 		return *rangeIndex, nil
 	default:
