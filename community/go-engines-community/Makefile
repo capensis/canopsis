@@ -196,6 +196,8 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 	# Create configuration directories
 	@echo "==> Creating configuration directories"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/var/lib/junit-files"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/var/lib/upload-files"
 	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/api/security"
 	
