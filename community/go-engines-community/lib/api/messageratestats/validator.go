@@ -9,4 +9,12 @@ func ValidateListRequest(sl validator.StructLevel) {
 	if !r.To.IsZero() && !r.From.IsZero() && r.To.Before(r.From) {
 		sl.ReportError(r.To, "To", "To", "gtfield", "From")
 	}
+
+	if r.From.IsZero() && r.Interval == IntervalHour {
+		sl.ReportError(r.From, "From", "From", "required_if", "Interval hour")
+	}
+
+	if r.To.IsZero() && r.Interval == IntervalHour {
+		sl.ReportError(r.To, "To", "To", "required_if", "Interval hour")
+	}
 }
