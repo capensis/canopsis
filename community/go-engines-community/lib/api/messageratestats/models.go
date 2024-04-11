@@ -7,10 +7,17 @@ const (
 	IntervalHour   = "hour"
 )
 
+type SearchRequest struct {
+	EventTypes     []string `form:"event_types[]" json:"event_types"`
+	ConnectorNames []string `form:"connector_names[]" json:"connector_names"`
+}
+
 type ListRequest struct {
 	Interval string           `form:"interval" json:"interval" binding:"required,oneof=minute hour"`
-	From     datetime.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
-	To       datetime.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
+	From     datetime.CpsTime `form:"from" json:"from" swaggertype:"integer"`
+	To       datetime.CpsTime `form:"to" json:"to" swaggertype:"integer"`
+
+	SearchRequest
 }
 
 type StatsResponse struct {
