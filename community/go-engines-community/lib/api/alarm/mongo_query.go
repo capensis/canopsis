@@ -32,7 +32,7 @@ const (
 	entityInfosPrefix        = "entity.infos"
 )
 
-var ErrUnknownQuery = fmt.Errorf("unknown query type")
+var ErrUnknownQuery = errors.New("unknown query type")
 
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection

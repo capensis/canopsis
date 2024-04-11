@@ -40,7 +40,7 @@ func NewCasProvider(
 	}
 }
 
-type casResponse struct { //nolint:musttag
+type casResponse struct {
 	XMLName xml.Name `xml:"http://www.yale.edu/tp/cas serviceResponse"`
 
 	Failure struct {
