@@ -12,11 +12,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -31,7 +31,7 @@ const (
 	entityInfosPrefix        = "entity.infos"
 )
 
-var ErrUnknownQuery = fmt.Errorf("unknown query type")
+var ErrUnknownQuery = errors.New("unknown query type")
 
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
@@ -145,10 +145,9 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
-		{key: "entity.category", pipeline: getEntityCategoryLookup()},
+		{key: "entity.category", pipeline: dbquery.GetCategoryLookup("entity")},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
-		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 	}
 
 	q.sort = bson.M{}
@@ -156,7 +155,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
-	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "entity.services"}
 }
 
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
@@ -520,6 +519,9 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 		afterLimit = append(afterLimit, bson.M{"$addFields": addFields})
 	}
 
+	afterLimit = append(afterLimit, bson.M{"$addFields": bson.M{
+		"entity.pbehavior_info": "$v.pbehavior_info",
+	}})
 	project := bson.M{}
 	for _, v := range q.excludedFields {
 		project[v] = 0
@@ -1250,8 +1252,8 @@ func (q *MongoQueryBuilder) handleOpened(opened int) {
 
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
 	if withDependencies {
-		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "entity.depends_counts", pipeline: getDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: dbquery.GetImpactsCountPipeline("entity")})
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.depends_counts", pipeline: dbquery.GetDependsCountPipeline("entity")})
 	}
 }
 
@@ -1264,18 +1266,6 @@ func getEntityLookup() []bson.M {
 			"as":           "entity",
 		}},
 		{"$unwind": "$entity"},
-	}
-}
-
-func getEntityCategoryLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "entity.category",
-			"foreignField": "_id",
-			"as":           "entity.category",
-		}},
-		{"$unwind": bson.M{"path": "$entity.category", "preserveNullAndEmptyArrays": true}},
 	}
 }
 
@@ -1311,6 +1301,7 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 			},
 		},
 	}})
+
 	return pipeline
 }
 
@@ -1332,51 +1323,6 @@ func getPbehaviorTypeLookup() []bson.M {
 				},
 			},
 		}},
-	}
-}
-
-func getPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "v.pbehavior_info.type",
-			"as":           "pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"v.pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$v.pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$v.pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-	}
-}
-
-func getEntityPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "entity.pbehavior_info.type",
-			"as":           "entity.pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$entity.pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"entity.pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$entity.pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$entity.pbehavior_info",
-					bson.M{"icon_name": "$entity.pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-		{"$project": bson.M{"entity.pbehavior_info_type": 0}},
 	}
 }
 
@@ -1494,6 +1440,27 @@ func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 				}},
 			}},
 		}},
+		"v.pbehavior_info": bson.M{"$cond": bson.M{
+			"if": "$v.pbehavior_info",
+			"then": bson.M{"$mergeObjects": bson.A{
+				"$v.pbehavior_info",
+				bson.M{
+					"last_comment": bson.M{"$cond": bson.M{
+						"if": "$pbehavior.last_comment",
+						"then": bson.M{"$mergeObjects": bson.A{
+							"$pbehavior.last_comment",
+							bson.M{"author": bson.M{"$cond": bson.M{
+								"if":   "$pbehavior.last_comment.origin",
+								"then": "$pbehavior.last_comment.origin",
+								"else": "$pbehavior.last_comment.author.display_name",
+							}}},
+						}},
+						"else": nil,
+					}},
+				},
+			}},
+			"else": nil,
+		}},
 	}
 
 	if userID != "" {
@@ -1551,95 +1518,6 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	}
 
 	return bson.M{"$and": and}, nil
-}
-
-func getDependsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "services",
-			"as":           "entity.service_depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "component",
-			"as":           "entity.component_depends",
-			"pipeline": []bson.M{
-				{"$match": bson.M{"type": types.EntityTypeResource}},
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$addFields": bson.M{
-			"entity.depends_count": bson.M{"$cond": bson.A{
-				bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$entity.type", types.EntityTypeComponent}},
-					{"$eq": bson.A{bson.M{"$type": "$entity.state_info._id"}, "string"}},
-					{"$ne": bson.A{"$entity.state_info._id", ""}},
-				}},
-				bson.M{"$size": "$entity.component_depends"},
-				bson.M{"$size": "$entity.service_depends"},
-			}},
-		}},
-		{"$project": bson.M{"entity.service_depends": 0, "entity.component_depends": 0}},
-	}
-}
-
-func getImpactsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity.services",
-			"foreignField": "_id",
-			"as":           "entity.service_impacts",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity.component",
-			"foreignField": "_id",
-			"as":           "entity.component_impacts",
-			"pipeline": []bson.M{
-				{"$project": bson.M{
-					"hasStateSettings": bson.M{
-						"$cond": []interface{}{bson.M{
-							"$and": []bson.M{
-								{"$eq": []interface{}{
-									bson.M{"$type": "$state_info._id"},
-									"string",
-								}},
-								{"$ne": []string{"$state_info._id", ""}},
-							}},
-							true,
-							false,
-						},
-					},
-				}},
-			},
-		}},
-		{"$unwind": bson.M{"path": "$entity.component_impacts", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"entity.impacts_count": bson.M{
-				"$cond": []interface{}{
-					bson.M{"$and": []interface{}{
-						bson.M{"$eq": []string{
-							"$entity.type", "resource"},
-						},
-						"$entity.component_impacts.hasStateSettings",
-					}},
-					bson.M{"$sum": bson.A{1, bson.M{"$size": "$entity.service_impacts"}}},
-					bson.M{"$size": "$entity.service_impacts"},
-				},
-			},
-		}},
-		{"$project": bson.M{"entity.service_impacts": 0, "entity.component_impacts": 0}},
-	}
 }
 
 func getOnlyParentsSearchPipeline(

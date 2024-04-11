@@ -9,7 +9,7 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom pro
     disabled="true"
     hide-details=""
     label="From"
-    value="today-2d"
+    value="today-1d"
   >
     <i
       aria-hidden="true"

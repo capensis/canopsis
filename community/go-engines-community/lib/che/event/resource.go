@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -64,7 +65,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, fmt.Errorf("unexpected empty resource")
+		return nil, nil, eventMetric, errors.New("unexpected empty resource")
 	}
 
 	eventMetric.EntityType = event.Entity.Type
@@ -162,7 +163,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		if resource.ID == "" {
-			return fmt.Errorf("resource was deleted during event processing")
+			return errors.New("resource was deleted during event processing")
 		}
 
 		// todo: decide if needed
