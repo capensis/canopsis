@@ -98,7 +98,7 @@ func TestService_ResolveCancels(t *testing.T) {
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
 			},
-			fmt.Errorf("not found"),
+			errors.New("not found"),
 			0,
 		},
 	}
@@ -213,7 +213,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-2)),
 				newSnoozedAlarm(time.Now(), time.Now().Add(time.Minute*-3)),
 			},
-			fmt.Errorf("not found"),
+			errors.New("not found"),
 			0,
 		},
 	}
