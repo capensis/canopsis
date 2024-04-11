@@ -1,6 +1,6 @@
 import { useComponentInstance } from '../vue';
 
-import { useInjectValidator } from './useValidationChildren';
+import { useInjectValidator } from './useInjectValidator';
 
 /**
  * Hook for add and remove validation rule for field
