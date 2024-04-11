@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -369,7 +370,7 @@ func (s AlarmSteps) Last() (AlarmStep, error) {
 	if len(s) > 0 {
 		return s[len(s)-1], nil
 	}
-	return AlarmStep{}, fmt.Errorf("no step")
+	return AlarmStep{}, errors.New("no step")
 }
 
 func (s AlarmSteps) Len() int      { return len(s) }
