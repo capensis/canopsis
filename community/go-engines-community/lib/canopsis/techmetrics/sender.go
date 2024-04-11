@@ -4,7 +4,11 @@ package techmetrics
 
 import (
 	"context"
+	"errors"
 	"math"
+	"os"
+	"runtime/metrics"
+	"slices"
 	"sync"
 	"time"
 
@@ -12,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"github.com/jackc/pgx/v5"
+	"github.com/prometheus/procfs"
 	"github.com/rs/zerolog"
 )
 
@@ -45,6 +50,7 @@ type Sender interface {
 }
 
 func NewSender(
+	instanceId string,
 	configProvider config.TechMetricsConfigProvider,
 	interval time.Duration,
 	poolRetryCount int,
@@ -52,6 +58,7 @@ func NewSender(
 	logger zerolog.Logger,
 ) Sender {
 	return &sender{
+		instanceId:       instanceId,
 		configProvider:   configProvider,
 		interval:         interval,
 		poolRetryCount:   poolRetryCount,
@@ -63,6 +70,7 @@ func NewSender(
 }
 
 type sender struct {
+	instanceId     string
 	configProvider config.TechMetricsConfigProvider
 	interval       time.Duration
 	logger         zerolog.Logger
@@ -73,27 +81,57 @@ type sender struct {
 	batchesMx sync.Mutex
 	batches   map[string][][]any
 
-	pool postgres.Pool
+	poolMx sync.Mutex
+	pool   postgres.Pool
 }
 
 func (s *sender) Run(ctx context.Context) {
 	defer func() {
-		if s.pool != nil {
-			s.pool.Close()
+		s.closePgPool()
+	}()
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		ticker := time.NewTicker(s.interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				s.send(ctx)
+			}
 		}
 	}()
 
-	ticker := time.NewTicker(s.interval)
-	defer ticker.Stop()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		interval := s.configProvider.Get().GoMetricsInterval
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
 
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case <-ticker.C:
-			s.send(ctx)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				s.collectGoMetrics(ctx)
+
+				newInterval := s.configProvider.Get().GoMetricsInterval
+				if newInterval != interval {
+					ticker.Stop()
+					interval = newInterval
+					ticker = time.NewTicker(interval)
+				}
+			}
 		}
-	}
+	}()
+
+	wg.Wait()
 }
 
 func (s *sender) SendQueue(metricName string, timestamp time.Time, length int64) {
@@ -236,24 +274,15 @@ func (s *sender) SendActionEvent(metric ActionEventMetric) {
 
 func (s *sender) send(ctx context.Context) {
 	if !s.configProvider.Get().Enabled {
-		if s.pool != nil {
-			s.pool.Close()
-			s.pool = nil
-		}
-
+		s.closePgPool()
 		s.cleanBatches()
 		return
 	}
 
 	batches := s.flushBatches()
-
-	if s.pool == nil {
-		var err error
-		s.pool, err = postgres.NewTechMetricsPool(ctx, s.poolRetryCount, s.poolRetryTimeout)
-		if err != nil {
-			s.logger.Err(err).Msg("cannot connect tech metrics Postgres")
-			return
-		}
+	pool := s.getPgPool(ctx)
+	if pool == nil {
+		return
 	}
 
 	bulkSize := canopsis.DefaultBulkSize
@@ -272,13 +301,37 @@ func (s *sender) send(ctx context.Context) {
 			if end > rowsCount {
 				end = rowsCount
 			}
-			_, err := s.pool.CopyFrom(ctx, pgx.Identifier{metricName}, columns, pgx.CopyFromRows(rows[begin:end]))
+			_, err := pool.CopyFrom(ctx, pgx.Identifier{metricName}, columns, pgx.CopyFromRows(rows[begin:end]))
 			if err != nil {
 				s.logger.Err(err).Msg("cannot send tech metrics")
 				return
 			}
 		}
 	}
+}
+
+func (s *sender) closePgPool() {
+	s.poolMx.Lock()
+	defer s.poolMx.Unlock()
+	if s.pool != nil {
+		s.pool.Close()
+		s.pool = nil
+	}
+}
+
+func (s *sender) getPgPool(ctx context.Context) postgres.Pool {
+	s.poolMx.Lock()
+	defer s.poolMx.Unlock()
+
+	if s.pool == nil {
+		var err error
+		s.pool, err = postgres.NewTechMetricsPool(ctx, s.poolRetryCount, s.poolRetryTimeout)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot connect tech metrics Postgres")
+		}
+	}
+
+	return s.pool
 }
 
 func (s *sender) flushBatches() map[string][][]any {
@@ -423,4 +476,127 @@ func (s *sender) getColumns(metricName string) []string {
 	}
 
 	return nil
+}
+
+func (s *sender) collectGoMetrics(ctx context.Context) {
+	conf := s.configProvider.Get()
+	if !conf.Enabled {
+		s.closePgPool()
+
+		return
+	}
+
+	if len(conf.GoMetrics) == 0 {
+		return
+	}
+
+	pool := s.getPgPool(ctx)
+	if pool == nil {
+		return
+	}
+
+	rows := s.getGoMetrics(conf)
+	if len(rows) > 0 {
+		_, err := pool.CopyFrom(ctx, pgx.Identifier{GoMetrics}, []string{"time", "metric", "value", "source"}, pgx.CopyFromRows(rows))
+		if err != nil {
+			s.logger.Err(err).Msg("cannot update go metrics")
+		}
+	}
+}
+
+func (s *sender) getGoMetrics(conf config.TechMetricsConfig) [][]any {
+	samples := make([]metrics.Sample, 0, len(conf.GoMetrics))
+	descs := metrics.All()
+	for _, desc := range descs {
+		if slices.Contains(conf.GoMetrics, desc.Name) {
+			samples = append(samples, metrics.Sample{
+				Name: desc.Name,
+			})
+		}
+	}
+
+	rows := make([][]any, len(samples))
+	now := time.Now().UTC()
+	if len(samples) > 0 {
+		metrics.Read(samples)
+		for i, sample := range samples {
+			name, value := sample.Name, sample.Value
+			switch value.Kind() {
+			case metrics.KindUint64:
+				rows[i] = []any{now, name, value.Uint64(), s.instanceId}
+			case metrics.KindFloat64:
+				rows[i] = []any{now, name, value.Float64(), s.instanceId}
+			case metrics.KindFloat64Histogram:
+				v, err := s.medianBucket(value.Float64Histogram())
+				if err != nil {
+					s.logger.Debug().Err(err).Msg("cannot update go metrics")
+
+					continue
+				}
+
+				rows[i] = []any{now, name, v, s.instanceId}
+			default:
+				s.logger.Debug().Msgf("unexpected %q metric kind: %v", name, value.Kind())
+
+				continue
+			}
+		}
+	}
+
+	pid := os.Getpid()
+	proc, err := procfs.NewProc(pid)
+	if err != nil {
+		s.logger.Debug().Err(err).Int("pid", pid).Msg("cannot update get proc metrics")
+
+		return rows
+	}
+
+	procStat, err := proc.Stat()
+	if err != nil {
+		s.logger.Debug().Err(err).Int("pid", pid).Msg("cannot update get proc metrics")
+
+		return rows
+	}
+
+	if slices.Contains(conf.GoMetrics, "proc_cpu_total") {
+		rows = append(rows, []any{now, "proc_cpu_total", procStat.CPUTime(), s.instanceId})
+	}
+
+	if slices.Contains(conf.GoMetrics, "proc_virtual_memory") {
+		rows = append(rows, []any{now, "proc_virtual_memory", procStat.VirtualMemory(), s.instanceId})
+	}
+
+	if slices.Contains(conf.GoMetrics, "proc_resident_memory") {
+		rows = append(rows, []any{now, "proc_resident_memory", procStat.ResidentMemory(), s.instanceId})
+	}
+
+	if slices.Contains(conf.GoMetrics, "proc_file_descriptors") {
+		fileDescriptors, err := proc.FileDescriptorsLen()
+		if err != nil {
+			s.logger.Debug().Err(err).Int("pid", pid).Msg("cannot update get proc metrics")
+
+			return rows
+		}
+
+		rows = append(rows, []any{now, "proc_file_descriptors", fileDescriptors, s.instanceId})
+	}
+
+	return rows
+}
+
+func (s *sender) medianBucket(h *metrics.Float64Histogram) (float64, error) {
+	total := uint64(0)
+	for _, count := range h.Counts {
+		total += count
+	}
+	thresh := total / 2
+	total = 0
+	for i, count := range h.Counts {
+		total += count
+		if total >= thresh {
+			return h.Buckets[i], nil
+		}
+	}
+
+	return 0, errors.New("unexpected value")
 }

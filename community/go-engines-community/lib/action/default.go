@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 
@@ -81,7 +82,7 @@ func NewEngineAction(
 		action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.ActionEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
 	storage := action.NewRedisScenarioExecutionStorage(redis.ActionScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
