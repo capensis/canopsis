@@ -5,6 +5,7 @@ export default {
   ticketID: 'ID de ticket',
   ticketURL: 'URL du ticket',
   allowTicketURLTemplate: 'Autoriser les variables dans l\'URL',
+  allowTicketIdTemplate: 'Autoriser les variables dans l\'ID',
   alarmFieldName: 'Nom du champ d\'alarme',
   customFields: 'Champs personnalisés',
   responseField: 'Champ de réponse',
