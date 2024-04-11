@@ -135,7 +135,7 @@ func (s *store) Load(ctx context.Context) {
 
 	ticker := time.NewTicker(s.configProvider.Get().ParseUpdateInterval(s.logger))
 
-	defer func() {
+	defer func() { // nolint: contextcheck
 		s.mxChangedParamsCh.Lock()
 		s.changedParamsCh = nil
 		s.mxChangedParamsCh.Unlock()

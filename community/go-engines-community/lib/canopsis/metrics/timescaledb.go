@@ -196,14 +196,13 @@ func (s *timescaleDBSender) send(ctx context.Context) {
 	}
 
 	batch := &pgx.Batch{}
-	numInserts := 0
+
 	for _, items := range batches {
 		lastIndex := len(items) - 1
 		for i, item := range items {
 			batch.Queue(item.query, item.arguments...)
-			numInserts++
 
-			if numInserts >= canopsis.DefaultBulkSize || i == lastIndex {
+			if batch.Len() >= canopsis.DefaultBulkSize || i == lastIndex {
 				err = pgPool.SendBatch(ctx, batch)
 				if err != nil {
 					s.logger.Err(err).Msg("cannot send metrics")
@@ -212,7 +211,6 @@ func (s *timescaleDBSender) send(ctx context.Context) {
 				}
 
 				batch = &pgx.Batch{}
-				numInserts = 0
 			}
 		}
 	}

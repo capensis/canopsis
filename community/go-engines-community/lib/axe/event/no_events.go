@@ -95,6 +95,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		entity = *event.Entity
 		updatedServiceStates = nil
 
 		alarm := types.Alarm{}
@@ -114,6 +115,10 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		if err != nil {
 			return err
+		}
+
+		if result.Entity.ID != "" {
+			entity = result.Entity
 		}
 
 		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
@@ -164,12 +169,14 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, now, alarmConfig)
-	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
-		params.Output, params.User, params.Role, params.Initiator)
+	alarm, err := p.newAlarm(params, entity, now, alarmConfig)
+	if err != nil {
+		return result, err
+	}
+
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Value = *params.State
-	statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, params.Author,
-		params.Output, params.User, params.Role, params.Initiator)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
 	statusStep.Value = types.AlarmStatusNoEvents
 	alarm.Value.State = &stateStep
 	err = alarm.Value.Steps.Add(stateStep)
@@ -194,15 +201,9 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 			alarm.Value.InactiveStart = &now
 		}
 
-		pbhOutput := fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s.",
-			pbehaviorInfo.Name,
-			pbehaviorInfo.TypeName,
-			pbehaviorInfo.ReasonName,
-		)
-		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, canopsis.DefaultEventAuthor,
-			pbhOutput, "", "", types.InitiatorSystem)
-		newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
+		newStep := types.NewPbhAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
+			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, pbehaviorInfo.CanonicalType,
+			pbehaviorInfo.IconName, pbehaviorInfo.Color)
 		alarm.Value.PbehaviorInfo = pbehaviorInfo
 		err := alarm.Value.Steps.Add(newStep)
 		if err != nil {
@@ -268,8 +269,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 
 	var stateStep types.AlarmStep
 	if newState != previousState {
-		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
-			params.Output, params.User, params.Role, params.Initiator)
+		stateStep = NewAlarmStep(types.AlarmStepStateIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		stateStep.Value = newState
 		alarmChange.Type = types.AlarmChangeTypeStateIncrease
 		if newState < previousState {
@@ -292,8 +292,11 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	}
 
 	newStatus := types.CpsNumber(types.AlarmStatusNoEvents)
+	statusStepMessage := params.Output
 	if newState == types.AlarmStateOK {
-		newStatus = p.alarmStatusService.ComputeStatus(alarm, entity)
+		var statusRuleName string
+		newStatus, statusRuleName = p.alarmStatusService.ComputeStatus(alarm, entity)
+		statusStepMessage = ConcatOutputAndRuleName(params.Output, statusRuleName)
 	}
 
 	if newStatus == previousStatus && newState == previousState {
@@ -307,9 +310,9 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 			inc["v.state_changes_since_status_update"] = 1
 		}
 	} else {
-		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, params.Author,
-			params.Output, params.User, params.Role, params.Initiator)
+		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 		statusStep.Value = newStatus
+		statusStep.Message = statusStepMessage
 		if newStatus < previousStatus {
 			statusStep.Type = types.AlarmStepStatusDecrease
 		}
@@ -375,7 +378,7 @@ func (p *noEventsProcessor) newAlarm(
 	entity types.Entity,
 	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
-) types.Alarm {
+) (types.Alarm, error) {
 	alarm := types.Alarm{
 		EntityID: entity.ID,
 		ID:       utils.NewID(),
@@ -398,19 +401,36 @@ func (p *noEventsProcessor) newAlarm(
 		},
 	}
 
+	if params.Initiator != types.InitiatorSystem {
+		return types.Alarm{}, fmt.Errorf("unknown initiator %q", params.Initiator)
+	}
+
+	connector := ""
+	connectorName := ""
+	if entity.Connector == "" {
+		connector = canopsis.DefaultSystemAlarmConnector
+		connectorName = canopsis.DefaultSystemAlarmConnector
+	} else {
+		connector, connectorName, _ = strings.Cut(entity.Connector, "/")
+	}
+
 	switch entity.Type {
 	case types.EntityTypeResource:
 		alarm.Value.Resource = entity.Name
 		alarm.Value.Component = entity.Component
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeComponent, types.EntityTypeService:
 		alarm.Value.Component = entity.Name
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeConnector:
 		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
+	default:
+		return types.Alarm{}, fmt.Errorf("unknown entity type %q", entity.Type)
 	}
 
-	return alarm
+	return alarm, nil
 }
 
 func (p *noEventsProcessor) postProcess(
@@ -445,7 +465,7 @@ func (p *noEventsProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}
@@ -464,8 +484,17 @@ func (p *noEventsProcessor) postProcess(
 		p.logger.Err(err).Msg("cannot send event to engine-remediation")
 	}
 
-	err = updatePbhLastAlarmDate(ctx, result, p.pbehaviorCollection)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot update pbehavior")
+	if result.AlarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		if event.Entity.PbehaviorInfo.IsDefaultActive() {
+			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
+			if err != nil {
+				p.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
 	}
 }

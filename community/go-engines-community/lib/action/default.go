@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -69,6 +70,7 @@ func NewEngineAction(
 	m := DependencyMaker{}
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
@@ -117,7 +119,8 @@ func NewEngineAction(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, templateExecutor),
+				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(),
+					logger, templateExecutor, alarmConfigProvider),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -147,6 +150,7 @@ func NewEngineAction(
 				DelayedScenarioManager: delayedScenarioManager,
 				AmqpChannel:            amqpChannel,
 				Queue:                  canopsis.FIFOQueueName,
+				EventGenerator:         libevent.NewGenerator(canopsis.ActionConnector, canopsis.ActionConnector),
 				Encoder:                json.NewEncoder(),
 				Logger:                 logger,
 			}
@@ -207,13 +211,13 @@ func NewEngineAction(
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engineAction.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAction.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
 	})
-	engineAction.AddPeriodicalWorker("abandon executions", engine.NewLockedPeriodicalWorker(
+	engineAction.AddPeriodicalWorker("abandon_executions", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.ActionPeriodicalLockKey,
 		&scenarioPeriodicalWorker{
@@ -230,6 +234,7 @@ func NewEngineAction(
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,
+		alarmConfigProvider,
 	))
 
 	healthcheck.Start(ctx, healthcheck.NewChecker(

@@ -138,6 +138,7 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 			Tstop:          event.Parameters.Tstop,
 			StartOnTrigger: event.Parameters.StartOnTrigger,
 			Duration:       event.Parameters.Duration,
+			RuleName:       event.Parameters.RuleName,
 		},
 	})
 	if err != nil {

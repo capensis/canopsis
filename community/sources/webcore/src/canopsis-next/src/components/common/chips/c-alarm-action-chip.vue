@@ -14,6 +14,7 @@
     <v-icon
       v-if="closable"
       class="cursor-pointer ml-2"
+      small
       @click.stop="$emit('close')"
     >
       cancel

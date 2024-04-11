@@ -95,7 +95,10 @@ type checkProcessor struct {
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil || !event.Entity.Enabled || event.Parameters.State == nil || event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
+	if event.Entity == nil ||
+		!event.Entity.Enabled ||
+		event.Parameters.State == nil ||
+		event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
 		return result, nil
 	}
 
@@ -107,6 +110,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		entity = *event.Entity
 		updatedServiceStates = nil
 		componentStateChanged = false
 		newComponentState = 0
@@ -128,6 +132,10 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 		if err != nil {
 			return err
+		}
+
+		if result.Entity.ID != "" {
+			entity = result.Entity
 		}
 
 		if !event.Healthcheck {
@@ -202,19 +210,23 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	author := ""
-	if entity.Type != types.EntityTypeService {
-		author = strings.Replace(entity.Connector, "/", ".", 1)
-	} else {
+	if params.Initiator == types.InitiatorExternal {
 		author = params.Connector + "." + params.ConnectorName
+	} else {
+		author = params.Author
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, now, alarmConfig)
-	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
-		params.Output, params.User, params.Role, params.Initiator)
+	alarm, err := p.newAlarm(params, entity, now, alarmConfig)
+	if err != nil {
+		return result, err
+	}
+
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
+	stateStep.Author = author
 	stateStep.Value = *params.State
-	statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, author,
-		params.Output, params.User, params.Role, params.Initiator)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
+	statusStep.Author = author
 	statusStep.Value = types.AlarmStatusOngoing
 	alarm.Value.State = &stateStep
 	err = alarm.Value.Steps.Add(stateStep)
@@ -240,15 +252,9 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 			alarm.Value.InactiveStart = &now
 		}
 
-		pbhOutput := fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s.",
-			pbehaviorInfo.Name,
-			pbehaviorInfo.TypeName,
-			pbehaviorInfo.ReasonName,
-		)
-		newStep := types.NewAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, canopsis.DefaultEventAuthor,
-			pbhOutput, "", "", types.InitiatorSystem)
-		newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
+		newStep := types.NewPbhAlarmStep(types.AlarmStepPbhEnter, *pbehaviorInfo.Timestamp, pbehaviorInfo.Author,
+			pbehaviorInfo.GetStepMessage(), "", "", types.InitiatorSystem, pbehaviorInfo.CanonicalType,
+			pbehaviorInfo.IconName, pbehaviorInfo.Color)
 		alarm.Value.PbehaviorInfo = pbehaviorInfo
 		err := alarm.Value.Steps.Add(newStep)
 		if err != nil {
@@ -258,7 +264,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
 	}
 
-	if p.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
+	if alarmConfig.ActivateAlarmAfterAutoRemediation {
 		matched, err := p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return result, err
@@ -332,10 +338,10 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 	unset := bson.M{}
 	author := ""
-	if entity.Type != types.EntityTypeService {
-		author = strings.Replace(entity.Connector, "/", ".", 1)
-	} else {
+	if params.Initiator == types.InitiatorExternal {
 		author = params.Connector + "." + params.ConnectorName
+	} else {
+		author = params.Author
 	}
 
 	if alarm.Value.LongOutputHistory[len(alarm.Value.LongOutputHistory)-1] != params.LongOutput {
@@ -349,8 +355,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 
 	var stateStep types.AlarmStep
 	if newState != previousState && (!alarm.IsStateLocked() || newState == types.AlarmStateOK) {
-		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
-			params.Output, params.User, params.Role, params.Initiator)
+		stateStep = NewAlarmStep(types.AlarmStepStateIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		stateStep.Author = author
 		stateStep.Value = newState
 		alarmChange.Type = types.AlarmChangeTypeStateIncrease
 		if newState < previousState {
@@ -373,7 +379,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		}
 	}
 
-	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
+	newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, entity)
 	if newStatus == previousStatus {
 		if stateStep.Type != "" {
 			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
@@ -381,9 +387,13 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 			inc["v.state_changes_since_status_update"] = 1
 		}
 	} else {
-		match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
-		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, author,
-			params.Output, params.User, params.Role, params.Initiator)
+		if newStatus != types.AlarmStatusOff {
+			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+		}
+
+		statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		statusStep.Message = ConcatOutputAndRuleName(params.Output, statusRuleName)
+		statusStep.Author = author
 		statusStep.Value = newStatus
 		if newStatus < previousStatus {
 			statusStep.Type = types.AlarmStepStatusDecrease
@@ -420,7 +430,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	// Update cropped steps if needed
-	if newAlarm.CropSteps() {
+	cropStepsNumber := p.alarmConfigProvider.Get().CropStepsNumber
+	if cropStepsNumber > 0 && newAlarm.CropSteps(cropStepsNumber) {
 		_, err = p.alarmCollection.UpdateOne(ctx, bson.M{"_id": newAlarm.ID, "v.resolved": nil}, bson.M{
 			"$set": bson.M{
 				"v.steps": newAlarm.Value.Steps,
@@ -432,14 +443,14 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	if entity.IdleSince != nil || entity.LastIdleRuleApply != "" {
-		unset := bson.M{"idle_since": ""}
+		unsetIdleFields := bson.M{"idle_since": ""}
 		alarmLastUpdateRule := fmt.Sprintf("%s_%s", idlerule.RuleTypeAlarm, idlerule.RuleAlarmConditionLastUpdate)
 		if entity.LastIdleRuleApply != alarmLastUpdateRule ||
 			entity.LastIdleRuleApply == alarmLastUpdateRule && alarmChange.Type != types.AlarmChangeTypeNone {
-			unset["last_idle_rule_apply"] = ""
+			unsetIdleFields["last_idle_rule_apply"] = ""
 		}
 
-		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": unset}, p.entityCollection)
+		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": unsetIdleFields}, p.entityCollection)
 		if err != nil {
 			return result, err
 		}
@@ -464,7 +475,7 @@ func (p *checkProcessor) newAlarm(
 	entity types.Entity,
 	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
-) types.Alarm {
+) (types.Alarm, error) {
 	tags := types.TransformEventTags(params.Tags)
 	alarm := types.Alarm{
 		EntityID:     entity.ID,
@@ -490,21 +501,40 @@ func (p *checkProcessor) newAlarm(
 		},
 	}
 
+	connector := ""
+	connectorName := ""
+	switch params.Initiator {
+	case types.InitiatorExternal, types.InitiatorUser:
+		connector = params.Connector
+		connectorName = params.ConnectorName
+	case types.InitiatorSystem:
+		if entity.Connector == "" {
+			connector = canopsis.DefaultSystemAlarmConnector
+			connectorName = canopsis.DefaultSystemAlarmConnector
+		} else {
+			connector, connectorName, _ = strings.Cut(entity.Connector, "/")
+		}
+	default:
+		return types.Alarm{}, fmt.Errorf("unknown initiator %q", params.Initiator)
+	}
+
 	switch entity.Type {
 	case types.EntityTypeResource:
 		alarm.Value.Resource = entity.Name
 		alarm.Value.Component = entity.Component
-		alarm.Value.Connector = params.Connector
-		alarm.Value.ConnectorName = params.ConnectorName
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeComponent, types.EntityTypeService:
 		alarm.Value.Component = entity.ID
-		alarm.Value.Connector = params.Connector
-		alarm.Value.ConnectorName = params.ConnectorName
+		alarm.Value.Connector = connector
+		alarm.Value.ConnectorName = connectorName
 	case types.EntityTypeConnector:
 		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
+	default:
+		return types.Alarm{}, fmt.Errorf("unknown entity type %q", entity.Type)
 	}
 
-	return alarm
+	return alarm, nil
 }
 
 func (p *checkProcessor) getNewExternalTags(alarmTags []string, eventTags map[string]string) []string {
@@ -562,7 +592,7 @@ func (p *checkProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}
@@ -583,9 +613,18 @@ func (p *checkProcessor) postProcess(
 		p.logger.Err(err).Msg("cannot send event to engine-remediation")
 	}
 
-	err = updatePbhLastAlarmDate(ctx, result, p.pbehaviorCollection)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot update pbehavior")
+	if result.AlarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		if event.Entity.PbehaviorInfo.IsDefaultActive() {
+			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
+			if err != nil {
+				p.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
 	}
 }
 
@@ -602,142 +641,4 @@ func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeE
 	}
 
 	p.eventStatisticsSender.Send(ctx, event.Entity.ID, stats)
-}
-
-func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now datetime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
-	result, err := pbhTypeResolver.Resolve(ctx, entity, now.Time)
-	if err != nil {
-		return types.PbehaviorInfo{}, err
-	}
-
-	return pbehavior.NewPBehaviorInfo(now, result), nil
-}
-
-func sendRemediationEvent(
-	ctx context.Context,
-	event rpc.AxeEvent,
-	result Result,
-	remediationRpcClient engine.RPCClient,
-	encoder encoding.Encoder,
-) error {
-	if remediationRpcClient == nil {
-		return nil
-	}
-
-	switch result.AlarmChange.Type {
-	case types.AlarmChangeTypeNone:
-		if result.AlarmChange.EventsCount < types.MinimalEventsCountThreshold {
-			return nil
-		}
-	case
-		types.AlarmChangeTypeCreate,
-		types.AlarmChangeTypeCreateAndPbhEnter,
-		types.AlarmChangeTypeStateIncrease,
-		types.AlarmChangeTypeStateDecrease,
-		types.AlarmChangeTypeChangeState,
-		types.AlarmChangeTypeUnsnooze,
-		types.AlarmChangeTypeActivate,
-		types.AlarmChangeTypePbhEnter,
-		types.AlarmChangeTypePbhLeave,
-		types.AlarmChangeTypePbhLeaveAndEnter,
-		types.AlarmChangeTypeResolve:
-	default:
-		return nil
-	}
-
-	entity := event.Entity
-	if result.Entity.ID != "" {
-		entity = &result.Entity
-	}
-
-	body, err := encoder.Encode(rpc.RemediationEvent{
-		Alarm:       &result.Alarm,
-		Entity:      entity,
-		AlarmChange: result.AlarmChange,
-	})
-	if err != nil {
-		return fmt.Errorf("cannot encode remediation event: %w", err)
-	}
-
-	err = remediationRpcClient.Call(ctx, engine.RPCMessage{
-		CorrelationID: result.Alarm.ID,
-		Body:          body,
-	})
-	if err != nil {
-		return fmt.Errorf("cannot send rpc call to remediation: %w", err)
-	}
-
-	return nil
-}
-
-func updatePbhLastAlarmDate(ctx context.Context, result Result, pbehaviorCollection mongo.DbCollection) error {
-	switch result.AlarmChange.Type {
-	case types.AlarmChangeTypeCreateAndPbhEnter,
-		types.AlarmChangeTypePbhEnter,
-		types.AlarmChangeTypePbhLeaveAndEnter:
-	default:
-		return nil
-	}
-
-	pbhId := ""
-	var lastAlarmDate *datetime.CpsTime
-	if result.Alarm.ID == "" {
-		pbhId = result.Entity.PbehaviorInfo.ID
-		lastAlarmDate = result.Entity.PbehaviorInfo.Timestamp
-	} else {
-		pbhId = result.Alarm.Value.PbehaviorInfo.ID
-		lastAlarmDate = result.Alarm.Value.PbehaviorInfo.Timestamp
-	}
-
-	_, err := pbehaviorCollection.UpdateOne(ctx,
-		bson.M{"_id": pbhId},
-		bson.M{"$set": bson.M{"last_alarm_date": lastAlarmDate}},
-	)
-	if err != nil {
-		return fmt.Errorf("cannot update pbehavior: %w", err)
-	}
-
-	return nil
-}
-
-func isInstructionMatched(event rpc.AxeEvent, result Result, autoInstructionMatcher AutoInstructionMatcher, logger zerolog.Logger) bool {
-	triggers := result.AlarmChange.GetTriggers()
-	if len(triggers) == 0 {
-		return false
-	}
-
-	entity := *event.Entity
-	if result.Entity.ID != "" {
-		entity = result.Entity
-	}
-
-	matched, err := autoInstructionMatcher.Match(triggers, types.AlarmWithEntity{Alarm: result.Alarm, Entity: entity})
-	if err != nil {
-		logger.Err(err).Str("alarm", result.Alarm.ID).Msg("cannot match auto instructions")
-		return false
-	}
-
-	return matched
-}
-
-func updateEntityByID(ctx context.Context, entityID string, update bson.M, entityCollection mongo.DbCollection) (types.Entity, error) {
-	newEntity := types.Entity{}
-	err := entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": entityID}, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).
-		Decode(&newEntity)
-	if err != nil {
-		return newEntity, fmt.Errorf("cannot update entity: %w", err)
-	}
-
-	return newEntity, nil
-}
-
-func updateEntity(ctx context.Context, match, update bson.M, entityCollection mongo.DbCollection) (types.Entity, error) {
-	newEntity := types.Entity{}
-	err := entityCollection.FindOneAndUpdate(ctx, match, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).
-		Decode(&newEntity)
-	if err != nil {
-		return newEntity, fmt.Errorf("cannot update entity: %w", err)
-	}
-
-	return newEntity, nil
 }

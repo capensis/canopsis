@@ -9,6 +9,7 @@
     >
       <c-quick-date-interval-field
         :interval="query.interval"
+        :quick-ranges="quickRanges"
         :min="deletedBefore"
         @input="updateInterval"
       />
@@ -64,6 +65,7 @@ import { debounce } from 'lodash';
 import {
   DATETIME_FORMATS,
   HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR,
+  HEALTHCHECK_QUICK_RANGES,
   MESSAGE_STATS_INTERVALS,
   QUICK_RANGES,
   TIME_UNITS,
@@ -110,6 +112,10 @@ export default {
     };
   },
   computed: {
+    quickRanges() {
+      return Object.values(HEALTHCHECK_QUICK_RANGES);
+    },
+
     interval() {
       return {
         from: convertStartDateIntervalToTimestamp(this.query.interval.from),

@@ -65,6 +65,20 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryAlarm(arg0, arg1 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryAlarm", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryAlarm), arg0, arg1)
 }
 
+// UpdateHistoryAlarmExternalTag mocks base method.
+func (m *MockAdapter) UpdateHistoryAlarmExternalTag(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryAlarmExternalTag", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryAlarmExternalTag indicates an expected call of UpdateHistoryAlarmExternalTag.
+func (mr *MockAdapterMockRecorder) UpdateHistoryAlarmExternalTag(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryAlarmExternalTag", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryAlarmExternalTag), arg0, arg1)
+}
+
 // UpdateHistoryEntityCleaned mocks base method.
 func (m *MockAdapter) UpdateHistoryEntityCleaned(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
 	m.ctrl.T.Helper()

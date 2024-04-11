@@ -2,7 +2,7 @@
 package parser
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/alecthomas/participle"
@@ -86,7 +86,7 @@ func (p *parser) hasComparison(str string) bool {
 
 func (p *parser) Parse(str string) (MongoQuery, error) {
 	if !p.hasComparison(str) {
-		return nil, fmt.Errorf("comparison not found")
+		return nil, errors.New("comparison not found")
 	}
 	expr := &Expression{}
 	err := p.baseParser.ParseString(str, expr)

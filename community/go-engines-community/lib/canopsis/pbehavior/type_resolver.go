@@ -60,12 +60,13 @@ func NewTypeResolver(
 
 // ResolveResult represents current state of entity.
 type ResolveResult struct {
-	ResolvedType          Type
-	ResolvedPbhID         string
-	ResolvedPbhName       string
-	ResolvedPbhReasonID   string
-	ResolvedPbhReasonName string
-	ResolvedCreated       int64
+	Type       Type
+	ID         string
+	Name       string
+	ReasonID   string
+	ReasonName string
+	Color      string
+	Created    int64
 }
 
 // Resolve checks entity for each pbehavior concurrently. It uses "workerPoolSize" goroutines.
@@ -103,12 +104,12 @@ func (r *typeResolver) Resolve(
 	}
 
 	// Empty result represents default active type.
-	if res.ResolvedType.ID != "" {
+	if res.Type.ID != "" {
 		activeType, ok := r.TypesByID[r.DefaultActiveTypeID]
 		if !ok {
 			return ResolveResult{}, fmt.Errorf("unknown type %v, probably need recompute data", r.DefaultActiveTypeID)
 		}
-		if res.ResolvedType == activeType {
+		if res.Type == activeType {
 			res = ResolveResult{}
 		}
 	}
@@ -230,12 +231,13 @@ func (r *typeResolver) getPbehaviorIntervals(
 					}
 
 					resCh <- ResolveResult{
-						ResolvedType:          resolvedType,
-						ResolvedPbhID:         d.id,
-						ResolvedPbhName:       d.computed.Name,
-						ResolvedPbhReasonName: d.computed.ReasonName,
-						ResolvedPbhReasonID:   d.computed.ReasonID,
-						ResolvedCreated:       d.computed.Created,
+						Type:       resolvedType,
+						ID:         d.id,
+						Name:       d.computed.Name,
+						ReasonID:   d.computed.ReasonID,
+						ReasonName: d.computed.ReasonName,
+						Color:      d.computed.Color,
+						Created:    d.computed.Created,
 					}
 					break
 				}
@@ -260,12 +262,12 @@ func (r *typeResolver) getPbehaviorIntervals(
 	}
 
 	sort.Slice(res, func(i, j int) bool {
-		return res[i].ResolvedType.Priority > res[j].ResolvedType.Priority ||
-			res[i].ResolvedType.Priority == res[j].ResolvedType.Priority &&
-				res[i].ResolvedCreated > res[j].ResolvedCreated ||
-			res[i].ResolvedType.Priority == res[j].ResolvedType.Priority &&
-				res[i].ResolvedCreated == res[j].ResolvedCreated &&
-				res[i].ResolvedPbhID > res[j].ResolvedPbhID
+		return res[i].Type.Priority > res[j].Type.Priority ||
+			res[i].Type.Priority == res[j].Type.Priority &&
+				res[i].Created > res[j].Created ||
+			res[i].Type.Priority == res[j].Type.Priority &&
+				res[i].Created == res[j].Created &&
+				res[i].ID > res[j].ID
 	})
 
 	return res, nil
