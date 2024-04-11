@@ -91,7 +91,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, fmt.Errorf("unexpected empty entity")
+		return nil, nil, eventMetric, errors.New("unexpected empty entity")
 	}
 
 	eventMetric.EntityType = event.Entity.Type
@@ -135,7 +135,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		err := p.dbCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&service)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				return fmt.Errorf("service was deleted during event processing")
+				return errors.New("service was deleted during event processing")
 			}
 
 			return err

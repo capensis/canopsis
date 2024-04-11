@@ -8,7 +8,7 @@ import (
 )
 
 type ComponentCountersCalculator interface {
-	// CalculateCounters calculates counters for the component by dependency alarm change and returns true if component state is changed as the first argument, and a new component state as the second one.
+	// CalculateCounters calculates counters for the component by dependency alarm change.
 	CalculateCounters(
 		ctx context.Context,
 		entity *types.Entity,
