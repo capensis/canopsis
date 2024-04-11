@@ -241,7 +241,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	}
 
 	if query == nil || negativeQuery == nil {
-		return types.Entity{}, fmt.Errorf("can't get queries from patterns")
+		return types.Entity{}, errors.New("can't get queries from patterns")
 	}
 
 	var entitiesToRemove []types.Entity
