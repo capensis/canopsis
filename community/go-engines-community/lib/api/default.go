@@ -136,7 +136,7 @@ func Default(
 	}
 
 	cookieOptions := DefaultCookieOptions()
-	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
+	sessionStore := mongostore.NewStore(dbClient, GetSessionKeyVar(logger))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	if p.ApiConfigProvider == nil {
@@ -338,7 +338,7 @@ func Default(
 	if flags.EnableDocs {
 		api.AddRouter(func(router *gin.Engine) {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
-				c.FileFromFS(fmt.Sprintf("swaggerui/%s", c.Param("filepath")), http.FS(docsUiFile))
+				c.FileFromFS("swaggerui/"+c.Param("filepath"), http.FS(docsUiFile))
 			})
 		})
 		if !overrideDocs {
@@ -496,4 +496,13 @@ func newWebsocketHub(
 	}
 
 	return websocketHub, nil
+}
+
+func GetSessionKeyVar(logger zerolog.Logger) []byte {
+	sessionKey := os.Getenv("SESSION_KEY")
+	if sessionKey == "" {
+		logger.Warn().Msg("SESSION_KEY is not set, using default value")
+		sessionKey = "canopsis"
+	}
+	return []byte(sessionKey)
 }

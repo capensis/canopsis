@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	"errors"
 	"strconv"
 	"strings"
 	"testing"
@@ -294,7 +294,7 @@ func getParseMongoDataSets() []mongoDataSet {
 		},
 		{
 			Expression: "ressete",
-			Err:        fmt.Errorf("comparison not found"),
+			Err:        errors.New("comparison not found"),
 		},
 	}
 }
@@ -525,11 +525,11 @@ func getParsePostgresDataSets() []postgresDataSet {
 		},
 		{
 			Expression: "ressete",
-			Err:        fmt.Errorf("comparison not found"),
+			Err:        errors.New("comparison not found"),
 		},
 		{
 			Expression: "NOT connector=\"test_connector1\" OR links=\"test_connector2\" AND connector LIKE \"test_connector3\"",
-			Err:        fmt.Errorf("field links is not allowed"),
+			Err:        errors.New("field links is not allowed"),
 		},
 	}
 }

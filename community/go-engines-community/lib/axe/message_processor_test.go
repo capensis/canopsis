@@ -184,7 +184,7 @@ func BenchmarkMessageProcessor_Process_GivenNewMetaAlarm(b *testing.B) {
 			MetaAlarmChildren: children,
 			MetaAlarmRuleID:   "test-metaalarm-rule",
 			Entity: &types.Entity{
-				ID:      fmt.Sprintf("%s/metaalarm", resource),
+				ID:      resource + "/metaalarm",
 				Name:    resource,
 				Enabled: true,
 				Type:    types.EntityTypeResource,
