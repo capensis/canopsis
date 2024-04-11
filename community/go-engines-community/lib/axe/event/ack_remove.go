@@ -5,14 +5,12 @@ import (
 	"errors"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -21,7 +19,6 @@ import (
 
 func NewAckRemoveProcessor(
 	client mongo.DbClient,
-	configProvider config.AlarmConfigProvider,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	eventsSender entitycounters.EventsSender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
@@ -32,7 +29,6 @@ func NewAckRemoveProcessor(
 		client:                          client,
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		configProvider:                  configProvider,
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		eventsSender:                    eventsSender,
 		metaAlarmEventProcessor:         metaAlarmEventProcessor,
@@ -45,7 +41,6 @@ type ackRemoveProcessor struct {
 	client                          mongo.DbClient
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
-	configProvider                  config.AlarmConfigProvider
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	eventsSender                    entitycounters.EventsSender
 	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
@@ -62,16 +57,15 @@ func (p *ackRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 	entity := *event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.ack"] = bson.M{"$ne": nil}
-	conf := p.configProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepAckRemove, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$set":  bson.M{"not_acked_since": event.Parameters.Timestamp},
-		"$push": bson.M{"v.steps": newStep},
-		"$unset": bson.M{
-			"v.ack": "",
-		},
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAckRemove, event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"not_acked_since": event.Parameters.Timestamp,
+			"v.steps":         addStepUpdateQuery(newStepQuery),
+		}},
+		{"$unset": bson.A{
+			"v.ack",
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo

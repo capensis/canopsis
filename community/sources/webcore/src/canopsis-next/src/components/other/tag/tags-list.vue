@@ -21,7 +21,7 @@
       />
     </template>
     <template #value="{ item }">
-      <c-alarm-action-chip :color="item.color">
+      <c-alarm-action-chip :color="item.color" class="px-2">
         {{ item.value }}
       </c-alarm-action-chip>
     </template>

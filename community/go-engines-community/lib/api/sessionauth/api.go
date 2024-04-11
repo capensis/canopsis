@@ -3,6 +3,7 @@
 package sessionauth
 
 import (
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -12,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 )
@@ -128,9 +130,17 @@ func (a *api) LogoutHandler() gin.HandlerFunc {
 func (a *api) getSession(c *gin.Context) *sessions.Session {
 	session, err := a.sessionStore.Get(c.Request, security.SessionKey)
 
+	if err == nil {
+		return session
+	}
+
+	var securecookieError securecookie.Error
+	if errors.As(err, &securecookieError) {
+		// if securecookie decode failed (for example due changed key), then it's a new session
+		session, err = a.sessionStore.New(c.Request, security.SessionKey)
+	}
 	if err != nil {
 		panic(err)
 	}
-
 	return session
 }

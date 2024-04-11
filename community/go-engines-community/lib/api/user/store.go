@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -92,7 +91,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("roles.permissions.%s", r.Permission): bson.M{"$exists": true}}})
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"roles.permissions." + r.Permission: bson.M{"$exists": true}}})
 	}
 
 	project = append(project, getViewPipeline()...)
