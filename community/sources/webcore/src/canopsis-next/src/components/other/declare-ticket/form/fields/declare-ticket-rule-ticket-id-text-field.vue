@@ -33,7 +33,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'ticket_url',
+      default: 'ticket_id',
     },
     disabled: {
       type: Boolean,
