@@ -528,7 +528,7 @@ func (h *hub) stop(ctx context.Context) {
 	for _, c := range h.conns {
 		conn := c.conn
 		err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(writeWait))
-		if err != nil {
+		if err != nil && !errors.Is(err, websocket.ErrCloseSent) {
 			h.logger.Err(err).
 				Str("addr", conn.RemoteAddr().String()).
 				Msg("cannot close connection")
@@ -592,7 +592,7 @@ func (h *hub) disconnectConnections(ctx context.Context, connIds ...string) {
 		if c, ok := h.conns[connId]; ok {
 			conn := c.conn
 			err := conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(writeWait))
-			if err != nil {
+			if err != nil && !errors.Is(err, websocket.ErrCloseSent) {
 				h.logger.Err(err).
 					Str("addr", conn.RemoteAddr().String()).
 					Msg("connection close failed")
@@ -795,13 +795,12 @@ func (h *hub) listen(connId string, conn Connection) {
 						Str("addr", conn.RemoteAddr().String()).
 						Msg("connection closed unexpectedly")
 				}
-
+				h.removeConnections(ctx, connId)
+			} else if errors.Is(err, websocket.ErrCloseSent) {
+				h.logger.Warn().Err(err).Str("conn", connId).Str("addr", conn.RemoteAddr().String()).Msg("connection closed")
 				h.removeConnections(ctx, connId)
 			} else {
-				h.logger.
-					Err(err).
-					Str("addr", conn.RemoteAddr().String()).
-					Msg("cannot read message from connection, connection will be closed")
+				h.logger.Err(err).Str("conn", connId).Str("addr", conn.RemoteAddr().String()).Msg("cannot read message from connection, connection will be closed")
 				h.disconnectConnections(ctx, connId)
 			}
 
@@ -892,7 +891,7 @@ func (h *hub) sendToConn(connId string, msg WMessage) (closed bool) {
 			Int("type", msg.Type).
 			Str("conn", connId).
 			Bool("closed", closed).
-			Msg("send to webhook conn")
+			Msg("sent to websocket conn")
 	}()
 
 	conn := h.conns[connId].conn
