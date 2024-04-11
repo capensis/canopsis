@@ -90,8 +90,8 @@ import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/me
 import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 
-import { useElementChildrenValidation } from '@/hooks/form/useValidationChildren';
 import { useI18n } from '@/hooks/i18n';
+import { useValidationElementChildren } from '@/hooks/validator/useValidationElementChildren';
 import { useEntityServerVariables } from '@/hooks/entities/entity/useEntityServerVariables';
 import { useAlarmServerVariables } from '@/hooks/entities/alarm/useAlarmServerVariables';
 
@@ -134,25 +134,6 @@ export default {
 
     const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
     const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
-
-    const generalStepElement = ref(null);
-    const {
-      hasChildrenError: hasGeneralError,
-      validateChildren: validateGeneralChildren,
-    } = useElementChildrenValidation(generalStepElement);
-
-    const typeStepElement = ref(null);
-    const {
-      hasChildrenError: hasTypeError,
-      validateChildren: validateTypeChildren,
-    } = useElementChildrenValidation(typeStepElement);
-
-    const parametersStepElement = ref(null);
-    const {
-      hasChildrenError: hasParametersError,
-      validateChildren: validateParametersChildren,
-    } = useElementChildrenValidation(parametersStepElement);
-
     const variables = computed(() => [
       {
         value: ENTITY_PAYLOADS_VARIABLES.entity,
@@ -165,6 +146,24 @@ export default {
         variables: alarmPayloadVariables.value,
       },
     ]);
+
+    const generalStepElement = ref(null);
+    const {
+      hasChildrenError: hasGeneralError,
+      validateChildren: validateGeneralChildren,
+    } = useValidationElementChildren(generalStepElement);
+
+    const typeStepElement = ref(null);
+    const {
+      hasChildrenError: hasTypeError,
+      validateChildren: validateTypeChildren,
+    } = useValidationElementChildren(typeStepElement);
+
+    const parametersStepElement = ref(null);
+    const {
+      hasChildrenError: hasParametersError,
+      validateChildren: validateParametersChildren,
+    } = useValidationElementChildren(parametersStepElement);
 
     expose({
       hasGeneralError,

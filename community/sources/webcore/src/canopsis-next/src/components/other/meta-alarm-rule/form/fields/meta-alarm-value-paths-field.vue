@@ -26,8 +26,8 @@ import { computed, nextTick, onBeforeUnmount, watch } from 'vue';
 import { defaultPrimitiveArrayItemCreator } from '@/helpers/entities/shared/form';
 
 import { useArrayModelField } from '@/hooks/form/useArrayModelField';
-import { useInjectValidator } from '@/hooks/form/useValidationChildren';
-import { useValidationAttachRequired } from '@/hooks/form/useValidationAttachRequired';
+import { useInjectValidator } from '@/hooks/validator/useInjectValidator';
+import { useValidationAttachRequired } from '@/hooks/validator/useValidationAttachRequired';
 
 export default {
   model: {
