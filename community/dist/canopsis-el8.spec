@@ -63,8 +63,8 @@ fi
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
-/opt/canospis/var/lib/junit-files
-/opt/canospis/var/lib/upload-files
+/opt/canopsis/var/lib/junit-files
+/opt/canopsis/var/lib/upload-files
 %defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service
