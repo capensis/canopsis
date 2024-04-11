@@ -345,7 +345,7 @@ func benchmarkMessageProcessor(
 			libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
 			logger,
 		),
-		TechMetricsSender: techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
+		TechMetricsSender: techmetrics.NewSender(canopsis.AxeEngineName+"/"+utils.NewID(), techMetricsConfigProvider, time.Minute, 0, 0, logger),
 		Encoder:           json.NewEncoder(),
 		Decoder:           json.NewDecoder(),
 		Logger:            logger,
