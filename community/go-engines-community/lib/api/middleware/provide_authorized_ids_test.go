@@ -33,7 +33,7 @@ func TestProvideAuthorizedIds_GivenAuthorizedUser_ShouldReturnIds(t *testing.T) 
 			{role, obj1, act},
 			{role, obj1, "testanotheract"},
 			{role, obj2, act},
-		})
+		}, nil)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
 		c.Set(auth.UserKey, subj)

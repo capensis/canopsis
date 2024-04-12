@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline-steps Renders \`alarm-timeline-steps\` correctly 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-stub
+    step="[object Object]"
+  />
+  <alarm-timeline-step-expand-stub
+    step="[object Object]"
+  />
+</div>
+`;

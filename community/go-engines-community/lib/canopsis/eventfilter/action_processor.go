@@ -2,6 +2,7 @@ package eventfilter
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"reflect"
 	"sort"
@@ -317,4 +318,4 @@ func (p *actionProcessor) setEntityInfo(entity *types.Entity, value any, name, d
 	return true
 }
 
-var ErrShouldBeAString = fmt.Errorf("value should be a string")
+var ErrShouldBeAString = errors.New("value should be a string")

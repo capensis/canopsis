@@ -58,6 +58,10 @@
       checkbox-color="primary"
       @update:options="updateOptions"
     >
+      <template v-if="hasItemSlot" #item="props">
+        <slot name="item" v-bind="props" />
+      </template>
+
       <template
         v-for="header in headers"
         #[getItemSlotName(header)]="props"
@@ -276,6 +280,10 @@ export default {
 
     visibleItems() {
       return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
+    },
+
+    hasItemSlot() {
+      return this.$slots.item || this.$scopedSlots.item;
     },
 
     hasExpandSlot() {

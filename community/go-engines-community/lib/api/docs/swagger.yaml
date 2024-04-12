@@ -755,6 +755,11 @@ paths:
             items:
               type: string
           example: t,asc
+        - name: query_log
+          in: query
+          description: show query log
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
