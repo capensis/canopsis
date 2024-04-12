@@ -770,6 +770,7 @@ export const createAlarmModule = () => {
   const bulkCreateAlarmChangestateEvent = jest.fn();
   const addBookmarkToAlarm = jest.fn();
   const removeBookmarkFromAlarm = jest.fn();
+  const fetchExecutionsWithoutStore = jest.fn().mockResolvedValue({});
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
@@ -785,6 +786,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmChangestateEvent.mockClear();
     addBookmarkToAlarm.mockClear();
     removeBookmarkFromAlarm.mockClear();
+    fetchExecutionsWithoutStore.mockClear();
   });
 
   const alarmModule = {
@@ -803,6 +805,7 @@ export const createAlarmModule = () => {
       bulkCreateAlarmChangestateEvent,
       addBookmarkToAlarm,
       removeBookmarkFromAlarm,
+      fetchExecutionsWithoutStore,
     },
   };
 
@@ -820,6 +823,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmChangestateEvent,
     addBookmarkToAlarm,
     removeBookmarkFromAlarm,
+    fetchExecutionsWithoutStore,
     alarmModule,
   };
 };

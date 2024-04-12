@@ -188,9 +188,14 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+		updateDoc, err := r.getUpdateBson(s.passwordEncoder)
+		if err != nil {
+			return err
+		}
+
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
 			return err
