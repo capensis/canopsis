@@ -414,3 +414,10 @@ export const EXCLUDED_SERVER_ERROR_STATUSES = [
   RESPONSE_STATUSES.unauthorized,
   RESPONSE_STATUSES.forbidden,
 ];
+
+export const WEBHOOK_EXECUTION_STATUSES = {
+  waiting: 0,
+  running: 1,
+  succeeded: 2,
+  failed: 3,
+};

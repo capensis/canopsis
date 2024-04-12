@@ -34,10 +34,7 @@
 </template>
 
 <script>
-import {
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
 import DeclareTicketRuleExecutionStatus from '../../alarm/partials/alarm-test-query-execution-status.vue';
 
@@ -89,11 +86,11 @@ export default {
   },
   methods: {
     isExecutionRunning(execution) {
-      return isDeclareTicketExecutionRunning(execution);
+      return isWebhookExecutionRunning(execution);
     },
 
     isExecutionSucceeded(execution) {
-      return isDeclareTicketExecutionSucceeded(execution);
+      return isWebhookExecutionSucceeded(execution);
     },
   },
 };
