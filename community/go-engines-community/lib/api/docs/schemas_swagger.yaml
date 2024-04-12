@@ -3504,7 +3504,14 @@ definitions:
         - alarm
         - entity
         - pbehavior
+        - weather_service
         type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     required:
     - is_corporate
     - title
@@ -3554,6 +3561,12 @@ definitions:
         type: string
       updated:
         type: integer
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
   pbehavior.BulkConnectorCreateRequestItem:
     properties:
@@ -5916,6 +5929,8 @@ definitions:
         type: string
       corporate_pbehavior_pattern:
         type: string
+      corporate_weather_service_pattern:
+        type: string
       entity_pattern:
         items:
           items:
@@ -5980,6 +5995,8 @@ definitions:
         type: string
       corporate_pbehavior_pattern:
         type: string
+      corporate_weather_service_pattern:
+        type: string
       entity_pattern:
         items:
           items:
@@ -6030,6 +6047,10 @@ definitions:
       corporate_pbehavior_pattern:
         type: string
       corporate_pbehavior_pattern_title:
+        type: string
+      corporate_weather_service_pattern:
+        type: string
+      corporate_weather_service_pattern_title:
         type: string
       created:
         type: integer

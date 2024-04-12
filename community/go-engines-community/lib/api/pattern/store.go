@@ -300,6 +300,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		filter = bson.M{"corporate_entity_pattern": pattern.ID}
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
+	case savedpattern.TypeWeatherService:
+		filter = bson.M{"corporate_weather_service_pattern": pattern.ID}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 	}
@@ -326,6 +328,11 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 			set = bson.M{
 				"pbehavior_pattern":                 pattern.PbehaviorPattern,
 				"corporate_pbehavior_pattern_title": pattern.Title,
+			}
+		case savedpattern.TypeWeatherService:
+			set = bson.M{
+				"weather_service_pattern":                 pattern.WeatherServicePattern,
+				"corporate_weather_service_pattern_title": pattern.Title,
 			}
 		default:
 			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
@@ -406,6 +413,8 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		f = "corporate_entity_pattern"
 	case savedpattern.TypePbehavior:
 		f = "corporate_pbehavior_pattern"
+	case savedpattern.TypeWeatherService:
+		f = "corporate_weather_service_pattern"
 	default:
 		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
 	}
@@ -829,6 +838,8 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 		model.EntityPattern = request.EntityPattern
 	case savedpattern.TypePbehavior:
 		model.PbehaviorPattern = request.PbehaviorPattern
+	case savedpattern.TypeWeatherService:
+		model.WeatherServicePattern = request.WeatherServicePattern
 	}
 
 	return model

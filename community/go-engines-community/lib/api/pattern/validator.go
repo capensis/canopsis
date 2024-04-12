@@ -20,5 +20,9 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		if len(r.PbehaviorPattern) == 0 {
 			sl.ReportError(r.PbehaviorPattern, "PbehaviorPattern", "PbehaviorPattern", "required", "")
 		}
+	case savedpattern.TypeWeatherService:
+		if len(r.WeatherServicePattern) == 0 {
+			sl.ReportError(r.WeatherServicePattern, "WeatherServicePattern", "WeatherServicePattern", "required", "")
+		}
 	}
 }
