@@ -22,7 +22,9 @@
       slider-color="primary"
       centered
     >
-      <v-tab>{{ $tc('common.action', 2) }}</v-tab>
+      <v-tab :class="{ 'error--text': hasParametersChildrenError }">
+        {{ $tc('common.action', 2) }}
+      </v-tab>
       <v-tab>{{ $t('common.testQuery') }}</v-tab>
 
       <v-tab-item eager>
@@ -45,13 +47,15 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { isWebhookActionType } from '@/helpers/entities/action';
 
 import { formMixin } from '@/mixins/form';
 
 import ScenarioTestQuery from '@/components/other/scenario/partials/scenario-test-query.vue';
+
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
 import ScenarioActionsForm from './scenario-actions-form.vue';
 
@@ -72,8 +76,13 @@ export default {
   setup(props) {
     const isWebhookActionExist = computed(() => props.form.actions.some(({ type }) => isWebhookActionType(type)));
 
+    const parametersFormElement = ref();
+    const { hasChildrenError: hasParametersChildrenError } = useValidationElementChildren(parametersFormElement);
+
     return {
       isWebhookActionExist,
+      parametersFormElement,
+      hasParametersChildrenError,
     };
   },
 };

@@ -43,7 +43,7 @@ export default {
         return {
           name: 'check_circle',
           color: this.color,
-          text: this.$t('declareTicket.webhookComplete'),
+          text: this.$t('common.webhookComplete'),
         };
       }
 
