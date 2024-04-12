@@ -366,6 +366,7 @@ func getAlarmLookup() []bson.M {
 			"status":           "$alarm.v.status",
 			"snooze":           "$alarm.v.snooze",
 			"ack":              "$alarm.v.ack",
+			"tags":             "$alarm.tags",
 			"impact_state":     bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
 			// For dependencies query
 			"alarm_id":      "$alarm._id",
