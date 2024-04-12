@@ -25,7 +25,7 @@ func (v *Validator) ValidatePatterns(sl validator.StructLevel, r BaseEditRequest
 	if len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" &&
 		len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
 		len(r.PbehaviorPattern) == 0 && r.CorporatePbehaviorPattern == "" &&
-		len(r.WeatherServicePattern) == 0 {
+		len(r.WeatherServicePattern) == 0 && r.CorporateWeatherServicePattern == "" {
 
 		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "required", "")
 		sl.ReportError(r.CorporateAlarmPattern, "CorporateAlarmPattern", "CorporateAlarmPattern", "required", "")
@@ -33,11 +33,7 @@ func (v *Validator) ValidatePatterns(sl validator.StructLevel, r BaseEditRequest
 		sl.ReportError(r.CorporateEntityPattern, "CorporateEntityPattern", "CorporateEntityPattern", "required", "")
 		sl.ReportError(r.PbehaviorPattern, "PbehaviorPattern", "PbehaviorPattern", "required", "")
 		sl.ReportError(r.CorporatePbehaviorPattern, "CorporatePbehaviorPattern", "CorporatePbehaviorPattern", "required", "")
-
 		sl.ReportError(r.WeatherServicePattern, "WeatherServicePattern", "WeatherServicePattern", "required", "")
-	}
-
-	if !r.WeatherServicePattern.Validate() {
-		sl.ReportError(r.WeatherServicePattern, "WeatherServicePattern", "WeatherServicePattern", "weather_service_pattern", "")
+		sl.ReportError(r.CorporateWeatherServicePattern, "CorporateWeatherServicePattern", "CorporateWeatherServicePattern", "required", "")
 	}
 }

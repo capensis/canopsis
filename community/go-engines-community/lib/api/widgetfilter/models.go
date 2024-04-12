@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
 
 type ListRequest struct {
@@ -30,8 +29,7 @@ type BaseEditRequest struct {
 	common.AlarmPatternFieldsRequest
 	common.EntityPatternFieldsRequest
 	common.PbehaviorPatternFieldsRequest
-
-	WeatherServicePattern view.WeatherServicePattern `json:"weather_service_pattern"`
+	common.WeatherServicePatternFieldsRequest
 }
 
 type CreateRequest struct {
@@ -53,11 +51,10 @@ type Response struct {
 	Created          *datetime.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated          *datetime.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
-	savedpattern.AlarmPatternFields     `bson:",inline"`
-	savedpattern.EntityPatternFields    `bson:",inline"`
-	savedpattern.PbehaviorPatternFields `bson:",inline"`
-
-	WeatherServicePattern view.WeatherServicePattern `bson:"weather_service_pattern" json:"weather_service_pattern,omitempty"`
+	savedpattern.AlarmPatternFields          `bson:",inline"`
+	savedpattern.EntityPatternFields         `bson:",inline"`
+	savedpattern.PbehaviorPatternFields      `bson:",inline"`
+	savedpattern.WeatherServicePatternFields `bson:",inline"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }

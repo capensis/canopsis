@@ -1,4 +1,4 @@
-package view
+package db
 
 import (
 	"fmt"
@@ -7,40 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type WeatherServicePattern [][]pattern.FieldCondition
-
-func (p WeatherServicePattern) Validate() bool {
-	for _, group := range p {
-		if len(group) == 0 {
-			return false
-		}
-
-		for _, v := range group {
-			f := v.Field
-			cond := v.Condition
-			var err error
-
-			switch f {
-			case "is_grey":
-				_, err = cond.MatchBool(true)
-			case "icon", "secondary_icon":
-				_, err = cond.MatchString("")
-			case "state.val":
-				_, err = cond.MatchInt(0)
-			default:
-				err = pattern.ErrUnsupportedField
-			}
-
-			if err != nil {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
-func (p WeatherServicePattern) ToMongoQuery(prefix string) (bson.M, error) {
+func WeatherServicePatternToMongoQuery(p pattern.WeatherServicePattern, prefix string) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -76,16 +43,4 @@ func (p WeatherServicePattern) ToMongoQuery(prefix string) (bson.M, error) {
 	}
 
 	return bson.M{"$or": groupQueries}, nil
-}
-
-func (p WeatherServicePattern) HasField(field string) bool {
-	for _, group := range p {
-		for _, condition := range group {
-			if condition.Field == field {
-				return true
-			}
-		}
-	}
-
-	return false
 }
