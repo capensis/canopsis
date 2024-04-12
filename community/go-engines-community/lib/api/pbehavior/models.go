@@ -103,6 +103,7 @@ type Response struct {
 	Exdates       []pbehaviorexception.Exdate    `bson:"exdates" json:"exdates"`
 	Exceptions    []pbehaviorexception.Exception `bson:"exceptions" json:"exceptions"`
 	LastAlarmDate *datetime.CpsTime              `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
+	AlarmCount    int64                          `bson:"alarm_count" json:"alarm_count"`
 	// IsActiveStatus represents if pbehavior is in action for current time.
 	IsActiveStatus *bool `bson:"-" json:"is_active_status,omitempty"`
 

@@ -3,11 +3,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math"
 	"math/rand"
 	"os"
+	"os/signal"
 	"strconv"
 	"time"
 
@@ -51,8 +53,9 @@ func (f *Feeder) getEvent(state, Ci, ci, ri int64) types.Event {
 	}
 }
 
-func (f *Feeder) sendBytes(content []byte, rk string) error {
-	return f.references.channelPub.Publish(
+func (f *Feeder) sendBytes(ctx context.Context, content []byte) error {
+	return f.references.channelPub.PublishWithContext(
+		ctx,
 		f.flags.ExchangeName,
 		"Engine_che",
 		false,
@@ -64,12 +67,12 @@ func (f *Feeder) sendBytes(content []byte, rk string) error {
 	)
 }
 
-func (f *Feeder) send(state, Ci, ci, ri int64) error {
+func (f *Feeder) send(ctx context.Context, state, Ci, ci, ri int64) error {
 	evt := f.getEvent(state, Ci, ci, ri)
 
 	bevt, _ := json.Marshal(evt)
 
-	return f.sendBytes(bevt, evt.GetCompatRK())
+	return f.sendBytes(ctx, bevt)
 }
 
 func (f *Feeder) adjust(target float64, sent, tsent int64) int64 {
@@ -110,7 +113,7 @@ func (f *Feeder) setupAmqp() error {
 	return nil
 }
 
-func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) error {
+func (f *Feeder) sendMessages(ctx context.Context, eventsPerSecond float64, callback resourceData) error {
 	if err := f.setupAmqp(); err != nil {
 		return err
 	}
@@ -124,8 +127,6 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 
 	checkEvery := int64(100)
 	changeStateEvery := int64(100 / f.flags.Alarms)
-
-	rand.Seed(time.Now().UnixNano())
 
 	stateMap := make(map[string]int)
 
@@ -145,7 +146,7 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 
 		stateMap[eid] = state
 
-		err := f.send(int64(state), connectorId, componentId, resourceId)
+		err := f.send(ctx, int64(state), connectorId, componentId, resourceId)
 		if err != nil {
 			return err
 		}
@@ -167,9 +168,9 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 	}
 }
 
-func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
+func (f *Feeder) feed(ctx context.Context, eventsPerSecond float64, newResourcesPerSec float64) {
 	go func() {
-		err := f.sendMessages(eventsPerSecond-newResourcesPerSec, func() (int64, int64, int64) {
+		err := f.sendMessages(ctx, eventsPerSecond-newResourcesPerSec, func() (int64, int64, int64) {
 			connectorId := 1 + rand.Intn(numberOfConnectors)
 			componentId := rand.Intn(numberOfComponents)
 
@@ -188,15 +189,13 @@ func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
 		for {
 			<-ticker.C
 
-			rand.Seed(time.Now().UnixNano())
-
 			connectorId := 1 + rand.Intn(numberOfConnectors)
 			componentId := rand.Intn(numberOfComponents)
 
 			f.newResourcesMap[connectorId]++
 			resourceId := f.newResourcesMap[connectorId]
 
-			err := f.send(1, int64(connectorId), int64(componentId), int64(resourceId))
+			err := f.send(ctx, 1, int64(connectorId), int64(componentId), int64(resourceId))
 			if err != nil {
 				f.logger.Fatal().Err(err).Msg("failed to send event")
 				return
@@ -205,12 +204,12 @@ func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
 	}()
 }
 
-func (f *Feeder) Run() error {
+func (f *Feeder) Run(ctx context.Context) error {
 	if err := f.setupAmqp(); err != nil {
 		return err
 	}
 
-	f.feed(float64(f.flags.EventsPerSec), float64(f.flags.NewResourcesPerSec))
+	f.feed(ctx, float64(f.flags.EventsPerSec), float64(f.flags.NewResourcesPerSec))
 
 	time.Sleep(time.Second * time.Duration(f.flags.FeederTime))
 
@@ -249,7 +248,9 @@ func main() {
 		logger.Fatal().Err(err).Msg("feeder init error")
 	}
 
-	err = feeder.Run()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+	err = feeder.Run(ctx)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("feeder run error")
 	}

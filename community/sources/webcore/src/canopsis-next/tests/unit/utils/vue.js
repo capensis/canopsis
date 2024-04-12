@@ -185,6 +185,11 @@ Wrapper.prototype.triggerCustomEvent = function triggerCustomEvent(name, ...data
 
   return this?.vm?.$nextTick?.();
 };
+Wrapper.prototype.triggerCustomEventForFirstChild = function triggerCustomEventForFirstChild(name, ...data) {
+  this.vm?.$children?.[0]?.$emit?.(name, ...data);
+
+  return this?.vm?.$nextTick?.();
+};
 
 /**
  * Generate render function

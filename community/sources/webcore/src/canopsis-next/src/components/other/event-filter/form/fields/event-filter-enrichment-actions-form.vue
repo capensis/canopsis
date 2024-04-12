@@ -5,8 +5,8 @@
       handle=".action-drag-handler"
     >
       <event-filter-enrichment-action-form
-        v-field="actions[index]"
         v-for="(action, index) in actions"
+        v-field="actions[index]"
         :key="action.key"
         :name="`${name}.${action.key}`"
         :variables="variables"

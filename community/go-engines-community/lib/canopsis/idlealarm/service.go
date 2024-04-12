@@ -8,8 +8,8 @@ package idlealarm
 import (
 	"context"
 	"fmt"
+	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -33,31 +33,33 @@ func NewService(
 	alarmAdapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
 	pbhRpcClient engine.RPCClient,
+	eventGenerator libevent.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Service {
 	return &baseService{
-		ruleAdapter:   ruleAdapter,
-		alarmAdapter:  alarmAdapter,
-		entityAdapter: entityAdapter,
-		pbhRpcClient:  pbhRpcClient,
-		encoder:       encoder,
-		logger:        logger,
+		ruleAdapter:    ruleAdapter,
+		alarmAdapter:   alarmAdapter,
+		entityAdapter:  entityAdapter,
+		pbhRpcClient:   pbhRpcClient,
+		eventGenerator: eventGenerator,
+		encoder:        encoder,
+		logger:         logger,
 	}
 }
 
 type baseService struct {
-	ruleAdapter   idlerule.RuleAdapter
-	alarmAdapter  libalarm.Adapter
-	entityAdapter libentity.Adapter
-	pbhRpcClient  engine.RPCClient
-	encoder       encoding.Encoder
-	logger        zerolog.Logger
+	ruleAdapter    idlerule.RuleAdapter
+	alarmAdapter   libalarm.Adapter
+	entityAdapter  libentity.Adapter
+	pbhRpcClient   engine.RPCClient
+	eventGenerator libevent.Generator
+	encoder        encoding.Encoder
+	logger         zerolog.Logger
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	now := datetime.NewCpsTime()
-	eventGenerator := libevent.NewGenerator("engine", "axe")
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
@@ -105,7 +107,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, fmt.Errorf("cannot decode alarm %w", err)
 			}
 
-			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, eventGenerator, now)
+			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, now)
 			if err != nil {
 				return events, err
 			}
@@ -134,7 +136,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				return events, fmt.Errorf("cannot decode entity : %w", err)
 			}
 
-			event, err := s.applyRules(ctx, rules, entity, nil, eventGenerator, now)
+			event, err := s.applyRules(ctx, rules, entity, nil, now)
 			if err != nil {
 				return events, err
 			}
@@ -163,7 +165,6 @@ func (s *baseService) applyRules(
 	rules []idlerule.Rule,
 	entity types.Entity,
 	alarm *types.Alarm,
-	eventGenerator libevent.Generator,
 	now datetime.CpsTime,
 ) (*types.Event, error) {
 	lastAlarm := alarm
@@ -212,7 +213,7 @@ func (s *baseService) applyRules(
 				}
 			}
 
-			return s.applyEntityRule(rule, entity, lastAlarm, eventGenerator)
+			return s.applyEntityRule(rule, entity)
 		}
 	}
 
@@ -227,19 +228,14 @@ func (s *baseService) applyAlarmRule(
 	now datetime.CpsTime,
 ) (*types.Event, error) {
 	idleRuleApply := fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition)
-	event := types.Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		Timestamp:     now,
-		Author:        canopsis.DefaultEventAuthor,
-		Initiator:     types.InitiatorSystem,
-		IdleRuleApply: idleRuleApply,
+	event, err := s.eventGenerator.Generate(entity)
+	if err != nil {
+		return nil, err
 	}
-	event.SourceType = event.DetectSourceType()
 
-	event.Output = rule.Operation.Parameters.Output
+	event.Timestamp = now
+	event.IdleRuleApply = idleRuleApply
+	event.Output = s.getEventOutput(rule)
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}
@@ -256,12 +252,13 @@ func (s *baseService) applyAlarmRule(
 		event.TicketInfo = types.TicketInfo{
 			Ticket:           rule.Operation.Parameters.Ticket,
 			TicketRuleID:     rule.ID,
-			TicketRuleName:   types.TicketRuleNameIdleRulePrefix + rule.Name,
+			TicketRuleName:   types.RuleNameIdleRulePrefix + rule.Name,
 			TicketURL:        rule.Operation.Parameters.TicketURL,
 			TicketSystemName: rule.Operation.Parameters.TicketSystemName,
 			TicketData:       rule.Operation.Parameters.TicketData,
 			TicketComment:    rule.Comment,
 		}
+		event.Output = event.TicketInfo.GetStepMessage()
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
@@ -277,6 +274,7 @@ func (s *baseService) applyAlarmRule(
 				Tstop:          rule.Operation.Parameters.Tstop,
 				StartOnTrigger: rule.Operation.Parameters.StartOnTrigger,
 				Duration:       rule.Operation.Parameters.Duration,
+				RuleName:       types.RuleNameIdleRulePrefix + rule.Name,
 			},
 		}
 		b, err := s.encoder.Encode(rpcEvent)
@@ -318,30 +316,16 @@ func (s *baseService) applyAlarmRule(
 func (s *baseService) applyEntityRule(
 	rule idlerule.Rule,
 	entity types.Entity,
-	alarm *types.Alarm,
-	eventGenerator libevent.Generator,
 ) (*types.Event, error) {
-	event := types.Event{}
-	if alarm == nil {
-		var err error
-		event, err = eventGenerator.Generate(entity)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		event.Connector = alarm.Value.Connector
-		event.ConnectorName = alarm.Value.ConnectorName
-		event.Component = alarm.Value.Component
-		event.Resource = alarm.Value.Resource
-		event.SourceType = event.DetectSourceType()
+	event, err := s.eventGenerator.Generate(entity)
+	if err != nil {
+		return nil, err
 	}
 
 	event.EventType = types.EventTypeNoEvents
 	event.Timestamp = datetime.NewCpsTime()
 	event.State = types.AlarmStateCritical
-	event.Author = canopsis.DefaultEventAuthor
-	event.Initiator = types.InitiatorSystem
-	event.Output = fmt.Sprintf("Idle rule %s", rule.Name)
+	event.Output = s.getEventOutput(rule)
 	event.IdleRuleApply = rule.Type
 
 	return &event, nil
@@ -360,15 +344,27 @@ func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, 
 			State:         types.AlarmStateOK,
 			Connector:     alarm.Value.Connector,
 			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			SourceType:    types.SourceTypeConnector,
 			Timestamp:     datetime.NewCpsTime(),
 			Initiator:     types.InitiatorSystem,
 			Output:        alarm.Value.State.Message,
 			Author:        alarm.Value.State.Author,
 		}
-		events[i].SourceType = events[i].DetectSourceType()
 	}
 
 	return events, nil
+}
+
+func (s *baseService) getEventOutput(rule idlerule.Rule) string {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(types.RuleNameIdleRulePrefix)
+	outputBuilder.WriteString(rule.Name)
+	if rule.Operation != nil && rule.Operation.Parameters.Output != "" {
+		outputBuilder.WriteString(". ")
+		outputBuilder.WriteString(types.OutputCommentPrefix)
+		outputBuilder.WriteString(rule.Operation.Parameters.Output)
+		outputBuilder.WriteRune('.')
+	}
+
+	return outputBuilder.String()
 }

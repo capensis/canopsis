@@ -1,9 +1,9 @@
 <template>
-  <alarms-time-line-steps :steps="webhooksTimelineSteps">
+  <declare-ticket-rule-execution-webhooks-timeline-steps :steps="webhooksTimelineSteps">
     <template #card="{ step }">
       <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
     </template>
-  </alarms-time-line-steps>
+  </declare-ticket-rule-execution-webhooks-timeline-steps>
 </template>
 
 <script>
@@ -15,12 +15,14 @@ import {
   isDeclareTicketExecutionWaiting,
 } from '@/helpers/entities/declare-ticket/rule/form';
 
-import AlarmsTimeLineSteps from '@/components/widgets/alarm/time-line/alarms-time-line-steps.vue';
-
 import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
+import DeclareTicketRuleExecutionWebhooksTimelineSteps from './declare-ticket-rule-execution-webhooks-timeline-steps.vue';
 
 export default {
-  components: { DeclareTicketRuleExecutionWebhooksTimelineCard, AlarmsTimeLineSteps },
+  components: {
+    DeclareTicketRuleExecutionWebhooksTimelineCard,
+    DeclareTicketRuleExecutionWebhooksTimelineSteps,
+  },
   props: {
     webhooks: {
       type: Array,
