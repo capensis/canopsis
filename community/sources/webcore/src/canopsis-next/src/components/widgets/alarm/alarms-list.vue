@@ -122,7 +122,7 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USERS_PERMISSIONS, LIVE_REPORTING_QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -225,16 +225,10 @@ export default {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findQuickRangeValue(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop, LIVE_REPORTING_QUICK_RANGES, LIVE_REPORTING_QUICK_RANGES.custom);
       }
 
       return null;
-    },
-
-    firstAlarmExpanded() {
-      const [alarm] = this.alarms;
-
-      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
     },
 
     hasAccessToExportAsCsv() {
