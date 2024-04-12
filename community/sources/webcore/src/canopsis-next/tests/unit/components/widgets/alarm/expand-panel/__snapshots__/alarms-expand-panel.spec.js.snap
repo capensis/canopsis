@@ -63,6 +63,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         <!---->
         <!---->
         <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#remediation"
+          role="tab"
+          tabindex="0"
+        >
+    Remediation
+        </a>
       </div>
     </div>
     <div
@@ -160,8 +169,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -203,6 +214,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
       <!---->
       <!---->
       <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="remediation"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-expand-panel-remediation-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
     </div>
   </div>
 </div>
@@ -294,6 +333,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
     Impact chain
         </a>
         <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#remediation"
+          role="tab"
+          tabindex="0"
+        >
+    Remediation
+        </a>
       </div>
     </div>
     <div
@@ -391,8 +439,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -523,6 +573,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         </div>
       </transition-stub>
       <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="remediation"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-expand-panel-remediation-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
     </div>
   </div>
 </div>
@@ -598,6 +676,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
     Gantt chart
         </a>
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#remediation"
+          role="tab"
+          tabindex="0"
+        >
+    Remediation
+        </a>
       </div>
     </div>
     <div
@@ -695,8 +782,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -757,6 +846,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                   class="v-card__text"
                 >
                   <entity-gantt-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="remediation"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-expand-panel-remediation-stub
                     alarm="[object Object]"
                   />
                 </div>
@@ -832,6 +949,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         <!---->
         <!---->
         <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#remediation"
+          role="tab"
+          tabindex="0"
+        >
+    Remediation
+        </a>
       </div>
     </div>
     <div
@@ -929,8 +1055,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                 <div
                   class="v-card__text"
                 >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
+                  <alarm-timeline-stub
+                    meta="[object Object]"
+                    query="[object Object]"
+                    steps=""
                   />
                 </div>
               </div>
@@ -972,6 +1100,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
       <!---->
       <!---->
       <!---->
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="remediation"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-expand-panel-remediation-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
     </div>
   </div>
 </div>
