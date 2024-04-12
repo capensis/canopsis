@@ -1,6 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATUSES, ENTITY_TYPES } from '@/constants';
+import { ALARM_STATUSES, ENTITY_TYPES } from '@/constants';
 
 import ServiceEntityHeader from '@/components/other/service/partials/service-entity-header.vue';
 
@@ -49,7 +49,7 @@ describe('service-entity-header', () => {
           ack: {},
           ticket: {},
           status: {
-            val: ENTITIES_STATUSES.cancelled,
+            val: ALARM_STATUSES.cancelled,
           },
         },
         selected: true,

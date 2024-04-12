@@ -48,8 +48,13 @@ func (f *Faker) DateUnix() interface{} {
 	return f.Number(1, int(time.Now().Unix()))
 }
 
-func (f *Faker) Password(password string) string {
-	return string(f.passwordEncoder.EncodePassword([]byte(password)))
+func (f *Faker) Password(password string) (string, error) {
+	h, err := f.passwordEncoder.EncodePassword([]byte(password))
+	if err != nil {
+		return "", err
+	}
+
+	return string(h), nil
 }
 
 func (f *Faker) UniqueName() (string, error) {

@@ -13,7 +13,7 @@ import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 
 import {
-  ENTITIES_STATES,
+  ALARM_STATES,
   MODALS,
   PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
@@ -63,7 +63,7 @@ describe('service-entities-list', () => {
       _id: 'service-entity-1-id',
       pbehaviors: [],
       state: {
-        val: ENTITIES_STATES.major,
+        val: ALARM_STATES.major,
       },
       alarm_id: 'alarm-id',
     },
@@ -271,7 +271,7 @@ describe('service-entities-list', () => {
     const entity = {
       _id: Faker.datatype.string(),
       state: {
-        val: ENTITIES_STATES.major,
+        val: ALARM_STATES.major,
       },
       pbehaviors: [],
       alarm_id: 'alarm-id',
@@ -304,7 +304,7 @@ describe('service-entities-list', () => {
         data: [{
           _id: entity.alarm_id,
           comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
-          state: ENTITIES_STATES.critical,
+          state: ALARM_STATES.critical,
         }],
       },
       undefined,
@@ -321,7 +321,7 @@ describe('service-entities-list', () => {
     const entity = {
       _id: Faker.datatype.string(),
       state: {
-        val: ENTITIES_STATES.major,
+        val: ALARM_STATES.major,
       },
       pbehaviors: [],
       alarm_id: 'alarm-id',

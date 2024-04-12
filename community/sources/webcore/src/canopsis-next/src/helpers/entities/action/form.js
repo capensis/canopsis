@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
+import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { durationToForm } from '@/helpers/date/duration';
@@ -185,7 +185,7 @@ const snoozeActionParametersToForm = (parameters = {}) => ({
  */
 const changeStateActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  state: parameters.state ?? ENTITIES_STATES.minor,
+  state: parameters.state ?? ALARM_STATES.minor,
 });
 
 /**

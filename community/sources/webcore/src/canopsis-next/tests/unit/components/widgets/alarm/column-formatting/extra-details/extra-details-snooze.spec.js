@@ -5,6 +5,10 @@ import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsSnooze from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-snooze.vue';
 
+const stubs = {
+  'c-alarm-extra-details-chip': true,
+};
+
 describe('extra-details-snooze', () => {
   const nowTimestamp = 1386435500000;
   const prevDateTimestamp = 1386392400000;
@@ -21,6 +25,7 @@ describe('extra-details-snooze', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsSnooze, {
+    stubs,
     attachTo: document.body,
   });
 

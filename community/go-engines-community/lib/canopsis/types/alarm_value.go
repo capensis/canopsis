@@ -1,7 +1,9 @@
 package types
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -10,15 +12,19 @@ import (
 
 // Alarm consts
 const (
-	AlarmStepCropMinStates      = 20
 	AlarmStepsHardLimit         = 2000
 	AlarmLongOutputHistoryLimit = 100
 )
 
 const (
-	TicketRuleNameScenarioPrefix          = "Scenario: "
-	TicketRuleNameIdleRulePrefix          = "Idle rule: "
-	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+	RuleNameScenarioPrefix          = "Scenario: "
+	RuleNameIdleRulePrefix          = "Idle rule: "
+	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+	RuleNameRulePrefix              = "Rule: "
+
+	OutputCommentPrefix   = "Comment: "
+	OutputTitlePrefix     = "Title: "
+	OutputComponentPrefix = "Component: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -36,6 +42,8 @@ type AlarmStep struct {
 	Value                  CpsNumber        `bson:"val" json:"val"`
 	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 	PbehaviorCanonicalType string           `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
+	IconName               string           `bson:"icon_name,omitempty" json:"icon_name,omitempty"`
+	Color                  string           `bson:"color,omitempty" json:"color,omitempty"`
 	Initiator              string           `bson:"initiator,omitempty" json:"initiator,omitempty"`
 	// Execution contains id
 	// - of instruction execution for instruction steps
@@ -43,6 +51,9 @@ type AlarmStep struct {
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 
 	TicketInfo `bson:",inline"`
+
+	DisplayGroup        string `bson:"dgroup,omitempty" json:"dgroup,omitempty"`
+	InPbehaviorInterval bool   `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
 }
 
 func (s *AlarmStep) GetInitiator() string {
@@ -102,7 +113,12 @@ func (t TicketInfo) GetStepMessage() string {
 
 // NewAlarmStep returns an AlarmStep.
 // If the timestamp or author are empty, default values will be used to create an AlarmStep.
-func NewAlarmStep(stepType string, timestamp datetime.CpsTime, author, msg, userID, role, initiator string) AlarmStep {
+func NewAlarmStep(
+	stepType string,
+	timestamp datetime.CpsTime,
+	author, msg, userID, role, initiator string,
+	inPbehaviorInterval bool,
+) AlarmStep {
 	authorAlarmStep := author
 	if authorAlarmStep == "" {
 		authorAlarmStep = cps.DefaultEventAuthor
@@ -114,27 +130,29 @@ func NewAlarmStep(stepType string, timestamp datetime.CpsTime, author, msg, user
 	}
 
 	return AlarmStep{
-		Author:    authorAlarmStep,
-		UserID:    userID,
-		Message:   msg,
-		Timestamp: timestampAlarmStep,
-		Type:      stepType,
-		Role:      role,
-		Initiator: initiator,
+		Author:              authorAlarmStep,
+		UserID:              userID,
+		Message:             msg,
+		Timestamp:           timestampAlarmStep,
+		Type:                stepType,
+		Role:                role,
+		Initiator:           initiator,
+		InPbehaviorInterval: inPbehaviorInterval,
 	}
 }
 
-func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string) AlarmStep {
-	newStep := NewAlarmStep(AlarmStepMetaAlarmAttach,
-		datetime.NewCpsTime(),
-		StepEngineCorrelationAuthor,
-		fmt.Sprintf("Rule: {%s}\n Displayname: {%s}\n Entity: {%s}",
-			ruleName,
-			metaAlarm.Value.DisplayName,
-			metaAlarm.EntityID),
-		"", "", InitiatorSystem,
-	)
-	return newStep
+func NewPbhAlarmStep(
+	stepType string,
+	timestamp datetime.CpsTime,
+	author, msg, userID, role, initiator string,
+	pbhCanonicalType, iconName, color string,
+) AlarmStep {
+	step := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator, false)
+	step.PbehaviorCanonicalType = pbhCanonicalType
+	step.IconName = iconName
+	step.Color = color
+
+	return step
 }
 
 // CropCounter provides an explicit way of counting the steps that were cropped.
@@ -188,6 +206,43 @@ func (counter CropCounter) IsZero() bool {
 	return counter == CropCounter{}
 }
 
+func (counter *CropCounter) getMsg() string {
+	msgBuilder := strings.Builder{}
+	msgBuilder.WriteString("State increased: ")
+	msgBuilder.WriteString(strconv.Itoa(counter.Stateinc))
+	msgBuilder.WriteString("\n")
+	msgBuilder.WriteString("State decreased: ")
+	msgBuilder.WriteString(strconv.Itoa(counter.Statedec))
+	msgBuilder.WriteString("\n")
+	msgBuilder.WriteString("State changes: ")
+	msgBuilder.WriteString(strconv.Itoa(counter.StateChanges))
+	if counter.StateInfo > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to ok: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateInfo))
+	}
+
+	if counter.StateMinor > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to minor: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateMinor))
+	}
+
+	if counter.StateMajor > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to major: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateMajor))
+	}
+
+	if counter.StateCritical > 0 {
+		msgBuilder.WriteString("\n")
+		msgBuilder.WriteString("State changes to critical: ")
+		msgBuilder.WriteString(strconv.Itoa(counter.StateCritical))
+	}
+
+	return msgBuilder.String()
+}
+
 // AlarmSteps is a sortable implementation of []*AlarmStep. Used for sorting
 // steps in some functions. Implements sort.Interface
 type AlarmSteps []AlarmStep
@@ -196,9 +251,9 @@ type AlarmSteps []AlarmStep
 func (s *AlarmSteps) Add(step AlarmStep) error {
 	if len(*s) < AlarmStepsHardLimit ||
 		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
-		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
-		step.Type == AlarmStepCancel ||
-		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStatusOff ||
+		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled ||
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStatusCancelled {
 		*s = append(*s, step)
 		return nil
 	}
@@ -270,13 +325,14 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// If last step is last change of status
 		// create and append new statecounter
 		newStep := AlarmStep{
-			Author:       currentStatus.Author,
-			Initiator:    currentStatus.Initiator,
-			Message:      currentStatus.Message,
-			Value:        currentStatus.Value,
-			Timestamp:    datetime.NewCpsTime(),
-			Type:         AlarmStepStateCounter,
-			StateCounter: CropCounter{},
+			Author:              currentStatus.Author,
+			UserID:              currentStatus.UserID,
+			Initiator:           currentStatus.Initiator,
+			Value:               currentStatus.Value,
+			InPbehaviorInterval: currentStatus.InPbehaviorInterval,
+			Timestamp:           datetime.NewCpsTime(),
+			Type:                AlarmStepStateCounter,
+			StateCounter:        CropCounter{},
 		}
 
 		s = append(s, newStep)
@@ -284,13 +340,14 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// Else if the step just after the status isn't statecounter
 		// create and insert new statecounter right after status
 		newStep := AlarmStep{
-			Author:       currentStatus.Author,
-			Initiator:    currentStatus.Initiator,
-			Message:      currentStatus.Message,
-			Value:        currentStatus.Value,
-			Timestamp:    datetime.NewCpsTime(),
-			Type:         AlarmStepStateCounter,
-			StateCounter: CropCounter{},
+			Author:              currentStatus.Author,
+			UserID:              currentStatus.UserID,
+			Initiator:           currentStatus.Initiator,
+			Value:               currentStatus.Value,
+			InPbehaviorInterval: currentStatus.InPbehaviorInterval,
+			Timestamp:           datetime.NewCpsTime(),
+			Type:                AlarmStepStateCounter,
+			StateCounter:        CropCounter{},
 		}
 
 		// insert
@@ -303,6 +360,7 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 
 	// update the existing statecounter
 	s[counterIdx].StateCounter.MergeCounter(counter)
+	s[counterIdx].Message = s[counterIdx].StateCounter.getMsg()
 
 	return s
 }
@@ -312,7 +370,7 @@ func (s AlarmSteps) Last() (AlarmStep, error) {
 	if len(s) > 0 {
 		return s[len(s)-1], nil
 	}
-	return AlarmStep{}, fmt.Errorf("no step")
+	return AlarmStep{}, errors.New("no step")
 }
 
 func (s AlarmSteps) Len() int      { return len(s) }
@@ -345,6 +403,11 @@ type PbehaviorInfo struct {
 	TypeName string `bson:"type_name" json:"type_name"`
 	// CanonicalType is Type of pbehavior.Type.
 	CanonicalType string `bson:"canonical_type" json:"canonical_type"`
+
+	IconName string `bson:"icon_name" json:"icon_name"`
+	Color    string `bson:"color" json:"color"`
+	Author   string `bson:"author" json:"author"`
+	RuleName string `bson:"rule_name,omitempty" json:"rule_name,omitempty"`
 }
 
 func (i *PbehaviorInfo) IsDefaultActive() bool {
@@ -404,6 +467,24 @@ func (i *PbehaviorInfo) GetStringField(f string) (string, bool) {
 	default:
 		return "", false
 	}
+}
+
+func (i *PbehaviorInfo) GetStepMessage() string {
+	builder := strings.Builder{}
+	if i.RuleName != "" {
+		builder.WriteString(i.RuleName)
+		builder.WriteString(". ")
+	}
+
+	builder.WriteString(OutputTitlePrefix)
+	builder.WriteString(i.Name)
+	builder.WriteString(". Type: ")
+	builder.WriteString(i.TypeName)
+	builder.WriteString(". Reason: ")
+	builder.WriteString(i.ReasonName)
+	builder.WriteRune('.')
+
+	return builder.String()
 }
 
 // AlarmValue represents a full description of an alarm.
@@ -478,12 +559,4 @@ func (v *AlarmValue) Transform() {
 	if v.Resolved != nil && v.Resolved.Unix() == 0 {
 		v.Resolved = nil
 	}
-}
-
-func NewTicketStep(stepType string, timestamp datetime.CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
-	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
-
-	s.TicketInfo = ticketInfo
-
-	return s
 }

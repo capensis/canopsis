@@ -31,5 +31,6 @@ export * from './external-data';
 export * from './tag';
 export * from './counter';
 export * from './calendar';
+export * from './event';
 export * from './icon';
 export * from './availability';

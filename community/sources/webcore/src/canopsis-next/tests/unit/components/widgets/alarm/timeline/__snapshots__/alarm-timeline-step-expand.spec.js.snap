@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline-step-expand Renders \`alarm-timeline-step-expand\` with steps and expanded correctly 1`] = `
+<transition-stub
+  name="expand-transition"
+>
+  <div
+    class="layout gap-2 column"
+  >
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+    <alarm-timeline-step-stub
+      deep="true"
+      step="[object Object]"
+    />
+  </div>
+</transition-stub>
+`;
+
+exports[`alarm-timeline-step-expand Renders \`alarm-timeline-step-expand\` with steps and without expanded correctly 1`] = `
+<transition-stub
+  name="expand-transition"
+>
+  <!---->
+</transition-stub>
+`;

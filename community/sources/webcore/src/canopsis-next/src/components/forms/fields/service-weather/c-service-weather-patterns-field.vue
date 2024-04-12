@@ -13,7 +13,7 @@
 <script>
 import { keyBy, merge } from 'lodash';
 
-import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ENTITIES_STATES } from '@/constants';
+import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ALARM_STATES } from '@/constants';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -66,9 +66,9 @@ export default {
     stateOptions() {
       return {
         operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
-        defaultValue: ENTITIES_STATES.ok,
+        defaultValue: ALARM_STATES.ok,
         valueField: {
-          is: 'c-entity-state-field',
+          is: 'c-alarm-state-field',
         },
       };
     },

@@ -3,6 +3,7 @@ package mongostore
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -84,6 +85,11 @@ func (s *MongoStore) New(r *http.Request, name string) (*sessions.Session, error
 		if err == nil {
 			err = s.load(r.Context(), session)
 			session.IsNew = false
+		}
+		var securecookieError securecookie.Error
+		if errors.As(err, &securecookieError) {
+			// if securecookie decode failed (for example due changed key), then it's a new session
+			err = nil
 		}
 	}
 	return session, err

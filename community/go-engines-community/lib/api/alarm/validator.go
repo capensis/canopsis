@@ -4,8 +4,11 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
 )
+
+var alarmStepTypes = types.GetAlarmStepTypes()
 
 func ValidateListRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(ListRequest)
@@ -38,5 +41,16 @@ func ValidateDetailsRequest(sl validator.StructLevel) {
 	if r.Steps == nil && r.Children == nil {
 		sl.ReportError(r.Steps, "Steps", "Steps", "required", "")
 		sl.ReportError(r.Children, "Children", "Children", "required", "")
+	}
+
+	if r.Steps != nil && r.Steps.Type != "" {
+		for _, stepType := range alarmStepTypes {
+			if r.Steps.Type == stepType {
+				return
+			}
+		}
+
+		param := strings.Join(alarmStepTypes, " ")
+		sl.ReportError(r.Steps.Type, "Steps.Type", "Type", "oneof", param)
 	}
 }

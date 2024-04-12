@@ -478,7 +478,7 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 
 		defer session.EndSession(ctx)
 
-		_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+		_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) { // nolint:contextcheck
 			return nil, f(context.WithValue(sessCtx, disableRetries, true))
 		})
 
