@@ -1,7 +1,7 @@
 <template>
   <alarms-time-line-steps :steps="webhooksTimelineSteps">
     <template #card="{ step }">
-      <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
+      <slot :step="step" name="card" />
     </template>
   </alarms-time-line-steps>
 </template>
@@ -17,10 +17,8 @@ import {
 
 import AlarmsTimeLineSteps from '@/components/widgets/alarm/time-line/alarms-time-line-steps.vue';
 
-import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
-
 export default {
-  components: { DeclareTicketRuleExecutionWebhooksTimelineCard, AlarmsTimeLineSteps },
+  components: { AlarmsTimeLineSteps },
   props: {
     webhooks: {
       type: Array,

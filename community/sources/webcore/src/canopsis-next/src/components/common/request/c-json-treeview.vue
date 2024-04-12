@@ -63,6 +63,11 @@ export default {
     min-height: unset !important;
   }
 
+  & .v-treeview-node__prepend {
+    min-width: unset;
+    margin: unset;
+  }
+
   & .v-treeview-node__label {
     margin: 0;
     font-size: 14px;

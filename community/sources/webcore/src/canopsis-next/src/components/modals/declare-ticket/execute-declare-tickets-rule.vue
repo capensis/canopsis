@@ -80,7 +80,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
-import DeclareTicketRuleExecutionStatus from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-status.vue';
+import DeclareTicketRuleExecutionStatus from '@/components/other/alarm/partials/alarm-test-query-execution-status.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

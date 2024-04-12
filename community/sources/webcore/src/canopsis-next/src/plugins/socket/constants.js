@@ -29,6 +29,7 @@ export const EVENTS_TYPES = {
   customClose: 'custom-close',
   closeRoom: 'close-room',
   networkError: 'network-error',
+  error: 'error',
 };
 
 export const ERROR_MESSAGES = {

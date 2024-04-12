@@ -98,6 +98,7 @@ export const SOCKET_ROOMS = {
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
   icons: 'icons',
+  testscenario: 'testscenario',
 };
 
 export const API_ROUTES = {
@@ -207,6 +208,8 @@ export const API_ROUTES = {
   },
   scenario: {
     scenarios: '/api/v4/scenarios',
+    testExecution: '/api/v4/cat/test-scenario-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-scenario-webhooks',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',

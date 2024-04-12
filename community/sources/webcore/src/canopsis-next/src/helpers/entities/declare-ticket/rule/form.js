@@ -74,34 +74,38 @@ import { uid } from '@/helpers/uid';
 /**
  * Check declare ticket execution status is waiting
  *
- * @param {number} status
+ * @param {Object} execution
  * @returns {boolean}
  */
-export const isDeclareTicketExecutionWaiting = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.waiting;
+export const isDeclareTicketExecutionWaiting = execution => execution
+  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.waiting;
 
 /**
  * Check declare ticket execution status is running
  *
- * @param {number} status
+ * @param {Object} execution
  * @returns {boolean}
  */
-export const isDeclareTicketExecutionRunning = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.running;
+export const isDeclareTicketExecutionRunning = execution => execution
+  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.running;
 
 /**
  * Check declare ticket execution status is succeeded
  *
- * @param {number} status
+ * @param {Object} execution
  * @returns {boolean}
  */
-export const isDeclareTicketExecutionSucceeded = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.succeeded;
+export const isDeclareTicketExecutionSucceeded = execution => execution
+  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.succeeded;
 
 /**
  * Check declare ticket execution status is failed
  *
- * @param {number} status
+ * @param {Object} execution
  * @returns {boolean}
  */
-export const isDeclareTicketExecutionFailed = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.failed;
+export const isDeclareTicketExecutionFailed = execution => execution
+  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.failed;
 
 /**
  * Convert declare ticket object to form compatible object
