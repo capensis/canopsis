@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	ErrNotExistCorporateAlarmPattern     = ValidationError{field: "corporate_alarm_pattern", errMsg: "CorporateAlarmPattern doesn't exist."}
-	ErrNotExistCorporateEntityPattern    = ValidationError{field: "corporate_entity_pattern", errMsg: "CorporateEntityPattern doesn't exist."}
-	ErrNotExistCorporatePbehaviorPattern = ValidationError{field: "corporate_pbehavior_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
+	ErrNotExistCorporateAlarmPattern          = ValidationError{field: "corporate_alarm_pattern", errMsg: "CorporateAlarmPattern doesn't exist."}
+	ErrNotExistCorporateEntityPattern         = ValidationError{field: "corporate_entity_pattern", errMsg: "CorporateEntityPattern doesn't exist."}
+	ErrNotExistCorporatePbehaviorPattern      = ValidationError{field: "corporate_pbehavior_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
+	ErrNotExistCorporateWeatherServicePattern = ValidationError{field: "corporate_weather_service_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
 )
 
 type AlarmPatternFieldsRequest struct {
@@ -110,10 +111,32 @@ func (r PbehaviorPatternFieldsRequest) ToModel() savedpattern.PbehaviorPatternFi
 	}
 }
 
+type WeatherServicePatternFieldsRequest struct {
+	WeatherServicePattern          pattern.WeatherServicePattern `json:"weather_service_pattern" binding:"weather_service_pattern"`
+	CorporateWeatherServicePattern string                        `json:"corporate_weather_service_pattern"`
+
+	CorporatePattern savedpattern.SavedPattern `json:"-"`
+}
+
+func (r WeatherServicePatternFieldsRequest) ToModel() savedpattern.WeatherServicePatternFields {
+	if r.CorporatePattern.ID == "" {
+		return savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: r.WeatherServicePattern,
+		}
+	}
+
+	return savedpattern.WeatherServicePatternFields{
+		WeatherServicePattern:               r.CorporatePattern.WeatherServicePattern,
+		CorporateWeatherServicePattern:      r.CorporatePattern.ID,
+		CorporateWeatherServicePatternTitle: r.CorporatePattern.Title,
+	}
+}
+
 type PatternFieldsTransformer interface {
 	TransformAlarmPatternFieldsRequest(ctx context.Context, r AlarmPatternFieldsRequest) (AlarmPatternFieldsRequest, error)
 	TransformEntityPatternFieldsRequest(ctx context.Context, r EntityPatternFieldsRequest) (EntityPatternFieldsRequest, error)
 	TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error)
+	TransformWeatherServicePatternFieldsRequest(ctx context.Context, r WeatherServicePatternFieldsRequest) (WeatherServicePatternFieldsRequest, error)
 }
 
 func NewPatternFieldsTransformer(client mongo.DbClient) PatternFieldsTransformer {
@@ -183,6 +206,25 @@ func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ct
 	return r, nil
 }
 
+func (t *basePatternFieldsTransformer) TransformWeatherServicePatternFieldsRequest(ctx context.Context, r WeatherServicePatternFieldsRequest) (WeatherServicePatternFieldsRequest, error) {
+	if r.CorporateWeatherServicePattern != "" {
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporateWeatherServicePattern,
+			"type":         savedpattern.TypeWeatherService,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return r, ErrNotExistCorporateWeatherServicePattern
+			}
+
+			return r, err
+		}
+	}
+
+	return r, nil
+}
+
 func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 	i := fl.Field().Interface()
 	if i == nil {
@@ -233,6 +275,19 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	}
 
 	return match.ValidatePbehaviorInfoPattern(p)
+}
+
+func ValidateWeatherServicePattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.WeatherServicePattern)
+	if !ok {
+		return false
+	}
+
+	return match.ValidateWeatherServicePattern(p)
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {
