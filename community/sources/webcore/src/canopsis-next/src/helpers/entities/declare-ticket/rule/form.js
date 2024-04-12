@@ -1,7 +1,5 @@
 import flatten from 'flat';
 
-import { DECLARE_TICKET_EXECUTION_STATUSES } from '@/constants';
-
 import {
   formToRequest,
   requestTemplateVariablesErrorsToForm,
@@ -70,42 +68,6 @@ import { uid } from '@/helpers/uid';
  * @property {DeclareTicketRuleWebhooksForm} webhooks
  * @property {FilterPatternsForm} patterns
  */
-
-/**
- * Check declare ticket execution status is waiting
- *
- * @param {Object} execution
- * @returns {boolean}
- */
-export const isDeclareTicketExecutionWaiting = execution => execution
-  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.waiting;
-
-/**
- * Check declare ticket execution status is running
- *
- * @param {Object} execution
- * @returns {boolean}
- */
-export const isDeclareTicketExecutionRunning = execution => execution
-  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.running;
-
-/**
- * Check declare ticket execution status is succeeded
- *
- * @param {Object} execution
- * @returns {boolean}
- */
-export const isDeclareTicketExecutionSucceeded = execution => execution
-  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.succeeded;
-
-/**
- * Check declare ticket execution status is failed
- *
- * @param {Object} execution
- * @returns {boolean}
- */
-export const isDeclareTicketExecutionFailed = execution => execution
-  ?.status === DECLARE_TICKET_EXECUTION_STATUSES.failed;
 
 /**
  * Convert declare ticket object to form compatible object

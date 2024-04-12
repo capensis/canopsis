@@ -66,15 +66,15 @@
 import { groupBy, keyBy } from 'lodash';
 
 import { SOCKET_ROOMS } from '@/config';
-import { DECLARE_TICKET_EXECUTION_STATUSES, MODALS } from '@/constants';
+import { WEBHOOK_EXECUTION_STATUSES, MODALS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import {
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+  isWebhookExecutionFinished,
+  isWebhookExecutionRunning,
+  isWebhookExecutionSucceeded,
+} from '@/helpers/entities/webhook-execution/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
@@ -114,7 +114,7 @@ export default {
       return this.successExecutions.reduce((acc, { executionId, ruleName, alarms }) => {
         alarms.forEach((alarm) => {
           const status = this.executionsStatusesById[executionId] ?? {
-            status: DECLARE_TICKET_EXECUTION_STATUSES.running,
+            status: WEBHOOK_EXECUTION_STATUSES.running,
           };
 
           acc.push({
@@ -134,11 +134,11 @@ export default {
     },
 
     isAllExecutionsRunning() {
-      return this.alarmExecutions.some(isDeclareTicketExecutionRunning);
+      return this.alarmExecutions.some(isWebhookExecutionRunning);
     },
 
     isAllExecutionsSucceeded() {
-      return this.alarmExecutions.every(isDeclareTicketExecutionSucceeded);
+      return this.alarmExecutions.every(isWebhookExecutionSucceeded);
     },
 
     isAllExecutionsFinished() {
@@ -184,7 +184,7 @@ export default {
     },
 
     isExecutionFinished(execution) {
-      return isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution);
+      return isWebhookExecutionFinished(execution);
     },
 
     /**

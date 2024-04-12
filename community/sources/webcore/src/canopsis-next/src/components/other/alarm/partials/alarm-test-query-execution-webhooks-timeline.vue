@@ -10,10 +10,10 @@
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import {
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionSucceeded,
-  isDeclareTicketExecutionWaiting,
-} from '@/helpers/entities/declare-ticket/rule/form';
+  isWebhookExecutionFailed,
+  isWebhookExecutionSucceeded,
+  isWebhookExecutionWaiting,
+} from '@/helpers/entities/webhook-execution/entity';
 
 import AlarmsTimeLineSteps from '@/components/widgets/alarm/time-line/alarms-time-line-steps.vue';
 
@@ -28,7 +28,7 @@ export default {
   computed: {
     webhooksTimelineSteps() {
       return this.webhooks.reduce((acc, webhook) => {
-        if (isDeclareTicketExecutionWaiting(webhook)) {
+        if (isWebhookExecutionWaiting(webhook)) {
           return acc;
         }
 
@@ -40,7 +40,7 @@ export default {
           _t: EVENT_ENTITY_TYPES.webhookStart,
         });
 
-        if (isDeclareTicketExecutionSucceeded(webhook)) {
+        if (isWebhookExecutionSucceeded(webhook)) {
           acc.push({
             webhookId,
             t: webhook.completed_at,
@@ -48,7 +48,7 @@ export default {
           });
         }
 
-        if (isDeclareTicketExecutionFailed(webhook)) {
+        if (isWebhookExecutionFailed(webhook)) {
           acc.push({
             webhookId,
             t: webhook.completed_at,

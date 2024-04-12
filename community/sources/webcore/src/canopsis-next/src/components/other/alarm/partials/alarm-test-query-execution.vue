@@ -61,11 +61,11 @@
 import { computed } from 'vue';
 
 import {
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-  isDeclareTicketExecutionWaiting,
-} from '@/helpers/entities/declare-ticket/rule/form';
+  isWebhookExecutionFailed,
+  isWebhookExecutionRunning,
+  isWebhookExecutionSucceeded,
+  isWebhookExecutionWaiting,
+} from '@/helpers/entities/webhook-execution/entity';
 
 import AlarmTestQueryExecutionStatus from './alarm-test-query-execution-status.vue';
 
@@ -99,12 +99,12 @@ export default {
   },
   setup(props, { emit }) {
     const isExecutionRunning = computed(
-      () => props.executionStatus && isDeclareTicketExecutionRunning(props.executionStatus),
+      () => props.executionStatus && isWebhookExecutionRunning(props.executionStatus),
     );
-    const isExecutionSucceeded = computed(() => isDeclareTicketExecutionSucceeded(props.executionStatus));
-    const isExecutionFailed = computed(() => isDeclareTicketExecutionFailed(props.executionStatus));
+    const isExecutionSucceeded = computed(() => isWebhookExecutionSucceeded(props.executionStatus));
+    const isExecutionFailed = computed(() => isWebhookExecutionFailed(props.executionStatus));
     const isSomeOneWebhookStarted = computed(() => props.executionStatus?.webhooks.some(
-      webhook => !isDeclareTicketExecutionWaiting(webhook),
+      webhook => !isWebhookExecutionWaiting(webhook),
     ));
 
     const runTestExecution = () => emit('run:execution');

@@ -31,10 +31,7 @@
 <script>
 import { keyBy } from 'lodash';
 
-import {
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
 import DeclareTicketRuleExecutionStatus from '../../alarm/partials/alarm-test-query-execution-status.vue';
 
@@ -69,11 +66,11 @@ export default {
   },
   computed: {
     isExecutionsRunning() {
-      return this.executions.some(isDeclareTicketExecutionRunning);
+      return this.executions.some(isWebhookExecutionRunning);
     },
 
     isExecutionsSucceeded() {
-      return this.executions.every(isDeclareTicketExecutionSucceeded);
+      return this.executions.every(isWebhookExecutionSucceeded);
     },
 
     failReason() {

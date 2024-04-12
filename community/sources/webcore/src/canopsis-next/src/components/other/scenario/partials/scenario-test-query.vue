@@ -23,10 +23,7 @@ import { SOCKET_ROOMS } from '@/config';
 
 import Socket from '@/plugins/socket/services/socket';
 
-import {
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { formToScenario } from '@/helpers/entities/scenario/form';
 
@@ -79,10 +76,7 @@ export default {
   },
   watch: {
     executionStatus(executionStatus) {
-      if (
-        executionStatus
-        && (isDeclareTicketExecutionSucceeded(executionStatus) || isDeclareTicketExecutionFailed(executionStatus))
-      ) {
+      if (isWebhookExecutionFinished(executionStatus)) {
         this.leaveFromSocketRoom();
       }
     },
@@ -105,9 +99,6 @@ export default {
       this.executionStatus = null;
     },
 
-    /**
-     * Socket customClose event handler (we need to use for connection checking)
-     */
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
         this.$modals.hide();
@@ -118,9 +109,6 @@ export default {
       }
     },
 
-    /**
-     * Socket closeRoom event handler
-     */
     socketCloseRoomHandler() {
       this.$modals.hide();
     },
@@ -131,9 +119,6 @@ export default {
       this.setExecutionStatus(executionStatus);
     },
 
-    /**
-     * Join from execution room
-     */
     joinToSocketRoom() {
       this.$socket
         .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
@@ -143,9 +128,6 @@ export default {
         .addListener(this.setExecutionStatus);
     },
 
-    /**
-     * Leave from execution room
-     */
     leaveFromSocketRoom() {
       this.$socket
         .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
@@ -162,13 +144,11 @@ export default {
         this.pending = true;
         this.clearWebhookStatus();
 
-        const scenario = formToScenario(this.form);
-
         try {
           this.executionStatus = await this.createTestScenarioExecution({
             data: {
               alarm: this.alarm,
-              ...scenario,
+              ...formToScenario(this.form),
             },
           });
 
