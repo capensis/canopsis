@@ -289,6 +289,7 @@ export default {
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
   event: 'Événement | Événements',
   showMore: 'Afficher plus ({current} sur {total})',
+  testQuery: 'Tester la requête',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

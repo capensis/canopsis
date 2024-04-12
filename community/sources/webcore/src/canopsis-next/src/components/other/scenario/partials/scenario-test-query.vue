@@ -11,7 +11,7 @@
     <template #webhooks="{ webhooks }">
       <alarm-test-query-execution-webhooks-timeline :webhooks="webhooks">
         <template #card="{ step }">
-          <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
+          <scenario-execution-webhooks-timeline-card :step="step" />
         </template>
       </alarm-test-query-execution-webhooks-timeline>
     </template>
@@ -24,28 +24,28 @@ import { SOCKET_ROOMS } from '@/config';
 import Socket from '@/plugins/socket/services/socket';
 
 import {
-  formToDeclareTicketRule,
   isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/entities/declare-ticket/rule/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { formToScenario } from '@/helpers/entities/scenario/form';
 
 import { validationErrorsMixinCreator } from '@/mixins/form';
-import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
 
 import AlarmTestQueryExecution from '@/components/other/alarm/partials/alarm-test-query-execution.vue';
 import AlarmTestQueryExecutionWebhooksTimeline from '@/components/other/alarm/partials/alarm-test-query-execution-webhooks-timeline.vue';
 
-import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
+import ScenarioExecutionWebhooksTimelineCard from './scenario-execution-webhooks-timeline-card.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    DeclareTicketRuleExecutionWebhooksTimelineCard,
+    ScenarioExecutionWebhooksTimelineCard,
     AlarmTestQueryExecutionWebhooksTimeline,
     AlarmTestQueryExecution,
   },
-  mixins: [entitiesDeclareTicketRuleMixin, validationErrorsMixinCreator()],
+  mixins: [entitiesScenarioMixin, validationErrorsMixinCreator()],
   props: {
     form: {
       type: Object,
@@ -94,11 +94,15 @@ export default {
   },
   methods: {
     getSocketRoomName(id) {
-      return `${SOCKET_ROOMS.declareticket}/${id}`;
+      return `${SOCKET_ROOMS.testscenario}/${id}`;
     },
 
-    async setExecutionStatus(executionStatus) {
+    setExecutionStatus(executionStatus) {
       this.executionStatus = executionStatus;
+    },
+
+    clearWebhookStatus() {
+      this.executionStatus = null;
     },
 
     /**
@@ -122,7 +126,9 @@ export default {
     },
 
     async handleSocketError() {
-      this.executionStatus = await this.fetchDeclareTicketExecutionWithoutStore({ id: this.executionStatus._id });
+      const executionStatus = await this.fetchTestScenarioExecutionWithoutStore({ id: this.executionStatus._id });
+
+      this.setExecutionStatus(executionStatus);
     },
 
     /**
@@ -156,13 +162,13 @@ export default {
         this.pending = true;
         this.clearWebhookStatus();
 
-        const declareTicket = formToDeclareTicketRule(this.form);
+        const scenario = formToScenario(this.form);
 
         try {
-          this.executionStatus = await this.createTestDeclareTicketExecution({
+          this.executionStatus = await this.createTestScenarioExecution({
             data: {
-              alarms: [this.alarm],
-              ...declareTicket,
+              alarm: this.alarm,
+              ...scenario,
             },
           });
 
@@ -179,10 +185,6 @@ export default {
           this.pending = false;
         }
       }
-    },
-
-    clearWebhookStatus() {
-      this.executionStatus = null;
     },
   },
 };

@@ -289,6 +289,7 @@ export default {
   convertToCustomColumn: 'Convert column to custom',
   event: 'Event | Events',
   showMore: 'Show more ({current} of {total})',
+  testQuery: 'Test query',
   variableTypes: {
     string: 'String',
     number: 'Number',
