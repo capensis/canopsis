@@ -1,14 +1,15 @@
 <template>
   <c-payload-text-field
     v-field="value"
-    :label="$t('declareTicket.ticketURL')"
+    :label="$t('declareTicket.ticketID')"
     :name="name"
     :variables="variables"
     :disabled="disabled"
+    :required="required"
   >
     <template #append="">
       <c-help-icon
-        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })"
+        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') })"
         icon="help"
         color="grey darken-1"
         left
@@ -30,9 +31,13 @@ export default {
     },
     name: {
       type: String,
-      default: 'ticket_url',
+      default: 'ticket_id',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
       type: Boolean,
       default: false,
     },
