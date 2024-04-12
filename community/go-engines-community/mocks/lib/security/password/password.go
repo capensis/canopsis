@@ -34,11 +34,12 @@ func (m *MockEncoder) EXPECT() *MockEncoderMockRecorder {
 }
 
 // EncodePassword mocks base method.
-func (m *MockEncoder) EncodePassword(arg0 []byte) []byte {
+func (m *MockEncoder) EncodePassword(arg0 []byte) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EncodePassword", arg0)
 	ret0, _ := ret[0].([]byte)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // EncodePassword indicates an expected call of EncodePassword.
@@ -48,11 +49,12 @@ func (mr *MockEncoderMockRecorder) EncodePassword(arg0 interface{}) *gomock.Call
 }
 
 // IsValidPassword mocks base method.
-func (m *MockEncoder) IsValidPassword(arg0, arg1 []byte) bool {
+func (m *MockEncoder) IsValidPassword(arg0, arg1 []byte) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsValidPassword", arg0, arg1)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // IsValidPassword indicates an expected call of IsValidPassword.

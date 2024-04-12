@@ -114,7 +114,7 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 		}
 	}()
 
-	defer func() {
+	defer func() { // nolint:contextcheck
 		if a.deferFunc != nil {
 			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
 			defer deferCancel()
@@ -166,7 +166,7 @@ func (a *api) runWorkers(ctx context.Context) *errgroup.Group {
 	for key := range a.workers {
 		f := a.workers[key]
 
-		restartGoroutine(g, fmt.Sprintf("worker %s", key), func() error {
+		restartGoroutine(g, "worker "+key, func() error {
 			f(ctx)
 
 			return nil

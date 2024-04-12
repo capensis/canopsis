@@ -14,10 +14,10 @@
 import { isArray } from 'lodash';
 
 import {
+  ALARM_STATES,
   ALARM_EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
-  ENTITIES_STATES,
-  EVENT_ENTITY_TYPES,
+  EVENT_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_SOURCE_TYPES,
   PATTERN_OPERATORS,
@@ -25,7 +25,7 @@ import {
   PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
-import CEntityOldStateField from '@/components/forms/fields/entity/c-entity-old-state-field.vue';
+import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-state-field.vue';
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
@@ -142,20 +142,9 @@ export default {
     },
 
     eventTypes() {
-      return [
-        EVENT_ENTITY_TYPES.ack,
-        EVENT_ENTITY_TYPES.ackRemove,
-        EVENT_ENTITY_TYPES.assocTicket,
-        EVENT_ENTITY_TYPES.declareTicket,
-        EVENT_ENTITY_TYPES.cancel,
-        EVENT_ENTITY_TYPES.uncancel,
-        EVENT_ENTITY_TYPES.changeState,
-        EVENT_ENTITY_TYPES.check,
-        EVENT_ENTITY_TYPES.comment,
-        EVENT_ENTITY_TYPES.snooze,
-      ].map(value => ({
+      return Object.values(EVENT_TYPES).map(value => ({
         value,
-        text: this.$t(`common.entityEventTypes.${value}`),
+        text: this.$t(`common.eventTypes.${value}`),
       }));
     },
 
@@ -256,9 +245,9 @@ export default {
           PATTERN_OPERATORS.higher,
           PATTERN_OPERATORS.lower,
         ],
-        defaultValue: ENTITIES_STATES.ok,
+        defaultValue: ALARM_STATES.ok,
         valueField: {
-          is: CEntityOldStateField,
+          is: CAlarmOldStateField,
         },
       };
     },
