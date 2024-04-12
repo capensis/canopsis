@@ -35,13 +35,13 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { invert, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
   USERS_PERMISSIONS,
-  ENTITIES_STATES_KEYS,
+  ALARM_STATES,
   COUNTER_STATES_ICONS,
   COUNTER_EXPORT_FILE_NAME_PREFIX,
 } from '@/constants';
@@ -54,6 +54,8 @@ import { authMixin } from '@/mixins/auth';
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
 const { mapActions } = createNamespacedHelpers('alarm');
+
+const INVERTED_ALARM_STATES = invert(ALARM_STATES);
 
 export default {
   components: { CardWithSeeAlarmsBtn },
@@ -80,7 +82,7 @@ export default {
       };
     },
 
-    stateKey() {
+    state() {
       const {
         counter,
         values,
@@ -89,10 +91,10 @@ export default {
       const count = this.counter[counter];
 
       return [
-        ENTITIES_STATES_KEYS.critical,
-        ENTITIES_STATES_KEYS.major,
-        ENTITIES_STATES_KEYS.minor,
-      ].find(state => count >= values[state]) || ENTITIES_STATES_KEYS.ok;
+        ALARM_STATES.critical,
+        ALARM_STATES.major,
+        ALARM_STATES.minor,
+      ].find(state => count >= values?.[INVERTED_ALARM_STATES[state]]) || ALARM_STATES.ok;
     },
 
     hasVariablesHelpAccess() {
@@ -106,11 +108,11 @@ export default {
     color() {
       const { colors } = this.widget.parameters.levels;
 
-      return colors[this.stateKey];
+      return colors[INVERTED_ALARM_STATES[this.state]];
     },
 
     icon() {
-      return COUNTER_STATES_ICONS[this.stateKey];
+      return COUNTER_STATES_ICONS[this.state];
     },
 
     itemClasses() {

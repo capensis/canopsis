@@ -32,7 +32,7 @@ func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 	mockEncoder.
 		EXPECT().
 		IsValidPassword(gomock.Eq([]byte(expectedUser.HashedPassword)), gomock.Eq([]byte(password))).
-		Return(true)
+		Return(true, nil)
 
 	p := NewBaseProvider(mockUserProvider, mockEncoder)
 	user, err := p.Auth(ctx, username, password)
@@ -98,7 +98,7 @@ func TestBaseProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	mockEncoder.
 		EXPECT().
 		IsValidPassword(gomock.Eq([]byte(expectedUser.HashedPassword)), gomock.Eq([]byte(password))).
-		Return(false)
+		Return(false, nil)
 
 	p := NewBaseProvider(mockUserProvider, mockEncoder)
 	user, err := p.Auth(ctx, username, password)
