@@ -10,6 +10,15 @@ export const widgetSearchMixin = {
     },
   },
   methods: {
+    updateSearchInQuery(search) {
+      this.query = {
+        ...this.query,
+
+        search,
+        page: 1,
+      };
+    },
+
     addSearchIntoUserPreferences(search) {
       if (!search) {
         return;

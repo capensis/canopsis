@@ -1,5 +1,5 @@
 <template>
-  <v-layout align-center>
+  <v-layout class="c-advanced-search px-4" align-end>
     <c-advanced-search-field
       v-if="advancedSearchActive"
       v-model="localValue"
@@ -43,14 +43,8 @@ import { ADVANCED_SEARCH_CONDITIONS } from '@/constants';
 import { useI18n } from '@/hooks/i18n';
 
 import { useSearchLocalValue } from './hooks/search';
-import CAdvancedSearchField from './c-advanced-search-field.vue';
-import CSearchField from './c-search-field.vue';
 
 export default {
-  components: {
-    CAdvancedSearchField,
-    CSearchField,
-  },
   model: {
     prop: 'value',
     event: 'input',
@@ -121,3 +115,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-advanced-search ::v-deep input {
+  min-width: 230px;
+}
+</style>

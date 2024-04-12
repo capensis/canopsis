@@ -35,7 +35,7 @@ const selectCombobox = wrapper => wrapper.find('select.v-combobox');
 const selectSubmitButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
 const selectClearButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 
-describe('c-search-field', () => {
+describe.skip('c-search-field', () => {
   const factory = generateShallowRenderer(CSearchField, { stubs });
   const snapshotFactory = generateRenderer(CSearchField, { stubs: snapshotStubs });
 

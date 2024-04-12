@@ -1,5 +1,5 @@
 <template>
-  <v-layout align-end>
+  <v-layout class="px-4" align-end>
     <c-search-field
       v-model="localValue"
       :combobox="combobox"
