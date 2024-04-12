@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -107,20 +108,13 @@ func (w *watcher) StopWatch(_ context.Context, connId, _ string) error {
 	defer w.streamsMx.Unlock()
 
 	for k, v := range w.streams {
-		index := -1
-
-		for i, streamConnId := range v.connIds {
-			if streamConnId == connId {
-				index = i
-				break
-			}
-		}
+		index := slices.Index(v.connIds, connId)
 
 		if index < 0 {
 			continue
 		}
 
-		v.connIds = append(v.connIds[:index], v.connIds[index+1:]...)
+		v.connIds = slices.Delete(v.connIds, index, index+1)
 		if len(v.connIds) == 0 {
 			delete(w.streams, k)
 			v.cancel()
@@ -138,7 +132,8 @@ func (w *watcher) newStream(k, connId string, streamCancel context.CancelFunc) b
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
-	if _, ok := w.streams[k]; !ok {
+	d, ok := w.streams[k]
+	if !ok {
 		w.streams[k] = streamData{
 			connIds: []string{connId},
 			cancel:  streamCancel,
@@ -147,7 +142,6 @@ func (w *watcher) newStream(k, connId string, streamCancel context.CancelFunc) b
 		return true
 	}
 
-	d := w.streams[k]
 	d.connIds = append(d.connIds, connId)
 	w.streams[k] = d
 
