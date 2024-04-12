@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-extra-details-chip Renders \`c-alarm-extra-details-chip\` with black color 1`] = `
+<span
+  class="c-alarm-extra-details-chip"
+  style="background-color: rgb(0, 0, 0);"
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="font-size: 16px; color: rgb(255, 255, 255); caret-color: #fff;"
+  >
+    help
+  </i>
+</span>
+`;
+
+exports[`c-alarm-extra-details-chip Renders \`c-alarm-extra-details-chip\` with default props 1`] = `
+<span
+  class="c-alarm-extra-details-chip"
+  style="background-color: rgb(43, 62, 79);"
+>
+  <!---->
+</span>
+`;
+
+exports[`c-alarm-extra-details-chip Renders \`c-alarm-extra-details-chip\` with white color 1`] = `
+<span
+  class="c-alarm-extra-details-chip"
+  style="background-color: rgb(255, 255, 255);"
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="font-size: 16px; color: rgb(0, 0, 0); caret-color: #000;"
+  >
+    help
+  </i>
+</span>
+`;

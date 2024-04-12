@@ -4,28 +4,18 @@ import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsPbehavior from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-pbehavior.vue';
 
-describe('extra-details-pbehavior', () => {
-  const prevDateStartTimestamp = 1386382400000;
-  const prevDateStopTimestamp = 1386392400000;
-  const prevMonthDateStartTimestamp = 1375884800000;
-  const prevMonthDateStopTimestamp = 1375894800000;
+const stubs = {
+  'c-alarm-pbehavior-chip': true,
+};
 
-  const pbehavior = {
+describe('extra-details-pbehavior', () => {
+  const pbehaviorInfo = {
     name: 'pbehavior-name',
-    author: {
-      _id: 'pbehavior-author',
-      display_name: 'pbehavior-author',
-    },
-    tstart: prevDateStartTimestamp,
-    tstop: prevDateStopTimestamp,
-    rrule: 'rrule',
-    type: {
-      name: 'pbehavior-type-name',
-      icon_name: 'pbehavior-type-icon',
-    },
-    reason: {
-      name: 'pbehavior-reason-name',
-    },
+    author: 'pbehavior-author',
+    type_name: 'type-name',
+    reason_name: 'pbehavior-reason-name',
+    icon_name: 'icon-name',
+    color: 'color',
     last_comment: {
       _id: 'pbehavior-comment-1-id',
       author: {
@@ -34,17 +24,12 @@ describe('extra-details-pbehavior', () => {
       message: 'pbehavior-comment-1-message',
     },
   };
-  const pbehaviorInfo = {
-    type_name: 'type-name',
-    icon_name: 'icon-name',
-  };
 
-  const snapshotFactory = generateRenderer(ExtraDetailsPbehavior);
+  const snapshotFactory = generateRenderer(ExtraDetailsPbehavior, { stubs });
 
   it('Renders `extra-details-pbehavior` with full pbehavior', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pbehavior,
         pbehaviorInfo,
       },
     });
@@ -57,34 +42,7 @@ describe('extra-details-pbehavior', () => {
   it('Renders `extra-details-pbehavior` without reason', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pbehavior: omit(pbehavior, ['reason']),
-        pbehaviorInfo,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
-  });
-
-  it('Renders `extra-details-pbehavior` without tstop', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        pbehavior: omit(pbehavior, ['tstop']),
-        pbehaviorInfo,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
-  });
-
-  it('Renders `extra-details-pbehavior` without rrule', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        pbehavior: omit(pbehavior, ['rrule']),
-        pbehaviorInfo,
+        pbehaviorInfo: omit(pbehaviorInfo, ['reason_name']),
       },
     });
 
@@ -96,8 +54,7 @@ describe('extra-details-pbehavior', () => {
   it('Renders `extra-details-pbehavior` without comment', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pbehavior: omit(pbehavior, ['last_comment']),
-        pbehaviorInfo,
+        pbehaviorInfo: omit(pbehaviorInfo, ['last_comment']),
       },
     });
 
@@ -109,29 +66,12 @@ describe('extra-details-pbehavior', () => {
   it('Renders `extra-details-pbehavior` without comment author', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pbehavior: {
-          ...pbehavior,
+        pbehaviorInfo: {
+          ...pbehaviorInfo,
           last_comment: {
             author: null,
-            ...pbehavior.last_comment,
+            ...pbehaviorInfo.last_comment,
           },
-        },
-        pbehaviorInfo,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
-  });
-
-  it('Renders `extra-details-pbehavior` with pbehavior started in previous month', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        pbehavior: {
-          ...pbehavior,
-          tstart: prevMonthDateStartTimestamp,
-          tstop: prevMonthDateStopTimestamp,
         },
       },
     });

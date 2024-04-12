@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -26,6 +27,7 @@ func (g *generator) Generate(
 	entity types.Entity,
 ) (types.Event, error) {
 	event := types.Event{
+		Author:    canopsis.DefaultEventAuthor,
 		Initiator: types.InitiatorSystem,
 	}
 
@@ -35,21 +37,13 @@ func (g *generator) Generate(
 		event.ConnectorName = entity.Name
 		event.SourceType = types.SourceTypeConnector
 	case types.EntityTypeComponent:
-		if entity.Connector == "" {
-			event.Connector = g.connector
-			event.ConnectorName = g.connectorName
-		} else {
-			event.Connector, event.ConnectorName, _ = strings.Cut(entity.Connector, "/")
-		}
+		event.Connector = g.connector
+		event.ConnectorName = g.connectorName
 		event.Component = entity.Name
 		event.SourceType = types.SourceTypeComponent
 	case types.EntityTypeResource:
-		if entity.Connector == "" {
-			event.Connector = g.connector
-			event.ConnectorName = g.connectorName
-		} else {
-			event.Connector, event.ConnectorName, _ = strings.Cut(entity.Connector, "/")
-		}
+		event.Connector = g.connector
+		event.ConnectorName = g.connectorName
 		event.Component = entity.Component
 		event.Resource = entity.Name
 		event.SourceType = types.SourceTypeResource

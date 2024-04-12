@@ -6,8 +6,8 @@
       :handle="`.${dragItemHandleClass}`"
     >
       <column-field
-        v-field="columns[index]"
         v-for="(column, index) in columns"
+        v-field="columns[index]"
         :key="column.key"
         :name="column.key"
         :type="type"
