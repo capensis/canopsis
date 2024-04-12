@@ -18,8 +18,8 @@
         name="no-data"
       />
       <c-text-pair-field
-        v-field="items[index]"
         v-for="(item, index) in items"
+        v-field="items[index]"
         :key="item[itemKey]"
         :disabled="disabled"
         :value-required="valueRequired"
