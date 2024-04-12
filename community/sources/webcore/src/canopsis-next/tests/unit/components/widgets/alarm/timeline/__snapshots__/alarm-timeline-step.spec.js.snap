@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline-step Renders \`alarm-timeline-step\` with children correctly 1`] = `
+<div
+  class="layout timeline-step align-center"
+>
+  <div
+    class="timeline-step__time grey--text"
+  >
+    18:00:00
+  </div>
+  <div
+    class="flex timeline-step__main-content-wrapper"
+  >
+    <div
+      class="layout timeline-step__main-content pb-2 column"
+    >
+      <div
+        class="layout gap-2"
+      >
+        <div
+          class="timeline-step__icon"
+        >
+          <alarm-timeline-step-icon-stub
+            step="[object Object]"
+          />
+        </div>
+        <c-expand-btn-stub
+          class="timeline-step__expand-button"
+        />
+        <div
+          class="timeline-step__title"
+        >
+          <alarm-timeline-step-title-stub
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+      </div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarm-timeline-step Renders \`alarm-timeline-step\` with custom props correctly 1`] = `
+<div
+  class="layout timeline-step align-center"
+>
+  <div
+    class="timeline-step__time grey--text"
+  >
+    18:00:00
+  </div>
+  <div
+    class="flex timeline-step__main-content-wrapper"
+  >
+    <div
+      class="layout timeline-step__main-content pb-2 column"
+    >
+      <div
+        class="layout gap-2"
+      >
+        <div
+          class="timeline-step__icon"
+        >
+          <alarm-timeline-step-icon-stub
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+        <div
+          class="timeline-step__title"
+        >
+          <alarm-timeline-step-title-stub
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+      </div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarm-timeline-step Renders \`alarm-timeline-step\` with deep and pbh correctly 1`] = `
+<div
+  class="layout timeline-step align-center timeline-step--deep"
+>
+  <div
+    class="timeline-step__time grey--text"
+  >
+    18:00:00
+  </div>
+  <div
+    class="flex timeline-step__main-content-wrapper"
+  >
+    <div
+      class="layout timeline-step__main-content pb-2 column"
+    >
+      <div
+        class="layout gap-2"
+      >
+        <div
+          class="timeline-step__icon"
+        >
+          <alarm-timeline-step-icon-stub
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+        <div
+          class="timeline-step__title"
+        >
+          <alarm-timeline-step-title-stub
+            deep="true"
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+      </div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarm-timeline-step Renders \`alarm-timeline-step\` with default props correctly 1`] = `
+<div
+  class="layout timeline-step align-center"
+>
+  <div
+    class="timeline-step__time grey--text"
+  >
+  </div>
+  <div
+    class="flex timeline-step__main-content-wrapper"
+  >
+    <div
+      class="layout timeline-step__main-content pb-2 column"
+    >
+      <div
+        class="layout gap-2"
+      >
+        <div
+          class="timeline-step__icon"
+        >
+          <alarm-timeline-step-icon-stub
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+        <div
+          class="timeline-step__title"
+        >
+          <alarm-timeline-step-title-stub
+            step="[object Object]"
+          />
+        </div>
+        <!---->
+      </div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;

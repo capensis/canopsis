@@ -150,6 +150,7 @@ export const fakeAlarmDetails = () => ({
   steps: {
     data: [
       {
+        _id: 1,
         _t: 'stateinc',
         t: 1626159262,
         a: 'root',
@@ -158,6 +159,7 @@ export const fakeAlarmDetails = () => ({
         initiator: 'system',
       },
       {
+        _id: 2,
         _t: 'statusinc',
         t: 1626159262,
         a: 'root',
@@ -166,6 +168,7 @@ export const fakeAlarmDetails = () => ({
         initiator: 'system',
       },
       {
+        _id: 3,
         _t: 'pbhenter',
         t: 1627641985,
         a: 'system',
@@ -174,6 +177,7 @@ export const fakeAlarmDetails = () => ({
         initiator: 'external',
       },
       {
+        _id: 4,
         _t: 'pbhleave',
         t: 1632723441,
         a: 'system',
@@ -182,6 +186,7 @@ export const fakeAlarmDetails = () => ({
         initiator: 'external',
       },
       {
+        _id: 5,
         _t: 'ack',
         t: 1632725253,
         a: 'root',
@@ -190,6 +195,7 @@ export const fakeAlarmDetails = () => ({
         initiator: 'user',
       },
       {
+        _id: 6,
         _t: 'pbhenter',
         t: 1632977650,
         a: 'system',
@@ -198,6 +204,7 @@ export const fakeAlarmDetails = () => ({
         initiator: 'external',
       },
       {
+        _id: 7,
         _t: 'pbhleave',
         t: 1634553310,
         a: 'system',
