@@ -1,98 +1,151 @@
 package dbquery
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetCategoryLookup() []bson.M {
+func GetCategoryLookup(prefixArg ...string) []bson.M {
+	prefix := ""
+	if len(prefixArg) > 0 && prefixArg[0] != "" {
+		prefix = prefixArg[0] + "."
+	}
+
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "category",
+			"localField":   prefix + "category",
 			"foreignField": "_id",
-			"as":           "category",
+			"as":           prefix + "category",
 		}},
-		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$" + prefix + "category", "preserveNullAndEmptyArrays": true}},
 	}
 }
 
-func GetPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
+func GetPbehaviorInfoLastCommentLookup(authorProvider author.Provider, prefixArg ...string) []bson.M {
+	prefix := ""
+	if len(prefixArg) > 0 && prefixArg[0] != "" {
+		prefix = prefixArg[0] + "."
+	}
+
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
+			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
-			"localField":   "pbehavior_info.type",
-			"as":           "pbehavior_info_type",
+			"localField":   prefix + "pbehavior_info.id",
+			"as":           prefix + "pbehavior",
 		}},
-		{"$unwind": bson.M{"path": "$pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$" + prefix + "pbehavior", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$pbehavior_info",
+			prefix + "pbehavior.last_comment": bson.M{"$arrayElemAt": bson.A{"$" + prefix + "pbehavior.comments", -1}},
+		}},
+	}
+	pipeline = append(pipeline, authorProvider.PipelineForField(prefix+"pbehavior.last_comment.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$addFields": bson.M{
+			prefix + "pbehavior.last_comment": bson.M{
+				"$cond": bson.M{
+					"if":   "$" + prefix + "pbehavior.last_comment._id",
+					"then": "$" + prefix + "pbehavior.last_comment",
+					"else": "$$REMOVE",
+				},
+			},
+		}},
+		bson.M{"$addFields": bson.M{
+			prefix + "pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$" + prefix + "pbehavior_info",
 				"then": bson.M{"$mergeObjects": bson.A{
-					"$pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_info_type.icon_name"},
+					"$" + prefix + "pbehavior_info",
+					bson.M{
+						"last_comment": bson.M{"$cond": bson.M{
+							"if": "$" + prefix + "pbehavior.last_comment",
+							"then": bson.M{"$mergeObjects": bson.A{
+								"$" + prefix + "pbehavior.last_comment",
+								bson.M{"author": bson.M{"$cond": bson.M{
+									"if":   "$" + prefix + "pbehavior.last_comment.origin",
+									"then": "$" + prefix + "pbehavior.last_comment.origin",
+									"else": "$" + prefix + "pbehavior.last_comment.author.display_name",
+								}}},
+							}},
+							"else": nil,
+						}},
+					},
 				}},
 				"else": nil,
 			}},
 		}},
-		{"$project": bson.M{"pbehavior_info_type": 0}},
-	}
+		bson.M{"$project": bson.M{
+			prefix + "pbehavior": 0,
+		}},
+	)
+
+	return pipeline
 }
 
-func GetDependsCountPipeline() []bson.M {
+func GetDependsCountPipeline(prefixArg ...string) []bson.M {
+	prefix := ""
+	if len(prefixArg) > 0 && prefixArg[0] != "" {
+		prefix = prefixArg[0] + "."
+	}
+
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
+			"localField":   prefix + "_id",
 			"foreignField": "services",
-			"as":           "service_depends",
+			"as":           prefix + "service_depends",
 			"pipeline": []bson.M{
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
+			"localField":   prefix + "_id",
 			"foreignField": "component",
-			"as":           "component_depends",
+			"as":           prefix + "component_depends",
 			"pipeline": []bson.M{
 				{"$match": bson.M{"type": types.EntityTypeResource}},
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
 		{"$addFields": bson.M{
-			"depends_count": bson.M{"$cond": bson.A{
+			prefix + "depends_count": bson.M{"$cond": bson.A{
 				bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$type", types.EntityTypeComponent}},
-					{"$eq": bson.A{bson.M{"$type": "$state_info._id"}, "string"}},
-					{"$ne": bson.A{"$state_info._id", ""}},
+					{"$eq": bson.A{"$" + prefix + "type", types.EntityTypeComponent}},
+					{"$eq": bson.A{bson.M{"$type": "$" + prefix + "state_info._id"}, "string"}},
+					{"$ne": bson.A{"$" + prefix + "state_info._id", ""}},
 				}},
-				bson.M{"$size": "$component_depends"},
-				bson.M{"$size": "$service_depends"},
+				bson.M{"$size": "$" + prefix + "component_depends"},
+				bson.M{"$size": "$" + prefix + "service_depends"},
 			}},
 		}},
-		{"$project": bson.M{"service_depends": 0, "component_depends": 0}},
+		{"$project": bson.M{prefix + "service_depends": 0, prefix + "component_depends": 0}},
 	}
 }
 
-func GetImpactsCountPipeline() []bson.M {
+func GetImpactsCountPipeline(prefixArg ...string) []bson.M {
+	prefix := ""
+	if len(prefixArg) > 0 && prefixArg[0] != "" {
+		prefix = prefixArg[0] + "."
+	}
+
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
-			"localField":   "services",
+			"localField":   prefix + "services",
 			"foreignField": "_id",
-			"as":           "service_impacts",
+			"as":           prefix + "service_impacts",
 			"pipeline": []bson.M{
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
-			"localField":   "component",
+			"localField":   prefix + "component",
 			"foreignField": "_id",
-			"as":           "component_impacts",
+			"as":           prefix + "component_impacts",
 			"pipeline": []bson.M{
 				{"$project": bson.M{
 					"hasStateSettings": bson.M{
@@ -111,22 +164,22 @@ func GetImpactsCountPipeline() []bson.M {
 				}},
 			},
 		}},
-		{"$unwind": bson.M{"path": "$component_impacts", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$" + prefix + "component_impacts", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"impacts_count": bson.M{
+			prefix + "impacts_count": bson.M{
 				"$cond": []interface{}{
 					bson.M{"$and": []interface{}{
 						bson.M{"$eq": []string{
-							"$type", "resource"},
+							"$" + prefix + "type", "resource"},
 						},
-						"$component_impacts.hasStateSettings",
+						"$" + prefix + "component_impacts.hasStateSettings",
 					}},
-					bson.M{"$sum": bson.A{1, bson.M{"$size": "$service_impacts"}}},
-					bson.M{"$size": "$service_impacts"},
+					bson.M{"$sum": bson.A{1, bson.M{"$size": "$" + prefix + "service_impacts"}}},
+					bson.M{"$size": "$" + prefix + "service_impacts"},
 				},
 			},
 		}},
-		{"$project": bson.M{"service_impacts": 0, "component_impacts": 0}},
+		{"$project": bson.M{prefix + "service_impacts": 0, prefix + "component_impacts": 0}},
 	}
 }
 

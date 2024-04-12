@@ -2,7 +2,7 @@ package eventfilter_test
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"reflect"
 	"testing"
 
@@ -88,7 +88,7 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		regexMatch eventfilter.RegexMatch,
 		externalData map[string]interface{},
 	) (bool, error) {
-		return false, fmt.Errorf("error")
+		return false, errors.New("error")
 	})
 
 	event := types.Event{}

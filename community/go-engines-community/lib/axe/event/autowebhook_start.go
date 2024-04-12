@@ -35,13 +35,12 @@ func (p *autoWebhookStartProcessor) Process(ctx context.Context, event rpc.AxeEv
 		"exec": event.Parameters.Execution,
 		"_t":   types.AlarmStepWebhookStart,
 	}}}
-	newStep := types.NewAlarmStep(types.AlarmStepWebhookStart, event.Parameters.Timestamp, event.Parameters.Author,
-		event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	newStep.Execution = event.Parameters.Execution
-	update := bson.M{
-		"$push": bson.M{
-			"v.steps": newStep,
-		},
+	newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStart, event.Parameters.Execution,
+		event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.steps": addStepUpdateQuery(newStepQuery),
+		}},
 	}
 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

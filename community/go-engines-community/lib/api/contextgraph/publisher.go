@@ -6,6 +6,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
@@ -37,7 +38,7 @@ func NewEventPublisher(
 
 func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, execTime time.Duration, state types.CpsNumber) error {
 	return p.sendEvent(ctx, types.Event{
-		Connector:     "taskhandler",
+		Connector:     "taskhandler", // todo refactor entity names
 		ConnectorName: "task_importctx",
 		Component:     "job",
 		EventType:     types.EventTypeCheck,
@@ -49,13 +50,14 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 		ExtraInfos: map[string]interface{}{
 			"execution_time": execTime,
 		},
+		Author:    canopsis.DefaultEventAuthor,
 		Initiator: types.InitiatorSystem,
 	})
 }
 
 func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
 	return p.sendEvent(ctx, types.Event{
-		Connector:     "Taskhandler",
+		Connector:     "Taskhandler", // todo refactor entity names
 		ConnectorName: "task_importctx",
 		Component:     uuid,
 		EventType:     types.EventTypeCheck,
@@ -64,6 +66,7 @@ func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats
 		State:         state,
 		Output:        fmt.Sprintf("execution : %f sec, updated ent : %d, deleted ent : %d", stats.ExecTime.Seconds(), stats.Updated, stats.Deleted),
 		PerfData:      fmt.Sprintf("execution_time=%ds ent_updated=%d ent_deleted=%d", int64(stats.ExecTime.Seconds()), stats.Updated, stats.Deleted),
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	})
 }
