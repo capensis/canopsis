@@ -8,8 +8,8 @@
       {{ $t('externalData.empty') }}
     </c-alert>
     <external-data-item-form
-      v-field="form[index]"
       v-for="(item, index) in form"
+      v-field="form[index]"
       :key="item.key"
       :name="`${name}.${item.key}`"
       :disabled="disabled"

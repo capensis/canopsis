@@ -28,7 +28,7 @@ export const ADVANCED_SEARCH_CONDITIONS = {
   contains: 'CONTAINS',
 };
 
-export const ADVANCED_SEARCH_REGEXP_PATTERN = new RegExp(`^(?<not>${ADVANCED_SEARCH_NOT})?\\s*(?<field>[a-z]+)\\s+(?<condition>${Object.values(ADVANCED_SEARCH_CONDITIONS).join('|')})\\s+(?<value>.+)$`, 'i');
+export const ADVANCED_SEARCH_REGEXP_PATTERN = new RegExp(`^(?<not>${ADVANCED_SEARCH_NOT})?\\s*(?<field>[\\w._]+)?\\s*(?<condition>${Object.values(ADVANCED_SEARCH_CONDITIONS).join('|')})?\\s*(?<value>.+)?$`, 'i');
 
 export const ADVANCED_SEARCH_UNION_REGEXP_PATTERN = new RegExp(`\\s(${Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).join('|')})\\s`, 'gi');
 
