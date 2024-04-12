@@ -45,6 +45,10 @@
       :label="$t('common.username')"
       name="username"
     />
+    <c-enabled-field
+      v-field="form.skip_verify"
+      :label="$t('common.request.skipVerify')"
+    />
   </v-layout>
 </template>
 
