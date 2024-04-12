@@ -182,6 +182,7 @@ func (s *store) getSearchQuery(r ListRequest) (string, pgx.NamedArgs) {
 	if r.From.IsZero() || r.To.IsZero() {
 		nowTrunc := time.Now().Truncate(time.Minute).UTC()
 
+		// add one minute to include current minute to response
 		end = nowTrunc.Add(time.Minute)
 		start = end.Add(-time.Hour)
 	} else {
