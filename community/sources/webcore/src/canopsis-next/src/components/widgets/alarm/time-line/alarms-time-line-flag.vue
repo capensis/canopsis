@@ -58,6 +58,9 @@ export default {
 <style lang="scss">
 .time-line-flag {
   &__badge-icon {
+    width: 14px !important;
+    max-width: unset !important;
+    height: 14px !important;
     background: white;
     border-radius: 50%;
   }

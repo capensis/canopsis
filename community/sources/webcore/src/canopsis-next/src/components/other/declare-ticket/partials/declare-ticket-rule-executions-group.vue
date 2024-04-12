@@ -36,7 +36,8 @@ import {
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/entities/declare-ticket/rule/form';
 
-import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
+import DeclareTicketRuleExecutionStatus from '../../alarm/partials/alarm-test-query-execution-status.vue';
+
 import DeclareTicketRuleExecutionAlarms from './declare-ticket-rule-execution-alarms.vue';
 
 export default {
