@@ -5009,6 +5009,10 @@ definitions:
         items:
           type: string
         type: array
+      tags:
+        items:
+          type: string
+        type: array
       ticket:
         $ref: '#/definitions/common.AlarmStep'
       tickets:
@@ -5083,6 +5087,10 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       status:
         $ref: '#/definitions/common.AlarmStep'
+      tags:
+        items:
+          type: string
+        type: array
     type: object
   sharetoken.EditRequest:
     properties:

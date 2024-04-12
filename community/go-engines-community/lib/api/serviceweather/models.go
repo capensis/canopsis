@@ -45,6 +45,7 @@ type Service struct {
 	Status         common.AlarmStep      `json:"status" bson:"status"`
 	Snooze         *common.AlarmStep     `json:"snooze" bson:"snooze"`
 	Ack            *common.AlarmStep     `json:"ack" bson:"ack"`
+	Tags           []string              `json:"tags" bson:"tags"`
 	Icon           string                `json:"icon" bson:"icon"`
 	SecondaryIcon  string                `json:"secondary_icon" bson:"secondary_icon"`
 	Output         string                `json:"output" bson:"output"`
@@ -129,6 +130,7 @@ type Entity struct {
 	LastUpdateDate *datetime.CpsTime          `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	CreationDate   *datetime.CpsTime          `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                     `json:"alarm_display_name" bson:"display_name"`
+	Tags           []string                   `json:"tags" bson:"tags"`
 	Icon           string                     `json:"icon" bson:"icon"`
 	Pbehaviors     []alarm.Pbehavior          `json:"pbehaviors" bson:"pbehaviors"`
 	PbehaviorInfo  *entity.PbehaviorInfo      `json:"pbehavior_info" bson:"pbehavior_info"`
