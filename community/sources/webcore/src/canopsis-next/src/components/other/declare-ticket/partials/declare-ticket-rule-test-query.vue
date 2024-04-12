@@ -1,5 +1,5 @@
 <template>
-  <alarm-test-query-execution
+  <alarm-webhook-execution
     v-model="alarm"
     :execution-status="executionStatus"
     :alarms-patterns-params="alarmsPatternsParams"
@@ -9,13 +9,13 @@
     @clear:status="clearWebhookStatus"
   >
     <template #webhooks="{ webhooks }">
-      <alarm-test-query-execution-webhooks-timeline :webhooks="webhooks">
+      <alarm-webhook-execution-timeline :webhooks="webhooks">
         <template #card="{ step }">
           <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
         </template>
-      </alarm-test-query-execution-webhooks-timeline>
+      </alarm-webhook-execution-timeline>
     </template>
-  </alarm-test-query-execution>
+  </alarm-webhook-execution>
 </template>
 
 <script>
@@ -30,8 +30,8 @@ import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
-import AlarmTestQueryExecution from '@/components/other/alarm/partials/alarm-test-query-execution.vue';
-import AlarmTestQueryExecutionWebhooksTimeline from '@/components/other/alarm/partials/alarm-test-query-execution-webhooks-timeline.vue';
+import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
+import AlarmWebhookExecutionTimeline from '@/components/other/alarm/partials/alarm-webhook-execution-timeline.vue';
 
 import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
 
@@ -39,8 +39,8 @@ export default {
   inject: ['$validator'],
   components: {
     DeclareTicketRuleExecutionWebhooksTimelineCard,
-    AlarmTestQueryExecutionWebhooksTimeline,
-    AlarmTestQueryExecution,
+    AlarmWebhookExecutionTimeline,
+    AlarmWebhookExecution,
   },
   mixins: [entitiesDeclareTicketRuleMixin, validationErrorsMixinCreator()],
   props: {

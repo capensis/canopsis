@@ -14,8 +14,8 @@
       >
         {{ ruleName }}
       </v-chip>
-      <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
-      <declare-ticket-rule-execution-status
+      <span class="text-subtitle-1 mr-5">{{ $t('common.webhookStatus') }}:</span>
+      <alarm-webhook-execution-status
         :running="isExecutionsRunning"
         :success="isExecutionsSucceeded"
         :fail-reason="failReason"
@@ -33,14 +33,14 @@ import { keyBy } from 'lodash';
 
 import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
-import DeclareTicketRuleExecutionStatus from '../../alarm/partials/alarm-test-query-execution-status.vue';
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
 import DeclareTicketRuleExecutionAlarms from './declare-ticket-rule-execution-alarms.vue';
 
 export default {
   components: {
     DeclareTicketRuleExecutionAlarms,
-    DeclareTicketRuleExecutionStatus,
+    AlarmWebhookExecutionStatus,
   },
   props: {
     executions: {

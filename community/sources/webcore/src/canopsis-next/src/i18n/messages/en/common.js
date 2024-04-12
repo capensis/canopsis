@@ -290,6 +290,9 @@ export default {
   event: 'Event | Events',
   showMore: 'Show more ({current} of {total})',
   testQuery: 'Test query',
+  webhookStatus: 'Webhook status',
+  webhookComplete: 'Webhook complete',
+  noResponse: 'No response',
   variableTypes: {
     string: 'String',
     number: 'Number',
