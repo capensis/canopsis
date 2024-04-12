@@ -7,7 +7,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -17,7 +17,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -37,12 +37,12 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -114,7 +114,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -124,7 +124,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -144,12 +144,12 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -239,7 +239,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -249,7 +249,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -269,12 +269,12 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -334,7 +334,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -344,7 +344,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -364,12 +364,12 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -429,7 +429,7 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -439,7 +439,7 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -459,12 +459,12 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -527,7 +527,7 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -537,7 +537,7 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -557,12 +557,12 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -637,7 +637,7 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -647,7 +647,7 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -667,12 +667,12 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -738,7 +738,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -748,7 +748,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -768,12 +768,12 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -836,12 +836,12 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    Fast ack|check|fastAck
+    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -919,7 +919,7 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-changeState"
@@ -929,7 +929,7 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-cancel"
@@ -949,7 +949,7 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"

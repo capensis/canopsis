@@ -1,9 +1,9 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, ALARM_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
 
 import { shapeToForm } from '@/helpers/flowchart/shapes';
-import { getImpactStateColor } from '@/helpers/entities/entity/color';
+import { getAlarmImpactStateColor } from '@/helpers/entities/alarm/color';
 
 import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
 
@@ -61,7 +61,7 @@ describe('flowchart-preview', () => {
     entity: {
       impact_state: 2,
       state: {
-        val: ENTITIES_STATES.ok,
+        val: ALARM_STATES.ok,
       },
       pbehavior_info: {
         canonical_type: PBEHAVIOR_TYPE_TYPES.active,
@@ -136,7 +136,7 @@ describe('flowchart-preview', () => {
         ...circleShape,
         properties: {
           ...circleShape.properties,
-          fill: getImpactStateColor(2),
+          fill: getAlarmImpactStateColor(2),
           stroke: colorDarken,
         },
         textProperties: {

@@ -155,16 +155,6 @@ html {
 }
 
 .c-extra-details {
-  &__badge {
-    height: 22px;
-    padding: 3px 7px;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 10px;
-    display: flex;
-  }
-
   &__message {
     max-width: 600px;
     white-space: pre-line;
