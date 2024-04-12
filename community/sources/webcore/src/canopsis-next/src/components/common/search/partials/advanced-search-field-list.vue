@@ -1,17 +1,17 @@
 <template>
   <v-menu
-    ref="menu"
+    ref="menuElement"
     v-bind="menuProps"
     :value="value"
     :activator="activator"
     @input="menuInput"
   >
     <v-list>
-      <v-list-item v-if="isActiveTypeValue">
-        <v-list-item-title v-html="$t('advancedSearch.valueTypeListMessage')" />
+      <v-list-item v-if="isItemTypeValue">
+        <v-list-item-title v-html="listMessage" />
       </v-list-item>
-      <v-list-item-group v-else :value="activeItem.value">
-        <template v-if="isActiveTypeField">
+      <v-list-item-group v-else-if="items.length" :value="activeValue">
+        <template v-if="isItemTypeField">
           <v-switch
             key="not"
             :input-value="notSwitcherValue"
@@ -32,16 +32,21 @@
           <v-list-item-title>{{ item.text }}</v-list-item-title>
         </v-list-item>
       </v-list-item-group>
+      <v-list-item v-else>
+        <v-list-item-title class="grey--text">
+          {{ $t('advancedSearch.noDataList') }}
+        </v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { toRef } from 'vue';
 
 import { ADVANCED_SEARCH_ITEM_TYPES } from '@/constants';
 
-import { isFieldType, isValueType } from '@/helpers/search/advanced-search';
+import { useAdvancedSearchItemType } from '../hooks/advanced-search';
 
 export default {
   inject: ['$system'],
@@ -73,28 +78,35 @@ export default {
         nudgeBottom: 1,
         bottom: true,
         offsetY: true,
+        transition: false,
       }),
     },
     activeType: {
       type: String,
       default: ADVANCED_SEARCH_ITEM_TYPES.field,
     },
-    activeItem: {
-      type: Object,
-      default: () => ({}),
+    activeValue: {
+      type: String,
+      required: false,
+    },
+    listMessage: {
+      type: String,
+      default: '',
     },
   },
   setup(props, { emit }) {
-    const isActiveTypeValue = computed(() => isValueType(props.activeType));
-    const isActiveTypeField = computed(() => isFieldType(props.activeType));
+    const {
+      isItemTypeField,
+      isItemTypeValue,
+    } = useAdvancedSearchItemType({ type: toRef(props, 'activeType') });
 
     const menuInput = value => emit('input', value);
     const selectItem = item => emit('select:item', item);
     const changeNotSwitcher = value => emit('change:not', value);
 
     return {
-      isActiveTypeValue,
-      isActiveTypeField,
+      isItemTypeField,
+      isItemTypeValue,
 
       menuInput,
       selectItem,

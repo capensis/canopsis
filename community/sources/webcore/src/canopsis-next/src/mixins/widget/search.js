@@ -1,5 +1,3 @@
-import { MAX_SEARCH_ITEMS } from '@/constants';
-
 import { sortPinnedSearches } from '@/helpers/search/sorting';
 
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -12,6 +10,18 @@ export const widgetSearchMixin = {
     },
   },
   methods: {
+    addSearchIntoUserPreferences(search) {
+      if (!search) {
+        return;
+      }
+
+      const newSearches = [...this.searches, { search, pinned: false }];
+
+      this.updateContentInUserPreference({
+        searches: sortPinnedSearches(newSearches, search),
+      });
+    },
+
     togglePinSearchInUserPreferences(search) {
       const searchItem = this.searches.find(item => item.search === search);
 
@@ -25,21 +35,6 @@ export const widgetSearchMixin = {
 
       this.updateContentInUserPreference({
         searches: sortPinnedSearches(newSearches, search),
-      });
-    },
-
-    updateSearchesInUserPreferences(search) {
-      if (!search) {
-        return;
-      }
-
-      const searchItem = this.searches.find(item => item.search === search) ?? { search, pinned: false };
-      const newSearches = this.searches.filter(item => item.search !== search);
-
-      newSearches.push(searchItem);
-
-      this.updateContentInUserPreference({
-        searches: sortPinnedSearches(newSearches, search).slice(0, MAX_SEARCH_ITEMS),
       });
     },
 
