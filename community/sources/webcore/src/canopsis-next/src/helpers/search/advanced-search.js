@@ -4,9 +4,11 @@ import {
   ADVANCED_SEARCH_UNION_CONDITIONS,
   ADVANCED_SEARCH_UNION_REGEXP_PATTERN,
   ADVANCED_SEARCH_REGEXP_PATTERN,
+  ADVANCED_SEARCH_NOT,
 } from '@/constants';
 
 import { uid } from '@/helpers/uid';
+import { replaceTextNotInQuotes } from '@/helpers/search/quotes';
 
 /**
  * @typedef { 'field' | 'condition' | 'value' | 'union' } AdvancedSearchItemType
@@ -56,7 +58,7 @@ export const getNextAdvancedSearchType = (type = ADVANCED_SEARCH_ITEM_TYPES.unio
  * The function splits the input string based on logical unions, then further analyzes each part
  * to classify it into one of the item types. It supports negation, fields, conditions, and values.
  *
- * @param {string} [search = ``] - The advanced search query string to be parsed.
+ * @param {string} [string = ``] - The advanced search query string to be parsed.
  * @returns {Array<AdvancedSearchItem>} An array of objects, each representing a part of the parsed search query.
  * Each object includes a unique key, the item's value, its type (field, condition, value, union),
  * the original text, and a flag indicating negation (for fields).
@@ -77,9 +79,9 @@ export const getNextAdvancedSearchType = (type = ADVANCED_SEARCH_ITEM_TYPES.unio
  * //   { key: `uid7`, value: "'value 2`", type: 'value', text: "'value 2`", not: false }
  * // ]
  */
-export const parseAdvancedSearch = (search = '') => search.replace(/^\s*-\s*/, '')
+export const advancedSearchStringToArray = (string = '') => string.replace(/^\s*-\s*/, '')
   .split(ADVANCED_SEARCH_UNION_REGEXP_PATTERN)
-  .reduce((acc, item) => {
+  .reduce((acc, item, index, items) => {
     const trimmedItem = item.trim();
 
     if (!trimmedItem) {
@@ -106,38 +108,48 @@ export const parseAdvancedSearch = (search = '') => search.replace(/^\s*-\s*/, '
         not,
         field,
         condition,
-        value = '\'\'',
+        value,
       } = groups;
 
-      if (!field || !condition) {
-        throw new Error('Incorrect search');
+      if (index !== items.length - 1 && (!field || !condition)) {
+        throw new Error('Incorrect search query');
       }
 
-      acc.push(
-        {
+      if (field) {
+        acc.push({
           key: uid(),
           value: field,
           type: ADVANCED_SEARCH_ITEM_TYPES.field,
           text: field,
           not: !!not,
-        },
-        {
+        });
+      }
+
+      if (condition) {
+        acc.push({
           key: uid(),
           value: condition,
           type: ADVANCED_SEARCH_ITEM_TYPES.condition,
           text: condition,
-        },
-        {
+        });
+      }
+
+      if (value) {
+        acc.push({
           key: uid(),
           value,
           type: ADVANCED_SEARCH_ITEM_TYPES.value,
           text: value,
-        },
-      );
+        });
+      }
     }
 
     return acc;
   }, []);
+
+export const advancedSearchArrayToString = (array = []) => (
+  `- ${array.map(item => `${item.not ? `${ADVANCED_SEARCH_NOT} ` : ''}${item.text}`).join(' ')}`
+);
 
 /**
  * Transforms an array of field objects by adding a `type` property with a value of `field` to each object.
@@ -151,7 +163,7 @@ export const parseAdvancedSearch = (search = '') => search.replace(/^\s*-\s*/, '
  * but with an additional `type` property set to `field`.
  */
 export const prepareAdvancedSearchFields = (fields = []) => (
-  fields.map(({ value, text }) => ({ value, text, type: ADVANCED_SEARCH_ITEM_TYPES.field }))
+  fields.map(field => ({ ...field, type: ADVANCED_SEARCH_ITEM_TYPES.field }))
 );
 
 /**
@@ -165,3 +177,14 @@ export const prepareAdvancedSearchFields = (fields = []) => (
 export const prepareAdvancedSearchConditions = (conditions = []) => (
   conditions.map(condition => ({ value: condition, type: ADVANCED_SEARCH_ITEM_TYPES.condition, text: condition }))
 );
+
+export const prepareSearchForSubmit = (search, columns = []) => {
+  if (!search.startsWith('-')) {
+    return search;
+  }
+
+  return columns.reduce(
+    (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
+    search.replace(/^-(\s*)/, ''),
+  );
+};

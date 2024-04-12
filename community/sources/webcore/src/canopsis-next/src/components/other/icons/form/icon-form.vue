@@ -2,13 +2,11 @@
   <v-layout column>
     <v-layout align-center>
       <v-flex
-        class="mr-2"
         v-if="iconOriginalTitle"
+        class="mr-2"
         xs2
       >
-        <v-icon
-          large
-        >
+        <v-icon large>
           $vuetify.icons.{{ iconOriginalTitle }}
         </v-icon>
       </v-flex>

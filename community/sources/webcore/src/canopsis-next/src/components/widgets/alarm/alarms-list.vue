@@ -8,16 +8,14 @@
       align-end
     >
       <v-flex>
-        <c-advanced-search :fields="advancedSearchFields" />
-        <c-advanced-search-field
-          :query.sync="query"
+        <c-advanced-search
           :columns="widget.parameters.widgetColumns"
-          :tooltip="$t('alarm.advancedSearch')"
-          :items="searches"
+          :saved-items="searches"
           combobox
-          @submit="updateSearchesInUserPreferences"
-          @toggle-pin="togglePinSearchInUserPreferences"
-          @remove="removeSearchFromUserPreferences"
+          @submit="updateSearchInQuery"
+          @add:item="addSearchIntoUserPreferences"
+          @toggle-pin:item="togglePinSearchInUserPreferences"
+          @remove:item="removeSearchFromUserPreferences"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
@@ -263,12 +261,6 @@ export default {
       return null;
     },
 
-    firstAlarmExpanded() {
-      const [alarm] = this.alarms;
-
-      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
-    },
-
     hasAccessToExportAsCsv() {
       return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
@@ -297,6 +289,15 @@ export default {
     this.actualizeUsedProperties();
   },
   methods: {
+    updateSearchInQuery(search) {
+      this.query = {
+        ...this.query,
+
+        search,
+        page: 1,
+      };
+    },
+
     refreshExpanded() {
       if (this.$refs.alarmsTable?.expanded) {
         Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
