@@ -35,8 +35,8 @@
           class="mb-4"
           align-center
         >
-          <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
-          <alarm-test-query-execution-status
+          <span class="text-subtitle-1 mr-5">{{ $t('common.webhookStatus') }}:</span>
+          <alarm-webhook-execution-status
             :running="isExecutionRunning"
             :success="isExecutionSucceeded"
             :fail-reason="executionStatus.fail_reason"
@@ -67,10 +67,10 @@ import {
   isWebhookExecutionWaiting,
 } from '@/helpers/entities/webhook-execution/entity';
 
-import AlarmTestQueryExecutionStatus from './alarm-test-query-execution-status.vue';
+import AlarmWebhookExecutionStatus from './alarm-webhook-execution-status.vue';
 
 export default {
-  components: { AlarmTestQueryExecutionStatus },
+  components: { AlarmWebhookExecutionStatus },
   model: {
     prop: 'alarm',
     event: 'input',

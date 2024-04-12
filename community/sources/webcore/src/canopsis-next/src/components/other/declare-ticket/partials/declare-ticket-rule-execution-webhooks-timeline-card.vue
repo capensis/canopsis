@@ -1,5 +1,5 @@
 <template>
-  <alarm-test-query-execution-webhooks-timeline-card
+  <alarm-webhook-execution-timeline-card
     :step="step"
     :expandable="expandable"
     :expanded="expanded"
@@ -14,13 +14,12 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
-import AlarmTestQueryExecutionWebhooksTimelineCard
-  from '@/components/other/alarm/partials/alarm-test-query-execution-webhooks-timeline-card.vue';
+import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
 
 const { mapActions: mapDeclareTicketRuleActions } = createNamespacedHelpers('declareTicketRule');
 
 export default {
-  components: { AlarmTestQueryExecutionWebhooksTimelineCard },
+  components: { AlarmWebhookExecutionTimelineCard },
   props: {
     step: {
       type: Object,
