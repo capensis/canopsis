@@ -23,11 +23,8 @@ import { SOCKET_ROOMS } from '@/config';
 
 import Socket from '@/plugins/socket/services/socket';
 
-import {
-  formToDeclareTicketRule,
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { validationErrorsMixinCreator } from '@/mixins/form';
@@ -79,10 +76,7 @@ export default {
   },
   watch: {
     executionStatus(executionStatus) {
-      if (
-        executionStatus
-        && (isDeclareTicketExecutionSucceeded(executionStatus) || isDeclareTicketExecutionFailed(executionStatus))
-      ) {
+      if (isWebhookExecutionFinished(executionStatus)) {
         this.leaveFromSocketRoom();
       }
     },
