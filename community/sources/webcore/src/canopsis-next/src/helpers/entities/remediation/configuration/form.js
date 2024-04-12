@@ -9,6 +9,7 @@ import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/const
  * @property {string} type
  * @property {string} auth_token
  * @property {string} auth_username
+ * @property {boolean} skip_verify
  */
 
 /**
@@ -45,6 +46,7 @@ export const remediationConfigurationToForm = (remediationConfiguration = {}) =>
   type: remediationConfiguration.type ?? '',
   auth_token: remediationConfiguration.auth_token ?? '',
   auth_username: remediationConfiguration.auth_username ?? '',
+  skip_verify: remediationConfiguration.skip_verify ?? false,
 });
 
 /**
@@ -54,7 +56,13 @@ export const remediationConfigurationToForm = (remediationConfiguration = {}) =>
  * @return {RemediationConfiguration}
  */
 export const formToRemediationConfiguration = (form) => {
-  const remediationConfiguration = pick(form, ['type', 'name', 'host', 'auth_token']);
+  const remediationConfiguration = pick(form, [
+    'type',
+    'name',
+    'host',
+    'auth_token',
+    'skip_verify',
+  ]);
 
   if (form.auth_username) {
     remediationConfiguration.auth_username = form.auth_username;

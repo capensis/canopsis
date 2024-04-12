@@ -311,11 +311,11 @@ export const widgetActionsPanelAlarmMixin = {
           items: alarms,
 
           title: this.$t('modals.createManualMetaAlarm.title'),
-          action: async (manualMetaAlarmEvent) => {
-            if (manualMetaAlarmEvent.id) {
-              await this.addAlarmsIntoManualMetaAlarm({ id: manualMetaAlarmEvent.id, data: manualMetaAlarmEvent });
+          action: async (data) => {
+            if (data.id) {
+              await this.addAlarmsIntoManualMetaAlarm({ id: data.id, data });
             } else {
-              await this.createManualMetaAlarm({ data: manualMetaAlarmEvent });
+              await this.createManualMetaAlarm({ data });
             }
 
             await this.afterSubmit();
@@ -331,10 +331,10 @@ export const widgetActionsPanelAlarmMixin = {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
-          action: async (removeAlarmsFromMetaAlarmEvent) => {
+          action: async (data) => {
             await this.removeAlarmsFromManualMetaAlarm({
               id: this.parentAlarm?._id,
-              data: removeAlarmsFromMetaAlarmEvent,
+              data,
             });
 
             await this.afterSubmit();
@@ -350,10 +350,10 @@ export const widgetActionsPanelAlarmMixin = {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
           isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
-          action: async (removeAlarmsFromMetaAlarmEvent) => {
+          action: async (data) => {
             await this.removeAlarmsFromMetaAlarm({
               id: this.parentAlarm?._id,
-              data: removeAlarmsFromMetaAlarmEvent,
+              data,
             });
 
             await this.afterSubmit();

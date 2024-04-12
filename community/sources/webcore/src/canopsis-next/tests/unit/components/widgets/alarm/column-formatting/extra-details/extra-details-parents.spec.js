@@ -2,6 +2,10 @@ import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsParents from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-parents.vue';
 
+const stubs = {
+  'c-alarm-extra-details-chip': true,
+};
+
 describe('extra-details-parents', () => {
   const total = 3;
   const rules = [
@@ -20,7 +24,7 @@ describe('extra-details-parents', () => {
   ];
 
   const snapshotFactory = generateRenderer(ExtraDetailsParents, {
-
+    stubs,
     attachTo: document.body,
   });
 

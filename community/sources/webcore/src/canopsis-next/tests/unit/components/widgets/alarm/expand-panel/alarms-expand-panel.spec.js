@@ -10,13 +10,14 @@ import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-t
 
 const stubs = {
   'more-infos': true,
-  'alarms-time-line': true,
+  'alarm-timeline': true,
   'alarms-expand-panel-children': true,
   'service-dependencies': true,
   'declared-tickets-list': true,
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
+  'alarms-expand-panel-remediation': true,
   'c-compiled-template': CCompiledTemplate,
   'c-runtime-template': CRuntimeTemplate,
 };
