@@ -32,7 +32,7 @@ export default {
 
     const title = computed(() => {
       const { _t: type, a: author, t: timestamp, val: value } = props.step;
-      const hasLaunchedMessage = ALARM_STEPS_WITH_LAUNCHED_IN_TITLE.includes(type);
+      const hasLaunchedMessage = ALARM_STEPS_WITH_LAUNCHED_IN_TITLE.includes(type) && !props.deep;
       const hasConditionForAuthorMessage = ALARM_STEPS_WITH_CONDITION_FOR_AUTHOR_IN_TITLE.includes(type);
       const hasAuthorMessage = ALARM_STEPS_WITH_AUTHOR_IN_TITLE.includes(type)
         && ((hasConditionForAuthorMessage && !props.deep) || !hasConditionForAuthorMessage);

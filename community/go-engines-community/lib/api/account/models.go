@@ -23,7 +23,7 @@ type EditRequest struct {
 	UITours                map[string]bool `json:"ui_tours"`
 }
 
-func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
+func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) (bson.M, error) {
 	bsonModel := bson.M{
 		"ui_language":               r.UILanguage,
 		"ui_groups_navigation_type": r.UIGroupsNavigationType,
@@ -32,8 +32,13 @@ func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
 		"ui_tours":                  r.UITours,
 	}
 	if r.Password != "" {
-		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
+		h, err := passwordEncoder.EncodePassword([]byte(r.Password))
+		if err != nil {
+			return nil, err
+		}
+
+		bsonModel["password"] = string(h)
 	}
 
-	return bsonModel
+	return bsonModel, nil
 }

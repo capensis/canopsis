@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	"errors"
 	"strconv"
 	"testing"
 
@@ -231,7 +231,7 @@ func getParseDataSets() []dateSet {
 		},
 		{
 			Expression: "ressete",
-			Err:        fmt.Errorf("comparison not found"),
+			Err:        errors.New("comparison not found"),
 		},
 	}
 }

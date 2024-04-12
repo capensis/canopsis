@@ -57,7 +57,7 @@ func (mr *MockEnforcerMockRecorder) Enforce(arg0 ...interface{}) *gomock.Call {
 }
 
 // GetPermissionsForUser mocks base method.
-func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) [][]string {
+func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) ([][]string, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -65,7 +65,8 @@ func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) [][]st
 	}
 	ret := m.ctrl.Call(m, "GetPermissionsForUser", varargs...)
 	ret0, _ := ret[0].([][]string)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetPermissionsForUser indicates an expected call of GetPermissionsForUser.
@@ -341,4 +342,18 @@ func (m *MockUserProvider) Save(arg0 context.Context, arg1 *security.User) error
 func (mr *MockUserProviderMockRecorder) Save(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserProvider)(nil).Save), arg0, arg1)
+}
+
+// UpdateHashedPassword mocks base method.
+func (m *MockUserProvider) UpdateHashedPassword(arg0 context.Context, arg1, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHashedPassword", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHashedPassword indicates an expected call of UpdateHashedPassword.
+func (mr *MockUserProviderMockRecorder) UpdateHashedPassword(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHashedPassword", reflect.TypeOf((*MockUserProvider)(nil).UpdateHashedPassword), arg0, arg1, arg2)
 }

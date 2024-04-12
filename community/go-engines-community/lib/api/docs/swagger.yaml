@@ -351,7 +351,8 @@ paths:
                     "opened": true,
                     "steps": {
                       "page": 1,
-                      "limit": 10
+                      "limit": 10,
+                      "reversed": true
                     },
                     "children": {
                       "page": 1,
@@ -754,6 +755,11 @@ paths:
             items:
               type: string
           example: t,asc
+        - name: query_log
+          in: query
+          description: show query log
+          schema:
+            type: boolean
       responses:
         200:
           description: OK

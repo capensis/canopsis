@@ -36,4 +36,5 @@ type UserProvider interface {
 	FindWithoutPermission(ctx context.Context, perm string) ([]User, error)
 	// Save updates user or inserts user if not exist.
 	Save(ctx context.Context, user *User) error
+	UpdateHashedPassword(ctx context.Context, id, hash string) error
 }

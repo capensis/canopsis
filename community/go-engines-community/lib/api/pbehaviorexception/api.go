@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -21,7 +22,7 @@ type API interface {
 func NewApi(
 	transformer ModelTransformer,
 	store Store,
-	computeChan chan<- []string,
+	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
@@ -37,7 +38,7 @@ func NewApi(
 type api struct {
 	transformer  ModelTransformer
 	store        Store
-	computeChan  chan<- []string
+	computeChan  chan<- rpc.PbehaviorRecomputeEvent
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 }
@@ -247,5 +248,5 @@ func (a *api) Import(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask() {
-	a.computeChan <- []string{}
+	a.computeChan <- rpc.PbehaviorRecomputeEvent{}
 }

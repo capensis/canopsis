@@ -466,7 +466,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(views) != len(r.Views) {
-			return ExportResponse{}, ValidationError{field: "views", error: fmt.Errorf("views not found")}
+			return ExportResponse{}, ValidationError{field: "views", error: errors.New("views not found")}
 		}
 	}
 	if len(r.Groups) > 0 {
@@ -534,7 +534,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(groups) != len(r.Groups) {
-			return ExportResponse{}, ValidationError{field: "groups", error: fmt.Errorf("groups not found")}
+			return ExportResponse{}, ValidationError{field: "groups", error: errors.New("groups not found")}
 		}
 
 		for i, group := range groups {
@@ -547,7 +547,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			}
 			groups[i].Views = foundViews
 			if len(groups[i].Views) != len(viewsByGroup[group.ID]) {
-				return ExportResponse{}, ValidationError{field: fmt.Sprintf("groups.%d", i), error: fmt.Errorf("views not found")}
+				return ExportResponse{}, ValidationError{field: fmt.Sprintf("groups.%d", i), error: ErrViewsNotFound}
 			}
 
 			groups[i].ID = ""
@@ -639,7 +639,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 				if g.Title == "" {
 					return ValidationError{
 						field: fmt.Sprintf("%d.title", gi),
-						error: fmt.Errorf("value is missing"),
+						error: ErrValueIsMissing,
 					}
 				}
 				newGroups = append(newGroups, view.Group{
@@ -665,7 +665,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 					if v.Title == "" {
 						return ValidationError{
 							field: fmt.Sprintf("%d.views.%d.title", gi, vi),
-							error: fmt.Errorf("value is missing"),
+							error: ErrValueIsMissing,
 						}
 					}
 
@@ -692,7 +692,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 							if tab.Title == "" {
 								return ValidationError{
 									field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
-									error: fmt.Errorf("value is missing"),
+									error: ErrValueIsMissing,
 								}
 							}
 
@@ -712,7 +712,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 									if widget.Type == "" {
 										return ValidationError{
 											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
-											error: fmt.Errorf("value is missing"),
+											error: ErrValueIsMissing,
 										}
 									}
 
@@ -723,13 +723,13 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 										if filter.Title == "" {
 											return ValidationError{
 												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
-												error: fmt.Errorf("value is missing"),
+												error: ErrValueIsMissing,
 											}
 										}
 										if len(filter.AlarmPattern) == 0 && len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 {
 											return ValidationError{
 												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.alarm_pattern", gi, vi, ti, wi, fi),
-												error: fmt.Errorf("value is missing"),
+												error: ErrValueIsMissing,
 											}
 										}
 
