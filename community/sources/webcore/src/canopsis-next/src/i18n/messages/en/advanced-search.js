@@ -3,7 +3,6 @@ export default {
   not: 'NOT',
   valueTypeListMessage: 'Press <kbd>enter</kbd> to apply',
   valueTypeListEmptyMessage: 'Press at least 1 symbol and press <kbd>enter</kbd> to apply',
-  validationError: 'Incorrect search query',
   switchAdvancedSearchActiveToTrue: 'Switch to the advanced search',
   switchAdvancedSearchActiveToFalse: 'Switch to the simple search',
   noDataList: 'There aren\'t any items for input',

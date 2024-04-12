@@ -1,8 +1,5 @@
 <template>
-  <advanced-search-field-wrapper
-    :is-menu-active="isMenuActive"
-    :error-messages="errorMessages"
-  >
+  <advanced-search-field-wrapper :is-menu-active="isMenuActive">
     <template #activator>
       <div ref="activatorElement" class="v-input__slot">
         <div class="v-select__slot">
@@ -51,7 +48,14 @@
 </template>
 
 <script>
-import { computed, ref, toRef, nextTick } from 'vue';
+import {
+  computed,
+  ref,
+  toRef,
+  nextTick,
+  watch,
+  set,
+} from 'vue';
 
 import { ADVANCED_SEARCH_CONDITIONS, ADVANCED_SEARCH_ITEM_TYPES, KEY_CODES } from '@/constants';
 
@@ -98,9 +102,9 @@ export default {
       type: Array,
       default: () => Object.values(ADVANCED_SEARCH_CONDITIONS),
     },
-    errorMessages: {
-      type: Array,
-      default: () => [],
+    initialInternalSearch: {
+      type: String,
+      default: '',
     },
   },
   setup(props, { emit }) {
@@ -115,7 +119,7 @@ export default {
       internalSearchElement,
       internalSearchElementFocus,
       clearInternalSearch,
-    } = useAdvancedSearchInternalSearch();
+    } = useAdvancedSearchInternalSearch({ initialInternalSearch: toRef(props, 'initialInternalSearch') });
 
     const {
       activeIndex,
@@ -234,6 +238,25 @@ export default {
         : internalSearch.value;
 
       return t(`advancedSearch.${!valueToCheck ? 'valueTypeListEmptyMessage' : 'valueTypeListMessage'}`);
+    });
+
+    watch(() => props.value, (newValue) => {
+      const keys = Object.keys(notValues.value);
+      const maxNotValueIndex = Math.max(...keys);
+
+      if (maxNotValueIndex < newValue.length) {
+        return;
+      }
+
+      keys.forEach((key) => {
+        if (key < newValue.length) {
+          return;
+        }
+
+        set(notValues.value, key, false);
+      });
+
+      clearInternalSearch();
     });
 
     return {

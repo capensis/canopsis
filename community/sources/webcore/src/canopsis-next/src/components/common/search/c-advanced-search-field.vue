@@ -3,7 +3,7 @@
     :value="internalValue"
     :fields="fields"
     :conditions="conditions"
-    :error-messages="errorMessages"
+    :initial-internal-search="internalSearch"
     @input="updateInternalValue"
   />
 </template>
@@ -11,11 +11,10 @@
 <script>
 import { ref, computed, watch } from 'vue';
 
-import { ADVANCED_SEARCH_CONDITIONS, ADVANCED_SEARCH_ITEM_TYPES, ALARM_ADVANCED_SEARCH_FIELDS } from '@/constants';
+import { ADVANCED_SEARCH_CONDITIONS, ADVANCED_SEARCH_ITEM_TYPES } from '@/constants';
 
 import { advancedSearchStringToArray, advancedSearchArrayToString } from '@/helpers/search/advanced-search';
 
-import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
 
 import AdvancedSearchField from './partials/advanced-search-field.vue';
@@ -41,16 +40,12 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
     const fields = computed(() => (
-      props.columns
-        .filter(({ value }) => ALARM_ADVANCED_SEARCH_FIELDS.includes(value))
-        .map(({ text }) => ({ text, value: text, type: ADVANCED_SEARCH_ITEM_TYPES.field }))
+      props.columns.map(({ text }) => ({ text, value: text, type: ADVANCED_SEARCH_ITEM_TYPES.field }))
     ));
 
-    const errorMessages = ref([]);
     const internalStringValue = ref(props.value);
 
     const updateModelWithInternalValue = (value) => {
@@ -58,37 +53,25 @@ export default {
       updateModel(value);
     };
 
-    const getParsedValue = (value) => {
-      try {
-        return advancedSearchStringToArray(value);
-      } catch (err) {
-        console.error(err);
-        errorMessages.value = [t('advancedSearch.validationError')];
-
-        return [];
-      }
-    };
-
-    const internalValue = ref(getParsedValue(props.value));
+    const {
+      value: initialValue,
+      internalSearch: initialInternalSearch,
+    } = advancedSearchStringToArray(props.value, props.columns);
+    const internalValue = ref(initialValue);
+    const internalSearch = ref(initialInternalSearch);
 
     const clearInternalValue = () => {
       internalValue.value = [];
     };
 
-    const clearErrorMessages = () => {
-      errorMessages.value = [];
-    };
-
     const clear = () => {
       clearInternalValue();
-      clearErrorMessages();
       updateModelWithInternalValue('');
     };
 
     const updateInternalValue = (value) => {
       internalValue.value = value;
 
-      clearErrorMessages();
       updateModelWithInternalValue(advancedSearchArrayToString(value));
     };
 
@@ -97,17 +80,22 @@ export default {
         return;
       }
 
+      const {
+        value: watchInitialValue,
+        internalSearch: watchInitialInternalSearch,
+      } = advancedSearchStringToArray(value, props.columns);
+
       internalStringValue.value = value;
-      internalValue.value = getParsedValue(value);
+      internalSearch.value = watchInitialInternalSearch;
+      internalValue.value = watchInitialValue;
     });
 
     return {
       fields,
       internalValue,
-      errorMessages,
+      internalSearch,
 
       clear,
-      clearErrorMessages,
       updateInternalValue,
     };
   },

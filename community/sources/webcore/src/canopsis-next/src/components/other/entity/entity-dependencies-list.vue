@@ -11,9 +11,8 @@
     <template #toolbar="">
       <v-flex>
         <c-advanced-search-field
-          :query.sync="query"
           :columns="columns"
-          :tooltip="$t('context.advancedSearch')"
+          @submit="updateSearchInQuery"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
@@ -72,6 +71,15 @@ export default {
     this.fetchList();
   },
   methods: {
+    updateSearchInQuery(search) {
+      this.query = {
+        ...this.query,
+
+        search,
+        page: 1,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 

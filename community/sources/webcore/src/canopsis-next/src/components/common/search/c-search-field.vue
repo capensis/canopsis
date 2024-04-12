@@ -2,17 +2,20 @@
   <v-combobox
     v-if="combobox"
     v-field="value"
+    ref="comboboxElement"
     :label="$t('common.search')"
     :items="items"
     :menu-props="comboboxMenuProps"
     :return-object="false"
-    :hide-details="false"
     append-icon=""
     item-text="search"
     item-value="search"
     hide-no-data
     single-line
+    hide-details
+    @keydown.enter="keydownEnterCombobox"
     @input="submit"
+    @update:search-input="updateModel"
   >
     <template #item="{ item }">
       <v-list-item-content>
@@ -55,14 +58,16 @@
     v-else
     v-field="value"
     :label="$t('common.search')"
-    :hide-details="hideDetails"
+    hide-details
     single-line
     @keydown.enter.prevent="submit(value)"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
 
 import { useSearchSavedItems } from './hooks/search';
 
@@ -80,23 +85,32 @@ export default {
       type: Array,
       required: false,
     },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
+    const comboboxElement = ref();
+
     const comboboxMenuProps = computed(() => ({ contentClass: 'c-search-field__menu' }));
 
     const submit = () => emit('submit', props.value);
     const { removeItem, togglePinItem } = useSearchSavedItems(emit);
 
+    const keydownEnterCombobox = () => {
+      submit();
+      comboboxElement.value?.blur();
+    };
+
     return {
+      comboboxElement,
+
       comboboxMenuProps,
 
+      updateModel,
       submit,
       removeItem,
       togglePinItem,
+      keydownEnterCombobox,
     };
   },
 };

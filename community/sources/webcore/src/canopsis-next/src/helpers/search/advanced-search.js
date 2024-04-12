@@ -1,14 +1,15 @@
+import { orderBy, map } from 'lodash';
+
 import {
   ADVANCED_SEARCH_ITEM_TYPES,
   ADVANCED_SEARCH_NEXT_ITEM_TYPES,
   ADVANCED_SEARCH_UNION_CONDITIONS,
   ADVANCED_SEARCH_UNION_REGEXP_PATTERN,
-  ADVANCED_SEARCH_REGEXP_PATTERN,
   ADVANCED_SEARCH_NOT,
+  ADVANCED_SEARCH_CONDITIONS,
 } from '@/constants';
 
 import { uid } from '@/helpers/uid';
-import { replaceTextNotInQuotes } from '@/helpers/search/quotes';
 
 /**
  * @typedef { 'field' | 'condition' | 'value' | 'union' } AdvancedSearchItemType
@@ -51,59 +52,84 @@ export const isFieldType = type => type === ADVANCED_SEARCH_ITEM_TYPES.field;
 export const getNextAdvancedSearchType = (type = ADVANCED_SEARCH_ITEM_TYPES.union) => (
   ADVANCED_SEARCH_NEXT_ITEM_TYPES[type] ?? ADVANCED_SEARCH_ITEM_TYPES.field
 );
-
 /**
- * Parses a string representing an advanced search query into an array of search items.
- * Each search item is an object that may represent a field, condition, value, or a logical union (AND/OR).
- * The function splits the input string based on logical unions, then further analyzes each part
- * to classify it into one of the item types. It supports negation, fields, conditions, and values.
+ * Converts an advanced search string into an array of search items, each represented as an object.
+ * This function parses a search string based on predefined union conditions, item types, and conditions.
+ * It supports complex queries with logical operators and is designed to work with a dynamic set of column names.
  *
- * @param {string} [string = ``] - The advanced search query string to be parsed.
- * @returns {Array<AdvancedSearchItem>} An array of objects, each representing a part of the parsed search query.
- * Each object includes a unique key, the item's value, its type (field, condition, value, union),
- * the original text, and a flag indicating negation (for fields).
+ * @param {string} search - The search string to be parsed.
+ * @param {Array<{text: string}>} columns - An array of objects representing the columns, where each column has a `text`
+ * property.
+ * @returns {{internalSearch: string, value: Array}} An object containing two properties: `internalSearch` which is
+ * a string that could not be parsed, and `value` which is an array of parsed items.
  *
  * @example
- * // Example usage of parseAdvancedSearch
- * const searchQuery = "-field1 = value1 AND field2 != `value 2`";
- * const parsedQuery = parseAdvancedSearch(searchQuery);
- * console.log(parsedQuery);
- * // Output might look like:
- * // [
- * //   { key: `uid1`, value: `field1`, type: 'field', text: `field1`, not: true },
- * //   { key: `uid2`, value: `=`, type: 'condition', text: `=`, not: false },
- * //   { key: `uid3`, value: `value1`, type: 'value', text: `value1`, not: false },
- * //   { key: `uid4`, value: `AND`, type: 'union', text: `AND`, not: false },
- * //   { key: `uid5`, value: `field2`, type: 'field', text: `field2`, not: false },
- * //   { key: `uid6`, value: `!=`, type: 'condition', text: `!=`, not: false },
- * //   { key: `uid7`, value: "'value 2`", type: 'value', text: "'value 2`", not: false }
- * // ]
+ * // Example usage:
+ * const search = "name = John AND age > 30";
+ * const columns = [{ text: "name" }, { text: "age" }];
+ * const result = advancedSearchStringToArray(search, columns);
+ * console.log(result);
+ * // Output:
+ * // {
+ * //   internalSearch: ``,
+ * //   value: [
+ * //     { key: `uid1`, value: `name`, type: `field`, text: `name`, not: false },
+ * //     { key: `uid2`, value: `=`, type: `condition`, text: `=` },
+ * //     { key: `uid3`, value: `John`, type: `value`, text: `John` },
+ * //     { key: `uid4`, value: `AND`, type: `union`, text: `AND` },
+ * //     { key: `uid5`, value: `age`, type: `field`, text: `age`, not: false },
+ * //     { key: `uid6`, value: `>`, type: `condition`, text: `>` },
+ * //     { key: `uid7`, value: `30`, type: `value`, text: `30` }
+ * //   ]
+ * // }
  */
-export const advancedSearchStringToArray = (string = '') => string.replace(/^\s*-\s*/, '')
-  .split(ADVANCED_SEARCH_UNION_REGEXP_PATTERN)
-  .reduce((acc, item, index, items) => {
-    const trimmedItem = item.trim();
+export const advancedSearchStringToArray = (search = '', columns = []) => {
+  const result = {
+    internalSearch: '',
+    value: [],
+  };
 
-    if (!trimmedItem) {
-      return acc;
-    }
+  if (!search) {
+    return result;
+  }
 
-    const unionItem = ADVANCED_SEARCH_UNION_CONDITIONS[trimmedItem.toLocaleLowerCase()];
+  const searchWithoutDash = search.replace(/^\s*-\s*/, '');
 
-    if (unionItem) {
-      acc.push({
-        key: uid(),
-        value: unionItem,
-        type: ADVANCED_SEARCH_ITEM_TYPES.union,
-        text: unionItem,
-      });
+  try {
+    const items = searchWithoutDash.split(ADVANCED_SEARCH_UNION_REGEXP_PATTERN);
+    const columnsForRegexp = orderBy(map(columns, 'text'), text => text.length, ['desc']).join('|');
+    const itemRegexp = new RegExp(`^(?<not>${ADVANCED_SEARCH_NOT})?\\s*(?<field>${columnsForRegexp}|[\\w._]+)?\\s*(?<condition>${Object.values(ADVANCED_SEARCH_CONDITIONS).join('|')})?\\s*(?<value>.+)?$`, 'i');
 
-      return acc;
-    }
+    for (let i = 0; i < items.length; i += 1) {
+      const item = items[i];
 
-    const { groups } = trimmedItem.match(ADVANCED_SEARCH_REGEXP_PATTERN);
+      const trimmedItem = item.trim();
 
-    if (groups) {
+      if (!trimmedItem) {
+        continue;
+      }
+
+      const unionItem = ADVANCED_SEARCH_UNION_CONDITIONS[trimmedItem.toLocaleLowerCase()];
+
+      if (unionItem) {
+        result.value.push({
+          key: uid(),
+          value: unionItem,
+          type: ADVANCED_SEARCH_ITEM_TYPES.union,
+          text: unionItem,
+        });
+
+        continue;
+      }
+
+      const { groups } = trimmedItem.match(itemRegexp);
+
+      if (!groups) {
+        result.internalSearch = items.slice(i).join(' ');
+
+        break;
+      }
+
       const {
         not,
         field,
@@ -111,12 +137,14 @@ export const advancedSearchStringToArray = (string = '') => string.replace(/^\s*
         value,
       } = groups;
 
-      if (index !== items.length - 1 && (!field || !condition)) {
-        throw new Error('Incorrect search query');
+      if (i !== items.length - 1 && (!field || !condition || !value)) {
+        result.internalSearch = items.slice(i).join(' ');
+
+        break;
       }
 
       if (field) {
-        acc.push({
+        result.value.push({
           key: uid(),
           value: field,
           type: ADVANCED_SEARCH_ITEM_TYPES.field,
@@ -126,7 +154,13 @@ export const advancedSearchStringToArray = (string = '') => string.replace(/^\s*
       }
 
       if (condition) {
-        acc.push({
+        if (!field) {
+          result.internalSearch = items.slice(i).join(' ');
+
+          break;
+        }
+
+        result.value.push({
           key: uid(),
           value: condition,
           type: ADVANCED_SEARCH_ITEM_TYPES.condition,
@@ -135,7 +169,13 @@ export const advancedSearchStringToArray = (string = '') => string.replace(/^\s*
       }
 
       if (value) {
-        acc.push({
+        if (!field || !condition) {
+          result.internalSearch = items.slice(i).join(' ');
+
+          break;
+        }
+
+        result.value.push({
           key: uid(),
           value,
           type: ADVANCED_SEARCH_ITEM_TYPES.value,
@@ -144,9 +184,41 @@ export const advancedSearchStringToArray = (string = '') => string.replace(/^\s*
       }
     }
 
-    return acc;
-  }, []);
+    return result;
+  } catch (err) {
+    console.error(err);
 
+    return {
+      internalSearch: searchWithoutDash,
+      value: [],
+    };
+  }
+};
+
+/**
+ * Converts an array of search items back into a string representation of the search query.
+ * Each item in the array represents a part of the search query, including fields, conditions, and values.
+ * The function prefixes the result with a dash and a space.
+ *
+ * @param {Array<{not: boolean, text: string}>} array - The array of search items to be converted into a string.
+ * @returns {string} A string representation of the search query.
+ *
+ * @example
+ * // Example usage:
+ * const searchItems = [
+ *   { not: false, text: `name` },
+ *   { not: false, text: `=` },
+ *   { not: false, text: `John` },
+ *   { not: false, text: `AND` },
+ *   { not: true, text: `age` },
+ *   { not: false, text: `>` },
+ *   { not: false, text: `30` }
+ * ];
+ * const searchString = advancedSearchArrayToString(searchItems);
+ * console.log(searchString);
+ * // Output:
+ * // - name = John AND NOT age > 30
+ */
 export const advancedSearchArrayToString = (array = []) => (
   `- ${array.map(item => `${item.not ? `${ADVANCED_SEARCH_NOT} ` : ''}${item.text}`).join(' ')}`
 );
@@ -177,14 +249,3 @@ export const prepareAdvancedSearchFields = (fields = []) => (
 export const prepareAdvancedSearchConditions = (conditions = []) => (
   conditions.map(condition => ({ value: condition, type: ADVANCED_SEARCH_ITEM_TYPES.condition, text: condition }))
 );
-
-export const prepareSearchForSubmit = (search, columns = []) => {
-  if (!search.startsWith('-')) {
-    return search;
-  }
-
-  return columns.reduce(
-    (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
-    search.replace(/^-(\s*)/, ''),
-  );
-};

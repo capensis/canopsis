@@ -289,15 +289,6 @@ export default {
     this.actualizeUsedProperties();
   },
   methods: {
-    updateSearchInQuery(search) {
-      this.query = {
-        ...this.query,
-
-        search,
-        page: 1,
-      };
-    },
-
     refreshExpanded() {
       if (this.$refs.alarmsTable?.expanded) {
         Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
