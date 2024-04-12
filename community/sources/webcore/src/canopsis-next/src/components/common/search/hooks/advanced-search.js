@@ -3,7 +3,6 @@ import { computed, ref, set } from 'vue';
 
 import { ADVANCED_SEARCH_ITEM_TYPES, ADVANCED_SEARCH_UNION_FIELDS } from '@/constants';
 
-import { uid } from '@/helpers/uid';
 import {
   getNextAdvancedSearchType,
   isFieldType,
@@ -34,19 +33,19 @@ export const useAdvancedSearchItemType = ({ type }) => {
 /**
  * Provides reactive state and functions for managing an internal search component in Vue.
  *
- * @returns {object} An object containing:
+ * @returns {Object} An object containing:
  * - `internalSearch`: a reactive reference to the search input value.
  * - `internalSearchElement`: a reactive reference to the search input element.
  * - `internalSearchElementFocus`: a function to focus the search input element if it exists.
  * - `setInternalSearch`: a function to set the value of the search input.
  * - `clearInternalSearch`: a function to clear the value of the search input.
  */
-export const useAdvancedSearchInternalSearch = () => {
-  const internalSearch = ref('');
+export const useAdvancedSearchInternalSearch = ({ initialInternalSearch }) => {
+  const internalSearch = ref(initialInternalSearch.value);
   const internalSearchElement = ref();
 
   const internalSearchElementFocus = () => internalSearchElement.value?.$el?.focus();
-  const setInternalSearch = (value = '') => internalSearch.value = value;
+  const setInternalSearch = (search = '') => internalSearch.value = search;
   const clearInternalSearch = () => setInternalSearch('');
 
   return {
@@ -103,7 +102,9 @@ export const useAdvancedSearchActiveIndex = ({ value, onChange }) => {
 
     activeIndex.value = index;
 
-    onChange?.();
+    if (index !== value.value.length) {
+      onChange?.();
+    }
   };
 
   const goToNextActiveIndex = () => goToActiveIndex(activeIndex.value + 1);
@@ -126,51 +127,23 @@ export const useAdvancedSearchActiveIndex = ({ value, onChange }) => {
 };
 
 /**
- * Custom hook for managing an advanced search internal value state.
- *
- * @param {Object} params - The parameters object.
- * @param {Array} params.value - Initial value for the internal state.
- * @returns {Object} An object containing:
- * - `internalValue`: a reactive reference to the internal value array,
- * - `addItemIntoInternalValue`: function to add a new item to the internal value,
- * - `updateItemInInternalValue`: function to update an item in the internal value by index,
- * - `removeItemFromInternalValue`: function to remove an item from the internal value by index.
- */
-export const useAdvancedSearchInternalValue = ({ value }) => {
-  const internalValue = ref(value);
-  const addItemIntoInternalValue = item => internalValue.value.push({ ...item, key: uid() });
-  const updateItemInInternalValue = (index, item) => set(internalValue.value, index, item);
-  const removeItemFromInternalValue = (index) => {
-    internalValue.value = internalValue.value.filter((item, itemIndex) => index !== itemIndex);
-  };
-
-  return {
-    internalValue,
-
-    addItemIntoInternalValue,
-    updateItemInInternalValue,
-    removeItemFromInternalValue,
-  };
-};
-
-/**
  * Provides reactive state and methods to manage the visibility of an advanced search menu.
  *
- * @param {Object} [options={}] - Configuration options for the menu.
- * @param {Function} [options.onChange] - Callback function that is called when the menu's visibility changes.
+ * @param {Object} options - Configuration options for the menu.
+ * @param {Function} options.onChange - Callback function that is called when the menu's visibility changes.
  * @returns {Object} An object containing:
  * - `isMenuActive` - A Vue ref that holds the boolean state of the menu's visibility.
  * - `changeMenu` - Function to directly set the visibility of the menu.
  * - `focusMenu` - Function to set the menu as active (visible).
  * - `blurMenu` - Function to set the menu as inactive (hidden).
  */
-export const useAdvancedSearchMenu = ({ onChange = () => {} } = {}) => {
+export const useAdvancedSearchMenu = ({ onChange }) => {
   const isMenuActive = ref(false);
 
   const changeMenu = (value) => {
     isMenuActive.value = value;
 
-    onChange(value);
+    onChange?.(value);
   };
 
   const focusMenu = () => changeMenu(true);
@@ -190,13 +163,12 @@ export const useAdvancedSearchMenu = ({ onChange = () => {} } = {}) => {
  * search query.
  *
  * @param {Object} params - The parameters object.
- * @param {Ref<Array>} params.fields - A ref to an array of field objects, each containing at least a `value`
- * and `text` property.
+ * @param {Ref<Array>} params.fields - A ref to an array of field objects, each containing at least a `value` and a
+ * `text` property.
  * @param {Ref<Array>} params.conditions - A ref to an array of condition strings.
- * @param {Ref<string>} params.activeType - A ref to the currently active type of item
- * (`field`, `condition`, or `union`).
- * @param {Ref<string>} params.internalSearch - A ref to the internal search string used to filter items.
- * @returns {Object} An object containing reactive properties for field items, condition items, all items based on the
+ * @param {Ref<string>} params.activeType - A ref to the current active type of the advanced search items.
+ * @param {Ref<string>} params.internalSearch - A ref to the internal search query string.
+ * @returns {Object} An object containing reactive properties for fields items, conditions items, all items based on the
  * active type, and filtered items based on the search query.
  */
 export const useAdvancedSearchItems = ({ fields, conditions, activeType, internalSearch }) => {
@@ -238,20 +210,27 @@ export const useAdvancedSearchItems = ({ fields, conditions, activeType, interna
 };
 
 /**
- * Provides reactive handling for "not" values in an advanced search context.
+ * Custom hook for managing "not" values in an advanced search component.
  *
  * @param {Object} params - The parameters object.
- * @param {Ref} params.value - A ref object containing the current search values.
- * @param {Ref} params.activeIndex - A ref to the active index in the search values array.
- * @param {Function} params.updateItemInArray - A function to update an item in the search values array.
+ * @param {Object} params.value - A ref object containing the array of search items.
+ * @param {Object} params.activeIndex - A ref representing the currently active search item index.
+ * @param {Function} params.updateItemInArray - Function to update an item in the search items array.
  *
  * @returns {Object} An object containing:
- * - `notValues`: a ref object mapping indices to their "not" values.
- * - `activeIndexNotValue`: a computed ref that returns the "not" value for the currently active index.
- * - `setNotValue`: a function to set the "not" value for the current active index and update the item in the array.
+ * - `notValues`: a ref object mapping indices to their boolean "not" status.
+ * - `activeIndexNotValue`: a computed ref that returns the "not" status of the item at the active index.
+ * - `setNotValue`: a function to set the "not" value of the item at the active index and update the array.
  */
 export const useAdvancedSearchNotValues = ({ value, activeIndex, updateItemInArray }) => {
-  const notValues = ref({});
+  const initialNotValues = value.value.reduce((acc, item, index) => {
+    if (item.not) {
+      acc[index] = true;
+    }
+
+    return acc;
+  }, {});
+  const notValues = ref(initialNotValues);
   const activeIndexNotValue = computed(() => notValues.value[activeIndex.value] ?? false);
 
   const setNotValue = (notValue) => {
@@ -259,12 +238,14 @@ export const useAdvancedSearchNotValues = ({ value, activeIndex, updateItemInArr
 
     set(notValues.value, activeIndex.value, notValue);
 
-    if (item) {
-      updateItemInArray(activeIndex.value, {
-        ...item,
-        not: value,
-      });
+    if (!item) {
+      return;
     }
+
+    updateItemInArray(activeIndex.value, {
+      ...item,
+      not: notValue,
+    });
   };
 
   return {

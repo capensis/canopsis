@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import { prepareSearchForSubmit } from '@/helpers/search/advanced-search';
+import { prepareSearchForSubmit } from '@/helpers/search/search';
 
 /**
  * Custom Vue composition function to manage local search value and handle submission.

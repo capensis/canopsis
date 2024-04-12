@@ -29,8 +29,6 @@ export { default as CPayloadTextField } from '@/components/forms/fields/c-payloa
 export { default as CMixedInputField } from '@/components/forms/fields/c-mixed-input-field.vue';
 export { default as CInputTypeField } from '@/components/forms/fields/c-input-type-field.vue';
 export { default as CArrayTextField } from '@/components/forms/fields/c-array-text-field.vue';
-export { default as CSearchField } from '@/components/forms/fields/c-search-field.vue';
-export { default as CAdvancedSearchField } from '@/components/forms/fields/c-advanced-search-field.vue';
 export { default as CStoragesField } from '@/components/forms/fields/c-storages-field.vue';
 export { default as CStorageField } from '@/components/forms/fields/c-storage-field.vue';
 export { default as CFileNameMaskField } from '@/components/forms/fields/c-file-name-mask-field.vue';
