@@ -1103,6 +1103,41 @@ permission:
     _id: models_stateSetting
     name: <Current()._id>
     description: State settings
+  permission_models_icon:
+    <<: *permission_crud
+    _id: models_icon
+    name: <Current()._id>
+    description: Icons
+  permission_availability_interval:
+    <<: *permission
+    _id: availability_interval
+    name: <Current()._id>
+    description: Availability interval
+  permission_availability_listFilters:
+    <<: *permission
+    _id: availability_listFilters
+    name: <Current()._id>
+    description: Availability list filters
+  permission_availability_editFilter:
+    <<: *permission
+    _id: availability_editFilter
+    name: <Current()._id>
+    description: Availability edit filter
+  permission_availability_addFilter:
+    <<: *permission
+    _id: availability_addFilter
+    name: <Current()._id>
+    description: Availability add filter
+  permission_availability_userFilter:
+    <<: *permission
+    _id: availability_userFilter
+    name: <Current()._id>
+    description: Availability user filter
+  permission_availability_exportAsCsv:
+    <<: *permission
+    _id: availability_exportAsCsv
+    name: <Current()._id>
+    description: Availability export as csv
 
   # API permissions
   permission_api_alarm_read:
@@ -1468,6 +1503,13 @@ role:
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
       "@permission_models_stateSetting": 15
+      "@permission_models_icon": 15
+      "@permission_availability_interval": 1
+      "@permission_availability_listFilters": 1
+      "@permission_availability_editFilter": 1
+      "@permission_availability_addFilter": 1
+      "@permission_availability_userFilter": 1
+      "@permission_availability_exportAsCsv": 1
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
