@@ -4319,6 +4319,8 @@ definitions:
         type: boolean
       ticket_id:
         type: string
+      ticket_id_tpl:
+        type: string
       ticket_url:
         type: string
       ticket_url_tpl:
