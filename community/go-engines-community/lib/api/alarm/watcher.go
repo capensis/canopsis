@@ -20,7 +20,7 @@ import (
 type Watcher interface {
 	StartWatch(ctx context.Context, connId, userId, roomId string, data any) error
 	StartWatchDetails(ctx context.Context, connId, userId, roomId string, data any) error
-	StopWatch(ctx context.Context, connId, roomId string) error
+	StopWatch(connId, roomId string) error
 }
 
 func NewWatcher(
@@ -119,7 +119,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 					continue
 				}
 
-				w.hub.SendGroupRoomByConnections(streamCtx, connIds, websocket.RoomAlarmsGroup, roomId, res)
+				w.hub.SendGroupRoomByConnections(connIds, websocket.RoomAlarmsGroup, roomId, res)
 			}
 		}
 	}()
@@ -264,12 +264,12 @@ func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId 
 		}
 		if res != nil {
 			res.ID = request.ID
-			w.hub.SendGroupRoomByConnections(ctx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+			w.hub.SendGroupRoomByConnections(connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
 		}
 	}
 }
 
-func (w *watcher) StopWatch(_ context.Context, connId, roomId string) error {
+func (w *watcher) StopWatch(connId, roomId string) error {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 

@@ -217,7 +217,7 @@ func Default(
 	})
 
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, security.GetTokenProviders())
-	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, logger)
+	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, logger)
 	err = registerWebsocketRooms(websocketHub)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot register websocket rooms: %w", err)
