@@ -21,6 +21,7 @@ import {
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { setSeveralFields } from '@/helpers/immutable';
+import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../template/form';
@@ -49,6 +50,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {number} treeOfDependenciesShowType
+ * @property {AvailabilityField} availability
  */
 
 /**
@@ -103,6 +105,7 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
   treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
+  availability: availabilityFieldToForm(parameters.availability),
 });
 
 /**

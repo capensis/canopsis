@@ -30,6 +30,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       value="Chart title"
     />
     <field-quick-date-interval-type-stub
+      ranges="[object Object]"
       value="last30Days"
     />
     <field-sampling-stub
@@ -77,6 +78,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       value=""
     />
     <field-quick-date-interval-type-stub
+      ranges="[object Object]"
       value="last30Days"
     />
     <field-sampling-stub
