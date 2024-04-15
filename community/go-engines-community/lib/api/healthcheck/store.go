@@ -220,8 +220,8 @@ func (s *store) doLoad(ctx context.Context) {
 	s.loadConfig(ctx)
 	s.loadServices(ctx)
 	s.loadEngines(ctx)
-	s.websocketHub.Send(ctx, websocket.RoomHealthcheck, s.GetInfo())
-	s.websocketHub.Send(ctx, websocket.RoomHealthcheckStatus, s.GetStatus())
+	s.websocketHub.Send(websocket.RoomHealthcheck, s.GetInfo())
+	s.websocketHub.Send(websocket.RoomHealthcheckStatus, s.GetStatus())
 }
 
 func (s *store) loadEngines(ctx context.Context) {
