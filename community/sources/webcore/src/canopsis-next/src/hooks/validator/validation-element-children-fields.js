@@ -2,7 +2,7 @@ import { computed, unref } from 'vue';
 
 import { isParent } from '@/helpers/vue-base';
 
-import { useInjectValidator } from './useInjectValidator';
+import { useInjectValidator } from './inject-validator';
 
 const EMPTY_VALIDATOR_FIELDS = [];
 

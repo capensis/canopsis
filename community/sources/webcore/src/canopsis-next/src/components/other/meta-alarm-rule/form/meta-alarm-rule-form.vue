@@ -91,7 +91,7 @@ import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fiel
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 
 import { useI18n } from '@/hooks/i18n';
-import { useValidationElementChildren } from '@/hooks/validator/useValidationElementChildren';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useEntityServerVariables } from '@/hooks/entities/entity/useEntityServerVariables';
 import { useAlarmServerVariables } from '@/hooks/entities/alarm/useAlarmServerVariables';
 
