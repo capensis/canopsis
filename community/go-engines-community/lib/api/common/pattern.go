@@ -17,7 +17,7 @@ var (
 	ErrNotExistCorporateAlarmPattern          = ValidationError{field: "corporate_alarm_pattern", errMsg: "CorporateAlarmPattern doesn't exist."}
 	ErrNotExistCorporateEntityPattern         = ValidationError{field: "corporate_entity_pattern", errMsg: "CorporateEntityPattern doesn't exist."}
 	ErrNotExistCorporatePbehaviorPattern      = ValidationError{field: "corporate_pbehavior_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
-	ErrNotExistCorporateWeatherServicePattern = ValidationError{field: "corporate_weather_service_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
+	ErrNotExistCorporateWeatherServicePattern = ValidationError{field: "corporate_weather_service_pattern", errMsg: "CorporateWeatherServicePattern doesn't exist."}
 )
 
 type AlarmPatternFieldsRequest struct {
