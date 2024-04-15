@@ -23,7 +23,7 @@ import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widge
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
 const stubs = {
-  'c-advanced-search-field': true,
+  'c-advanced-search': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -44,7 +44,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
-  'c-advanced-search-field': true,
+  'c-advanced-search': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,

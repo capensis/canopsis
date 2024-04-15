@@ -5,7 +5,6 @@
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
-    :search-tooltip="$t('dynamicInfo.advancedSearch')"
     :select-all="removable"
     advanced-search
     advanced-pagination

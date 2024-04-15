@@ -10,8 +10,8 @@ import { replaceTextNotInQuotes } from './quotes';
  * @returns {string} - The processed search string with replacements made, or the original search string if no hyphen
  * prefix is present.
  */
-export const prepareSearchForSubmit = (search, columns = []) => {
-  if (!search.startsWith('-')) {
+export const prepareSearchForSubmit = (search = '', columns = []) => {
+  if (search.startsWith('-')) {
     return search;
   }
 
