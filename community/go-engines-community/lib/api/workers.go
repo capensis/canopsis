@@ -153,7 +153,7 @@ func updateWebsocketConns(
 }
 
 func sendPbhRecomputeEvents(
-	pbhComputeChan <-chan []string,
+	pbhComputeChan <-chan rpc.PbehaviorRecomputeEvent,
 	encoder encoding.Encoder,
 	publisher libamqp.Publisher,
 	logger zerolog.Logger,
@@ -163,12 +163,12 @@ func sendPbhRecomputeEvents(
 			select {
 			case <-ctx.Done():
 				return
-			case ids, ok := <-pbhComputeChan:
+			case event, ok := <-pbhComputeChan:
 				if !ok {
 					return
 				}
 
-				body, err := encoder.Encode(rpc.PbehaviorRecomputeEvent{Ids: ids})
+				body, err := encoder.Encode(event)
 				if err != nil {
 					logger.Err(err).Msg("cannot encode event")
 					continue

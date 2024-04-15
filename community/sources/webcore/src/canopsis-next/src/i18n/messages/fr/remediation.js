@@ -1,4 +1,9 @@
-import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+import {
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES,
+  REMEDIATION_INSTRUCTION_TYPES,
+} from '@/constants';
 
 export default {
   tabs: {
@@ -8,6 +13,7 @@ export default {
   },
 
   instruction: {
+    name: 'Nom de l\'instruction',
     usingInstruction: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     addStep: 'Ajouter une étape',
     addOperation: 'Ajouter une opération',
@@ -78,6 +84,7 @@ export default {
       title: 'Tâches attribuées :',
       startedAt: 'Date de déclenchement\n(par Canopsis)',
       launchedAt: 'Date de lancement\n(par l\'ordonnanceur)',
+      launchedBy: 'Lancé par',
       completedAt: 'Fin de traitement\n(par l\'ordonnanceur)',
       waitAlert: 'L\'ordonnanceur ne répond pas, veuillez contacter votre administrateur',
       skip: 'Ignorer la tâche',
@@ -87,6 +94,30 @@ export default {
       instructionFailed: 'Échec de d\'une consigne',
       instructionComplete: 'Exécution des consignes terminée',
       stopped: 'Arrêté',
+    },
+    status: {
+      tooltips: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running]: 'En cours',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused]: 'En pause',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]: 'Terminer avec succès',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted]: 'Annulé',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed]: 'Échoué',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]: 'En cours',
+      },
+    },
+    stepsTitles: {
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual]: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: 'L\'étape {name} est terminée',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: 'L\'étape {name} a échoué',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: 'L\'étape {name} est abandonnée',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]: 'L\'étape {name} est ignorée',
+      },
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.job]: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: '{name} est terminée',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: '{name} a échoué',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: '{name} est abandonnée',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]: '{name} est ignorée',
+      },
     },
   },
 

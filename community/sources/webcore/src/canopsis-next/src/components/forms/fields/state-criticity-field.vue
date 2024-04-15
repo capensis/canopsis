@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
-import { getEntityStateColor } from '@/helpers/entities/entity/color';
+import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
 export default {
   props: {
@@ -36,7 +36,7 @@ export default {
     },
     stateValues: {
       type: Object,
-      default: () => ENTITIES_STATES,
+      default: () => ALARM_STATES,
     },
   },
   computed: {
@@ -44,7 +44,7 @@ export default {
       return Object.entries(this.stateValues).map(([key, state]) => ({
         text: this.$t(`modals.createChangeStateEvent.states.${key}`),
         state,
-        color: getEntityStateColor(state),
+        color: getAlarmStateColor(state),
       }));
     },
   },
