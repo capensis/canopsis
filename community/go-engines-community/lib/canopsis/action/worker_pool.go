@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -66,12 +68,13 @@ type WorkerPool interface {
 }
 
 type pool struct {
-	size             int
-	axeRpcClient     engine.RPCClient
-	webhookRpcClient engine.RPCClient
-	encoder          encoding.Encoder
-	logger           zerolog.Logger
-	templateExecutor template.Executor
+	size                int
+	axeRpcClient        engine.RPCClient
+	webhookRpcClient    engine.RPCClient
+	encoder             encoding.Encoder
+	logger              zerolog.Logger
+	templateExecutor    template.Executor
+	alarmConfigProvider config.AlarmConfigProvider
 
 	alarmCollection          mongo.DbCollection
 	webhookHistoryCollection mongo.DbCollection
@@ -85,14 +88,16 @@ func NewWorkerPool(
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 	templateExecutor template.Executor,
+	alarmConfigProvider config.AlarmConfigProvider,
 ) WorkerPool {
 	return &pool{
-		size:             size,
-		axeRpcClient:     axeRpcClient,
-		webhookRpcClient: webhookRpcClient,
-		encoder:          encoder,
-		logger:           logger,
-		templateExecutor: templateExecutor,
+		size:                size,
+		axeRpcClient:        axeRpcClient,
+		webhookRpcClient:    webhookRpcClient,
+		encoder:             encoder,
+		logger:              logger,
+		templateExecutor:    templateExecutor,
+		alarmConfigProvider: alarmConfigProvider,
 
 		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryMongoCollection),
@@ -254,19 +259,10 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	}
 
 	axeParams := rpc.AxeParameters{
-		Output: params.Output,
-		Author: additionalData.Author,
-		User:   additionalData.User,
-		State:  params.State,
-		TicketInfo: types.TicketInfo{
-			Ticket:           params.Ticket,
-			TicketURL:        params.TicketURL,
-			TicketSystemName: params.TicketSystemName,
-			TicketRuleName:   types.TicketRuleNameScenarioPrefix + task.ScenarioName,
-			TicketRuleID:     task.ScenarioID,
-			TicketData:       params.TicketData,
-			TicketComment:    task.Action.Comment,
-		},
+		RuleName:       types.RuleNameScenarioPrefix + task.ScenarioName,
+		Author:         additionalData.Author,
+		User:           additionalData.User,
+		State:          params.State,
 		Duration:       params.Duration,
 		Name:           params.Name,
 		Reason:         params.Reason,
@@ -275,6 +271,31 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		Tstart:         params.Tstart,
 		Tstop:          params.Tstop,
 		StartOnTrigger: params.StartOnTrigger,
+	}
+
+	switch task.Action.Type {
+	case types.ActionTypeAssocTicket:
+		axeParams.TicketInfo = types.TicketInfo{
+			Ticket:           params.Ticket,
+			TicketURL:        params.TicketURL,
+			TicketSystemName: params.TicketSystemName,
+			TicketRuleName:   axeParams.RuleName,
+			TicketRuleID:     task.ScenarioID,
+			TicketData:       params.TicketData,
+			TicketComment:    task.Action.Comment,
+		}
+		axeParams.Output = axeParams.TicketInfo.GetStepMessage()
+	default:
+		if params.Output != "" {
+			outputBuilder := strings.Builder{}
+			outputBuilder.WriteString(axeParams.RuleName)
+			alarmConfig := s.alarmConfigProvider.Get()
+			outputBuilder.WriteString(". ")
+			outputBuilder.WriteString(types.OutputCommentPrefix)
+			outputBuilder.WriteString(utils.TruncateString(params.Output, alarmConfig.OutputLength))
+			outputBuilder.WriteRune('.')
+			axeParams.Output = outputBuilder.String()
+		}
 	}
 
 	return &rpc.AxeEvent{
@@ -362,7 +383,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		Scenario:  task.ScenarioID,
 		Index:     int64(task.Step),
 		Execution: task.ExecutionID,
-		Name:      types.TicketRuleNameScenarioPrefix + task.ScenarioName,
+		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		SystemName:    task.Action.Parameters.TicketSystemName,
 		Status:        libwebhook.StatusCreated,

@@ -86,13 +86,14 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					break
 				}
 
-				event := result.FifoAckEvent
-				if event.EventType == "" {
-					event = types.Event{
+				fifoAckEvent := result.FifoAckEvent
+				if fifoAckEvent.EventType == "" {
+					fifoAckEvent = types.Event{
 						Connector:     alarm.Value.Connector,
 						ConnectorName: alarm.Value.ConnectorName,
 						Component:     alarm.Value.Component,
 						Resource:      alarm.Value.Resource,
+						SourceType:    result.EntityType,
 						Alarm:         &alarm,
 					}
 				}
@@ -102,7 +103,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, result.EntityType, event.IsMetaAlarmUpdated)
+					ok, err = s.activationService.Process(ctx, alarm, fifoAckEvent)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
@@ -114,7 +115,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				if !activationSent {
-					s.sendEventToFifoAck(ctx, event)
+					s.sendEventToFifoAck(ctx, fifoAckEvent)
 				}
 			}
 		}
@@ -181,7 +182,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		var activated bool
 		var err error
 		if event.AlarmChange.Type != types.AlarmChangeTypeNone {
-			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp, event.Entity.Type, event.IsMetaAlarmUpdated)
+			activated, err = s.activationService.Process(ctx, alarm, *event)
 			if err != nil {
 				return err
 			}

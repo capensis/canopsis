@@ -6,17 +6,10 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge purple"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        playlist_add_check
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#9c27b0"
+      icon="check"
+    />
   </span>
 </div>
 `;
@@ -56,17 +49,10 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge purple"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        playlist_add_check
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#9c27b0"
+      icon="check"
+    />
   </span>
 </div>
 `;
@@ -106,17 +92,10 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 1`] =
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge purple"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        playlist_add_check
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#9c27b0"
+      icon="check"
+    />
   </span>
 </div>
 `;
@@ -154,17 +133,10 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without message 1`] = `
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge purple"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        playlist_add_check
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#9c27b0"
+      icon="check"
+    />
   </span>
 </div>
 `;

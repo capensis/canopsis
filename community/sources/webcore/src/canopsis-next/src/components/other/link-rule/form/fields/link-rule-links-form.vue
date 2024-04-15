@@ -7,8 +7,8 @@
       {{ $t('linkRule.linksEmpty') }}
     </c-alert>
     <link-rule-link-form
-      v-field="links[index]"
       v-for="(link, index) in links"
+      v-field="links[index]"
       :key="link.key"
       :name="link.key"
       :type="type"

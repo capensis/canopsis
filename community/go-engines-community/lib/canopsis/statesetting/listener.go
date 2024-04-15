@@ -39,6 +39,8 @@ type listener struct {
 	processedIDsMapMx sync.Mutex
 	processedIDsMap   map[string]bool
 
+	connector string
+
 	logger zerolog.Logger
 }
 
@@ -50,12 +52,14 @@ type entityDoc struct {
 func NewListener(
 	dbClient mongo.DbClient,
 	publisher libamqp.Publisher,
+	connector string,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Listener {
 	return &listener{
 		entityCollection: dbClient.Collection(mongo.EntityMongoCollection),
 		amqpPublisher:    publisher,
+		connector:        connector,
 		encoder:          encoder,
 		logger:           logger,
 
@@ -168,16 +172,16 @@ func (l *listener) publishEvent(ctx context.Context, entID, entType string) erro
 	case types.EntityTypeComponent:
 		event = types.Event{
 			EventType:     types.EventTypeEntityUpdated,
-			Connector:     types.ConnectorApi,
-			ConnectorName: types.ConnectorApi,
+			Connector:     l.connector,
+			ConnectorName: l.connector,
 			SourceType:    types.SourceTypeComponent,
 			Component:     entID,
 		}
 	case types.EntityTypeService:
 		event = types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
-			Connector:     types.ConnectorApi,
-			ConnectorName: types.ConnectorApi,
+			Connector:     l.connector,
+			ConnectorName: l.connector,
 			SourceType:    types.SourceTypeService,
 			Component:     entID,
 		}

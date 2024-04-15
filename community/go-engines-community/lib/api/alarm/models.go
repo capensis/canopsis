@@ -45,6 +45,13 @@ const (
 	IconManualSuccessfulManualAvailable
 )
 
+const (
+	AlarmStepDeclareTicketRuleInProgress = "declareticketruleinprogress"
+	AlarmStepDeclareTicketRuleComplete   = "declareticketrulecomplete"
+	AlarmStepDeclareTicketRuleFail       = "declareticketrulefail"
+	AlarmStepWebhookInProgress           = "webhookinprogress"
+)
+
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -57,6 +64,7 @@ type ListRequest struct {
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
 	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
+	QueryLog           bool `form:"query_log" json:"query_log"`
 }
 
 type FilterRequest struct {
@@ -184,6 +192,7 @@ type StepsRequest struct {
 	pagination.Query
 	Reversed bool   `json:"reversed"`
 	Type     string `json:"type"`
+	Group    bool   `json:"group"`
 }
 
 type ChildDetailsRequest struct {
@@ -215,8 +224,17 @@ type Details struct {
 }
 
 type StepDetails struct {
-	Data []common.AlarmStep   `json:"data"`
+	Data []Step               `json:"data"`
 	Meta common.PaginatedMeta `json:"meta"`
+}
+
+type Step struct {
+	common.AlarmStep `bson:",inline"`
+	ID               string `bson:"_id" json:"_id"`
+	Steps            []struct {
+		common.AlarmStep `bson:",inline"`
+		ID               string `bson:"_id" json:"_id"`
+	} `bson:"steps,omitempty" json:"steps,omitempty"`
 }
 
 type ChildrenDetails struct {
