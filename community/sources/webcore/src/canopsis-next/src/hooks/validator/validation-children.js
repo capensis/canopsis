@@ -1,6 +1,6 @@
 import { useComponentInstance } from '../vue';
 
-import { useValidationElementChildren } from './useValidationElementChildren';
+import { useValidationElementChildren } from './validation-element-children';
 
 /**
  * Hook for validating the children of the current component instance.

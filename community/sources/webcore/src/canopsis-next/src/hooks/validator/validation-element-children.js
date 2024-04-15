@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 
-import { useValidationElementChildrenFields } from './useValidationElementChildrenFields';
-import { useInjectValidator } from './useInjectValidator';
+import { useValidationElementChildrenFields } from './validation-element-children-fields';
+import { useInjectValidator } from './inject-validator';
 
 /**
  * Provides validation functionalities for the children of a given parent component.
