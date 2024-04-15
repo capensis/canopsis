@@ -10,7 +10,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
@@ -223,8 +222,8 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				getInOrder = append(getInOrder, get)
 
 				if info.Err == nil {
-					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-						Do(func(_ context.Context, alarm types.Alarm, _ datetime.MicroTime, _ string, _ bool) {
+					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any()).
+						Do(func(_ context.Context, alarm types.Alarm, _ types.Event) {
 							if alarm.ID != info.Alarm.ID {
 								t.Errorf("expected alarm %s but got %s", info.Alarm.ID, alarm.ID)
 							}

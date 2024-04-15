@@ -3,7 +3,6 @@ package types_test
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"testing"
 
@@ -47,7 +46,7 @@ func TestEvent_IsValid(t *testing.T) {
 				Resource:      "nginx",
 				SourceType:    types.SourceTypeResource,
 			},
-			Err: fmt.Errorf("wrong event type: "),
+			Err: errors.New("wrong event type: "),
 		},
 		{
 			Event: types.Event{

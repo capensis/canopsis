@@ -1,8 +1,8 @@
 <template>
   <span
+    v-html="preparedContent"
     :class="themeClass"
     class="v-icon"
-    v-html="preparedContent"
   />
 </template>
 <script>

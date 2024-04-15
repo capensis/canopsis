@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -29,6 +31,7 @@ type rpcServerMessageProcessor struct {
 	PbhService               libpbehavior.Service
 	EventManager             libpbehavior.EventManager
 	TimezoneConfigProvider   config.TimezoneConfigProvider
+	PubChannel               libamqp.Channel
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -44,40 +47,69 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 		return p.getErrRpcEvent(errors.New("invalid event")), nil
 	}
 
-	var pbhEvent *types.Event
-	if !event.Healthcheck {
-		pbhEvent, err = p.processCreatePbhEvent(
+	if event.Healthcheck {
+		return p.getRpcEvent(rpc.PbehaviorResultEvent{
+			Alarm:  event.Alarm,
+			Entity: event.Entity,
+		})
+	}
+
+	pbhEvent, err := p.processCreatePbhEvent(ctx, *event.Entity, event.Params)
+	if err != nil {
+		if engine.IsConnectionError(err) {
+			return nil, err
+		}
+
+		p.logError(err, "cannot process event", msg)
+
+		return p.getErrRpcEvent(err), nil
+	}
+
+	if pbhEvent != nil && d.ReplyTo == "" {
+		b, err := p.Encoder.Encode(pbhEvent)
+		if err != nil {
+			p.logError(err, "cannot encode event", msg)
+
+			return nil, nil
+		}
+
+		err = p.PubChannel.PublishWithContext(
 			ctx,
-			*event.Alarm,
-			*event.Entity,
-			event.Params,
+			"",
+			canopsis.FIFOQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  canopsis.JsonContentType,
+				Body:         b,
+				DeliveryMode: amqp.Persistent,
+			},
 		)
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return nil, err
 			}
 
-			p.logError(err, "cannot process event", msg)
-			return p.getErrRpcEvent(err), nil
+			p.logError(err, "cannot publish event", msg)
 		}
+
+		return nil, nil
 	}
 
-	if pbhEvent == nil {
-		pbhEvent = &types.Event{}
-	} else {
-		pbhEvent.Entity = event.Entity
+	resEvent := rpc.PbehaviorResultEvent{
+		Alarm:  event.Alarm,
+		Entity: event.Entity,
+	}
+	if pbhEvent != nil {
+		resEvent.PbhEvent = *pbhEvent
+		resEvent.PbhEvent.Entity = event.Entity
 	}
 
-	return p.getRpcEvent(rpc.PbehaviorResultEvent{
-		Alarm:    event.Alarm,
-		Entity:   event.Entity,
-		PbhEvent: *pbhEvent,
-	})
+	return p.getRpcEvent(resEvent)
 }
 
 func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	ctx context.Context,
-	alarm types.Alarm,
 	entity types.Entity,
 	params rpc.PbehaviorParameters,
 ) (*types.Event, error) {
@@ -98,9 +130,25 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 		return nil, err
 	}
 
-	pbhEvent := p.EventManager.GetEvent(resolveResult, alarm, time.Now())
+	pbhEvent, err := p.EventManager.GetEvent(resolveResult, entity, datetime.NewCpsTime())
+	if err != nil {
+		return nil, err
+	}
+
 	if pbhEvent.EventType == "" {
 		return nil, nil
+	}
+
+	if pbhEvent.PbehaviorInfo.ID == pbehavior.ID {
+		if params.RuleName != "" {
+			pbhEvent.PbehaviorInfo.RuleName = params.RuleName
+			pbhEvent.Output = pbhEvent.PbehaviorInfo.GetStepMessage()
+		}
+
+		if params.Author != "" {
+			pbhEvent.Author = params.Author
+			pbhEvent.PbehaviorInfo.Author = params.Author
+		}
 	}
 
 	return &pbhEvent, nil
@@ -181,6 +229,7 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	}
 
 	p.Logger.Info().Str("pbehavior", pbehavior.ID).Msg("create pbehavior")
+
 	return &pbehavior, nil
 }
 

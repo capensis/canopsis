@@ -1,6 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATUSES, ENTITY_INFOS_TYPE, EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_STATES, ALARM_STATUSES, ENTITY_INFOS_TYPE } from '@/constants';
 
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 
@@ -10,7 +10,7 @@ describe('c-alarm-chip', () => {
   const snapshotFactory = generateRenderer(CAlarmChip);
   const factory = generateShallowRenderer(CAlarmChip);
 
-  it('Click event emitted', () => {
+  test('Click event emitted', () => {
     const wrapper = factory();
 
     selectChipContainer(wrapper).trigger('click');
@@ -18,13 +18,13 @@ describe('c-alarm-chip', () => {
     expect(wrapper).toHaveBeenEmit('click');
   });
 
-  it('Renders `c-alarm-chip` with default props', () => {
+  test('Renders `c-alarm-chip` with default props', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `c-alarm-chip` with custom props', () => {
+  test('Renders `c-alarm-chip` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: 2,
@@ -36,7 +36,7 @@ describe('c-alarm-chip', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it.each(Object.entries(ENTITIES_STATUSES))('Renders `c-alarm-chip` with status: %s', (_, value) => {
+  test.each(Object.entries(ALARM_STATUSES))('Renders `c-alarm-chip` with status: %s', (_, value) => {
     const wrapper = snapshotFactory({
       propsData: {
         value,
@@ -48,7 +48,7 @@ describe('c-alarm-chip', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it.each(Object.entries(EVENT_ENTITY_TYPES))('Renders `c-alarm-chip` with state: %s', (_, value) => {
+  test.each(Object.entries(ALARM_STATES))('Renders `c-alarm-chip` with state: %s', (_, value) => {
     const wrapper = snapshotFactory({
       propsData: {
         value,

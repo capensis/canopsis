@@ -16,6 +16,7 @@ import { uid } from '@/helpers/uid';
  * @property {string} empty_response
  * @property {string} is_regexp
  * @property {string} ticket_id
+ * @property {string} [ticket_id_tpl]
  * @property {string} [ticket_url]
  * @property {string} [ticket_url_tpl]
  */
@@ -47,9 +48,16 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
+ * @typedef {Object} DeclareTicketRuleWebhookTickerIdForm
+ * @property {boolean} template
+ * @property {string} value
+ */
+
+/**
  * @typedef {DeclareTicketRuleWebhookDeclareTicket} DeclareTicketRuleWebhookDeclareTicketForm
  * @property {boolean} enabled
  * @property {TextPairObject[]} mapping
+ * @property {DeclareTicketRuleWebhookTickerIdForm} ticket_id
  * @property {DeclareTicketRuleWebhookTickerUrlForm} ticket_url
  */
 
@@ -79,7 +87,8 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
   const {
     empty_response: emptyResponse,
     is_regexp: isRegexp,
-    ticket_id: ticketId,
+    ticket_id: ticketId = '',
+    ticket_id_tpl: ticketIdTpl = '',
     ticket_url: ticketUrl = '',
     ticket_url_tpl: ticketUrlTpl = '',
     ...fields
@@ -89,7 +98,10 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
     enabled: !!declareTicket,
     empty_response: emptyResponse ?? false,
     is_regexp: isRegexp ?? false,
-    ticket_id: ticketId ?? '',
+    ticket_id: {
+      template: !!ticketIdTpl,
+      value: ticketIdTpl || ticketId,
+    },
     ticket_url: {
       template: !!ticketUrlTpl,
       value: ticketUrlTpl || ticketUrl,
@@ -141,7 +153,13 @@ export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
  * @returns {DeclareTicketRuleWebhookDeclareTicket | null}
  */
 export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
-  const { enabled, mapping, ticket_url: ticketUrl, ...rest } = form;
+  const {
+    enabled,
+    mapping,
+    ticket_url: ticketUrl,
+    ticket_id: ticketId,
+    ...rest
+  } = form;
 
   if (!enabled) {
     return null;
@@ -158,6 +176,14 @@ export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
   } else {
     declareTicket.ticket_url = ticketUrl.value;
     declareTicket.ticket_url_tpl = '';
+  }
+
+  if (ticketId.template) {
+    declareTicket.ticket_id = '';
+    declareTicket.ticket_id_tpl = ticketId.value;
+  } else {
+    declareTicket.ticket_id = ticketId.value;
+    declareTicket.ticket_id_tpl = '';
   }
 
   return declareTicket;

@@ -54,7 +54,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
-	eventManager := pbehavior.NewEventManager()
+	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
@@ -135,8 +135,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		DbClient:                 dbClient,
 		PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
-		EventManager:             pbehavior.NewEventManager(),
+		EventManager:             eventManager,
 		TimezoneConfigProvider:   timezoneConfigProvider,
+		PubChannel:               amqpChannel,
 		Decoder:                  json.NewDecoder(),
 		Encoder:                  json.NewEncoder(),
 		Logger:                   logger,
@@ -167,7 +168,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
 			PbehaviorCollection:      dbClient.Collection(mongo.PbehaviorMongoCollection),
 			EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
-			EventGenerator:           libevent.NewGenerator("engine", "pbehavior"),
 			EventManager:             eventManager,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
@@ -191,9 +191,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			EntityAdapter:          entity.NewAdapter(dbClient),
 			EventManager:           eventManager,
 			FrameDuration:          frameDuration,
+			TimezoneConfigProvider: timezoneConfigProvider,
 			Encoder:                json.NewEncoder(),
 			Logger:                 logger,
-			TimezoneConfigProvider: timezoneConfigProvider,
 		},
 		logger,
 	))

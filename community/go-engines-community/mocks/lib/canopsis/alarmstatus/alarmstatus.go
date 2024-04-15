@@ -36,11 +36,12 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // ComputeStatus mocks base method.
-func (m *MockService) ComputeStatus(arg0 types.Alarm, arg1 types.Entity) types.CpsNumber {
+func (m *MockService) ComputeStatus(arg0 types.Alarm, arg1 types.Entity) (types.CpsNumber, string) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ComputeStatus", arg0, arg1)
 	ret0, _ := ret[0].(types.CpsNumber)
-	return ret0
+	ret1, _ := ret[1].(string)
+	return ret0, ret1
 }
 
 // ComputeStatus indicates an expected call of ComputeStatus.

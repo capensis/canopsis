@@ -62,11 +62,7 @@
 <script>
 import { pick } from 'lodash';
 
-import {
-  ENTITIES_STATES_KEYS,
-  STATE_SETTING_THRESHOLDS_CONDITIONS,
-  STATE_SETTING_THRESHOLDS_METHODS,
-} from '@/constants';
+import { ALARM_STATES, STATE_SETTING_THRESHOLDS_CONDITIONS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
 
 import StateSettingThresholdMethodField from './state-setting-threshold-method-field.vue';
 
@@ -113,10 +109,10 @@ export default {
     },
 
     states() {
-      return Object.values(ENTITIES_STATES_KEYS)
-        .map(state => ({
-          text: this.$t(`stateSetting.states.${state}`),
-          value: state,
+      return Object.keys(ALARM_STATES)
+        .map(key => ({
+          text: this.$t(`stateSetting.states.${key}`),
+          value: key,
         }));
     },
 

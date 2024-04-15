@@ -7,8 +7,8 @@ import request, { useRequestCancelling } from '@/services/request';
 
 import i18n from '@/i18n';
 
-import { mergeChangedProperties } from '@/helpers/collection';
 import { mapIds } from '@/helpers/array';
+import { mergeReactiveChangedProperties } from '@/helpers/vue-base';
 
 import detailsModule from './details';
 import linksModule from './links';
@@ -49,7 +49,7 @@ export default {
         const oldAlarm = state.alarmsById[alarm._id];
 
         const updatedAlarm = oldAlarm
-          ? mergeChangedProperties(oldAlarm, alarm)
+          ? mergeReactiveChangedProperties(oldAlarm, alarm)
           : alarm;
 
         Vue.set(state.alarmsById, alarm._id, updatedAlarm);
@@ -205,6 +205,10 @@ export default {
 
     fetchDisplayNamesWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.alarmDisplayNames, { params });
+    },
+
+    fetchExecutionsWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.alarmExecutions}/${id}`, { params });
     },
 
     updateItemInStore({ commit }, alarm) {

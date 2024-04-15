@@ -10,6 +10,7 @@ const stubs = {
   'c-clickable-tooltip': CClickableTooltip,
   'c-runtime-template': CRuntimeTemplate,
   'c-compiled-template': CCompiledTemplate,
+  'c-alarm-extra-details-chip': true,
 };
 
 describe('extra-details-last-comment', () => {

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -40,10 +41,16 @@ type store struct {
 	archivedCollection      mongo.DbCollection
 	stateSettingsCollection mongo.DbCollection
 	timezoneConfigProvider  config.TimezoneConfigProvider
+	authorProvider          author.Provider
 	decoder                 encoding.Decoder
 }
 
-func NewStore(db, dbExport mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, decoder encoding.Decoder) Store {
+func NewStore(
+	db, dbExport mongo.DbClient,
+	timezoneConfigProvider config.TimezoneConfigProvider,
+	authorProvider author.Provider,
+	decoder encoding.Decoder,
+) Store {
 	return &store{
 		db:                      db,
 		dbExport:                dbExport,
@@ -51,6 +58,7 @@ func NewStore(db, dbExport mongo.DbClient, timezoneConfigProvider config.Timezon
 		archivedCollection:      db.Collection(mongo.ArchivedEntitiesMongoCollection),
 		stateSettingsCollection: db.Collection(mongo.StateSettingsMongoCollection),
 		timezoneConfigProvider:  timezoneConfigProvider,
+		authorProvider:          authorProvider,
 		decoder:                 decoder,
 	}
 }
@@ -567,7 +575,7 @@ func (s *store) fillConnectorType(result *AggregationResult) {
 }
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.db)
+	return NewMongoQueryBuilder(s.db, s.authorProvider)
 }
 
 func (s *store) fillPerfData(result *AggregationResult, perfData []string) {

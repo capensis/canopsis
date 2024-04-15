@@ -781,6 +781,14 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.TypeName = string(in.String())
 		case "canonical_type":
 			out.CanonicalType = string(in.String())
+		case "icon_name":
+			out.IconName = string(in.String())
+		case "color":
+			out.Color = string(in.String())
+		case "author":
+			out.Author = string(in.String())
+		case "rule_name":
+			out.RuleName = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -838,6 +846,26 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"canonical_type\":"
 		out.RawString(prefix)
 		out.String(string(in.CanonicalType))
+	}
+	{
+		const prefix string = ",\"icon_name\":"
+		out.RawString(prefix)
+		out.String(string(in.IconName))
+	}
+	{
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
+	}
+	{
+		const prefix string = ",\"author\":"
+		out.RawString(prefix)
+		out.String(string(in.Author))
+	}
+	if in.RuleName != "" {
+		const prefix string = ",\"rule_name\":"
+		out.RawString(prefix)
+		out.String(string(in.RuleName))
 	}
 	out.RawByte('}')
 }
@@ -3084,10 +3112,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(in, &out.StateCounter)
 		case "pbehavior_canonical_type":
 			out.PbehaviorCanonicalType = string(in.String())
+		case "icon_name":
+			out.IconName = string(in.String())
+		case "color":
+			out.Color = string(in.String())
 		case "initiator":
 			out.Initiator = string(in.String())
 		case "exec":
 			out.Execution = string(in.String())
+		case "dgroup":
+			out.DisplayGroup = string(in.String())
+		case "in_pbh":
+			out.InPbehaviorInterval = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -3181,6 +3217,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.PbehaviorCanonicalType))
 	}
+	if in.IconName != "" {
+		const prefix string = ",\"icon_name\":"
+		out.RawString(prefix)
+		out.String(string(in.IconName))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
+	}
 	if in.Initiator != "" {
 		const prefix string = ",\"initiator\":"
 		out.RawString(prefix)
@@ -3190,6 +3236,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"exec\":"
 		out.RawString(prefix)
 		out.String(string(in.Execution))
+	}
+	if in.DisplayGroup != "" {
+		const prefix string = ",\"dgroup\":"
+		out.RawString(prefix)
+		out.String(string(in.DisplayGroup))
+	}
+	if in.InPbehaviorInterval {
+		const prefix string = ",\"in_pbh\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.InPbehaviorInterval))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

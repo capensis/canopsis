@@ -138,7 +138,7 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 
 		i := int((rate.ID - from) / interval)
 		if i < 0 || i >= len(rates) {
-			return nil, fmt.Errorf("invalid postgres query, rates must contain gaps")
+			return nil, errors.New("invalid postgres query, rates must contain gaps")
 		}
 
 		rates[i].Rate += rate.Rate

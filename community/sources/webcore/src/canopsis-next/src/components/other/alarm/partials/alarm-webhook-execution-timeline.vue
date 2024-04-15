@@ -1,9 +1,9 @@
 <template>
-  <alarms-time-line-steps :steps="webhooksTimelineSteps">
+  <alarm-webhook-execution-timeline-steps :steps="webhooksTimelineSteps">
     <template #card="{ step }">
       <slot :step="step" name="card" />
     </template>
-  </alarms-time-line-steps>
+  </alarm-webhook-execution-timeline-steps>
 </template>
 
 <script>
@@ -15,10 +15,12 @@ import {
   isWebhookExecutionWaiting,
 } from '@/helpers/entities/webhook-execution/entity';
 
-import AlarmsTimeLineSteps from '@/components/widgets/alarm/time-line/alarms-time-line-steps.vue';
+import AlarmWebhookExecutionTimelineSteps from './alarm-webhook-execution-timeline-steps.vue';
 
 export default {
-  components: { AlarmsTimeLineSteps },
+  components: {
+    AlarmWebhookExecutionTimelineSteps,
+  },
   props: {
     webhooks: {
       type: Array,
