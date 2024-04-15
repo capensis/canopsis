@@ -27,6 +27,8 @@
 <script>
 import { ref, toRef, watch, nextTick } from 'vue';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 import { useAdvancedSearchItemType } from '../hooks/advanced-search';
 
 export default {
@@ -51,6 +53,7 @@ export default {
   setup(props, { emit }) {
     const inputElement = ref();
 
+    const { updateModel } = useModelField(props, emit);
     const { isItemTypeValue } = useAdvancedSearchItemType({ type: toRef(props.item, 'type') });
 
     watch(() => props.active, (active) => {
@@ -59,7 +62,7 @@ export default {
       }
     });
 
-    const input = ({ target: { value } = {} } = {}) => emit('input', { ...props.item, value, text: value });
+    const input = ({ target: { value } = {} } = {}) => updateModel({ ...props.item, value, text: value });
     const clickChip = () => emit('click:item', props.item);
     const clickChipClose = () => emit('remove:item', props.item);
     const keydownInput = event => emit('keydown:input', event);

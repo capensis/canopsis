@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="c-advanced-search px-4" align-end>
+  <v-layout class="c-advanced-search" align-end>
     <c-advanced-search-field
       v-if="advancedSearchActive"
       v-model="localValue"
@@ -117,7 +117,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-advanced-search ::v-deep input {
-  min-width: 230px;
+.c-advanced-search::v-deep {
+  --advanced-search-input-min-width: 170px;
+
+  .v-input, .v-input__control .v-input__slot, .v-select__selections {
+    width: unset;
+    max-width: unset;
+  }
+
+  .v-select__slot {
+    width: 100%;
+    max-width: unset;
+
+    input {
+      min-width: var(--advanced-search-input-min-width);
+      width: var(--advanced-search-input-min-width);
+    }
+
+    &, .v-select__selections {
+      &:first-child.input {
+        width: 100%;
+      }
+    }
+  }
 }
 </style>

@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import { computed, ref, set } from 'vue';
 
 import { ADVANCED_SEARCH_ITEM_TYPES, ADVANCED_SEARCH_UNION_FIELDS } from '@/constants';
@@ -80,10 +79,9 @@ export const useAdvancedSearchInternalSearch = ({ initialInternalSearch }) => {
  * - `goToPrevActiveIndex`: A method to decrement the active index.
  * - `clearActiveIndex`: A method to reset the active index to -1 (none selected).
  */
-
 export const useAdvancedSearchActiveIndex = ({ value, onChange }) => {
   const activeIndex = ref();
-  const lastItemType = computed(() => last(value.value)?.type);
+  const lastItemType = computed(() => value.value?.at(-1)?.type);
   const activeItem = computed(() => value.value?.[activeIndex.value]);
   const activeType = computed(() => {
     if (activeIndex.value === -1) {

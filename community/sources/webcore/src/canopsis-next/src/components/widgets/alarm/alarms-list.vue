@@ -2,7 +2,7 @@
   <div class="alarms-list">
     <v-layout
       v-if="!hideToolbar"
-      :class="['alarms-list__toolbar', { 'mb-4': !dense }]"
+      :class="['alarms-list__toolbar gap-4 px-4', { 'mb-4': !dense }]"
       wrap
       justify-space-between
       align-end
@@ -21,7 +21,7 @@
       <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
           :category="query.category"
-          class="mr-3 mt-0"
+          class="ma-0"
           hide-details
           @input="updateCategory"
         />

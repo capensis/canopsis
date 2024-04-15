@@ -17,7 +17,7 @@ export const useSearchLocalValue = ({ value, columns, onSubmit }, emit) => {
   const localValue = ref(value.value);
 
   const submit = () => {
-    emit('submit', prepareSearchForSubmit(localValue.value, columns.value));
+    emit('submit', prepareSearchForSubmit(localValue.value ?? '', columns.value));
     onSubmit(localValue.value);
   };
 
