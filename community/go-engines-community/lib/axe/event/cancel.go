@@ -43,37 +43,23 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	}
 
 	entity := *event.Entity
-	match := getOpenAlarmMatchWithStepsLimit(event)
+	match := getOpenAlarmMatch(event)
 	match["v.canceled"] = nil
-	output := event.Parameters.Output
-	newStep := types.NewAlarmStep(types.AlarmStepCancel, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	newIncStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	newDecStepStatus := types.NewAlarmStep(types.AlarmStepStatusDecrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
 	newStatus := types.CpsNumber(types.AlarmStatusCancelled)
-	newIncStepStatus.Value = newStatus
-	newDecStepStatus.Value = newStatus
+	newIncStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusIncrease, newStatus,
+		event.Parameters.Output, event.Parameters)
+	newDecStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusDecrease, newStatus,
+		event.Parameters.Output, event.Parameters)
+	newStepQuery := bson.M{"$cond": bson.M{
+		"if":   bson.M{"$gt": bson.A{newStatus, "$v.status.val"}},
+		"then": newIncStepStatusQuery,
+		"else": newDecStepStatusQuery,
+	}}
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.canceled": newStep,
-			"v.status": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$gt": bson.A{newStatus, "$v.status.val"}},
-				"then": newIncStepStatus,
-				"else": newDecStepStatus,
-			}},
-			"v.steps": bson.M{"$concatArrays": bson.A{
-				"$v.steps",
-				bson.A{
-					newStep,
-					bson.M{"$cond": bson.M{
-						"if":   bson.M{"$gt": bson.A{newStatus, "$v.status.val"}},
-						"then": newIncStepStatus,
-						"else": newDecStepStatus,
-					}},
-				},
-			}},
+			"v.canceled":                          newStepQuery,
+			"v.status":                            newStepQuery,
+			"v.steps":                             addStepUpdateQuery(newStepQuery),
 			"v.state_changes_since_status_update": 0,
 			"v.last_update_date":                  event.Parameters.Timestamp,
 		}},

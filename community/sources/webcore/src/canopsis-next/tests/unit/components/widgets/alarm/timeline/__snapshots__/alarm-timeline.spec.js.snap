@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline Renders \`alarm-timeline\` correctly 1`] = `
+<div
+  class="layout column"
+>
+  <c-enabled-field-stub
+    label="Group items"
+    value="true"
+  />
+  <alarm-timeline-days-stub
+    days="[object Object]"
+  />
+  <c-pagination-stub
+    limit="10"
+    page="1"
+    total="7"
+  />
+</div>
+`;

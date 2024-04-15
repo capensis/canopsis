@@ -56,6 +56,9 @@
     >
       {{ $t('alarm.tabs.entityGantt') }}
     </v-tab>
+    <v-tab :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.remediation}`">
+      {{ $t('alarm.tabs.remediation') }}
+    </v-tab>
     <v-tabs-items
       v-model="activeTab"
       mandatory
@@ -90,10 +93,12 @@
                 indeterminate
               />
               <v-card-text>
-                <alarms-time-line
-                  :steps="steps"
+                <alarm-timeline
+                  :steps="steps.data"
+                  :meta="steps.meta"
+                  :query="stepsQuery"
                   :is-html-enabled="isHtmlEnabled"
-                  @update:page="updateStepsQueryPage"
+                  @update:query="updateStepsQuery"
                 />
               </v-card-text>
             </v-card>
@@ -223,6 +228,17 @@
           </v-flex>
         </v-layout>
       </v-tab-item>
+      <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.remediation">
+        <v-layout class="pa-3 secondary lighten-2">
+          <v-flex :class="cardFlexClass">
+            <v-card class="tab-item-card">
+              <v-card-text>
+                <alarms-expand-panel-remediation :alarm="alarm" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
     </v-tabs-items>
   </v-tabs>
 </template>
@@ -248,11 +264,12 @@ import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehav
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
-import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
+import AlarmTimeline from '../timeline/alarm-timeline.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
 
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
+import AlarmsExpandPanelRemediation from './alarms-expand-panel-remediation.vue';
 
 export default {
   components: {
@@ -260,10 +277,11 @@ export default {
     DeclaredTicketsList,
     PbehaviorsSimpleList,
     ServiceDependencies,
-    AlarmsTimeLine,
+    AlarmTimeline,
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
+    AlarmsExpandPanelRemediation,
   },
   mixins: [
     entitiesInfoMixin,
@@ -311,10 +329,17 @@ export default {
       return this.widget.parameters.isHtmlEnabledOnTimeLine;
     },
 
+    entity() {
+      return {
+        ...this.alarm.entity,
+        ...this.alarmDetails?.entity,
+      };
+    },
+
     dependency() {
       const alarmWithDependenciesCounts = setField(this.alarm, 'entity', entity => ({
         ...entity,
-        ...this.alarmDetails.entity,
+        ...this.entity,
       }));
 
       return alarmToServiceDependency(alarmWithDependenciesCounts);
@@ -333,11 +358,11 @@ export default {
     },
 
     hasServiceDependencies() {
-      return this.alarm.entity.type === ENTITY_TYPES.service;
+      return this.entity.type === ENTITY_TYPES.service;
     },
 
     hasImpactsDependencies() {
-      const { impacts_count: impactsCount } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.entity;
 
       return impactsCount > 0;
     },
@@ -348,7 +373,7 @@ export default {
        */
       return this.isProVersion
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
-        && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
+        && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.entity.type);
     },
 
     hasWidgetCharts() {

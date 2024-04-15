@@ -2,7 +2,7 @@
   <div>
     <p
       v-if="!engine.is_running"
-      class="pre-wrap"
+      class="pre-line"
     >
       {{ systemDownMessage }}
     </p>

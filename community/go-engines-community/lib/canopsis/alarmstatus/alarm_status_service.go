@@ -16,7 +16,7 @@ import (
 
 type Service interface {
 	Load(ctx context.Context) error
-	ComputeStatus(alarm types.Alarm, entity types.Entity) types.CpsNumber
+	ComputeStatus(alarm types.Alarm, entity types.Entity) (state types.CpsNumber, ruleName string)
 }
 
 func NewService(
@@ -59,30 +59,30 @@ func (s *service) Load(ctx context.Context) error {
 	return nil
 }
 
-func (s *service) ComputeStatus(alarm types.Alarm, entity types.Entity) types.CpsNumber {
+func (s *service) ComputeStatus(alarm types.Alarm, entity types.Entity) (types.CpsNumber, string) {
 	if alarm.Value.Canceled != nil && alarm.Value.Resolved == nil {
-		return types.AlarmStatusCancelled
+		return types.AlarmStatusCancelled, ""
 	}
 
-	if s.isFlapping(alarm, entity) {
-		return types.AlarmStatusFlapping
+	if ok, ruleName := s.isFlapping(alarm, entity); ok {
+		return types.AlarmStatusFlapping, ruleName
 	}
 
 	if s.isStealthy(alarm) {
-		return types.AlarmStatusStealthy
+		return types.AlarmStatusStealthy, ""
 	}
 
 	if alarm.Value.State != nil {
 		alarmState := alarm.Value.State.Value
 		if alarmState != types.AlarmStateOK {
-			return types.AlarmStatusOngoing
+			return types.AlarmStatusOngoing, ""
 		}
 	}
 
-	return types.AlarmStatusOff
+	return types.AlarmStatusOff, ""
 }
 
-func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
+func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) (bool, string) {
 	s.flappingRulesMx.RLock()
 	defer s.flappingRulesMx.RUnlock()
 
@@ -119,7 +119,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 				}
 
 				if freq > rule.FreqLimit {
-					return true
+					return true, types.RuleNameRulePrefix + rule.Name
 				}
 			}
 
@@ -127,7 +127,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 		}
 	}
 
-	return false
+	return false, ""
 }
 
 func (s *service) isStealthy(alarm types.Alarm) bool {

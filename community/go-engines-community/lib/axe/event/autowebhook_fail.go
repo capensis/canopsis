@@ -37,7 +37,7 @@ func (p *autoWebhookFailProcessor) Process(ctx context.Context, event rpc.AxeEve
 		"_t":   bson.M{"$in": bson.A{types.AlarmStepWebhookComplete, types.AlarmStepWebhookFail}},
 	}}}
 	alarmChange := types.NewAlarmChange()
-	var update bson.M
+	var update []bson.M
 	outputBuilder := strings.Builder{}
 	outputBuilder.WriteString(event.Parameters.Output)
 	if event.Parameters.WebhookFailReason != "" {
@@ -47,13 +47,12 @@ func (p *autoWebhookFailProcessor) Process(ctx context.Context, event rpc.AxeEve
 	}
 
 	if event.Parameters.TicketInfo.TicketRuleID == "" {
-		newStep := types.NewAlarmStep(types.AlarmStepWebhookFail, event.Parameters.Timestamp, event.Parameters.Author,
-			outputBuilder.String(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-		newStep.Execution = event.Parameters.Execution
-		update = bson.M{
-			"$push": bson.M{
-				"v.steps": newStep,
-			},
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookFail, event.Parameters.Execution,
+			outputBuilder.String(), event.Parameters)
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.steps": addStepUpdateQuery(newStepQuery),
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeAutoWebhookFail
 	} else {
@@ -65,17 +64,14 @@ func (p *autoWebhookFailProcessor) Process(ctx context.Context, event rpc.AxeEve
 			stepType = types.AlarmStepWebhookComplete
 		}
 
-		newStep := types.NewAlarmStep(stepType, event.Parameters.Timestamp, event.Parameters.Author, requestOutput,
-			event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-		newStep.Execution = event.Parameters.Execution
-		newTicketStep := types.NewTicketStep(types.AlarmStepDeclareTicketFail, event.Parameters.Timestamp, event.Parameters.Author,
-			ticketOutput, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, event.Parameters.TicketInfo)
-		newTicketStep.Execution = event.Parameters.Execution
-		update = bson.M{
-			"$push": bson.M{
-				"v.tickets": newTicketStep,
-				"v.steps":   bson.M{"$each": bson.A{newStep, newTicketStep}},
-			},
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(stepType, event.Parameters.Execution, requestOutput, event.Parameters)
+		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicketFail,
+			event.Parameters.Execution, ticketOutput, event.Parameters)
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
+				"v.steps":   addStepUpdateQuery(newStepQuery, newTicketStepQuery),
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeAutoDeclareTicketWebhookFail
 	}

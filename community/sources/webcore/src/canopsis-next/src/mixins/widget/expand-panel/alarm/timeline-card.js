@@ -1,4 +1,4 @@
-import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITIES_STATES_STYLES_TEXT, ENTITY_INFOS_TYPE } from '@/constants';
+import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITY_INFOS_TYPE } from '@/constants';
 
 export const widgetExpandPanelAlarmTimelineCard = {
   props: {
@@ -37,7 +37,7 @@ export const widgetExpandPanelAlarmTimelineCard = {
           const stateValue = parseInt(key.replace(prefix, ''), 10);
 
           acc.push({
-            text: ENTITIES_STATES_STYLES_TEXT[stateValue],
+            text: stateValue,
             value: states[key],
           });
         }

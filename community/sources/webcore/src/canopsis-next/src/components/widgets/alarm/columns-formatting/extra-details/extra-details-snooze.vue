@@ -5,17 +5,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-extra-details__badge pink"
-          v-on="on"
-        >
-          <v-icon
-            color="white"
-            small
-          >
-            {{ icon }}
-          </v-icon>
-        </span>
+        <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on" />
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.snooze') }}</strong>
@@ -37,9 +27,12 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { COLORS } from '@/config';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -49,18 +42,18 @@ export default {
       required: true,
     },
   },
-  computed: {
-    date() {
-      return convertDateToStringWithFormatForToday(this.snooze.t);
-    },
+  setup(props) {
+    const date = computed(() => convertDateToStringWithFormatForToday(props.snooze.t));
+    const end = computed(() => convertDateToStringWithFormatForToday(props.snooze.val));
+    const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.snooze);
+    const color = COLORS.alarmExtraDetails.snooze;
 
-    end() {
-      return convertDateToStringWithFormatForToday(this.snooze.val);
-    },
-
-    icon() {
-      return getEntityEventIcon(EVENT_ENTITY_TYPES.snooze);
-    },
+    return {
+      date,
+      end,
+      icon,
+      color,
+    };
   },
 };
 </script>
