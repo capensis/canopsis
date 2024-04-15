@@ -2,15 +2,23 @@ package middleware
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
+
+var bufPool = sync.Pool{
+	New: func() any {
+		return new(bytes.Buffer)
+	},
+}
 
 type responseBodyLogWriter struct {
 	gin.ResponseWriter
@@ -35,8 +43,14 @@ func Logger(logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.Handle
 		var responseWriter *responseBodyLogWriter
 		var requestBody io.ReadCloser
 		if logBody || logBodyOnError {
+			buf, ok := bufPool.Get().(*bytes.Buffer)
+			if !ok {
+				panic(errors.New("unknown buffer type"))
+			}
+
+			defer bufPool.Put(buf)
 			responseWriter = &responseBodyLogWriter{
-				body:           bytes.NewBufferString(""),
+				body:           buf,
 				ResponseWriter: c.Writer,
 			}
 			c.Writer = responseWriter
@@ -46,7 +60,7 @@ func Logger(logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.Handle
 
 		c.Next()
 
-		latency := time.Since(start)
+		duration := time.Since(start)
 		statusCode := c.Writer.Status()
 		var logEvent *zerolog.Event
 		isResponseOk := false
@@ -74,7 +88,7 @@ func Logger(logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.Handle
 		}
 
 		logEvent.
-			Str("latency", latency.String()).
+			Str("duration", duration.String()).
 			Str("client_ip", c.ClientIP()).
 			Msg(strconv.Itoa(statusCode) + " " + c.Request.Method + " " + path)
 	}
