@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { ENTITY_PAYLOADS_VARIABLES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-import { useInfosServerVariables } from '@/hooks/entities/common/useInfosServerVariables';
+import { useInfosServerVariables } from '@/hooks/entities/common/infos-server-variables';
 
 /**
  * Provides a reactive list of entity server variables with their corresponding localization texts.
