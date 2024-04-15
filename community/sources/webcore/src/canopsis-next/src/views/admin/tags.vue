@@ -30,7 +30,7 @@ import { isImportedTag } from '@/helpers/entities/tag/entity';
 import { pickIds } from '@/helpers/array';
 
 import { authMixin } from '@/mixins/auth';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { permissionsTechnicalTagMixin } from '@/mixins/permissions/technical/tag';
 

@@ -14,7 +14,7 @@
 
 <script>
 import { entitiesRatingSettingsMixin } from '@/mixins/entities/rating-settings';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { permissionsTechnicalKpiRatingSettingsMixin } from '@/mixins/permissions/technical/kpi-rating-settings';
 
 import KpiRatingSettingsList from './kpi-rating-settings-list.vue';

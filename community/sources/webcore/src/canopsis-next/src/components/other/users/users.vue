@@ -17,7 +17,7 @@ import { MODALS } from '@/constants';
 
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import UsersList from '@/components/other/users/users-list.vue';
 

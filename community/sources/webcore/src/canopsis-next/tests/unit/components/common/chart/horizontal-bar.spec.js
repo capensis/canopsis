@@ -48,9 +48,7 @@ describe('horizontal-bar', () => {
       },
     });
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `horizontal-bar` with custom props.', () => {
@@ -62,9 +60,7 @@ describe('horizontal-bar', () => {
       },
     });
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `horizontal-bar` after update data.', async () => {
@@ -81,9 +77,7 @@ describe('horizontal-bar', () => {
       datasets: updatedDatasets,
     });
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `horizontal-bar` after update options.', async () => {
@@ -99,8 +93,6 @@ describe('horizontal-bar', () => {
       options: updatedOptions,
     });
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 });

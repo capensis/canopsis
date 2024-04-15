@@ -40,6 +40,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       value="Chart title"
     />
     <field-quick-date-interval-type-stub
+      ranges="[object Object]"
       value="last30Days"
     />
     <field-sampling-stub
@@ -93,6 +94,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       value=""
     />
     <field-quick-date-interval-type-stub
+      ranges="[object Object]"
       value="last30Days"
     />
     <field-sampling-stub
