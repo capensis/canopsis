@@ -1,12 +1,12 @@
 <template>
-  <alarm-test-query-execution
+  <alarm-webhook-execution
     v-model="alarm"
     :execution-status="executionStatus"
     :alarms-patterns-params="alarmsPatternsParams"
     :pending="pending"
     :has-errors="hasErrors"
     @run:execution="runTestExecution"
-    @clear:status="clearWebhookStatus"
+    @clear:execution="clearWebhookStatus"
   >
     <template #webhooks="{ webhooks }">
       <alarm-webhook-execution-timeline :webhooks="webhooks">
@@ -15,7 +15,7 @@
         </template>
       </alarm-webhook-execution-timeline>
     </template>
-  </alarm-test-query-execution>
+  </alarm-webhook-execution>
 </template>
 
 <script>
@@ -30,7 +30,7 @@ import { formToScenario } from '@/helpers/entities/scenario/form';
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
 
-import AlarmTestQueryExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
+import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
 import AlarmWebhookExecutionTimeline from '@/components/other/alarm/partials/alarm-webhook-execution-timeline.vue';
 
 import ScenarioExecutionWebhooksTimelineCard from './scenario-execution-webhooks-timeline-card.vue';
@@ -40,7 +40,7 @@ export default {
   components: {
     ScenarioExecutionWebhooksTimelineCard,
     AlarmWebhookExecutionTimeline,
-    AlarmTestQueryExecution,
+    AlarmWebhookExecution,
   },
   mixins: [entitiesScenarioMixin, validationErrorsMixinCreator()],
   props: {
