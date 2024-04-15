@@ -146,7 +146,7 @@ func updateWebsocketConns(
 					continue
 				}
 
-				websocketHub.Send(ctx, websocket.RoomLoggedUserCount, c)
+				websocketHub.Send(websocket.RoomLoggedUserCount, c)
 			}
 		}
 	}

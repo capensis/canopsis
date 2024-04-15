@@ -64,9 +64,9 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userId1), gomock.Any()).Return(alarmResForUserId1, nil)
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userId2), gomock.Any()).Return(alarmResForUserId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId1}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForUserId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId2, connId3}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2, connId3}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForUserId2))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
@@ -169,9 +169,9 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId1), gomock.Eq(userId), gomock.Any()).Return(alarmResForConnId1, nil)
 	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId2), gomock.Eq(userId), gomock.Any()).Return(alarmResForConnId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId1}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForConnId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId2}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForConnId2))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
@@ -256,9 +256,9 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userId1)).Return(alarmResForUserId1, nil)
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userId2)).Return(alarmResForUserId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId1}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForUserId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId2, connId3}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2, connId3}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForUserId2))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
@@ -365,9 +365,9 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId1}), gomock.Eq(userId)).Return(alarmResForConnId1, nil)
 	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId2}), gomock.Eq(userId)).Return(alarmResForConnId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId1}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForConnId1))
-	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Any(), gomock.Eq([]string{connId2}), gomock.Any(),
+	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId2}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForConnId2))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
@@ -440,7 +440,7 @@ func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T)
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StopWatch(ctx, connId, roomId)
+	err = w.StopWatch(connId, roomId)
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -490,7 +490,7 @@ func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *tes
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StopWatch(ctx, connId, roomId)
+	err = w.StopWatch(connId, roomId)
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
