@@ -11,7 +11,7 @@
         color="grey"
         @expand="expandResponse"
       />
-      <span class="ml-2">{{ $t(`alarm.timeLine.types.${step._t}`) }}</span>
+      <span class="ml-2">{{ $t(`alarm.timeline.steps.${step._t}`) }}</span>
       <span v-if="step.message">: {{ step.message }}</span>
     </v-layout>
     <v-expand-transition>
