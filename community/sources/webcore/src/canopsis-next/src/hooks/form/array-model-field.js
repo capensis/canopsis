@@ -1,6 +1,6 @@
 import { setField } from '@/helpers/immutable';
 
-import { useModelField } from './useModelField';
+import { useModelField } from './model-field';
 
 /**
  * Provides functionality to manipulate an array model field and emit events to the parent component.

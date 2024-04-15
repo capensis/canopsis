@@ -92,8 +92,8 @@ import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form
 
 import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-import { useEntityServerVariables } from '@/hooks/entities/entity/useEntityServerVariables';
-import { useAlarmServerVariables } from '@/hooks/entities/alarm/useAlarmServerVariables';
+import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-variables';
+import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
 
 export default {
   components: {

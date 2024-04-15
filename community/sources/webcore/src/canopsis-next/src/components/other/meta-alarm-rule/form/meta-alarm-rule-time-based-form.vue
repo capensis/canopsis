@@ -45,7 +45,7 @@
 <script>
 import { durationToForm } from '@/helpers/date/duration';
 
-import { useModelField } from '@/hooks/form/useModelField';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   model: {
