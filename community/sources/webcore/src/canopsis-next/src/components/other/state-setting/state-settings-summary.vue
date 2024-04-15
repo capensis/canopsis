@@ -62,7 +62,7 @@
 <script>
 import { isUndefined } from 'lodash';
 
-import { ENTITIES_STATES, MODALS, STATE_SETTING_METHODS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
+import { ALARM_STATES, MODALS, STATE_SETTING_METHODS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
 
 export default {
   props: {
@@ -105,10 +105,10 @@ export default {
       } = this.stateSetting.state_thresholds ?? {};
 
       return {
-        [ENTITIES_STATES.ok]: ok,
-        [ENTITIES_STATES.minor]: minor,
-        [ENTITIES_STATES.major]: major,
-        [ENTITIES_STATES.critical]: critical,
+        [ALARM_STATES.ok]: ok,
+        [ALARM_STATES.minor]: minor,
+        [ALARM_STATES.major]: major,
+        [ALARM_STATES.critical]: critical,
       }[this.entityState];
     },
 
@@ -145,10 +145,10 @@ export default {
       } = this.stateSetting.state_thresholds ?? {};
 
       const currentCondition = {
-        [ENTITIES_STATES.ok]: ok,
-        [ENTITIES_STATES.minor]: minor,
-        [ENTITIES_STATES.major]: major,
-        [ENTITIES_STATES.critical]: critical,
+        [ALARM_STATES.ok]: ok,
+        [ALARM_STATES.minor]: minor,
+        [ALARM_STATES.major]: major,
+        [ALARM_STATES.critical]: critical,
       }[this.entityState];
 
       if (!currentCondition) {

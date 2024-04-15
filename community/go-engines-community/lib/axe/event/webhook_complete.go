@@ -7,6 +7,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -22,6 +23,7 @@ func NewWebhookCompleteProcessor(
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -30,6 +32,7 @@ func NewWebhookCompleteProcessor(
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
 		metricsSender:           metricsSender,
 		amqpPublisher:           amqpPublisher,
+		eventGenerator:          eventGenerator,
 		encoder:                 encoder,
 		logger:                  logger,
 	}
@@ -40,6 +43,7 @@ type webhookCompleteProcessor struct {
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	amqpPublisher           libamqp.Publisher
+	eventGenerator          event.Generator
 	encoder                 encoding.Encoder
 	logger                  zerolog.Logger
 }
@@ -56,33 +60,27 @@ func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEve
 		"_t":   bson.M{"$in": bson.A{types.AlarmStepWebhookComplete, types.AlarmStepWebhookFail}},
 	}}}
 	alarmChange := types.NewAlarmChange()
-	var update bson.M
+	var update []bson.M
 	if event.Parameters.Ticket == "" {
-		newStep := types.NewAlarmStep(types.AlarmStepWebhookComplete, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-		newStep.Execution = event.Parameters.Execution
-		update = bson.M{
-			"$push": bson.M{
-				"v.steps": newStep,
-			},
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.RuleExecution,
+			event.Parameters.Output, event.Parameters)
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.steps": addStepUpdateQuery(newStepQuery),
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeWebhookComplete
 	} else {
-		newStep := types.NewAlarmStep(types.AlarmStepWebhookComplete, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-		newStep.Execution = event.Parameters.Execution
-		newTicketStep := types.NewTicketStep(types.AlarmStepDeclareTicket, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-			event.Parameters.TicketInfo)
-		newTicketStep.Execution = event.Parameters.Execution
-		update = bson.M{
-			"$set": bson.M{
-				"v.ticket": newTicketStep,
-			},
-			"$push": bson.M{
-				"v.tickets": newTicketStep,
-				"v.steps":   bson.M{"$each": bson.A{newStep, newTicketStep}},
-			},
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookComplete, event.Parameters.RuleExecution,
+			event.Parameters.Output, event.Parameters)
+		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicket,
+			event.Parameters.RuleExecution, event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.ticket":  newTicketStepQuery,
+				"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
+				"v.steps":   addStepUpdateQuery(newStepQuery, newTicketStepQuery),
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeDeclareTicketWebhook
 	}
@@ -131,5 +129,5 @@ func (p *webhookCompleteProcessor) postProcess(
 		p.logger.Err(err).Msg("cannot process meta alarm")
 	}
 
-	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.logger)
+	sendTriggerEvent(ctx, event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
 }

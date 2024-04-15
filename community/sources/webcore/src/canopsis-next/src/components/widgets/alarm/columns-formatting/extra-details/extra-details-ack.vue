@@ -5,17 +5,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-extra-details__badge purple"
-          v-on="on"
-        >
-          <v-icon
-            color="white"
-            small
-          >
-            {{ icon }}
-          </v-icon>
-        </span>
+        <c-alarm-extra-details-chip :icon="icon" :color="color" v-on="on" />
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.ack') }}</strong>
@@ -36,10 +26,13 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { COLORS } from '@/config';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 
 export default {
   props: {
@@ -48,14 +41,16 @@ export default {
       required: true,
     },
   },
-  computed: {
-    date() {
-      return convertDateToStringWithFormatForToday(this.ack.t);
-    },
+  setup(props) {
+    const date = computed(() => convertDateToStringWithFormatForToday(props.ack.t));
+    const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.ack);
+    const color = COLORS.alarmExtraDetails.ack;
 
-    icon() {
-      return getEntityEventIcon(EVENT_ENTITY_TYPES.ack);
-    },
+    return {
+      date,
+      icon,
+      color,
+    };
   },
 };
 </script>

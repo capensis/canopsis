@@ -101,8 +101,9 @@ func TestAlarmSteps_Crop_GivenGreaterThenLimitSteps_ShouldCropSteps(t *testing.T
 	if steps[1].Author != "test" {
 		t.Fatalf("expected %q but got %s", "test", steps[1].Author)
 	}
-	if steps[1].Message != "test" {
-		t.Fatalf("expected %q but got %s", "test", steps[1].Message)
+	msg := "State increased: 5\nState decreased: 5\nState changes: 10\nState changes to minor: 5\nState changes to major: 5"
+	if steps[1].Message != msg {
+		t.Fatalf("expected %q but got %s", msg, steps[1].Message)
 	}
 	if steps[1].Value != statusStep.Value {
 		t.Fatalf("expected %d but got %d", statusStep.Value, steps[1].Value)

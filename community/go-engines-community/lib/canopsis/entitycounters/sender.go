@@ -5,27 +5,31 @@ package entitycounters
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	libamqp "github.com/rabbitmq/amqp091-go"
 )
 
 type EventsSender interface {
-	UpdateComponentState(ctx context.Context, id, connectorID string, state int) error
+	UpdateComponentState(ctx context.Context, id string, state int) error
 	UpdateServiceState(ctx context.Context, serviceID string, serviceInfo UpdatedServicesInfo) error
 	RecomputeService(ctx context.Context, serviceID string) error
-	RecomputeComponent(ctx context.Context, componentID, connectorID string) error
+	RecomputeComponent(ctx context.Context, componentID string) error
 }
 
 type sender struct {
-	encoder         encoding.Encoder
-	pubChannel      amqp.Publisher
-	pubExchangeName string
-	pubQueueName    string
+	encoder             encoding.Encoder
+	pubChannel          amqp.Publisher
+	pubExchangeName     string
+	pubQueueName        string
+	connector           string
+	alarmConfigProvider config.AlarmConfigProvider
 }
 
 func NewEventSender(
@@ -33,27 +37,30 @@ func NewEventSender(
 	pubChannel amqp.Publisher,
 	pubExchangeName string,
 	pubQueueName string,
+	connector string,
+	alarmConfigProvider config.AlarmConfigProvider,
 ) EventsSender {
 	return &sender{
-		encoder:         encoder,
-		pubChannel:      pubChannel,
-		pubExchangeName: pubExchangeName,
-		pubQueueName:    pubQueueName,
+		encoder:             encoder,
+		pubChannel:          pubChannel,
+		pubExchangeName:     pubExchangeName,
+		pubQueueName:        pubQueueName,
+		connector:           connector,
+		alarmConfigProvider: alarmConfigProvider,
 	}
 }
 
-func (s *sender) UpdateComponentState(ctx context.Context, id, connectorID string, state int) error {
-	connector, connectorName, _ := strings.Cut(connectorID, "/")
-
+func (s *sender) UpdateComponentState(ctx context.Context, id string, state int) error {
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeComponent,
 		Component:     id,
-		Connector:     connector,
-		ConnectorName: connectorName,
+		Connector:     s.connector,
+		ConnectorName: s.connector,
 		State:         types.CpsNumber(state),
 		Output:        "",
 		Timestamp:     datetime.NewCpsTime(),
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	}
 
@@ -85,9 +92,10 @@ func (s *sender) RecomputeService(ctx context.Context, serviceID string) error {
 		EventType:     types.EventTypeRecomputeEntityService,
 		SourceType:    types.SourceTypeService,
 		Component:     serviceID,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
+		Connector:     s.connector,
+		ConnectorName: s.connector,
 		Timestamp:     datetime.NewCpsTime(),
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	}
 
@@ -115,15 +123,17 @@ func (s *sender) RecomputeService(ctx context.Context, serviceID string) error {
 }
 
 func (s *sender) UpdateServiceState(ctx context.Context, serviceID string, serviceInfo UpdatedServicesInfo) error {
+	alarmConfig := s.alarmConfigProvider.Get()
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeService,
 		Component:     serviceID,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
+		Connector:     s.connector,
+		ConnectorName: s.connector,
 		State:         types.CpsNumber(serviceInfo.State),
-		Output:        serviceInfo.Output,
+		Output:        utils.TruncateString(serviceInfo.Output, alarmConfig.OutputLength),
 		Timestamp:     datetime.NewCpsTime(),
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	}
 
@@ -150,16 +160,15 @@ func (s *sender) UpdateServiceState(ctx context.Context, serviceID string, servi
 	return nil
 }
 
-func (s *sender) RecomputeComponent(ctx context.Context, componentID, connectorID string) error {
-	connector, connectorName, _ := strings.Cut(connectorID, "/")
-
+func (s *sender) RecomputeComponent(ctx context.Context, componentID string) error {
 	event := types.Event{
 		EventType:     types.EventTypeEntityUpdated,
 		SourceType:    types.SourceTypeComponent,
 		Component:     componentID,
-		Connector:     connector,
-		ConnectorName: connectorName,
+		Connector:     s.connector,
+		ConnectorName: s.connector,
 		Timestamp:     datetime.NewCpsTime(),
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	}
 
