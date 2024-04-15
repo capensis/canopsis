@@ -48,7 +48,7 @@ export default {
 
     const ruleTypesOptions = computed(() => Object.values(META_ALARMS_RULE_TYPES).reduce((acc, type) => {
       /**
-       * We are filtered 'manualgroup' because we are using in only in the alarms list widget directly
+       * We are filtered 'manualgroup' because we are using it only in the alarms list widget directly
        */
       if (!isManualGroupMetaAlarmRuleType(type)) {
         const messageKey = `metaAlarmRule.types.${type}`;
