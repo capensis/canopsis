@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_STATES } from '@/constants';
+import { MODALS, ALARM_STATES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -62,7 +62,7 @@ export default {
     return {
       form: {
         comment: '',
-        state: firstItem ? firstItem.v.state.val : ENTITIES_STATES.major,
+        state: firstItem ? firstItem.v.state.val : ALARM_STATES.major,
       },
     };
   },

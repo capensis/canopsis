@@ -27,8 +27,8 @@
         {{ $t('healthcheck.notifyUsersNumberOfInstances') }}
       </template>
       <healthcheck-engine-instance-field
-        v-field="form[engineName]"
         v-for="engineName in engineNames"
+        v-field="form[engineName]"
         :key="engineName"
         :name="engineName"
         :label="$t(`healthcheck.nodes.${engineName}.name`)"

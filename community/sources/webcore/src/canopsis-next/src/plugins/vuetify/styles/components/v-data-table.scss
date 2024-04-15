@@ -27,9 +27,9 @@
       height: $dense-cell-height;
     }
 
-    tbody, thead {
-      tr:not(.v-data-table__progress, .v-data-table__expanded) {
-        td {
+    & > tbody, thead {
+      & > tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        & > td {
           height: $ultra-dense-cell-height;
         }
       }
@@ -37,17 +37,17 @@
   }
 
   &--ultra-dense > .v-data-table__wrapper > table {
-    thead > tr > th {
+    & > thead > tr > th {
       height: $ultra-dense-cell-height;
     }
 
-    tbody, thead {
-      tr:not(.v-data-table__progress, .v-data-table__expanded) {
-        td, th {
+    & > tbody, thead {
+      & > tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        & > td, & > th {
           padding: 0 $ultra-dense-padding !important;
         }
 
-        td {
+        & > td {
           height: $ultra-dense-cell-height;
         }
       }
@@ -68,41 +68,6 @@
 
           .c-action-btn__button {
             margin: 0 !important;
-          }
-        }
-
-        .service-dependencies {
-          .v-data-table__wrapper {
-            padding-top: 0;
-          }
-
-          thead, tbody {
-            tr:not(.v-data-table__progress, .v-data-table__expanded) {
-              td, th {
-                height: $dense-treeview-cell-height !important;
-              }
-            }
-          }
-
-          .treeview-data-table--tree {
-            margin-top: $dense-treeview-cell-height;
-          }
-
-          .v-treeview-node__root {
-            min-height: $dense-treeview-cell-height;
-            height: $dense-treeview-cell-height;
-          }
-
-          .v-treeview-node__label {
-            .v-chip.v-size--default {
-              height: unset;
-            }
-          }
-
-          .v-btn {
-            width: $dense-treeview-cell-height - 4;
-            height: $dense-treeview-cell-height - 4;
-            margin: 2px;
           }
         }
       }

@@ -5,17 +5,7 @@
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-extra-details__badge brown darken-1"
-          v-on="on"
-        >
-          <v-icon
-            color="white"
-            small
-          >
-            {{ icon }}
-          </v-icon>
-        </span>
+        <c-alarm-extra-details-chip :color="color" icon="center_focus_strong" v-on="on" />
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.grouping') }}</strong>
@@ -29,7 +19,9 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
+import { computed } from 'vue';
+
+import { COLORS } from '@/config';
 
 export default {
   props: {
@@ -50,14 +42,14 @@ export default {
       default: 0,
     },
   },
-  computed: {
-    ruleName() {
-      return this.rule?.name ?? '';
-    },
+  setup(props) {
+    const ruleName = computed(() => props.rule?.name ?? '');
+    const color = COLORS.alarmExtraDetails.children;
 
-    icon() {
-      return EVENT_ENTITY_ICONS_BY_TYPE.groupChildren;
-    },
+    return {
+      ruleName,
+      color,
+    };
   },
 };
 </script>

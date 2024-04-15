@@ -128,11 +128,11 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 	}
 
 	p := parser.NewParser()
-	expr, err := p.Parse(search)
+	expr, err := p.Parse(search, nil)
 	if err == nil {
 		q.adjustLookupsForFilter(expr.GetFields())
 
-		return expr.Query(), nil
+		return expr.MongoQuery(), nil
 	}
 
 	searchRegexp := primitive.Regex{

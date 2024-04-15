@@ -13,7 +13,7 @@ import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-  ENTITIES_STATUSES,
+  ALARM_STATUSES,
   ENTITY_PATTERN_FIELDS,
   LINK_RULE_ACTIONS,
   META_ALARMS_RULE_TYPES,
@@ -104,7 +104,7 @@ describe('mass-actions-panel', () => {
       component: `alarm-component-${index}`,
       resource: `alarm-resource-${index}`,
       status: {
-        val: ENTITIES_STATUSES.ongoing,
+        val: ALARM_STATUSES.ongoing,
       },
       state: {
         val: `state-val-${index}`,
@@ -161,7 +161,7 @@ describe('mass-actions-panel', () => {
     jest.clearAllMocks();
   });
 
-  it('Create pbehavior modal showed after trigger pbehavior add action', () => {
+  test('Create pbehavior modal showed after trigger pbehavior add action', () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -201,7 +201,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Ack modal showed after trigger ack action', async () => {
+  test('Ack modal showed after trigger ack action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -247,7 +247,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Fast ack event sent after trigger fast ack action', async () => {
+  test('Fast ack event sent after trigger fast ack action', async () => {
     const comment = Faker.datatype.string();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -289,7 +289,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Fast ack event sent after trigger fast ack action without parameters', async () => {
+  test('Fast ack event sent after trigger fast ack action without parameters', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -325,7 +325,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Ack remove modal showed after trigger ack remove action', async () => {
+  test('Ack remove modal showed after trigger ack remove action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -375,7 +375,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Cancel modal showed after trigger cancel action', async () => {
+  test('Cancel modal showed after trigger cancel action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -428,7 +428,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Fast cancel event sent after trigger fast cancel action', async () => {
+  test('Fast cancel event sent after trigger fast cancel action', async () => {
     const comment = Faker.datatype.string();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -468,7 +468,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Fast cancel event sent after trigger fast cancel action without parameters', async () => {
+  test('Fast cancel event sent after trigger fast cancel action without parameters', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -502,7 +502,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Associate ticket modal showed after trigger associate ticket action', async () => {
+  test('Associate ticket modal showed after trigger associate ticket action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -558,7 +558,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Snooze modal showed after trigger snooze action', async () => {
+  test('Snooze modal showed after trigger snooze action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -616,7 +616,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Manual meta alarm group modal showed after trigger manual meta alarm group action', async () => {
+  test('Manual meta alarm group modal showed after trigger manual meta alarm group action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -693,7 +693,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Comment modal showed after trigger comment action', async () => {
+  test('Comment modal showed after trigger comment action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -743,7 +743,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
-  it('Renders `mass-actions-panel` with non empty items', () => {
+  test('Renders `mass-actions-panel` with non empty items', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -755,7 +755,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with empty items', () => {
+  test('Renders `mass-actions-panel` with empty items', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -767,7 +767,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with one item', () => {
+  test('Renders `mass-actions-panel` with one item', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -779,7 +779,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with meta alarm', () => {
+  test('Renders `mass-actions-panel` with meta alarm', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -791,7 +791,7 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with meta ack', () => {
+  test('Renders `mass-actions-panel` with meta ack', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {

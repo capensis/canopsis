@@ -58,7 +58,7 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
             class="v-icon notranslate material-icons theme--dark"
             style="font-size: 16px;"
           >
-            check
+            done_all
           </i>
         </span>
       </button>
@@ -75,7 +75,7 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
             class="v-icon notranslate material-icons theme--dark"
             style="font-size: 16px;"
           >
-            local_play
+            sticky_note_2
           </i>
         </span>
       </button>

@@ -6,7 +6,7 @@ import { SIDE_BARS } from '@/constants';
 
 import TheSidebar from '@/plugins/sidebar/components/the-sidebar.vue';
 
-const stubs = {
+const snapshotStubs = {
   'sidebar-base': {
     props: ['sidebar'],
     template: '<div class="sidebar-base">{{sidebar?.name}}</div>',
@@ -16,7 +16,7 @@ const stubs = {
 describe('the-sidebar', () => {
   const $sidebar = mockSidebar();
 
-  const snapshotFactory = generateRenderer(TheSidebar, { stubs });
+  const snapshotFactory = generateRenderer(TheSidebar, { stubs: snapshotStubs });
 
   it('Renders `the-sidebars` with type: alarmSettings', async () => {
     const sidebar = {

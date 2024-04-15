@@ -553,17 +553,107 @@ definitions:
       type:
         $ref: '#/definitions/pbehavior.Type'
     type: object
+  alarm.Step:
+    properties:
+      _id:
+        type: string
+      _t:
+        type: string
+      a:
+        type: string
+      color:
+        type: string
+      icon_name:
+        type: string
+      in_pbh:
+        type: boolean
+      initiator:
+        type: string
+      m:
+        type: string
+      steps:
+        items:
+          properties:
+            _id:
+              type: string
+            _t:
+              type: string
+            a:
+              type: string
+            color:
+              type: string
+            icon_name:
+              type: string
+            in_pbh:
+              type: boolean
+            initiator:
+              type: string
+            m:
+              type: string
+            t:
+              type: integer
+            ticket:
+              type: string
+            ticket_comment:
+              type: string
+            ticket_data:
+              additionalProperties:
+                type: string
+              type: object
+            ticket_meta_alarm_id:
+              type: string
+            ticket_rule_id:
+              type: string
+            ticket_rule_name:
+              type: string
+            ticket_system_name:
+              type: string
+            ticket_url:
+              type: string
+            user_id:
+              type: string
+            val:
+              type: integer
+          type: object
+        type: array
+      t:
+        type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
   alarm.StepDetails:
     properties:
       data:
         items:
-          $ref: '#/definitions/common.AlarmStep'
+          $ref: '#/definitions/alarm.Step'
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
     type: object
   alarm.StepsRequest:
     properties:
+      group:
+        type: boolean
       limit:
         type: integer
       page:
@@ -1157,12 +1247,16 @@ definitions:
         type: string
       a:
         type: string
+      color:
+        type: string
+      icon_name:
+        type: string
+      in_pbh:
+        type: boolean
       initiator:
         type: string
       m:
         type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
       t:
         type: integer
       ticket:
@@ -1636,14 +1730,29 @@ definitions:
     type: object
   entity.PbehaviorInfo:
     properties:
+      author:
+        type: string
       canonical_type:
         description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      color:
         type: string
       icon_name:
         type: string
       id:
         description: ID is ID of pbehavior.PBehavior.
         type: string
+      last_comment:
+        properties:
+          _id:
+            type: string
+          author:
+            type: string
+          message:
+            type: string
+          ts:
+            type: integer
+        type: object
       name:
         description: Name is Name of pbehavior.PBehavior.
         type: string
@@ -1652,6 +1761,8 @@ definitions:
         type: string
       reason_name:
         description: ReasonName is Name of pbehavior.Reason.
+        type: string
+      rule_name:
         type: string
       timestamp:
         description: |-
@@ -3706,6 +3817,8 @@ definitions:
     properties:
       _id:
         type: string
+      alarm_count:
+        type: integer
       author:
         $ref: '#/definitions/author.Author'
       color:
@@ -4205,6 +4318,8 @@ definitions:
       is_regexp:
         type: boolean
       ticket_id:
+        type: string
+      ticket_id_tpl:
         type: string
       ticket_url:
         type: string
@@ -5226,23 +5341,6 @@ definitions:
     required:
     - lat
     - lng
-    type: object
-  types.CropCounter:
-    properties:
-      state:0:
-        type: integer
-      state:1:
-        type: integer
-      state:2:
-        type: integer
-      state:3:
-        type: integer
-      statechanges:
-        type: integer
-      statedec:
-        type: integer
-      stateinc:
-        type: integer
     type: object
   types.Exdate:
     properties:

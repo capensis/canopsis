@@ -108,27 +108,6 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
           />
         </g>
       </g>
-      <defs>
-        <clippath
-          id="clip0_8821_52891"
-        >
-          <rect
-            fill="white"
-            height="24"
-            width="24"
-          />
-        </clippath>
-        <clippath
-          id="clip1_8821_52891"
-        >
-          <rect
-            fill="white"
-            height="12"
-            transform="translate(5 6)"
-            width="12"
-          />
-        </clippath>
-      </defs>
     </svg>
   </span>
 </span>
@@ -175,27 +154,6 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
           />
         </g>
       </g>
-      <defs>
-        <clippath
-          id="clip0_8821_52891"
-        >
-          <rect
-            fill="white"
-            height="24"
-            width="24"
-          />
-        </clippath>
-        <clippath
-          id="clip1_8821_52891"
-        >
-          <rect
-            fill="white"
-            height="12"
-            transform="translate(5 6)"
-            width="12"
-          />
-        </clippath>
-      </defs>
     </svg>
   </span>
 </span>
@@ -251,27 +209,6 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
           />
         </g>
       </g>
-      <defs>
-        <clippath
-          id="clip0_8821_52891"
-        >
-          <rect
-            fill="white"
-            height="24"
-            width="24"
-          />
-        </clippath>
-        <clippath
-          id="clip1_8821_52891"
-        >
-          <rect
-            fill="white"
-            height="12"
-            transform="translate(5 6)"
-            width="12"
-          />
-        </clippath>
-      </defs>
     </svg>
   </span>
 </span>

@@ -1,6 +1,7 @@
 package token
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -76,12 +77,12 @@ func (s *jwtGenerator) Validate(tokenString string) (string, error) {
 	}
 
 	if !token.Valid {
-		return "", fmt.Errorf("token is invalid")
+		return "", errors.New("token is invalid")
 	}
 
 	if claims, ok := token.Claims.(*tokenClaims); ok {
 		return claims.ID, nil
 	}
 
-	return "", fmt.Errorf("token claims are invalid")
+	return "", errors.New("token claims are invalid")
 }

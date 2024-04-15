@@ -15,7 +15,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
     <div
       class="flex mr-3 xs6"
     >
-      <declare-ticket-rule-ticket-id-field-stub
+      <declare-ticket-rule-ticket-id-text-field-stub
         name="ticket_id"
         required="true"
         value="Ticket ID"
