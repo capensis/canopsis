@@ -2,7 +2,7 @@ import Faker from 'faker';
 import { omit } from 'lodash';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 
@@ -74,10 +74,6 @@ describe('alarms-list', () => {
 
   const nowTimestamp = 1386435600000;
   const nowSubtractOneYearUnix = 1354834800;
-
-  mockDateNow(nowTimestamp);
-
-  jest.useFakeTimers({ now: nowTimestamp });
 
   const totalItems = 10;
   const alarms = fakeStaticAlarms({
@@ -283,6 +279,10 @@ describe('alarms-list', () => {
     mocks: {
       $socket,
     },
+  });
+
+  beforeEach(() => {
+    jest.useFakeTimers({ now: nowTimestamp });
   });
 
   afterEach(() => {
