@@ -221,7 +221,7 @@ func Default(
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
 		author.NewProvider(dbClient, p.ApiConfigProvider), tplExecutor, json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
+	websocketHub, err := newWebsocketHub(ctx, enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
 		dbClient, alarmStore, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
@@ -456,6 +456,7 @@ func Default(
 }
 
 func newWebsocketHub(
+	ctx context.Context,
 	enforcer libsecurity.Enforcer,
 	tokenProviders []libsecurity.TokenProvider,
 	checkAuthInterval time.Duration,
@@ -471,7 +472,7 @@ func newWebsocketHub(
 		},
 	})
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
-	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
+	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
 		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
