@@ -24,6 +24,7 @@ export default {
     componentInfos: 'Component infos',
     alarmDisplayName: 'Alarm display name',
     alarmCreationDate: 'Alarm creation date',
+    alarmLastComment: 'Alarm last comment',
     importSource: 'Import source',
     imported: 'Imported date',
   },
