@@ -12,19 +12,6 @@ export default {
   actionsRequired: 'Des actions sont requises',
   acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
   acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
-  advancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
-    + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
-    + '<p>Le "-" avant la recherche est obligatoire</p>\n'
-    + '<p>Opérateurs:\n'
-    + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
-    + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
-    + '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
-    + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
-    + '</dl>',
   otherTickets: 'D\'autres tickets sont disponibles dans le panneau d\'expansion',
   noAlarmFound: 'Aucune alarme n\'a été trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',

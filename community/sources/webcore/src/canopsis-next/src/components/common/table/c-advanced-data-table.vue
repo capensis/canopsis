@@ -195,10 +195,6 @@ export default {
       type: String,
       default: 'text',
     },
-    searchTooltip: {
-      type: String,
-      default: '',
-    },
     options: {
       type: Object,
       required: false,

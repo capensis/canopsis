@@ -9,7 +9,7 @@
     selectable
   >
     <template #toolbar="">
-      <v-layout class="gap-2" wrap align-end>
+      <v-layout class="gap-4 pa-4 pt-0" wrap align-end>
         <v-flex>
           <c-advanced-search
             :columns="widget.parameters.widgetColumns"
@@ -24,7 +24,6 @@
         <v-flex v-if="hasAccessToCategory">
           <c-entity-category-field
             :category="query.category"
-            class="mr-3"
             hide-details
             @input="updateCategory"
           />

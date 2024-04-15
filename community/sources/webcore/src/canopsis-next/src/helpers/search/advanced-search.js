@@ -52,6 +52,7 @@ export const isFieldType = type => type === ADVANCED_SEARCH_ITEM_TYPES.field;
 export const getNextAdvancedSearchType = (type = ADVANCED_SEARCH_ITEM_TYPES.union) => (
   ADVANCED_SEARCH_NEXT_ITEM_TYPES[type] ?? ADVANCED_SEARCH_ITEM_TYPES.field
 );
+
 /**
  * Converts an advanced search string into an array of search items, each represented as an object.
  * This function parses a search string based on predefined union conditions, item types, and conditions.
@@ -143,38 +144,34 @@ export const advancedSearchStringToArray = (search = '', columns = []) => {
         break;
       }
 
-      if (field) {
-        result.value.push({
-          key: uid(),
-          value: field,
-          type: ADVANCED_SEARCH_ITEM_TYPES.field,
-          text: field,
-          not: !!not,
-        });
+      if (!field) {
+        result.internalSearch = items.slice(i).join(' ');
+
+        break;
       }
 
-      if (condition) {
-        if (!field) {
-          result.internalSearch = items.slice(i).join(' ');
+      result.value.push({
+        key: uid(),
+        value: field,
+        type: ADVANCED_SEARCH_ITEM_TYPES.field,
+        text: field,
+        not: !!not,
+      });
 
-          break;
-        }
+      if (!condition) {
+        result.internalSearch = items.slice(i).map((slicedItem, index) => (index ? slicedItem : value)).join(' ');
 
-        result.value.push({
-          key: uid(),
-          value: condition,
-          type: ADVANCED_SEARCH_ITEM_TYPES.condition,
-          text: condition,
-        });
+        break;
       }
+
+      result.value.push({
+        key: uid(),
+        value: condition,
+        type: ADVANCED_SEARCH_ITEM_TYPES.condition,
+        text: condition,
+      });
 
       if (value) {
-        if (!field || !condition) {
-          result.internalSearch = items.slice(i).join(' ');
-
-          break;
-        }
-
         result.value.push({
           key: uid(),
           value,

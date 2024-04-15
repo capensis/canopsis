@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CSearchField from '@/components/forms/fields/c-search-field.vue';
+import CSearchField from '@/components/common/search/c-search-field.vue';
 
 const mockData = {
   search: Faker.lorem.words(),
@@ -23,11 +23,9 @@ const stubs = {
     `,
   },
   'v-combobox': createSelectInputStub('v-combobox'),
-  'c-action-btn': true,
 };
 
 const snapshotStubs = {
-  'c-action-btn': true,
 };
 
 const selectTextInput = wrapper => wrapper.find('input.v-text-field');

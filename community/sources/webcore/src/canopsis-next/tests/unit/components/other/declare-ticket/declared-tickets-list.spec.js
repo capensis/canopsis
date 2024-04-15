@@ -9,12 +9,6 @@ import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tick
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-search-field': true,
-  'v-checkbox': true,
-  'c-expand-btn': true,
-  'c-action-btn': true,
-  'c-enabled': true,
-  'c-table-pagination': true,
   'c-help-icon': true,
 };
 
