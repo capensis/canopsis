@@ -1,35 +1,47 @@
 <template>
-  <v-text-field
-    v-field="value"
-    v-validate="rules"
-    :label="$t('declareTicket.ticketID')"
-    :error-messages="errors.collect(name)"
-    :name="name"
-    :disabled="disabled"
-    class="declare-ticket-rule-ticket-id-field"
-  >
-    <template #append="">
-      <c-help-icon
-        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') })"
-        icon="help"
-        color="grey darken-1"
-        left
+  <v-layout>
+    <v-flex xs6>
+      <c-enabled-field
+        v-field="value.template"
+        :label="$t('declareTicket.allowTicketIdTemplate')"
       />
-    </template>
-  </v-text-field>
+    </v-flex>
+    <declare-ticket-rule-ticket-id-payload-text-field
+      v-if="value.template"
+      v-field="value.value"
+      :name="name"
+      :disabled="disabled"
+      :variables="variables"
+      :required="required"
+    />
+    <declare-ticket-rule-ticket-id-text-field
+      v-else
+      v-field="value.value"
+      :name="name"
+      :disabled="disabled"
+      :required="required"
+    />
+  </v-layout>
 </template>
 
 <script>
+import DeclareTicketRuleTicketIdPayloadTextField from './declare-ticket-rule-ticket-id-payload-text-field.vue';
+import DeclareTicketRuleTicketIdTextField from './declare-ticket-rule-ticket-id-text-field.vue';
+
 export default {
   inject: ['$validator'],
+  components: {
+    DeclareTicketRuleTicketIdTextField,
+    DeclareTicketRuleTicketIdPayloadTextField,
+  },
   model: {
     prop: 'value',
     event: 'input',
   },
   props: {
     value: {
-      type: String,
-      required: true,
+      type: Object,
+      default: () => ({}),
     },
     name: {
       type: String,
@@ -43,19 +55,10 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
 };
 </script>
-
-<style lang="scss">
-.declare-ticket-rule-ticket-id-field {
-  pointer-events: auto !important;
-}
-</style>
