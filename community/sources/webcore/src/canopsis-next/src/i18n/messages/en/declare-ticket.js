@@ -5,6 +5,7 @@ export default {
   ticketID: 'Ticket ID',
   ticketURL: 'Ticket URL',
   allowTicketURLTemplate: 'Allow variables in the URL',
+  allowTicketIdTemplate: 'Allow variables in the ID',
   alarmFieldName: 'Alarm field name',
   customFields: 'Custom fields',
   responseField: 'Response field',
