@@ -108,7 +108,7 @@ export default {
     ));
 
     const runTestExecution = () => emit('run:execution');
-    const clearWebhookStatus = () => emit('run:execution');
+    const clearWebhookStatus = () => emit('clear:execution');
 
     return {
       isExecutionRunning,

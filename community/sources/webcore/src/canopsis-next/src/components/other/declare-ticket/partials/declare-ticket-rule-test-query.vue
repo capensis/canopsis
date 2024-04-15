@@ -6,7 +6,7 @@
     :pending="pending"
     :has-errors="hasErrors"
     @run:execution="runTestExecution"
-    @clear:status="clearWebhookStatus"
+    @clear:execution="clearWebhookStatus"
   >
     <template #webhooks="{ webhooks }">
       <alarm-webhook-execution-timeline :webhooks="webhooks">
