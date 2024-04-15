@@ -11,7 +11,7 @@ import { replaceTextNotInQuotes } from './quotes';
  * prefix is present.
  */
 export const prepareSearchForSubmit = (search = '', columns = []) => {
-  if (search.startsWith('-')) {
+  if (!search.startsWith('-')) {
     return search;
   }
 
