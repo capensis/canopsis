@@ -21,7 +21,7 @@ import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
 import {
   permissionsTechnicalRemediationConfigurationMixin,

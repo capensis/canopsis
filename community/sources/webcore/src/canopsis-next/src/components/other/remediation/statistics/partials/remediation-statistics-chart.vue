@@ -5,7 +5,7 @@
     :dark="$system.dark"
   >
     <template #actions="{ chart }">
-      <kpi-chart-export-actions
+      <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
@@ -19,20 +19,20 @@
 import { COLORS } from '@/config';
 import {
   SAMPLINGS,
-  TIME_UNITS,
   REMEDIATION_STATISTICS_BAR_PERCENTAGE,
   REMEDIATION_STATISTICS_CHART_DATA_TYPE,
+  TIME_UNITS_BY_SAMPLING,
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
-import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],
-  components: { KpiChartExportActions, BarChart },
+  components: { ChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -69,12 +69,7 @@ export default {
     },
 
     samplingUnit() {
-      return {
-        [SAMPLINGS.hour]: TIME_UNITS.minute,
-        [SAMPLINGS.day]: TIME_UNITS.hour,
-        [SAMPLINGS.week]: TIME_UNITS.day,
-        [SAMPLINGS.month]: TIME_UNITS.day,
-      }[this.sampling];
+      return TIME_UNITS_BY_SAMPLING[this.sampling];
     },
 
     datasets() {

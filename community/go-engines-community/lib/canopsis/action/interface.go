@@ -59,22 +59,18 @@ type TaskManager interface {
 }
 
 type ScenarioExecution struct {
-	ID                   string                 `json:"_id"`
-	ScenarioID           string                 `json:"sid"`
-	ScenarioName         string                 `json:"sn"`
-	AlarmID              string                 `json:"aid"`
-	Entity               types.Entity           `json:"e"`
-	ActionExecutions     []Execution            `json:"ae"`
-	LastUpdate           int64                  `json:"u"`
-	Tries                int64                  `json:"t"`
-	Header               map[string]string      `json:"h,omitempty"`
-	Response             map[string]interface{} `json:"r,omitempty"`
-	ResponseMap          map[string]interface{} `json:"rm,omitempty"`
-	ResponseCount        int                    `json:"rc"`
-	AdditionalData       AdditionalData         `json:"ad"`
-	FifoAckEvent         types.Event            `json:"fev"`
-	IsMetaAlarmUpdated   bool                   `json:"mau,omitempty"`
-	IsInstructionMatched bool                   `json:"im,omitempty"`
+	ID                   string         `json:"_id"`
+	ScenarioID           string         `json:"sid"`
+	ScenarioName         string         `json:"sn"`
+	AlarmID              string         `json:"aid"`
+	Entity               types.Entity   `json:"e"`
+	ActionExecutions     []Execution    `json:"ae"`
+	LastUpdate           int64          `json:"u"`
+	Tries                int64          `json:"t"`
+	AdditionalData       AdditionalData `json:"ad"`
+	FifoAckEvent         types.Event    `json:"fev"`
+	IsMetaAlarmUpdated   bool           `json:"mau,omitempty"`
+	IsInstructionMatched bool           `json:"im,omitempty"`
 }
 
 func (e ScenarioExecution) GetCacheKey() string {
@@ -105,14 +101,15 @@ type ExecuteScenariosTask struct {
 }
 
 type AdditionalData struct {
-	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
-	Trigger         string                `json:"trigger"`
-	Author          string                `json:"author"`
-	User            string                `json:"user"`
-	Initiator       string                `json:"initiator"`
-	Output          string                `json:"event_output"`
+	Trigger   string `json:"trigger"`
+	Author    string `json:"author"`
+	User      string `json:"user"`
+	Initiator string `json:"initiator"`
+	Output    string `json:"event_output"`
+	RuleName  string `json:"rule_name"`
 
-	RuleName string `json:"rule_name"`
+	// Deprecated: use Trigger instead of AlarmChangeType
+	AlarmChangeType string `json:"alarm_change_type"`
 }
 
 type Execution struct {
@@ -124,7 +121,5 @@ type RpcResult struct {
 	CorrelationID   string
 	Alarm           *types.Alarm
 	AlarmChangeType types.AlarmChangeType
-	WebhookHeader   map[string]string
-	WebhookResponse map[string]interface{}
 	Error           error
 }

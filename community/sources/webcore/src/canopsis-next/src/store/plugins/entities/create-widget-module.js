@@ -14,6 +14,8 @@ export const DEFAULT_WIDGET_MODULE_TYPES = {
 export const createWidgetModule = ({
   types = DEFAULT_WIDGET_MODULE_TYPES,
   method = REQUEST_METHODS.post,
+  dataPreparer = d => d?.data,
+  metaPreparer = d => d?.meta,
   route,
 }, module = {}) => {
   const moduleState = {
@@ -45,14 +47,14 @@ export const createWidgetModule = ({
       try {
         commit(types.FETCH_LIST, { widgetId });
 
-        const {
-          data,
-          meta,
-        } = await request({
+        const response = await request({
           method,
           url: route,
           [method === REQUEST_METHODS.get ? 'params' : 'data']: params,
         });
+
+        const data = dataPreparer(response);
+        const meta = metaPreparer(response);
 
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,

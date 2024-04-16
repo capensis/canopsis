@@ -22,6 +22,7 @@
           <time-picker-field
             :value="timeString"
             :round-hours="roundHours"
+            :allowed-time="allowedTime"
             class="v-date-time-picker__subtitle"
             @input="updateTime"
           />
@@ -31,6 +32,7 @@
         <v-date-picker
           :locale="$i18n.locale"
           :value="dateString"
+          :allowed-dates="allowedDates"
           color="primary"
           first-day-of-week="1"
           no-title
@@ -92,6 +94,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    allowedDates: {
+      type: Function,
+      required: false,
+    },
   },
   data() {
     return {
@@ -125,6 +131,15 @@ export default {
 
     updateDate(date) {
       this.localValue = getDateObjectByDate(this.localValue, date);
+    },
+
+    allowedTime(time) {
+      const [hours, minutes] = time.split(':');
+      const currentDate = convertDateToDateObject(this.value);
+
+      currentDate.setHours(hours, minutes);
+
+      return this.allowedDates?.(currentDate);
     },
 
     submit() {

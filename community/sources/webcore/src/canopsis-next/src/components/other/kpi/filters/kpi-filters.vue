@@ -22,7 +22,7 @@ import { omit } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { entitiesFilterMixin } from '@/mixins/entities/filter';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { permissionsTechnicalKpiFiltersMixin } from '@/mixins/permissions/technical/kpi-filters';
 
 import KpiFiltersList from './kpi-filters-list.vue';
