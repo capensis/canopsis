@@ -294,6 +294,10 @@ export default {
   event: 'Event | Events',
   showMore: 'Show more ({current} of {total})',
   availability: 'Availability',
+  testQuery: 'Test query',
+  webhookStatus: 'Webhook status',
+  webhookComplete: 'Webhook complete',
+  noResponse: 'No response',
   variableTypes: {
     string: 'String',
     number: 'Number',
