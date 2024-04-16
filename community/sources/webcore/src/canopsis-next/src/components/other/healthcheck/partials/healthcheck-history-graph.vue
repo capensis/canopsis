@@ -24,36 +24,28 @@
         class="text--primary"
       >
         <template #actions="{ chart }">
-          <v-layout
+          <chart-export-actions
+            :chart="chart"
             class="mt-4"
-            justify-end
-          >
+            hide-csv
+            @export:png="exportChart"
+          />
+          <div class="healthcheck-history__zoom">
             <v-btn
-              color="primary"
-              @click="exportChart(chart)"
+              fab
+              small
+              @click="zoomIn(chart)"
             >
-              <v-icon left>
-                file_download
-              </v-icon>
-              <span>{{ $t('common.downloadAsPng') }}</span>
+              <v-icon>add</v-icon>
             </v-btn>
-            <div class="healthcheck-history__zoom">
-              <v-btn
-                fab
-                small
-                @click="zoomIn(chart)"
-              >
-                <v-icon>add</v-icon>
-              </v-btn>
-              <v-btn
-                fab
-                small
-                @click="zoomOut(chart)"
-              >
-                <v-icon>remove</v-icon>
-              </v-btn>
-            </div>
-          </v-layout>
+            <v-btn
+              fab
+              small
+              @click="zoomOut(chart)"
+            >
+              <v-icon>remove</v-icon>
+            </v-btn>
+          </div>
         </template>
       </limited-time-line-chart>
     </div>
@@ -82,19 +74,19 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { convertUnit } from '@/helpers/date/duration';
 import { colorToRgba } from '@/helpers/color';
 import { saveFile } from '@/helpers/file/files';
-import { canvasToBlob } from '@/helpers/charts/canvas';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
 import { localQueryMixin } from '@/mixins/query/query';
 
 import HealthcheckHistoryFilters from '@/components/other/healthcheck/partials/healthcheck-history-filters.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const LimitedTimeLineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/limited-time-line-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { HealthcheckHistoryFilters, LimitedTimeLineChart },
+  components: { ChartExportActions, HealthcheckHistoryFilters, LimitedTimeLineChart },
   mixins: [entitiesMessageRateStatsMixin, localQueryMixin],
   props: {
     maxMessagesPerMinute: {
@@ -248,12 +240,10 @@ export default {
       return isMetricsQueryChanged(query, oldQuery, this.deletedBefore);
     },
 
-    async exportChart(chart) {
+    async exportChart(chartBlob) {
       try {
         const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.long);
         const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.long);
-
-        const chartBlob = await canvasToBlob(chart.canvas);
 
         await saveFile(chartBlob, `${HEALTHCHECK_HISTORY_FILENAME_PREFIX}${fromTime}-${toTime}`);
       } catch (err) {
