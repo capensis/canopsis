@@ -18,7 +18,14 @@
     @fetch="fetchEntities"
     @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"
-  />
+  >
+    <template #selection="props">
+      <slot v-bind="props" name="selection" />
+    </template>
+    <template #item="props">
+      <slot v-bind="props" name="item" />
+    </template>
+  </c-lazy-search-field>
 </template>
 
 <script>
