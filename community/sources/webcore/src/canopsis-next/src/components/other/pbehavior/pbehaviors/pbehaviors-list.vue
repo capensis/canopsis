@@ -141,7 +141,7 @@ export default {
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.updated'), value: 'updated' },
         { text: this.$t('pbehavior.lastAlarmDate'), value: 'last_alarm_date' },
-        { text: this.$t('pbehavior.alarmCount'), value: 'alarm_count' },
+        { text: this.$t('pbehavior.alarmCount'), value: 'alarm_count', sortable: false },
         { text: this.$tc('common.icon', 1), value: 'type.icon_name' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
