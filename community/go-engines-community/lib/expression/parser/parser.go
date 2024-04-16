@@ -3,21 +3,24 @@ package parser
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/alecthomas/participle"
 	"github.com/alecthomas/participle/lexer"
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Parser parses expression.
 type Parser interface {
-	Parse(string) (MongoQuery, error)
+	Parse(str string, isAllowedField func(f string) bool) (Query, error)
 }
 
-type MongoQuery interface {
-	Query() bson.M
-	ExprQuery() bson.M
+type Query interface {
+	MongoQuery() bson.M
+	PostgresQuery(prefix string) (string, pgx.NamedArgs)
+	MongoExprQuery() bson.M
 	GetFields() []string
 }
 
@@ -84,7 +87,7 @@ func (p *parser) hasComparison(str string) bool {
 	return strings.Contains(s, "LIKE") || strings.Contains(s, "CONTAINS")
 }
 
-func (p *parser) Parse(str string) (MongoQuery, error) {
+func (p *parser) Parse(str string, isAllowedField func(f string) bool) (Query, error) {
 	if !p.hasComparison(str) {
 		return nil, errors.New("comparison not found")
 	}
@@ -92,6 +95,14 @@ func (p *parser) Parse(str string) (MongoQuery, error) {
 	err := p.baseParser.ParseString(str, expr)
 	if err != nil {
 		return nil, err
+	}
+
+	if isAllowedField != nil {
+		for _, v := range expr.GetFields() {
+			if !isAllowedField(v) {
+				return nil, fmt.Errorf("field %s is not allowed", v)
+			}
+		}
 	}
 
 	return expr, nil

@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { METRICS_QUICK_RANGES, QUICK_RANGES } from '@/constants';
+import { QUICK_RANGES } from '@/constants';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
@@ -24,10 +24,17 @@ export default {
       type: String,
       required: false,
     },
+    ranges: {
+      type: Object,
+      default: () => QUICK_RANGES,
+    },
   },
   computed: {
     intervalRanges() {
-      const { [QUICK_RANGES.custom.value]: custom, ...ranges } = METRICS_QUICK_RANGES;
+      const {
+        [QUICK_RANGES.custom.value]: custom,
+        ...ranges
+      } = this.ranges;
 
       return Object.values(ranges);
     },

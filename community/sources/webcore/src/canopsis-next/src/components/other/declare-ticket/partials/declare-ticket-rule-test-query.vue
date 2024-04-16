@@ -1,59 +1,21 @@
 <template>
-  <v-layout
-    class="declare-ticket-test-query"
-    column
+  <alarm-webhook-execution
+    v-model="alarm"
+    :execution-status="executionStatus"
+    :alarms-patterns-params="alarmsPatternsParams"
+    :pending="pending"
+    :has-errors="hasErrors"
+    @run:execution="runTestExecution"
+    @clear:execution="clearWebhookStatus"
   >
-    <v-layout
-      align-center
-      justify-space-between
-    >
-      <v-flex xs10>
-        <c-alarm-field
-          v-model="alarm"
-          :disabled="pending || isExecutionRunning"
-          :params="alarmsPatternsParams"
-          name="alarms"
-        />
-      </v-flex>
-      <v-btn
-        :disabled="hasErrors || !alarm"
-        :loading="pending || isExecutionRunning"
-        class="white--text"
-        color="orange"
-        @click="runTestExecution"
-      >
-        {{ $t('declareTicket.runTest') }}
-      </v-btn>
-    </v-layout>
-    <v-expand-transition>
-      <v-layout
-        v-if="executionStatus"
-        column
-      >
-        <v-layout
-          class="mb-4"
-          align-center
-        >
-          <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
-          <declare-ticket-rule-execution-status
-            :running="isExecutionRunning"
-            :success="isExecutionSucceeded"
-            :fail-reason="executionStatus.fail_reason"
-          />
-          <c-action-btn
-            v-if="isExecutionSucceeded || isExecutionFailed"
-            type="delete"
-            @click="clearWebhookStatus"
-          />
-        </v-layout>
-        <v-card v-if="isSomeOneWebhookStarted">
-          <v-card-text>
-            <declare-ticket-rule-execution-webhooks-timeline :webhooks="executionStatus.webhooks" />
-          </v-card-text>
-        </v-card>
-      </v-layout>
-    </v-expand-transition>
-  </v-layout>
+    <template #webhooks="{ webhooks }">
+      <alarm-webhook-execution-timeline :webhooks="webhooks">
+        <template #card="{ step }">
+          <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
+        </template>
+      </alarm-webhook-execution-timeline>
+    </template>
+  </alarm-webhook-execution>
 </template>
 
 <script>
@@ -61,24 +23,25 @@ import { SOCKET_ROOMS } from '@/config';
 
 import Socket from '@/plugins/socket/services/socket';
 
-import {
-  formToDeclareTicketRule,
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-  isDeclareTicketExecutionWaiting,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
-import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
-import DeclareTicketRuleExecutionWebhooksTimeline from './declare-ticket-rule-execution-webhooks-timeline.vue';
+import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
+import AlarmWebhookExecutionTimeline from '@/components/other/alarm/partials/alarm-webhook-execution-timeline.vue';
+
+import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DeclareTicketRuleExecutionWebhooksTimeline, DeclareTicketRuleExecutionStatus },
+  components: {
+    DeclareTicketRuleExecutionWebhooksTimelineCard,
+    AlarmWebhookExecutionTimeline,
+    AlarmWebhookExecution,
+  },
   mixins: [entitiesDeclareTicketRuleMixin, validationErrorsMixinCreator()],
   props: {
     form: {
@@ -102,22 +65,6 @@ export default {
       return this.errors.any();
     },
 
-    isExecutionRunning() {
-      return this.executionStatus && isDeclareTicketExecutionRunning(this.executionStatus);
-    },
-
-    isExecutionSucceeded() {
-      return isDeclareTicketExecutionSucceeded(this.executionStatus);
-    },
-
-    isExecutionFailed() {
-      return isDeclareTicketExecutionFailed(this.executionStatus);
-    },
-
-    isSomeOneWebhookStarted() {
-      return this.executionStatus?.webhooks.some(webhook => !isDeclareTicketExecutionWaiting(webhook));
-    },
-
     alarmsPatternsParams() {
       return Object.entries(formFilterToPatterns(this.form.patterns))
         .reduce((acc, [key, value]) => {
@@ -129,10 +76,7 @@ export default {
   },
   watch: {
     executionStatus(executionStatus) {
-      if (
-        executionStatus
-        && (isDeclareTicketExecutionSucceeded(executionStatus) || isDeclareTicketExecutionFailed(executionStatus))
-      ) {
+      if (isWebhookExecutionFinished(executionStatus)) {
         this.leaveFromSocketRoom();
       }
     },
@@ -171,6 +115,10 @@ export default {
       this.$modals.hide();
     },
 
+    async handleSocketError() {
+      this.executionStatus = await this.fetchDeclareTicketExecutionWithoutStore({ id: this.executionStatus._id });
+    },
+
     /**
      * Join from execution room
      */
@@ -178,6 +126,7 @@ export default {
       this.$socket
         .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
         .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+        .on(Socket.EVENTS_TYPES.error, this.handleSocketError)
         .join(this.getSocketRoomName(this.executionStatus._id))
         .addListener(this.setExecutionStatus);
     },
@@ -189,6 +138,7 @@ export default {
       this.$socket
         .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
         .off(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+        .off(Socket.EVENTS_TYPES.error, this.handleSocketError)
         .leave(this.getSocketRoomName(this.executionStatus._id))
         .removeListener(this.setExecutionStatus);
     },
