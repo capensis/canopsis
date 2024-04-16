@@ -3,10 +3,13 @@
     :value="value"
     :entity-types="entityTypes"
     :label="$t('common.connectorName')"
+    :placeholder="!value.length ? $t('common.all') : ''"
+    :persistent-placeholder="!value.length"
     item-text="name"
     item-value="name"
     class="healthcheck-connector-names-field"
     multiple
+    clearable
     @input="$emit('input', $event)"
   >
     <template #item="{ item, attrs, on, parent}">
@@ -68,6 +71,16 @@ export default {
 
 <style lang="scss">
 .healthcheck-connector-names-field {
+  & ::placeholder {
+    .theme--dark & {
+      color: var(--v-text-dark-primary) !important;
+    }
+
+    .theme--light & {
+      color: var(--v-text-light-primary) !important;
+    }
+  }
+
   &.v-autocomplete input {
     padding: 8px 0 !important;
   }
