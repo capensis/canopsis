@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-form Renders \`availability-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <field-title-stub
+    name="title"
+    value=""
+  />
+  <field-periodic-refresh-stub
+    form="[object Object]"
+  />
+  <field-columns-stub
+    columns="[object Object],[object Object]"
+    excludedcolumns="last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,import_source,imported"
+    label="Column names"
+    templates="[object Object]"
+    templatespending="true"
+    type="entity"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for active alarms"
+      templates="[object Object],[object Object]"
+      templatespending="true"
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      templates="[object Object],[object Object]"
+      templatespending="true"
+      type="alarm"
+    />
+    <field-quick-date-interval-type-stub
+      ranges="[object Object]"
+      value="today"
+    />
+    <field-availability-display-parameter-stub
+      name="default_display_parameter"
+      value="0"
+    />
+    <field-availability-display-show-type-stub
+      name="default_show_type"
+      value="0"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters=""
+      widgetid="widget-id"
+      withentity="true"
+    />
+    <export-csv-form-stub
+      excludedcolumns="last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,import_source,imported"
+      form="[object Object]"
+      templates="[object Object]"
+      templatespending="true"
+      type="entity"
+      withoutinfosattributes="true"
+    />
+  </widget-settings-group-stub>
+</div>
+`;
+
+exports[`availability-form Renders \`availability-form\` with required props 1`] = `
+<div
+  class="layout column"
+>
+  <field-title-stub
+    name="title"
+    value=""
+  />
+  <field-periodic-refresh-stub
+    form="[object Object]"
+  />
+  <field-columns-stub
+    columns="[object Object],[object Object]"
+    excludedcolumns="last_event_date,last_pbehavior_date,last_update_date,ko_events,ok_events,pbehavior_info,state,impact_state,status,idle_since,import_source,imported"
+    label="Column names"
+    templates=""
+    type="entity"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for active alarms"
+      templates=""
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      templates=""
+      type="alarm"
+    />
+    <!---->
+    <field-availability-display-parameter-stub
+      name="default_display_parameter"
+      value="0"
+    />
+    <field-availability-display-show-type-stub
+      name="default_show_type"
+      value="0"
+    />
+    <!---->
+    <!---->
+  </widget-settings-group-stub>
+</div>
+`;

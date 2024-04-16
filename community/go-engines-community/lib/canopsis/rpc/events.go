@@ -38,14 +38,12 @@ type AxeParameters struct {
 	// AssocTicket and Webhook
 	types.TicketInfo
 	// Webhook
-	TicketResources   bool              `json:"ticket_resources,omitempty"`
-	WebhookRequest    bool              `json:"webhook_request,omitempty"`
-	WebhookHeader     map[string]string `json:"webhook_header,omitempty"`
-	WebhookResponse   map[string]any    `json:"webhook_response,omitempty"`
-	WebhookFailReason string            `json:"webhook_fail_reason,omitempty"`
-	WebhookError      *Error            `json:"webhook_error,omitempty"`
-	EmitTrigger       bool              `json:"emit_trigger,omitempty"`
-	RuleExecution     string            `bson:"rule_execution,omitempty"`
+	TicketResources   bool   `json:"ticket_resources,omitempty"`
+	WebhookRequest    bool   `json:"webhook_request,omitempty"`
+	WebhookFailReason string `json:"webhook_fail_reason,omitempty"`
+	WebhookError      *Error `json:"webhook_error,omitempty"`
+	EmitTrigger       bool   `json:"emit_trigger,omitempty"`
+	RuleExecution     string `bson:"rule_execution,omitempty"`
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
@@ -85,8 +83,6 @@ type AxeParameters struct {
 type AxeResultEvent struct {
 	Alarm           *types.Alarm          `json:"alarm"`
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
-	WebhookHeader   map[string]string     `json:"webhook_header,omitempty"`
-	WebhookResponse map[string]any        `json:"webhook_response,omitempty"`
 	Error           *Error                `json:"error"`
 
 	Origin *types.Event `json:"origin,omitempty"`

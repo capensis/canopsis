@@ -283,6 +283,8 @@ func Default(
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
 	api.AddRouter(func(router *gin.Engine) {
+		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
+		router.Use(middleware.Recovery(logger))
 		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {

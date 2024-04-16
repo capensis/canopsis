@@ -15,7 +15,7 @@ import { MODALS } from '@/constants';
 
 import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
 import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import ShareTokensList from '@/components/other/share-token/share-tokens-list.vue';
 
