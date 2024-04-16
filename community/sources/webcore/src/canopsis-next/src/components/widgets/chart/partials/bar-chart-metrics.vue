@@ -17,7 +17,7 @@
       class="kpi-widget__chart"
     >
       <template #actions="{ chart }">
-        <kpi-chart-export-actions
+        <chart-export-actions
           :downloading="downloading"
           :chart="chart"
           class="mt-4"
@@ -37,13 +37,13 @@ import { convertMetricValueByUnit, getDateLabelBySampling } from '@/helpers/enti
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
-import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { KpiChartExportActions, BarChart },
+  components: { ChartExportActions, BarChart },
   mixins: [chartMetricsOptionsMixin],
   props: {
     chartId: {

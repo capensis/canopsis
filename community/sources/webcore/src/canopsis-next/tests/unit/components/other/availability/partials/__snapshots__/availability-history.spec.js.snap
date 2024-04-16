@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-history Renders \`availability-history\` with custom props 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <availability-history-filters-stub
+    minintervaldate="1709038503904"
+    sampling="hour"
+    showtype="1"
+  />
+  <availability-line-chart-stub
+    animation="true"
+    availabilities="[object Object],[object Object]"
+    displayparameter="1"
+    height="440"
+    responsive="true"
+    sampling="hour"
+    showtype="1"
+    width="600"
+  />
+</div>
+`;
+
+exports[`availability-history Renders \`availability-history\` with required props 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <availability-history-filters-stub
+    sampling="hour"
+    showtype="0"
+  />
+  <availability-line-chart-stub
+    animation="true"
+    availabilities=""
+    displayparameter="0"
+    height="440"
+    responsive="true"
+    sampling="hour"
+    showtype="0"
+    width="600"
+  />
+</div>
+`;

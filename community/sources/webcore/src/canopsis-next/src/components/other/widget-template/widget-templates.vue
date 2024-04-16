@@ -14,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
 

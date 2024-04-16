@@ -23,7 +23,7 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 

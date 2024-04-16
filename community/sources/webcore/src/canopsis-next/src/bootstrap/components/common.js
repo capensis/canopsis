@@ -12,6 +12,7 @@ export { default as CRuntimeTemplate } from '@/components/common/runtime-templat
 export { default as CCompiledTemplate } from '@/components/common/runtime-template/c-compiled-template.vue';
 export { default as CCopyWrapper } from '@/components/common/runtime-template/c-copy-wrapper.vue';
 export { default as CLinksList } from '@/components/common/links/c-links-list.vue';
+export { default as CLinksChips } from '@/components/common/links/c-links-chips.vue';
 export { default as CRequestTextInformation } from '@/components/common/request/c-request-text-information.vue';
 export { default as CJsonTreeview } from '@/components/common/request/c-json-treeview.vue';
 export { default as CMiniBarChart } from '@/components/common/chart/c-mini-bar-chart.vue';

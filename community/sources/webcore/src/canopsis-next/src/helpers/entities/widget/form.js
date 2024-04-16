@@ -23,6 +23,7 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
 import { contextWidgetParametersToForm, formToContextWidgetParameters, prepareContextWidget } from './forms/context';
 import { textWidgetParametersToForm } from './forms/text';
 import { statisticsWidgetParametersToForm, formToStatisticsWidgetParameters } from './forms/statistics';
+import { availabilityWidgetParametersToForm, formToAvailabilityWidgetParameters } from './forms/availability';
 
 /**
  * @typedef {
@@ -39,7 +40,8 @@ import { statisticsWidgetParametersToForm, formToStatisticsWidgetParameters } fr
  *   'PieChart' |
  *   'Numbers' |
  *   'UserStatistics' |
- *   'AlarmStatistics'
+ *   'AlarmStatistics' |
+ *   'Availability'
  * } WidgetType
  */
 
@@ -195,6 +197,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
     [WIDGET_TYPES.userStatistics]: statisticsWidgetParametersToForm,
     [WIDGET_TYPES.alarmStatistics]: statisticsWidgetParametersToForm,
+    [WIDGET_TYPES.availability]: availabilityWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
@@ -266,6 +269,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
     [WIDGET_TYPES.userStatistics]: formToStatisticsWidgetParameters,
     [WIDGET_TYPES.alarmStatistics]: formToStatisticsWidgetParameters,
+    [WIDGET_TYPES.availability]: formToAvailabilityWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };
