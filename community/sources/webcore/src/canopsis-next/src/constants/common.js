@@ -429,3 +429,10 @@ export const PAYLOADS_INFO_VARIABLES = {
   value: '.Value',
   description: '.Description',
 };
+
+export const WEBHOOK_EXECUTION_STATUSES = {
+  waiting: 0,
+  running: 1,
+  succeeded: 2,
+  failed: 3,
+};
