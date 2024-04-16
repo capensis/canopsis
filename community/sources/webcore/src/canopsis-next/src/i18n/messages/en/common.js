@@ -195,6 +195,8 @@ export default {
   uptime: 'Uptime',
   maintenance: 'Maintenance',
   downtime: 'Downtime',
+  totalActiveTime: 'Total active time',
+  inactiveTime: 'Inactive time',
   toTheTop: 'To the top',
   time: 'Time',
   lastModifiedOn: 'Last modified on',
@@ -291,6 +293,7 @@ export default {
   convertToCustomColumn: 'Convert column to custom',
   event: 'Event | Events',
   showMore: 'Show more ({current} of {total})',
+  availability: 'Availability',
   variableTypes: {
     string: 'String',
     number: 'Number',

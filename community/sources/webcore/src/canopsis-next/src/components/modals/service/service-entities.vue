@@ -94,7 +94,7 @@ import Observer from '@/services/observer';
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 

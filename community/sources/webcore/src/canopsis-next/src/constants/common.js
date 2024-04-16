@@ -233,6 +233,16 @@ export const QUICK_RANGES = {
     start: 'today/M',
     stop: 'now',
   },
+  last3Months: {
+    value: 'last3Months',
+    start: 'today-3M/M',
+    stop: 'today-1M/M',
+  },
+  last6Months: {
+    value: 'last6Months',
+    start: 'today-6M/M',
+    stop: 'today-1M/M',
+  },
   custom: {
     value: 'custom',
   },

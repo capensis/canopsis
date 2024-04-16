@@ -1,0 +1,322 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-list-expand-panel Renders \`availability-list-expand-panel\` with custom props 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--dark"
+>
+  <div
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+          Graph
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Active alarm
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Resolved alarms
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex xs12"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <availability-history-stub
+                    availability="[object Object]"
+                    defaultshowtype="1"
+                    displayparameter="1"
+                    interval="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex xs12"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <entity-alarms-list-table-stub
+                    columns="[object Object]"
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex xs12"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <entity-alarms-list-table-stub
+                    columns="[object Object],[object Object]"
+                    entity="[object Object]"
+                    resolved="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`availability-list-expand-panel Renders \`availability-list-expand-panel\` with required props 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--dark"
+>
+  <div
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+          Graph
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Active alarm
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Resolved alarms
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex xs12"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <availability-history-stub
+                    availability="[object Object]"
+                    displayparameter="0"
+                    interval="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex xs12"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <entity-alarms-list-table-stub
+                    columns="[object Object],[object Object]"
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex xs12"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <entity-alarms-list-table-stub
+                    columns="[object Object]"
+                    entity="[object Object]"
+                    resolved="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
