@@ -5,9 +5,11 @@
     :items="eventTypes"
     :label="label ?? $t('common.eventType')"
     :return-object="false"
+    :error-messages="errors.collect(name)"
+    :name="name"
     v-bind="$attrs"
   >
-    <template #selection="props">
+    <template v-if="$scopedSlots.selection" #selection="props">
       <slot name="selection" v-bind="props" />
     </template>
   </v-combobox>
