@@ -37,10 +37,12 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 func (w *periodicalWorker) Work(parentCtx context.Context) {
 	metric := techmetrics.AxePeriodicalMetric{}
 	metric.Timestamp = time.Now()
-	eventsCount := 0
+	eventCount := 0
+	idleEventCount := 0
 	defer func() {
 		metric.Interval = time.Since(metric.Timestamp)
-		metric.Events = int64(eventsCount)
+		metric.Events = int64(eventCount)
+		metric.IdleEvents = int64(idleEventCount)
 		w.TechMetricsSender.SendAxePeriodical(metric)
 	}()
 
@@ -64,7 +66,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
-	eventsCount += len(resolveOkEvents)
+	eventCount += len(resolveOkEvents)
 	w.publishEvents(ctx, resolveOkEvents)
 	unsnoozeEvents, err := w.AlarmService.ResolveSnoozes(ctx, alarmConfig)
 	if err != nil {
@@ -73,7 +75,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
-	eventsCount += len(unsnoozeEvents)
+	eventCount += len(unsnoozeEvents)
 	w.publishEvents(ctx, unsnoozeEvents)
 	resolveCanceledEvents, err := w.AlarmService.ResolveCancels(ctx, alarmConfig)
 	if err != nil {
@@ -82,7 +84,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
-	eventsCount += len(resolveCanceledEvents)
+	eventCount += len(resolveCanceledEvents)
 	w.publishEvents(ctx, resolveCanceledEvents)
 	statusUpdateEvents, err := w.AlarmService.UpdateFlappingAlarms(ctx)
 	if err != nil {
@@ -91,7 +93,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
-	eventsCount += len(statusUpdateEvents)
+	eventCount += len(statusUpdateEvents)
 	w.publishEvents(ctx, statusUpdateEvents)
 	idleEvents, err := w.IdleAlarmService.Process(ctx)
 	if err != nil {
@@ -100,7 +102,8 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
-	eventsCount += len(idleEvents)
+	idleEventCount = len(idleEvents)
+	eventCount += idleEventCount
 	w.publishEvents(ctx, idleEvents)
 }
 

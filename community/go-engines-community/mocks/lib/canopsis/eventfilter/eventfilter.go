@@ -38,13 +38,14 @@ func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 }
 
 // Apply mocks base method.
-func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 *types.Event, arg3 eventfilter.RegexMatch) (string, bool, error) {
+func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 *types.Event, arg3 eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(bool)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret2, _ := ret[2].(map[string]int64)
+	ret3, _ := ret[3].(error)
+	return ret0, ret1, ret2, ret3
 }
 
 // Apply indicates an expected call of Apply.
@@ -232,12 +233,14 @@ func (mr *MockServiceMockRecorder) LoadRules(arg0, arg1 interface{}) *gomock.Cal
 }
 
 // ProcessEvent mocks base method.
-func (m *MockService) ProcessEvent(arg0 context.Context, arg1 *types.Event) (bool, error) {
+func (m *MockService) ProcessEvent(arg0 context.Context, arg1 *types.Event) (bool, int64, map[string]int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessEvent", arg0, arg1)
 	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(map[string]int64)
+	ret3, _ := ret[3].(error)
+	return ret0, ret1, ret2, ret3
 }
 
 // ProcessEvent indicates an expected call of ProcessEvent.
