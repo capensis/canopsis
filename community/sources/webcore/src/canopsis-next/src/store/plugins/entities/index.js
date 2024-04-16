@@ -15,7 +15,7 @@ import request from '@/services/request';
 
 import schemas from '@/store/schemas';
 
-import { mergeChangedProperties } from '@/helpers/collection';
+import { mergeReactiveChangedProperties } from '@/helpers/vue-base';
 
 import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from './helpers';
 import cache from './cache';
@@ -156,7 +156,7 @@ export const entitiesModule = {
             const oldEntity = state[type][key];
 
             const data = oldEntity
-              ? mergeChangedProperties(oldEntity, entity)
+              ? mergeReactiveChangedProperties(oldEntity, entity)
               : entity;
 
             Vue.set(state[type], key, data);

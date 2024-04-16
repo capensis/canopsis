@@ -23,6 +23,7 @@ export default {
     [SIDE_BARS.numbersSettings]: 'Paramètres des nombres',
     [SIDE_BARS.userStatisticsSettings]: 'Paramètres des statistiques utilisateur',
     [SIDE_BARS.alarmStatisticsSettings]: 'Paramètres des statistiques d\'alarme',
+    [SIDE_BARS.availabilitySettings]: 'Paramètres de disponibilité',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -230,6 +231,7 @@ export default {
     compact: 'Vue compacte',
     ultraCompact: 'Vue ultra compacte',
   },
+  showTrend: 'Afficher la tendance',
 
   chart: {
     graphType: 'Type de graphique',
@@ -240,7 +242,6 @@ export default {
     showComparison: 'Afficher la comparaison',
     preset: 'Préréglé',
     metricsDisplay: 'Affichage des métriques',
-    showTrend: 'Afficher la tendance',
     fontSize: 'Taille de la police',
     auto: 'Auto',
     manual: 'Manuel',
@@ -300,4 +301,9 @@ export default {
     split: 'Diviser les données par chemin de valeur',
   },
   entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
+  availability: {
+    graphSettings: 'Paramètres du graphique de disponibilité',
+    defaultAvailabilityDisplay: 'Affichage de disponibilité par défaut',
+    defaultParameterToDisplay: 'Paramètre par défaut à afficher',
+  },
 };

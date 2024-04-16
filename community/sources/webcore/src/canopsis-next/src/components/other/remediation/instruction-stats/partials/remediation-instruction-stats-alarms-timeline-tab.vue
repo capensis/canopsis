@@ -40,7 +40,7 @@
         v-if="!item.alarm"
         class="text--secondary"
       >{{ $t('remediation.instructionStat.instructionChanged') }}</span>
-      <alarm-horizontal-time-line
+      <alarm-horizontal-timeline
         v-else
         :alarm="item.alarm"
         class="my-2"
@@ -54,13 +54,13 @@ import {
   prepareRemediationInstructionExecutionsForAlarmTimeline,
 } from '@/helpers/entities/remediation/instruction-execution/list';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
-import AlarmHorizontalTimeLine from '@/components/widgets/alarm/time-line/horizontal-time-line.vue';
+import AlarmHorizontalTimeline from '@/components/widgets/alarm/timeline/horizontal-timeline.vue';
 
 export default {
-  components: { AlarmHorizontalTimeLine },
+  components: { AlarmHorizontalTimeline },
   mixins: [localQueryMixin, entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstruction: {

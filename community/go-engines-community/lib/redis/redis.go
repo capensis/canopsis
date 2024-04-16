@@ -119,7 +119,7 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 	}
 
 	if redisURL.RawQuery == "" {
-		return nil, fmt.Errorf("no master specified in the url")
+		return nil, errors.New("no master specified in the url")
 	}
 
 	failoverOptions := redis.FailoverOptions{}

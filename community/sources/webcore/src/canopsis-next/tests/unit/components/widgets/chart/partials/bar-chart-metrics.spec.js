@@ -5,7 +5,7 @@ import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 
 const stubs = {
-  'kpi-chart-export-actions': true,
+  'chart-export-actions': true,
 };
 
 describe('bar-chart-metrics', () => {
@@ -67,11 +67,9 @@ describe('bar-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `bar-chart-metrics` with stacked metrics', async () => {
@@ -89,11 +87,9 @@ describe('bar-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `bar-chart-metrics` with history data', async () => {
@@ -107,11 +103,9 @@ describe('bar-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `bar-chart-metrics` with stacked history data', async () => {
@@ -126,11 +120,9 @@ describe('bar-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   test('Renders `bar-chart-metrics` with empty data', async () => {
@@ -146,10 +138,8 @@ describe('bar-chart-metrics', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
     expect(wrapper).toMatchSnapshot();
 
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 });

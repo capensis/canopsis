@@ -7,8 +7,8 @@
           name="no-data"
         />
         <pbehavior-exception-field
-          v-field="exdates[index]"
           v-for="(exdate, index) in exdates"
+          v-field="exdates[index]"
           :key="exdate.key"
           :disabled="disabled"
           :with-type="withExdateType"

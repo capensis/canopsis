@@ -33,7 +33,7 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with empty data 1`] = `
         width="600"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
@@ -62,7 +62,7 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with history data 1`] =
         width="600"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
@@ -92,7 +92,7 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with metrics 1`] = `
         width="600"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
@@ -121,7 +121,7 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with stacked history da
         width="600"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
@@ -151,7 +151,7 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with stacked metrics 1`
         width="600"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />

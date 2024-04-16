@@ -40,5 +40,6 @@ export default {
     actionRequired: 'Please add at least one action',
     deprecatedTriggerExist: 'This scenario is not supported anymore due to its old format and thus disabled. \n'
       + 'Please update the scenario triggers or create a new ticket declaration rule.',
+    testQueryRequireSteps: 'Test query is unavailable: no webhooks were added to the scenario',
   },
 };

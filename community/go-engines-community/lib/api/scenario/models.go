@@ -27,7 +27,7 @@ type FilteredQuery struct {
 
 type EditRequest struct {
 	Name                 string                     `json:"name" binding:"required,max=255"`
-	Author               string                     `json:"author" binding:"required,max=255"`
+	Author               string                     `json:"author" swaggerignore:"true"`
 	Enabled              *bool                      `json:"enabled" binding:"required"`
 	Priority             int64                      `json:"priority" binding:"min=0"`
 	Triggers             []Trigger                  `json:"triggers" binding:"required,notblank,dive"`
@@ -70,31 +70,29 @@ type Trigger struct {
 }
 
 func (t *Trigger) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
-	case bson.TypeString:
-		value, _, ok := bsoncore.ReadString(b)
-		if !ok {
-			return errors.New("invalid trigger value, expected string")
-		}
-
-		thresholdStr, ok := strings.CutPrefix(value, string(types.AlarmChangeEventsCount))
-		if !ok {
-			t.Type = value
-			return nil
-		}
-
-		threshold, err := strconv.Atoi(thresholdStr)
-		if err != nil {
-			return fmt.Errorf("cannot decode an %s trigger threshold value: %w", types.AlarmChangeEventsCount, err)
-		}
-
-		t.Type = string(types.AlarmChangeEventsCount)
-		t.Threshold = threshold
-
-		return nil
-	default:
-		return fmt.Errorf("trigger should be a string")
+	if valueType != bson.TypeString {
+		return errors.New("trigger should be a string")
 	}
+	value, _, ok := bsoncore.ReadString(b)
+	if !ok {
+		return errors.New("invalid trigger value, expected string")
+	}
+
+	thresholdStr, ok := strings.CutPrefix(value, string(types.AlarmChangeEventsCount))
+	if !ok {
+		t.Type = value
+		return nil
+	}
+
+	threshold, err := strconv.Atoi(thresholdStr)
+	if err != nil {
+		return fmt.Errorf("cannot decode an %s trigger threshold value: %w", types.AlarmChangeEventsCount, err)
+	}
+
+	t.Type = string(types.AlarmChangeEventsCount)
+	t.Threshold = threshold
+
+	return nil
 }
 
 type CreateRequest struct {

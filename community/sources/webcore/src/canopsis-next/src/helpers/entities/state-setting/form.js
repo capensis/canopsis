@@ -1,11 +1,11 @@
 import { omit, mapValues, pickBy } from 'lodash';
 
 import {
-  ENTITIES_STATES_KEYS,
   PATTERNS_FIELDS,
   STATE_SETTING_THRESHOLDS_METHODS,
   STATE_SETTING_METHODS,
   ENTITY_TYPES,
+  ALARM_STATES,
 } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
@@ -111,7 +111,7 @@ const stateSettingThresholdToForm = (threshold = {}) => ({
  * @return {StateSettingThresholdsForm}
  */
 const stateSettingThresholdsToForm = (thresholds = {}) => (
-  mapValues(ENTITIES_STATES_KEYS, stateKey => stateSettingThresholdToForm(thresholds[stateKey]))
+  mapValues(Object.keys(ALARM_STATES), stateKey => stateSettingThresholdToForm(thresholds[stateKey])) // TODO: remove
 );
 
 /**

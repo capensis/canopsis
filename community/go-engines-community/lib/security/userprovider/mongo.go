@@ -3,6 +3,7 @@ package userprovider
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -124,6 +125,25 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 	})
 
 	return err
+}
+
+func (p *mongoProvider) UpdateHashedPassword(ctx context.Context, id, hash string) error {
+	res, err := p.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": id},
+		bson.M{"$set": bson.M{
+			"password": hash,
+		}},
+	)
+	if err != nil {
+		return err
+	}
+
+	if res.MatchedCount == 0 {
+		return errors.New("user not found")
+	}
+
+	return nil
 }
 
 // findByFilter returns User or nil if no user matches filter.

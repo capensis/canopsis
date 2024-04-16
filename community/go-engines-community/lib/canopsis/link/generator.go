@@ -24,6 +24,13 @@ import (
 const workers = 10
 const jsFuncName = "generate"
 
+var (
+	ErrValueIsntSlice      = errors.New("value is not slice")
+	ErrValueIsntSliceOrMap = errors.New("value is not slice or map")
+	ErrLabelIsMissing      = errors.New("label is missing")
+	ErrURLIsMissing        = errors.New("url is missing")
+)
+
 func NewGenerator(
 	client mongo.DbClient,
 	tplExecutor libtemplate.Executor,
@@ -777,14 +784,14 @@ func (g *generator) getLinksWithCategoryByCode(
 
 	s, ok := r.([]any)
 	if !ok {
-		return nil, fmt.Errorf("value is not slice")
+		return nil, ErrValueIsntSlice
 	}
 
 	res := make([]linkWithCategory, len(s))
 	for i := 0; i < len(s); i++ {
 		item, ok := s[i].(map[string]any)
 		if !ok {
-			return nil, fmt.Errorf("value is not slice of map")
+			return nil, ErrValueIsntSliceOrMap
 		}
 
 		category, _ := item["category"].(string)
@@ -793,10 +800,10 @@ func (g *generator) getLinksWithCategoryByCode(
 		url, _ := item["url"].(string)
 		action, _ := item["action"].(string)
 		if url == "" {
-			return nil, fmt.Errorf("url is missing")
+			return nil, ErrURLIsMissing
 		}
 		if label == "" {
-			return nil, fmt.Errorf("label is missing")
+			return nil, ErrLabelIsMissing
 		}
 
 		res[i] = linkWithCategory{
@@ -832,14 +839,14 @@ func (g *generator) getLinksByCode(
 
 	s, ok := r.([]any)
 	if !ok {
-		return nil, fmt.Errorf("value is not slice")
+		return nil, ErrValueIsntSlice
 	}
 
 	res := make([]Link, len(s))
 	for i := 0; i < len(s); i++ {
 		item, ok := s[i].(map[string]any)
 		if !ok {
-			return nil, fmt.Errorf("value is not slice of map")
+			return nil, ErrValueIsntSliceOrMap
 		}
 
 		label, _ := item["label"].(string)
@@ -847,10 +854,10 @@ func (g *generator) getLinksByCode(
 		url, _ := item["url"].(string)
 		action, _ := item["action"].(string)
 		if url == "" {
-			return nil, fmt.Errorf("url is missing")
+			return nil, ErrURLIsMissing
 		}
 		if label == "" {
-			return nil, fmt.Errorf("label is missing")
+			return nil, ErrLabelIsMissing
 		}
 
 		res[i] = Link{

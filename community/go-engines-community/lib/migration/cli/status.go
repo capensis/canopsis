@@ -114,11 +114,11 @@ func (c *statusCmd) Exec(ctx context.Context) error {
 }
 
 func (c *statusCmd) findMigrations() ([]string, map[string]bool, map[string]bool, error) {
-	upFiles, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixUp)))
+	upFiles, err := filepath.Glob(filepath.Join(c.path, "*"+fileNameSuffixUp))
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("cannot read directory %q: %w", c.path, err)
 	}
-	downFiles, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixDown)))
+	downFiles, err := filepath.Glob(filepath.Join(c.path, "*"+fileNameSuffixDown))
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("cannot read directory %q: %w", c.path, err)
 	}

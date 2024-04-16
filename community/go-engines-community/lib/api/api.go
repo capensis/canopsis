@@ -7,7 +7,6 @@ import (
 	"runtime/debug"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -114,7 +113,7 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 		}
 	}()
 
-	defer func() {
+	defer func() { // nolint:contextcheck
 		if a.deferFunc != nil {
 			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
 			defer deferCancel()
@@ -140,8 +139,6 @@ func (a *api) GetWebsocketHub() websocket.Hub {
 
 func (a *api) registerRoutes() http.Handler {
 	ginRouter := gin.New()
-	ginRouter.Use(gin.Logger())
-	ginRouter.Use(middleware.Recovery(a.logger))
 	ginRouter.HandleMethodNotAllowed = true
 	ginRouter.ContextWithFallback = true
 
@@ -166,7 +163,7 @@ func (a *api) runWorkers(ctx context.Context) *errgroup.Group {
 	for key := range a.workers {
 		f := a.workers[key]
 
-		restartGoroutine(g, fmt.Sprintf("worker %s", key), func() error {
+		restartGoroutine(g, "worker "+key, func() error {
 			f(ctx)
 
 			return nil

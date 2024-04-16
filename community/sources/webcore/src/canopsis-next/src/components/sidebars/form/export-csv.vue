@@ -27,6 +27,7 @@
         :optional-infos-attributes="optionalInfosAttributes"
         :with-simple-template="withSimpleTemplate"
         :without-infos-attributes="withoutInfosAttributes"
+        :excluded-columns="excludedColumns"
         @update:template="updateTemplate"
       />
     </v-layout>
@@ -87,6 +88,10 @@ export default {
     withoutInfosAttributes: {
       type: Boolean,
       default: false,
+    },
+    excludedColumns: {
+      type: Array,
+      required: false,
     },
   },
   computed: {

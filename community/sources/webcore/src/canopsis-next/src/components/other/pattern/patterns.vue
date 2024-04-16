@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 import PatternsList from './patterns-list.vue';

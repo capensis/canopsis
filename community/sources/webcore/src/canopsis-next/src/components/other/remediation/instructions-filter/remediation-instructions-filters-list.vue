@@ -1,8 +1,8 @@
 <template>
   <div>
     <remediation-instructions-filters-item
-      v-field="filters[index]"
       v-for="(filter, index) in filters"
+      v-field="filters[index]"
       :key="filter._id"
       :filters="filters"
       :editable="editable"

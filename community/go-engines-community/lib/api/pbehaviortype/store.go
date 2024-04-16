@@ -3,7 +3,6 @@ package pbehaviortype
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -100,7 +99,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 	defer cursor.Close(ctx)
 
 	if !cursor.Next(ctx) {
-		return nil, fmt.Errorf("pbehavior types find return no data")
+		return nil, errors.New("pbehavior types find return no data")
 	}
 
 	pbhResult = &AggregationResult{}
