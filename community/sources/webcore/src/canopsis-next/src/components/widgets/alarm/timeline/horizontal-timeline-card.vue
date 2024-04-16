@@ -1,5 +1,5 @@
 <template>
-  <span class="c-horizontal-time-line-card">
+  <span class="horizontal-time-line-card">
     <v-tooltip
       :disabled="!step.m"
       top
@@ -11,20 +11,20 @@
           v-on="on"
         >
           <c-alarm-chip
-            v-if="isStepTypeState"
+            v-if="isChangeState"
             :value="step.val"
           />
           <v-icon
             v-else
-            :style="{ color: style.icon }"
+            :color="style.color"
           >
             {{ style.icon }}
           </v-icon>
-          <span class="c-horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
+          <span class="horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
         </v-layout>
       </template>
       <div class="pre-line">
-        <div><strong>{{ stepTitle }}</strong></div>
+        <alarm-timeline-step-title :step="step" class="text-subtitle-1" />
         <div v-html="sanitizedStepMessage" />
       </div>
     </v-tooltip>
@@ -32,33 +32,38 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { formatNotificationAlarmStep } from '@/helpers/entities/alarm/step/formatting';
+import { isChangeStateStepType } from '@/helpers/entities/alarm/step/entity';
 
-import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
+import AlarmTimelineStepTitle from './alarm-timeline-step-title.vue';
 
 export default {
-  mixins: [widgetExpandPanelAlarmTimelineCard],
+  components: { AlarmTimelineStepTitle },
   props: {
     step: {
       type: Object,
       required: true,
     },
   },
-  computed: {
-    style() {
-      return formatNotificationAlarmStep(this.step);
-    },
+  setup(props) {
+    const isChangeState = computed(() => isChangeStateStepType(props.step._t));
+    const style = computed(() => formatNotificationAlarmStep(props.step));
+    const sanitizedStepMessage = computed(() => sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))));
 
-    sanitizedStepMessage() {
-      return sanitizeHtml(linkifyHtml(String(this.step?.m ?? '')));
-    },
+    return {
+      style,
+      isChangeState,
+      sanitizedStepMessage,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.c-horizontal-time-line-card {
+.horizontal-time-line-card {
   display: inline-flex;
   align-items: center;
 
