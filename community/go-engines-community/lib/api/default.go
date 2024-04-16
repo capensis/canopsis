@@ -49,6 +49,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -213,7 +214,7 @@ func Default(
 	broadcastMessageChan := make(chan bool)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
 

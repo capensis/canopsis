@@ -99,7 +99,7 @@ func (p *ackRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 			}
 		}
 
-		updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
+		result.IsCountersUpdated, updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
 
 		return err
 	})
