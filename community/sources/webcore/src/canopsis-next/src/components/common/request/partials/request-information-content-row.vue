@@ -23,11 +23,9 @@
     <span
       class="request-information-content-row__key"
       @contextmenu.prevent="openContextmenu"
-    >
-      {{ row.name }}
-    </span>
+    >{{ row.name }}</span>
     <template v-if="hasRowValue">
-      :&nbsp;
+      :
       <span
         class="request-information-content-row__value"
         @contextmenu.prevent="openContextmenu"
@@ -154,6 +152,7 @@ export default {
     padding: 2px;
     cursor: pointer;
     word-wrap: break-word;
+    white-space: pre-wrap;
 
     &:hover {
       background: rgba(0, 0, 0, 0.1);

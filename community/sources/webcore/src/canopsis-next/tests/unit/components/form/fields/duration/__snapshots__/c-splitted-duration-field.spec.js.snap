@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-splitted-duration-field Renders \`c-splitted-duration-field\` with big value and with maxValue is one day 1`] = `
+<div
+  class="layout c-splitted-duration-field gap-3 align-end"
+>
+  <c-number-field-stub
+    hide-details=""
+    label="hours"
+    max="24"
+    min="0"
+    value="2"
+  />
+  <c-number-field-stub
+    hide-details=""
+    label="minutes"
+    max="1320"
+    min="0"
+    value="46"
+  />
+</div>
+`;
+
+exports[`c-splitted-duration-field Renders \`c-splitted-duration-field\` with big value and without maxValue 1`] = `
+<div
+  class="layout c-splitted-duration-field gap-3 align-end"
+>
+  <c-number-field-stub
+    hide-details=""
+    label="days"
+    min="0"
+    value="0"
+  />
+  <c-number-field-stub
+    hide-details=""
+    label="hours"
+    min="0"
+    value="2"
+  />
+  <c-number-field-stub
+    hide-details=""
+    label="minutes"
+    min="0"
+    value="46"
+  />
+</div>
+`;
+
+exports[`c-splitted-duration-field Renders \`c-splitted-duration-field\` with required props 1`] = `
+<div
+  class="layout c-splitted-duration-field gap-3 align-end"
+>
+  <c-number-field-stub
+    hide-details=""
+    label="days"
+    min="0"
+    value="0"
+  />
+  <c-number-field-stub
+    hide-details=""
+    label="hours"
+    min="0"
+    value="0"
+  />
+  <c-number-field-stub
+    hide-details=""
+    label="minutes"
+    min="0"
+    value="0"
+  />
+</div>
+`;

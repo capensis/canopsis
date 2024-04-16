@@ -29,7 +29,7 @@
     >
       <chart-loader
         v-if="vectorMetricsPending"
-        :has-metrics="hasMetrics"
+        :has-data="hasMetrics"
       />
       <bar-chart-metrics
         v-if="hasMetrics"
@@ -56,7 +56,7 @@ import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -83,7 +83,7 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    metricsIntervalFilterMixin,
+    queryIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,

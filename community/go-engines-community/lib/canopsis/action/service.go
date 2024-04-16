@@ -200,7 +200,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		Alarm:    alarm,
 		Entity:   entity,
 		AdditionalData: AdditionalData{
-			AlarmChangeType: event.AlarmChange.Type,
+			AlarmChangeType: string(event.AlarmChange.Type),
 			Author:          event.Author,
 			User:            event.UserID,
 			Initiator:       event.Initiator,
