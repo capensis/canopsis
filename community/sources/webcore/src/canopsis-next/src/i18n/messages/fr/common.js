@@ -248,6 +248,7 @@ export default {
   sharedTokens: 'Jetons partagés',
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
+  more: 'plus',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',

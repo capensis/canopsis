@@ -6,58 +6,46 @@
     class="text--primary"
   >
     <template #actions="{ chart }">
-      <v-layout
+      <chart-export-actions
+        :chart="chart"
         class="mt-4"
-        justify-end
-      >
-        <v-btn
-          color="primary"
-          @click="exportChart(chart)"
-        >
-          <v-icon left>
-            file_download
-          </v-icon>
-          <span>{{ $t('common.downloadAsPng') }}</span>
-        </v-btn>
-      </v-layout>
+        hide-csv
+        v-on="$listeners"
+      />
     </template>
   </limited-time-line-chart>
 </template>
 
 <script>
-import { COLORS, HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX, SOCKET_ROOMS } from '@/config';
-import {
-  DATETIME_FORMATS,
-  HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR,
-  MESSAGE_STATS_INTERVALS,
-  TIME_UNITS,
-} from '@/constants';
+import { COLORS } from '@/config';
+import { DATETIME_FORMATS, HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
-import { convertDateToString, getNowTimestamp, subtractUnitFromDate } from '@/helpers/date/date';
-import { canvasToBlob } from '@/helpers/charts/canvas';
-import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
 import { localQueryMixin } from '@/mixins/query/query';
+
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const LimitedTimeLineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/limited-time-line-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { LimitedTimeLineChart },
+  components: { ChartExportActions, LimitedTimeLineChart },
   mixins: [entitiesMessageRateStatsMixin, localQueryMixin],
   props: {
+    messagesRates: {
+      type: Array,
+      default: () => [],
+    },
+    pending: {
+      type: Boolean,
+      default: false,
+    },
     maxMessagesPerMinute: {
       type: Number,
       required: true,
     },
-  },
-  data() {
-    return {
-      pending: false,
-      messagesRates: [],
-    };
   },
   computed: {
     suggestedMax() {
@@ -107,61 +95,6 @@ export default {
           },
         },
       };
-    },
-  },
-  mounted() {
-    this.fetchList();
-
-    this.$socket
-      .join(SOCKET_ROOMS.messageRates)
-      .addListener(this.setMessageRates);
-  },
-  beforeDestroy() {
-    this.$socket
-      .leave(SOCKET_ROOMS.messageRates)
-      .removeListener(this.setMessageRates);
-  },
-  methods: {
-    setMessageRates(messagesRates) {
-      this.messagesRates = messagesRates;
-    },
-
-    async exportChart(chart) {
-      try {
-        const firstStatsMessage = this.messagesRates[0];
-        const lastStatsMessage = this.messagesRates[this.messagesRates.length - 1];
-
-        const day = convertDateToString(firstStatsMessage.time, DATETIME_FORMATS.short);
-        const fromTime = convertDateToString(firstStatsMessage.time, DATETIME_FORMATS.timePicker);
-        const toTime = convertDateToString(lastStatsMessage.time, DATETIME_FORMATS.timePicker);
-
-        const chartBlob = await canvasToBlob(chart.canvas);
-
-        await saveFile(chartBlob, `${HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX}${day}(${fromTime}-${toTime})`);
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: err.message || this.$t('errors.default') });
-      }
-    },
-
-    async fetchList() {
-      this.pending = true;
-
-      const to = getNowTimestamp();
-      const from = subtractUnitFromDate(to, 1, TIME_UNITS.hour);
-
-      const { data: messagesRates } = await this.fetchMessageRateStatsWithoutStore({
-        params: {
-          from,
-          to,
-          interval: MESSAGE_STATS_INTERVALS.minute,
-        },
-      });
-
-      this.setMessageRates(messagesRates);
-
-      this.pending = false;
     },
   },
 };

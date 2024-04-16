@@ -58,10 +58,11 @@
         class="c-lazy-search-field__append"
       />
     </template>
-    <template #selection="{ item, index }">
+    <template #selection="{ item, index, parent }">
       <slot
         :item="item"
         :index="index"
+        :parent="parent"
         name="selection"
       >
         <v-chip
