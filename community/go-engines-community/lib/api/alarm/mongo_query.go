@@ -365,9 +365,9 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 
 	if search != "" {
 		p := parser.NewParser()
-		expr, err := p.Parse(search)
+		expr, err := p.Parse(search, nil)
 		if err == nil {
-			query := expr.ExprQuery()
+			query := expr.MongoExprQuery()
 			resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
 			if !ok {
 				return nil, ErrUnknownQuery
@@ -738,9 +738,9 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 	}
 
 	p := parser.NewParser()
-	expr, err := p.Parse(r.Search)
+	expr, err := p.Parse(r.Search, nil)
 	if err == nil {
-		query := expr.Query()
+		query := expr.MongoQuery()
 		resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
 		if !ok {
 			return nil, false, ErrUnknownQuery

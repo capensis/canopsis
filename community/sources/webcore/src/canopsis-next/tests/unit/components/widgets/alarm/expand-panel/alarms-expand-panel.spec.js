@@ -2,7 +2,14 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
-import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USERS_PERMISSIONS } from '@/constants';
+import {
+  AVAILABILITY_SHOW_TYPE,
+  CANOPSIS_EDITION,
+  ENTITY_TYPES,
+  JUNIT_ALARM_CONNECTOR,
+  QUICK_RANGES,
+  USERS_PERMISSIONS,
+} from '@/constants';
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -18,6 +25,7 @@ const stubs = {
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
   'alarms-expand-panel-remediation': true,
+  'entity-availability': true,
   'c-compiled-template': CCompiledTemplate,
   'c-runtime-template': CRuntimeTemplate,
 };
@@ -217,6 +225,11 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             moreInfoTemplate: 'template',
             isHtmlEnabledOnTimeLine: false,
             serviceDependenciesColumns: [{}],
+            availability: {
+              enabled: true,
+              default_time_range: QUICK_RANGES.last6Months.value,
+              default_show_type: AVAILABILITY_SHOW_TYPE.duration,
+            },
           },
         },
       },
@@ -250,6 +263,39 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             moreInfoTemplate: 'template',
             isHtmlEnabledOnTimeLine: false,
             serviceDependenciesColumns: [{}],
+          },
+        },
+      },
+    });
+
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-expand-panel` with availability', async () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        alarmModule,
+        catInfoModule,
+        authModule,
+      ]),
+      propsData: {
+        alarm: {
+          _id: 'alarm-id',
+          v: {
+            connector: JUNIT_ALARM_CONNECTOR,
+          },
+          entity: {
+            type: ENTITY_TYPES.resource,
+            impacts_count: 0,
+          },
+        },
+        widget: {
+          parameters: {
+            availability: {
+              enabled: true,
+            },
           },
         },
       },

@@ -5,6 +5,25 @@
     dark
     centered
   >
+    <template v-if="isAvailabilityEnabled">
+      <v-tab>{{ $t('common.availability') }}</v-tab>
+      <v-tab-item>
+        <v-layout class="pa-3">
+          <v-flex xs12>
+            <v-card>
+              <v-card-text>
+                <entity-availability
+                  :entity="item"
+                  :default-time-range="availability?.default_time_range"
+                  :default-show-type="availability?.default_show_type"
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </template>
+
     <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
@@ -21,6 +40,7 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
+
     <template v-if="item.type !== $constants.ENTITY_TYPES.service">
       <v-tab>{{ $t('context.impactDepends') }}</v-tab>
       <v-tab-item>
@@ -29,6 +49,7 @@
         </v-flex>
       </v-tab-item>
     </template>
+
     <v-tab>{{ $t('common.infos') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
@@ -44,6 +65,7 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
+
     <template v-if="hasWidgetCharts">
       <v-tab>{{ $t('context.charts') }}</v-tab>
       <v-tab-item>
@@ -62,6 +84,7 @@
         </v-layout>
       </v-tab-item>
     </template>
+
     <template v-if="item.type === $constants.ENTITY_TYPES.service">
       <v-tab>{{ $t('context.treeOfDependencies') }}</v-tab>
       <v-tab-item>
@@ -80,6 +103,7 @@
         </v-layout>
       </v-tab-item>
     </template>
+
     <v-tab>{{ $t('context.impactChain') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
@@ -95,6 +119,7 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
+
     <v-tab>{{ $t('context.activeAlarm') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
@@ -110,6 +135,7 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
+
     <v-tab>{{ $t('context.resolvedAlarms') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
@@ -138,6 +164,7 @@ import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permiss
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
+import EntityAvailability from '@/components/other/entity/entity-availability.vue';
 
 import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
 import InfosTab from './expand-panel-tabs/infos-tab.vue';
@@ -147,6 +174,7 @@ import EntityAlarmsListTable from './expand-panel-tabs/entity-alarms-list-table.
 
 export default {
   components: {
+    EntityAvailability,
     EntityCharts,
     PbehaviorsSimpleList,
     ImpactChainDependenciesTab,
@@ -185,6 +213,10 @@ export default {
       type: Number,
       default: TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
     },
+    availability: {
+      type: Object,
+      required: false,
+    },
     expandGridRangeSize: {
       type: Array,
       default: () => [GRID_SIZES.min, GRID_SIZES.max],
@@ -197,6 +229,10 @@ export default {
 
     hasWidgetCharts() {
       return this.charts?.length && this.item.filtered_perf_data?.length;
+    },
+
+    isAvailabilityEnabled() {
+      return this.availability?.enabled;
     },
   },
 };

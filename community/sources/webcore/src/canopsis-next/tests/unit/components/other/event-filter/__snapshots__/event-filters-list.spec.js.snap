@@ -30,7 +30,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
     </div>
   </div>
   <div
-    class="v-data-table theme--light v-data-table--selectable"
+    class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
     header-text="text"
   >
     <div
@@ -1705,7 +1705,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -2071,7 +2071,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -3332,7 +3332,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
