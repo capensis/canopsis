@@ -17,9 +17,9 @@
 
 <script>
 import { HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX, SOCKET_ROOMS } from '@/config';
-import { DATETIME_FORMATS, MESSAGE_STATS_INTERVALS, TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, MESSAGE_STATS_INTERVALS } from '@/constants';
 
-import { convertDateToString, getNowTimestamp, subtractUnitFromDate } from '@/helpers/date/date';
+import { convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
@@ -90,13 +90,9 @@ export default {
     },
 
     getQuery() {
-      const to = getNowTimestamp();
-      const from = subtractUnitFromDate(to, 1, TIME_UNITS.hour);
-
       return {
-        from,
-        to,
         event_types: this.query.eventTypes,
+        connector_names: this.query.connectorNames,
         interval: MESSAGE_STATS_INTERVALS.minute,
       };
     },
