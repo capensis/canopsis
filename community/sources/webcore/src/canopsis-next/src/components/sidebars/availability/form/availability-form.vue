@@ -158,6 +158,7 @@ export default {
         'infos',
         'componentInfos',
         'links',
+        'alarmLastComment',
       ]),
     ));
 
