@@ -90,11 +90,19 @@ export default {
     },
 
     getQuery() {
-      return {
-        event_types: this.query.eventTypes,
-        connector_names: this.query.connectorNames,
+      const query = {
         interval: MESSAGE_STATS_INTERVALS.minute,
       };
+
+      if (this.query.eventTypes.length) {
+        query.event_types = this.query.eventTypes;
+      }
+
+      if (this.query.connectorNames.length) {
+        query.connector_names = this.query.connectorNames;
+      }
+
+      return query;
     },
 
     async fetchList() {

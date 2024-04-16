@@ -275,12 +275,20 @@ export default {
     },
 
     getQuery() {
-      return {
+      const query = {
         ...this.intervalWithSwipeOffset,
         interval: this.sampling,
-        event_types: this.query.eventTypes,
-        connector_names: this.query.connectorNames,
       };
+
+      if (this.query.eventTypes.length) {
+        query.event_types = this.query.eventTypes;
+      }
+
+      if (this.query.connectorNames.length) {
+        query.connector_names = this.query.connectorNames;
+      }
+
+      return query;
     },
 
     async fetchList() {
