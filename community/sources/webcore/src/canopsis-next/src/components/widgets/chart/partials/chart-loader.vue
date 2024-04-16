@@ -1,6 +1,6 @@
 <template>
   <v-fade-transition
-    v-if="hasMetrics"
+    v-if="hasData"
     key="progress"
     mode="out-in"
   >
@@ -25,7 +25,7 @@
 <script>
 export default {
   props: {
-    hasMetrics: {
+    hasData: {
       type: Boolean,
       default: false,
     },

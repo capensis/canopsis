@@ -1,43 +1,9 @@
 import { isNumber } from 'lodash';
 
-import { COLORS, CSS_COLORS_VARS } from '@/config';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { CSS_COLORS_VARS } from '@/config';
+import { COLOR_INDICATOR_TYPES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
-/**
- * Get color by entity impact state
- *
- * @param {number} value
- * @returns {string}
- */
-export const getImpactStateColor = value => COLORS.impactState[value];
-
-/**
- * Get color by entity impact state
- *
- * @param {number} value
- * @returns {string}
- */
-export const getEntityStateColor = value => ({
-  [ENTITIES_STATES.ok]: CSS_COLORS_VARS.state.ok,
-  [ENTITIES_STATES.minor]: CSS_COLORS_VARS.state.minor,
-  [ENTITIES_STATES.major]: CSS_COLORS_VARS.state.major,
-  [ENTITIES_STATES.critical]: CSS_COLORS_VARS.state.critical,
-}[value]);
-
-/**
- * Get color by entity status
- *
- * @param {number} value
- * @returns {string}
- */
-export const getEntityStatusColor = value => ({
-  [ENTITIES_STATUSES.closed]: CSS_COLORS_VARS.status.closed,
-  [ENTITIES_STATUSES.ongoing]: CSS_COLORS_VARS.status.ongoing,
-  [ENTITIES_STATUSES.stealthy]: CSS_COLORS_VARS.status.stealthy,
-  [ENTITIES_STATUSES.flapping]: CSS_COLORS_VARS.status.flapping,
-  [ENTITIES_STATUSES.cancelled]: CSS_COLORS_VARS.status.cancelled,
-  [ENTITIES_STATUSES.noEvents]: CSS_COLORS_VARS.status.noEvents,
-}[value]);
+import { getAlarmImpactStateColor, getAlarmStateColor } from '../alarm/color';
 
 /**
  * Get color for a entity by colorIndicator and isGrey parameters
@@ -54,10 +20,10 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
     const state = isNumber(entity.state) ? entity.state : entity.state?.val;
 
-    return getEntityStateColor(state);
+    return getAlarmStateColor(state);
   }
 
-  return getImpactStateColor(entity.impact_state);
+  return getAlarmImpactStateColor(entity.impact_state);
 };
 
 /**

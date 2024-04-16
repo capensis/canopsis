@@ -96,97 +96,96 @@ Vous pouvez déplier les groupes dans la colonne "Résultat" et y placer les él
 Le bouton "Sauvegarder" vous permettra d'appliquer ces changements.
 
 
-## Paramètres d'état
+## Modèles de widgets
 
-Cet onglet permet de changer les valeurs relatifs aux états des services canopsis.  
-![Onglet paramètres d'état](img/parametres_etat.png)
+Lorsque vous avez plusieurs widgets à configurer de manière identique, le travail peut vite devenir fastidieux.
+Ces configurations vous permettent de définir des modèles qui seront exploitables de manière générale dans l'interface de Canopsis.
+
+### Général
+
+**Colonnes des alarmes**
+
+Vous définissez ici des "jeux" de colonnes d'alarmes qui seront exploitables dans tout widget permettant de définir des colonnes d'alarmes :
+
+* Bac à alarmes pour : la liste des alarmes, la liste des méta alarmes, la liste pour les causes racines
+* Météo des services : la liste des alarmes lorsque l'on clique sur "Suivi des alarmes"
+
+Lorsque la compatibilité existe, la configuration vous permet de définir un jeu de colonnes personnalisé ou hérité d'une modèle :
+
+![widget-template1](./img/modele-jeu-colonnes.png)
+
+**Colonnes des entités**
+
+Vous définissez ici des "jeux" de colonnes d'entités qui seront exploitables dans tout widget permettant de définir des colonnes d'entités :
+
+* Explorateur de contexte
+* Météo des services
+
+### Bac à alarmes
+
+**Plus d'infos**
+
+Il s'agit ici de définir des modèles qui seront utilisés dans des fenêtre "Plus d'infos" associées à des bacs à alarmes.
+
+![modele-jeu-plusdinfos](./img/modele-jeu-plusdinfos.png)
+
+**Export PDF**
+
+Vous avez la possibilité de définir un modèle qui sera utilisé pour l'export d'alarmes au format PDF.
+
+### Météo des services
+
+Vous pouvez définir des modèles qui seront appliqués aux widgets de météo des services et ce à 3 niveaux
+
+**Modèle de tuile**
+
+![modele-jeu-meteo1](./img/modele-jeu-meteo1.png)
+
+**Modèle de modale**
+
+![modele-jeu-meteo2](./img/modele-jeu-meteo2.png)
+
+**Modèle d'entité**
+
+![modele-jeu-meteo3](./img/modele-jeu-meteo3.png)
 
 ## Paramètres de notifications
 
 Cet onglet vous permet d'éditer les notifications relatifs aux consignes.  
 ![Onglet paramètres de notifications](img/parametres_notifications.png)
 
-## Paramètres de stockage
+## Icônes
 
-Certaines données accumulées dans Canopsis peuvent être régulées par une politique de stockage. Les types de données éligibles sont : 
+Dans Canopsis, le jeu d'icône [material Design](https://fonts.google.com/icons) est mis à disposition.  
+Vous avez également la possibilité d'ajouter vos propres icônes au format **svg**.  
 
-* [Les alarmes](#les-alarmes)
-* [Les entités](#les-entites)
-* [Les statistiques liées aux remédiations](#les-statistiques-liees-aux-remediations)
-* [Les comportements périodiques](#les-comportements-periodiques)
-* [Les résultats de scénarios Junit](#les-resultats-de-scenarios-junit)
-* [Les statistiques Healthcheck](#les-statistiques-healthcheck)
+Vous pourrez ensuite en bénéficier dans les modules compatibles 
 
-!!! Note
-    Cette politique de stockage est appliquée une fois par semaine. Vous pouvez définir le jour et l'heure d'exécution dans le fichier de configuration `canopsis.toml`
-    ```ini
-    [Canopsis.data_storage]
-    TimeToExecute = "Sunday,23"
-    ```
+* Générateur de liens
 
-### Les alarmes
+![icones-generateur-liens](./img/icones-generateur-liens.png)
 
-Le cycle de vie d'une alarme respecte le schéma suivant : 
+* Comportements périodiques
 
-![stockage-donnees-cycle-alarme](./img/parametres_stockage_cycle.png)
+![icones-comportements-periodiques](./img/icones-comportements-periodiques.png)
 
-Vous avez la possibilité de définir les délais avant archivage et avant suppression définitive des alarmes dans le menu `Administration->Paramètres->Paramètres de stockage`.
 
-![stockage-donnees-alarmes1](./img/parametres_stockage_alarmes.png)
+* Modèles (Fenêtre plus d'infos, colonnes, etc)
 
-L'archivage des alarmes consiste à déplacer les alarmes éligibles (résolues et respectant le délai défini) dans une collection de données dédiée.  
-Ces alarmes restent ainsi disponibles pour les administrateurs en cas de besoin.
+Il est possible d'utiliser la balise `v-icon` avec les propriétés des composants décrites sur [vuefity v-icon](https://v2.vuetifyjs.com/en/api/v-icon/#props).
 
-La suppression des alarmes résolues est quant à elle définitive et a lieu après le délai défini.
+Pour les icônes [Material de base](https://fonts.google.com/icons) :
 
-Par ailleurs, les alarmes `ouvertes` (collection `periodical_alarm`) et les alarmes `résolues` (collection `resolved`) ne sont désormais plus stockées dans le même espace pour garantir la performance d'accès aux alarmes en cours.  
-
-Le paramètre `TimeToKeepResolvedAlarms` permet de définir le délai à partir duquel une alarme résolue passera de la collection `ouvertes` à la collection `résolues`
-
-Ce paramètre se situe dans le fichier de configuration `canopsis.toml`.
-
-```ini
-[Canopsis.alarm]
-# TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
-TimeToKeepResolvedAlarms = "720h"
+```html
+<p>
+  <v-icon color="red" large>help</v-icon>
+</p>
 ```
 
+Pour les icônes personnalisées, on préfixe avec `$vuetify.icons.` :
 
-### Les entités
-
-Les entités désactivées peuvent être :
-
-* archivées : déplacées dans une collection de données dédiée
-* supprimées : supprimées définitivement de la collection d'archives
-
-!!! Attention 
-    Une option permet également l'archivage ou la suppression des impacts et dépendances de ces entités.  
-    Pour les **connecteurs**, tous les composants et ressources dépendants sont archivés ou supprimés.  
-    Pour les **composants**, toutes les ressources dépendantes sont archivées ou supprimées.
-
-!!! Note
-    Cette opération n'est pas éligible à l'ordonnancement général et ne peut s'effectuer qu'à la demande 
-
-### Les statistiques liées aux remédiations
-
-Les statistiques d'exécutions des remédiations peuvent être agrégées par semaine après le délai défini. Seul le nombre d'exécutions par semaine sera conservé.  
-
-Ces statistiques sont totalement supprimées avec le délai défini.
-
-### Les comportements périodiques
-
-Les comportements périodiques peuvent être supprimés après le délai défini.  
-Ils doivent néanmoins respecter les conditions suivantes :
-
-* Etre inactifs
-* Ne plus posséder de périodes de temps à venir
-
-Le délai s'applique à partir de la fin de la  dernière période du comportement périodique.
-
-### Les résultats de scénarios Junit
-
-Les données associées aux scénarios Junit (fichiers XML, captures d'écran, vidéos) sont supprimés après le délai défini.
-
-### Les statistiques Healthcheck
-
-Les données concernant le nombre d'événements entrants dans Canopsis (moteur `fifo`) sont supprimées après le délai défini.
+```html
+<p>
+  <v-icon small>$vuetify.icons.icône-perso</v-icon>
+</p>
+```

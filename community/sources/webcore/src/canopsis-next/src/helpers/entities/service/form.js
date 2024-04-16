@@ -1,6 +1,6 @@
 import { isNumber, omit } from 'lodash';
 
-import { ENTITIES_STATES, PATTERNS_FIELDS } from '@/constants';
+import { ALARM_STATES, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 import { infosToArray } from '../shared/form';
@@ -39,7 +39,7 @@ export const serviceToForm = (service = {}) => ({
   enabled: service.enabled ?? true,
   infos: infosToArray(service.infos),
   output_template: service.output_template ?? '',
-  sli_avail_state: service.sli_avail_state ?? ENTITIES_STATES.ok,
+  sli_avail_state: service.sli_avail_state ?? ALARM_STATES.ok,
   patterns: filterPatternsToForm(
     service,
     [PATTERNS_FIELDS.entity],

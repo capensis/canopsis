@@ -30,7 +30,7 @@ import {
 import { isSeveralEqual } from '@/helpers/collection';
 
 import { authMixin } from '@/mixins/auth';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 import {
   permissionsTechnicalRemediationInstructionMixin,

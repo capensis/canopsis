@@ -6,6 +6,7 @@
     item-key="name"
     loader-height="2"
     hide-default-footer
+    disable-pagination
   >
     <template #item="props">
       <permission-group-row

@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -64,7 +65,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, fmt.Errorf("unexpected empty entity")
+		return nil, nil, eventMetric, errors.New("unexpected empty entity")
 	}
 
 	eventMetric.EntityType = event.Entity.Type
@@ -76,7 +77,8 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		isInfosUpdated, err := p.eventFilterService.ProcessEvent(ctx, event)
+		var isInfosUpdated bool
+		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}
@@ -122,6 +124,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		resourceIDsToUpdateMetrics = resourceIDsToUpdateMetrics[:0]
 
 		eventMetric.IsServicesUpdated = false
+		eventMetric.IsStateSettingUpdated = false
 
 		var component types.Entity
 		var connector types.Entity
@@ -149,7 +152,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		if component.ID == "" {
-			return fmt.Errorf("component was deleted during event processing")
+			return errors.New("component was deleted during event processing")
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
@@ -187,6 +190,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		event.Entity = &component
 		event.StateSettingUpdated = stateSettingUpdated
 		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
+		eventMetric.IsStateSettingUpdated = stateSettingUpdated
 
 		return nil
 	})

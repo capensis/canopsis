@@ -15,7 +15,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesPbehaviorExceptionMixin } from '@/mixins/entities/pbehavior/exceptions';
 import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
 

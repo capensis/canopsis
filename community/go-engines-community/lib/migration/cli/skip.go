@@ -33,7 +33,7 @@ type skipCmd struct {
 }
 
 func (c *skipCmd) Exec(ctx context.Context) error {
-	files, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixUp)))
+	files, err := filepath.Glob(filepath.Join(c.path, "*"+fileNameSuffixUp))
 	if err != nil {
 		return fmt.Errorf("cannot read directory %q: %w", c.path, err)
 	}

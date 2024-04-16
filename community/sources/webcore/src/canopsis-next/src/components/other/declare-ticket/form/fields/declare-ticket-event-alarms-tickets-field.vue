@@ -5,35 +5,38 @@
       :items="alarms"
       hide-default-footer
     >
-      <template #items="{ item }">
-        <td v-if="!hideRowSelect">
-          <v-checkbox
-            :input-value="isEveryTicketsActive(item._id)"
-            color="primary"
-            hide-details
-            @change="updateAllTickets(item._id, $event)"
-          />
-        </td>
-        <td class="text-left">
-          {{ item.v.connector_name }}
-        </td>
-        <td class="text-left">
-          {{ item.v.connector }}
-        </td>
-        <td class="text-left">
-          {{ item.v.component }}
-        </td>
-        <td class="text-left">
-          {{ item.v.resource }}
-        </td>
-        <td v-if="!hideTickets">
-          <declare-ticket-event-tickets-field
-            :alarm-tickets="item.v.tickets"
-            :value="activeTicketsByAlarms[item._id]"
-            :tickets="ticketsByAlarms[item._id]"
-            @input="updateTickets(item._id, $event)"
-          />
-        </td>
+      <template #item="{ item }">
+        <tr>
+          <td v-if="!hideRowSelect">
+            <v-checkbox
+              :input-value="isEveryTicketsActive(item._id)"
+              class="mt-0 pt-0"
+              color="primary"
+              hide-details
+              @change="updateAllTickets(item._id, $event)"
+            />
+          </td>
+          <td class="text-left">
+            {{ item.v.connector_name }}
+          </td>
+          <td class="text-left">
+            {{ item.v.connector }}
+          </td>
+          <td class="text-left">
+            {{ item.v.component }}
+          </td>
+          <td class="text-left">
+            {{ item.v.resource }}
+          </td>
+          <td v-if="!hideTickets">
+            <declare-ticket-event-tickets-field
+              :alarm-tickets="item.v.tickets"
+              :value="activeTicketsByAlarms[item._id]"
+              :tickets="ticketsByAlarms[item._id]"
+              @input="updateTickets(item._id, $event)"
+            />
+          </td>
+        </tr>
       </template>
     </v-data-table>
     <v-divider />

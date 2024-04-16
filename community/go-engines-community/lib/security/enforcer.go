@@ -20,7 +20,7 @@ type Enforcer interface {
 	StartAutoLoadPolicy(context.Context, time.Duration)
 	LoadPolicy() error
 	GetRolesForUser(name string, domain ...string) ([]string, error)
-	GetPermissionsForUser(user string, domain ...string) [][]string
+	GetPermissionsForUser(user string, domain ...string) ([][]string, error)
 	HasPermissionForUser(user string, permission ...string) bool
 }
 

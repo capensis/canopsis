@@ -99,3 +99,17 @@ export const SAMPLINGS = {
   week: 'week',
   month: 'month',
 };
+
+export const MAX_TIME_VALUE_BY_SAMPLING = {
+  [SAMPLINGS.hour]: 60,
+  [SAMPLINGS.day]: 24,
+  [SAMPLINGS.week]: 7,
+  [SAMPLINGS.month]: 31,
+};
+
+export const TIME_UNITS_BY_SAMPLING = {
+  [SAMPLINGS.hour]: TIME_UNITS.minute,
+  [SAMPLINGS.day]: TIME_UNITS.hour,
+  [SAMPLINGS.week]: TIME_UNITS.day,
+  [SAMPLINGS.month]: TIME_UNITS.day,
+};

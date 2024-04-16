@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -92,7 +91,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("roles.permissions.%s", r.Permission): bson.M{"$exists": true}}})
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"roles.permissions." + r.Permission: bson.M{"$exists": true}}})
 	}
 
 	project = append(project, getViewPipeline()...)
@@ -168,15 +167,21 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
+	insertDoc, err := r.getBson(s.passwordEncoder)
+	if err != nil {
+		return nil, err
+	}
+
 	var user *User
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
-		_, err := s.collection.InsertOne(ctx, r.getBson(s.passwordEncoder))
+		_, err = s.collection.InsertOne(ctx, insertDoc)
 		if err != nil {
 			return err
 		}
 
 		user, err = s.GetOneBy(ctx, r.Name)
+
 		return err
 	})
 	if err != nil {
@@ -187,18 +192,24 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
+	updateDoc, err := r.getBson(s.passwordEncoder)
+	if err != nil {
+		return nil, err
+	}
+
 	var user *User
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r.getBson(s.passwordEncoder)},
+			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
 
 		user, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
@@ -209,18 +220,24 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 }
 
 func (s *store) Patch(ctx context.Context, r PatchRequest) (*User, error) {
+	updateDoc, err := r.getBson(s.passwordEncoder)
+	if err != nil {
+		return nil, err
+	}
+
 	var user *User
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r.getBson(s.passwordEncoder)},
+			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
 
 		user, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
