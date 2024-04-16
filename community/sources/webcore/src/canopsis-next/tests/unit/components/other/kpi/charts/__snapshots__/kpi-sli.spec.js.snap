@@ -18,6 +18,24 @@ exports[`kpi-sli Renders \`kpi-sli\` with fetching error 1`] = `
 </div>
 `;
 
+exports[`kpi-sli Renders \`kpi-sli\` with fetching error 2`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <kpi-sli-filters-stub
+    query="[object Object]"
+  />
+  <kpi-sli-chart-stub
+    data-type="percent"
+    metrics=""
+    responsive=""
+    sampling="day"
+  />
+  <kpi-error-overlay-stub />
+</div>
+`;
+
 exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
 <div
   class="position-relative"
