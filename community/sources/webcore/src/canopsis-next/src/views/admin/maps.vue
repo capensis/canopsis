@@ -34,7 +34,7 @@ import { MODALS, MAP_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { permissionsTechnicalMapMixin } from '@/mixins/permissions/technical/map';
 import { entitiesMapMixin } from '@/mixins/entities/map';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import MapsList from '@/components/other/map/maps-list.vue';
 

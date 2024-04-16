@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
 import TestSuiteDetailsExpandPanel from './test-suite-details-expand-panel.vue';

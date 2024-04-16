@@ -15,7 +15,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -761,7 +761,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -932,7 +932,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -1578,7 +1578,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
