@@ -4768,7 +4768,7 @@ func runComponentsDataset(
 		entityCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, nil)
 	}
 
-	resUpdated, resState, err := componentService.CalculateCounters(ctx, &dSet.entity, dSet.alarm, dSet.alarmChange)
+	_, resUpdated, resState, err := componentService.CalculateCounters(ctx, &dSet.entity, dSet.alarm, dSet.alarmChange)
 	if err != nil {
 		t.Fatalf("expected no err, but got %v", err)
 	}

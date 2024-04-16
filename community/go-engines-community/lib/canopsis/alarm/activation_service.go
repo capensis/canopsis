@@ -68,7 +68,7 @@ func (s *baseActivationService) sendActivationEvent(
 		Component:          fifoAckEvent.Component,
 		Resource:           fifoAckEvent.Resource,
 		Timestamp:          datetime.NewCpsTime(),
-		ReceivedTimestamp:  fifoAckEvent.ReceivedTimestamp,
+		ReceivedTimestamp:  datetime.NewMicroTime(),
 		SourceType:         fifoAckEvent.SourceType,
 		IsMetaAlarmUpdated: fifoAckEvent.IsMetaAlarmUpdated,
 		EventType:          types.EventTypeActivate,

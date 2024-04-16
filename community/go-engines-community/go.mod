@@ -59,6 +59,7 @@ require (
 require (
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/jellydator/ttlcache/v2 v2.11.1
+	github.com/prometheus/procfs v0.13.0
 	golang.org/x/crypto v0.22.0
 	golang.org/x/oauth2 v0.19.0
 )
