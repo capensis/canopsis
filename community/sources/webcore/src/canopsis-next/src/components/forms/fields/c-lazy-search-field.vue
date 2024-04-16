@@ -2,6 +2,7 @@
   <c-select-field
     v-field="value"
     v-validate="rules"
+    v-bind="$attrs"
     :search-input="search"
     :label="label"
     :loading="loading"
@@ -100,6 +101,7 @@ import { formArrayMixin } from '@/mixins/form';
 export default {
   inject: ['$validator'],
   mixins: [formArrayMixin],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',

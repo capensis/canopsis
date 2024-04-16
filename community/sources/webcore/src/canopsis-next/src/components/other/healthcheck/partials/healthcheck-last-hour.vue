@@ -51,7 +51,6 @@ export default {
   },
   mounted() {
     this.fetchList();
-    this.joinToSocketRoom();
   },
   beforeDestroy() {
     this.leaveFromSocketRoom();
@@ -63,7 +62,7 @@ export default {
 
     joinToSocketRoom() {
       this.$socket
-        .join(SOCKET_ROOMS.messageRates)
+        .join(SOCKET_ROOMS.messageRates, this.getQuery())
         .addListener(this.setMessageRates);
     },
 
@@ -104,6 +103,9 @@ export default {
 
     async fetchList() {
       this.pending = true;
+
+      this.leaveFromSocketRoom();
+      this.joinToSocketRoom();
 
       const { data: messagesRates } = await this.fetchMessageRateStatsWithoutStore({
         params: this.getQuery(),

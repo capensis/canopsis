@@ -36,6 +36,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'event_type',
+    },
   },
   setup(props) {
     const { t } = useI18n();

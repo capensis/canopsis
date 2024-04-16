@@ -1,19 +1,23 @@
 <template>
-  <limited-time-line-chart
-    :datasets="datasets"
-    :options="lastHourChartOptions"
-    :dark="$system.dark"
-    class="text--primary"
-  >
-    <template #actions="{ chart }">
-      <chart-export-actions
-        :chart="chart"
-        class="mt-4"
-        hide-csv
-        v-on="$listeners"
-      />
-    </template>
-  </limited-time-line-chart>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+
+    <limited-time-line-chart
+      :datasets="datasets"
+      :options="lastHourChartOptions"
+      :dark="$system.dark"
+      class="text--primary"
+    >
+      <template #actions="{ chart }">
+        <chart-export-actions
+          :chart="chart"
+          class="mt-4"
+          hide-csv
+          v-on="$listeners"
+        />
+      </template>
+    </limited-time-line-chart>
+  </div>
 </template>
 
 <script>
