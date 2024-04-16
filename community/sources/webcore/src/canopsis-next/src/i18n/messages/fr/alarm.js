@@ -18,6 +18,7 @@ export default {
   followLink: 'Suivez le lien "{title}"',
   hasBookmark: 'L\'alarme a un signet',
   filterByBookmark: 'Filtrer par signet',
+  runTest: 'Exécuter le test',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',
