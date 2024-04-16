@@ -1,8 +1,11 @@
 <template>
   <c-event-type-field
     :value="value"
-    class="healthcheck-last-hour-filters__event-types"
+    :placeholder="!value.length ? $t('common.all') : ''"
+    :persistent-placeholder="!value.length"
+    class="healthcheck-event-types-field"
     multiple
+    clearable
     @input="$emit('input', $event)"
   >
     <template #selection="{ item, index, parent }">
@@ -34,3 +37,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.healthcheck-event-types-field {
+  & ::placeholder {
+    .theme--dark & {
+      color: var(--v-text-dark-primary) !important;
+    }
+
+    .theme--light & {
+      color: var(--v-text-light-primary) !important;
+    }
+  }
+}
+</style>

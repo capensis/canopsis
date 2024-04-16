@@ -249,6 +249,7 @@ export default {
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
   more: 'plus',
+  all: 'Toute',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
