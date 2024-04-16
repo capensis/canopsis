@@ -31,5 +31,7 @@ export default {
     [QUICK_RANGES.thisWeekSoFar.value]: 'Cette semaine jusqu\'à maintenant',
     [QUICK_RANGES.thisMonth.value]: 'Ce mois',
     [QUICK_RANGES.thisMonthSoFar.value]: 'Ce mois jusqu\'à maintenant',
+    [QUICK_RANGES.last3Months.value]: '3 derniers mois',
+    [QUICK_RANGES.last6Months.value]: '6 derniers mois',
   },
 };

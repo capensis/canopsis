@@ -20,6 +20,7 @@
         :with-simple-template="withSimpleTemplate"
         :without-infos-attributes="withoutInfosAttributes"
         :variables="variables"
+        :excluded-columns="excludedColumns"
         class="mb-3"
         @remove="remove(index)"
       />
@@ -104,6 +105,10 @@ export default {
     withoutInfosAttributes: {
       type: Boolean,
       default: false,
+    },
+    excludedColumns: {
+      type: Array,
+      required: false,
     },
   },
   computed: {

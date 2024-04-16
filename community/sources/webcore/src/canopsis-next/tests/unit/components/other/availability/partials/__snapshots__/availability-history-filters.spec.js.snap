@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-history-filters Renders \`availability-history-filters\` with custom props 1`] = `
+<div
+  class="layout availability-history-filters gap-6 wrap"
+  interval="[object Object]"
+>
+  <c-sampling-field-stub
+    class="availability-history-filters__sampling"
+    samplings="hour,day"
+  />
+  <availability-show-type-field-stub
+    class="availability-history-filters__show-type"
+    label="Show"
+    name="availability"
+    value="1"
+  />
+</div>
+`;
+
+exports[`availability-history-filters Renders \`availability-history-filters\` with default props 1`] = `
+<div
+  class="layout availability-history-filters gap-6 wrap"
+>
+  <c-sampling-field-stub
+    class="availability-history-filters__sampling"
+    samplings="hour,day"
+  />
+  <availability-show-type-field-stub
+    class="availability-history-filters__show-type"
+    label="Show"
+    name="availability"
+    value="0"
+  />
+</div>
+`;

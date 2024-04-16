@@ -25,7 +25,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
       <!---->
     </div>
     <div
-      class="v-data-table alarms-list-table v-data-table--dense theme--light v-data-table--selectable columns-sm"
+      class="v-data-table alarms-list-table v-data-table--expand v-data-table--dense theme--light v-data-table--selectable columns-sm"
     >
       <div
         class="v-data-table__wrapper"
@@ -282,7 +282,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="v-data-table alarms-list-table theme--light columns-sm alarms-list-table--truncated"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light columns-sm alarms-list-table--truncated"
     >
       <div
         class="v-data-table__wrapper"
@@ -375,7 +375,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="v-data-table alarms-list-table theme--light columns-sm alarms-list-table--wrapped"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light columns-sm alarms-list-table--wrapped"
     >
       <div
         class="v-data-table__wrapper"
@@ -466,7 +466,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="v-data-table alarms-list-table theme--light columns-sm"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light columns-sm"
     >
       <div
         class="v-data-table__wrapper"
@@ -557,7 +557,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="v-data-table alarms-list-table theme--light columns-sm"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light columns-sm"
     >
       <div
         class="v-data-table__wrapper"
@@ -649,7 +649,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="v-data-table alarms-list-table theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
     >
       <div
         class="v-data-table__wrapper"
@@ -768,7 +768,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   <div>
     <!---->
     <div
-      class="v-data-table alarms-list-table theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
     >
       <div
         class="v-data-table__wrapper"
@@ -922,7 +922,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
       <!---->
     </div>
     <div
-      class="v-data-table alarms-list-table theme--light columns-sm"
+      class="v-data-table alarms-list-table v-data-table--expand theme--light columns-sm"
     >
       <div
         class="v-data-table__wrapper"

@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import AffectAlarmStates from './affect-alarm-states.vue';

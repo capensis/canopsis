@@ -22,7 +22,7 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] =
         width="700"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
@@ -63,7 +63,7 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
         width="700"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
@@ -92,7 +92,7 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels prop
         width="700"
       />
     </div>
-    <kpi-chart-export-actions-stub
+    <chart-export-actions-stub
       chart="[object Object]"
       class="mt-4"
     />
