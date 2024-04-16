@@ -12,7 +12,7 @@ exports[`kpi-rating-chart Renders \`kpi-rating-chart\` with counter metrics 2`] 
       width="400"
     />
   </div>
-  <kpi-chart-export-actions-stub
+  <chart-export-actions-stub
     chart="[object Object]"
     class="mt-4"
   />
@@ -31,7 +31,7 @@ exports[`kpi-rating-chart Renders \`kpi-rating-chart\` with downloading true 1`]
       width="400"
     />
   </div>
-  <kpi-chart-export-actions-stub
+  <chart-export-actions-stub
     chart="[object Object]"
     class="mt-4"
     downloading="true"

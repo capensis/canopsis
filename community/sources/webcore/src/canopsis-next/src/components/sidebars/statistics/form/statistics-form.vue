@@ -16,7 +16,7 @@
         :label="$tc('common.header')"
         :placeholder="$t('settings.headerTitle')"
       />
-      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" :ranges="metricsRanges" />
       <field-filters
         v-if="showFilter"
         v-field="form.parameters.mainFilter"
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { KPI_RATING_SETTINGS_TYPES } from '@/constants';
+import { KPI_RATING_SETTINGS_TYPES, METRICS_QUICK_RANGES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -84,6 +84,11 @@ export default {
     filterEditable: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    metricsRanges() {
+      return METRICS_QUICK_RANGES;
     },
   },
 };

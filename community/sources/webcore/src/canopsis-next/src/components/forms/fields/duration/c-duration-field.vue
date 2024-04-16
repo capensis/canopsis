@@ -11,6 +11,8 @@
         :name="valueFieldName"
         :required="isRequired"
         :min="min"
+        :max="max"
+        :hide-details="hideDetails"
       />
     </v-flex>
     <v-flex xs5>
@@ -23,6 +25,7 @@
         :error-messages="errors.collect(unitFieldName)"
         :name="unitFieldName"
         :clearable="clearable"
+        :hide-details="hideDetails"
         @change="updateUnit"
       />
     </v-flex>
@@ -83,7 +86,15 @@ export default {
       type: Number,
       default: 1,
     },
+    max: {
+      type: Number,
+      required: false,
+    },
     long: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import entitiesPbehaviorEntitiesMixin from '@/mixins/entities/pbehavior/entities';
 
 export default {

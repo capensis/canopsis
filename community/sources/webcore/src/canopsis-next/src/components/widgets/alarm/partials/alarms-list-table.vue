@@ -83,7 +83,7 @@
         :loading="loading || columnsFiltersPending"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
-        class="alarms-list-table"
+        class="alarms-list-table v-data-table--expand"
         item-key="_id"
         loader-height="2"
         hide-default-footer

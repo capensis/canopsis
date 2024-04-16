@@ -784,6 +784,7 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   entityGantt: 'entityGantt',
   charts: 'charts',
   remediation: 'remediation',
+  availability: 'availability',
 };
 
 export const ALARM_LINK_ICON_CHIP_WIDTH = 24;
