@@ -12,7 +12,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import Observer from '@/services/observer';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import RemediationInstructionExecutionsList
   from '@/components/other/remediation/instruction-execute/remediation-instruction-executions-list.vue';

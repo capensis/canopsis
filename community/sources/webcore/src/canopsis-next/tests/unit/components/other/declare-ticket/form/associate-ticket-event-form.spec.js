@@ -7,13 +7,13 @@ import AssociateTicketEventForm from '@/components/other/declare-ticket/form/ass
 const stubs = {
   'c-information-block': true,
   'c-name-field': true,
-  'declare-ticket-rule-ticket-id-field': true,
+  'declare-ticket-rule-ticket-id-text-field': true,
   'declare-ticket-rule-ticket-url-text-field': true,
   'declare-ticket-rule-ticket-custom-fields-field': true,
 };
 
 const selectSystemNameField = wrapper => wrapper.find('c-name-field-stub');
-const selectDeclareTicketRuleTicketIdField = wrapper => wrapper.find('declare-ticket-rule-ticket-id-field-stub');
+const selectDeclareTicketRuleTicketIdField = wrapper => wrapper.find('declare-ticket-rule-ticket-id-text-field-stub');
 const selectDeclareTicketRuleTicketUrlTextField = wrapper => wrapper.find('declare-ticket-rule-ticket-url-text-field-stub');
 const selectDeclareTicketRuleTicketCustomFieldsField = wrapper => wrapper.find('declare-ticket-rule-ticket-custom-fields-field-stub');
 

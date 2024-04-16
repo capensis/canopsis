@@ -172,9 +172,6 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						IsMetaAlarmUpdated:   execution.IsMetaAlarmUpdated,
 						SkipForInstruction:   skipForInstruction,
 						IsInstructionMatched: execution.IsInstructionMatched,
-						Header:               execution.Header,
-						Response:             execution.Response,
-						ResponseMap:          execution.ResponseMap,
 						AdditionalData:       task.AdditionalData,
 					}
 
@@ -325,8 +322,6 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 				taskRes.Step = step
 				taskRes.AlarmChangeType = result.AlarmChangeType
 				taskRes.ExecutionCacheKey = executionCacheKey
-				taskRes.Header = result.WebhookHeader
-				taskRes.Response = result.WebhookResponse
 
 				if r.Error != nil {
 					taskRes.Status = TaskRpcError
@@ -410,31 +405,6 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 	scenarioExecution.ActionExecutions[taskRes.Step].Executed = true
 	scenarioExecution.LastUpdate = time.Now().Unix()
-	if scenarioExecution.Header == nil {
-		scenarioExecution.Header = make(map[string]string)
-	}
-	if scenarioExecution.Response == nil {
-		scenarioExecution.Response = make(map[string]interface{})
-	}
-
-	if scenarioExecution.ResponseMap == nil {
-		scenarioExecution.ResponseMap = make(map[string]interface{})
-	}
-
-	for k, v := range taskRes.Header {
-		scenarioExecution.Header[k] = v
-	}
-
-	responseCountStr := strconv.Itoa(scenarioExecution.ResponseCount)
-	for k, v := range taskRes.Response {
-		scenarioExecution.Response[k] = v
-		scenarioExecution.ResponseMap[responseCountStr+"."+k] = v
-	}
-
-	if taskRes.Response != nil {
-		scenarioExecution.ResponseCount++
-	}
-
 	err = e.executionStorage.Update(ctx, *scenarioExecution)
 	if err != nil {
 		e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot save execution")
@@ -464,7 +434,6 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	nextStep := taskRes.Step + 1
 	if len(scenarioExecution.ActionExecutions) > nextStep {
 		additionalData := scenarioExecution.AdditionalData
-		additionalData.AlarmChangeType = taskRes.AlarmChangeType
 		action := scenarioExecution.ActionExecutions[nextStep].Action
 		skipForChild := false
 		if action.Parameters.SkipForChild != nil {
@@ -488,9 +457,6 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			IsMetaAlarmUpdated:   scenarioExecution.IsMetaAlarmUpdated,
 			SkipForInstruction:   skipForInstruction,
 			IsInstructionMatched: scenarioExecution.IsInstructionMatched,
-			Header:               scenarioExecution.Header,
-			Response:             scenarioExecution.Response,
-			ResponseMap:          scenarioExecution.ResponseMap,
 			AdditionalData:       additionalData,
 		}
 
@@ -549,6 +515,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	additionalData := task.AdditionalData
 	for trigger, scenarios := range scenariosByTrigger {
 		additionalData.Trigger = trigger
+		additionalData.AlarmChangeType = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent,
 				task.Start, task.IsMetaAlarmUpdated, task.IsInstructionMatched)
@@ -564,8 +531,6 @@ func (e *redisBasedManager) processEmittedTrigger(
 	prevScenarioExecution ScenarioExecution,
 ) error {
 	additionalData := prevScenarioExecution.AdditionalData
-	additionalData.AlarmChangeType = prevTaskRes.AlarmChangeType
-
 	alarmChange := types.AlarmChange{Type: prevTaskRes.AlarmChangeType}
 	triggers := alarmChange.GetTriggers()
 
@@ -603,6 +568,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 
 	for trigger, scenarios := range scenariosByTrigger {
 		additionalData.Trigger = trigger
+		additionalData.AlarmChangeType = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
 				prevScenarioExecution.FifoAckEvent, time.Unix(prevScenarioExecution.StartEventProcessing, 0),

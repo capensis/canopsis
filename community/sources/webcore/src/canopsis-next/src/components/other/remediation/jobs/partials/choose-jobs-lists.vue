@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 
 export default {
