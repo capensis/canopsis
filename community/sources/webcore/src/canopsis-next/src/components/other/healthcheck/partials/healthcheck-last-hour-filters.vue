@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="healthcheck-last-hour-filters gap-6" wrap>
+  <div class="healthcheck-last-hour-filters col-gap-6">
     <healthcheck-event-types-field
       :value="eventTypes"
       class="healthcheck-last-hour-filters__event-types"
@@ -10,7 +10,7 @@
       class="healthcheck-last-hour-filters__connector-names"
       @input="$emit('update:connector-names', $event)"
     />
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -35,8 +35,15 @@ export default {
 
 <style lang="scss">
 .healthcheck-last-hour-filters {
+  display: flex;
+  flex-wrap: wrap;
+
+  & > * {
+    flex-grow: 0;
+  }
+
   &__connector-names, &__event-types {
-    max-width: 360px;
+    width: 340px;
   }
 }
 </style>

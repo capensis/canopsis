@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="gap-5" column>
+  <v-layout column>
     <healthcheck-last-hour-filters
       :event-types="query.eventTypes"
       :connector-names="query.connectorNames"
