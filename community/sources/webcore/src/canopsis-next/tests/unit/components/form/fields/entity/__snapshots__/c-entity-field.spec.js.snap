@@ -3,8 +3,6 @@
 exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
 <div
   class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-label-active v-input--is-dirty v-input--is-focused v-input--dense theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi v-autocomplete primary--text"
-  items="[object Object],[object Object],[object Object]"
-  limit="10"
 >
   <div
     class="v-input__control"
@@ -207,10 +205,6 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
 exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 <div
   class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--dense theme--light v-text-field v-select v-autocomplete"
-  items="[object Object],[object Object],[object Object]"
-  limit="10"
-  loading="true"
-  search="Text 2"
 >
   <div
     class="v-input__control"
@@ -315,7 +309,6 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
   class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-focused v-input--dense theme--light v-text-field v-select v-autocomplete primary--text"
-  limit="10"
 >
   <div
     class="v-input__control"

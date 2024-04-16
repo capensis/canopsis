@@ -4,7 +4,6 @@
     v-bind="$attrs"
     :label="selectLabel"
     :loading="pending"
-    :limit="limit"
     :items="entities"
     :name="name"
     :has-more="hasMoreEntities"
