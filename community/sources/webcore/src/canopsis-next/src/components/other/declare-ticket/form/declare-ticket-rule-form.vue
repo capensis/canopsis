@@ -9,7 +9,7 @@
     <v-tab :class="{ 'error--text': hasPatternsError }">
       {{ $tc('common.pattern') }}
     </v-tab>
-    <v-tab>{{ $t('declareTicket.testQuery') }}</v-tab>
+    <v-tab>{{ $t('common.testQuery') }}</v-tab>
 
     <v-tab-item eager>
       <declare-ticket-rule-general-form

@@ -34,6 +34,10 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
     <field-tree-of-dependencies-settings-stub
       value="2"
     />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
+    />
     <field-root-cause-settings-stub
       parameters="[object Object]"
     />
@@ -118,6 +122,10 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
     <field-tree-of-dependencies-settings-stub
       value="1"
     />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
+    />
     <field-root-cause-settings-stub
       parameters="[object Object]"
     />
@@ -192,6 +200,10 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
     />
     <field-tree-of-dependencies-settings-stub
       value="2"
+    />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
     />
     <field-root-cause-settings-stub
       parameters="[object Object]"

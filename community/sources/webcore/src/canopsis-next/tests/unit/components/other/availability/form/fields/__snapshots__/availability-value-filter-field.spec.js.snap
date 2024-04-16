@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-value-filter-field Renders \`availability-value-filter-field\` with default props 1`] = `
+<div
+  class="layout availability-value-filter-field gap-3 d-inline-flex align-end"
+>
+  <availability-value-filter-method-field-stub
+    class="availability-value-filter-field__method"
+  />
+  <!---->
+</div>
+`;
+
+exports[`availability-value-filter-field Renders \`availability-value-filter-field\` with duration show type props 1`] = `
+<div
+  class="layout availability-value-filter-field gap-3 d-inline-flex align-end"
+>
+  <availability-value-filter-method-field-stub
+    class="availability-value-filter-field__method"
+    value="gt"
+  />
+  <c-splitted-duration-field-stub
+    class="availability-value-filter-field__value"
+    hide-details=""
+    max-value="499"
+    value="500"
+  />
+  <c-action-btn-stub
+    color="white"
+    icon="clear"
+    small=""
+    tooltip="Clear"
+    type="delete"
+  />
+</div>
+`;
+
+exports[`availability-value-filter-field Renders \`availability-value-filter-field\` with percent show type props 1`] = `
+<div
+  class="layout availability-value-filter-field gap-3 d-inline-flex align-end"
+>
+  <availability-value-filter-method-field-stub
+    class="availability-value-filter-field__method"
+    value="gt"
+  />
+  <c-percents-field-stub
+    class="availability-value-filter-field__value"
+    hide-details=""
+    value="50"
+  />
+  <c-action-btn-stub
+    color="white"
+    icon="clear"
+    small=""
+    tooltip="Clear"
+    type="delete"
+  />
+</div>
+`;

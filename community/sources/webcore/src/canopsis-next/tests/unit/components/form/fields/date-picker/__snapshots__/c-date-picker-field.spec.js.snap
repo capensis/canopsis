@@ -57,7 +57,564 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with custom props 2
   role="menu"
   style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
-  <!---->
+  <div
+    class="v-picker v-card v-picker--date date-picker theme--light"
+    opened="true"
+  >
+    <div
+      class="v-picker__title"
+      style="background-color: rgb(43, 62, 79); border-color: #2b3e4f;"
+    >
+      <div
+        class="v-date-picker-title"
+      >
+        <div
+          class="v-picker__title__btn v-date-picker-title__year"
+        >
+          2022
+        </div>
+        <div
+          class="v-picker__title__btn v-date-picker-title__date v-picker__title__btn--active"
+        >
+          <transition-stub
+            name="picker-transition"
+          >
+            <div>
+              Wed, Jan 12
+            </div>
+          </transition-stub>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-picker__body theme--light"
+      style="width: 290px;"
+    >
+      <transition-stub
+        name="fade-transition"
+      >
+        <div>
+          <div
+            class="v-date-picker-header theme--light"
+          >
+            <button
+              aria-label="Previous month"
+              class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+              type="button"
+            >
+              <span
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  chevron_left
+                </i>
+              </span>
+            </button>
+            <div
+              class="v-date-picker-header__value"
+            >
+              <transition-stub
+                name="tab-transition"
+              >
+                <div
+                  style="color: rgb(43, 62, 79); caret-color: #2b3e4f;"
+                >
+                  <button
+                    type="button"
+                  >
+                    January 2022
+                  </button>
+                </div>
+              </transition-stub>
+            </div>
+            <button
+              aria-label="Next month"
+              class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
+              disabled="disabled"
+              type="button"
+            >
+              <span
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  chevron_right
+                </i>
+              </span>
+            </button>
+          </div>
+          <div
+            class="v-date-picker-table v-date-picker-table--date theme--light"
+          >
+            <transition-stub
+              name="tab-transition"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>
+                      S
+                    </th>
+                    <th>
+                      M
+                    </th>
+                    <th>
+                      T
+                    </th>
+                    <th>
+                      W
+                    </th>
+                    <th>
+                      T
+                    </th>
+                    <th>
+                      F
+                    </th>
+                    <th>
+                      S
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td />
+                    <td />
+                    <td />
+                    <td />
+                    <td />
+                    <td />
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          1
+                        </div>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          2
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          3
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          4
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          5
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          6
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          7
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          8
+                        </div>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          9
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          10
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          11
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          12
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          13
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          14
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          15
+                        </div>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          16
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          17
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          18
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          19
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          20
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          21
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          22
+                        </div>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          23
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          24
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          25
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          26
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          27
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          28
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          29
+                        </div>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          30
+                        </div>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="v-btn v-btn--flat v-btn--text v-btn--rounded v-btn--disabled theme--light"
+                        disabled=""
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          31
+                        </div>
+                      </button>
+                    </td>
+                    <td />
+                    <td />
+                    <td />
+                    <td />
+                    <td />
+                  </tr>
+                </tbody>
+              </table>
+            </transition-stub>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
 </div>
 `;
 
