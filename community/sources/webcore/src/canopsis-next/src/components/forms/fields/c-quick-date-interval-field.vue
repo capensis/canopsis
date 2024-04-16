@@ -22,11 +22,14 @@
             <c-information-block :title="$t('common.interval')">
               <v-divider />
               <v-layout class="mt-2">
-                <c-date-interval-field
+                <component
+                  :is="withHours ? 'c-date-time-interval-field' : 'c-date-interval-field'"
                   :value="intervalObject"
                   :disabled="disabled"
                   :is-allowed-from-date="isAllowedFromDate"
                   :is-allowed-to-date="isAllowedToDate"
+                  :round-hours="withHours"
+                  hide-details
                   column
                   @input="updateModel($event)"
                 />
@@ -117,6 +120,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    withHours: {
+      type: Boolean,
+      default: false,
+    },
+    allowFuture: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     shortValue() {
@@ -142,14 +153,27 @@ export default {
     },
 
     intervalFromString() {
-      return convertDateToString(this.intervalFromAsTimestamp, DATETIME_FORMATS.datePicker);
+      return convertDateToString(
+        this.intervalFromAsTimestamp,
+        this.withHours ? DATETIME_FORMATS.dateTimePicker : DATETIME_FORMATS.datePicker,
+      );
     },
 
     intervalToString() {
-      return convertDateToString(this.intervalToAsTimestamp, DATETIME_FORMATS.datePicker);
+      return convertDateToString(
+        this.intervalToAsTimestamp,
+        this.withHours ? DATETIME_FORMATS.dateTimePicker : DATETIME_FORMATS.datePicker,
+      );
     },
 
     intervalObject() {
+      if (this.withHours) {
+        return {
+          from: this.intervalFromAsTimestamp,
+          to: this.intervalToAsTimestamp,
+        };
+      }
+
       return {
         from: this.intervalFromString,
         to: this.intervalToString,
@@ -230,7 +254,7 @@ export default {
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
-        && this.isLessNowDate(stopTimestamp)
+        && (this.allowFuture || this.isLessNowDate(stopTimestamp))
         && this.isAllowedAccumulatedToDate(stopTimestamp);
     },
 

@@ -23,7 +23,7 @@
         :placeholder="$t('settings.headerTitle')"
         name="chart_title"
       />
-      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" :ranges="metricsRanges" />
       <field-sampling v-field="form.parameters.default_sampling" />
       <field-filters
         v-if="withFilters"
@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { METRICS_QUICK_RANGES } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
@@ -90,6 +92,11 @@ export default {
     onlyExternal: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    metricsRanges() {
+      return METRICS_QUICK_RANGES;
     },
   },
   methods: {
