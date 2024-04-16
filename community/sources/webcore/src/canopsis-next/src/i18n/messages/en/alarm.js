@@ -31,6 +31,7 @@ export default {
   followLink: 'Follow the link "{title}"',
   hasBookmark: 'Alarm has bookmark',
   filterByBookmark: 'Filter by bookmark',
+  runTest: 'Run test',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
