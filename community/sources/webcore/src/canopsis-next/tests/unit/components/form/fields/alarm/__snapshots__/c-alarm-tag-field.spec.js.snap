@@ -2,12 +2,7 @@
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] = `
 <div
-  chips=""
-  class="v-input c-select-field c-lazy-search-field mt-4 c-alarm-tag-field v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--dense theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi v-autocomplete"
-  dense=""
-  hide-details=""
-  menu-props="[object Object]"
-  multiple="multiple"
+  class="v-input c-select-field c-lazy-search-field mt-4 c-alarm-tag-field v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--dense theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi v-autocomplete"
 >
   <div
     class="v-input__control"
@@ -85,19 +80,6 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
       <div
         class="v-menu"
       />
-    </div>
-    <div
-      class="v-text-field__details"
-    >
-      <div
-        class="v-messages theme--light"
-      >
-        <transition-group-stub
-          class="v-messages__wrapper"
-          name="message-transition"
-          tag="div"
-        />
-      </div>
     </div>
   </div>
 </div>
@@ -178,12 +160,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] = `
 <div
-  chips=""
-  class="v-input c-select-field c-lazy-search-field mt-4 c-alarm-tag-field v-input--dense theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi v-autocomplete"
-  dense=""
-  hide-details=""
-  menu-props="[object Object]"
-  multiple="multiple"
+  class="v-input c-select-field c-lazy-search-field mt-4 c-alarm-tag-field v-input--hide-details v-input--dense theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi v-autocomplete"
 >
   <div
     class="v-input__control"
@@ -239,19 +216,6 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] 
       <div
         class="v-menu"
       />
-    </div>
-    <div
-      class="v-text-field__details"
-    >
-      <div
-        class="v-messages theme--light"
-      >
-        <transition-group-stub
-          class="v-messages__wrapper"
-          name="message-transition"
-          tag="div"
-        />
-      </div>
     </div>
   </div>
 </div>
