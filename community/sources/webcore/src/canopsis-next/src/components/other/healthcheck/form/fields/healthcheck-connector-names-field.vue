@@ -5,6 +5,7 @@
     :label="$t('common.connectorName')"
     item-text="name"
     item-value="name"
+    class="healthcheck-connector-names-field"
     multiple
     @input="$emit('input', $event)"
   >
@@ -64,3 +65,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.healthcheck-connector-names-field {
+  &.v-autocomplete input {
+    padding: 8px 0 !important;
+  }
+}
+</style>

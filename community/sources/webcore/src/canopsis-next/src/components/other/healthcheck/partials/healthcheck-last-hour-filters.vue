@@ -36,7 +36,7 @@ export default {
 <style lang="scss">
 .healthcheck-last-hour-filters {
   &__connector-names, &__event-types {
-    max-width: 350px;
+    max-width: 360px;
   }
 }
 </style>
