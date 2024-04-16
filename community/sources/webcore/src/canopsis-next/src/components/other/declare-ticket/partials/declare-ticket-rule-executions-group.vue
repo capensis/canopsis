@@ -14,8 +14,8 @@
       >
         {{ ruleName }}
       </v-chip>
-      <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
-      <declare-ticket-rule-execution-status
+      <span class="text-subtitle-1 mr-5">{{ $t('common.webhookStatus') }}:</span>
+      <alarm-webhook-execution-status
         :running="isExecutionsRunning"
         :success="isExecutionsSucceeded"
         :fail-reason="failReason"
@@ -31,18 +31,16 @@
 <script>
 import { keyBy } from 'lodash';
 
-import {
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
-import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
+
 import DeclareTicketRuleExecutionAlarms from './declare-ticket-rule-execution-alarms.vue';
 
 export default {
   components: {
     DeclareTicketRuleExecutionAlarms,
-    DeclareTicketRuleExecutionStatus,
+    AlarmWebhookExecutionStatus,
   },
   props: {
     executions: {
@@ -68,11 +66,11 @@ export default {
   },
   computed: {
     isExecutionsRunning() {
-      return this.executions.some(isDeclareTicketExecutionRunning);
+      return this.executions.some(isWebhookExecutionRunning);
     },
 
     isExecutionsSucceeded() {
-      return this.executions.every(isDeclareTicketExecutionSucceeded);
+      return this.executions.every(isWebhookExecutionSucceeded);
     },
 
     failReason() {
