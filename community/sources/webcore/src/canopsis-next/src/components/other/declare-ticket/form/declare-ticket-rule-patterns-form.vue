@@ -46,10 +46,6 @@ export default {
           options: { disabled: true },
         },
         {
-          value: ALARM_PATTERN_FIELDS.resolvedAt,
-          options: { disabled: true },
-        },
-        {
           value: ALARM_PATTERN_FIELDS.ackAt,
           options: {
             intervalRanges: [QUICK_RANGES.custom],

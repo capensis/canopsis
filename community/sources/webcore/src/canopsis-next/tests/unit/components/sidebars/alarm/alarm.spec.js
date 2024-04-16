@@ -23,6 +23,8 @@ import {
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
   WIDGET_TYPES,
+  AVAILABILITY_SHOW_TYPE,
+  QUICK_RANGES,
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
@@ -37,6 +39,7 @@ import {
   formToWidgetParameters,
 } from '@/helpers/entities/widget/form';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
+import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
 
 import AlarmSettings from '@/components/sidebars/alarm/alarm.vue';
 
@@ -52,6 +55,7 @@ const stubs = {
   'field-opened-resolved-filter': createInputStub('field-opened-resolved-filter'),
   'field-filters': createInputStub('field-filters'),
   'field-root-cause-settings': createInputStub('field-root-cause-settings'),
+  'field-availability-graph-settings': createInputStub('field-availability-graph-settings'),
   'field-remediation-instructions-filters': createInputStub('field-remediation-instructions-filters'),
   'field-live-reporting': createInputStub('field-live-reporting'),
   'field-info-popup': createInputStub('field-info-popup'),
@@ -90,6 +94,7 @@ const snapshotStubs = {
   'charts-form': true,
   'field-resize-column-behavior': true,
   'field-root-cause-settings': true,
+  'field-availability-graph-settings': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
@@ -131,6 +136,7 @@ const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle
   'Actions allowed when state OK?',
 );
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
+const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -946,6 +952,35 @@ describe('alarm', () => {
             parameters: newParameters,
           }),
         ),
+      },
+    });
+  });
+
+  test('Availability field changed after trigger availability settings field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const newAvailability = availabilityFieldToForm({
+      enabled: true,
+      default_time_range: QUICK_RANGES.yesterday.value,
+      default_show_type: AVAILABILITY_SHOW_TYPE.duration,
+    });
+    selectFieldAvailabilityGraphSettings(wrapper).triggerCustomEvent('input', newAvailability);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'availability', newAvailability),
       },
     });
   });

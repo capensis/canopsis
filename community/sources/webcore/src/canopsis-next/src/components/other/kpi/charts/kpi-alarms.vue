@@ -29,8 +29,8 @@ import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
-import { localQueryMixin } from '@/mixins/query-local/query';
-import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { localQueryMixin } from '@/mixins/query/query';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 import KpiAlarmsFilters from './partials/kpi-alarms-filters.vue';
@@ -44,7 +44,7 @@ export default {
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    metricsIntervalFilterMixin,
+    queryIntervalFilterMixin,
     metricsExportMixinCreator({
       createExport: 'createKpiAlarmExport',
       fetchExport: 'fetchMetricExport',
