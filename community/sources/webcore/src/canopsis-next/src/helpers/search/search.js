@@ -1,3 +1,5 @@
+import { orderBy } from 'lodash';
+
 import { replaceTextNotInQuotes } from './quotes';
 
 /**
@@ -15,7 +17,9 @@ export const prepareSearchForSubmit = (search = '', columns = []) => {
     return search;
   }
 
-  return columns.reduce(
+  const orderedColumns = orderBy(columns, ({ text }) => text.length, ['desc']);
+
+  return orderedColumns.reduce(
     (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
     search.replace(/^-(\s*)/, ''),
   );
