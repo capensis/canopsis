@@ -292,6 +292,10 @@ export default {
   event: 'Événement | Événements',
   showMore: 'Afficher plus ({current} sur {total})',
   availability: 'Disponibilité',
+  testQuery: 'Tester la requête',
+  webhookStatus: 'Statut du webhook',
+  webhookComplete: 'Webhook terminé',
+  noResponse: 'Pas de réponse',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

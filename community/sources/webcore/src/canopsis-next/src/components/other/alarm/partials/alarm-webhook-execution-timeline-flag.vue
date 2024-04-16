@@ -1,6 +1,6 @@
 <template>
   <v-badge
-    :value="isActiveBadge"
+    :value="isFailedStep"
     class="time-line-flag"
     color="transparent"
     overlap
@@ -14,14 +14,17 @@
         error
       </v-icon>
     </template>
-    <v-icon :style="{ color: style.color, caretColor: style.color }">
-      {{ style.icon }}
+    <v-icon :color="stepColor">
+      {{ stepIcon }}
     </v-icon>
   </v-badge>
 </template>
 
 <script>
-import { ALARM_LIST_STEPS } from '@/constants';
+import { computed } from 'vue';
+
+import { getAlarmStepColor, getAlarmStepIcon } from '@/helpers/entities/alarm/step/formatting';
+import { isFailStepType } from '@/helpers/entities/alarm/step/entity';
 
 /**
  * Component for the flag on the alarms list's timeline
@@ -41,17 +44,16 @@ export default {
       default: false,
     },
   },
-  computed: {
-    style() {
-      return {};
-    },
+  setup(props) {
+    const stepIcon = computed(() => getAlarmStepIcon(props.step._t));
+    const stepColor = computed(() => getAlarmStepColor(props.step._t));
+    const isFailedStep = computed(() => isFailStepType(props.step._t));
 
-    isActiveBadge() {
-      return [
-        ALARM_LIST_STEPS.declareTicketFail,
-        ALARM_LIST_STEPS.webhookFail,
-      ].includes(this.step._t);
-    },
+    return {
+      stepIcon,
+      stepColor,
+      isFailedStep,
+    };
   },
 };
 </script>
@@ -59,6 +61,9 @@ export default {
 <style lang="scss" scoped>
 .time-line-flag {
   &__badge-icon {
+    width: 14px !important;
+    max-width: unset !important;
+    height: 14px !important;
     background: white;
     border-radius: 50%;
   }

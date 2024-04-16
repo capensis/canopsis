@@ -11,7 +11,7 @@
     <template #webhooks="{ webhooks }">
       <alarm-webhook-execution-timeline :webhooks="webhooks">
         <template #card="{ step }">
-          <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
+          <scenario-execution-webhooks-timeline-card :step="step" />
         </template>
       </alarm-webhook-execution-timeline>
     </template>
@@ -23,26 +23,26 @@ import { SOCKET_ROOMS } from '@/config';
 
 import Socket from '@/plugins/socket/services/socket';
 
-import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
 import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { formToScenario } from '@/helpers/entities/scenario/form';
 
 import { validationErrorsMixinCreator } from '@/mixins/form';
-import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
 
 import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
 import AlarmWebhookExecutionTimeline from '@/components/other/alarm/partials/alarm-webhook-execution-timeline.vue';
 
-import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
+import ScenarioExecutionWebhooksTimelineCard from './scenario-execution-webhooks-timeline-card.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    DeclareTicketRuleExecutionWebhooksTimelineCard,
+    ScenarioExecutionWebhooksTimelineCard,
     AlarmWebhookExecutionTimeline,
     AlarmWebhookExecution,
   },
-  mixins: [entitiesDeclareTicketRuleMixin, validationErrorsMixinCreator()],
+  mixins: [entitiesScenarioMixin, validationErrorsMixinCreator()],
   props: {
     form: {
       type: Object,
@@ -88,16 +88,17 @@ export default {
   },
   methods: {
     getSocketRoomName(id) {
-      return `${SOCKET_ROOMS.declareticket}/${id}`;
+      return `${SOCKET_ROOMS.testscenario}/${id}`;
     },
 
-    async setExecutionStatus(executionStatus) {
+    setExecutionStatus(executionStatus) {
       this.executionStatus = executionStatus;
     },
 
-    /**
-     * Socket customClose event handler (we need to use for connection checking)
-     */
+    clearWebhookStatus() {
+      this.executionStatus = null;
+    },
+
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
         this.$modals.hide();
@@ -108,20 +109,16 @@ export default {
       }
     },
 
-    /**
-     * Socket closeRoom event handler
-     */
     socketCloseRoomHandler() {
       this.$modals.hide();
     },
 
     async handleSocketError() {
-      this.executionStatus = await this.fetchDeclareTicketExecutionWithoutStore({ id: this.executionStatus._id });
+      const executionStatus = await this.fetchTestScenarioExecutionWithoutStore({ id: this.executionStatus._id });
+
+      this.setExecutionStatus(executionStatus);
     },
 
-    /**
-     * Join from execution room
-     */
     joinToSocketRoom() {
       this.$socket
         .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
@@ -131,9 +128,6 @@ export default {
         .addListener(this.setExecutionStatus);
     },
 
-    /**
-     * Leave from execution room
-     */
     leaveFromSocketRoom() {
       this.$socket
         .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
@@ -150,13 +144,11 @@ export default {
         this.pending = true;
         this.clearWebhookStatus();
 
-        const declareTicket = formToDeclareTicketRule(this.form);
-
         try {
-          this.executionStatus = await this.createTestDeclareTicketExecution({
+          this.executionStatus = await this.createTestScenarioExecution({
             data: {
-              alarms: [this.alarm],
-              ...declareTicket,
+              alarm: this.alarm,
+              ...formToScenario(this.form),
             },
           });
 
@@ -173,10 +165,6 @@ export default {
           this.pending = false;
         }
       }
-    },
-
-    clearWebhookStatus() {
-      this.executionStatus = null;
     },
   },
 };

@@ -423,6 +423,13 @@ export const EXCLUDED_SERVER_ERROR_STATUSES = [
   RESPONSE_STATUSES.forbidden,
 ];
 
+export const WEBHOOK_EXECUTION_STATUSES = {
+  waiting: 0,
+  running: 1,
+  succeeded: 2,
+  failed: 3,
+};
+
 export const KEY_CODES = {
   backspace: 8,
   enter: 13,

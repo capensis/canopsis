@@ -232,3 +232,17 @@ export const isMetaAlarmStepType = type => [
   ALARM_LIST_STEPS.metaalarmattach,
   ALARM_LIST_STEPS.metaalarmdetach,
 ].includes(type);
+
+/**
+ * Determines if the provided type corresponds to a failure step.
+ *
+ * @param {string} type - The step type to check.
+ * @returns {boolean} Returns true if the type is a failure step, otherwise false.
+ */
+export const isFailStepType = type => [
+  ALARM_LIST_STEPS.autoInstructionFail,
+  ALARM_LIST_STEPS.webhookFail,
+  ALARM_LIST_STEPS.instructionFail,
+  ALARM_LIST_STEPS.declareTicketFail,
+  ALARM_LIST_STEPS.declareTicketRuleFail,
+].includes(type);
