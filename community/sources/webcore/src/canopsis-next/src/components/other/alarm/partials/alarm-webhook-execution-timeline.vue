@@ -1,27 +1,25 @@
 <template>
-  <declare-ticket-rule-execution-webhooks-timeline-steps :steps="webhooksTimelineSteps">
+  <alarm-webhook-execution-timeline-steps :steps="webhooksTimelineSteps">
     <template #card="{ step }">
-      <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
+      <slot :step="step" name="card" />
     </template>
-  </declare-ticket-rule-execution-webhooks-timeline-steps>
+  </alarm-webhook-execution-timeline-steps>
 </template>
 
 <script>
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import {
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionSucceeded,
-  isDeclareTicketExecutionWaiting,
-} from '@/helpers/entities/declare-ticket/rule/form';
+  isWebhookExecutionFailed,
+  isWebhookExecutionSucceeded,
+  isWebhookExecutionWaiting,
+} from '@/helpers/entities/webhook-execution/entity';
 
-import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
-import DeclareTicketRuleExecutionWebhooksTimelineSteps from './declare-ticket-rule-execution-webhooks-timeline-steps.vue';
+import AlarmWebhookExecutionTimelineSteps from './alarm-webhook-execution-timeline-steps.vue';
 
 export default {
   components: {
-    DeclareTicketRuleExecutionWebhooksTimelineCard,
-    DeclareTicketRuleExecutionWebhooksTimelineSteps,
+    AlarmWebhookExecutionTimelineSteps,
   },
   props: {
     webhooks: {
@@ -32,7 +30,7 @@ export default {
   computed: {
     webhooksTimelineSteps() {
       return this.webhooks.reduce((acc, webhook) => {
-        if (isDeclareTicketExecutionWaiting(webhook)) {
+        if (isWebhookExecutionWaiting(webhook)) {
           return acc;
         }
 
@@ -44,7 +42,7 @@ export default {
           _t: EVENT_ENTITY_TYPES.webhookStart,
         });
 
-        if (isDeclareTicketExecutionSucceeded(webhook)) {
+        if (isWebhookExecutionSucceeded(webhook)) {
           acc.push({
             webhookId,
             t: webhook.completed_at,
@@ -52,7 +50,7 @@ export default {
           });
         }
 
-        if (isDeclareTicketExecutionFailed(webhook)) {
+        if (isWebhookExecutionFailed(webhook)) {
           acc.push({
             webhookId,
             t: webhook.completed_at,
