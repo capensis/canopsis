@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesCorporatePatternsMixin } from '@/mixins/entities/pattern/corporate';
 
 import PatternsList from './patterns-list.vue';

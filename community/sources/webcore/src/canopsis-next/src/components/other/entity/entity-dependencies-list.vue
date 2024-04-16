@@ -29,7 +29,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 

@@ -6,17 +6,10 @@ exports[`extra-details-parents Renders \`extra-details-parents\` with full paren
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge brown darken-1"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        center_focus_weak
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#6d4c41"
+      icon="center_focus_weak"
+    />
   </span>
 </div>
 `;
@@ -67,17 +60,10 @@ exports[`extra-details-parents Renders \`extra-details-parents\` without rules 1
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge brown darken-1"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        center_focus_weak
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#6d4c41"
+      icon="center_focus_weak"
+    />
   </span>
 </div>
 `;

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`quick-date-interval-type Renders \`quick-date-interval-type\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Default time range"
+>
+  <c-quick-date-interval-type-field-stub
+    name="custom_name"
+    ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    value="last1Year"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`quick-date-interval-type Renders \`quick-date-interval-type\` with default props 1`] = `
+<widget-settings-item-stub
+  title="Default time range"
+>
+  <c-quick-date-interval-type-field-stub
+    ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  />
+</widget-settings-item-stub>
+`;
