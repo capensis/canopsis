@@ -1571,12 +1571,10 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.EntityID))
 	}
-	{
+	if len(in.Tags) != 0 {
 		const prefix string = ",\"tags\":"
 		out.RawString(prefix)
-		if in.Tags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
+		{
 			out.RawByte('[')
 			for v31, v32 := range in.Tags {
 				if v31 > 0 {
@@ -1587,12 +1585,10 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawByte(']')
 		}
 	}
-	{
+	if len(in.ExternalTags) != 0 {
 		const prefix string = ",\"etags\":"
 		out.RawString(prefix)
-		if in.ExternalTags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
+		{
 			out.RawByte('[')
 			for v33, v34 := range in.ExternalTags {
 				if v33 > 0 {
@@ -1603,12 +1599,10 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawByte(']')
 		}
 	}
-	{
+	if len(in.InternalTags) != 0 {
 		const prefix string = ",\"itags\":"
 		out.RawString(prefix)
-		if in.InternalTags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
+		{
 			out.RawByte('[')
 			for v35, v36 := range in.InternalTags {
 				if v35 > 0 {
