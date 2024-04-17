@@ -846,6 +846,22 @@ export default {
       title: 'Modifier le filtre partagé de comportement périodique',
     },
   },
+  createServiceWeatherPattern: {
+    create: {
+      title: 'Créer un filtre météo de service',
+    },
+    edit: {
+      title: 'Modifier le filtre météo du service',
+    },
+  },
+  createCorporateServiceWeatherPattern: {
+    create: {
+      title: 'Create shared service weather filter',
+    },
+    edit: {
+      title: 'Edit shared service weather filter',
+    },
+  },
   createMap: {
     title: 'Créer une carte',
   },

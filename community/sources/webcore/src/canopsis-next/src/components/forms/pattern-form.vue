@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <v-name-field
+    <c-name-field
       v-field="form.title"
       :label="$t('common.title')"
       name="title"
