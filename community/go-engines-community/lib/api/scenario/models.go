@@ -27,7 +27,7 @@ type FilteredQuery struct {
 
 type EditRequest struct {
 	Name                 string                     `json:"name" binding:"required,max=255"`
-	Author               string                     `json:"author" binding:"required,max=255"`
+	Author               string                     `json:"author" swaggerignore:"true"`
 	Enabled              *bool                      `json:"enabled" binding:"required"`
 	Priority             int64                      `json:"priority" binding:"min=0"`
 	Triggers             []Trigger                  `json:"triggers" binding:"required,notblank,dive"`

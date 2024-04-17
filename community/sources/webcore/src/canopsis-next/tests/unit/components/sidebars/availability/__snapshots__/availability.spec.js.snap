@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-settings Renders \`availability-settings\` widget settings with custom props and permissions 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <availability-form-stub
+    alarmcolumnswidgettemplates=""
+    entitycolumnswidgettemplates=""
+    form="[object Object]"
+    widgetid="_id"
+  />
+</widget-settings-stub>
+`;
+
+exports[`availability-settings Renders \`availability-settings\` widget settings with default props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <availability-form-stub
+    alarmcolumnswidgettemplates=""
+    entitycolumnswidgettemplates=""
+    form="[object Object]"
+    widgetid="Availability_id"
+  />
+</widget-settings-stub>
+`;

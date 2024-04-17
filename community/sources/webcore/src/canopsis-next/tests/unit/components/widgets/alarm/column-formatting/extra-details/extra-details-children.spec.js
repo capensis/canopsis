@@ -2,7 +2,11 @@ import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
-const selectExtraDetailsIcon = wrapper => wrapper.find('.c-extra-details__badge');
+const stubs = {
+  'c-alarm-extra-details-chip': true,
+};
+
+const selectExtraDetailsIcon = wrapper => wrapper.find('c-alarm-extra-details-chip-stub');
 
 describe('extra-details-children', () => {
   const total = 3;
@@ -13,6 +17,7 @@ describe('extra-details-children', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsChildren, {
+    stubs,
     attachTo: document.body,
   });
 

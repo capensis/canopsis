@@ -16,28 +16,6 @@ const stubs = {
 describe('alarm-column-value-extra-details', () => {
   const fullAlarm = {
     rule: {},
-    pbehavior: {
-      name: 'pbehavior-name',
-      author: 'pbehavior-author',
-      tstart: '',
-      tstop: '',
-      rrule: 'rrule',
-      reason: {
-        name: 'pbehavior-reason-name',
-      },
-      comments: [
-        {
-          _id: 'pbehavior-comment-1-id',
-          author: 'pbehavior-comment-1-author',
-          message: 'pbehavior-comment-1-message',
-        },
-        {
-          _id: 'pbehavior-comment-2-id',
-          author: 'pbehavior-comment-2-author',
-          message: 'pbehavior-comment-2-message',
-        },
-      ],
-    },
     v: {
       ack: {},
       last_comment: {
@@ -55,7 +33,7 @@ describe('alarm-column-value-extra-details', () => {
 
   const snapshotFactory = generateRenderer(AlarmColumnValueExtraDetails, { stubs });
 
-  it('Renders `alarm-column-value-extra-details` with empty alarm', () => {
+  test('Renders `alarm-column-value-extra-details` with empty alarm', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -67,7 +45,7 @@ describe('alarm-column-value-extra-details', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-extra-details` with full alarm (only parent)', () => {
+  test('Renders `alarm-column-value-extra-details` with full alarm (only parent)', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -95,7 +73,7 @@ describe('alarm-column-value-extra-details', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-extra-details` with full alarm (only children)', () => {
+  test('Renders `alarm-column-value-extra-details` with full alarm (only children)', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {

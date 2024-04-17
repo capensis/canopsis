@@ -30,7 +30,7 @@
         :placeholder="$t('settings.headerTitle')"
         name="chart_title"
       />
-      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" :ranges="metricsRanges" />
       <field-sampling v-field="form.parameters.default_sampling" />
       <field-filters
         v-if="withFilters"
@@ -43,14 +43,14 @@
       />
       <field-switcher
         v-field="form.parameters.show_trend"
-        :title="$t('settings.chart.showTrend')"
+        :title="$t('settings.showTrend')"
       />
     </widget-settings-group>
   </v-layout>
 </template>
 
 <script>
-import { ALARM_METRIC_PARAMETERS } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, METRICS_QUICK_RANGES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -110,6 +110,10 @@ export default {
     },
   },
   computed: {
+    metricsRanges() {
+      return METRICS_QUICK_RANGES;
+    },
+
     availableParameters() {
       return [
         ALARM_METRIC_PARAMETERS.createdAlarms,

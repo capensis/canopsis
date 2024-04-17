@@ -15,8 +15,10 @@ updateDateLocaleMessages('fr', durationFrMessages);
 
 Vue.use(VueI18n);
 
-export default new VueI18n({
+const i18nInstance = new VueI18n({
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
   messages: merge(messages, featuresService.get('i18n')),
 });
+
+export default i18nInstance;

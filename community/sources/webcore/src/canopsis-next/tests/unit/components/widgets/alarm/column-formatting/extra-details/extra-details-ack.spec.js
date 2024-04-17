@@ -5,6 +5,10 @@ import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsAck from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ack.vue';
 
+const stubs = {
+  'c-alarm-extra-details-chip': true,
+};
+
 describe('extra-details-ack', () => {
   const nowTimestamp = 1386435500000;
   const prevDateTimestamp = 1386392400000;
@@ -13,6 +17,7 @@ describe('extra-details-ack', () => {
   mockDateNow(nowTimestamp);
 
   const snapshotFactory = generateRenderer(ExtraDetailsAck, {
+    stubs,
     attachTo: document.body,
   });
 

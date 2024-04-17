@@ -8,7 +8,7 @@ import {
   WEATHER_ACTIONS_TYPES,
   PBEHAVIOR_TYPE_TYPES,
   PBEHAVIOR_ORIGINS,
-  ENTITIES_STATES,
+  ALARM_STATES,
 } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
@@ -379,7 +379,7 @@ export const widgetActionPanelServiceEntityMixin = {
           data: availableEntities.map(
             ({ alarm_id: alarmId }) => ({
               _id: alarmId,
-              state: ENTITIES_STATES.critical,
+              state: ALARM_STATES.critical,
               comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
             }),
           ),

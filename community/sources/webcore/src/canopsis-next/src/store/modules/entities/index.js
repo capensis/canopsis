@@ -63,6 +63,7 @@ import groupMetricsModule from './group-metrics';
 import tagModule from './tag';
 import themeModule from './theme';
 import iconModule from './icon';
+import availabilityModule from './availability';
 
 export default {
   alarm: alarmModule,
@@ -130,4 +131,5 @@ export default {
   tag: tagModule,
   theme: themeModule,
   icon: iconModule,
+  availability: availabilityModule,
 };

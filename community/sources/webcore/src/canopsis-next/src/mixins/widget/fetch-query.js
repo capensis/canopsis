@@ -17,7 +17,7 @@ export const widgetFetchQueryMixin = {
   },
   watch: {
     query(value, oldValue) {
-      if (!isEqual(value, oldValue) && !isEmpty(value) && this.visible) {
+      if (this.customQueryCondition(value, oldValue) && this.visible) {
         this.fetchList();
       }
     },
@@ -36,6 +36,10 @@ export const widgetFetchQueryMixin = {
     this.setQuery();
   },
   methods: {
+    customQueryCondition(value, oldValue) {
+      return !isEqual(value, oldValue) && !isEmpty(value);
+    },
+
     setQuery() {
       const { search = '' } = this.query;
 

@@ -58,5 +58,12 @@ export const queryWidgetMixin = {
     updatePage(page) {
       this.query = { ...this.query, page };
     },
+
+    updateQueryField(field, value) {
+      this.query = {
+        ...this.query,
+        [field]: value,
+      };
+    },
   },
 };

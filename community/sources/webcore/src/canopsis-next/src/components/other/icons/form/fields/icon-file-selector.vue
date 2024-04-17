@@ -11,9 +11,7 @@
         align-center
       >
         <v-flex xs2>
-          <v-icon
-            large
-          >
+          <v-icon large>
             $vuetify.icons.{{ uniqueIconName }}
           </v-icon>
         </v-flex>

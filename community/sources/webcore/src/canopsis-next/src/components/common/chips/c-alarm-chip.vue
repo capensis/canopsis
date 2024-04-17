@@ -26,7 +26,7 @@
 <script>
 import { ENTITY_INFOS_TYPE } from '@/constants';
 
-import { formatState, formatStatus } from '@/helpers/entities/entity/formatting';
+import { formatAlarmState, formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
 
 /**
  * Chips for the state/status of the alarm on timeline
@@ -57,11 +57,9 @@ export default {
   },
   computed: {
     style() {
-      if (this.type === ENTITY_INFOS_TYPE.status) {
-        return formatStatus(this.value);
-      }
-
-      return formatState(this.value);
+      return this.type === ENTITY_INFOS_TYPE.status
+        ? formatAlarmStatus(this.value)
+        : formatAlarmState(this.value);
     },
   },
 };

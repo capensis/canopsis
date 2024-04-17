@@ -34,6 +34,14 @@ export const entityVariablesMixin = {
       ];
     },
 
+    lastCommentVariables() {
+      return [
+        this.alarmStepTimestampVariable,
+        this.alarmStepAuthorVariable,
+        this.alarmStepMessageVariable,
+      ];
+    },
+
     entityVariables() {
       return [
         { value: ENTITY_TEMPLATE_FIELDS.id },
@@ -79,6 +87,10 @@ export const entityVariablesMixin = {
         { value: ENTITY_TEMPLATE_FIELDS.statsKo },
         { value: ENTITY_TEMPLATE_FIELDS.alarmDisplayName },
         { value: ENTITY_TEMPLATE_FIELDS.links },
+        {
+          value: ENTITY_TEMPLATE_FIELDS.alarmLastComment,
+          variables: this.lastCommentVariables,
+        },
       ].map(variable => ({
         ...variable,
 

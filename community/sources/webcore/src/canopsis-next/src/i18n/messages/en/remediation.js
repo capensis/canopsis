@@ -1,4 +1,9 @@
-import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+import {
+  REMEDIATION_INSTRUCTION_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES,
+} from '@/constants';
 
 export default {
   tabs: {
@@ -8,6 +13,7 @@ export default {
   },
 
   instruction: {
+    name: 'Instruction name',
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',
@@ -78,6 +84,7 @@ export default {
       title: 'Jobs assigned:',
       startedAt: 'Started at',
       launchedAt: 'Launched at',
+      launchedBy: 'Launched by',
       completedAt: 'Completed at',
       waitAlert: 'External job executor is not responding, please contact your admin',
       skip: 'Skip job',
@@ -87,6 +94,30 @@ export default {
       instructionFailed: 'Instruction failed',
       instructionComplete: 'Instruction complete',
       stopped: 'Stopped',
+    },
+    status: {
+      tooltips: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running]: 'In progress',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused]: 'Paused',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]: 'Complete successfully',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted]: 'Canceled',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed]: 'Failed',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]: 'In progress',
+      },
+    },
+    stepsTitles: {
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual]: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: 'Step {name} is complete',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: 'Step {name} is failed',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: 'Step {name} is aborted',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]: 'Step {name} is skipped',
+      },
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.job]: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: '{name} is complete',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: '{name} is failed',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: '{name} is aborted',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]: '{name} is skipped',
+      },
     },
   },
 

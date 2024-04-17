@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
-import { getEntityStateColor } from '@/helpers/entities/entity/color';
+import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
 export default {
   props: {
@@ -31,15 +31,15 @@ export default {
   },
   computed: {
     minorColor() {
-      return getEntityStateColor(ENTITIES_STATES.minor);
+      return getAlarmStateColor(ALARM_STATES.minor);
     },
 
     majorColor() {
-      return getEntityStateColor(ENTITIES_STATES.major);
+      return getAlarmStateColor(ALARM_STATES.major);
     },
 
     criticalColor() {
-      return getEntityStateColor(ENTITIES_STATES.critical);
+      return getAlarmStateColor(ALARM_STATES.critical);
     },
   },
 };

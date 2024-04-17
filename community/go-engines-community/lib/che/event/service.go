@@ -99,7 +99,8 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled && !event.Healthcheck {
-		isInfosUpdated, err := p.eventFilterService.ProcessEvent(ctx, event)
+		var isInfosUpdated bool
+		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}
@@ -128,6 +129,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
 		eventMetric.IsServicesUpdated = false
+		eventMetric.IsStateSettingUpdated = false
 
 		var service types.Entity
 		err := p.dbCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&service)
@@ -147,7 +149,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 
 		p.contextGraphManager.AssignServices(&service, commRegister)
 
-		_, err = p.contextGraphManager.AssignStateSetting(ctx, &service, commRegister)
+		eventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &service, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot inherit component fields: %w", err)
 		}

@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline-days Renders \`alarm-timeline-days\` correctly 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout my-1 column"
+  >
+    <span
+      class="grey--text my-2"
+    >
+      13/07/2021
+    </span>
+    <alarm-timeline-steps-stub
+      steps="[object Object],[object Object]"
+    />
+  </div>
+  <div
+    class="layout my-1 column"
+  >
+    <span
+      class="grey--text my-2"
+    >
+      30/07/2021
+    </span>
+    <alarm-timeline-steps-stub
+      steps="[object Object]"
+    />
+  </div>
+  <div
+    class="layout my-1 column"
+  >
+    <span
+      class="grey--text my-2"
+    >
+      27/09/2021
+    </span>
+    <alarm-timeline-steps-stub
+      steps="[object Object],[object Object]"
+    />
+  </div>
+  <div
+    class="layout my-1 column"
+  >
+    <span
+      class="grey--text my-2"
+    >
+      30/09/2021
+    </span>
+    <alarm-timeline-steps-stub
+      steps="[object Object]"
+    />
+  </div>
+  <div
+    class="layout my-1 column"
+  >
+    <span
+      class="grey--text my-2"
+    >
+      18/10/2021
+    </span>
+    <alarm-timeline-steps-stub
+      steps="[object Object]"
+    />
+  </div>
+</div>
+`;

@@ -1,6 +1,6 @@
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, ALARM_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { geomapPointToForm } from '@/helpers/entities/map/form';
 
@@ -59,7 +59,7 @@ describe('geomap-preview', () => {
       _id: 'point-1',
       coordinates: { lat: 1, lng: 1 },
       entity: {
-        state: ENTITIES_STATES.minor,
+        state: ALARM_STATES.minor,
         impact_state: 1,
       },
     },
@@ -67,7 +67,7 @@ describe('geomap-preview', () => {
       _id: 'point-2',
       coordinates: { lat: 2, lng: 2 },
       entity: {
-        state: ENTITIES_STATES.critical,
+        state: ALARM_STATES.critical,
         impact_state: 2,
       },
     },
@@ -82,7 +82,7 @@ describe('geomap-preview', () => {
       _id: 'point-4',
       coordinates: { lat: 4, lng: 4 },
       entity: {
-        state: ENTITIES_STATES.ok,
+        state: ALARM_STATES.ok,
         impact_state: 2,
         pbehavior_info: {
           canonical_type: PBEHAVIOR_TYPE_TYPES.active,

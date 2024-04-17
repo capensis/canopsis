@@ -35,6 +35,7 @@ export const ENTITY_FIELDS = {
   alarmCreationDate: 'alarm_creation_date',
   importSource: 'import_source',
   imported: 'imported',
+  alarmLastComment: 'alarm_last_comment',
 
   /**
    * OBJECTS
@@ -45,101 +46,36 @@ export const ENTITY_FIELDS = {
   snooze: 'snooze',
 };
 
-export const EVENT_ENTITY_TYPES = {
-  ack: 'ack',
-  check: 'check',
-  fastAck: 'fastAck',
-  ackRemove: 'ackremove',
-  pbehaviorAdd: 'pbehaviorAdd',
-  pbehaviorList: 'pbehaviorList',
-  assocTicket: 'assocticket',
-  cancel: 'cancel',
-  uncancel: 'uncancel',
-  delete: 'delete',
-  changeState: 'changestate',
-  declareTicket: 'declareticket',
-  declareTicketFail: 'declareticketfail',
-  webhookStart: 'webhookstart',
-  webhookComplete: 'webhookcomplete',
-  webhookFail: 'webhookfail',
-  snooze: 'snooze',
-  validate: 'validate',
-  invalidate: 'invalidate',
-  pause: 'pause',
-  play: 'play',
-  group: 'group',
-  pbhenter: 'pbhenter',
-  pbhleave: 'pbhleave',
-  comment: 'comment',
-  createManualMetaAlarm: 'createManualMetaAlarm',
-  removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
-  removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
-  stateinc: 'stateinc',
-  statedec: 'statedec',
-  statusinc: 'statusinc',
-  statusdec: 'statusdec',
-  unsooze: 'unsooze',
-  metaalarmattach: 'metaalarmattach',
-  executeInstruction: 'executeInstruction',
-  instructionStart: 'instructionstart',
-  instructionPause: 'instructionpause',
-  instructionResume: 'instructionresume',
-  instructionComplete: 'instructioncomplete',
-  instructionAbort: 'instructionabort',
-  instructionFail: 'instructionfail',
-  instructionJobStart: 'instructionjobstart',
-  instructionJobComplete: 'instructionjobcomplete',
-  instructionJobAbort: 'instructionjobabort',
-  instructionJobFail: 'instructionjobfail',
-  autoInstructionStart: 'autoinstructionstart',
-  autoInstructionComplete: 'autoinstructioncomplete',
-  autoInstructionFail: 'autoinstructionfail',
-  autoInstructionAlreadyRunning: 'autoinstructionalreadyrunning',
-  junitTestSuiteUpdate: 'junittestsuiteupdate',
-  junitTestCaseUpdate: 'junittestcaseupdate',
+export const EVENT_ENTITY_TYPES = { // TODO: remove it in the future
+  ack: 'ack', // TODO: ServiceWeather
+  fastAck: 'fastAck', // TODO: ServiceWeather
+  ackRemove: 'ackremove', // TODO: ServiceWeather, EventPattern
+  pbehaviorList: 'pbehaviorList', // TODO: ServiceWeather
+  cancel: 'cancel', // TODO: ServiceWeather, EventPattern
+  delete: 'delete', // TODO: ServiceWeather
+  assocTicket: 'assocticket', // TODO: DeclareTicket, EventPattern
+  declareTicket: 'declareticket', // TODO: DeclareTicket, EventPattern
+  declareTicketFail: 'declareticketfail', // TODO: DeclareTicket, EventPattern
+  webhookStart: 'webhookstart', // TODO: DeclareTicket, EventPattern
+  webhookComplete: 'webhookcomplete', // TODO: DeclareTicket, EventPattern
+  webhookFail: 'webhookfail', // TODO: DeclareTicket, EventPattern
+  snooze: 'snooze', // TODO: EventPattern
+  unsooze: 'unsooze', // TODO: remove
+  validate: 'validate', // TODO: ServiceWeather
+  invalidate: 'invalidate', // TODO: ServiceWeather
+  pause: 'pause', // TODO: ServiceWeather
+  play: 'play', // TODO: ServiceWeather
+  pbhenter: 'pbhenter', // TODO: remove
+  pbhleave: 'pbhleave', // TODO: remove
+  comment: 'comment', // TODO: ServiceWeather, EventPattern
+  metaalarmattach: 'metaalarmattach', // TODO: remove
+  executeInstruction: 'executeInstruction', // TODO: ServiceWeather
 };
 
-export const ENTITY_INFOS_TYPE = {
+export const ENTITY_INFOS_TYPE = { // TODO: move to alarm
   state: 'state',
   status: 'status',
   action: 'action',
-};
-
-export const ENTITIES_STATES_KEYS = {
-  ok: 'ok',
-  minor: 'minor',
-  major: 'major',
-  critical: 'critical',
-};
-
-export const ENTITIES_STATES = {
-  ok: 0,
-  minor: 1,
-  major: 2,
-  critical: 3,
-};
-
-export const ENTITIES_STATUSES = {
-  closed: 0,
-  ongoing: 1,
-  stealthy: 2,
-  flapping: 3,
-  cancelled: 4,
-  noEvents: 5,
-};
-
-export const ENTITIES_STATES_STYLES_ICONS = {
-  [ENTITIES_STATES.ok]: 'assistant_photo',
-  [ENTITIES_STATES.minor]: 'assistant_photo',
-  [ENTITIES_STATES.major]: 'assistant_photo',
-  [ENTITIES_STATES.critical]: 'assistant_photo',
-};
-
-export const ENTITIES_STATES_STYLES_TEXT = {
-  [ENTITIES_STATES.ok]: 'ok',
-  [ENTITIES_STATES.minor]: 'minor',
-  [ENTITIES_STATES.major]: 'major',
-  [ENTITIES_STATES.critical]: 'critical',
 };
 
 export const SERVICE_STATES = {
@@ -148,13 +84,6 @@ export const SERVICE_STATES = {
   major: 'major',
   critical: 'critical',
   pause: 'pause',
-};
-
-export const COUNTER_STATES_ICONS = {
-  [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
-  [ENTITIES_STATES_KEYS.minor]: 'person',
-  [ENTITIES_STATES_KEYS.major]: 'person',
-  [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
 };
 
 export const WEATHER_ICONS = {
@@ -166,24 +95,6 @@ export const WEATHER_ICONS = {
   [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
   [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
   [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
-};
-
-export const ENTITIES_STATUSES_STYLES_ICONS = {
-  [ENTITIES_STATUSES.closed]: 'check_circle_outline',
-  [ENTITIES_STATUSES.ongoing]: 'warning',
-  [ENTITIES_STATUSES.stealthy]: 'swap_vert',
-  [ENTITIES_STATUSES.flapping]: 'swap_vert',
-  [ENTITIES_STATUSES.cancelled]: 'highlight_off',
-  [ENTITIES_STATUSES.noEvents]: 'sync_problem',
-};
-
-export const ENTITIES_STATUSES_STYLES_TEXT = {
-  [ENTITIES_STATUSES.closed]: 'closed',
-  [ENTITIES_STATUSES.ongoing]: 'ongoing',
-  [ENTITIES_STATUSES.stealthy]: 'stealthy',
-  [ENTITIES_STATUSES.flapping]: 'flapping',
-  [ENTITIES_STATUSES.cancelled]: 'cancelled',
-  [ENTITIES_STATUSES.noEvents]: 'no events',
 };
 
 export const WEATHER_ACTIONS_TYPES = {
@@ -207,20 +118,18 @@ export const WEATHER_ACTIONS_TYPES = {
   executeInstruction: 'executeInstruction',
 };
 
-export const EVENT_ENTITY_ICONS_BY_TYPE = {
-  [EVENT_ENTITY_TYPES.ack]: 'playlist_add_check',
-  [EVENT_ENTITY_TYPES.fastAck]: 'check',
-  [EVENT_ENTITY_TYPES.pbehaviorAdd]: 'pause',
+export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
+  [EVENT_ENTITY_TYPES.ack]: 'check',
+  [EVENT_ENTITY_TYPES.fastAck]: 'done_all',
   [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
-  [EVENT_ENTITY_TYPES.ackRemove]: 'not_interested',
-  [EVENT_ENTITY_TYPES.declareTicket]: 'report_problem',
+  [EVENT_ENTITY_TYPES.ackRemove]: 'remove_done',
+  [EVENT_ENTITY_TYPES.declareTicket]: 'note_add',
   [EVENT_ENTITY_TYPES.declareTicketFail]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
-  [EVENT_ENTITY_TYPES.assocTicket]: 'local_play',
+  [EVENT_ENTITY_TYPES.assocTicket]: '$vuetify.icons.sticky_note_2',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
-  [EVENT_ENTITY_TYPES.changeState]: 'thumbs_up_down',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
   [EVENT_ENTITY_TYPES.invalidate]: 'thumb_down',
@@ -229,29 +138,9 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.pbhenter]: 'pause',
   [EVENT_ENTITY_TYPES.pbhleave]: 'play_arrow',
   [EVENT_ENTITY_TYPES.comment]: 'comment',
-  [EVENT_ENTITY_TYPES.createManualMetaAlarm]: 'center_focus_strong',
-  [EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
-  [EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm]: 'link_off',
   [EVENT_ENTITY_TYPES.metaalarmattach]: 'center_focus_weak',
   [EVENT_ENTITY_TYPES.executeInstruction]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionStart]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionPause]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionResume]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionComplete]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionAbort]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionFail]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobStart]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobComplete]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobAbort]: 'assignment',
-  [EVENT_ENTITY_TYPES.instructionJobFail]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionStart]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionFail]: 'assignment',
-  [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'assignment',
-  [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'keyboard_arrow_up',
-  [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'keyboard_arrow_up',
-  [EVENT_ENTITY_TYPES.cancel]: 'delete',
-  [EVENT_ENTITY_TYPES.uncancel]: 'delete_forever',
+  [EVENT_ENTITY_TYPES.cancel]: 'block',
   groupChildren: 'center_focus_strong',
   groupParents: 'center_focus_weak',
 };
@@ -279,12 +168,6 @@ export const ENTITY_EVENT_BY_ACTION_TYPE = {
   [WEATHER_ACTIONS_TYPES.executeInstruction]: EVENT_ENTITY_TYPES.executeInstruction,
   [WEATHER_ACTIONS_TYPES.declareTicket]: EVENT_ENTITY_TYPES.declareTicket,
   [WEATHER_ACTIONS_TYPES.entityAckRemove]: EVENT_ENTITY_TYPES.ackRemove,
-};
-
-export const UNKNOWN_VALUE_STYLE = {
-  color: COLORS.status.unknown,
-  text: 'Invalid val',
-  icon: 'clear',
 };
 
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
@@ -453,6 +336,7 @@ export const ENTITY_TEMPLATE_FIELDS = {
   statsOk: `entity.${ENTITY_FIELDS.statsOk}`,
   statsKo: `entity.${ENTITY_FIELDS.statsKo}`,
   links: `entity.${ENTITY_FIELDS.links}`,
+  alarmLastComment: `entity.${ENTITY_FIELDS.alarmLastComment}`,
 };
 
 export const ENTITY_FIELDS_TO_LABELS_KEYS = {
@@ -485,6 +369,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
   [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
   [ENTITY_FIELDS.imported]: 'entity.fields.imported',
+  [ENTITY_FIELDS.alarmLastComment]: 'entity.fields.alarmLastComment',
 
   /**
    * OBJECTS

@@ -98,6 +98,7 @@ export const SOCKET_ROOMS = {
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
   icons: 'icons',
+  testscenario: 'testscenario',
 };
 
 export const API_ROUTES = {
@@ -116,6 +117,7 @@ export const API_ROUTES = {
   openAlarms: '/api/v4/open-alarms',
   alarmLinks: '/api/v4/alarm-links',
   alarmDisplayNames: '/api/v4/alarm-display-names',
+  alarmExecutions: '/api/v4/cat/alarm-executions',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   entityCheckStateSetting: '/api/v4/entities/check-state-setting',
@@ -207,6 +209,8 @@ export const API_ROUTES = {
   },
   scenario: {
     scenarios: '/api/v4/scenarios',
+    testExecution: '/api/v4/cat/test-scenario-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-scenario-webhooks',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
@@ -280,6 +284,8 @@ export const API_ROUTES = {
     exportAggregate: '/api/v4/cat/metrics-export/aggregate',
     exportRemediation: '/api/v4/cat/metrics-export/remediation',
     exportMetric: '/api/v4/cat/metrics-export',
+    exportAvailabilityByEntity: '/api/v4/cat/metrics-export/availability-by-entity',
+    exportAvailability: '/api/v4/cat/metrics-export/availability',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
     remediation: '/api/v4/cat/metrics/remediation',
@@ -287,8 +293,11 @@ export const API_ROUTES = {
     perfDataMetrics: '/api/v4/cat/perf-data-metrics',
     entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
     entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
+    entityAvailability: '/api/v4/cat/entity-metrics/availability',
+    entityAggregateAvailability: '/api/v4/cat/entity-metrics/aggregate-availability',
     group: '/api/v4/cat/metrics/group',
     exportGroup: '/api/v4/cat/metrics-export/group',
+    availability: '/api/v4/cat/metrics/availability',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
@@ -336,13 +345,34 @@ export const COLORS = {
     pause: '#808080',
   },
   status: {
-    closed: '#2fab63',
-    stealthy: '#757575',
-    flapping: '#2b3E4F',
-    ongoing: '#f9A825',
+    closed: '#2FAB63',
+    stealthy: '#6A6A6A',
+    flapping: '#2B3E4F',
+    ongoing: '#F9A825',
     cancelled: '#757575',
-    noEvents: '#ff5252',
+    noEvents: '#FF5252',
     unknown: '#000',
+  },
+  alarmSteps: {
+    ack: '#35485D',
+    ackRemove: '#35485D',
+    declareTicket: '#6A6A6A',
+    snooze: '#FF5252',
+    comment: '#5B6E7F',
+    metaalarmattach: '#8C1D18',
+    junitTestCaseUpdate: '#979797',
+    activate: '#01579B',
+    resolve: '#2FAB63',
+    instruction: '#6A6A6A',
+  },
+  alarmExtraDetails: {
+    ack: '#9c27b0',
+    canceled: '#607d8b',
+    children: '#6d4c41',
+    parent: '#6d4c41',
+    comment: '#ba68c8',
+    snooze: '#e91e63',
+    ticket: '#2196F3',
   },
   entitiesEvents: {
     ack: '#9c27b0',
@@ -441,6 +471,15 @@ export const COLORS = {
     lineColor: '#323232',
     noteBkgColor: '#75818c',
     noteTextColor: '#fdfdfd',
+  },
+  remediation: {
+    executionStatus: {
+      running: '#5A6D80',
+      paused: '#323232',
+      completed: '#2FAB63',
+      aborted: '#979797',
+      failed: '#FF5252',
+    },
   },
   flowchart: {
     selection: '#5b6e7f',
@@ -590,6 +629,8 @@ export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
 
 export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
+
+export const AVAILABILITY_FILENAME_PREFIX = 'availability';
 
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 

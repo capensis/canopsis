@@ -23,6 +23,7 @@ export default {
     [SIDE_BARS.numbersSettings]: 'Numbers settings',
     [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
     [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
+    [SIDE_BARS.availabilitySettings]: 'Availability settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -230,6 +231,7 @@ export default {
     compact: 'Compact view',
     ultraCompact: 'Ultra compact view',
   },
+  showTrend: 'Show trend',
 
   chart: {
     graphType: 'Graph type',
@@ -240,7 +242,6 @@ export default {
     showComparison: 'Show comparison',
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
-    showTrend: 'Show trend',
     fontSize: 'Font size adjustment',
     auto: 'Auto',
     manual: 'Manual',
@@ -300,4 +301,9 @@ export default {
     split: 'Split data by value path',
   },
   entitiesActionsInQueue: 'Stack entities actions and apply simultaneously',
+  availability: {
+    graphSettings: 'Availability graph settings',
+    defaultAvailabilityDisplay: 'Default availability display',
+    defaultParameterToDisplay: 'Default parameter to display',
+  },
 };

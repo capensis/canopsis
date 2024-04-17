@@ -4,7 +4,7 @@ import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/
 import { createMockedStoreGetters } from '@unit/utils/store';
 import { createTextareaInputStub, createNumberInputStub } from '@unit/stubs/input';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
 
@@ -30,7 +30,7 @@ describe('c-change-state-field', () => {
 
   it('State changed after trigger the state field', () => {
     const initialValue = {
-      state: ENTITIES_STATES.major,
+      state: ALARM_STATES.major,
       output: Faker.datatype.string(),
     };
     const wrapper = factory({
@@ -40,17 +40,17 @@ describe('c-change-state-field', () => {
       },
     });
 
-    wrapper.find('input.state-criticity-field').setValue(ENTITIES_STATES.critical);
+    wrapper.find('input.state-criticity-field').setValue(ALARM_STATES.critical);
 
     expect(wrapper).toEmitInput({
       ...initialValue,
-      state: ENTITIES_STATES.critical,
+      state: ALARM_STATES.critical,
     });
   });
 
   it('Output changed after trigger the textarea field', () => {
     const initialValue = {
-      state: ENTITIES_STATES.major,
+      state: ALARM_STATES.major,
       output: Faker.datatype.string(),
     };
     const wrapper = factory({
@@ -72,7 +72,7 @@ describe('c-change-state-field', () => {
 
   it('Renders `c-change-state-field` after validate correctly', async () => {
     const value = {
-      state: ENTITIES_STATES.major,
+      state: ALARM_STATES.major,
       output: '',
     };
 
@@ -95,7 +95,7 @@ describe('c-change-state-field', () => {
       store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
-          state: ENTITIES_STATES.ok,
+          state: ALARM_STATES.ok,
           output: 'Custom label output',
         },
         name: 'customLabelFieldName',
@@ -110,7 +110,7 @@ describe('c-change-state-field', () => {
       store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: false }),
       propsData: {
         value: {
-          state: ENTITIES_STATES.ok,
+          state: ALARM_STATES.ok,
           output: 'Output',
         },
         label: 'Custom label',
@@ -125,7 +125,7 @@ describe('c-change-state-field', () => {
       store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
-          state: ENTITIES_STATES.ok,
+          state: ALARM_STATES.ok,
           output: 'Output',
         },
         label: 'Custom label',
@@ -143,7 +143,7 @@ describe('c-change-state-field', () => {
       store: createMockedStoreGetters({ name: 'info', allowChangeSeverityToInfo: true }),
       propsData: {
         value: {
-          state: ENTITIES_STATES.ok,
+          state: ALARM_STATES.ok,
           output: 'Output',
         },
         name,
