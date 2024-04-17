@@ -1,3 +1,6 @@
+/**
+ * @deprecated Should be used useValidationAttachRequired
+ */
 export const validationAttachRequiredMixin = {
   methods: {
     attachRequiredRule(getter = () => this[this.$options?.model?.prop ?? 'value']) {

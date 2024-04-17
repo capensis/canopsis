@@ -38,24 +38,7 @@ export const payloadFieldMixin = {
   },
   computed: {
     availableVariables() {
-      return this.variables.reduce((acc, variable) => {
-        if (variable.enumerable) {
-          acc.push(...variable.variables.map(({ value, text, variables }) => ({
-            variables,
-            text,
-            value: (this.variableGroup || this.newVariableGroup) && this.operatorGroup
-              ? `{{ ${value} }}`
-              : `{{ range ${variable.value} }}{{ ${value} }}{{ end }}`,
-          })));
-        } else {
-          acc.push({
-            ...variable,
-            value: `{{ ${variable.value} }}`,
-          });
-        }
-
-        return acc;
-      }, []);
+      return this.prepareVariables(this.variables);
     },
 
     variablesMenuValue() {
@@ -80,6 +63,39 @@ export const payloadFieldMixin = {
     document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
   methods: {
+    prepareVariable(variable, prefix) {
+      const value = `${prefix ?? ''}${variable.value}`;
+
+      return {
+        ...variable,
+        value: `{{ ${value} }}`,
+        variables: variable.variables
+          ? this.prepareVariables(variable.variables, value)
+          : variable.variables,
+      };
+    },
+
+    prepareVariableWithEnumerable(variable) {
+      return variable.variables.map(subVariable => ({
+        ...this.prepareVariable(subVariable, variable),
+        value: (this.variableGroup || this.newVariableGroup) && this.operatorGroup
+          ? `{{ ${subVariable.value} }}`
+          : `{{ range ${variable.value} }}{{ ${subVariable.value} }}{{ end }}`,
+      }));
+    },
+
+    prepareVariables(variables, prefix) {
+      return variables.reduce((acc, variable) => {
+        if (variable.enumerable) {
+          acc.push(...this.prepareVariableWithEnumerable(variable));
+        } else {
+          acc.push(this.prepareVariable(variable, prefix));
+        }
+
+        return acc;
+      }, []);
+    },
+
     setVariableSelection(start, end) {
       this.selectionVariableStart = start;
       this.selectionVariableEnd = end;

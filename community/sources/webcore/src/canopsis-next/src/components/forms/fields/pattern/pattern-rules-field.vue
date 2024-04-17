@@ -22,27 +22,16 @@
         @click="removeItemFromArray(index)"
       />
     </v-layout>
-    <v-layout
+
+    <c-btn-with-error
       v-if="!readonly"
-      class="mt-2"
-      align-center
+      :error="hasRulesErrors ? $t('pattern.errors.existExcluded') : ''"
+      :disabled="disabled"
+      outlined
+      @click="addFilterRule"
     >
-      <v-btn
-        :disabled="disabled"
-        :color="hasRulesErrors ? 'error' : 'primary'"
-        class="mr-2"
-        outlined
-        @click="addFilterRule"
-      >
-        {{ $t('pattern.addRule') }}
-      </v-btn>
-      <span
-        v-show="hasRulesErrors"
-        class="error--text"
-      >
-        {{ $t('pattern.errors.existExcluded') }}
-      </span>
-    </v-layout>
+      {{ $t('pattern.addRule') }}
+    </c-btn-with-error>
   </v-layout>
 </template>
 

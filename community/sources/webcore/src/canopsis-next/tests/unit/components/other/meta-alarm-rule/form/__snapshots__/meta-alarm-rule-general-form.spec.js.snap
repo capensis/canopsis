@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-id-field-stub
+    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+    value=""
+  />
+  <c-name-field-stub
+    required=""
+    value=""
+  />
+  <c-description-field-stub
+    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
+    label="Output template"
+    value="{{ .Children.Alarm.Value.State.Message }}"
+  />
+  <c-enabled-field-stub
+    label="Auto resolve"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <c-id-field-stub
+    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+  />
+  <c-name-field-stub
+    required=""
+  />
+  <c-description-field-stub
+    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
+    label="Output template"
+  />
+  <c-enabled-field-stub
+    label="Auto resolve"
+  />
+</div>
+`;

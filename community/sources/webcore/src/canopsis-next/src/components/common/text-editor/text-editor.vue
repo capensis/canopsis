@@ -10,12 +10,13 @@
     >
       <div ref="textEditor" />
       <variables-menu
-        v-if="variables"
-        :variables="variables"
+        v-if="preparedVariables"
+        :variables="preparedVariables"
         :visible="variablesShown"
         :value="variablesMenuValue"
         :position-x="variablesMenuPosition.x"
         :position-y="variablesMenuPosition.y"
+        dense
         @input="pasteVariable"
         @close="closeVariablesMenu"
       />
@@ -145,6 +146,10 @@ export default {
       return this.errorMessages.length;
     },
 
+    preparedVariables() {
+      return this.variables && this.prepareVariables(this.variables);
+    },
+
     variablesButton() {
       return {
         name: 'variables',
@@ -255,6 +260,18 @@ export default {
     this.destroyJodit();
   },
   methods: {
+    prepareVariable(variable, parentVariable) {
+      return {
+        ...variable,
+        value: parentVariable ? `${parentVariable.value}.${variable.value}` : variable.value,
+        variables: variable.variables ? this.prepareVariables(variable.variables, variable) : variable.variables,
+      };
+    },
+
+    prepareVariables(variables, parentVariable) {
+      return variables.map(variable => this.prepareVariable(variable, parentVariable));
+    },
+
     createJodit() {
       this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
       this.$editor.setEditorValue(this.sanitizedValue);

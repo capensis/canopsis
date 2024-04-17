@@ -1,5 +1,8 @@
 import { isParent } from '@/helpers/vue-base';
 
+/**
+ * @deprecated Should be used useValidationChildren
+ */
 export const validationChildrenMixin = {
   computed: {
     childrenFields() {
