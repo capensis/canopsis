@@ -74,6 +74,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       disabled="true"
       name="name.weather_service_pattern"
       required="true"
+      with-type=""
     />
   </c-collapse-panel-stub>
   <c-alert-stub
