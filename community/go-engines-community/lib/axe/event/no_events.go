@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -35,6 +36,7 @@ func NewNoEventsProcessor(
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -51,6 +53,7 @@ func NewNoEventsProcessor(
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
 		metricsSender:           metricsSender,
 		remediationRpcClient:    remediationRpcClient,
+		internalTagAlarmMatcher: internalTagAlarmMatcher,
 		encoder:                 encoder,
 		logger:                  logger,
 	}
@@ -69,6 +72,7 @@ type noEventsProcessor struct {
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	remediationRpcClient    engine.RPCClient
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
 	encoder                 encoding.Encoder
 	logger                  zerolog.Logger
 }
@@ -210,6 +214,11 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 
 		alarm.InactiveAutoInstructionInProgress = matched
 	}
+
+	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
+	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.Tags = make([]string, len(alarm.InternalTags))
+	copy(alarm.Tags, alarm.InternalTags)
 
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
 	if err != nil {
