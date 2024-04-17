@@ -43,14 +43,15 @@ func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
 	return nil
 }
 
-func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (bool, error) {
+func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (bool, int64, map[string]int64, error) {
 	s.rulesMutex.RLock()
 	defer s.rulesMutex.RUnlock()
 
 	outcome := OutcomePass
 	now := datetime.NewCpsTime()
 	entityUpdated := false
-
+	var executedEnrichRuleCount int64
+	externalRequestCount := make(map[string]int64)
 	for _, rule := range s.rules {
 		if outcome != OutcomePass {
 			break
@@ -142,28 +143,35 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 		}
 
 		var isUpdated bool
-		outcome, isUpdated, err = applicator.Apply(ctx, rule, event, RegexMatch{
+		var ruleExternalRequestCount map[string]int64
+		outcome, isUpdated, ruleExternalRequestCount, err = applicator.Apply(ctx, rule, event, RegexMatch{
 			EventRegexMatches: eventRegexMatches,
 			Entity:            entityRegexMatches,
 		})
-
-		entityUpdated = entityUpdated || isUpdated
-
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to apply")
 			continue
 		}
 
+		entityUpdated = entityUpdated || isUpdated
 		if rule.Updated != nil {
 			s.eventCounter.Add(rule.ID, *rule.Updated)
+		}
+
+		if rule.Type == RuleTypeEnrichment {
+			executedEnrichRuleCount++
+		}
+
+		for k, v := range ruleExternalRequestCount {
+			externalRequestCount[k] += v
 		}
 	}
 
 	if outcome == OutcomeDrop {
-		return false, ErrDropOutcome
+		return false, executedEnrichRuleCount, externalRequestCount, ErrDropOutcome
 	}
 
-	return entityUpdated, nil
+	return entityUpdated, executedEnrichRuleCount, externalRequestCount, nil
 }
 
 func NewRuleService(

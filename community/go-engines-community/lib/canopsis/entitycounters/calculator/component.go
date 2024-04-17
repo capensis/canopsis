@@ -173,9 +173,14 @@ func (s *componentCountersCalculator) RecomputeAll(ctx context.Context) error {
 	return nil
 }
 
-func (s *componentCountersCalculator) CalculateCounters(ctx context.Context, entity *types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (bool, int, error) {
+func (s *componentCountersCalculator) CalculateCounters(
+	ctx context.Context,
+	entity *types.Entity,
+	alarm *types.Alarm,
+	alarmChange types.AlarmChange,
+) (bool, bool, int, error) {
 	if entity == nil || entity.Type != types.EntityTypeResource {
-		return false, 0, nil
+		return false, false, 0, nil
 	}
 
 	var strategy ComponentCountersStrategy
@@ -185,13 +190,13 @@ func (s *componentCountersCalculator) CalculateCounters(ctx context.Context, ent
 		strategy = component.NoChangeStrategy{}
 	case types.AlarmChangeTypeCreate:
 		if alarm == nil || alarm.ID == "" {
-			return false, 0, nil
+			return false, false, 0, nil
 		}
 
 		strategy = component.CreateStrategy{}
 	case types.AlarmChangeTypeCreateAndPbhEnter:
 		if alarm == nil || alarm.ID == "" {
-			return false, 0, nil
+			return false, false, 0, nil
 		}
 
 		strategy = component.CreateAndPbhEnterStrategy{}
@@ -205,18 +210,24 @@ func (s *componentCountersCalculator) CalculateCounters(ctx context.Context, ent
 		strategy = component.PbhLeaveAndEnterStrategy{}
 	case types.AlarmChangeTypeResolve:
 		if alarm == nil || alarm.ID == "" {
-			return false, 0, nil
+			return false, false, 0, nil
 		}
 
 		strategy = component.ResolveStrategy{}
 	default:
-		return false, 0, nil
+		return false, false, 0, nil
 	}
 
 	return s.calculateCounters(ctx, entity, alarm, alarmChange, strategy)
 }
 
-func (s *componentCountersCalculator) calculateCounters(ctx context.Context, entity *types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange, strategy ComponentCountersStrategy) (bool, int, error) {
+func (s *componentCountersCalculator) calculateCounters(
+	ctx context.Context,
+	entity *types.Entity,
+	alarm *types.Alarm,
+	alarmChange types.AlarmChange,
+	strategy ComponentCountersStrategy,
+) (bool, bool, int, error) {
 	var calcData entitycounters.ComponentCountersCalcData
 	var err error
 
@@ -224,11 +235,11 @@ func (s *componentCountersCalculator) calculateCounters(ctx context.Context, ent
 	// Always get the fresh data.
 	calcData.Info, err = s.getStateSettingsInfo(ctx, entity.ID)
 	if err != nil {
-		return false, 0, nil
+		return false, false, 0, err
 	}
 
 	if !calcData.Info.ComponentStateSettings && !calcData.Info.ComponentStateSettingsToRemove {
-		return false, 0, nil
+		return false, false, 0, nil
 	}
 
 	calcData.PrevActive = alarmChange.PreviousPbehaviorCannonicalType == types.PbhCanonicalTypeActive || alarmChange.PreviousPbehaviorCannonicalType == ""
@@ -259,27 +270,30 @@ func (s *componentCountersCalculator) calculateCounters(ctx context.Context, ent
 	// each alarm change have some conditions where we can be 100% sure that counters won't be changed, so we can
 	// avoid extra calculation and updates and skip
 	if strategy.CanSkip(calcData) {
-		return false, 0, nil
+		return false, false, 0, nil
 	}
 
 	var counters entitycounters.EntityCounters
 	err = s.entityCountersCollection.FindOne(ctx, bson.M{"_id": entity.Component}).Decode(&counters)
 	if err != nil {
-		return false, 0, nil
+		return false, false, 0, err
 	}
 
 	calcData.Counters = counters.Copy()
-
 	newCounters := strategy.Calculate(calcData)
+	diff := newCounters.Sub(counters)
+	if len(diff) == 0 {
+		return false, false, 0, nil
+	}
 
 	_, err = s.entityCountersCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": entity.Component},
-		bson.M{"$inc": newCounters.Sub(counters)},
+		bson.M{"$inc": diff},
 		options.Update().SetUpsert(true),
 	)
 	if err != nil {
-		return false, 0, err
+		return false, false, 0, err
 	}
 
 	if calcData.Info.ComponentStateSettingsToAdd || calcData.Info.ComponentStateSettingsToRemove {
@@ -288,16 +302,16 @@ func (s *componentCountersCalculator) calculateCounters(ctx context.Context, ent
 			bson.M{"_id": entity.ID},
 			bson.M{"$unset": bson.M{"component_state_settings_to_add": 1, "component_state_settings_to_remove": 1}})
 		if err != nil {
-			return false, 0, err
+			return false, false, 0, err
 		}
 	}
 
 	newWorstState := newCounters.GetWorstState()
 	if counters.GetWorstState() != newWorstState {
-		return true, newWorstState, nil
+		return true, true, newWorstState, nil
 	}
 
-	return false, 0, nil
+	return true, false, 0, nil
 }
 
 func (s *componentCountersCalculator) getStateSettingsInfo(ctx context.Context, entityID string) (entitycounters.StateSettingsInfo, error) {
