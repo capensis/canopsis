@@ -35,6 +35,9 @@ export default {
     },
   },
   methods: {
+    genCustomList() {
+      return this.$scopedSlots.list?.(this.listData);
+    },
     genMenu() {
       const props = this.$_menuProps;
       props.activator = this.$refs['input-slot'];
@@ -62,7 +65,11 @@ export default {
           scroll: this.onScroll,
         },
         ref: 'menu',
-      }, [this.genList()]);
+      }, [
+        this.$scopedSlots.list
+          ? this.genCustomList()
+          : this.genList(),
+      ]);
     },
 
     onEnterDown(e) {

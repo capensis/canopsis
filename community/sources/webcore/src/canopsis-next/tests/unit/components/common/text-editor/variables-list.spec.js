@@ -132,7 +132,7 @@ describe('variables-list', () => {
 
     variablesList.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmitInput(`${parentValue}.${value}`);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Renders `variables-list` with default props', () => {

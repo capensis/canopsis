@@ -389,7 +389,17 @@ export const ENTITY_UNSORTABLE_FIELDS = [
 export const ENTITY_PAYLOADS_VARIABLES = {
   entity: '.Entity',
   entities: '.Entities',
+  id: '.ID',
   name: '.Name',
+  type: '.Type',
+  infos: '.Infos',
+  infosName: '.Infos.%name%',
+  connector: '.Connector',
+  component: '.Component',
+  connectorName: '.ConnectorName',
+  resource: '.Resource',
+  impactLevel: '.ImpactLevel',
+  category: '.Category',
   infosValue: '(index .Infos "%infos_name%").Value',
 };
 
