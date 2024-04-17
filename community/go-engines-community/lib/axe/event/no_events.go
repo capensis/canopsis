@@ -121,7 +121,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			entity = result.Entity
 		}
 
-		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
 			p.entityServiceCountersCalculator,
 			p.componentCountersCalculator,

@@ -61,8 +61,14 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		if event.AlarmChange != nil {
 			eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
 		}
+
 		if event.Entity != nil {
 			eventMetric.EntityType = event.Entity.Type
+		}
+
+		if event.EventType == types.EventTypeCheck {
+			isOkState := event.State == types.AlarmStateOK
+			eventMetric.IsOkState = &isOkState
 		}
 
 		eventMetric.Interval = time.Since(eventMetric.Timestamp)
@@ -103,6 +109,7 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	event.IsInstructionMatched = res.IsInstructionMatched
+	eventMetric.IsCountersUpdated = res.IsCountersUpdated
 	// Encode and publish the event to the next engine
 	var bevent []byte
 	trace.WithRegion(ctx, "encode-event", func() {

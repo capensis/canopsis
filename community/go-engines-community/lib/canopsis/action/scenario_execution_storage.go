@@ -13,13 +13,20 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const countExpiration = 24 * time.Hour
+
 type ScenarioExecutionStorage interface {
 	Get(ctx context.Context, key string) (*ScenarioExecution, error)
 	GetAbandoned(ctx context.Context) ([]ScenarioExecution, error)
 	Create(ctx context.Context, execution ScenarioExecution) (bool, error)
 	Update(ctx context.Context, execution ScenarioExecution) error
 	Del(ctx context.Context, key string) error
-	Inc(ctx context.Context, key string, inc int64, drop bool) (int64, error)
+	IncExecutingCount(ctx context.Context, key string, inc int64, drop bool) (int64, error)
+	DelExecutingCount(ctx context.Context, key string) (int64, error)
+	IncExecutedCount(ctx context.Context, key string, inc int64, drop bool) (int64, error)
+	DelExecutedCount(ctx context.Context, key string) (int64, error)
+	IncExecutedWebhookCount(ctx context.Context, key string, inc int64, drop bool) (int64, error)
+	DelExecutedWebhookCount(ctx context.Context, key string) (int64, error)
 }
 
 type redisScenarioExecutionStorage struct {
@@ -106,47 +113,44 @@ func (s *redisScenarioExecutionStorage) Update(ctx context.Context, execution Sc
 	return nil
 }
 
-func (s *redisScenarioExecutionStorage) updateWithoutPrefix(ctx context.Context, redisKey string, execution ScenarioExecution) error {
-	encoded, err := s.encoder.Encode(execution)
-	if err != nil {
-		return err
-	}
-
-	res := s.redisClient.SetXX(ctx, redisKey, encoded, 0)
-	if err := res.Err(); err != nil {
-		return err
-	}
-
-	if !res.Val() {
-		return errors.New("key not found")
-	}
-
-	return nil
-}
-
 func (s *redisScenarioExecutionStorage) Del(ctx context.Context, key string) error {
 	return s.redisClient.Del(ctx, s.getRedisKey(key)).Err()
 }
 
-func (s *redisScenarioExecutionStorage) delWithoutPrefix(ctx context.Context, redisKey string) error {
-	return s.redisClient.Del(ctx, redisKey).Err()
+func (s *redisScenarioExecutionStorage) IncExecutingCount(ctx context.Context, key string, inc int64, drop bool) (int64, error) {
+	redisKey := s.getRedisExecutingCountKey(key)
+
+	return s.incCount(ctx, redisKey, inc, drop)
 }
 
-func (s *redisScenarioExecutionStorage) Inc(ctx context.Context, key string, inc int64, drop bool) (int64, error) {
-	incRedisKey := s.getRedisIncKey(key)
-	if drop {
-		res := s.redisClient.Del(ctx, incRedisKey)
-		if err := res.Err(); err != nil {
-			return 0, err
-		}
-	}
+func (s *redisScenarioExecutionStorage) DelExecutingCount(ctx context.Context, key string) (int64, error) {
+	redisKey := s.getRedisExecutingCountKey(key)
 
-	res := s.redisClient.IncrBy(ctx, incRedisKey, inc)
-	if err := res.Err(); err != nil {
-		return 0, err
-	}
+	return s.delCount(ctx, redisKey)
+}
 
-	return res.Val(), nil
+func (s *redisScenarioExecutionStorage) IncExecutedCount(ctx context.Context, key string, inc int64, drop bool) (int64, error) {
+	redisKey := s.getRedisExecutedCountKey(key)
+
+	return s.incCount(ctx, redisKey, inc, drop)
+}
+
+func (s *redisScenarioExecutionStorage) DelExecutedCount(ctx context.Context, key string) (int64, error) {
+	redisKey := s.getRedisExecutedCountKey(key)
+
+	return s.delCount(ctx, redisKey)
+}
+
+func (s *redisScenarioExecutionStorage) IncExecutedWebhookCount(ctx context.Context, key string, inc int64, drop bool) (int64, error) {
+	redisKey := s.getRedisExecutedWebhookCountKey(key)
+
+	return s.incCount(ctx, redisKey, inc, drop)
+}
+
+func (s *redisScenarioExecutionStorage) DelExecutedWebhookCount(ctx context.Context, key string) (int64, error) {
+	redisKey := s.getRedisExecutedWebhookCountKey(key)
+
+	return s.delCount(ctx, redisKey)
 }
 
 func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]ScenarioExecution, error) {
@@ -225,6 +229,28 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 	return executions, nil
 }
 
+func (s *redisScenarioExecutionStorage) updateWithoutPrefix(ctx context.Context, redisKey string, execution ScenarioExecution) error {
+	encoded, err := s.encoder.Encode(execution)
+	if err != nil {
+		return err
+	}
+
+	res := s.redisClient.SetXX(ctx, redisKey, encoded, 0)
+	if err := res.Err(); err != nil {
+		return err
+	}
+
+	if !res.Val() {
+		return errors.New("key not found")
+	}
+
+	return nil
+}
+
+func (s *redisScenarioExecutionStorage) delWithoutPrefix(ctx context.Context, redisKey string) error {
+	return s.redisClient.Del(ctx, redisKey).Err()
+}
+
 func (s *redisScenarioExecutionStorage) getRedisKey(key string) string {
 	return s.redisKeyPrefix + "-execution-" + key
 }
@@ -233,6 +259,46 @@ func (s *redisScenarioExecutionStorage) parseRedisKey(key string) string {
 	return strings.ReplaceAll(key, s.redisKeyPrefix+"-execution-", "")
 }
 
-func (s *redisScenarioExecutionStorage) getRedisIncKey(key string) string {
-	return s.redisKeyPrefix + "-inc-" + key
+func (s *redisScenarioExecutionStorage) getRedisExecutingCountKey(key string) string {
+	return s.redisKeyPrefix + "-executing-count-" + key
+}
+
+func (s *redisScenarioExecutionStorage) getRedisExecutedCountKey(key string) string {
+	return s.redisKeyPrefix + "-executed-count-" + key
+}
+
+func (s *redisScenarioExecutionStorage) getRedisExecutedWebhookCountKey(key string) string {
+	return s.redisKeyPrefix + "-executed-webhook-count-" + key
+}
+
+func (s *redisScenarioExecutionStorage) incCount(ctx context.Context, redisKey string, inc int64, drop bool) (int64, error) {
+	if drop {
+		err := s.redisClient.Del(ctx, redisKey).Err()
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	res := s.redisClient.IncrBy(ctx, redisKey, inc)
+	if err := res.Err(); err != nil {
+		return 0, err
+	}
+
+	err := s.redisClient.Expire(ctx, redisKey, countExpiration).Err()
+	if err != nil {
+		return 0, err
+	}
+
+	return res.Val(), nil
+}
+
+func (s *redisScenarioExecutionStorage) delCount(ctx context.Context, redisKey string) (int64, error) {
+	res := s.redisClient.IncrBy(ctx, redisKey, 0)
+	if err := res.Err(); err != nil {
+		return 0, err
+	}
+
+	err := s.redisClient.Del(ctx, redisKey).Err()
+
+	return res.Val(), err
 }
