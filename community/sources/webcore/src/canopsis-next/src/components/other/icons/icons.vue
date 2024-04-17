@@ -15,7 +15,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesIconMixin } from '@/mixins/entities/icon';
 import { permissionsTechnicalIconMixin } from '@/mixins/permissions/technical/icon';
 import { vuetifyCustomIconsBaseMixin } from '@/mixins/vuetify/custom-icons/base';

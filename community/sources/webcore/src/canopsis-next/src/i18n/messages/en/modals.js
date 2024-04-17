@@ -274,6 +274,9 @@ export default {
       [WIDGET_TYPES.alarmStatistics]: {
         title: 'Alarm statistics',
       },
+      [WIDGET_TYPES.availability]: {
+        title: 'Availability',
+      },
       chart: {
         title: 'Chart',
       },

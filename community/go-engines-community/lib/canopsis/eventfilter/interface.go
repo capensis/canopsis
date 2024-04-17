@@ -21,7 +21,7 @@ type ActionProcessor interface {
 
 type RuleApplicator interface {
 	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
-	Apply(context.Context, ParsedRule, *types.Event, RegexMatch) (string, bool, error)
+	Apply(context.Context, ParsedRule, *types.Event, RegexMatch) (outcome string, isEntityUpdated bool, externalRequestCount map[string]int64, err error)
 }
 
 type RuleAdapter interface {
@@ -30,7 +30,7 @@ type RuleAdapter interface {
 }
 
 type Service interface {
-	ProcessEvent(context.Context, *types.Event) (bool, error)
+	ProcessEvent(context.Context, *types.Event) (bool, int64, map[string]int64, error)
 	LoadRules(context.Context, []string) error
 }
 

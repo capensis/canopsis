@@ -24,8 +24,8 @@
       @end="endDragging"
     >
       <remediation-instruction-operation-field
-        v-field="operations[index]"
         v-for="(operation, index) in operations"
+        v-field="operations[index]"
         :key="operation.key"
         :index="index"
         :operation-number="getOperationNumber(index)"

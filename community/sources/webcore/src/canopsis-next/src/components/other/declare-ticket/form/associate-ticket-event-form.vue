@@ -10,7 +10,7 @@
         class="mr-3"
         xs6
       >
-        <declare-ticket-rule-ticket-id-field
+        <declare-ticket-rule-ticket-id-text-field
           v-field="form.ticket_id"
           :name="ticketIdFieldName"
           required
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import DeclareTicketRuleTicketIdField from './fields/declare-ticket-rule-ticket-id-field.vue';
+import DeclareTicketRuleTicketIdTextField from './fields/declare-ticket-rule-ticket-id-text-field.vue';
 import DeclareTicketRuleTicketUrlTextField from './fields/declare-ticket-rule-ticket-url-text-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './fields/declare-ticket-rule-ticket-custom-fields-field.vue';
 
@@ -39,7 +39,7 @@ export default {
   components: {
     DeclareTicketRuleTicketCustomFieldsField,
     DeclareTicketRuleTicketUrlTextField,
-    DeclareTicketRuleTicketIdField,
+    DeclareTicketRuleTicketIdTextField,
   },
   model: {
     prop: 'form',

@@ -140,7 +140,7 @@
           "position": "before"
         },
         {
-          "pattern": "@/mixins/**",
+          "pattern": "@/+(mixins|hooks)/**",
           "group": "internal",
           "position": "before"
         },

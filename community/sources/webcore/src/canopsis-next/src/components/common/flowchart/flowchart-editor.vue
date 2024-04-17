@@ -9,8 +9,8 @@
     v-on="svgHandlers"
   >
     <component
-      :is="`${shape.type}-shape`"
       v-for="shape in data"
+      :is="`${shape.type}-shape`"
       :key="`${shape._id}-shape`"
       :shape="shape"
       :readonly="readonly"
@@ -22,8 +22,8 @@
     />
     <template v-if="!readonly">
       <component
-        :is="selection.is"
         v-for="selection in selectionComponents"
+        :is="selection.is"
         :key="selection.key"
         :shape="selection.shape"
         :selected="isSelected(selection.shape._id)"

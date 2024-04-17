@@ -1,0 +1,393 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`ack\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ack by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`ackremove\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Cancel ack by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`activate\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Alarm is active
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`assocticket\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket associated by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`autoinstructioncomplete\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is complete
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`autoinstructionfail\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is failed
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`autoinstructionstart\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is launched by the system
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`changestate\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  State changed by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`comment\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Comment added by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticket\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket is declared
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketfail\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket declaration is failed
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketrulecomplete\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket declaration rule is complete, launched by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketrulefail\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket declaration rule is failed, launched by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`declareticketruleinprogress\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Ticket declaration rule launched by root in progress
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`instructionabort\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is aborted by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`instructioncomplete\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is complete by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`instructionfail\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is failed by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`instructionpause\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction paused by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`instructionresume\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction resumed by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`instructionstart\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Instruction is launched by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`junittestcaseupdate\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Test case is relaunched
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`junittestsuiteupdate\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Test suite is relaunched
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`metaalarmattach\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Alarm linked to meta alarm by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`metaalarmdetach\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Alarm unlinked from meta alarm by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`pbhenter\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Periodical behavior activated by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`pbhleave\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Periodical behavior deactivated by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`resolve\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Alarm resolved by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`snooze\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Alarm snoozed for 0s by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statecounter\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Cropped severity (since the last change of the status)
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statedec\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  State decreased by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`stateinc\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  State increased by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`0\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Closed by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`1\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Ongoing by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`2\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Stealth by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`3\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Flapping by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`4\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Canceled by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusdec\` and status \`5\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to No events by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`0\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Closed by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`1\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Ongoing by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`2\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Stealth by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`3\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Flapping by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`4\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to Canceled by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`statusinc\` and status \`5\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Status changed to No events by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`unsnooze\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Alarm unsnoozed by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookcomplete\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Webhook is executed successfully, launched by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookfail\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Webhook is failed, launched by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookinprogress\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Webhook launched by root in progress...
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookstart\` correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Webhook is launched by root
+</span>
+`;
+
+exports[`alarm-timeline-step-title Renders \`alarm-timeline-step-title\` for step \`webhookstart\` with deep flag correctly 1`] = `
+<span
+  class="text-subtitle-2"
+>
+  Webhook is launched
+</span>
+`;

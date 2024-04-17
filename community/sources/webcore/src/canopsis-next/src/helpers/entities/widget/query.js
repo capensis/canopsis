@@ -24,6 +24,10 @@ import { convertWeatherUserPreferenceToQuery, convertWeatherWidgetToQuery } from
 import { convertMapUserPreferenceToQuery, convertMapWidgetToQuery } from '../map/query';
 import { convertCounterWidgetToQuery } from '../counter/query';
 import { convertStatsCalendarWidgetToQuery } from '../stats/query';
+import {
+  convertAvailabilityUserPreferenceToQuery,
+  convertAvailabilityWidgetParametersToQuery,
+} from '../availability/query';
 
 /**
  * This function converts userPreference to query Object
@@ -44,6 +48,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.userStatistics]: convertStatisticsUserPreferenceToQuery,
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
+    [WIDGET_TYPES.availability]: convertAvailabilityUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -73,6 +78,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
     [WIDGET_TYPES.userStatistics]: convertStatisticsWidgetParametersToQuery,
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
+    [WIDGET_TYPES.availability]: convertAvailabilityWidgetParametersToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

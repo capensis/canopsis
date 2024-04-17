@@ -7,12 +7,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    Fast ack|check|fastAck
+    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-createManualMetaAlarm"
@@ -34,17 +34,17 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    Fast ack|check|fastAck
+    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-ackRemove"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel ack|remove_done|ackRemove
   </button>
   <button
     class="action-cancel"
@@ -64,12 +64,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -96,12 +96,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    Fast ack|check|fastAck
+    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -121,12 +121,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -153,12 +153,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    Fast ack|check|fastAck
+    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -178,12 +178,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"
@@ -210,12 +210,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
   <button
     class="action-ack"
   >
-    Ack|playlist_add_check|ack
+    Ack|check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    Fast ack|check|fastAck
+    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -235,12 +235,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
   <button
     class="action-declareTicket"
   >
-    Declare ticket|report_problem|declareTicket
+    Declare ticket|note_add|declareTicket
   </button>
   <button
     class="action-associateTicket"
   >
-    Associate ticket|local_play|associateTicket
+    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
   </button>
   <button
     class="action-snooze"

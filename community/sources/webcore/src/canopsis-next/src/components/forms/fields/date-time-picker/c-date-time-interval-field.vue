@@ -1,5 +1,5 @@
 <template>
-  <div class="d-inline-flex">
+  <div :class="['c-date-time-interval-field', 'col-gap-3', { 'c-date-time-interval-field--column': column }]">
     <date-time-picker-field
       v-validate="rules"
       v-field="value.from"
@@ -7,6 +7,8 @@
       :disabled="disabled"
       :name="fromFieldName"
       :hide-details="hideDetails"
+      :allowed-dates="isAllowedFromDate"
+      :round-hours="roundHours"
     />
     <date-time-picker-field
       v-validate="rules"
@@ -15,7 +17,8 @@
       :disabled="disabled"
       :name="toFieldName"
       :hide-details="hideDetails"
-      class="pl-3"
+      :allowed-dates="isAllowedToDate"
+      :round-hours="roundHours"
     />
   </div>
 </template>
@@ -53,6 +56,22 @@ export default {
       type: Boolean,
       required: false,
     },
+    isAllowedFromDate: {
+      type: Function,
+      required: false,
+    },
+    isAllowedToDate: {
+      type: Function,
+      required: false,
+    },
+    column: {
+      type: Boolean,
+      default: false,
+    },
+    roundHours: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     rules() {
@@ -71,3 +90,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-date-time-interval-field {
+  display: inline-flex;
+
+  &--column {
+    flex-direction: column;
+  }
+}
+</style>

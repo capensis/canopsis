@@ -6,7 +6,7 @@ import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -49,7 +49,7 @@ describe('create-manual-meta-alarm', () => {
         val: Faker.datatype.number(),
       },
       status: {
-        val: ENTITIES_STATES.ok,
+        val: ALARM_STATES.ok,
       },
     },
     entity: {

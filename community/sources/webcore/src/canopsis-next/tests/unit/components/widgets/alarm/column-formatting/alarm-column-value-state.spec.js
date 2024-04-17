@@ -1,6 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import AlarmColumnValueState from '@/components/widgets/alarm/columns-formatting/alarm-column-value-state.vue';
 
@@ -14,7 +14,7 @@ describe('alarm-column-value-state', () => {
   const snapshotFactory = generateRenderer(AlarmColumnValueState, { stubs });
   const factory = generateShallowRenderer(AlarmColumnValueState, { stubs });
 
-  it('Click emitted after trigger click on chip', () => {
+  test('Click emitted after trigger click on chip', () => {
     const wrapper = factory({
       propsData: {
         alarm: {},
@@ -26,7 +26,7 @@ describe('alarm-column-value-state', () => {
     expect(wrapper).toHaveBeenEmit('click');
   });
 
-  it('Renders `alarm-column-value-state` with default props', () => {
+  test('Renders `alarm-column-value-state` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {},
@@ -36,7 +36,7 @@ describe('alarm-column-value-state', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-state` with alarm state', () => {
+  test('Renders `alarm-column-value-state` with alarm state', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -44,7 +44,7 @@ describe('alarm-column-value-state', () => {
             events_count: 'Events count',
             state: {
               val: 'custom-state-val',
-              _t: EVENT_ENTITY_TYPES.changeState,
+              _t: ALARM_LIST_ACTIONS_TYPES.changeState,
             },
           },
         },
@@ -54,7 +54,7 @@ describe('alarm-column-value-state', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-state` with custom propertyKey', () => {
+  test('Renders `alarm-column-value-state` with custom propertyKey', () => {
     const wrapper = snapshotFactory({
       propsData: {
         propertyKey: 'customPropertyKey',

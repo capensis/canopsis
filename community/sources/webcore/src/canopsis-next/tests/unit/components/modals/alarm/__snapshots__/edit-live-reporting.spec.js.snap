@@ -23,7 +23,7 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with empty modal 1`
         Date interval
       </h3>
       <date-interval-selector-stub
-        quickranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        quickranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         value="[object Object]"
       />
     </div>
@@ -78,7 +78,7 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with interval 1`] =
         Date interval
       </h3>
       <date-interval-selector-stub
-        quickranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        quickranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         value="[object Object]"
       />
     </div>

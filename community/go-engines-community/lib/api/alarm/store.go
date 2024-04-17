@@ -4,6 +4,7 @@ package alarm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
@@ -164,6 +165,11 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userId)
 	if err != nil {
 		return nil, err
+	}
+	if r.QueryLog {
+		if b, err := json.Marshal(pipeline); err == nil {
+			s.logger.Info().RawJSON("pipeline", b).Send()
+		}
 	}
 
 	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))

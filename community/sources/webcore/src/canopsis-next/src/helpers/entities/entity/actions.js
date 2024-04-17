@@ -1,6 +1,6 @@
 import { isNull, uniq } from 'lodash';
 
-import { ENTITIES_STATES, ENTITIES_STATUSES, ENTITY_EVENT_BY_ACTION_TYPE, WEATHER_ACTIONS_TYPES } from '@/constants';
+import { ALARM_STATES, ALARM_STATUSES, ENTITY_EVENT_BY_ACTION_TYPE, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import { getEntityEventIcon } from './icons';
 import { getEntityEventColor } from './color';
@@ -31,8 +31,8 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
   } = entity;
 
   const paused = pbhOriginIcon !== '';
-  const stateIsOk = state?.val === ENTITIES_STATES.ok;
-  const statusIsCancelled = status?.val === ENTITIES_STATUSES.cancelled;
+  const stateIsOk = state?.val === ALARM_STATES.ok;
+  const statusIsCancelled = status?.val === ALARM_STATUSES.cancelled;
   const hasAlarm = !!alarmId;
 
   if (statusIsCancelled) {
@@ -47,7 +47,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
 
     case WEATHER_ACTIONS_TYPES.entityValidate:
     case WEATHER_ACTIONS_TYPES.entityInvalidate:
-      return state?.val === ENTITIES_STATES.major && hasAlarm;
+      return state?.val === ALARM_STATES.major && hasAlarm;
 
     case WEATHER_ACTIONS_TYPES.entityCancel:
       return !stateIsOk && alarmDisplayName && (!status || !statusIsCancelled) && hasAlarm;

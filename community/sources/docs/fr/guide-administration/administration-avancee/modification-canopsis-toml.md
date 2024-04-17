@@ -107,6 +107,9 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | UploadMaxSize  | 314572800 # 300Mb                        | Taille maximale d'un fichier à uploader (en octet) |
 | Junit          | "/opt/canopsis/var/lib/junit-files"      | Emplacement des fichiers traités par le module Junit |
 | JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
+| SnmpMib        | ["/usr/share/snmp/mibs"]                 | Emplacement des fichiers MIB qui seront utilisés par le module SNMP |
+| Icon           | "/opt/canopsis/var/lib/icons"            | Emplacement des fichiers d'icônes |
+| IconMaxSize    | 10240 # 10Kb                             | Taille max des fichiers d'icônes |
 
 
 ### Section [Canopsis.alarm]
@@ -174,9 +177,12 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ### Section [Canopsis.metrics]
 
-| Attribut            | Exemple de valeur  | Description                           |
-| :------------------ | :------------------| :------------------------------------ |
-| SliInterval         | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+| Attribut               | Exemple de valeur  | Description                           |
+| :--------------------- | :------------------| :------------------------------------ |
+| Enabled                | false|true         | Activation / Désactivation des métriques |
+| FlushInterval          | "10s"              | Délai d'écriture des métriques dans la base de données |
+| SliInterval            | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+| UserSessionGapInterval | "1h"               | Intervalle minimum d'un session utilisateur |
 
 
 ### Section [Canopsis.tech_metrics]

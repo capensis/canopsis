@@ -24,3 +24,11 @@ export const reloadPageWithTrailingSlashes = () => {
     window.location = preparedHref;
   }
 };
+
+/**
+ * Open url in new tab
+ *
+ * @param url
+ * @return {WindowProxy}
+ */
+export const openUrlInNewTab = url => window.open(removeTrailingSlashes(url), '_blank');

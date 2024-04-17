@@ -35,7 +35,7 @@
       <field-text-editor
         v-model="form.parameters.entity_info_template"
         :title="$t('settings.entityInfoPopup')"
-        :variables="entityVariables"
+        :variables="entityInfoTemplateVariables"
       />
       <v-divider />
       <field-columns
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
@@ -110,6 +110,15 @@ export default {
     widgetTemplatesMixin,
     permissionsWidgetsMapFilters,
   ],
+  computed: {
+    entityInfoTemplateVariables() {
+      const excludeFields = [
+        ENTITY_TEMPLATE_FIELDS.alarmLastComment,
+      ];
+
+      return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
+    },
+  },
   mounted() {
     this.fetchInfos();
   },

@@ -162,6 +162,59 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
 </aside>
 `;
 
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-settings 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
+>
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
+      <div
+        class="v-list v-sheet theme--light secondary"
+        role="list"
+      >
+        <div
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
+        >
+          <div
+            class="v-list-item__title white--text text-subtitle-1"
+          >
+          Availability settings
+          </div>
+          <button
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+            type="button"
+          >
+            <span
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light white--text"
+              >
+                close
+              </i>
+            </span>
+          </button>
+        </div>
+      </div>
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"

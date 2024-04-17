@@ -22,7 +22,7 @@
           {{ item.ruleName }}
         </td>
         <td class="text-left">
-          <declare-ticket-rule-execution-status
+          <alarm-webhook-execution-status
             :running="isExecutionRunning(item)"
             :success="isExecutionSucceeded(item)"
             :fail-reason="item.fail_reason"
@@ -34,15 +34,12 @@
 </template>
 
 <script>
-import {
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
-import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
 export default {
-  components: { DeclareTicketRuleExecutionStatus },
+  components: { AlarmWebhookExecutionStatus },
   props: {
     alarmExecutions: {
       type: Array,
@@ -89,11 +86,11 @@ export default {
   },
   methods: {
     isExecutionRunning(execution) {
-      return isDeclareTicketExecutionRunning(execution);
+      return isWebhookExecutionRunning(execution);
     },
 
     isExecutionSucceeded(execution) {
-      return isDeclareTicketExecutionSucceeded(execution);
+      return isWebhookExecutionSucceeded(execution);
     },
   },
 };
