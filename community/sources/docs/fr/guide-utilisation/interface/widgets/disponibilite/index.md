@@ -10,7 +10,8 @@ Ce widget permet de les retranscrire avec des fonctions de recherche et de filtr
 
 ### Guide utilisateur
 
-1. [La disponibilité](#la-disponibilité)
+1. [La disponibilité](#la-disponibilite)
+2. [Les paramètres du widget](#les-parametres-du-widget)
 
 ## La disponibilité
 
@@ -39,3 +40,15 @@ Les tendances pour les périodes "Dernière heure", "Dernier jour", "Dernière s
 Les tendances pour "Aujourd'hui", "Semaine en cours", "Mois en cours" sont le résultat de la comparaison de la période courante incomplète avec la période précédente. 
 Par exemple, le temps de disponibilité pour aujourd'hui (qui n'est pas encore fini) est comparé à hier (24h).
 
+## Les paramètres du widget
+
+| Paramètre          | Description                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Recherche          | Permet de retourner des entités en fonction d'un motif de recherche                                                      |
+| Période            | Sélecteur de la période à considérer pour les temps de disponibilité/indisponibilité                                     |
+| Filtre             | Application d'un filtre basé sur un modèle d'entité                                                                      |
+| Valeur             | Sélection du mode Uptime ou Donwtime                                                                                     |
+| Afficher           | Sélection d'un affichage en pourcentage ou en durée                                                                      |
+| Tendance           | Permet d'afficher une flèche représentant les tendances lorsque le paramètre "Afficher" est positionné sur "Pourcentage" |
+| Filtrer par valeur | Permet d'appliquer un filtre "Plus grand que" ou "Plus petit que" sur les valeurs de disponibilité                       |
+| :octicons-chevron-down-16: | Présente le diagramme de disponibilité ainsi qu'un onglet contenant les éventuelles alarmes active et résolues  |
