@@ -1,960 +1,292 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`attribute\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              attribute
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="attribute"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-    somerequired="true"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              complex
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="complex"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <meta-alarm-rule-threshold-form-stub
-    threshold="[object Object]"
-  />
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-    withtotalentity="true"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              corel
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="corel"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <meta-alarm-rule-corel-form-stub
-    config="[object Object]"
-  />
-  <!---->
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`manualgroup\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="manualgroup"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`relation\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              relation
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="relation"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`timebased\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              timebased
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="timebased"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <!---->
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-  />
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`valuegroup\` type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
-  <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
-      >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              valuegroup
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="valuegroup"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <meta-alarm-rule-threshold-form-stub
-    threshold="[object Object]"
-  />
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <meta-alarm-rule-value-paths-form-stub
-    class="mb-2"
-    form="[object Object]"
-  />
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-    withtotalentity="true"
-  />
-</div>
-`;
-
 exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="meta-alarm-rule-id"
-  />
-  <c-name-field-stub
-    required=""
-    value="event-filter-name"
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    value="event-filter-output-template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-    value="true"
-  />
+<div
+  class="v-stepper v-sheet theme--light"
+>
   <div
-    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
+    class="v-stepper__header"
   >
     <div
-      class="v-input__control"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--complete"
+      tabindex="0"
     >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
+      <span
+        class="v-stepper__step__step primary"
       >
-        <div
-          class="v-select__slot"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <label
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <div
-              class="v-select__selection v-select__selection--comma"
-            >
-              complex
-            </div>
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-            value="complex"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
+          edit
+        </i>
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+      Basics
+        <!---->
       </div>
-      <div
-        class="v-text-field__details"
+    </div>
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <div
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--complete"
+      tabindex="0"
+    >
+      <span
+        class="v-stepper__step__step primary"
       >
-        <div
-          class="v-messages theme--light"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
+          edit
+        </i>
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+      Define type
+        <!---->
+      </div>
+    </div>
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <div
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        3
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+      Add parameters
+        <!---->
       </div>
     </div>
   </div>
-  <!---->
-  <meta-alarm-rule-threshold-form-stub
-    threshold="[object Object]"
-  />
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-    withtotalentity="true"
-  />
+  <div
+    class="v-stepper__items"
+  >
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <meta-alarm-rule-general-form-stub
+            class="pa-4"
+            disabledidfield="true"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <div
+            class="pa-4"
+          >
+            <meta-alarm-rule-type-field-stub
+              value="attribute"
+            />
+          </div>
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <c-information-block-stub
+            class="pa-4"
+            title="Attribute based relationship"
+          >
+            <span
+              class="text--secondary mb-2"
+            >
+              All alarms that have the attribute(s) defined by filter patterns are grouped
+            </span>
+            <meta-alarm-rule-parameters-form-stub
+              form="[object Object]"
+              variables="[object Object],[object Object]"
+            />
+          </c-information-block-stub>
+        </div>
+      </div>
+    </transition-stub>
+  </div>
 </div>
 `;
 
 exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default props 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-  />
-  <c-name-field-stub
-    required=""
-  />
-  <c-description-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-  />
-  <c-enabled-field-stub
-    label="Auto resolve"
-  />
+<div
+  class="v-stepper v-sheet theme--light"
+>
   <div
-    class="v-input theme--light v-text-field v-select"
+    class="v-stepper__header"
   >
     <div
-      class="v-input__control"
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
     >
-      <div
-        aria-expanded="false"
-        aria-haspopup="listbox"
-        class="v-input__slot"
-        role="button"
+      <span
+        class="v-stepper__step__step"
       >
-        <div
-          class="v-select__slot"
-        >
-          <label
-            class="v-label theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Type
-          </label>
-          <div
-            class="v-select__selections"
-          >
-            <input
-              aria-readonly="false"
-              autocomplete="off"
-              readonly="readonly"
-              type="text"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <div
-              class="v-input__icon v-input__icon--append"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon notranslate material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </div>
-          <input
-            type="hidden"
-          />
-        </div>
-        <div
-          class="v-menu"
-        >
-          <!---->
-        </div>
+        1
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+      Basics
+        <!---->
       </div>
-      <div
-        class="v-text-field__details"
+    </div>
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <div
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
+    >
+      <span
+        class="v-stepper__step__step"
       >
-        <div
-          class="v-messages theme--light"
-        >
-          <transition-group-stub
-            class="v-messages__wrapper"
-            name="message-transition"
-            tag="div"
-          />
-        </div>
+        2
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+      Define type
+        <!---->
+      </div>
+    </div>
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <div
+      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
+      tabindex="0"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        3
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+      Add parameters
+        <!---->
       </div>
     </div>
   </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-  />
+  <div
+    class="v-stepper__items"
+  >
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <meta-alarm-rule-general-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <div
+            class="pa-4"
+          >
+            <meta-alarm-rule-type-field-stub
+              value="attribute"
+            />
+          </div>
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <c-information-block-stub
+            class="pa-4"
+            title="Attribute based relationship"
+          >
+            <span
+              class="text--secondary mb-2"
+            >
+              All alarms that have the attribute(s) defined by filter patterns are grouped
+            </span>
+            <meta-alarm-rule-parameters-form-stub
+              form="[object Object]"
+              variables="[object Object],[object Object]"
+            />
+          </c-information-block-stub>
+        </div>
+      </div>
+    </transition-stub>
+  </div>
 </div>
 `;

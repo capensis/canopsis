@@ -229,7 +229,7 @@ export const metaAlarmRuleToForm = (rule = {}) => {
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
       time_interval: durationToForm(config.time_interval ?? DEFAULT_TIME_INTERVAL),
-      child_inactive_delay: config.child_inactive_delay ? durationToForm(config.child_inactive_delay) : {},
+      child_inactive_delay: config.child_inactive_delay ? durationToForm(config.child_inactive_delay) : undefined,
     },
   };
 };
