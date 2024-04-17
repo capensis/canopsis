@@ -20,6 +20,7 @@ export default {
     [PATTERN_TYPES.alarm]: 'Alarm pattern',
     [PATTERN_TYPES.entity]: 'Entity pattern',
     [PATTERN_TYPES.pbehavior]: 'Pbehavior pattern',
+    [PATTERN_TYPES.serviceWeather]: 'Service weather pattern',
   },
   errors: {
     ruleRequired: 'Please add at least one rule',

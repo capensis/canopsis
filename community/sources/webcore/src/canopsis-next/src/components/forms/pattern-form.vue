@@ -1,11 +1,10 @@
 <template>
   <v-layout column>
-    <v-text-field
+    <v-name-field
       v-field="form.title"
-      v-validate="titleRules"
       :label="$t('common.title')"
-      :error-messages="errors.collect('title')"
       name="title"
+      required
     />
     <c-alarm-patterns-field
       v-if="isAlarmPattern"
@@ -25,14 +24,21 @@
       :name="$constants.PATTERNS_FIELDS.pbehavior"
       :check-count-name="$constants.PATTERNS_FIELDS.pbehavior"
     />
+    <c-service-weather-patterns-field
+      v-else-if="isServiceWeatherPattern"
+      v-field="form"
+      :name="$constants.PATTERNS_FIELDS.serviceWeather"
+      :check-count-name="$constants.PATTERNS_FIELDS.serviceWeather"
+    />
   </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { PATTERN_TYPES } from '@/constants';
 
 export default {
-  inject: ['$validator'],
   model: {
     prop: 'form',
     event: 'input',
@@ -43,24 +49,18 @@ export default {
       required: true,
     },
   },
-  computed: {
-    isAlarmPattern() {
-      return this.form.type === PATTERN_TYPES.alarm;
-    },
+  setup(props) {
+    const isAlarmPattern = computed(() => props.form.type === PATTERN_TYPES.alarm);
+    const isEntityPattern = computed(() => props.form.type === PATTERN_TYPES.entity);
+    const isPbehaviorPattern = computed(() => props.form.type === PATTERN_TYPES.pbehavior);
+    const isServiceWeatherPattern = computed(() => props.form.type === PATTERN_TYPES.serviceWeather);
 
-    isEntityPattern() {
-      return this.form.type === PATTERN_TYPES.entity;
-    },
-
-    isPbehaviorPattern() {
-      return this.form.type === PATTERN_TYPES.pbehavior;
-    },
-
-    titleRules() {
-      return {
-        required: true,
-      };
-    },
+    return {
+      isAlarmPattern,
+      isEntityPattern,
+      isPbehaviorPattern,
+      isServiceWeatherPattern,
+    };
   },
 };
 </script>
