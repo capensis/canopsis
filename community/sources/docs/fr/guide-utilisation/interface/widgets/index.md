@@ -8,6 +8,7 @@ Plusieurs types de widgets sont disponibles dans Canopsis :
 * [Explorateur de contexte](contexte/index.md)
 * [Météo de services](meteo-des-services/index.md)
 * [Compteur](compteur/index.md)
+* [Disponibilité](disponibilite/index.md)
 * Statistiques :
     - Tableau
     - Compteur
@@ -53,6 +54,16 @@ Le widget **Compteur** permet de présenter des compteurs d'alarmes.
 Il se présente sous la forme d'une grille de tuiles, avec un un jeu de couleurs et d'icônes permettant de constater un dépassement de seuil. 
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur](./compteur/index.md)
+
+### [Disponibilité](disponibilite/index.md)
+
+Le widget **Disponibilité** permet de présenter les temps de disponibilité et d'indisponibilité des entités dans Canopsis.
+Ces temps sont présentés sous forme de tableau prenant en paramètres les éléments suivants :
+
+* Période à considérer
+* Filtres sur les entités
+* Sélection du temps de disponibilité ou d'indisponibilité
+* Temps minimum et maximum à considérer
 
 ### Tableau de statistiques
 
