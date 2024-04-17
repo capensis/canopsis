@@ -2,6 +2,7 @@
  * Mock for date now. Clear yourself after all tests.
  *
  * @param {number} nowTimestamp
+ * @deprecated Should be used jest.useFakeTimers({ now: nowTimestamp })
  */
 export const mockDateNow = (nowTimestamp) => {
   let dateNowSpy;
@@ -170,4 +171,21 @@ export const mockXMLHttpRequest = () => {
   });
 
   return request;
+};
+
+/**
+ * Mock console methods
+ *
+ * @return {Object}
+ */
+export const mockConsole = () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+  afterEach(() => {
+    consoleErrorSpy.mockReset();
+  });
+
+  return {
+    error: consoleErrorSpy,
+  };
 };

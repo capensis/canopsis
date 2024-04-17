@@ -32,9 +32,9 @@ func GetSearchQuery(search string, searchBy []string) bson.M {
 	}
 
 	p := parser.NewParser()
-	expr, err := p.Parse(search)
+	expr, err := p.Parse(search, nil)
 	if err == nil {
-		return expr.Query()
+		return expr.MongoQuery()
 	}
 
 	searchRegexp := primitive.Regex{

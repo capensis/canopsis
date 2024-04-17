@@ -4319,6 +4319,8 @@ definitions:
         type: boolean
       ticket_id:
         type: string
+      ticket_id_tpl:
+        type: string
       ticket_url:
         type: string
       ticket_url_tpl:
@@ -4623,9 +4625,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4647,7 +4646,6 @@ definitions:
     required:
     - _id
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4660,9 +4658,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4683,7 +4678,6 @@ definitions:
         type: array
     required:
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4694,9 +4688,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4717,7 +4708,6 @@ definitions:
         type: array
     required:
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4921,6 +4911,8 @@ definitions:
         type: string
       alarm_id:
         type: string
+      alarm_last_comment:
+        $ref: '#/definitions/common.AlarmStep'
       assigned_declare_ticket_rules:
         items:
           $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
@@ -5034,6 +5026,8 @@ definitions:
       _id:
         type: string
       ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_comment:
         $ref: '#/definitions/common.AlarmStep'
       category:
         $ref: '#/definitions/entity.Category'

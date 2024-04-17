@@ -39,7 +39,7 @@ import { canvasToBlob } from '@/helpers/charts/canvas';
 import { saveFile } from '@/helpers/file/files';
 
 import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 const LimitedTimeLineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/limited-time-line-chart.vue');
 

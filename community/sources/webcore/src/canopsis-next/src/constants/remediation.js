@@ -1,3 +1,5 @@
+import { COLORS } from '@/config';
+
 import { TRIGGERS_TYPES } from './common';
 
 export const REMEDIATION_TABS = {
@@ -32,6 +34,25 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   completed: 2,
   aborted: 3,
   failed: 4,
+  waitingResult: 5,
+};
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES_ICONS = {
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running]: 'play_circle_filled',
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused]: 'pause',
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]: 'check_circle',
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted]: 'not_interested',
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed]: 'cancel',
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]: 'play_circle_filled',
+};
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES_COLORS = {
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running]: COLORS.remediation.executionStatus.running,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused]: COLORS.remediation.executionStatus.paused,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]: COLORS.remediation.executionStatus.completed,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted]: COLORS.remediation.executionStatus.aborted,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed]: COLORS.remediation.executionStatus.failed,
+  [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.waitingResult]: COLORS.remediation.executionStatus.running,
 };
 
 export const REMEDIATION_JOB_EXECUTION_STATUSES = {
@@ -79,3 +100,15 @@ export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES = [
   TRIGGERS_TYPES.pbhleave,
   TRIGGERS_TYPES.eventscount,
 ];
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES = {
+  job: 0,
+  manual: 1,
+};
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES = {
+  completed: 1,
+  failed: 2,
+  aborted: 3,
+  skipped: 5,
+};

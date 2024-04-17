@@ -5,7 +5,7 @@
     :dark="$system.dark"
   >
     <template #actions="{ chart }">
-      <kpi-chart-export-actions
+      <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
@@ -21,8 +21,9 @@ import {
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,
-  TIME_UNITS,
   KPI_SLI_GRAPH_DATA_TYPE,
+  MAX_TIME_VALUE_BY_SAMPLING,
+  TIME_UNITS_BY_SAMPLING,
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
@@ -30,12 +31,11 @@ import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
 import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
-
-import KpiChartExportActions from './kpi-chart-export-actions.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],
-  components: { KpiChartExportActions, BarChart },
+  components: { ChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -64,12 +64,7 @@ export default {
   },
   computed: {
     maxValueBySampling() {
-      return {
-        [SAMPLINGS.hour]: 60,
-        [SAMPLINGS.day]: 24,
-        [SAMPLINGS.week]: 7,
-        [SAMPLINGS.month]: 31,
-      }[this.sampling];
+      return MAX_TIME_VALUE_BY_SAMPLING[this.sampling];
     },
 
     maxValueByType() {
@@ -81,12 +76,7 @@ export default {
     },
 
     samplingUnit() {
-      return {
-        [SAMPLINGS.hour]: TIME_UNITS.minute,
-        [SAMPLINGS.day]: TIME_UNITS.hour,
-        [SAMPLINGS.week]: TIME_UNITS.day,
-        [SAMPLINGS.month]: TIME_UNITS.day,
-      }[this.sampling];
+      return TIME_UNITS_BY_SAMPLING[this.sampling];
     },
 
     unit() {

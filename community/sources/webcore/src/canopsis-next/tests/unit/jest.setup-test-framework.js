@@ -22,7 +22,11 @@ Object.defineProperty(HTMLElement.prototype, 'innerText', {
   },
 });
 
-function toMatchCanvasSnapshot(canvas, options, ...args) {
+function toMatchCanvasSnapshot(canvasOrWrapper, options, ...args) {
+  const canvas = canvasOrWrapper?.tagName !== 'CANVAS' && canvasOrWrapper.find
+    ? canvasOrWrapper.find('canvas')?.element
+    : canvasOrWrapper;
+
   const img = canvas.toDataURL();
   const data = img.replace(/^data:image\/(png|jpg);base64,/, '');
   const newOptions = {
@@ -88,8 +92,8 @@ function toEmit(wrapper, event, ...data) {
     return {
       pass: false,
       message: () => [
-        `Expected number of emit: ${emittedEvents?.length ?? 0}`,
-        `Received number of emit: ${data.length}`,
+        `Expected number of emit: ${data.length}`,
+        `Received number of emit: ${emittedEvents?.length ?? 0}`,
       ].join('\n'),
     };
   }
@@ -145,7 +149,12 @@ function toBeDispatchedWith(received, expected) {
 
     return { pass: true };
   } catch (err) {
-    return err.matcherResult;
+    const { pass, message } = err.matcherResult ?? { pass: false, message: '' };
+
+    return {
+      pass,
+      message: isFunction(message) ? message : () => message,
+    };
   }
 }
 

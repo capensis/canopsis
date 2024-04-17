@@ -36,7 +36,6 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     snooze="[object Object]"
   />
   <extra-details-pbehavior-stub
-    pbehavior="[object Object]"
     pbehaviorinfo="[object Object]"
   />
   <!---->
@@ -70,7 +69,6 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     snooze="[object Object]"
   />
   <extra-details-pbehavior-stub
-    pbehavior="[object Object]"
     pbehaviorinfo="[object Object]"
   />
   <!---->

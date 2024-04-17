@@ -33,7 +33,7 @@ import { MODALS } from '@/constants';
 
 import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 
 import RolesList from '@/components/other/role/roles-list.vue';
 

@@ -16,11 +16,12 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 import { CSS_COLORS_VARS } from '@/config';
 
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
-import { getEntityColor, getEntityStateColor } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
 export default {
   props: {
@@ -51,11 +52,11 @@ export default {
     },
 
     entityIcon() {
-      if (this.entity.state === ENTITIES_STATES.ok) {
+      if (this.entity.state === ALARM_STATES.ok) {
         return {
           name: 'check_circle_outline',
           color: 'white',
-          backgroundColor: getEntityStateColor(ENTITIES_STATES.ok),
+          backgroundColor: getAlarmStateColor(ALARM_STATES.ok),
         };
       }
 

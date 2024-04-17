@@ -755,6 +755,11 @@ paths:
             items:
               type: string
           example: t,asc
+        - name: query_log
+          in: query
+          description: show query log
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
@@ -10417,7 +10422,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,
@@ -10989,7 +10994,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,

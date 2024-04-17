@@ -9,6 +9,7 @@
           :value="isLastFailed"
           class="time-line-flag"
           color="transparent"
+          offset-y="15px"
           overlap
         >
           <template #badge="">
@@ -20,17 +21,7 @@
               error
             </v-icon>
           </template>
-          <span
-            class="c-extra-details__badge blue"
-            v-on="on"
-          >
-            <v-icon
-              color="white"
-              small
-            >
-              {{ icon }}
-            </v-icon>
-          </span>
+          <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on" />
         </v-badge>
       </template>
       <v-layout
@@ -62,11 +53,15 @@
 
 <script>
 import { last } from 'lodash';
+import { computed } from 'vue';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
+import { COLORS } from '@/config';
+import { ALARM_LIST_ACTIONS_TYPES, ALARM_LIST_STEPS } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -79,31 +74,29 @@ export default {
       default: 5,
     },
   },
-  computed: {
-    shownTickets() {
-      return this.tickets.slice(0, this.limit);
-    },
+  setup(props) {
+    const { t } = useI18n();
 
-    isLastFailed() {
-      return !this.isSuccessTicketDeclaration(last(this.tickets));
-    },
+    const isSuccessTicketDeclaration = ticket => [
+      ALARM_LIST_STEPS.declareTicket,
+      ALARM_LIST_STEPS.assocTicket,
+    ].includes(ticket?._t);
+    const getTicketStatusText = ticket => t(`common.${isSuccessTicketDeclaration(ticket) ? 'ok' : 'failed'}`);
+    const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
-    icon() {
-      return getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket);
-    },
-  },
-  methods: {
-    isSuccessTicketDeclaration(ticket = {}) {
-      return [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket?._t);
-    },
+    const shownTickets = computed(() => props.tickets.slice(0, props.limit));
+    const isLastFailed = computed(() => !isSuccessTicketDeclaration(last(props.tickets)));
+    const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
+    const color = COLORS.alarmExtraDetails.ticket;
 
-    getTicketStatusText(ticket) {
-      return this.$t(`common.${this.isSuccessTicketDeclaration(ticket) ? 'ok' : 'failed'}`);
-    },
-
-    convertDateWithToday(date) {
-      return convertDateToStringWithFormatForToday(date);
-    },
+    return {
+      getTicketStatusText,
+      convertDateWithToday,
+      shownTickets,
+      isLastFailed,
+      icon,
+      color,
+    };
   },
 };
 </script>
