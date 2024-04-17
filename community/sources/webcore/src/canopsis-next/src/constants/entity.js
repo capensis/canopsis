@@ -128,7 +128,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
   [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
-  [EVENT_ENTITY_TYPES.assocTicket]: 'sticky_note_2',
+  [EVENT_ENTITY_TYPES.assocTicket]: '$vuetify.icons.sticky_note_2',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',

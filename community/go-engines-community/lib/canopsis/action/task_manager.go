@@ -100,27 +100,29 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if scenario == nil {
 						e.logger.Error().Str("scenario", task.DelayedScenarioID).Msg("cannot find scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm:        task.Alarm,
-							FifoAckEvent: task.FifoAckEvent,
-							Err:          errors.New("scenario doesn't exist"),
-							EntityType:   task.Entity.Type,
+							Alarm:                task.Alarm,
+							StartEventProcessing: task.Start,
+							FifoAckEvent:         task.FifoAckEvent,
+							Err:                  errors.New("scenario doesn't exist"),
+							EntityType:           task.Entity.Type,
 						}
 						return
 					}
-					_, err := e.executionStorage.Inc(ctx, task.Alarm.ID, 1, true)
+					_, err := e.executionStorage.IncExecutingCount(ctx, task.Alarm.ID, 1, true)
 					if err != nil {
 						e.logger.Err(err).Str("scenario", task.DelayedScenarioID).Str("alarm", task.Alarm.ID).Msg("cannot run scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm:        task.Alarm,
-							FifoAckEvent: task.FifoAckEvent,
-							Err:          err,
-							EntityType:   task.Entity.Type,
+							Alarm:                task.Alarm,
+							StartEventProcessing: task.Start,
+							FifoAckEvent:         task.FifoAckEvent,
+							Err:                  err,
+							EntityType:           task.Entity.Type,
 						}
 						return
 					}
 
 					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent,
-						task.IsMetaAlarmUpdated, task.IsInstructionMatched)
+						task.Start, task.IsMetaAlarmUpdated, task.IsInstructionMatched)
 					return
 				}
 
@@ -129,10 +131,11 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if err != nil {
 						e.logger.Err(err).Str("execution", task.AbandonedExecutionCacheKey).Msg("cannot find abandoned scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm:        task.Alarm,
-							FifoAckEvent: task.FifoAckEvent,
-							Err:          err,
-							EntityType:   task.Entity.Type,
+							Alarm:                task.Alarm,
+							StartEventProcessing: task.Start,
+							FifoAckEvent:         task.FifoAckEvent,
+							Err:                  err,
+							EntityType:           task.Entity.Type,
 						}
 						return
 					}
@@ -179,19 +182,21 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 				if err != nil {
 					e.logger.Err(err).Str("alarm", task.Alarm.ID).Msg("cannot run scenarios")
 					e.outputChannel <- ScenarioResult{
-						Alarm:        task.Alarm,
-						FifoAckEvent: task.FifoAckEvent,
-						Err:          err,
-						EntityType:   task.Entity.Type,
+						Alarm:                task.Alarm,
+						StartEventProcessing: task.Start,
+						FifoAckEvent:         task.FifoAckEvent,
+						Err:                  err,
+						EntityType:           task.Entity.Type,
 					}
 					return
 				}
 
 				if !ok {
 					e.outputChannel <- ScenarioResult{
-						Alarm:        task.Alarm,
-						FifoAckEvent: task.FifoAckEvent,
-						EntityType:   task.Entity.Type,
+						Alarm:                task.Alarm,
+						StartEventProcessing: task.Start,
+						FifoAckEvent:         task.FifoAckEvent,
+						EntityType:           task.Entity.Type,
 					}
 				}
 			}(ctx, scenariosTask)
@@ -215,7 +220,7 @@ func (e *redisBasedManager) finishExecution(
 		return
 	}
 
-	count, err := e.executionStorage.Inc(ctx, alarm.ID, -1, false)
+	count, err := e.executionStorage.IncExecutingCount(ctx, alarm.ID, -1, false)
 	if err != nil {
 		e.logger.Err(err).Str("execution", execution.GetCacheKey()).Msg("cannot decrease counter")
 		return
@@ -231,6 +236,24 @@ func (e *redisBasedManager) finishExecution(
 		return
 	}
 
+	_, err = e.executionStorage.DelExecutingCount(ctx, alarm.ID)
+	if err != nil {
+		e.logger.Err(err).Str("alarm", alarm.ID).Msg("cannot delete count")
+		return
+	}
+
+	executedRuleCount, err := e.executionStorage.DelExecutedCount(ctx, alarm.ID)
+	if err != nil {
+		e.logger.Err(err).Str("alarm", alarm.ID).Msg("cannot delete count")
+		return
+	}
+
+	executedWebhookCount, err := e.executionStorage.DelExecutedWebhookCount(ctx, alarm.ID)
+	if err != nil {
+		e.logger.Err(err).Str("alarm", alarm.ID).Msg("cannot delete count")
+		return
+	}
+
 	select {
 	case <-ctx.Done():
 		return
@@ -241,6 +264,10 @@ func (e *redisBasedManager) finishExecution(
 			ActionExecutions: execution.ActionExecutions,
 			FifoAckEvent:     execution.FifoAckEvent,
 			EntityType:       execution.Entity.Type,
+
+			StartEventProcessing: time.Unix(execution.StartEventProcessing, 0),
+			ExecutedRuleCount:    executedRuleCount,
+			ExecutedWebhookCount: executedWebhookCount,
 		}
 	}
 }
@@ -385,8 +412,17 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		return
 	}
 
-	if scenarioExecution.ActionExecutions[taskRes.Step].Action.EmitTrigger &&
-		taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
+	executedAction := scenarioExecution.ActionExecutions[taskRes.Step].Action
+	if executedAction.Type == types.ActionTypeWebhook {
+		_, err = e.executionStorage.IncExecutedWebhookCount(ctx, taskRes.Alarm.ID, 1, false)
+		if err != nil {
+			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot update counter")
+			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
+			return
+		}
+	}
+
+	if executedAction.EmitTrigger && taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
 		err := e.processEmittedTrigger(ctx, taskRes, *scenarioExecution)
 		if err != nil {
 			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot process emitted trigger")
@@ -461,7 +497,17 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 		return false, nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, task.Alarm.ID, int64(scenariosCount), true)
+	_, err = e.executionStorage.IncExecutingCount(ctx, task.Alarm.ID, int64(scenariosCount), true)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = e.executionStorage.IncExecutedCount(ctx, task.Alarm.ID, int64(scenariosCount), true)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = e.executionStorage.IncExecutedWebhookCount(ctx, task.Alarm.ID, 0, true)
 	if err != nil {
 		return false, err
 	}
@@ -472,7 +518,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 		additionalData.AlarmChangeType = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent,
-				task.IsMetaAlarmUpdated, task.IsInstructionMatched)
+				task.Start, task.IsMetaAlarmUpdated, task.IsInstructionMatched)
 		}
 	}
 
@@ -510,7 +556,12 @@ func (e *redisBasedManager) processEmittedTrigger(
 		return nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, prevTaskRes.Alarm.ID, int64(scenariosCount), false)
+	_, err = e.executionStorage.IncExecutingCount(ctx, prevTaskRes.Alarm.ID, int64(scenariosCount), false)
+	if err != nil {
+		return err
+	}
+
+	_, err = e.executionStorage.IncExecutedCount(ctx, prevTaskRes.Alarm.ID, int64(scenariosCount), false)
 	if err != nil {
 		return err
 	}
@@ -520,7 +571,8 @@ func (e *redisBasedManager) processEmittedTrigger(
 		additionalData.AlarmChangeType = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
-				prevScenarioExecution.FifoAckEvent, prevScenarioExecution.IsMetaAlarmUpdated, prevScenarioExecution.IsInstructionMatched)
+				prevScenarioExecution.FifoAckEvent, time.Unix(prevScenarioExecution.StartEventProcessing, 0),
+				prevScenarioExecution.IsMetaAlarmUpdated, prevScenarioExecution.IsInstructionMatched)
 		}
 	}
 
@@ -534,6 +586,7 @@ func (e *redisBasedManager) startExecution(
 	entity types.Entity,
 	data AdditionalData,
 	fifoAckEvent types.Event,
+	start time.Time,
 	isMetaAlarmUpdated bool,
 	isInstructionMatched bool,
 ) {
@@ -560,6 +613,7 @@ func (e *redisBasedManager) startExecution(
 		FifoAckEvent:         fifoAckEvent,
 		IsMetaAlarmUpdated:   isMetaAlarmUpdated,
 		IsInstructionMatched: isInstructionMatched,
+		StartEventProcessing: start.Unix(),
 	}
 	ok, err := e.executionStorage.Create(ctx, execution)
 	if err != nil {
@@ -576,10 +630,12 @@ func (e *redisBasedManager) startExecution(
 	if action.Parameters.SkipForChild != nil {
 		skipForChild = *action.Parameters.SkipForChild
 	}
+
 	skipForInstruction := false
 	if action.Parameters.SkipForInstruction != nil {
 		skipForInstruction = *action.Parameters.SkipForInstruction
 	}
+
 	e.taskChannel <- Task{
 		Source:               "input listener",
 		Action:               action,
