@@ -19,6 +19,7 @@
       :selected-tag="selectedTag"
       @activate="$emit('activate', $event)"
       @select:tag="$emit('select:tag', $event)"
+      @clear:tag="$emit('clear:tag')"
       @click:state="$emit('click:state', $event)"
     />
   </color-indicator-wrapper>
@@ -31,6 +32,7 @@
     :selected-tag="selectedTag"
     @activate="$emit('activate', $event)"
     @select:tag="$emit('select:tag', $event)"
+    @clear:tag="$emit('clear:tag')"
     @click:state="$emit('click:state', $event)"
   />
 </template>

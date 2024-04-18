@@ -17,7 +17,6 @@ import {
   ALARM_STATES,
   ALARM_EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
-  EVENT_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_SOURCE_TYPES,
   PATTERN_OPERATORS,
@@ -141,13 +140,6 @@ export default {
       };
     },
 
-    eventTypes() {
-      return Object.values(EVENT_TYPES).map(value => ({
-        value,
-        text: this.$t(`common.eventTypes.${value}`),
-      }));
-    },
-
     eventTypeOptions() {
       return {
         operators: [
@@ -160,14 +152,11 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
-          is: 'v-combobox',
+          is: 'c-event-type-field',
           props: (rule) => {
             const isMultiple = isArray(rule?.value);
 
             return {
-              items: this.eventTypes,
-              returnObject: false,
-              combobox: true,
               multiple: isMultiple,
               deletableChips: isMultiple,
               smallChips: isMultiple,

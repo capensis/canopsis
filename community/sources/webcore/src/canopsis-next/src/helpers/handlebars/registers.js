@@ -29,7 +29,6 @@ export function unregisterHelper(name) {
 
 registerHelper('duration', helpers.durationHelper);
 registerHelper('state', helpers.alarmStateHelper);
-registerHelper('tags', helpers.alarmTagsHelper);
 registerHelper('request', helpers.requestHelper);
 registerHelper('timestamp', helpers.timestampHelper);
 registerHelper('internal-link', helpers.internalLinkHelper);

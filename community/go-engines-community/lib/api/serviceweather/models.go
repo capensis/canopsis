@@ -46,6 +46,7 @@ type Service struct {
 	Snooze           *common.AlarmStep     `json:"snooze" bson:"snooze"`
 	Ack              *common.AlarmStep     `json:"ack" bson:"ack"`
 	AlarmLastComment *common.AlarmStep     `json:"alarm_last_comment" bson:"alarm_last_comment"`
+	Tags             []string              `json:"tags" bson:"tags"`
 	Icon             string                `json:"icon" bson:"icon"`
 	SecondaryIcon    string                `json:"secondary_icon" bson:"secondary_icon"`
 	Output           string                `json:"output" bson:"output"`
@@ -128,6 +129,7 @@ type Entity struct {
 	Ticket           *common.AlarmStep          `json:"ticket" bson:"ticket"`
 	Tickets          []common.AlarmStep         `json:"tickets" bson:"tickets"`
 	AlarmLastComment *common.AlarmStep          `json:"alarm_last_comment" bson:"alarm_last_comment"`
+	Tags             []string                   `json:"tags" bson:"tags"`
 	LastUpdateDate   *datetime.CpsTime          `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	CreationDate     *datetime.CpsTime          `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName      string                     `json:"alarm_display_name" bson:"display_name"`

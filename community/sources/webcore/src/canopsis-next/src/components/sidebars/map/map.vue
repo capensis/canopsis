@@ -114,6 +114,7 @@ export default {
     entityInfoTemplateVariables() {
       const excludeFields = [
         ENTITY_TEMPLATE_FIELDS.alarmLastComment,
+        ENTITY_TEMPLATE_FIELDS.tags,
       ];
 
       return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));

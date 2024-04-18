@@ -2,7 +2,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CEntityField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
+import CAlarmTag from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
 import CLazySearchField from '@/components/forms/fields/c-lazy-search-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field.vue';
 
@@ -60,8 +60,8 @@ describe('c-alarm-tag-field', () => {
     },
   ]);
 
-  const factory = generateShallowRenderer(CEntityField, { stubs });
-  const snapshotFactory = generateRenderer(CEntityField, { stubs: snapshotStubs });
+  const factory = generateShallowRenderer(CAlarmTag, { stubs });
+  const snapshotFactory = generateRenderer(CAlarmTag, { stubs: snapshotStubs });
 
   afterEach(() => {
     fetchAlarmTags.mockClear();
