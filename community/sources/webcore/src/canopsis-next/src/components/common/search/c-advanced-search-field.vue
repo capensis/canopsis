@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 
-import { ADVANCED_SEARCH_CONDITIONS, ADVANCED_SEARCH_ITEM_TYPES } from '@/constants';
+import { ADVANCED_SEARCH_CONDITIONS } from '@/constants';
 
-import { advancedSearchStringToArray, advancedSearchArrayToString } from '@/helpers/search/advanced-search';
+import { advancedSearchArrayToString, advancedSearchStringToArray } from '@/helpers/search/advanced-search';
 
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -30,7 +30,7 @@ export default {
       type: String,
       default: '',
     },
-    columns: {
+    fields: {
       type: Array,
       default: () => [],
     },
@@ -42,10 +42,6 @@ export default {
   setup(props, { emit }) {
     const { updateModel } = useModelField(props, emit);
 
-    const fields = computed(() => (
-      props.columns.map(({ text }) => ({ text, value: text, type: ADVANCED_SEARCH_ITEM_TYPES.field }))
-    ));
-
     const internalStringValue = ref(props.value);
 
     const updateModelWithInternalValue = (value) => {
@@ -56,7 +52,7 @@ export default {
     const {
       value: initialValue,
       internalSearch: initialInternalSearch,
-    } = advancedSearchStringToArray(props.value, props.columns);
+    } = advancedSearchStringToArray(props.value, props.fields);
     const internalValue = ref(initialValue);
     const internalSearch = ref(initialInternalSearch);
 
@@ -83,7 +79,7 @@ export default {
       const {
         value: watchInitialValue,
         internalSearch: watchInitialInternalSearch,
-      } = advancedSearchStringToArray(value, props.columns);
+      } = advancedSearchStringToArray(value, props.fields);
 
       internalStringValue.value = value;
       internalSearch.value = watchInitialInternalSearch;
@@ -91,7 +87,6 @@ export default {
     });
 
     return {
-      fields,
       internalValue,
       internalSearch,
 

@@ -3,7 +3,7 @@
     <c-advanced-search-field
       v-if="advancedSearchActive"
       v-model="localValue"
-      :columns="columns"
+      :fields="fields"
       :conditions="conditions"
     />
     <c-search-field
@@ -54,7 +54,7 @@ export default {
       type: String,
       default: '',
     },
-    columns: {
+    fields: {
       type: Array,
       default: () => [],
     },
@@ -88,7 +88,7 @@ export default {
       clear,
     } = useSearchLocalValue({
       value: toRef(props, 'value'),
-      columns: toRef(props, 'columns'),
+      fields: toRef(props, 'fields'),
       onSubmit: addItem,
     }, emit);
 
