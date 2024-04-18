@@ -152,6 +152,7 @@
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
+            @clear:tag="$emit('clear:tag')"
             @click:state="openRootCauseDiagram"
             @expand="expand"
             @input="select"
@@ -211,6 +212,7 @@ import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-select
 import { widgetColumnResizingAlarmMixin } from '@/mixins/widget/columns/alarm-resizing';
 import { widgetColumnDraggingAlarmMixin } from '@/mixins/widget/columns/alarm-dragging';
 import { widgetHeaderStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky-header';
+import { alarmHandlebarsTagsHelper } from '@/mixins/widget/handlebars/alarm-tags-helper';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -237,6 +239,7 @@ export default {
     widgetRowsSelectingAlarmMixin,
     widgetColumnResizingAlarmMixin,
     widgetColumnDraggingAlarmMixin,
+    alarmHandlebarsTagsHelper,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
