@@ -2,12 +2,12 @@
   <v-card>
     <v-card-title class="primary pa-2 white--text">
       <v-layout
+        class="gap-3"
         justify-space-between
         align-center
       >
         <h4>{{ $t('alarm.infoPopup') }}</h4>
         <v-btn
-          class="ma-0 ml-3"
           color="white"
           icon
           small
@@ -27,7 +27,9 @@
         <c-compiled-template
           :template="template"
           :context="templateContext"
-          :template-props="{ alarm }"
+          :template-props="{ alarm, selectedTag }"
+          @select:tag="$emit('select:tag', $event)"
+          @clear:tag="$emit('clear:tag')"
         />
       </v-card-text>
     </v-fade-transition>
@@ -42,6 +44,10 @@ export default {
       required: true,
     },
     template: {
+      type: String,
+      default: '',
+    },
+    selectedTag: {
       type: String,
       default: '',
     },
