@@ -12,8 +12,8 @@ const DEFAULT_SANITIZE_OPTIONS = {
     /**
      * VUE COMPONENTS
      */
-    'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-copy-wrapper', 'c-links-list', 'service-entities-list',
-    'v-icon',
+    'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
+    'service-entities-list', 'v-icon',
   ]),
   allowedAttributes: {
     '*': [
@@ -27,6 +27,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
     'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
+    'c-entity-tags-chips': [':entity', 'inline-count'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
     'v-icon': [

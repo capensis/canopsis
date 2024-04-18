@@ -2,6 +2,7 @@
   <c-compiled-template
     :template="modalTemplate"
     :context="templateContext"
+    :template-props="templateProps"
   />
 </template>
 
@@ -10,6 +11,8 @@ import Handlebars from 'handlebars';
 
 import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
+import { entityHandlebarsTagsHelper } from '@/mixins/widget/handlebars/entity-tags-helper';
+
 import ServiceEntitiesList from './service-entities-list.vue';
 
 export default {
@@ -17,6 +20,7 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     ServiceEntitiesList,
   },
+  mixins: [entityHandlebarsTagsHelper],
   props: {
     service: {
       type: Object,
@@ -45,6 +49,10 @@ export default {
   },
   computed: {
     templateContext() {
+      return { entity: this.service };
+    },
+
+    templateProps() {
       return { entity: this.service };
     },
 
