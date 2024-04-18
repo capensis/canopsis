@@ -70,7 +70,7 @@ func GetWebsocketHandler(
 					continue
 				}
 
-				hub.Send(ctx, websocket.RoomMessageRates, rates)
+				hub.Send(websocket.RoomMessageRates, rates)
 			}
 		}
 	}
