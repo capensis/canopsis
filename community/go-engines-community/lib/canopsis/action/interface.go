@@ -4,6 +4,7 @@ package action
 
 import (
 	"context"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -71,6 +72,7 @@ type ScenarioExecution struct {
 	FifoAckEvent         types.Event    `json:"fev"`
 	IsMetaAlarmUpdated   bool           `json:"mau,omitempty"`
 	IsInstructionMatched bool           `json:"im,omitempty"`
+	StartEventProcessing int64          `json:"sep"`
 }
 
 func (e ScenarioExecution) GetCacheKey() string {
@@ -82,6 +84,10 @@ type ScenarioResult struct {
 	Err              error
 	ActionExecutions []Execution
 	FifoAckEvent     types.Event
+
+	StartEventProcessing time.Time
+	ExecutedRuleCount    int64
+	ExecutedWebhookCount int64
 
 	// EntityType is needed to send activation event with right source type.
 	EntityType string
@@ -96,6 +102,7 @@ type ExecuteScenariosTask struct {
 	FifoAckEvent         types.Event
 	IsMetaAlarmUpdated   bool
 	IsInstructionMatched bool
+	Start                time.Time
 
 	AbandonedExecutionCacheKey string
 }

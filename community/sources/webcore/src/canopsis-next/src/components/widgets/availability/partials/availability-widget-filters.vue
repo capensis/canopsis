@@ -229,7 +229,7 @@ export default {
 .availability-widget-filters {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
+  align-items: flex-end;
 
   & > * {
     flex-grow: 0;

@@ -2,7 +2,6 @@ package eventfilter
 
 import (
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -26,10 +25,10 @@ func NewChangeEntityApplicator(
 	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (string, bool, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (string, bool, map[string]int64, error) {
+	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
 	if err != nil {
-		return OutcomeDrop, false, err
+		return OutcomeDrop, false, nil, err
 	}
 
 	templateParams := Template{
@@ -42,7 +41,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		resource, err := ExecuteParsedTemplate(rule.ID, "Resource", rule.Config.Resource,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, err
+			return OutcomeDrop, false, nil, err
 		}
 
 		event.Resource = resource
@@ -52,7 +51,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		component, err := ExecuteParsedTemplate(rule.ID, "Component", rule.Config.Component,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, err
+			return OutcomeDrop, false, nil, err
 		}
 
 		event.Component = component
@@ -62,7 +61,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		connector, err := ExecuteParsedTemplate(rule.ID, "Connector", rule.Config.Connector,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, err
+			return OutcomeDrop, false, nil, err
 		}
 
 		event.Connector = connector
@@ -72,36 +71,11 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		connectorName, err := ExecuteParsedTemplate(rule.ID, "ConnectorName", rule.Config.ConnectorName,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, err
+			return OutcomeDrop, false, nil, err
 		}
 
 		event.ConnectorName = connectorName
 	}
 
-	return OutcomePass, false, nil
-}
-
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
-	externalData := make(map[string]interface{})
-
-	for name, parameters := range rule.ExternalData {
-		getter, ok := a.externalDataContainer.Get(parameters.Type)
-		if !ok {
-			failReason := fmt.Sprintf("external data %q has invalid type %q", name, parameters.Type)
-			a.failureService.Add(rule.ID, FailureTypeOther, failReason, nil)
-			return nil, fmt.Errorf("no such data source: %s", parameters.Type)
-		}
-
-		data, err := getter.Get(ctx, rule.ID, name, event, parameters, Template{
-			Event:      event,
-			RegexMatch: regexMatch,
-		})
-		if err != nil {
-			return externalData, err
-		}
-
-		externalData[name] = data
-	}
-
-	return externalData, nil
+	return OutcomePass, false, externalRequestCount, nil
 }
