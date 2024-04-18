@@ -688,19 +688,19 @@ func RegisterRoutes(
 			entityCommentAPI := entitycomment.NewApi(entitycomment.NewStore(dbClient, logger))
 			entityCommentRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionCan, enforcer),
 				middleware.SetAuthor(),
 				entityCommentAPI.Create,
 			)
 			entityCommentRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionCan, enforcer),
 				middleware.SetAuthor(),
 				entityCommentAPI.Update,
 			)
 			entityCommentRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityComment, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
 				entityCommentAPI.List,
 			)
 		}
