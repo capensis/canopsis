@@ -48,7 +48,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		bson.M{"$sort": bson.M{"t": -1}},
+		nil, // keep comments sort order as is, only first item is editable
 	))
 	if err != nil {
 		return nil, err
