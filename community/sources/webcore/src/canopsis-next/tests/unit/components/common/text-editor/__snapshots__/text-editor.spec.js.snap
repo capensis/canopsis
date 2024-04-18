@@ -1938,11 +1938,12 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
       {{ test.test }}
     </div>
     <variables-menu-stub
+      childrenkey="variables"
       dense="true"
+      items="[object Object]"
       positionx="112"
       positiony="189"
       value=""
-      variables="[object Object]"
       visible="true"
     />
     <div

@@ -4,9 +4,8 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
 <div
   class="availability-widget-filters col-gap-6 row-gap-3"
 >
-  <c-advanced-search-field-stub
+  <c-advanced-search-stub
     class="pa-0 availability-widget-filters__search"
-    query="[object Object]"
     tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
 <p>The \\"-\\" before the research is required</p>
@@ -88,9 +87,8 @@ exports[`availability-widget-filters Renders \`availability-widget-filters\` wit
 <div
   class="availability-widget-filters col-gap-6 row-gap-3"
 >
-  <c-advanced-search-field-stub
+  <c-advanced-search-stub
     class="pa-0 availability-widget-filters__search"
-    query="[object Object]"
     tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
 <p>The \\"-\\" before the research is required</p>

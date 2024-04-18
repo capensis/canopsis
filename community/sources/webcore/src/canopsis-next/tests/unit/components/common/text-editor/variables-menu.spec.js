@@ -55,7 +55,7 @@ describe('variables-menu', () => {
         value: 'entity._id',
         positionX: 2,
         positionY: 3,
-        variables: [
+        items: [
           {
             value: 'entity._id',
             text: 'Variable',

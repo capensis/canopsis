@@ -7,17 +7,17 @@ import { prepareSearchForSubmit } from '@/helpers/search/search';
  *
  * @param {Object} params - The parameters object.
  * @param {Object} params.value - A ref object containing the initial value of the search input.
- * @param {Object} params.columns - A ref object containing the columns to be used in the search.
+ * @param {Object} params.fields - A ref object containing the fields to be used in the search.
  * @param {Function} params.onSubmit - The callback function to execute on search submission.
  * @param {Function} emit - The Vue emit function used to trigger events.
  * @returns {Object} Returns an object containing the local search value ref and functions to submit or clear the
  * search.
  */
-export const useSearchLocalValue = ({ value, columns, onSubmit }, emit) => {
+export const useSearchLocalValue = ({ value, fields, onSubmit }, emit) => {
   const localValue = ref(value.value);
 
   const submit = () => {
-    emit('submit', prepareSearchForSubmit(localValue.value ?? '', columns.value));
+    emit('submit', prepareSearchForSubmit(localValue.value ?? '', fields.value));
     onSubmit(localValue.value);
   };
 

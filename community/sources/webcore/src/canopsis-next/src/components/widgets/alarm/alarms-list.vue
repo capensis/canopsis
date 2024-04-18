@@ -9,7 +9,7 @@
     >
       <v-flex>
         <c-advanced-search
-          :columns="widget.parameters.widgetColumns"
+          :fields="advancedSearchFields"
           :saved-items="searches"
           combobox
           @submit="updateSearchInQuery"
@@ -145,7 +145,7 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { ALARM_ADVANCED_SEARCH_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -155,7 +155,10 @@ import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetSearchMixin } from '@/mixins/widget/search';
+import {
+  widgetAdvancedSearchSavedItemsMixin,
+  widgetAdvancedSearchAlarmFieldsMixin,
+} from '@/mixins/widget/advanced-search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
@@ -197,7 +200,8 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetSearchMixin,
+    widgetAdvancedSearchSavedItemsMixin,
+    widgetAdvancedSearchAlarmFieldsMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
@@ -244,13 +248,6 @@ export default {
     };
   },
   computed: {
-    advancedSearchFields() {
-      return ALARM_ADVANCED_SEARCH_FIELDS.map(field => ({
-        value: field,
-        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
-      }));
-    },
-
     activeRange() {
       const { tstart, tstop } = this.query;
 

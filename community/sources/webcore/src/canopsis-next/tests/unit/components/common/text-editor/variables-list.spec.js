@@ -25,7 +25,7 @@ describe('variables-list', () => {
 
     const wrapper = factory({
       propsData: {
-        variables: [
+        items: [
           { value },
         ],
       },
@@ -37,22 +37,43 @@ describe('variables-list', () => {
 
     expect(wrapper).toEmitInput(value);
   });
+  test('Variable selected after click on tile (returnObject is enabled)', () => {
+    const value = Faker.datatype.string();
+    const item = { value };
 
-  test('Submenu opened when mouseover tile', async () => {
+    const wrapper = factory({
+      propsData: {
+        items: [item],
+        returnObject: true,
+      },
+    });
+
+    const variableTile = selectVariableTileByIndex(wrapper, 0);
+
+    variableTile.triggerCustomEvent('click');
+
+    expect(wrapper).toEmitInput(item);
+  });
+
+  test.each([
+    [undefined, 'variables'],
+    ['items', 'items'],
+  ])('Submenu opened when mouseover tile (childrenKey: %s)', async (childrenKey, internalKey) => {
     const zIndex = Faker.datatype.number();
-    const subVariables = [
+    const subItems = [
       {
-        value: 'child',
+        value: 'parent.child',
       },
     ];
     const wrapper = factory({
       propsData: {
         zIndex,
+        childrenKey,
         value: 'parent.child',
-        variables: [
+        items: [
           {
             value: 'parent',
-            variables: subVariables,
+            [internalKey]: subItems,
           },
         ],
       },
@@ -73,15 +94,16 @@ describe('variables-list', () => {
     expect(menu.vm.zIndex).toEqual(zIndex);
 
     const variablesList = selectVariablesList(wrapper);
-    expect(variablesList.vm.$attrs.variables).toEqual(subVariables);
+
+    expect(variablesList.vm.$attrs.items).toEqual(subItems);
     expect(variablesList.vm.$attrs['z-index']).toBe(zIndex + 1);
-    expect(variablesList.vm.$attrs.value).toBe(subVariables[0].value);
+    expect(variablesList.vm.$attrs.value).toBe(subItems[0].value);
   });
 
   test('Submenu closed after mouseover on other tile', async () => {
     const wrapper = factory({
       propsData: {
-        variables: [
+        items: [
           {
             value: 'first',
             variables: [],
@@ -111,7 +133,7 @@ describe('variables-list', () => {
     const parentValue = Faker.datatype.string();
     const wrapper = factory({
       propsData: {
-        variables: [
+        items: [
           {
             value: parentValue,
             variables: [],
@@ -146,7 +168,7 @@ describe('variables-list', () => {
       propsData: {
         value: 'entity._id',
         zIndex: 2,
-        variables: [
+        items: [
           {
             value: 'entity',
             text: 'Entity',

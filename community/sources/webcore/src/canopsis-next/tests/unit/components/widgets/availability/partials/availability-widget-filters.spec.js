@@ -13,7 +13,7 @@ import {
 import AvailabilityWidgetFilters from '@/components/widgets/availability/partials/availability-widget-filters.vue';
 
 const stubs = {
-  'c-advanced-search-field': true,
+  'c-advanced-search': true,
   'c-quick-date-interval-field': true,
   'filter-selector': true,
   'filters-list-btn': true,
@@ -24,7 +24,7 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const selectSearchField = wrapper => wrapper.find('c-advanced-search-field-stub');
+const selectSearch = wrapper => wrapper.find('c-advanced-search-stub');
 const selectQuickDateIntervalField = wrapper => wrapper.find('c-quick-date-interval-field-stub');
 const selectAvailabilityShowTypeField = wrapper => wrapper.find('availability-show-type-field-stub');
 const selectAvailabilityDisplayParameterField = wrapper => wrapper.find('availability-display-parameter-field-stub');
@@ -74,7 +74,7 @@ describe('availability-widget-filters', () => {
 
     const newSearch = Faker.lorem.word();
 
-    await selectSearchField(wrapper).triggerCustomEvent('update:query', { search: newSearch });
+    await selectSearch(wrapper).triggerCustomEvent('submit', newSearch);
 
     expect(wrapper).toEmit('update:search', newSearch);
   });

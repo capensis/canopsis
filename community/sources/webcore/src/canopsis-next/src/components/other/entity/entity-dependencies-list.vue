@@ -10,8 +10,8 @@
   >
     <template #toolbar="">
       <v-flex>
-        <c-advanced-search-field
-          :columns="columns"
+        <c-advanced-search
+          :fields="columns"
           @submit="updateSearchInQuery"
         />
       </v-flex>

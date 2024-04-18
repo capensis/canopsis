@@ -20,7 +20,7 @@ export const prepareSearchForSubmit = (search = '', columns = []) => {
   const orderedColumns = orderBy(columns, ({ text }) => text.length, ['desc']);
 
   return orderedColumns.reduce(
-    (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
+    (acc, { selectorText, text, value }) => replaceTextNotInQuotes(acc, selectorText || text, value),
     search.replace(/^-(\s*)/, ''),
   );
 };

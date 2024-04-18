@@ -127,8 +127,8 @@ export const ALARM_ADVANCED_SEARCH_FIELDS = [
   ALARM_FIELDS.pbhInactiveDuration,
   ALARM_FIELDS.activeDuration,
   ALARM_FIELDS.eventsCount,
+  ALARM_FIELDS.tags,
   ALARM_FIELDS.impactState,
-  ALARM_FIELDS.infos,
   ALARM_FIELDS.ticketAuthor,
   ALARM_FIELDS.ticketMessage,
   ALARM_FIELDS.ticketInitiator,
@@ -136,6 +136,22 @@ export const ALARM_ADVANCED_SEARCH_FIELDS = [
   ALARM_FIELDS.ticketCreatedAt,
   ALARM_FIELDS.changeState,
   ALARM_FIELDS.meta,
+  ALARM_FIELDS.entityId,
+  ALARM_FIELDS.entityName,
+  ALARM_FIELDS.entityCategoryName,
+  ALARM_FIELDS.entityType,
+  ALARM_FIELDS.entityComponent,
+  ALARM_FIELDS.entityConnector,
+  ALARM_FIELDS.entityImpactLevel,
+  ALARM_FIELDS.entityKoEvents,
+  ALARM_FIELDS.entityOkEvents,
+  ALARM_FIELDS.entityInfos,
+  ALARM_FIELDS.entityComponentInfos,
+  ALARM_FIELDS.entityLastPbehaviorDate,
+
+  /**
+   * OBJECTS
+   */
   ALARM_FIELDS.ack,
   ALARM_FIELDS.ticket,
   ALARM_FIELDS.ticketData,
@@ -143,6 +159,10 @@ export const ALARM_ADVANCED_SEARCH_FIELDS = [
   ALARM_FIELDS.canceledInitiator,
   ALARM_FIELDS.snooze,
   ALARM_FIELDS.pbehaviorInfo,
+
+  /**
+   * VIRTUAL
+   */
   ALARM_FIELDS.activated,
 ];
 

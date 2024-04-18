@@ -1,10 +1,10 @@
 <template>
   <div class="availability-widget-filters col-gap-6 row-gap-3">
-    <c-advanced-search-field
-      :query.sync="searchQuery"
+    <c-advanced-search
       :tooltip="$t('availability.advancedSearch')"
-      :columns="columns"
+      :fields="columns"
       class="pa-0 availability-widget-filters__search"
+      @submit="updateSearchInQuery"
     />
     <c-quick-date-interval-field
       v-if="showInterval"
@@ -80,7 +80,7 @@
 
 <script>
 import { debounce } from 'lodash';
-import { ref, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
@@ -184,17 +184,6 @@ export default {
     const localValueFilter = ref();
     const quickRanges = Object.values(AVAILABILITY_QUICK_RANGES);
 
-    const searchQuery = computed({
-      get() {
-        return {
-          search: props.search,
-        };
-      },
-      set({ search }) {
-        emit('update:search', search);
-      },
-    });
-
     watch(
       () => props.valueFilter,
       () => {
@@ -203,6 +192,7 @@ export default {
       { immediate: true },
     );
 
+    const updateSearchInQuery = search => emit('update:search', search);
     const emitUpdateValueFilter = valueFilter => emit('update:value-filter', valueFilter);
     const debouncedEmitUpdateValueFilter = debounce(emitUpdateValueFilter, 1000);
 
@@ -215,10 +205,10 @@ export default {
     };
 
     return {
-      searchQuery,
       localValueFilter,
       quickRanges,
 
+      updateSearchInQuery,
       handleUpdateValueFilter,
     };
   },

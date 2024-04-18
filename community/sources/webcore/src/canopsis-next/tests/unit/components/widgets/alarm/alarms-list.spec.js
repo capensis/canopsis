@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
-import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModule, createMockedStoreModules, createServiceModule } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 
 import { API_HOST, API_ROUTES } from '@/config';
@@ -249,6 +249,8 @@ describe('alarms-list', () => {
     },
   };
 
+  const { serviceModule, fetchEntityInfosKeysWithoutStore } = createServiceModule();
+
   const store = createMockedStoreModules([
     alarmModule,
     sideBarModule,
@@ -258,6 +260,7 @@ describe('alarms-list', () => {
     userPreferenceModule,
     authModule,
     alarmTagModule,
+    serviceModule,
   ]);
 
   const factory = generateShallowRenderer(AlarmsList, {
@@ -290,6 +293,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
     hideSideBar.mockClear();
     fetchTagsList.mockClear();
+    fetchEntityInfosKeysWithoutStore.mockClear();
   });
 
   it('Query updated after mount', async () => {
@@ -369,6 +373,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -431,6 +436,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -493,6 +499,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -822,6 +829,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -965,6 +973,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1050,6 +1059,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1117,6 +1127,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1193,6 +1204,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1268,6 +1280,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1315,6 +1328,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1366,6 +1380,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1708,6 +1723,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1747,6 +1763,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {

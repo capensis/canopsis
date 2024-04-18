@@ -6,22 +6,38 @@
     :activator="activator"
     @input="menuInput"
   >
-    <v-list>
+    <variables-list
+      v-if="isItemTypeField"
+      :value="activeValue"
+      :items="items"
+      children-key="items"
+      return-object
+      @input="selectItem"
+    >
+      <template #append>
+        <v-switch
+          key="not"
+          :input-value="notSwitcherValue"
+          :label="$t('advancedSearch.not')"
+          class="mx-3"
+          color="primary"
+          @change="changeNotSwitcher"
+        />
+        <v-divider key="divider" />
+      </template>
+      <template #no-data>
+        <v-list-item>
+          <v-list-item-title class="grey--text">
+            {{ $t('advancedSearch.noDataList') }}
+          </v-list-item-title>
+        </v-list-item>
+      </template>
+    </variables-list>
+    <v-list v-else>
       <v-list-item v-if="isItemTypeValue">
         <v-list-item-title v-html="listMessage" />
       </v-list-item>
       <v-list-item-group v-else-if="items.length" :value="activeValue">
-        <template v-if="isItemTypeField">
-          <v-switch
-            key="not"
-            :input-value="notSwitcherValue"
-            :label="$t('advancedSearch.not')"
-            class="mx-3"
-            color="primary"
-            @change="changeNotSwitcher"
-          />
-          <v-divider key="divider" />
-        </template>
         <v-list-item
           v-for="item in items"
           :key="item.value"
@@ -46,10 +62,13 @@ import { toRef } from 'vue';
 
 import { ADVANCED_SEARCH_ITEM_TYPES } from '@/constants';
 
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
+
 import { useAdvancedSearchItemType } from '../hooks/advanced-search';
 
 export default {
   inject: ['$system'],
+  components: { VariablesList },
   props: {
     activator: {
       default: null,

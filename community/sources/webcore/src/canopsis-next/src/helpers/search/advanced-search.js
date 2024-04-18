@@ -16,11 +16,21 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {Object} AdvancedSearchItem
- * @property {string} key
- * @property {AdvancedSearchItemType} type
+ * @typedef {Object} AdvancedSearchField
  * @property {string} value
  * @property {string} text
+ * @property {string} [selectorText]
+ * @property {AdvancedSearchItem[]} [items]
+ */
+
+/**
+ * @typedef {AdvancedSearchField} AdvancedSearchListItem
+ * @property {AdvancedSearchItemType} type
+ */
+
+/**
+ * @typedef {AdvancedSearchListItem} AdvancedSearchItem
+ * @property {string} key
  * @property {boolean} [not]
  */
 
@@ -59,7 +69,7 @@ export const getNextAdvancedSearchType = (type = ADVANCED_SEARCH_ITEM_TYPES.unio
  * It supports complex queries with logical operators and is designed to work with a dynamic set of column names.
  *
  * @param {string} search - The search string to be parsed.
- * @param {Array<{text: string}>} columns - An array of objects representing the columns, where each column has a `text`
+ * @param {Array<{text: string}>} fields - An array of objects representing the fields, where each column has a `text`
  * property.
  * @returns {{internalSearch: string, value: Array}} An object containing two properties: `internalSearch` which is
  * a string that could not be parsed, and `value` which is an array of parsed items.
@@ -84,7 +94,7 @@ export const getNextAdvancedSearchType = (type = ADVANCED_SEARCH_ITEM_TYPES.unio
  * //   ]
  * // }
  */
-export const advancedSearchStringToArray = (search = '', columns = []) => {
+export const advancedSearchStringToArray = (search = '', fields = []) => {
   const result = {
     internalSearch: '',
     value: [],
@@ -98,8 +108,8 @@ export const advancedSearchStringToArray = (search = '', columns = []) => {
 
   try {
     const items = searchWithoutDash.split(ADVANCED_SEARCH_UNION_REGEXP_PATTERN);
-    const columnsForRegexp = orderBy(map(columns, 'text'), text => text.length, ['desc']).join('|');
-    const itemRegexp = new RegExp(`^(?<not>${ADVANCED_SEARCH_NOT})?\\s*(?<field>${columnsForRegexp}|[\\w._]+)?\\s*(?<condition>${Object.values(ADVANCED_SEARCH_CONDITIONS).join('|')})?\\s*(?<value>.+)?$`, 'i');
+    const columnsForRegexp = orderBy(map(fields, 'text'), text => text.length, ['desc']).join('|');
+    const itemRegexp = new RegExp(`^(?<not>${ADVANCED_SEARCH_NOT})?\\s*(?<field>(${columnsForRegexp})[\\w._]*|[\\w._]+)?\\s*(?<condition>${Object.values(ADVANCED_SEARCH_CONDITIONS).join('|')})?\\s*(?<value>.+)?$`, 'i');
 
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i];
@@ -193,31 +203,22 @@ export const advancedSearchStringToArray = (search = '', columns = []) => {
 };
 
 /**
- * Converts an array of search items back into a string representation of the search query.
- * Each item in the array represents a part of the search query, including fields, conditions, and values.
- * The function prefixes the result with a dash and a space.
+ * Converts an array of search items into a formatted string for advanced search.
+ * Each item in the array can optionally have a `not` property to prepend `NOT` to the item text.
  *
- * @param {Array<{not: boolean, text: string}>} array - The array of search items to be converted into a string.
- * @returns {string} A string representation of the search query.
+ * @param {Object<{ not: boolean, text: string, selectorText: string}>[]} array - The array of search items.
+ * Each item should have either `selectorText` or `text`.
+ * @returns {string} The formatted search string starting with a dash and spaces between items.
  *
  * @example
- * // Example usage:
- * const searchItems = [
- *   { not: false, text: `name` },
- *   { not: false, text: `=` },
- *   { not: false, text: `John` },
- *   { not: false, text: `AND` },
- *   { not: true, text: `age` },
- *   { not: false, text: `>` },
- *   { not: false, text: `30` }
- * ];
- * const searchString = advancedSearchArrayToString(searchItems);
- * console.log(searchString);
- * // Output:
- * // - name = John AND NOT age > 30
+ * // returns "- NOT apple banana"
+ * advancedSearchArrayToString([
+ *   { not: true, text: `apple` },
+ *   { text: `banana` }
+ * ]);
  */
 export const advancedSearchArrayToString = (array = []) => (
-  `- ${array.map(item => `${item.not ? `${ADVANCED_SEARCH_NOT} ` : ''}${item.text}`).join(' ')}`
+  `- ${array.map(item => `${item.not ? `${ADVANCED_SEARCH_NOT} ` : ''}${item.selectorText || item.text}`).join(' ')}`
 );
 
 /**
@@ -225,23 +226,28 @@ export const advancedSearchArrayToString = (array = []) => (
  * This is used to prepare fields for advanced search functionality, ensuring each field object includes
  * the necessary type information.
  *
- * @param {Array<{value: string, text: string}>} [fields=[]] - An array of objects representing the fields to be
+ * @param {AdvancedSearchField[]} [fields=[]] - An array of objects representing the fields to be
  * prepared.
  * Each object should have at least a `value` and a `text` property.
- * @returns {Array<{value: string, text: string, type: string}>} An array of the same objects provided in the input,
+ * @returns {AdvancedSearchListItem[]} An array of the same objects provided in the input,
  * but with an additional `type` property set to `field`.
  */
 export const prepareAdvancedSearchFields = (fields = []) => (
-  fields.map(field => ({ ...field, type: ADVANCED_SEARCH_ITEM_TYPES.field }))
+  fields.map(field => ({
+    ...field,
+    type: ADVANCED_SEARCH_ITEM_TYPES.field,
+    items: field.items?.length ? prepareAdvancedSearchFields(field.items) : undefined,
+  }))
 );
 
 /**
  * Prepares advanced search conditions by mapping each condition to an object with its value, type, and text.
  * The type is always set to the `condition` type from `ADVANCED_SEARCH_ITEM_TYPES`.
  *
- * @param {Array} [conditions=[]] - An array of conditions to be prepared. Defaults to an empty array if not provided.
- * @returns {Array} An array of objects where each object represents a prepared condition with properties: value,
- * type, and text.
+ * @param {string[]} [conditions=[]] - An array of conditions to be prepared. Defaults to an empty array if not
+ * provided.
+ * @returns {AdvancedSearchListItem[]} An array of objects where each object represents a prepared condition with
+ * properties: value, type, and text.
  */
 export const prepareAdvancedSearchConditions = (conditions = []) => (
   conditions.map(condition => ({ value: condition, type: ADVANCED_SEARCH_ITEM_TYPES.condition, text: condition }))

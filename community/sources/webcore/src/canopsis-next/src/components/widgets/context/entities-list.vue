@@ -12,7 +12,7 @@
       <v-layout class="gap-4 pa-4 pt-0" wrap align-end>
         <v-flex>
           <c-advanced-search
-            :columns="widget.parameters.widgetColumns"
+            :fields="advancedSearchFields"
             :saved-items="searches"
             combobox
             @submit="updateSearchInQuery"
@@ -89,7 +89,10 @@ import { USERS_PERMISSIONS } from '@/constants';
 import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
 import { authMixin } from '@/mixins/auth';
-import { widgetSearchMixin } from '@/mixins/widget/search';
+import {
+  widgetAdvancedSearchSavedItemsMixin,
+  widgetAdvancedSearchEntityFieldsMixin,
+} from '@/mixins/widget/advanced-search';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -112,7 +115,8 @@ export default {
   },
   mixins: [
     authMixin,
-    widgetSearchMixin,
+    widgetAdvancedSearchSavedItemsMixin,
+    widgetAdvancedSearchEntityFieldsMixin,
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
@@ -135,6 +139,7 @@ export default {
     };
   },
   computed: {
+
     hasAccessToCreateEntity() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
     },
