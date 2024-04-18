@@ -4633,7 +4633,7 @@ paths:
       description: |
         Get paginated list of entity comments.
         
-        -  PERMISSIONS: `api_entitycomment:read`
+        -  PERMISSIONS: `api_entity:read`
       operationId: entity-comments-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -4664,6 +4664,12 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     post:
       tags:
         - entity-comments
@@ -4671,7 +4677,7 @@ paths:
       description: |
         Create entity comment.
         
-        -  PERMISSIONS: `api_entitycomment:create`
+        -  PERMISSIONS: `api_entitycomment:can`
       operationId: entity-comments-create
       requestBody:
         description: body
@@ -4701,6 +4707,12 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entity-comments/{id}:
     put:
       tags:
@@ -4709,7 +4721,7 @@ paths:
       description: |
         Update entity last comment by id.
         
-        -  PERMISSIONS: `api_entitycomment:update`
+        -  PERMISSIONS: `api_entitycomment:can`
       operationId: entity-comments-update-by-id
       parameters:
         - name: id
