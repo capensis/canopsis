@@ -68,18 +68,18 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 }
 
 func (s *store) Insert(ctx context.Context, r Request, userID, username string) (*Response, error) {
-	sr := s.dbCollection.FindOne(ctx, bson.M{"_id": r.Entity}, options.FindOne().SetProjection(bson.M{"type": 1}))
-	if sr.Err() != nil {
-		if errors.Is(sr.Err(), mongodriver.ErrNoDocuments) {
-			return nil, common.NewValidationError("entity", "Entity not found.")
-		}
-		return nil, sr.Err()
-	}
 	var entity struct {
 		Type string `bson:"type"`
 	}
-	err := sr.Decode(&entity)
-	if err != nil || entity.Type != types.EntityTypeService && entity.Type != types.EntityTypeResource {
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.Entity}, options.FindOne().SetProjection(bson.M{"type": 1})).
+		Decode(&entity)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if entity.Type != types.EntityTypeService && entity.Type != types.EntityTypeResource {
 		return nil, common.NewValidationError("entity", "Invalid entity type.")
 	}
 	doc := types.EntityComment{
@@ -109,7 +109,8 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 		}},
 	}
 
-	if _, err := s.dbCollection.UpdateOne(ctx, filter, update); err != nil {
+	res, err := s.dbCollection.UpdateOne(ctx, filter, update)
+	if err != nil || res.MatchedCount == 0 {
 		return nil, err
 	}
 	return &Response{
@@ -136,11 +137,8 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, userID, username st
 		"comments.0._id": r.ID,
 	}
 	res, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{"comments.0": doc, "last_comment": doc}})
-	if err != nil {
+	if err != nil || res.MatchedCount == 0 {
 		return nil, err
-	}
-	if res.ModifiedCount == 0 {
-		return nil, common.NewValidationError("_id", "Comment cannot be edited.")
 	}
 	return &Response{
 		ID:     doc.ID,
