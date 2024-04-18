@@ -1,9 +1,9 @@
 <template>
   <c-lazy-search-field
     v-field="value"
+    v-bind="$attrs"
     :label="selectLabel"
     :loading="pending"
-    :limit="limit"
     :items="entities"
     :name="name"
     :has-more="hasMoreEntities"
@@ -18,7 +18,14 @@
     @fetch="fetchEntities"
     @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"
-  />
+  >
+    <template #selection="props">
+      <slot v-bind="props" name="selection" />
+    </template>
+    <template #item="props">
+      <slot v-bind="props" name="item" />
+    </template>
+  </c-lazy-search-field>
 </template>
 
 <script>
@@ -35,6 +42,7 @@ const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 export default {
   inject: ['$validator'],
   mixins: [formArrayMixin],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
