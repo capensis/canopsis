@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -217,8 +218,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
 	alarm.InternalTagsUpdated = types.NewMicroTime()
-	alarm.Tags = make([]string, len(alarm.InternalTags))
-	copy(alarm.Tags, alarm.InternalTags)
+	alarm.Tags = slices.Clone(alarm.InternalTags)
 
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
 	if err != nil {
