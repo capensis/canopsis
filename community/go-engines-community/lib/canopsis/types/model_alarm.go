@@ -100,9 +100,9 @@ type Alarm struct {
 	Time     CpsTime `bson:"t" json:"t"`
 	EntityID string  `bson:"d" json:"d"`
 
-	Tags                []string  `bson:"tags" json:"tags"`
-	ExternalTags        []string  `bson:"etags" json:"etags"`
-	InternalTags        []string  `bson:"itags" json:"itags"`
+	Tags                []string  `bson:"tags,omitempty" json:"tags,omitempty"`
+	ExternalTags        []string  `bson:"etags,omitempty" json:"etags,omitempty"`
+	InternalTags        []string  `bson:"itags,omitempty" json:"itags,omitempty"`
 	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
