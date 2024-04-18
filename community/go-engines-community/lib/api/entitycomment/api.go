@@ -104,11 +104,6 @@ func (a *api) Update(c *gin.Context) {
 
 	response, err := a.store.Update(c, request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		panic(err)
 	}
 
