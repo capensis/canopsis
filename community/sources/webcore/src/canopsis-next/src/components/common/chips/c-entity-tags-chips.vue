@@ -10,10 +10,7 @@
 </template>
 
 <script>
-import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
-
 export default {
-  mixins: [entitiesAlarmTagMixin],
   props: {
     entity: {
       type: Object,
