@@ -139,7 +139,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if !event.Healthcheck {
-			updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 				ctx,
 				p.entityServiceCountersCalculator,
 				p.componentCountersCalculator,
