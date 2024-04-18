@@ -11,3 +11,4 @@ export { default as CTestSuiteChip } from '@/components/common/chips/c-test-suit
 export { default as CInstructionJobChip } from '@/components/common/chips/c-instruction-job-chip.vue';
 export { default as CEngineChip } from '@/components/common/chips/c-engine-chip.vue';
 export { default as CPatternOperatorChip } from '@/components/common/chips/c-pattern-operator-chip.vue';
+export { default as CEntityTagsChips } from '@/components/common/chips/c-entity-tags-chips.vue';
