@@ -94,7 +94,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeCreate,
 	})
@@ -183,7 +183,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeUpdate,
 	})
@@ -237,7 +237,7 @@ func (a *api) Patch(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeUpdate,
 	})
@@ -265,7 +265,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
 		ID:   id,
 		Type: websocketMsgTypeDelete,
 	})

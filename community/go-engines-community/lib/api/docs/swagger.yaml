@@ -7414,6 +7414,22 @@ paths:
           required: true
           schema:
             type: integer
+        - name: event_types[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: connector_names[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
