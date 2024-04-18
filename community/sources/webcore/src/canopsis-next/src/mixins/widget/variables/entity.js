@@ -91,6 +91,7 @@ export const entityVariablesMixin = {
           value: ENTITY_TEMPLATE_FIELDS.alarmLastComment,
           variables: this.lastCommentVariables,
         },
+        { value: ENTITY_TEMPLATE_FIELDS.tags },
       ].map(variable => ({
         ...variable,
 

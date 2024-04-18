@@ -39,8 +39,11 @@
     </template>
     <alarm-column-cell-popup-body
       :alarm="alarm"
+      :selected-tag="selectedTag"
       :template="column.popupTemplate"
       @close="hideInfoPopup"
+      @select:tag="$emit('select:tag', $event)"
+      @clear:tag="$emit('clear:tag')"
     />
   </v-menu>
   <div
