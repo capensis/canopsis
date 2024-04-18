@@ -11,7 +11,7 @@
       <div ref="textEditor" />
       <variables-menu
         v-if="preparedVariables"
-        :variables="preparedVariables"
+        :items="preparedVariables"
         :visible="variablesShown"
         :value="variablesMenuValue"
         :position-x="variablesMenuPosition.x"

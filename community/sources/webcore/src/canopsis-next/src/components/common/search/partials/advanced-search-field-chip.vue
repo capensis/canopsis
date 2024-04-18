@@ -20,7 +20,7 @@
     @click:close="clickChipClose"
   >
     <span v-if="item.not" class="mr-2 font-italic">{{ $t('advancedSearch.not') }}</span>
-    <span>{{ item.text }}</span>
+    <span>{{ item.selectorText || item.text }}</span>
   </v-chip>
 </template>
 

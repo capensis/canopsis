@@ -8,7 +8,7 @@
         />
         <c-advanced-search
           v-else-if="advancedSearch"
-          :columns="headers"
+          :fields="headers"
           @submit="updateSearchHandler"
         />
       </v-flex>
