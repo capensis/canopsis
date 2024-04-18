@@ -214,7 +214,6 @@ func (e *Event) Format() {
 		e.Timestamp = now
 	}
 
-	e.ReceivedTimestamp = datetime.NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
 	}

@@ -85,7 +85,7 @@ export default {
     const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
     const shownTickets = computed(() => props.tickets.slice(0, props.limit));
-    const isLastFailed = computed(() => isSuccessTicketDeclaration(last(props.tickets)));
+    const isLastFailed = computed(() => !isSuccessTicketDeclaration(last(props.tickets)));
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
     const color = COLORS.alarmExtraDetails.ticket;
 
