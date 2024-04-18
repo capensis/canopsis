@@ -36,6 +36,7 @@ export const ENTITY_FIELDS = {
   importSource: 'import_source',
   imported: 'imported',
   alarmLastComment: 'alarm_last_comment',
+  tags: 'tags',
 
   /**
    * OBJECTS
@@ -337,6 +338,7 @@ export const ENTITY_TEMPLATE_FIELDS = {
   statsKo: `entity.${ENTITY_FIELDS.statsKo}`,
   links: `entity.${ENTITY_FIELDS.links}`,
   alarmLastComment: `entity.${ENTITY_FIELDS.alarmLastComment}`,
+  tags: `entity.${ENTITY_FIELDS.tags}`,
 };
 
 export const ENTITY_FIELDS_TO_LABELS_KEYS = {
@@ -370,6 +372,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
   [ENTITY_FIELDS.imported]: 'entity.fields.imported',
   [ENTITY_FIELDS.alarmLastComment]: 'entity.fields.alarmLastComment',
+  [ENTITY_FIELDS.tags]: 'common.tag',
 
   /**
    * OBJECTS
