@@ -11,7 +11,7 @@ const (
 	ObjEntity         = "api_entity"
 	ObjEntityService  = "api_entityservice"
 	ObjEntityCategory = "api_entitycategory"
-	ObjEntityComment  = "api_entitycomment"
+	PermEntityComment = "api_entitycomment"
 	ObjContextGraph   = "api_contextgraph"
 
 	ObjView           = "api_view"
