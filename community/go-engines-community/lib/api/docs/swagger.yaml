@@ -4638,9 +4638,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
-        - name: id
+        - name: entity
           required: true
-          in: path
+          in: query
           description: entity ID
           schema:
             type: string
@@ -4677,7 +4677,7 @@ paths:
       description: |
         Create entity comment.
         
-        -  PERMISSIONS: `api_entitycomment:can`
+        -  PERMISSIONS: `api_entitycomment`
       operationId: entity-comments-create
       requestBody:
         description: body
@@ -4721,7 +4721,7 @@ paths:
       description: |
         Update entity last comment by id.
         
-        -  PERMISSIONS: `api_entitycomment:can`
+        -  PERMISSIONS: `api_entitycomment`
       operationId: entity-comments-update-by-id
       parameters:
         - name: id
