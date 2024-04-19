@@ -10,7 +10,7 @@
       :title="$t('healthcheck.messagesLastHour')"
       class="mb-5"
     >
-      <healthcheck-last-hour-graph
+      <healthcheck-last-hour
         :max-messages-per-minute="maxMessagesPerMinute"
         class="mt-4"
       />
@@ -25,11 +25,12 @@
 </template>
 
 <script>
+import HealthcheckLastHour from '@/components/other/healthcheck/partials/healthcheck-last-hour.vue';
+
 import HealthcheckHistoryGraph from './partials/healthcheck-history-graph.vue';
-import HealthcheckLastHourGraph from './partials/healthcheck-last-hour-graph.vue';
 
 export default {
-  components: { HealthcheckHistoryGraph, HealthcheckLastHourGraph },
+  components: { HealthcheckLastHour, HealthcheckHistoryGraph },
   props: {
     maxMessagesPerMinute: {
       type: Number,
