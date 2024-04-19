@@ -94,6 +94,7 @@ import Observer from '@/services/observer';
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { localQueryMixin } from '@/mixins/query/query';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -116,6 +117,7 @@ export default {
     authMixin,
     localQueryMixin,
     modalInnerMixin,
+    entitiesAlarmTagMixin,
     entitiesServiceEntityMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator({ field: 'actionsRequests' }),
@@ -204,6 +206,10 @@ export default {
       params.pbh_origin = PBEHAVIOR_ORIGINS.serviceWeather;
 
       await this.fetchServiceEntitiesList({ id: this.service._id, params });
+
+      if (!this.alarmTagsPending) {
+        this.fetchAlarmTagsList({ params: { paginate: false } });
+      }
 
       this.pending = false;
     },
