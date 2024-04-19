@@ -49,5 +49,5 @@ type Sender interface {
 
 	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 
-	SendMessageRate(timestamp time.Time)
+	SendMessageRate(timestamp time.Time, eventType, connectorName string)
 }

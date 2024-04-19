@@ -3,18 +3,19 @@
     class="healthcheck-history"
     @touchend.stop=""
   >
-    <v-layout
+    <healthcheck-history-filters
+      :interval="query.interval"
+      :event-types="query.eventTypes"
+      :connector-names="query.connectorNames"
+      :deleted-before="deletedBefore"
       class="ml-4 mb-4"
-      align-center
-    >
-      <c-quick-date-interval-field
-        :interval="query.interval"
-        :quick-ranges="quickRanges"
-        :min="deletedBefore"
-        @input="updateInterval"
-      />
-    </v-layout>
-    <div class="healthcheck-history__graph">
+      @update:interval="updateInterval"
+      @update:event-types="updateQueryField('eventTypes', $event)"
+      @update:connector-names="updateQueryField('connectorNames', $event)"
+    />
+    <div class="position-relative">
+      <c-progress-overlay :pending="pending" />
+
       <limited-time-line-chart
         ref="chart"
         :datasets="datasets"
@@ -23,36 +24,28 @@
         class="text--primary"
       >
         <template #actions="{ chart }">
-          <v-layout
+          <chart-export-actions
+            :chart="chart"
             class="mt-4"
-            justify-end
-          >
+            hide-csv
+            @export:png="exportChart"
+          />
+          <div class="healthcheck-history__zoom">
             <v-btn
-              color="primary"
-              @click="exportChart(chart)"
+              fab
+              small
+              @click="zoomIn(chart)"
             >
-              <v-icon left>
-                file_download
-              </v-icon>
-              <span>{{ $t('common.downloadAsPng') }}</span>
+              <v-icon>add</v-icon>
             </v-btn>
-            <div class="healthcheck-history__zoom">
-              <v-btn
-                fab
-                small
-                @click="zoomIn(chart)"
-              >
-                <v-icon>add</v-icon>
-              </v-btn>
-              <v-btn
-                fab
-                small
-                @click="zoomOut(chart)"
-              >
-                <v-icon>remove</v-icon>
-              </v-btn>
-            </div>
-          </v-layout>
+            <v-btn
+              fab
+              small
+              @click="zoomOut(chart)"
+            >
+              <v-icon>remove</v-icon>
+            </v-btn>
+          </div>
         </template>
       </limited-time-line-chart>
     </div>
@@ -65,7 +58,6 @@ import { debounce } from 'lodash';
 import {
   DATETIME_FORMATS,
   HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR,
-  HEALTHCHECK_QUICK_RANGES,
   MESSAGE_STATS_INTERVALS,
   QUICK_RANGES,
   TIME_UNITS,
@@ -82,16 +74,19 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
 import { convertUnit } from '@/helpers/date/duration';
 import { colorToRgba } from '@/helpers/color';
 import { saveFile } from '@/helpers/file/files';
-import { canvasToBlob } from '@/helpers/charts/canvas';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
 import { localQueryMixin } from '@/mixins/query/query';
+
+import HealthcheckHistoryFilters from '@/components/other/healthcheck/partials/healthcheck-history-filters.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 const LimitedTimeLineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/limited-time-line-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { LimitedTimeLineChart },
+  components: { ChartExportActions, HealthcheckHistoryFilters, LimitedTimeLineChart },
   mixins: [entitiesMessageRateStatsMixin, localQueryMixin],
   props: {
     maxMessagesPerMinute: {
@@ -101,9 +96,12 @@ export default {
   },
   data() {
     return {
+      pending: false,
       messagesStats: [],
       deletedBefore: 0,
       query: {
+        eventTypes: [],
+        connectorNames: [],
         interval: {
           from: QUICK_RANGES.last30Days.start,
           to: QUICK_RANGES.last30Days.stop,
@@ -112,10 +110,6 @@ export default {
     };
   },
   computed: {
-    quickRanges() {
-      return Object.values(HEALTHCHECK_QUICK_RANGES);
-    },
-
     interval() {
       return {
         from: convertStartDateIntervalToTimestamp(this.query.interval.from),
@@ -243,19 +237,13 @@ export default {
     },
 
     customQueryCondition(query, oldQuery) {
-      const isFromChanged = query.interval.from !== oldQuery.interval.from;
-      const isFromEqualDeletedBefore = query.interval.from === this.deletedBefore;
-      const isToChanged = query.interval.to !== oldQuery.interval.to;
-
-      return (isFromChanged && !isFromEqualDeletedBefore) || isToChanged;
+      return isMetricsQueryChanged(query, oldQuery, this.deletedBefore);
     },
 
-    async exportChart(chart) {
+    async exportChart(chartBlob) {
       try {
         const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.long);
         const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.long);
-
-        const chartBlob = await canvasToBlob(chart.canvas);
 
         await saveFile(chartBlob, `${HEALTHCHECK_HISTORY_FILENAME_PREFIX}${fromTime}-${toTime}`);
       } catch (err) {
@@ -286,25 +274,47 @@ export default {
       this.updateQueryField('interval', interval);
     },
 
+    getQuery() {
+      const query = {
+        ...this.intervalWithSwipeOffset,
+        interval: this.sampling,
+      };
+
+      if (this.query.eventTypes.length) {
+        query.event_types = this.query.eventTypes;
+      }
+
+      if (this.query.connectorNames.length) {
+        query.connector_names = this.query.connectorNames;
+      }
+
+      return query;
+    },
+
     async fetchList() {
-      const { data: messagesStats, meta } = await this.fetchMessageRateStatsWithoutStore({
-        params: {
-          ...this.intervalWithSwipeOffset,
-          interval: this.sampling,
-        },
-      });
+      this.pending = true;
 
-      this.messagesStats = messagesStats;
+      try {
+        const { data: messagesStats, meta } = await this.fetchMessageRateStatsWithoutStore({
+          params: this.getQuery(),
+        });
 
-      if (meta.deleted_before) {
-        this.deletedBefore = convertDateToStartOfDayTimestamp(meta.deleted_before);
+        this.messagesStats = messagesStats;
 
-        if (this.interval.from < this.deletedBefore) {
-          this.updateInterval({
-            ...this.query.interval,
-            from: this.deletedBefore,
-          });
+        if (meta.deleted_before) {
+          this.deletedBefore = convertDateToStartOfDayTimestamp(meta.deleted_before);
+
+          if (this.interval.from < this.deletedBefore) {
+            this.updateInterval({
+              ...this.query.interval,
+              from: this.deletedBefore,
+            });
+          }
         }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pending = false;
       }
     },
   },
@@ -313,10 +323,6 @@ export default {
 
 <style lang="scss" scoped>
 .healthcheck-history {
-  &__graph {
-    position: relative;
-  }
-
   &__zoom {
     display: flex;
     gap: 8px;
