@@ -10,7 +10,10 @@
 </template>
 
 <script>
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
+
 export default {
+  mixins: [entitiesAlarmTagMixin],
   props: {
     entity: {
       type: Object,
@@ -25,7 +28,7 @@ export default {
     tags() {
       return (this.entity.tags ?? []).map(tag => ({
         text: tag,
-        color: 'secondary',
+        color: this.getTagColor(tag),
       }));
     },
   },
