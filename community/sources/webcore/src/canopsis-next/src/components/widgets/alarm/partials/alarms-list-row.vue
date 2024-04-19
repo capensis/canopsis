@@ -75,6 +75,7 @@
         :small="small"
         @activate="activateRow"
         @select:tag="$emit('select:tag', $event)"
+        @clear:tag="$emit('clear:tag')"
         @click:state="$emit('click:state', $event)"
       />
       <span

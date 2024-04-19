@@ -71,7 +71,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	event.Format()
 	event.ReceivedTimestamp = datetime.NewMicroTime()
-	p.MetricsSender.SendMessageRate(time.Now())
+	p.MetricsSender.SendMessageRate(time.Now(), event.EventType, event.ConnectorName)
 
 	err = event.InjectExtraInfos(msg)
 	if err != nil {

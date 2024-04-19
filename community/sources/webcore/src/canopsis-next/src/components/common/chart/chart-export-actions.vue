@@ -5,6 +5,7 @@
     wrap
   >
     <v-btn
+      v-if="!hideCsv"
       :loading="downloading"
       color="primary"
       small
@@ -44,6 +45,10 @@ export default {
       required: true,
     },
     downloading: {
+      type: Boolean,
+      default: false,
+    },
+    hideCsv: {
       type: Boolean,
       default: false,
     },

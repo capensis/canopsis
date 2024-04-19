@@ -248,6 +248,8 @@ export default {
   sharedTokens: 'Shared tokens',
   notAvailable: 'N/a',
   addMore: 'Add more',
+  more: 'more',
+  all: 'All',
   attribute: 'Attribute',
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
