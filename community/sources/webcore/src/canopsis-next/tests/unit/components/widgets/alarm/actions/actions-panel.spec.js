@@ -6,11 +6,10 @@ import {
   createAlarmDetailsModule,
   createAuthModule,
   createDeclareTicketModule,
-  createManualMetaAlarmModule,
   createMetaAlarmModule,
   createMockedStoreModules,
 } from '@unit/utils/store';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -64,7 +63,8 @@ const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
 
 describe('actions-panel', () => {
   const timestamp = 1386435600000;
-  mockDateNow(timestamp);
+  jest.useFakeTimers({ now: timestamp });
+
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -92,7 +92,6 @@ describe('actions-panel', () => {
     addBookmarkToAlarm,
     removeBookmarkFromAlarm,
   } = createAlarmModule();
-  const { manualMetaAlarmModule, removeAlarmsFromManualMetaAlarm } = createManualMetaAlarmModule();
   const { metaAlarmModule, removeAlarmsFromMetaAlarm } = createMetaAlarmModule();
   const { alarmDetailsModule, fetchAlarmDetailsWithoutStore } = createAlarmDetailsModule();
 
@@ -102,7 +101,6 @@ describe('actions-panel', () => {
   } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
-    manualMetaAlarmModule,
     metaAlarmModule,
     authModule,
     alarmModule,
@@ -226,7 +224,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -291,7 +288,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: fastActionAlarm,
@@ -324,7 +320,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -375,7 +370,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: { ...alarm, entity },
@@ -416,7 +410,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -494,7 +487,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
         declareTicketRuleModule,
       ]),
       propsData: {
@@ -547,7 +539,6 @@ describe('actions-panel', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
-        manualMetaAlarmModule,
         authModuleWithAccess,
         alarmModule,
       ]),
@@ -604,7 +595,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -659,7 +649,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -738,7 +727,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: fastActionAlarm,
@@ -784,7 +772,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: flappingAlarm,
@@ -819,7 +806,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: flappingAlarm,
@@ -860,7 +846,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: flappingAlarm,
@@ -899,7 +884,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -980,7 +964,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: { ...alarm, entity },
@@ -1041,7 +1024,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: commentAlarm,
@@ -1093,7 +1075,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
+        metaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -1125,61 +1107,7 @@ describe('actions-panel', () => {
 
     await config.action(newRemoveAlarmsEvent);
 
-    expect(removeAlarmsFromManualMetaAlarm).toBeCalledWith(
-      expect.any(Object),
-      {
-        id: parentAlarm?._id,
-        data: newRemoveAlarmsEvent,
-      },
-      undefined,
-    );
-
-    expect(refreshAlarmsList).toBeCalledTimes(1);
-  });
-
-  test('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
-    const widgetData = {
-      _id: Faker.datatype.string(),
-      parameters: {},
-    };
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-        alarmModule,
-        manualMetaAlarmModule,
-      ]),
-      propsData: {
-        item: alarm,
-        widget: widgetData,
-        parentAlarm,
-        refreshAlarmsList,
-      },
-    });
-
-    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm).trigger('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.removeAlarmsFromMetaAlarm,
-        config: {
-          items: [alarm],
-          action: expect.any(Function),
-          title: 'Unlink alarm from manual meta alarm',
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    const newRemoveAlarmsEvent = {
-      comment: Faker.datatype.string(),
-      alarms: [Faker.datatype.string()],
-    };
-
-    await config.action(newRemoveAlarmsEvent);
-
-    expect(removeAlarmsFromManualMetaAlarm).toBeCalledWith(
+    expect(removeAlarmsFromMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
         id: parentAlarm?._id,
@@ -1201,7 +1129,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
         metaAlarmModule,
       ]),
       propsData: {
@@ -1266,7 +1193,6 @@ describe('actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
         {
           ...alarmModule,
           getters: {
@@ -1373,7 +1299,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -1408,7 +1333,6 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: { ...alarm, bookmark: true },
@@ -1434,7 +1358,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1453,7 +1376,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1481,7 +1403,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1500,7 +1421,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1519,7 +1439,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1538,7 +1457,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -1554,7 +1472,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1585,7 +1502,6 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        manualMetaAlarmModule,
       ]),
       propsData: {
         item: resolvedAlarmData,

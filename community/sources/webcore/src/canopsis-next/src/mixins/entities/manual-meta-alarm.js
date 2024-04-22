@@ -1,14 +1,10 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('manualMetaAlarm');
+const { mapActions } = createNamespacedHelpers('metaAlarm');
 
 export const entitiesManualMetaAlarmMixin = {
   methods: {
     ...mapActions({
-      fetchManualMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
-      createManualMetaAlarm: 'create',
-      addAlarmsIntoManualMetaAlarm: 'addAlarms',
-      removeAlarmsFromManualMetaAlarm: 'removeAlarms',
     }),
   },
 };
