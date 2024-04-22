@@ -258,4 +258,34 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default prop
 </div>
 `;
 
-exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default props 2`] = `undefined`;
+exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default props 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
+  >
+    <div
+      class="v-list-item theme--light"
+      tabindex="-1"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          No meta alarm corresponding. Press 
+          <kbd>
+            enter
+          </kbd>
+           to create a new one
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
