@@ -172,11 +172,10 @@ type WidgetFilter struct {
 	Created   datetime.CpsTime `bson:"created,omitempty"`
 	Updated   datetime.CpsTime `bson:"updated,omitempty"`
 
-	savedpattern.AlarmPatternFields     `bson:",inline"`
-	savedpattern.EntityPatternFields    `bson:",inline"`
-	savedpattern.PbehaviorPatternFields `bson:",inline"`
-
-	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
+	savedpattern.AlarmPatternFields          `bson:",inline"`
+	savedpattern.EntityPatternFields         `bson:",inline"`
+	savedpattern.PbehaviorPatternFields      `bson:",inline"`
+	savedpattern.WeatherServicePatternFields `bson:",inline"`
 
 	IsUserPreference bool `bson:"is_user_preference"`
 }

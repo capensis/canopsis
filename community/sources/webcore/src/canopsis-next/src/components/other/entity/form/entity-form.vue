@@ -29,6 +29,16 @@
                   required
                 />
               </v-flex>
+              <v-flex
+                class="pr-3"
+                xs3
+              >
+                <c-alarm-state-field
+                  v-field="form.sli_avail_state"
+                  :label="$t('entity.availabilityState')"
+                  required
+                />
+              </v-flex>
               <v-flex xs6>
                 <c-entity-type-field
                   v-field="form.type"
