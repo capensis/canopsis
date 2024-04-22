@@ -26,7 +26,64 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
           class="mb-4"
           items="[object Object]"
         />
-        <manual-meta-alarm-form-stub
+        <link-meta-alarm-form-stub
+          form="[object Object]"
+        />
+      </div>
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--text theme--light v-size--default"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Cancel
+        </span>
+      </button>
+      <button
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
+        type="submit"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Save changes
+        </span>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`link-to-meta-alarm Renders \`link-to-meta-alarm\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close=""
+  >
+    <div
+      class="title"
+    >
+      Link to a meta alarm
+    </div>
+    <div
+      class="text"
+    >
+      <div
+        class="layout column"
+      >
+        <alarm-general-table-stub
+          class="mb-4"
+          items="[object Object]"
+        />
+        <link-meta-alarm-form-stub
           form="[object Object]"
         />
       </div>

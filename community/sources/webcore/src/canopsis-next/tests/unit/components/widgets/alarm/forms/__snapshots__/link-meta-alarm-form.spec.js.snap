@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1`] = `
+exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 1`] = `
 <div
   class="layout column"
 >
@@ -23,7 +23,7 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
-            Manual meta alarm
+            Select meta alarm or create a new one
           </label>
           <input
             autocomplete="off"
@@ -113,9 +113,9 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
 </div>
 `;
 
-exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 2`] = `undefined`;
+exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 2`] = `undefined`;
 
-exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default props 1`] = `
+exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default props 1`] = `
 <div
   class="layout column"
 >
@@ -138,7 +138,7 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
-            Manual meta alarm
+            Select meta alarm or create a new one
           </label>
           <input
             autocomplete="off"
@@ -230,4 +230,4 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
 </div>
 `;
 
-exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default props 2`] = `undefined`;
+exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default props 2`] = `undefined`;

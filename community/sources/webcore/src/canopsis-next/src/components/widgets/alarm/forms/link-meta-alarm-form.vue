@@ -4,7 +4,7 @@
       v-field="form.metaAlarm"
       v-validate="'required'"
       :items="manualMetaAlarms"
-      :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')"
+      :label="$t('modals.linkToMetaAlarm.fields.metaAlarm')"
       :error-messages="errors.collect('manualMetaAlarm')"
       :loading="pending"
       item-value="_id"
@@ -16,7 +16,7 @@
       <template #no-data="">
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title v-html="$t('modals.createManualMetaAlarm.noData')" />
+            <v-list-item-title v-html="$t('modals.linkToMetaAlarm.noData')" />
           </v-list-item-content>
         </v-list-item>
       </template>

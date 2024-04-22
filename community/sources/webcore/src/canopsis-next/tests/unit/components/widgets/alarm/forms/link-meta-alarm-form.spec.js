@@ -4,7 +4,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { createInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-alarm-form.vue';
+import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
 
 const stubs = {
   'v-combobox': createInputStub('v-combobox'),
@@ -20,7 +20,7 @@ const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
-describe('manual-meta-alarm-form', () => {
+describe('link-meta-alarm-form', () => {
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockReturnValue([]);
   const alarmModule = {
     name: 'alarm',
@@ -32,8 +32,8 @@ describe('manual-meta-alarm-form', () => {
     alarmModule,
   ]);
 
-  const factory = generateShallowRenderer(ManualMetaAlarmForm, { stubs });
-  const snapshotFactory = generateRenderer(ManualMetaAlarmForm, { stubs: snapshotStubs });
+  const factory = generateShallowRenderer(LinkMetaAlarmForm, { stubs });
+  const snapshotFactory = generateRenderer(LinkMetaAlarmForm, { stubs: snapshotStubs });
 
   test('Alarms fetched after mount', () => {
     factory({
@@ -110,7 +110,7 @@ describe('manual-meta-alarm-form', () => {
     expect(wrapper).toEmitInput({ ...form, auto_resolve: autoResolve });
   });
 
-  test('Renders `manual-meta-alarm-form` with default props', () => {
+  test('Renders `link-meta-alarm-form` with default props', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -126,7 +126,7 @@ describe('manual-meta-alarm-form', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `manual-meta-alarm-form` with alarms', async () => {
+  test('Renders `link-meta-alarm-form` with alarms', async () => {
     fetchManualMetaAlarmsListWithoutStore.mockReturnValueOnce([
       { _id: 'entity-id', name: 'alarm-display-name' },
     ]);

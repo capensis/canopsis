@@ -54,7 +54,7 @@ export default {
       changeState: 'Changer et verrouiller la criticité',
       variablesHelp: 'Liste des variables disponibles',
       history: 'Historique',
-      createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
+      linkToMetaAlarm: 'Lien vers une méta-alarme',
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
       removeAlarmsFromAutoMetaAlarm: 'Dissocier l\'alarme de la méta-alarme',
       comment: 'Commenter l\'alarme',
