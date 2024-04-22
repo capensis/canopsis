@@ -216,7 +216,6 @@ export default {
     ticketInitiator: 'Initiateur du ticket',
     ticketCreatedAt: 'Ticket créé à',
     ticketData: 'Données du ticket',
-    entityId: 'ID d\'entité',
     entityName: 'Nom de l\'entité',
     entityCategoryName: 'Nom de la catégorie d\'entité',
     entityType: 'Type d\'entité',

@@ -52,10 +52,9 @@ import { computed, ref } from 'vue';
 import { isWebhookActionType } from '@/helpers/entities/action';
 
 import { formMixin } from '@/mixins/form';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
 import ScenarioTestQuery from '@/components/other/scenario/partials/scenario-test-query.vue';
-
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
 import ScenarioActionsForm from './scenario-actions-form.vue';
 

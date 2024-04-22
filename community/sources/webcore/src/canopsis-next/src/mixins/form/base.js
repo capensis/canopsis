@@ -5,6 +5,7 @@ import formComputedPropertiesMixin, {
 
 /**
  * @mixin Form mixin
+ * @deprecated Should be used useModelField
  */
 export const formBaseMixin = {
   mixins: [formComputedPropertiesMixin],
