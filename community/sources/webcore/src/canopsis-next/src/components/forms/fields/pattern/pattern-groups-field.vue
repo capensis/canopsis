@@ -29,26 +29,16 @@
         <c-pattern-operator-chip>{{ $t('common.or') }}</c-pattern-operator-chip>
       </v-layout>
     </v-layout>
-    <v-layout
+
+    <c-btn-with-error
       v-if="!readonly"
+      :error="hasGroupsErrors ? $t('pattern.errors.groupRequired'): ''"
+      :disabled="disabled"
       class="mt-2"
-      align-center
+      @click="addFilterGroup"
     >
-      <v-btn
-        :color="hasGroupsErrors ? 'error' : 'primary'"
-        :disabled="disabled"
-        class="mr-2"
-        @click="addFilterGroup"
-      >
-        {{ $t('pattern.addGroup') }}
-      </v-btn>
-      <span
-        v-show="hasGroupsErrors"
-        class="error--text"
-      >
-        {{ $t('pattern.errors.groupRequired') }}
-      </span>
-    </v-layout>
+      {{ $t('pattern.addGroup') }}
+    </c-btn-with-error>
   </v-layout>
 </template>
 
