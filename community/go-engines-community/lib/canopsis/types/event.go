@@ -66,6 +66,7 @@ const (
 	EventTypeMetaAlarmAttachChildren = "metaalarmattachchildren"
 	EventTypeMetaAlarmDetachChildren = "metaalarmdetachchildren"
 	EventTypeMetaAlarmUngroup        = "metaalarm_ungroup"
+	EventTypeMetaAlarmUpdate         = "metaalarm_update"
 	EventTypeManualMetaAlarmGroup    = "manual_metaalarm_group"
 	EventTypeManualMetaAlarmUngroup  = "manual_metaalarm_ungroup"
 	EventTypeManualMetaAlarmUpdate   = "manual_metaalarm_update"
@@ -584,6 +585,7 @@ func isValidEventType(t string) bool {
 		EventTypeMetaAlarmAttachChildren,
 		EventTypeMetaAlarmDetachChildren,
 		EventTypeMetaAlarmUngroup,
+		EventTypeMetaAlarmUpdate,
 		EventTypeManualMetaAlarmGroup,
 		EventTypeManualMetaAlarmUngroup,
 		EventTypeManualMetaAlarmUpdate,
