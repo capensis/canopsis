@@ -12,7 +12,7 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   MODALS,
-  QUICK_RANGES,
+  LIVE_REPORTING_QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
   USERS_PERMISSIONS,
@@ -114,8 +114,8 @@ describe('alarms-list', () => {
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
     limit: userPreferences.content.itemsPerPage,
-    tstart: QUICK_RANGES.last1Year.start,
-    tstop: QUICK_RANGES.last1Year.stop,
+    tstart: LIVE_REPORTING_QUICK_RANGES.last1Year.start,
+    tstop: LIVE_REPORTING_QUICK_RANGES.last1Year.stop,
     opened: null,
     search: 'search',
   };
@@ -791,8 +791,8 @@ describe('alarms-list', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     const actionValue = {
-      tstart: QUICK_RANGES.last3Hour.start,
-      tstop: QUICK_RANGES.last3Hour.stop,
+      tstart: LIVE_REPORTING_QUICK_RANGES.last3Hour.start,
+      tstop: LIVE_REPORTING_QUICK_RANGES.last3Hour.stop,
     };
 
     modalArguments.config.action(actionValue);
@@ -1000,7 +1000,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1091,7 +1091,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1157,7 +1157,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,
