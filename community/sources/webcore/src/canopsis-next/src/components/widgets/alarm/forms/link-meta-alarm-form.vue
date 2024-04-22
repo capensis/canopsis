@@ -3,7 +3,7 @@
     <v-combobox
       v-field="form.metaAlarm"
       v-validate="'required'"
-      :items="manualMetaAlarms"
+      :items="metaAlarms"
       :label="$t('modals.linkToMetaAlarm.fields.metaAlarm')"
       :error-messages="errors.collect('manualMetaAlarm')"
       :loading="pending"
@@ -35,7 +35,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('alarm');
+const { mapActions } = createNamespacedHelpers('metaAlarm');
 
 export default {
   inject: ['$validator'],
@@ -52,23 +52,23 @@ export default {
   data() {
     return {
       pending: false,
-      manualMetaAlarms: [],
+      metaAlarms: [],
     };
   },
   mounted() {
-    this.fetchManualMetaAlarms();
+    this.fetchMetaAlarms();
   },
   methods: {
     ...mapActions({
-      fetchManualMetaAlarmsListWithoutStore: 'fetchManualMetaAlarmsListWithoutStore',
+      fetchMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    async fetchManualMetaAlarms() {
+    async fetchMetaAlarms() {
       this.pending = true;
 
-      const alarms = await this.fetchManualMetaAlarmsListWithoutStore();
+      const alarms = await this.fetchMetaAlarmsListWithoutStore();
 
-      this.manualMetaAlarms = alarms ?? [];
+      this.metaAlarms = alarms ?? [];
       this.pending = false;
     },
   },

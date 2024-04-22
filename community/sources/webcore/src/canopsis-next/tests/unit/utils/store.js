@@ -956,12 +956,12 @@ export const createInfosModule = () => {
 
 export const createMetaAlarmModule = () => {
   const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
-  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
   const createMetaAlarm = jest.fn().mockResolvedValue([]);
   const addAlarmsIntoMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
-    fetchManualMetaAlarmsListWithoutStore.mockClear();
+    fetchMetaAlarmsListWithoutStore.mockClear();
     createMetaAlarm.mockClear();
     addAlarmsIntoMetaAlarm.mockClear();
     removeAlarmsFromMetaAlarm.mockClear();
@@ -971,14 +971,14 @@ export const createMetaAlarmModule = () => {
     name: 'metaAlarm',
     actions: {
       removeAlarms: removeAlarmsFromMetaAlarm,
-      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
+      fetchListWithoutStore: fetchMetaAlarmsListWithoutStore,
       create: createMetaAlarm,
       addAlarms: addAlarmsIntoMetaAlarm,
     },
   };
 
   return {
-    fetchManualMetaAlarmsListWithoutStore,
+    fetchMetaAlarmsListWithoutStore,
     createMetaAlarm,
     addAlarmsIntoMetaAlarm,
     removeAlarmsFromMetaAlarm,
