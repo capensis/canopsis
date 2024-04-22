@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
+  createAlarmTagModule,
   createAuthModule,
   createMockedStoreModules,
   createQueryModule,
@@ -73,12 +74,14 @@ describe('service-weather', () => {
     fetchServiceAlarmsWithoutStore,
   } = createServiceModule();
   const { queryModule, updateQuery } = createQueryModule();
+  const { alarmTagModule } = createAlarmTagModule();
 
   const store = createMockedStoreModules([
     authModule,
     userPreferenceModule,
     serviceModule,
     queryModule,
+    alarmTagModule,
   ]);
 
   const factory = generateShallowRenderer(ServiceWeatherWidget, {
