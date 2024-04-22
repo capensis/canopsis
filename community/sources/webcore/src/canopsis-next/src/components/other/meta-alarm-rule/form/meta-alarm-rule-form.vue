@@ -1,81 +1,105 @@
 <template>
-  <div>
-    <c-id-field
-      v-field="form._id"
-      :disabled="isDisabledIdField"
-      :help-text="$t('metaAlarmRule.idHelp')"
-    />
-    <c-name-field
-      v-field="form.name"
-      required
-    />
-    <c-description-field
-      v-field="form.output_template"
-      :label="$t('metaAlarmRule.outputTemplate')"
-      :help-text="$t('metaAlarmRule.outputTemplateHelp')"
-    />
-    <c-enabled-field
-      v-field="form.auto_resolve"
-      :label="$t('metaAlarmRule.autoResolve')"
-    />
-    <v-select
-      v-field="form.type"
-      :items="ruleTypes"
-      :label="$t('common.type')"
-    />
-    <meta-alarm-rule-corel-form
-      v-if="isCorelFormShown"
-      v-field="form.config"
-    />
-    <meta-alarm-rule-threshold-form
-      v-if="isThresholdFormShown"
-      v-field="form.config"
-    />
-    <meta-alarm-rule-time-based-form
-      v-if="isTimeBasedFormShown"
-      v-field="form.config"
-      :with-child-inactive-delay="withChildInactiveDelay"
-    />
-    <meta-alarm-rule-value-paths-form
-      v-if="isValuePathsFormShown"
-      v-field="form.config"
-      class="mb-2"
-    />
-    <meta-alarm-rule-patterns-form
-      v-field="form.patterns"
-      :with-total-entity="withTotalEntityPattern"
-      :some-required="isAttributeType"
-    />
-  </div>
+  <v-stepper :value="activeStep" @change="$emit('update:active-step', $event)">
+    <v-stepper-header>
+      <v-stepper-step
+        :complete="activeStep > META_ALARMS_FORM_STEPS.general"
+        :step="META_ALARMS_FORM_STEPS.general"
+        :rules="[() => !hasGeneralError]"
+        class="py-0"
+        editable
+      >
+        {{ $t('metaAlarmRule.steps.basics') }}
+        <small v-if="hasGeneralError">{{ $t('errors.invalid') }}</small>
+      </v-stepper-step>
+      <v-divider />
+      <v-stepper-step
+        :complete="activeStep > META_ALARMS_FORM_STEPS.type"
+        :step="META_ALARMS_FORM_STEPS.type"
+        :rules="[() => !hasTypeError]"
+        class="py-0"
+        editable
+      >
+        {{ $t('metaAlarmRule.steps.defineType') }}
+        <small v-if="hasTypeError">{{ $t('errors.invalid') }}</small>
+      </v-stepper-step>
+      <v-divider />
+      <v-stepper-step
+        :complete="activeStep > META_ALARMS_FORM_STEPS.parameters"
+        :step="META_ALARMS_FORM_STEPS.parameters"
+        :rules="[() => !hasParametersError]"
+        class="py-0"
+        editable
+      >
+        {{ $t('metaAlarmRule.steps.addParameters') }}
+        <small v-if="hasParametersError">{{ $t('errors.invalid') }}</small>
+      </v-stepper-step>
+    </v-stepper-header>
+
+    <v-stepper-items>
+      <v-stepper-content
+        ref="generalStepElement"
+        :step="META_ALARMS_FORM_STEPS.general"
+        class="pa-0"
+      >
+        <meta-alarm-rule-general-form
+          v-field="form"
+          :disabled-id-field="disabledIdField"
+          class="pa-4"
+        />
+      </v-stepper-content>
+      <v-stepper-content
+        ref="typeStepElement"
+        :step="META_ALARMS_FORM_STEPS.type"
+        class="pa-0"
+      >
+        <div class="pa-4">
+          <meta-alarm-rule-type-field v-field="form.type" />
+        </div>
+      </v-stepper-content>
+      <v-stepper-content
+        ref="parametersStepElement"
+        :step="META_ALARMS_FORM_STEPS.parameters"
+        class="pa-0"
+      >
+        <c-information-block
+          :title="$t(`metaAlarmRule.parametersTitle.${form.type}`)"
+          class="pa-4"
+        >
+          <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
+          <meta-alarm-rule-parameters-form
+            v-field="form"
+            :variables="variables"
+          />
+        </c-information-block>
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 </template>
 
 <script>
-import { META_ALARMS_RULE_TYPES } from '@/constants';
+import { computed, ref, toRef } from 'vue';
 
 import {
-  isAttributeMetaAlarmRuleType,
-  isComplexMetaAlarmRuleType,
-  isCorelMetaAlarmRuleType,
-  isManualGroupMetaAlarmRuleType,
-  isMetaAlarmRuleTypeHasTotalEntityPatterns,
-  isTimebasedMetaAlarmRuleType,
-  isValueGroupMetaAlarmRuleType,
-} from '@/helpers/entities/meta-alarm/rule/form';
+  ALARM_PAYLOADS_VARIABLES,
+  ENTITY_PAYLOADS_VARIABLES,
+  META_ALARMS_FORM_STEPS,
+  META_ALARMS_RULE_TYPES,
+} from '@/constants';
 
-import MetaAlarmRuleThresholdForm from './meta-alarm-rule-threshold-form.vue';
-import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
-import MetaAlarmRuleValuePathsForm from './meta-alarm-rule-value-paths-form.vue';
-import MetaAlarmRuleCorelForm from './meta-alarm-rule-corel-form.vue';
-import MetaAlarmRulePatternsForm from './meta-alarm-rule-patterns-form.vue';
+import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
+import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
+import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
+
+import { useI18n } from '@/hooks/i18n';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
+import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-variables';
+import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
 
 export default {
-  inject: ['$validator'],
   components: {
-    MetaAlarmRuleTimeBasedForm,
-    MetaAlarmRuleThresholdForm,
-    MetaAlarmRuleValuePathsForm,
-    MetaAlarmRuleCorelForm,
-    MetaAlarmRulePatternsForm,
+    MetaAlarmRuleParametersForm,
+    MetaAlarmRuleTypeField,
+    MetaAlarmRuleGeneralForm,
   },
   model: {
     prop: 'form',
@@ -84,76 +108,82 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        type: META_ALARMS_RULE_TYPES.attribute,
+      }),
     },
-    isDisabledIdField: {
+    disabledIdField: {
       type: Boolean,
       default: false,
     },
+    activeStep: {
+      type: Number,
+      default: 0,
+    },
+    alarmInfos: {
+      type: Array,
+      default: () => [],
+    },
+    entityInfos: {
+      type: Array,
+      default: () => [],
+    },
   },
-  computed: {
-    /**
-     * We are filtered 'manualgroup' because we are using in only in the alarms list widget directly
-     */
-    ruleTypes() {
-      return Object.values(META_ALARMS_RULE_TYPES)
-        .filter(type => !isManualGroupMetaAlarmRuleType(type));
-    },
+  setup(props, { expose }) {
+    const { tc } = useI18n();
 
-    /**
-     * Conditions for forms showing
-     */
-    isThresholdFormShown() {
-      return this.isComplexType || this.isValueGroupType;
-    },
+    const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
+    const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
+    const variables = computed(() => [
+      {
+        value: ENTITY_PAYLOADS_VARIABLES.entity,
+        text: tc('common.entity'),
+        variables: entityPayloadVariables.value,
+      },
+      {
+        value: ALARM_PAYLOADS_VARIABLES.alarm,
+        text: tc('common.alarm'),
+        variables: alarmPayloadVariables.value,
+      },
+    ]);
 
-    isValuePathsFormShown() {
-      return this.isValueGroupType;
-    },
+    const generalStepElement = ref(null);
+    const {
+      hasChildrenError: hasGeneralError,
+      validateChildren: validateGeneralChildren,
+    } = useValidationElementChildren(generalStepElement);
 
-    isTimeBasedFormShown() {
-      return this.isComplexType
-        || this.isValueGroupType
-        || this.isTimeBasedType
-        || this.isCorelFormShown;
-    },
+    const typeStepElement = ref(null);
+    const {
+      hasChildrenError: hasTypeError,
+      validateChildren: validateTypeChildren,
+    } = useValidationElementChildren(typeStepElement);
 
-    isCorelFormShown() {
-      return this.isCorelType;
-    },
+    const parametersStepElement = ref(null);
+    const {
+      hasChildrenError: hasParametersError,
+      validateChildren: validateParametersChildren,
+    } = useValidationElementChildren(parametersStepElement);
 
-    withTotalEntityPattern() {
-      return isMetaAlarmRuleTypeHasTotalEntityPatterns(this.form.type);
-    },
+    expose({
+      hasGeneralError,
+      hasTypeError,
+      hasParametersError,
+      validateGeneralChildren,
+      validateTypeChildren,
+      validateParametersChildren,
+    });
 
-    withChildInactiveDelay() {
-      return this.isComplexType
-        || this.isValueGroupType
-        || this.isCorelFormShown;
-    },
-
-    /**
-     * Rule types
-     */
-    isAttributeType() {
-      return isAttributeMetaAlarmRuleType(this.form.type);
-    },
-
-    isTimeBasedType() {
-      return isTimebasedMetaAlarmRuleType(this.form.type);
-    },
-
-    isComplexType() {
-      return isComplexMetaAlarmRuleType(this.form.type);
-    },
-
-    isValueGroupType() {
-      return isValueGroupMetaAlarmRuleType(this.form.type);
-    },
-
-    isCorelType() {
-      return isCorelMetaAlarmRuleType(this.form.type);
-    },
+    return {
+      generalStepElement,
+      hasGeneralError,
+      parametersStepElement,
+      hasParametersError,
+      typeStepElement,
+      hasTypeError,
+      variables,
+      META_ALARMS_FORM_STEPS,
+    };
   },
 };
 </script>
