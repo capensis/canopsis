@@ -50,7 +50,7 @@ describe('service-weather', () => {
     lockedFilter: null,
     sortDesc: [],
     sortBy: [],
-    limit: DEFAULT_WEATHER_LIMIT,
+    itemsPerPage: DEFAULT_WEATHER_LIMIT,
     hide_grey: false,
   };
 
@@ -72,14 +72,16 @@ describe('service-weather', () => {
     fetchServicesList,
     fetchServiceAlarmsWithoutStore,
   } = createServiceModule();
-  const { queryModule, updateQuery } = createQueryModule();
+  const { queryModule, updateQuery, getQueryById } = createQueryModule();
 
-  const store = createMockedStoreModules([
+  const createStore = () => createMockedStoreModules([
     authModule,
     userPreferenceModule,
     serviceModule,
     queryModule,
   ]);
+
+  const store = createStore();
 
   const factory = generateShallowRenderer(ServiceWeatherWidget, {
     stubs,
@@ -110,13 +112,10 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    expect(fetchUserPreference).toBeCalledWith(
-      expect.any(Object),
+    expect(fetchUserPreference).toBeDispatchedWith(
       { id: widget._id },
-      undefined,
     );
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
+    expect(updateQuery).toBeDispatchedWith(
       {
         id: widget._id,
         query: {
@@ -124,7 +123,6 @@ describe('service-weather', () => {
           search: '',
         },
       },
-      undefined,
     );
   });
 
@@ -133,13 +131,33 @@ describe('service-weather', () => {
 
     await wrapper.vm.fetchList();
 
-    expect(fetchServicesList).toBeCalledWith(
-      expect.any(Object),
+    expect(fetchServicesList).toBeDispatchedWith(
       {
         widgetId: widget._id,
         params: { limit: 10 },
       },
-      undefined,
+    );
+  });
+
+  test('Services list fetched with custom limit query', async () => {
+    const limit = Faker.datatype.number({ min: 0, max: 100 });
+    getQueryById.mockReturnValueOnce(() => ({
+      itemsPerPage: limit,
+    }));
+
+    const wrapper = factory({
+      store: createStore(),
+    });
+
+    await flushPromises();
+
+    await wrapper.vm.fetchList();
+
+    expect(fetchServicesList).toBeDispatchedWith(
+      {
+        widgetId: widget._id,
+        params: { limit },
+      },
     );
   });
 
