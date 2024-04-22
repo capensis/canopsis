@@ -5,7 +5,7 @@ const { mapActions } = createNamespacedHelpers('metaAlarm');
 export const entitiesMetaAlarmMixin = {
   methods: {
     ...mapActions({
-      fetchManualMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
+      fetchMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
       createMetaAlarm: 'create',
       addAlarmsIntoMetaAlarm: 'addAlarms',
       removeAlarmsFromMetaAlarm: 'removeAlarms',

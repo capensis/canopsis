@@ -2,7 +2,7 @@ import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModules, createMetaAlarmModule } from '@unit/utils/store';
 
 import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
 
@@ -21,15 +21,9 @@ const selectComboboxField = wrapper => wrapper.find('.v-combobox');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
 describe('link-meta-alarm-form', () => {
-  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockReturnValue([]);
-  const alarmModule = {
-    name: 'alarm',
-    actions: {
-      fetchManualMetaAlarmsListWithoutStore,
-    },
-  };
+  const { metaAlarmModule, fetchMetaAlarmsListWithoutStore } = createMetaAlarmModule();
   const store = createMockedStoreModules([
-    alarmModule,
+    metaAlarmModule,
   ]);
 
   const factory = generateShallowRenderer(LinkMetaAlarmForm, { stubs });
@@ -43,7 +37,7 @@ describe('link-meta-alarm-form', () => {
       },
     });
 
-    expect(fetchManualMetaAlarmsListWithoutStore).toBeCalled();
+    expect(fetchMetaAlarmsListWithoutStore).toBeCalled();
   });
 
   test('Meta alarm changed after trigger text field', () => {
@@ -110,7 +104,7 @@ describe('link-meta-alarm-form', () => {
     expect(wrapper).toEmitInput({ ...form, auto_resolve: autoResolve });
   });
 
-  test('Renders `link-meta-alarm-form` with default props', () => {
+  test('Renders `link-meta-alarm-form` with default props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -123,17 +117,16 @@ describe('link-meta-alarm-form', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `link-meta-alarm-form` with alarms', async () => {
-    fetchManualMetaAlarmsListWithoutStore.mockReturnValueOnce([
+    fetchMetaAlarmsListWithoutStore.mockReturnValueOnce([
       { _id: 'entity-id', name: 'alarm-display-name' },
     ]);
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([
-        alarmModule,
-      ]),
+      store: createMockedStoreModules([metaAlarmModule]),
       propsData: {
         form: {},
       },
@@ -142,6 +135,7 @@ describe('link-meta-alarm-form', () => {
     await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

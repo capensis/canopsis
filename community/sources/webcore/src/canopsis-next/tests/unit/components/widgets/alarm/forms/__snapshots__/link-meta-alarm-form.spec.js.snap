@@ -113,7 +113,35 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 1`] =
 </div>
 `;
 
-exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 2`] = `undefined`;
+exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
+  >
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          alarm-display-name
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
 exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default props 1`] = `
 <div
