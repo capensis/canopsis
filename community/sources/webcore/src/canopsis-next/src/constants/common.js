@@ -425,6 +425,11 @@ export const EXCLUDED_SERVER_ERROR_STATUSES = [
   RESPONSE_STATUSES.forbidden,
 ];
 
+export const PAYLOADS_INFO_VARIABLES = {
+  value: '.Value',
+  description: '.Description',
+};
+
 export const WEBHOOK_EXECUTION_STATUSES = {
   waiting: 0,
   running: 1,
