@@ -954,42 +954,16 @@ export const createInfosModule = () => {
   };
 };
 
-export const createManualMetaAlarmModule = () => {
+export const createMetaAlarmModule = () => {
+  const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
-  const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const removeAlarmsFromManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const createMetaAlarm = jest.fn().mockResolvedValue([]);
+  const addAlarmsIntoMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
     fetchManualMetaAlarmsListWithoutStore.mockClear();
-    createManualMetaAlarm.mockClear();
-    addAlarmsIntoManualMetaAlarm.mockClear();
-    removeAlarmsFromManualMetaAlarm.mockClear();
-  });
-
-  const manualMetaAlarmModule = {
-    name: 'manualMetaAlarm',
-    actions: {
-      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
-      create: createManualMetaAlarm,
-      addAlarms: addAlarmsIntoManualMetaAlarm,
-      removeAlarms: removeAlarmsFromManualMetaAlarm,
-    },
-  };
-
-  return {
-    fetchManualMetaAlarmsListWithoutStore,
-    createManualMetaAlarm,
-    addAlarmsIntoManualMetaAlarm,
-    removeAlarmsFromManualMetaAlarm,
-    manualMetaAlarmModule,
-  };
-};
-
-export const createMetaAlarmModule = () => {
-  const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
-
-  afterEach(() => {
+    createMetaAlarm.mockClear();
+    addAlarmsIntoMetaAlarm.mockClear();
     removeAlarmsFromMetaAlarm.mockClear();
   });
 
@@ -997,10 +971,16 @@ export const createMetaAlarmModule = () => {
     name: 'metaAlarm',
     actions: {
       removeAlarms: removeAlarmsFromMetaAlarm,
+      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
+      create: createMetaAlarm,
+      addAlarms: addAlarmsIntoMetaAlarm,
     },
   };
 
   return {
+    fetchManualMetaAlarmsListWithoutStore,
+    createMetaAlarm,
+    addAlarmsIntoMetaAlarm,
     removeAlarmsFromMetaAlarm,
     metaAlarmModule,
   };

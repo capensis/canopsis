@@ -229,9 +229,9 @@ export default {
       if (!this.hasMetaAlarm) {
         actions.push(
           {
-            type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
-            title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
-            method: this.showCreateManualMetaAlarmModal,
+            type: ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm,
+            title: this.$t('alarm.actions.titles.linkToMetaAlarm'),
+            method: this.showLinkToMetaAlarmModal,
           },
         );
       }
@@ -354,8 +354,8 @@ export default {
       this.showUnCancelModalByAlarms(this.cancelledAndUnResolvedAlarms);
     },
 
-    showCreateManualMetaAlarmModal() {
-      this.showCreateManualMetaAlarmModalByAlarms(this.alarmsForActions);
+    showLinkToMetaAlarmModal() {
+      this.showLinkToMetaAlarmModalByAlarms(this.alarmsForActions);
     },
 
     createMassFastAckEvent() {
