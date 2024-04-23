@@ -842,6 +842,22 @@ export default {
       title: 'Edit shared pbehavior filter',
     },
   },
+  createServiceWeatherPattern: {
+    create: {
+      title: 'Create service weather filter',
+    },
+    edit: {
+      title: 'Edit service weather filter',
+    },
+  },
+  createCorporateServiceWeatherPattern: {
+    create: {
+      title: 'Create shared service weather filter',
+    },
+    edit: {
+      title: 'Edit shared service weather filter',
+    },
+  },
   createMap: {
     title: 'Create a map',
   },
