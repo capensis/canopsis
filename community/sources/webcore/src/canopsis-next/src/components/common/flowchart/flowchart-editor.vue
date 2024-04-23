@@ -54,7 +54,7 @@
 import { cloneDeep, isEqual, omit } from 'lodash';
 
 import { COLORS } from '@/config';
-import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
+import { KEY_CODES, SHAPES } from '@/constants';
 
 import { roundByStep } from '@/helpers/flowchart/round';
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
@@ -569,15 +569,15 @@ export default {
       }
 
       const handler = {
-        [FLOWCHART_KEY_CODES.arrowUp]: this.moveSelectedUp,
-        [FLOWCHART_KEY_CODES.arrowRight]: this.moveSelectedRight,
-        [FLOWCHART_KEY_CODES.arrowDown]: this.moveSelectedDown,
-        [FLOWCHART_KEY_CODES.arrowLeft]: this.moveSelectedLeft,
+        [KEY_CODES.up]: this.moveSelectedUp,
+        [KEY_CODES.right]: this.moveSelectedRight,
+        [KEY_CODES.down]: this.moveSelectedDown,
+        [KEY_CODES.left]: this.moveSelectedLeft,
 
-        [FLOWCHART_KEY_CODES.delete]: this.removeSelectedShapes,
+        [KEY_CODES.delete]: this.removeSelectedShapes,
 
-        [FLOWCHART_KEY_CODES.keyC]: this.handleCopyShapes,
-        [FLOWCHART_KEY_CODES.keyV]: this.handlePasteShapes,
+        [KEY_CODES.c]: this.handleCopyShapes,
+        [KEY_CODES.v]: this.handlePasteShapes,
       }[event.keyCode];
 
       if (handler) {
