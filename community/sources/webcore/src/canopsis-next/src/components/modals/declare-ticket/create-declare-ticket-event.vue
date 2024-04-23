@@ -95,7 +95,7 @@ export default {
       return Object.entries(this.form.alarms_by_tickets).some(([ticketRuleId, alarmIds]) => alarmIds.some((alarmId) => {
         const alarm = alarmsById[alarmId];
 
-        return alarm.v.tickets.some(
+        return alarm.v.tickets?.some(
           ticket => ticketRuleId === ticket.ticket_rule_id
             && isSuccessStepTicketType(ticket._t),
         );
@@ -115,11 +115,17 @@ export default {
 
       if (isFormValid) {
         if (this.isSomeOneSuccessTicketExist()) {
+          const isSingleAlarm = this.config.items.length === 1;
+
           this.$modals.show({
             name: MODALS.confirmation,
             config: {
-              title: this.$t('modals.confirmationReplaceTicket.title'),
-              text: this.$t('modals.confirmationReplaceTicket.text'),
+              title: isSingleAlarm
+                ? this.$t('modals.confirmationCreateNewTicketForAlarm.title')
+                : this.$t('modals.confirmationCreateNewTicketForAlarms.title'),
+              text: isSingleAlarm
+                ? this.$t('modals.confirmationCreateNewTicketForAlarm.text')
+                : this.$t('modals.confirmationCreateNewTicketForAlarms.text'),
               action: this.callActionAndHideModal,
             },
           });
