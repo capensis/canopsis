@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -10,12 +10,12 @@ import { ALARM_STATES } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
 
-import CreateManualMetaAlarm from '@/components/modals/alarm/create-manual-meta-alarm.vue';
+import LinkToMetaAlarm from '@/components/modals/alarm/link-to-meta-alarm.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'alarm-general-table': true,
-  'manual-meta-alarm-form': true,
+  'link-meta-alarm-form': true,
   'c-name-field': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -24,18 +24,18 @@ const stubs = {
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'alarm-general-table': true,
-  'manual-meta-alarm-form': true,
+  'link-meta-alarm-form': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectManualMetaAlarmForm = wrapper => wrapper.find('manual-meta-alarm-form-stub');
+const selectLinkMetaAlarmForm = wrapper => wrapper.find('link-meta-alarm-form-stub');
 
-describe('create-manual-meta-alarm', () => {
+describe('link-to-meta-alarm', () => {
   const timestamp = 1386435600000;
+  jest.useFakeTimers({ now: timestamp });
 
-  mockDateNow(timestamp);
   const $modals = mockModals();
 
   const alarm = {
@@ -60,7 +60,7 @@ describe('create-manual-meta-alarm', () => {
   const items = [alarm];
   const config = { items };
 
-  const factory = generateShallowRenderer(CreateManualMetaAlarm, {
+  const factory = generateShallowRenderer(LinkToMetaAlarm, {
     stubs,
     attachTo: document.body,
     propsData: {
@@ -74,7 +74,7 @@ describe('create-manual-meta-alarm', () => {
       },
     },
   });
-  const snapshotFactory = generateRenderer(CreateManualMetaAlarm, {
+  const snapshotFactory = generateRenderer(LinkToMetaAlarm, {
     stubs: snapshotStubs,
     propsData: {
       modal: {
@@ -95,7 +95,7 @@ describe('create-manual-meta-alarm', () => {
       },
     });
 
-    const manualMetaAlarmForm = selectManualMetaAlarmForm(wrapper);
+    const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
 
     expect(manualMetaAlarmForm.vm.form).toEqual({
       metaAlarm: null,
@@ -122,7 +122,7 @@ describe('create-manual-meta-alarm', () => {
     });
 
     const submitButton = selectSubmitButton(wrapper);
-    const manualMetaAlarmForm = selectManualMetaAlarmForm(wrapper);
+    const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
 
     const newData = {
       comment: Faker.datatype.string(),
@@ -162,7 +162,7 @@ describe('create-manual-meta-alarm', () => {
     });
 
     const submitButton = selectSubmitButton(wrapper);
-    const manualMetaAlarmForm = selectManualMetaAlarmForm(wrapper);
+    const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
 
     const validator = wrapper.getValidator();
 
@@ -203,7 +203,7 @@ describe('create-manual-meta-alarm', () => {
     expect($modals.hide).toBeCalled();
   });
 
-  test('Renders `create-manual-meta-alarm` with empty modal', () => {
+  test('Renders `link-to-meta-alarm` with empty modal', () => {
     const action = jest.fn();
     const wrapper = snapshotFactory({
       propsData: {

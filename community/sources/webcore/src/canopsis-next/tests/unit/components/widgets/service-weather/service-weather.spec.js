@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
+  createAlarmTagModule,
   createAuthModule,
   createMockedStoreModules,
   createQueryModule,
@@ -73,12 +74,14 @@ describe('service-weather', () => {
     fetchServiceAlarmsWithoutStore,
   } = createServiceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
+  const { alarmTagModule } = createAlarmTagModule();
 
   const createStore = () => createMockedStoreModules([
     authModule,
     userPreferenceModule,
     serviceModule,
     queryModule,
+    alarmTagModule,
   ]);
 
   const store = createStore();

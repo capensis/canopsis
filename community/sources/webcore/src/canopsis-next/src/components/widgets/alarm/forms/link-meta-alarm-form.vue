@@ -3,8 +3,8 @@
     <v-combobox
       v-field="form.metaAlarm"
       v-validate="'required'"
-      :items="manualMetaAlarms"
-      :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')"
+      :items="metaAlarms"
+      :label="$t('modals.linkToMetaAlarm.fields.metaAlarm')"
       :error-messages="errors.collect('manualMetaAlarm')"
       :loading="pending"
       item-value="_id"
@@ -16,7 +16,7 @@
       <template #no-data="">
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title v-html="$t('modals.createManualMetaAlarm.noData')" />
+            <v-list-item-title v-html="$t('modals.linkToMetaAlarm.noData')" />
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -35,7 +35,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('alarm');
+const { mapActions } = createNamespacedHelpers('metaAlarm');
 
 export default {
   inject: ['$validator'],
@@ -52,23 +52,23 @@ export default {
   data() {
     return {
       pending: false,
-      manualMetaAlarms: [],
+      metaAlarms: [],
     };
   },
   mounted() {
-    this.fetchManualMetaAlarms();
+    this.fetchMetaAlarms();
   },
   methods: {
     ...mapActions({
-      fetchManualMetaAlarmsListWithoutStore: 'fetchManualMetaAlarmsListWithoutStore',
+      fetchMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    async fetchManualMetaAlarms() {
+    async fetchMetaAlarms() {
       this.pending = true;
 
-      const alarms = await this.fetchManualMetaAlarmsListWithoutStore();
+      const alarms = await this.fetchMetaAlarmsListWithoutStore();
 
-      this.manualMetaAlarms = alarms ?? [];
+      this.metaAlarms = alarms ?? [];
       this.pending = false;
     },
   },

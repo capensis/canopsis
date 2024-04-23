@@ -54,7 +54,7 @@ export default {
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      createManualMetaAlarm: 'Manual meta alarm management',
+      linkToMetaAlarm: 'Link to a meta alarm',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',

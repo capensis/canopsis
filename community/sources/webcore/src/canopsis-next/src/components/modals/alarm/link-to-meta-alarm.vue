@@ -2,12 +2,12 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ $t('modals.createManualMetaAlarm.title') }}</span>
+        {{ $t('modals.linkToMetaAlarm.title') }}
       </template>
       <template #text="">
         <v-layout column>
           <alarm-general-table :items="alarms" class="mb-4" />
-          <manual-meta-alarm-form v-model="form" />
+          <link-meta-alarm-form v-model="form" />
         </v-layout>
       </template>
       <template #actions="">
@@ -42,7 +42,7 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
-import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-alarm-form.vue';
+import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -50,14 +50,14 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal to manage alarms in manual meta alarm
  */
 export default {
-  name: MODALS.createManualMetaAlarm,
+  name: MODALS.linkToMetaAlarm,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
   components: {
     AlarmGeneralTable,
-    ManualMetaAlarmForm,
+    LinkMetaAlarmForm,
     ModalWrapper,
   },
   mixins: [
