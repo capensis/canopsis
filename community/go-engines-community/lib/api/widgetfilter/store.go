@@ -439,10 +439,9 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 		IsUserPreference: *request.IsUserPreference,
 		Author:           request.Author,
 
-		AlarmPatternFields:     request.AlarmPatternFieldsRequest.ToModel(),
-		EntityPatternFields:    request.EntityPatternFieldsRequest.ToModel(),
-		PbehaviorPatternFields: request.PbehaviorPatternFieldsRequest.ToModel(),
-
-		WeatherServicePattern: request.WeatherServicePattern,
+		AlarmPatternFields:          request.AlarmPatternFieldsRequest.ToModel(),
+		EntityPatternFields:         request.EntityPatternFieldsRequest.ToModel(),
+		PbehaviorPatternFields:      request.PbehaviorPatternFieldsRequest.ToModel(),
+		WeatherServicePatternFields: request.WeatherServicePatternFieldsRequest.ToModel(),
 	}
 }

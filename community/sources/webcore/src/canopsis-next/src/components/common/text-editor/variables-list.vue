@@ -1,7 +1,7 @@
 <template>
   <v-list
+    :dense="dense"
     class="pa-0"
-    dense
   >
     <v-list-item
       v-for="variable in variables"
@@ -12,11 +12,14 @@
     >
       <v-list-item-content>
         <v-list-item-title>
-          <v-layout justify-space-between>
-            {{ variable.text }}<span
+          <v-layout class="gap-4" justify-space-between>
+            <span v-if="variable.text">{{ variable.text }}</span>
+            <span
               v-if="showValue"
-              class="ml-4 grey--text lighten-1"
-            >{{ variable.value }}</span>
+              class="grey--text lighten-1"
+            >
+              {{ variable.value }}
+            </span>
           </v-layout>
         </v-list-item-title>
       </v-list-item-content>
@@ -26,7 +29,7 @@
     </v-list-item>
     <v-menu
       v-if="subVariablesShown"
-      :value="subVariablesShown"
+      v-model="subVariablesShown"
       :position-x="subVariablesPosition.x"
       :position-y="subVariablesPosition.y"
       :z-index="zIndex"
@@ -37,7 +40,8 @@
         :variables="parentVariable.variables"
         :value="subVariableValue"
         :z-index="zIndex + 1"
-        @input="selectSubVariable(parentVariable, $event)"
+        :show-value="showValue"
+        @input="selectSubVariable"
       />
     </v-menu>
   </v-list>
@@ -63,6 +67,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -84,8 +92,9 @@ export default {
       this.$emit('input', variable.value);
     },
 
-    selectSubVariable(parentVariable, value) {
-      this.$emit('input', `${parentVariable.value}.${value}`);
+    selectSubVariable(value) {
+      this.$emit('input', value);
+      this.subVariablesShown = false;
     },
 
     isActiveVariable(variable) {
