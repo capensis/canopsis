@@ -10,9 +10,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value="Filter"
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -1691,7 +1689,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
     <div
       class="flex xs4"
     >
-      <c-search-field-stub />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -2057,9 +2055,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -3320,9 +3316,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"

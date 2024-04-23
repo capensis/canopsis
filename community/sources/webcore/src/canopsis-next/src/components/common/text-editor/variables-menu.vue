@@ -10,7 +10,9 @@
     @input="$emit('close')"
   >
     <variables-list
-      :variables="variables"
+      :items="items"
+      :return-object="returnObject"
+      :children-key="childrenKey"
       :value="value"
       :dense="dense"
       :z-index="submenuZIndex"
@@ -42,7 +44,7 @@ export default {
       type: Number,
       required: false,
     },
-    variables: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -57,6 +59,14 @@ export default {
     dense: {
       type: Boolean,
       default: false,
+    },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    childrenKey: {
+      type: String,
+      default: 'variables',
     },
   },
   data() {

@@ -32,7 +32,7 @@
       </v-list-item>
     </template>
     <template #list="">
-      <variables-list :variables="availableVariables" show-value @input="pasteVariable" />
+      <variables-list :items="availableVariables" show-value @input="pasteVariable" />
     </template>
   </v-combobox>
 </template>
