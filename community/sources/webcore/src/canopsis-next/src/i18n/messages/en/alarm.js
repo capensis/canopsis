@@ -216,7 +216,6 @@ export default {
     ticketCreatedAt: 'Ticket created at',
     ticketData: 'Ticket data',
     alarmInfos: 'Alarm infos',
-    entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
     entityType: 'Entity type',

@@ -578,11 +578,11 @@ func transformEditRequestToModel(r EditRequest) view.Widget {
 
 func transformFilterRequestToModel(r FilterRequest) view.WidgetFilter {
 	return view.WidgetFilter{
-		Title:                  r.Title,
-		IsUserPreference:       false,
-		AlarmPatternFields:     r.AlarmPatternFieldsRequest.ToModel(),
-		EntityPatternFields:    r.EntityPatternFieldsRequest.ToModel(),
-		PbehaviorPatternFields: r.PbehaviorPatternFieldsRequest.ToModel(),
-		WeatherServicePattern:  r.WeatherServicePattern,
+		Title:                       r.Title,
+		IsUserPreference:            false,
+		AlarmPatternFields:          r.AlarmPatternFieldsRequest.ToModel(),
+		EntityPatternFields:         r.EntityPatternFieldsRequest.ToModel(),
+		PbehaviorPatternFields:      r.PbehaviorPatternFieldsRequest.ToModel(),
+		WeatherServicePatternFields: r.WeatherServicePatternFieldsRequest.ToModel(),
 	}
 }

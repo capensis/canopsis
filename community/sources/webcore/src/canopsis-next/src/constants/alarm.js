@@ -397,26 +397,6 @@ export const ALARM_UNKNOWN_VALUE = {
   icon: 'clear',
 };
 
-export const META_ALARMS_RULE_TYPES = {
-  relation: 'relation',
-  timebased: 'timebased',
-  attribute: 'attribute',
-  complex: 'complex',
-  valuegroup: 'valuegroup',
-  corel: 'corel',
-
-  /**
-   * Manual group type doesn't use in the form
-   * We are using it only inside alarms list widget
-   */
-  manualgroup: 'manualgroup',
-};
-
-export const META_ALARMS_THRESHOLD_TYPES = {
-  thresholdRate: 'thresholdRate',
-  thresholdCount: 'thresholdCount',
-};
-
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
@@ -702,7 +682,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
   [ALARM_FIELDS.ticketInitiator]: 'alarm.fields.ticketInitiator',
   [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
-  [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
+  [ALARM_FIELDS.entityId]: 'common.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
   [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',
   [ALARM_FIELDS.entityType]: 'alarm.fields.entityType',
@@ -749,8 +729,16 @@ export const ALARM_DENSE_TYPES = {
 export const ALARM_PAYLOADS_VARIABLES = {
   alarm: '.Alarm',
   alarms: '.Alarms',
+  id: '.ID',
+  displayName: '.Value.DisplayName',
+  connector: '.Value.Connector',
   component: '.Value.Component',
+  connectorName: '.Value.ConnectorName',
   resource: '.Value.Resource',
+  infos: '.Value.Infos',
+  infosName: '.Value.Infos.%name%',
+  initialOutput: '.Value.InitialOutput',
+  tags: '.Value.Tags',
   stateMessage: '.Value.State.Message',
   stateValue: '.Value.State.Value',
   statusValue: '.Value.Status.Value',
