@@ -848,18 +848,18 @@ export default {
   },
   createServiceWeatherPattern: {
     create: {
-      title: 'Créer un filtre météo de service',
+      title: 'Créer un modèle de météo des services',
     },
     edit: {
-      title: 'Modifier le filtre météo du service',
+      title: 'Modifier le modèle de météo des services',
     },
   },
   createCorporateServiceWeatherPattern: {
     create: {
-      title: 'Create shared service weather filter',
+      title: 'Créer un modèle partagé de météo des services',
     },
     edit: {
-      title: 'Edit shared service weather filter',
+      title: 'Editer un modèle partagé de météo des services',
     },
   },
   createMap: {
