@@ -24,23 +24,14 @@
         />
       </template>
     </c-card-iterator-field>
-    <v-layout align-center>
-      <v-btn
-        :color="hasWebhooksErrors ? 'error' : 'primary'"
-        :disabled="disabled"
-        class="ml-0"
-        outlined
-        @click="addWebhook"
-      >
-        {{ $t('declareTicket.addWebhook') }}
-      </v-btn>
-      <span
-        v-show="hasWebhooksErrors"
-        class="error--text"
-      >
-        {{ $t('declareTicket.errors.webhookRequired') }}
-      </span>
-    </v-layout>
+    <c-btn-with-error
+      :error="hasWebhooksErrors ? $t('declareTicket.errors.webhookRequired') : ''"
+      :disabled="disabled"
+      outlined
+      @click="addWebhook"
+    >
+      {{ $t('declareTicket.addWebhook') }}
+    </c-btn-with-error>
   </v-layout>
 </template>
 

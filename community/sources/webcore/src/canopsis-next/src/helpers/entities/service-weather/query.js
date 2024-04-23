@@ -13,7 +13,7 @@ export function convertWeatherWidgetToQuery(widget) {
 
   return {
     ...convertSortToQuery(widget),
-    limit: limit || DEFAULT_WEATHER_LIMIT,
+    itemsPerPage: limit || DEFAULT_WEATHER_LIMIT,
     lockedFilter: mainFilter,
   };
 }

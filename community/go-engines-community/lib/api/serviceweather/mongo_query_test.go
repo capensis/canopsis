@@ -148,11 +148,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "state.val",
-					Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
+					{
+						Field:     "state.val",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
+					},
 				},
 			},
 		},
@@ -214,11 +216,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "icon",
-					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					{
+						Field:     "icon",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
 				},
 			},
 		},
@@ -343,22 +347,26 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 				},
 			},
 		},
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "icon",
-					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					{
+						Field:     "icon",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
 				},
 			},
 		},
 	}
 	filter2 := view.WidgetFilter{
 		ID: "test-filter-2",
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "secondary_icon",
-					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					{
+						Field:     "secondary_icon",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
 				},
 			},
 		},
