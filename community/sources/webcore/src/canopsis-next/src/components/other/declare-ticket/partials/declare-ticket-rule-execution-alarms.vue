@@ -4,31 +4,33 @@
     :items="alarmExecutions"
     hide-default-footer
   >
-    <template #items="{ item }">
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.connector_name }}
-      </td>
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.connector }}
-      </td>
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.component }}
-      </td>
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.resource }}
-      </td>
-      <template v-if="!isOneExecution">
+    <template #item="{ item }">
+      <tr>
         <td class="text-left pre-wrap">
-          {{ item.ruleName }}
+          {{ item.alarm.v.connector_name }}
         </td>
-        <td class="text-left">
-          <alarm-webhook-execution-status
-            :running="isExecutionRunning(item)"
-            :success="isExecutionSucceeded(item)"
-            :fail-reason="item.fail_reason"
-          />
+        <td class="text-left pre-wrap">
+          {{ item.alarm.v.connector }}
         </td>
-      </template>
+        <td class="text-left pre-wrap">
+          {{ item.alarm.v.component }}
+        </td>
+        <td class="text-left pre-wrap">
+          {{ item.alarm.v.resource }}
+        </td>
+        <template v-if="!isOneExecution">
+          <td class="text-left pre-wrap">
+            {{ item.ruleName }}
+          </td>
+          <td class="text-left">
+            <alarm-webhook-execution-status
+              :running="isExecutionRunning(item)"
+              :success="isExecutionSucceeded(item)"
+              :fail-reason="item.fail_reason"
+            />
+          </td>
+        </template>
+      </tr>
     </template>
   </v-data-table>
 </template>
