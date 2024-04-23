@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"os"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -142,8 +143,10 @@ type RemediationConfig struct {
 }
 
 type TechMetricsConfig struct {
-	Enabled          bool
-	DumpKeepInterval time.Duration
+	Enabled           bool
+	DumpKeepInterval  time.Duration
+	GoMetricsInterval time.Duration
+	GoMetrics         []string
 }
 
 type DataStorageConfig struct {
@@ -178,9 +181,15 @@ type BaseTechMetricsConfigProvider struct {
 func NewTechMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTechMetricsConfigProvider {
 	sectionName := "tech_metrics"
 	conf := TechMetricsConfig{
-		Enabled:          parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
-		DumpKeepInterval: parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
+		Enabled:           parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
+		DumpKeepInterval:  parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
+		GoMetricsInterval: parseTimeDurationByStr(cfg.TechMetrics.GoMetricsInterval, TechMetricsGoMetricsInterval, "GoMetricsInterval", sectionName, logger),
+		GoMetrics:         cfg.TechMetrics.GoMetrics,
 	}
+
+	logger.Info().
+		Strs("value", conf.GoMetrics).
+		Msgf("GoMetrics of %s config section is used", sectionName)
 
 	return &BaseTechMetricsConfigProvider{
 		conf:   conf,
@@ -203,6 +212,18 @@ func (p *BaseTechMetricsConfigProvider) Update(cfg CanopsisConf) {
 	d, ok := parseUpdatedTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, p.conf.DumpKeepInterval, "DumpKeepInterval", sectionName, p.logger)
 	if ok {
 		p.conf.DumpKeepInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.TechMetrics.GoMetricsInterval, p.conf.GoMetricsInterval, "GoMetricsInterval", sectionName, p.logger)
+	if ok {
+		p.conf.GoMetricsInterval = d
+	}
+
+	if !slices.Equal(p.conf.GoMetrics, cfg.TechMetrics.GoMetrics) {
+		p.conf.GoMetrics = cfg.TechMetrics.GoMetrics
+		p.logger.Info().
+			Strs("new", p.conf.GoMetrics).
+			Msgf("GoMetrics of %s config section is loaded", sectionName)
 	}
 }
 
