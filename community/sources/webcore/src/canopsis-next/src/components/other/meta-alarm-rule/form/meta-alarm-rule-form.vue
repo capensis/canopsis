@@ -86,14 +86,14 @@ import {
   META_ALARMS_RULE_TYPES,
 } from '@/constants';
 
-import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
-import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
-import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
-
 import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-variables';
 import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
+
+import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
+import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
+import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 
 export default {
   components: {
