@@ -999,6 +999,11 @@ export default {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
+  /* TODO: Should be added messages */
+  confirmationReplaceTicket: {
+    title: '',
+    text: '',
+  },
   createTag: {
     create: {
       title: 'Créer un tag',
