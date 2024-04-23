@@ -2,27 +2,26 @@
   <div class="alarms-list">
     <v-layout
       v-if="!hideToolbar"
-      :class="['alarms-list__toolbar', { 'mb-4': !dense }]"
+      :class="['alarms-list__toolbar gap-4 px-4', { 'mb-4': !dense }]"
       wrap
       justify-space-between
       align-end
     >
       <v-flex>
-        <c-advanced-search-field
-          :query.sync="query"
-          :columns="widget.parameters.widgetColumns"
-          :tooltip="$t('alarm.advancedSearch')"
-          :items="searches"
+        <c-advanced-search
+          :fields="advancedSearchFields"
+          :saved-items="searches"
           combobox
-          @submit="updateSearchesInUserPreferences"
-          @toggle-pin="togglePinSearchInUserPreferences"
-          @remove="removeSearchFromUserPreferences"
+          @submit="updateSearchInQuery"
+          @add:item="addSearchIntoUserPreferences"
+          @toggle-pin:item="togglePinSearchInUserPreferences"
+          @remove:item="removeSearchFromUserPreferences"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
           :category="query.category"
-          class="mr-3 mt-0"
+          class="ma-0"
           hide-details
           @input="updateCategory"
         />
@@ -156,7 +155,10 @@ import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetSearchMixin } from '@/mixins/widget/search';
+import {
+  widgetAdvancedSearchSavedItemsMixin,
+  widgetAdvancedSearchAlarmFieldsMixin,
+} from '@/mixins/widget/advanced-search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
@@ -198,7 +200,8 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetSearchMixin,
+    widgetAdvancedSearchSavedItemsMixin,
+    widgetAdvancedSearchAlarmFieldsMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
@@ -253,12 +256,6 @@ export default {
       }
 
       return null;
-    },
-
-    firstAlarmExpanded() {
-      const [alarm] = this.alarms;
-
-      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
     },
 
     hasAccessToExportAsCsv() {

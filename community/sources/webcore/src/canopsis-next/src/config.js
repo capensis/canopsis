@@ -129,7 +129,7 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
-  entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
+  entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   alarmTag: {
