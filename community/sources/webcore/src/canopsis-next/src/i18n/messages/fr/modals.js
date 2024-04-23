@@ -540,7 +540,7 @@ export default {
     emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
   linkToMetaAlarm: {
-    title: 'Lien vers une méta-alarme',
+    title: 'Lier à une méta-alarme',
     noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
     fields: {
       metaAlarm: 'Sélectionnez une méta-alarme ou créez-en une nouvelle',
