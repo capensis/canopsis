@@ -535,11 +535,11 @@ export default {
     },
     emptyExdates: 'No exdates added yet',
   },
-  createManualMetaAlarm: {
-    title: 'Manual meta alarm management',
+  linkToMetaAlarm: {
+    title: 'Link to a meta alarm',
     noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
     fields: {
-      metaAlarm: 'Manual meta alarm',
+      metaAlarm: 'Select meta alarm or create a new one',
     },
   },
   createRemediationInstruction: {

@@ -535,11 +535,11 @@ export default {
     },
     emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
-  createManualMetaAlarm: {
-    title: 'Gestion manuelle des méta-alarmes',
+  linkToMetaAlarm: {
+    title: 'Lier à une méta-alarme',
     noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
     fields: {
-      metaAlarm: 'Méta-alarme manuelle',
+      metaAlarm: 'Sélectionnez une méta-alarme ou créez-en une nouvelle',
     },
   },
   createRemediationInstruction: {

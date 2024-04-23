@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empty modal 1`] = `
+exports[`link-to-meta-alarm Renders \`link-to-meta-alarm\` with empty modal 1`] = `
 <form
   class="v-form"
   novalidate="novalidate"
@@ -12,9 +12,7 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
     <div
       class="title"
     >
-      <span>
-        Manual meta alarm management
-      </span>
+      Link to a meta alarm
     </div>
     <div
       class="text"
@@ -26,7 +24,7 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
           class="mb-4"
           items="[object Object]"
         />
-        <manual-meta-alarm-form-stub
+        <link-meta-alarm-form-stub
           form="[object Object]"
         />
       </div>
