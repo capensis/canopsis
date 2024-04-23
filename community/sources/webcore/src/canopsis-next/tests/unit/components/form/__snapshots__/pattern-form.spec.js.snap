@@ -4,11 +4,11 @@ exports[`pattern-form Renders \`pattern-form\` with alarm type 1`] = `
 <div
   class="layout column"
 >
-  <input
-    class="v-text-field"
-    error-messages=""
+  <c-name-field-stub
     label="Title"
     name="title"
+    required=""
+    value="Title"
   />
   <c-alarm-patterns-field-stub
     check-count-name="alarm_pattern"
@@ -22,11 +22,10 @@ exports[`pattern-form Renders \`pattern-form\` with default props 1`] = `
 <div
   class="layout column"
 >
-  <input
-    class="v-text-field"
-    error-messages=""
+  <c-name-field-stub
     label="Title"
     name="title"
+    required=""
   />
   <!---->
 </div>
@@ -36,11 +35,11 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
 <div
   class="layout column"
 >
-  <input
-    class="v-text-field"
-    error-messages=""
+  <c-name-field-stub
     label="Title"
     name="title"
+    required=""
+    value="Title"
   />
   <c-entity-patterns-field-stub
     check-count-name="entity_pattern"
@@ -54,30 +53,16 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
 <div
   class="layout column"
 >
-  <input
-    class="v-text-field"
-    error-messages=""
+  <c-name-field-stub
     label="Title"
     name="title"
+    required=""
+    value="Title"
   />
   <c-pbehavior-patterns-field-stub
     check-count-name="pbehavior_pattern"
     name="pbehavior_pattern"
     value="[object Object]"
   />
-</div>
-`;
-
-exports[`pattern-form Renders \`pattern-form\` with errors 1`] = `
-<div
-  class="layout column"
->
-  <input
-    class="v-text-field"
-    error-messages="The field is required"
-    label="Title"
-    name="title"
-  />
-  <!---->
 </div>
 `;

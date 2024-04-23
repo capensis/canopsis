@@ -118,6 +118,12 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
       tooltip="Create shared alarm filter"
       top=""
     />
+    <c-action-fab-btn-stub
+      color="secondary lighten-2"
+      icon="view_module"
+      tooltip="Create shared service weather filter"
+      top=""
+    />
   </c-fab-expand-btn-stub>
 </div>
 `;
@@ -240,6 +246,12 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
       tooltip="Create alarm filter"
       top=""
     />
+    <c-action-fab-btn-stub
+      color="secondary lighten-2"
+      icon="view_module"
+      tooltip="Create service weather filter"
+      top=""
+    />
   </c-fab-expand-btn-stub>
 </div>
 `;
@@ -281,6 +293,12 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
       color="error"
       icon="notification_important"
       tooltip="Create alarm filter"
+      top=""
+    />
+    <c-action-fab-btn-stub
+      color="secondary lighten-2"
+      icon="view_module"
+      tooltip="Create service weather filter"
       top=""
     />
   </c-fab-expand-btn-stub>

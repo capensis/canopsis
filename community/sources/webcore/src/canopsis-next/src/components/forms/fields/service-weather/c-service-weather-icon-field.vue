@@ -6,10 +6,13 @@
     :loading="pending"
     :name="name"
     :error-messages="errors.collect(name)"
+    :disabled="disabled"
     item-value="icon"
   >
     <template #selection="{ item }">
-      <v-icon>{{ item.icon }}</v-icon>
+      <v-icon :class="disabled ? 'text--disabled' : ''">
+        {{ item.icon }}
+      </v-icon>
       <span class="ml-2">{{ item.text }}</span>
     </template>
     <template #item="{ item }">
@@ -46,6 +49,10 @@ export default {
       default: 'icon',
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
