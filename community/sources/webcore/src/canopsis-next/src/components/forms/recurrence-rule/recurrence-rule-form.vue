@@ -59,15 +59,17 @@
           </v-flex>
           <v-flex
             v-for="(field, index) in advancedFields"
-            :key="field"
+            :key="field.name"
             :class="`${index % 2 ? 'pl' : 'pr'}-2`"
             xs6
           >
             <recurrence-rule-regex-field
-              v-model="form[field]"
-              :label="$t(`recurrenceRule.${field}`)"
-              :help-text="$t(`recurrenceRule.tooltips.${field}`)"
-              :name="field"
+              v-model="form[field.name]"
+              :label="$t(`recurrenceRule.${field.name}`)"
+              :help-text="$t(`recurrenceRule.tooltips.${field.name}`)"
+              :name="field.name"
+              :min="field.min"
+              :max="field.max"
             />
           </v-flex>
         </v-layout>
@@ -88,7 +90,7 @@
 
 <script>
 import { RRule, rrulestr } from 'rrule';
-import { isNull } from 'lodash';
+import { isNull, map } from 'lodash';
 
 import {
   formOptionsToRecurrenceRuleOptions,
@@ -176,22 +178,36 @@ export default {
     },
 
     advancedFields() {
-      const fields = ['bysetpos'];
+      const fields = [{
+        name: 'bysetpos',
+        min: -366,
+        max: 366,
+      }];
 
       if (!this.isMonthlyFrequency) {
-        fields.push('byyearday');
+        fields.push({
+          name: 'byyearday',
+        });
       }
 
       if (!this.isYearlyFrequency) {
-        fields.push('bymonthday');
+        fields.push({
+          name: 'bymonthday',
+        });
       }
 
       if (!this.isMonthlyFrequency && !this.isYearlyFrequency) {
-        fields.push('byweekno');
+        fields.push({
+          name: 'byweekno',
+        });
       }
 
       if (this.isHourlyFrequency) {
-        fields.push('byhour');
+        fields.push({
+          name: 'byhour',
+          min: -24,
+          max: 24,
+        });
       }
 
       return fields;
@@ -244,7 +260,12 @@ export default {
      */
     changeRecurrenceRuleOption() {
       try {
-        this.recurrenceRuleObject = new RRule(formOptionsToRecurrenceRuleOptions(this.form, this.advancedFields));
+        this.recurrenceRuleObject = new RRule(
+          formOptionsToRecurrenceRuleOptions(
+            this.form,
+            map(this.advancedFields, 'name'),
+          ),
+        );
 
         if (!this.errors.has('recurrenceRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
           this.errors.add({
