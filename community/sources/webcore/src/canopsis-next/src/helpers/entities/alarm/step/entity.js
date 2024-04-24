@@ -246,3 +246,14 @@ export const isFailStepType = type => [
   ALARM_LIST_STEPS.declareTicketFail,
   ALARM_LIST_STEPS.declareTicketRuleFail,
 ].includes(type);
+
+/**
+ * Determines if the provided type corresponds to a success ticket step.
+ *
+ * @param {string} type - The step type to check.
+ * @returns {boolean} Returns true if the type is a success ticket step, otherwise false.
+ */
+export const isSuccessStepTicketType = type => [
+  ALARM_LIST_STEPS.declareTicket,
+  ALARM_LIST_STEPS.assocTicket,
+].includes(type);

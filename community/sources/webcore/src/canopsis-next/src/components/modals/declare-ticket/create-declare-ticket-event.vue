@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import { keyBy } from 'lodash';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import {
@@ -48,6 +50,7 @@ import {
   formToDeclareTicketEvents,
 } from '@/helpers/entities/declare-ticket/event/form';
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
+import { isSuccessStepTicketType } from '@/helpers/entities/alarm/step/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -86,15 +89,49 @@ export default {
     },
   },
   methods: {
+    isSomeOneSuccessTicketExist() {
+      const alarmsById = keyBy(this.config.items, '_id');
+
+      return Object.entries(this.form.alarms_by_tickets).some(([ticketRuleId, alarmIds]) => alarmIds.some((alarmId) => {
+        const alarm = alarmsById[alarmId];
+
+        return alarm.v.tickets?.some(
+          ticket => ticketRuleId === ticket.ticket_rule_id
+            && isSuccessStepTicketType(ticket._t),
+        );
+      }));
+    },
+
+    async callActionAndHideModal() {
+      const preparedForm = formToDeclareTicketEvents(this.form, this.singleMode);
+
+      await this.config.action?.(preparedForm, this.singleMode);
+
+      this.$modals.hide();
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToDeclareTicketEvents(this.form, this.singleMode), this.singleMode);
-        }
+        if (this.isSomeOneSuccessTicketExist()) {
+          const isSingleAlarm = this.config.items.length === 1;
 
-        this.$modals.hide();
+          this.$modals.show({
+            name: MODALS.confirmation,
+            config: {
+              title: isSingleAlarm
+                ? this.$t('modals.confirmationCreateNewTicketForAlarm.title')
+                : this.$t('modals.confirmationCreateNewTicketForAlarms.title'),
+              text: isSingleAlarm
+                ? this.$t('modals.confirmationCreateNewTicketForAlarm.text')
+                : this.$t('modals.confirmationCreateNewTicketForAlarms.text'),
+              action: this.callActionAndHideModal,
+            },
+          });
+        } else {
+          await this.callActionAndHideModal();
+        }
       }
     },
   },
