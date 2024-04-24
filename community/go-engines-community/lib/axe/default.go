@@ -530,6 +530,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeMetaAlarmAttachChildren, event.NewMetaAlarmAttachProcessor(metaAlarmEventProcessor, metricsSender, json.NewEncoder(), amqpPublisher, logger))
 	container.Set(types.EventTypeMetaAlarmDetachChildren, event.NewMetaAlarmDetachProcessor(metaAlarmEventProcessor))
 	container.Set(types.EventTypeMetaAlarmUngroup, event.NewForwardProcessor())
+	container.Set(types.EventTypeMetaAlarmUpdate, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmGroup, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmUngroup, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmUpdate, event.NewForwardProcessor())

@@ -207,6 +207,11 @@ export default {
       this.$modals.hide();
     },
 
+    handleSocketError() {
+      this.fetchExecutionsStatuses();
+      this.config.onExecute?.();
+    },
+
     /**
      * Join from execution room
      */
@@ -221,6 +226,7 @@ export default {
         this.$socket
           .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+          .on(Socket.EVENTS_TYPES.error, this.handleSocketError)
           .join(this.getSocketRoomName(executionId))
           .addListener(this.setExecutionStatus);
       });
@@ -234,6 +240,7 @@ export default {
         this.$socket
           .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .off(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+          .off(Socket.EVENTS_TYPES.error, this.handleSocketError)
           .leave(this.getSocketRoomName(executionId))
           .removeListener(this.setExecutionStatus);
       });

@@ -10,9 +10,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -453,9 +451,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value="Rating setting"
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -936,7 +932,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
     <div
       class="flex xs4"
     >
-      <c-search-field-stub />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -1032,9 +1028,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -1498,9 +1492,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"

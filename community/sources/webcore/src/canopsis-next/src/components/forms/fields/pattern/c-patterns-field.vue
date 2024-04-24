@@ -96,6 +96,7 @@
         :disabled="disabled"
         :name="serviceWeatherName"
         :counter="counters.weather_service_pattern"
+        with-type
         @input="errors.remove(serviceWeatherName)"
       />
     </c-collapse-panel>

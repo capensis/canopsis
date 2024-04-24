@@ -9,67 +9,74 @@
     selectable
   >
     <template #toolbar="">
-      <v-flex>
-        <c-advanced-search-field
-          :query.sync="query"
-          :columns="widget.parameters.widgetColumns"
-          :tooltip="$t('context.advancedSearch')"
-        />
-      </v-flex>
-      <v-flex v-if="hasAccessToCategory">
-        <c-entity-category-field
-          :category="query.category"
-          class="mr-3"
-          @input="updateCategory"
-        />
-      </v-flex>
-      <v-flex>
-        <v-layout
-          v-if="hasAccessToUserFilter"
-          align-center
-        >
-          <filter-selector
-            :value="query.filter"
-            :locked-value="query.lockedFilter"
-            :label="$t('settings.selectAFilter')"
-            :filters="userPreference.filters"
-            :locked-filters="widget.filters"
-            :disabled="!hasAccessToListFilters"
-            @input="updateSelectedFilter"
+      <v-layout class="gap-4 pa-4 pt-0" wrap align-end>
+        <v-flex>
+          <c-advanced-search
+            :fields="advancedSearchFields"
+            :saved-items="searches"
+            combobox
+            @submit="updateSearchInQuery"
+            @add:item="addSearchIntoUserPreferences"
+            @toggle-pin:item="togglePinSearchInUserPreferences"
+            @remove:item="removeSearchFromUserPreferences"
           />
-          <filters-list-btn
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
-            :widget-id="widget._id"
-            :addable="hasAccessToAddFilter"
-            :editable="hasAccessToEditFilter"
-            private
-            with-alarm
-            with-entity
-            with-pbehavior
-            entity-counters-type
+        </v-flex>
+        <v-flex v-if="hasAccessToCategory">
+          <c-entity-category-field
+            :category="query.category"
+            hide-details
+            @input="updateCategory"
           />
-        </v-layout>
-      </v-flex>
-      <v-flex>
-        <v-checkbox
-          :input-value="query.no_events"
-          :label="$t('context.noEventsFilter')"
-          class="pt-2"
-          color="primary"
-          @change="updateNoEvents"
-        />
-      </v-flex>
-      <v-flex v-if="hasAccessToCreateEntity">
-        <context-fab />
-      </v-flex>
-      <v-flex v-if="hasAccessToExportAsCsv">
-        <c-action-btn
-          :loading="downloading"
-          :tooltip="$t('settings.exportAsCsv')"
-          icon="cloud_download"
-          @click="exportContextList"
-        />
-      </v-flex>
+        </v-flex>
+        <v-flex>
+          <v-layout
+            v-if="hasAccessToUserFilter"
+            align-end
+          >
+            <filter-selector
+              :value="query.filter"
+              :locked-value="query.lockedFilter"
+              :label="$t('settings.selectAFilter')"
+              :filters="userPreference.filters"
+              :locked-filters="widget.filters"
+              :disabled="!hasAccessToListFilters"
+              hide-details
+              @input="updateSelectedFilter"
+            />
+            <filters-list-btn
+              v-if="hasAccessToAddFilter || hasAccessToEditFilter"
+              :widget-id="widget._id"
+              :addable="hasAccessToAddFilter"
+              :editable="hasAccessToEditFilter"
+              private
+              with-alarm
+              with-entity
+              with-pbehavior
+              entity-counters-type
+            />
+          </v-layout>
+        </v-flex>
+        <v-flex>
+          <v-checkbox
+            :input-value="query.no_events"
+            :label="$t('context.noEventsFilter')"
+            color="primary"
+            hide-details
+            @change="updateNoEvents"
+          />
+        </v-flex>
+        <v-flex v-if="hasAccessToCreateEntity">
+          <context-fab />
+        </v-flex>
+        <v-flex v-if="hasAccessToExportAsCsv">
+          <c-action-btn
+            :loading="downloading"
+            :tooltip="$t('settings.exportAsCsv')"
+            icon="cloud_download"
+            @click="exportContextList"
+          />
+        </v-flex>
+      </v-layout>
     </template>
   </entities-list-table-with-pagination>
 </template>
@@ -82,6 +89,10 @@ import { USERS_PERMISSIONS } from '@/constants';
 import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
 import { authMixin } from '@/mixins/auth';
+import {
+  widgetAdvancedSearchSavedItemsMixin,
+  widgetAdvancedSearchEntityFieldsMixin,
+} from '@/mixins/widget/advanced-search';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -104,6 +115,8 @@ export default {
   },
   mixins: [
     authMixin,
+    widgetAdvancedSearchSavedItemsMixin,
+    widgetAdvancedSearchEntityFieldsMixin,
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
@@ -126,6 +139,7 @@ export default {
     };
   },
   computed: {
+
     hasAccessToCreateEntity() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
     },
