@@ -2,7 +2,7 @@
   <v-text-field
     v-field="value"
     v-bind="$attrs"
-    :error-messages="errorMessages"
+    :error-messages="errorMessage"
     :name="name"
     persistent-hint
   >
@@ -54,29 +54,56 @@ export default {
       type: Number,
       required: false,
     },
+    negative: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const { t } = useI18n();
     const validator = useInjectValidator();
     const instance = useComponentInstance();
 
-    const errorMessages = computed(() => (validator.errors.has(props.name) ? t('validation.messages.regex') : undefined));
+    const invalidMessage = computed(
+      () => {
+        const isMinZero = props.min === 0;
 
+        if (!props.negative || isMinZero) {
+          return t(
+            'recurrenceRule.errors.invalidRange',
+            {
+              min: props.negative && isMinZero ? -props.max : props.min,
+              max: props.max,
+            },
+          );
+        }
+
+        return t(
+          'recurrenceRule.errors.invalidRangeNegative',
+          { min: props.min, max: props.max },
+        );
+      },
+    );
+    const errorMessage = computed(() => (validator.errors.has(props.name) ? invalidMessage.value : undefined));
+
+    const isValueValid = () => !props.value.length || props.value.split(',').every((value) => {
+      const preparedValue = props.negative
+        ? Math.abs(+value)
+        : +value;
+
+      if (isNaN(preparedValue) || !isNumber(preparedValue)) {
+        return false;
+      }
+
+      return isNumber(props.min) && isNumber(props.max)
+        ? preparedValue >= props.min && preparedValue <= props.max
+        : true;
+    });
     const attachRangeRule = () => {
       validator.attach({
         name: props.name,
         rules: 'required:true',
-        getter: () => props.value.split(',').every((value) => {
-          const preparedValue = Number(value);
-
-          if (isNaN(preparedValue) || !isNumber(preparedValue)) {
-            return false;
-          }
-
-          return isNumber(props.min) && isNumber(props.max)
-            ? preparedValue >= props.min && preparedValue <= props.max
-            : true;
-        }),
+        getter: isValueValid,
         vm: instance,
       });
     };
@@ -86,14 +113,14 @@ export default {
     attachRangeRule();
 
     watch(() => props.value, () => {
-      if (errorMessages.value) {
+      if (errorMessage.value) {
         validateRangeRule();
       }
     });
     onBeforeUnmount(detachRangeRule);
 
     return {
-      errorMessages,
+      errorMessage,
     };
   },
 };
