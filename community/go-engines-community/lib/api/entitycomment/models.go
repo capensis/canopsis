@@ -17,7 +17,7 @@ type UpdateRequest struct {
 }
 
 type Comment struct {
-	Timestamp datetime.CpsTime `bson:"t" json:"ts" swaggertype:"integer"`
+	Timestamp datetime.CpsTime `bson:"t" json:"t" swaggertype:"integer"`
 	Author    *types.Author    `bson:"a" json:"author"`
 	Message   string           `bson:"m" json:"message"`
 }
