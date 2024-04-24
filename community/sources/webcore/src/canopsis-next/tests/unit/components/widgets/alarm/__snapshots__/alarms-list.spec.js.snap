@@ -5,29 +5,15 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
   class="alarms-list"
 >
   <div
-    class="layout wrap justify-space-between align-end alarms-list__toolbar mb-4"
+    class="layout wrap justify-space-between align-end alarms-list__toolbar gap-4 px-4 mb-4"
   >
     <div
       class="flex"
     >
-      <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      <c-advanced-search-stub
         combobox=""
-        items="item 1,item 2"
-        query="[object Object]"
-        tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators :
-    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl><dt>Examples :</dt><dt>- Connector = \\"connector_1\\"</dt>
-    <dd>Alarms whose connectors are \\"connector_1\\"</dd><dt>- Connector=\\"connector_1\\" AND Resource=\\"resource_3\\"</dt>
-    <dd>Alarms whose connectors is \\"connector_1\\" and the resources is \\"resource_3\\"</dd><dt>- Connector=\\"connector_1\\" OR Resource=\\"resource_3\\"</dt>
-    <dd>Alarms whose connectors is \\"connector_1\\" or the resources is \\"resource_3\\"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
-    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = \\"connector_1\\"</dt>
-    <dd>Alarms whose connectors isn't \\"connector_1\\"</dd>
-</dl>"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        saved-items="item 1,item 2"
       />
     </div>
     <!---->
@@ -116,29 +102,15 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
   class="alarms-list"
 >
   <div
-    class="layout wrap justify-space-between align-end alarms-list__toolbar mb-4"
+    class="layout wrap justify-space-between align-end alarms-list__toolbar gap-4 px-4 mb-4"
   >
     <div
       class="flex"
     >
-      <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      <c-advanced-search-stub
         combobox=""
-        items=""
-        query="[object Object]"
-        tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators :
-    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl><dt>Examples :</dt><dt>- Connector = \\"connector_1\\"</dt>
-    <dd>Alarms whose connectors are \\"connector_1\\"</dd><dt>- Connector=\\"connector_1\\" AND Resource=\\"resource_3\\"</dt>
-    <dd>Alarms whose connectors is \\"connector_1\\" and the resources is \\"resource_3\\"</dd><dt>- Connector=\\"connector_1\\" OR Resource=\\"resource_3\\"</dt>
-    <dd>Alarms whose connectors is \\"connector_1\\" or the resources is \\"resource_3\\"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
-    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = \\"connector_1\\"</dt>
-    <dd>Alarms whose connectors isn't \\"connector_1\\"</dd>
-</dl>"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        saved-items=""
       />
     </div>
     <!---->
@@ -214,29 +186,15 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
   class="alarms-list"
 >
   <div
-    class="layout wrap justify-space-between align-end alarms-list__toolbar mb-4"
+    class="layout wrap justify-space-between align-end alarms-list__toolbar gap-4 px-4 mb-4"
   >
     <div
       class="flex"
     >
-      <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      <c-advanced-search-stub
         combobox=""
-        items=""
-        query="[object Object]"
-        tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators :
-    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl><dt>Examples :</dt><dt>- Connector = \\"connector_1\\"</dt>
-    <dd>Alarms whose connectors are \\"connector_1\\"</dd><dt>- Connector=\\"connector_1\\" AND Resource=\\"resource_3\\"</dt>
-    <dd>Alarms whose connectors is \\"connector_1\\" and the resources is \\"resource_3\\"</dd><dt>- Connector=\\"connector_1\\" OR Resource=\\"resource_3\\"</dt>
-    <dd>Alarms whose connectors is \\"connector_1\\" or the resources is \\"resource_3\\"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
-    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = \\"connector_1\\"</dt>
-    <dd>Alarms whose connectors isn't \\"connector_1\\"</dd>
-</dl>"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        saved-items=""
       />
     </div>
     <!---->

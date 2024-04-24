@@ -70,27 +70,13 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
       </c-pattern-operator-chip-stub>
     </div>
   </div>
-  <div
-    class="layout mt-2 align-center"
+  <c-btn-with-error-stub
+    class="mt-2"
+    disabled="true"
+    error=""
   >
-    <button
-      class="mr-2 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"
-      disabled="disabled"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-      Add group
-      </span>
-    </button>
-    <span
-      class="error--text"
-      style="display: none;"
-    >
-      Please add at least one group
-    </span>
-  </div>
+    Add group
+  </c-btn-with-error-stub>
 </div>
 `;
 
@@ -122,26 +108,12 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with default prop
       </div>
     </div>
   </div>
-  <div
-    class="layout mt-2 align-center"
+  <c-btn-with-error-stub
+    class="mt-2"
+    error=""
   >
-    <button
-      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-      Add group
-      </span>
-    </button>
-    <span
-      class="error--text"
-      style="display: none;"
-    >
-      Please add at least one group
-    </span>
-  </div>
+    Add group
+  </c-btn-with-error-stub>
 </div>
 `;
 
@@ -173,25 +145,11 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with errors 1`] =
       </div>
     </div>
   </div>
-  <div
-    class="layout mt-2 align-center"
+  <c-btn-with-error-stub
+    class="mt-2"
+    error="Please add at least one group"
   >
-    <button
-      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default error"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-      Add group
-      </span>
-    </button>
-    <span
-      class="error--text"
-      style=""
-    >
-      Please add at least one group
-    </span>
-  </div>
+    Add group
+  </c-btn-with-error-stub>
 </div>
 `;

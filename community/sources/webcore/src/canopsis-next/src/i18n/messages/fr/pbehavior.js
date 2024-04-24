@@ -9,25 +9,6 @@ export default {
   massRemove: 'Supprimer les comportements périodiques',
   massEnable: 'Activer les comportements périodiques',
   massDisable: 'Désactiver les comportements périodiques',
-  searchHelp: '<span>Aide sur la recherche avancée :</span>\n'
-    + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
-    + '<p>Le "-" avant la recherche est obligatoire</p>\n'
-    + '<p>Opérateurs : <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
-    + '<p>Pour effectuer une recherche dans les "patterns", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n'
-    + '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
-    + '<dl>'
-    + '  <dt>Examples :</dt>'
-    + '  <dt>- name = "name_1"</dt>\n'
-    + '  <dd>Le nom du comportement périodique est "name_1"</dd>\n'
-    + '  <dt>- rrule = "rrule_1"</dt>\n'
-    + '  <dd>La règle de comportement périodique est "rrule_1"</dd>\n'
-    + '  <dt>- filter = "filter_1"</dt>\n'
-    + '  <dd>Le filtre de comportement périodique est "filter_1"</dd>\n'
-    + '  <dt>- type.name = "type_name_1"</dt>\n'
-    + '  <dd>Le nom du type de comportement périodique est "type_name_1"</dd>\n'
-    + '  <dt>- reason.name = "reason_name_1"</dt>\n'
-    + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
-    + '</dl>',
   periodsCalendar: 'Calendrier avec périodes',
   notEditable: 'Ne peut pas être modifié',
   pbehaviorInfo: 'PBehavior infos',

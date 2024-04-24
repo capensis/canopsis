@@ -450,6 +450,15 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 	if err != nil {
 		return err
 	}
+	request.WeatherServicePatternFieldsRequest, err = a.transformer.TransformWeatherServicePatternFieldsRequest(
+		ctx,
+		request.WeatherServicePatternFieldsRequest,
+		*request.IsUserPreference,
+		request.Author,
+	)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -48,16 +48,6 @@ export const STROKE_TYPES = {
   dashed: 'dashed',
 };
 
-export const FLOWCHART_KEY_CODES = {
-  arrowUp: 38,
-  arrowRight: 39,
-  arrowDown: 40,
-  arrowLeft: 37,
-  delete: 46,
-  keyC: 67,
-  keyV: 86,
-};
-
 export const FLOWCHART_MAX_POSITION_DIFF = 10;
 
 export const FLOWCHART_MAX_TIMESTAMP_DIFF = 300;

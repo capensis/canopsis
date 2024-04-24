@@ -74,10 +74,6 @@ export default {
       return request.get(API_ROUTES.resolvedAlarms, { params });
     },
 
-    fetchManualMetaAlarmsListWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.manualMetaAlarm, { params });
-    },
-
     fetchOpenAlarmsListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.openAlarms, { params });
     },

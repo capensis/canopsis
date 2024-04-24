@@ -7,9 +7,10 @@ import PatternGroupsField from '@/components/forms/fields/pattern/pattern-groups
 const stubs = {
   'pattern-group-field': true,
   'c-pattern-operator-chip': true,
+  'c-btn-with-error': true,
 };
 
-const selectAddButton = wrapper => wrapper.find('v-btn-stub');
+const selectAddButton = wrapper => wrapper.find('c-btn-with-error-stub');
 const selectPatternGroupsField = wrapper => wrapper.findAll('pattern-group-field-stub');
 const selectPatternGroupFieldByIndex = (wrapper, index) => selectPatternGroupsField(wrapper)
   .at(index);
@@ -79,9 +80,7 @@ describe('pattern-groups-field', () => {
       },
     });
 
-    const addButton = selectAddButton(wrapper);
-
-    addButton.triggerCustomEvent('click');
+    selectAddButton(wrapper).triggerCustomEvent('click');
 
     expect(wrapper).toEmitInput([
       ...groups,

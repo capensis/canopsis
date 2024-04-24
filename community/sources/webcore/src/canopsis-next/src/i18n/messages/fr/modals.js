@@ -155,9 +155,6 @@ export default {
         label: 'Utiliser une couleur spéciale pour cet événement ?',
       },
     },
-    errors: {
-      invalid: 'Invalide',
-    },
     success: {
       create: 'Comportement périodique créé avec succès !',
     },
@@ -412,7 +409,6 @@ export default {
       success: 'Information dynamique supprimée avec succès !',
     },
     errors: {
-      invalid: 'Invalide',
       emptyInfos: 'Au moins une information doit être ajoutée.',
     },
     steps: {
@@ -539,11 +535,11 @@ export default {
     },
     emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
-  createManualMetaAlarm: {
-    title: 'Gestion manuelle des méta-alarmes',
+  linkToMetaAlarm: {
+    title: 'Lier à une méta-alarme',
     noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
     fields: {
-      metaAlarm: 'Méta-alarme manuelle',
+      metaAlarm: 'Sélectionnez une méta-alarme ou créez-en une nouvelle',
     },
   },
   createRemediationInstruction: {
@@ -844,6 +840,22 @@ export default {
     },
     edit: {
       title: 'Modifier le filtre partagé de comportement périodique',
+    },
+  },
+  createServiceWeatherPattern: {
+    create: {
+      title: 'Créer un modèle de météo des services',
+    },
+    edit: {
+      title: 'Modifier le modèle de météo des services',
+    },
+  },
+  createCorporateServiceWeatherPattern: {
+    create: {
+      title: 'Créer un modèle partagé de météo des services',
+    },
+    edit: {
+      title: 'Editer un modèle partagé de météo des services',
     },
   },
   createMap: {
