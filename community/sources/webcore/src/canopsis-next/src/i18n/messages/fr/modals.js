@@ -999,6 +999,14 @@ export default {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
+  confirmationCreateNewTicketForAlarm: {
+    title: 'Confirmer la création de tickets',
+    text: 'Au moins un ticket existe déjà pour cette alarme.\nVoulez-vous en créer un nouveau ?',
+  },
+  confirmationCreateNewTicketForAlarms: {
+    title: 'Confirmer la création de tickets',
+    text: 'Des tickets existent déjà pour certaines alarmes.\nVoulez-vous en créer de nouveaux pour celles-ci ?',
+  },
   createTag: {
     create: {
       title: 'Créer un tag',
