@@ -999,6 +999,14 @@ export default {
     title: 'Leave maintenance mode',
     text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
   },
+  confirmationCreateNewTicketForAlarm: {
+    title: 'Confirm create tickets',
+    text: 'This alarm already has tickets created.\nDo you want to create a new one?',
+  },
+  confirmationCreateNewTicketForAlarms: {
+    title: 'Confirm create tickets',
+    text: 'Some alarms already have tickets created.\nDo you want to create new tickets for them?',
+  },
   createTag: {
     create: {
       title: 'Create a tag',

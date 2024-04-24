@@ -24,9 +24,8 @@
 <script>
 import { groupBy } from 'lodash';
 
-import { ALARM_LIST_STEPS } from '@/constants';
-
 import { filterValue } from '@/helpers/array';
+import { isSuccessStepTicketType } from '@/helpers/entities/alarm/step/entity';
 
 import { formMixin } from '@/mixins/form';
 
@@ -59,10 +58,7 @@ export default {
   },
   computed: {
     successAlarmTickets() {
-      return this.alarmTickets
-        .filter(ticket => (
-          [ALARM_LIST_STEPS.declareTicket, ALARM_LIST_STEPS.assocTicket].includes(ticket._t)
-        ));
+      return this.alarmTickets.filter(ticket => isSuccessStepTicketType(ticket._t));
     },
 
     successAlarmTicketsByTicketId() {
