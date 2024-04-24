@@ -1,9 +1,8 @@
 <template>
   <v-text-field
     v-field="value"
-    v-validate="{ regex: advancedFieldRegex }"
     v-bind="$attrs"
-    :error-messages="errors.collect(name)"
+    :error-messages="errorMessages"
     :name="name"
     persistent-hint
   >
@@ -20,6 +19,13 @@
 </template>
 
 <script>
+import { isNumber, isNaN } from 'lodash';
+import { computed, onBeforeUnmount, watch } from 'vue';
+
+import { useInjectValidator } from '@/hooks/validator/inject-validator';
+import { useComponentInstance } from '@/hooks/vue';
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   inject: ['$validator'],
   inheritAttrs: false,
@@ -40,11 +46,55 @@ export default {
       type: String,
       default: 'regex',
     },
-  },
-  computed: {
-    advancedFieldRegex() {
-      return /^(-?(?:[0-9]|[0-9]\d|[12]\d\d|3[0-6][0-6]?))(,-?(?:[1-9]|[1-9]\d|[12]\d\d|3[0-6][0-6]?))*,?$/;
+    min: {
+      type: Number,
+      required: false,
     },
+    max: {
+      type: Number,
+      required: false,
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const validator = useInjectValidator();
+    const instance = useComponentInstance();
+
+    const errorMessages = computed(() => (validator.errors.has(props.name) ? t('validation.messages.regex') : undefined));
+
+    const attachRangeRule = () => {
+      validator.attach({
+        name: props.name,
+        rules: 'required:true',
+        getter: () => props.value.split(',').every((value) => {
+          const preparedValue = Number(value);
+
+          if (isNaN(preparedValue) || !isNumber(preparedValue)) {
+            return false;
+          }
+
+          return isNumber(props.min) && isNumber(props.max)
+            ? preparedValue >= props.min && preparedValue <= props.max
+            : true;
+        }),
+        vm: instance,
+      });
+    };
+    const validateRangeRule = () => validator.validate(props.name);
+    const detachRangeRule = () => validator.detach(props.name);
+
+    attachRangeRule();
+
+    watch(() => props.value, () => {
+      if (errorMessages.value) {
+        validateRangeRule();
+      }
+    });
+    onBeforeUnmount(detachRangeRule);
+
+    return {
+      errorMessages,
+    };
   },
 };
 </script>
