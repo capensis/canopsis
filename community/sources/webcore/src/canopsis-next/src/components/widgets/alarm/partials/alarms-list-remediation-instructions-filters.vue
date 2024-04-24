@@ -20,7 +20,7 @@
     >
       <template #activator="{ on }">
         <v-btn
-          class="mx-1 my-0"
+          class="ma-0"
           icon
           v-on="on"
           @click="showCreateFilterModal"

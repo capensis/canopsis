@@ -2,7 +2,7 @@
 
 exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] = `
 <div
-  class="v-stepper dynamic-info-form v-stepper--non-linear v-sheet theme--light"
+  class="v-stepper v-stepper--non-linear v-sheet theme--light"
 >
   <div
     class="v-stepper__header"
@@ -130,7 +130,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
 
 exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] = `
 <div
-  class="v-stepper dynamic-info-form v-stepper--non-linear v-sheet theme--light"
+  class="v-stepper v-stepper--non-linear v-sheet theme--light"
 >
   <div
     class="v-stepper__header"
@@ -258,7 +258,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
 
 exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
 <div
-  class="v-stepper dynamic-info-form v-stepper--non-linear v-sheet theme--light"
+  class="v-stepper v-stepper--non-linear v-sheet theme--light"
 >
   <div
     class="v-stepper__header"

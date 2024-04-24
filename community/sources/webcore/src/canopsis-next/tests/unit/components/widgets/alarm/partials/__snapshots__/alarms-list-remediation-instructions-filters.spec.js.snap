@@ -19,7 +19,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     <!---->
   </span>
   <button
-    class="mx-1 my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
     type="button"
   >
     <span
@@ -55,7 +55,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     <!---->
   </span>
   <button
-    class="mx-1 my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
     type="button"
   >
     <span
@@ -102,7 +102,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     <!---->
   </span>
   <button
-    class="mx-1 my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
     type="button"
   >
     <span

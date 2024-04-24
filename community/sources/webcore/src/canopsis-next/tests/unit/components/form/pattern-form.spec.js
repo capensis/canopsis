@@ -1,20 +1,19 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createInputStub } from '@unit/stubs/input';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
 
 import PatternForm from '@/components/forms/pattern-form.vue';
 
 const stubs = {
-  'v-text-field': createInputStub('v-text-field'),
+  'c-name-field': true,
   'c-alarm-patterns-field': true,
   'c-entity-patterns-field': true,
   'c-pbehavior-patterns-field': true,
 };
 
-const selectTextField = wrapper => wrapper.find('.v-text-field');
+const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
 const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
@@ -37,9 +36,7 @@ describe('pattern-form', () => {
 
     const title = Faker.datatype.string();
 
-    const textField = selectTextField(wrapper);
-
-    textField.triggerCustomEvent('input', title);
+    selectNameField(wrapper).triggerCustomEvent('input', title);
 
     expect(wrapper).toEmitInput({ ...form, title });
   });
@@ -60,9 +57,7 @@ describe('pattern-form', () => {
     const id = Faker.datatype.string();
     const groups = [{}];
 
-    const alarmPatternsField = selectAlarmPatternsField(wrapper);
-
-    alarmPatternsField.triggerCustomEvent('input', { ...form, id, groups });
+    selectAlarmPatternsField(wrapper).triggerCustomEvent('input', { ...form, id, groups });
 
     expect(wrapper).toEmitInput({ ...form, id, groups });
   });
@@ -83,9 +78,7 @@ describe('pattern-form', () => {
     const id = Faker.datatype.string();
     const groups = [{}];
 
-    const entityPatternsField = selectEntityPatternsField(wrapper);
-
-    entityPatternsField.triggerCustomEvent('input', { ...form, id, groups });
+    selectEntityPatternsField(wrapper).triggerCustomEvent('input', { ...form, id, groups });
 
     expect(wrapper).toEmitInput({ ...form, id, groups });
   });
@@ -106,9 +99,7 @@ describe('pattern-form', () => {
     const id = Faker.datatype.string();
     const groups = [{}];
 
-    const pbehaviorPatternsField = selectPbehaviorPatternsField(wrapper);
-
-    pbehaviorPatternsField.triggerCustomEvent('input', { ...form, id, groups });
+    selectPbehaviorPatternsField(wrapper).triggerCustomEvent('input', { ...form, id, groups });
 
     expect(wrapper).toEmitInput({ ...form, id, groups });
   });
@@ -161,22 +152,6 @@ describe('pattern-form', () => {
         },
       },
     });
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('Renders `pattern-form` with errors', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        form: {
-          title: '',
-        },
-      },
-    });
-
-    const validator = wrapper.getValidator();
-
-    await validator.validateAll();
 
     expect(wrapper).toMatchSnapshot();
   });

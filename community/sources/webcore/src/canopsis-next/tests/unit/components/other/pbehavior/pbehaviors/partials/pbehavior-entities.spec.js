@@ -9,7 +9,7 @@ import PbehaviorEntities from '@/components/other/pbehavior/pbehaviors/partials/
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-search-field': true,
+  'c-search': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,

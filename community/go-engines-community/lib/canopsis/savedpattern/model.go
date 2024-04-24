@@ -6,22 +6,24 @@ import (
 )
 
 const (
-	TypeAlarm     = "alarm"
-	TypeEntity    = "entity"
-	TypePbehavior = "pbehavior"
+	TypeAlarm          = "alarm"
+	TypeEntity         = "entity"
+	TypePbehavior      = "pbehavior"
+	TypeWeatherService = "weather_service"
 )
 
 type SavedPattern struct {
-	ID               string                `bson:"_id"`
-	Title            string                `bson:"title"`
-	Type             string                `bson:"type"`
-	IsCorporate      bool                  `bson:"is_corporate"`
-	AlarmPattern     pattern.Alarm         `bson:"alarm_pattern,omitempty"`
-	EntityPattern    pattern.Entity        `bson:"entity_pattern,omitempty"`
-	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern,omitempty"`
-	Author           string                `bson:"author"`
-	Created          datetime.CpsTime      `bson:"created,omitempty"`
-	Updated          datetime.CpsTime      `bson:"updated,omitempty"`
+	ID                    string                        `bson:"_id"`
+	Title                 string                        `bson:"title"`
+	Type                  string                        `bson:"type"`
+	IsCorporate           bool                          `bson:"is_corporate"`
+	AlarmPattern          pattern.Alarm                 `bson:"alarm_pattern,omitempty"`
+	EntityPattern         pattern.Entity                `bson:"entity_pattern,omitempty"`
+	PbehaviorPattern      pattern.PbehaviorInfo         `bson:"pbehavior_pattern,omitempty"`
+	WeatherServicePattern pattern.WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
+	Author                string                        `bson:"author"`
+	Created               datetime.CpsTime              `bson:"created,omitempty"`
+	Updated               datetime.CpsTime              `bson:"updated,omitempty"`
 }
 
 type AlarmPatternFields struct {
@@ -43,4 +45,11 @@ type PbehaviorPatternFields struct {
 
 	CorporatePbehaviorPattern      string `bson:"corporate_pbehavior_pattern" json:"corporate_pbehavior_pattern,omitempty"`
 	CorporatePbehaviorPatternTitle string `bson:"corporate_pbehavior_pattern_title" json:"corporate_pbehavior_pattern_title,omitempty"`
+}
+
+type WeatherServicePatternFields struct {
+	WeatherServicePattern pattern.WeatherServicePattern `bson:"weather_service_pattern" json:"weather_service_pattern,omitempty"`
+
+	CorporateWeatherServicePattern      string `bson:"corporate_weather_service_pattern" json:"corporate_weather_service_pattern,omitempty"`
+	CorporateWeatherServicePatternTitle string `bson:"corporate_weather_service_pattern_title" json:"corporate_weather_service_pattern_title,omitempty"`
 }

@@ -7,9 +7,10 @@ import PatternRulesField from '@/components/forms/fields/pattern/pattern-rules-f
 const stubs = {
   'pattern-rule-field': true,
   'c-action-btn': true,
+  'c-btn-with-error': true,
 };
 
-const selectAddButton = wrapper => wrapper.find('v-btn-stub');
+const selectAddButton = wrapper => wrapper.find('c-btn-with-error-stub');
 const selectPatternRulesField = wrapper => wrapper.findAll('pattern-rule-field-stub');
 const selectPatternRuleFieldByIndex = (wrapper, index) => selectPatternRulesField(wrapper)
   .at(index);
@@ -171,9 +172,7 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    const addButton = selectAddButton(wrapper);
-
-    addButton.triggerCustomEvent('click');
+    selectAddButton(wrapper).triggerCustomEvent('click');
 
     expect(wrapper).toEmitInput([
       ...rules,
