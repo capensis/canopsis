@@ -363,7 +363,13 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 	scenarioExecution, err := e.executionStorage.Get(ctx, taskRes.ExecutionCacheKey)
 	if err != nil || scenarioExecution == nil {
-		e.logger.Error().Err(err).Str("execution", taskRes.ExecutionCacheKey).Msg("cannot get execution")
+		e.logger.Error().Err(err).
+			Str("source", taskRes.Source).
+			Str("execution", taskRes.ExecutionCacheKey).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("entity", taskRes.Alarm.EntityID).
+			Int("step", taskRes.Step).
+			Msg("cannot get execution")
 		return
 	}
 
@@ -375,7 +381,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 				Str("alarm", taskRes.Alarm.ID).
 				Str("execution", taskRes.ExecutionCacheKey).
 				Int("step", taskRes.Step).
-				Msg("Worker returned error, drop scenario")
+				Msg("worker returned error, drop scenario")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 		}
 
@@ -387,7 +393,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Str("source", taskRes.Source).
 			Str("alarm", taskRes.Alarm.ID).
 			Str("execution", taskRes.ExecutionCacheKey).
-			Int("step", taskRes.Step).Msg("Execution failed, drop scenario")
+			Int("step", taskRes.Step).Msg("execution failed, drop scenario")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 
 		return
@@ -398,7 +404,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Str("source", taskRes.Source).
 			Str("alarm", taskRes.Alarm.ID).
 			Str("execution", taskRes.ExecutionCacheKey).Int("step", taskRes.Step).
-			Msg("Action is not matched, drop scenario")
+			Msg("action is not matched, drop scenario")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
 		return
 	}
@@ -472,7 +478,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Str("alarm", taskRes.Alarm.ID).
 			Str("execution", taskRes.ExecutionCacheKey).
 			Int("step", taskRes.Step).
-			Msg("Scenario is finished")
+			Msg("scenario is finished")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
 	}
 }
