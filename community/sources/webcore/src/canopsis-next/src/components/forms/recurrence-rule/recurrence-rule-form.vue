@@ -63,11 +63,12 @@
             :class="`${index % 2 ? 'pl' : 'pr'}-2`"
             xs6
           >
-            <recurrence-rule-regex-field
+            <recurrence-rule-advanced-field
               v-model="form[field.name]"
               :label="$t(`recurrenceRule.${field.name}`)"
               :help-text="$t(`recurrenceRule.tooltips.${field.name}`)"
               :name="field.name"
+              :negative="field.negative"
               :min="field.min"
               :max="field.max"
             />
@@ -100,7 +101,7 @@ import {
 import { formBaseMixin } from '@/mixins/form';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
-import RecurrenceRuleRegexField from '@/components/forms/recurrence-rule/fields/recurrence-rule-regex-field.vue';
+import RecurrenceRuleAdvancedField from '@/components/forms/recurrence-rule/fields/recurrence-rule-advanced-field.vue';
 import RecurrenceRuleEndField from '@/components/forms/recurrence-rule/fields/recurrence-rule-end-field.vue';
 import RecurrenceRuleIntervalField from '@/components/forms/recurrence-rule/fields/recurrence-rule-interval-field.vue';
 
@@ -115,7 +116,7 @@ export default {
     RecurrenceRuleAdvancedRepeatField,
     RecurrenceRuleIntervalField,
     RecurrenceRuleEndField,
-    RecurrenceRuleRegexField,
+    RecurrenceRuleAdvancedField,
     RecurrenceRuleMonthField,
     RecurrenceRuleWeekdayField,
     RecurrenceRuleFrequencyField,
@@ -180,33 +181,43 @@ export default {
     advancedFields() {
       const fields = [{
         name: 'bysetpos',
-        min: -366,
+        negative: true,
+        min: 1,
         max: 366,
       }];
 
       if (!this.isMonthlyFrequency) {
         fields.push({
           name: 'byyearday',
+          negative: true,
+          min: 1,
+          max: 366,
         });
       }
 
       if (!this.isYearlyFrequency) {
         fields.push({
           name: 'bymonthday',
+          negative: true,
+          min: 1,
+          max: 31,
         });
       }
 
       if (!this.isMonthlyFrequency && !this.isYearlyFrequency) {
         fields.push({
           name: 'byweekno',
+          negative: true,
+          min: 1,
+          max: 53,
         });
       }
 
       if (this.isHourlyFrequency) {
         fields.push({
           name: 'byhour',
-          min: -24,
-          max: 24,
+          min: 0,
+          max: 23,
         });
       }
 
