@@ -95,6 +95,10 @@ func RegisterValidators(client mongo.DbClient) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("weather_service_pattern", common.ValidateWeatherServicePattern)
+	if err != nil {
+		panic(err)
+	}
 	err = v.RegisterValidation("info_value", common.ValidateInfoValue)
 	if err != nil {
 		panic(err)

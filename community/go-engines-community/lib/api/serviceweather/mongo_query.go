@@ -257,7 +257,7 @@ func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
 	}
 
 	if r.WeatherServicePattern != "" {
-		var weatherPattern view.WeatherServicePattern
+		var weatherPattern pattern.WeatherServicePattern
 		err := json.Unmarshal([]byte(r.WeatherServicePattern), &weatherPattern)
 		if err != nil {
 			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
@@ -284,8 +284,8 @@ func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) er
 	return nil
 }
 
-func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern view.WeatherServicePattern) error {
-	weatherPatternQuery, err := weatherServicePattern.ToMongoQuery("")
+func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern pattern.WeatherServicePattern) error {
+	weatherPatternQuery, err := db.WeatherServicePatternToMongoQuery(weatherServicePattern, "")
 	if err != nil {
 		return err
 	}

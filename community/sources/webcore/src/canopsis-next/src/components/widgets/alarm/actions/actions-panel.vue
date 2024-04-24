@@ -31,7 +31,6 @@ import {
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
-import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
 import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
@@ -51,7 +50,6 @@ export default {
   mixins: [
     entitiesAlarmMixin,
     entitiesMetaAlarmMixin,
-    entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
     widgetActionsPanelAlarmExportPdfMixin,

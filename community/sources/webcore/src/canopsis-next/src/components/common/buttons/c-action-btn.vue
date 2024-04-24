@@ -47,6 +47,7 @@
             :small="small"
             :color="btnColor"
             :dark="dark"
+            :input-value="inputValue"
             class="ma-0 c-action-btn__button"
             icon
             v-on="tooltipOn"
@@ -64,6 +65,7 @@
           :small="small"
           :color="btnColor"
           :dark="dark"
+          :input-value="inputValue"
           class="mx-1 my-0 c-action-btn__button"
           icon
           v-on="tooltipOn"
@@ -153,6 +155,10 @@ export default {
     dark: {
       type: Boolean,
       default: false,
+    },
+    inputValue: {
+      type: Boolean,
+      required: false,
     },
   },
   computed: {

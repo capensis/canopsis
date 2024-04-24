@@ -15,7 +15,7 @@ import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-search-field': true,
+  'c-search': true,
   'v-checkbox': true,
   'c-expand-btn': true,
   'c-action-btn': true,
