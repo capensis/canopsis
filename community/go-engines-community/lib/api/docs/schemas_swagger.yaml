@@ -1944,7 +1944,7 @@ definitions:
         $ref: '#/definitions/types.Author'
       message:
         type: string
-      ts:
+      t:
         type: integer
     type: object
   entitycomment.Request:
@@ -1968,7 +1968,7 @@ definitions:
         type: string
       message:
         type: string
-      ts:
+      t:
         type: integer
     type: object
   entitycomment.UpdateRequest:
