@@ -1001,11 +1001,11 @@ export default {
   },
   confirmationCreateNewTicketForAlarm: {
     title: 'Confirmer la création de tickets',
-    text: 'Cette alarme a déjà des tickets créés.\nVoulez-vous en créer un nouveau ?',
+    text: 'Au moins un ticket existe déjà pour cette alarme.\nVoulez-vous en créer un nouveau ?',
   },
   confirmationCreateNewTicketForAlarms: {
     title: 'Confirmer la création de tickets',
-    text: 'Certaines alarmes ont déjà des tickets créés.\nVoulez-vous créer de nouveaux tickets pour eux ?',
+    text: 'Des tickets existent déjà pour certaines alarmes.\nVoulez-vous en créer de nouveaux pour celles-ci ?',
   },
   createTag: {
     create: {
