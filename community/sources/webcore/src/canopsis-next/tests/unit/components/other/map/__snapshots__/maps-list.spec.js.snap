@@ -10,9 +10,7 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value="Filter"
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -1122,7 +1120,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
     <div
       class="flex xs4"
     >
-      <c-search-field-stub />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"

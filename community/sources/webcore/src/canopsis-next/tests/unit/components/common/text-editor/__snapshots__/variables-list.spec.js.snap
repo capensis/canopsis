@@ -2,11 +2,11 @@
 
 exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 <div
-  class="v-list pa-0 v-sheet theme--light v-list--dense"
+  class="v-list pa-0 v-sheet theme--light"
   role="list"
 >
   <div
-    class="v-list-item v-list-item--link theme--light"
+    class="v-list-item v-list-item--active v-list-item--link theme--light"
     role="listitem"
     tabindex="0"
   >
@@ -17,9 +17,11 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
         class="v-list-item__title"
       >
         <div
-          class="layout justify-space-between"
+          class="layout gap-4 justify-space-between"
         >
-          Entity
+          <span>
+            Entity
+          </span>
           <!---->
         </div>
       </div>
@@ -36,12 +38,15 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
     </div>
   </div>
   <!---->
+  <!---->
 </div>
 `;
 
 exports[`variables-list Renders \`variables-list\` with default props 1`] = `
 <div
-  class="v-list pa-0 v-sheet theme--light v-list--dense"
+  class="v-list pa-0 v-sheet theme--light"
   role="list"
-/>
+>
+  <!---->
+</div>
 `;

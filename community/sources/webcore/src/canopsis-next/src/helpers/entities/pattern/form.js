@@ -1147,17 +1147,14 @@ export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(for
 export const formToPattern = (form) => {
   const { groups, id, ...pattern } = form;
 
-  switch (form.type) {
-    case PATTERN_TYPES.alarm:
-      pattern.alarm_pattern = formGroupsToPatternRules(groups);
-      break;
-    case PATTERN_TYPES.entity:
-      pattern.entity_pattern = formGroupsToPatternRules(groups);
-      break;
-    case PATTERN_TYPES.pbehavior:
-      pattern.pbehavior_pattern = formGroupsToPatternRules(groups);
-      break;
-  }
+  const patternsKey = {
+    [PATTERN_TYPES.alarm]: PATTERNS_FIELDS.alarm,
+    [PATTERN_TYPES.entity]: PATTERNS_FIELDS.entity,
+    [PATTERN_TYPES.pbehavior]: PATTERNS_FIELDS.pbehavior,
+    [PATTERN_TYPES.serviceWeather]: PATTERNS_FIELDS.serviceWeather,
+  }[form.type];
+
+  pattern[patternsKey] = formGroupsToPatternRules(groups);
 
   return pattern;
 };

@@ -17,7 +17,7 @@ import TagsList from '@/components/other/tag/tags-list.vue';
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-search-field': true,
+  'c-search': true,
   'v-checkbox': true,
   'c-expand-btn': true,
   'c-action-btn': true,

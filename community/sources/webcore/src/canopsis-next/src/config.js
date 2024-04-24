@@ -129,7 +129,7 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
-  entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
+  entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   alarmTag: {
@@ -302,7 +302,6 @@ export const API_ROUTES = {
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
-  manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
   metaAlarm: '/api/v4/cat/meta-alarms',
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',

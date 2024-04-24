@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`attribute\` type 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+    somerequired="true"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`complex\` type 1`] = `
+<div
+  class="layout column"
+>
+  <meta-alarm-rule-threshold-form-stub
+    threshold="[object Object]"
+  />
+  <meta-alarm-rule-time-based-form-stub
+    timebased="[object Object]"
+    withchildinactivedelay="true"
+  />
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+    withtotalentity="true"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`corel\` type 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <meta-alarm-rule-corel-form-stub
+    config="[object Object]"
+    variables=""
+  />
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`manualgroup\` type 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`relation\` type 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`timebased\` type 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <meta-alarm-rule-time-based-form-stub
+    timebased="[object Object]"
+  />
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`valuegroup\` type 1`] = `
+<div
+  class="layout column"
+>
+  <meta-alarm-rule-threshold-form-stub
+    threshold="[object Object]"
+  />
+  <meta-alarm-rule-time-based-form-stub
+    timebased="[object Object]"
+    withchildinactivedelay="true"
+  />
+  <meta-alarm-rule-value-paths-form-stub
+    class="mb-3"
+    form="[object Object]"
+    name="value_paths"
+  />
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+    withtotalentity="true"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <meta-alarm-rule-threshold-form-stub
+    threshold="[object Object]"
+  />
+  <meta-alarm-rule-time-based-form-stub
+    timebased="[object Object]"
+    withchildinactivedelay="true"
+  />
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+    withtotalentity="true"
+  />
+</div>
+`;
+
+exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;
