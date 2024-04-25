@@ -31,9 +31,8 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	eventMetric := techmetrics.EventMetric{
-		Timestamp: time.Now(),
-	}
+	eventMetric := techmetrics.EventMetric{}
+	eventMetric.Timestamp = time.Now()
 
 	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
 	defer task.End()
@@ -70,6 +69,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}()
 
 	event.Format()
+	event.ReceivedTimestamp = types.NewMicroTime()
 	p.StatsSender.Add(time.Now().Unix(), true)
 
 	err = event.InjectExtraInfos(msg)

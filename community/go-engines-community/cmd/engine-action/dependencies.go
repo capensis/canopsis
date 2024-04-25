@@ -54,6 +54,9 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
 		action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(canopsis.ActionEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
 	storage := action.NewRedisScenarioExecutionStorage(redis.ActionScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
 		json.NewDecoder(), options.LastRetryInterval, logger)
@@ -61,7 +64,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), techMetricsSender, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
@@ -179,17 +182,12 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	)
 
-	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(canopsis.ActionEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
-		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-
 	engineAction.AddRoutine(func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
 		return nil
 	})
 
 	mainMessageProcessor := &messageProcessor{
-		TechMetricsSender:        techMetricsSender,
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		ActionService:            actionService,
 		Decoder:                  json.NewDecoder(),
