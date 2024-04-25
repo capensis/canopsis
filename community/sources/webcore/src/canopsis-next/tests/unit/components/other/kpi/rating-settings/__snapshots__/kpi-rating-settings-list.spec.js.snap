@@ -5,7 +5,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -446,7 +446,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -927,7 +927,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -1023,7 +1023,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -1037,7 +1037,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
         name="expand-transition"
       >
         <div
-          class="layout ml-3 mt-3"
+          class="layout mt-3"
         >
           <button
             class="v-btn v-btn--outlined theme--light v-size--default primary--text"
@@ -1487,7 +1487,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"

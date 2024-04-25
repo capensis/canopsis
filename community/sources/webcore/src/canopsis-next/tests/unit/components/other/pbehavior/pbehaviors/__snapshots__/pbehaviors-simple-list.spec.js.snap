@@ -24,7 +24,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     class="c-advanced-data-table"
   >
     <div
-      class="layout wrap"
+      class="layout px-4 wrap"
     >
       <!---->
       <!---->
@@ -1438,7 +1438,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
     class="c-advanced-data-table"
   >
     <div
-      class="layout wrap"
+      class="layout px-4 wrap"
     >
       <!---->
       <!---->

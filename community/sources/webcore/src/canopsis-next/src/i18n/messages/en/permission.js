@@ -37,6 +37,18 @@ export default {
       name: 'Access to available variables list',
       description: 'Users with this permission can see the list of variables in the alarm list and service weather',
     },
+    [USERS_PERMISSIONS.business.context.actions.entityCommentsList]: {
+      name: 'Access to entity comments list',
+      description: 'Users with this permission can see entity comments list',
+    },
+    [USERS_PERMISSIONS.business.context.actions.createEntityComment]: {
+      name: 'Access to creating entity comments',
+      description: 'Users with this permission can create entity comments',
+    },
+    [USERS_PERMISSIONS.business.context.actions.editEntityComment]: {
+      name: 'Access to editing entity comments',
+      description: 'Users with this permission can edit entity comments',
+    },
 
     /**
      * Business Alarms List Permissions
