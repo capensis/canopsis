@@ -5,7 +5,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -1051,7 +1051,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"

@@ -20,6 +20,7 @@
       :page="query.page"
       @update:page="updateQueryPage"
       @update:items-per-page="updateQueryItemsPerPage"
+      @input="updateQuery"
     />
   </v-layout>
 </template>
@@ -84,6 +85,7 @@ export default {
 
     const {
       query,
+      updateQuery,
       updateQueryPage,
       updateQueryItemsPerPage,
     } = useLocalQuery({
@@ -134,6 +136,7 @@ export default {
       isFirstPage,
       addComment,
       editComment,
+      updateQuery,
       updateQueryPage,
       updateQueryItemsPerPage,
     };

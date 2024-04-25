@@ -179,6 +179,7 @@
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
     <component
       v-bind="additionalComponent.props"
@@ -590,6 +591,10 @@ export default {
 
     updatePage(page) {
       this.$emit('update:page', page);
+    },
+
+    updatePaginationOptions(query) {
+      this.$emit('update:pagination-options', query);
     },
 
     openRootCauseDiagram(entity) {

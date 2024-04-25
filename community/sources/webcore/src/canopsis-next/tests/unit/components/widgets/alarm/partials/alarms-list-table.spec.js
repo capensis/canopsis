@@ -28,6 +28,7 @@ const selectTable = wrapper => wrapper.findComponent({ name: 'VDataTable' });
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
+const selectTablePagination = wrapper => wrapper.find('c-table-pagination-stub');
 
 describe('alarms-list-table', () => {
   const $modals = mockModals();
@@ -520,6 +521,27 @@ describe('alarms-list-table', () => {
     /**
      * TODO: Should be tested show modal
      */
+  });
+
+  test('Table pagination emits input event correctly', () => {
+    const newPaginationOptions = { page: 1, itemsPerPage: 20 };
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+        stickyHeader: true,
+      },
+      mocks: { $modals },
+    });
+
+    const tablePagination = selectTablePagination(wrapper);
+
+    tablePagination.triggerCustomEvent('input', newPaginationOptions);
+
+    expect(wrapper).toEmit('update:pagination-options', newPaginationOptions);
   });
 
   test('Renders `alarms-list-table` with default and required props', () => {

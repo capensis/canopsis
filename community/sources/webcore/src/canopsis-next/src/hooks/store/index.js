@@ -1,3 +1,5 @@
+import { computed } from 'vue';
+
 import { useComponentInstance } from '../vue';
 
 /**
@@ -80,7 +82,7 @@ export const useStoreModuleHooks = (namespace) => {
   }
 
   const useGetters = getters => normalizeStoreMap(getters).reduce((acc, { key, value }) => {
-    acc[key] = () => store.getters(preparedNamespace + value);
+    acc[key] = computed(() => store.getters[preparedNamespace + value]);
 
     return acc;
   }, {});

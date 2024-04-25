@@ -1,6 +1,6 @@
 <template>
   <div class="c-advanced-data-table">
-    <v-layout v-bind="toolbarProps" wrap>
+    <v-layout v-bind="toolbarProps" class="px-4" wrap>
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
@@ -122,13 +122,12 @@
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
 
 <script>
-import { getPageForNewItemsPerPage } from '@/helpers/pagination';
-
 export default {
   model: {
     prop: 'selected',
@@ -315,16 +314,15 @@ export default {
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.updateOptions({
-        ...this.options,
-
-        itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
-      });
+      this.updateOptions({ ...this.options, itemsPerPage });
     },
 
     updatePage(page) {
       this.updateOptions({ ...this.options, page });
+    },
+
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.updateOptions({ ...this.options, page, itemsPerPage });
     },
 
     clearSelected() {

@@ -137,6 +137,7 @@
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
       @update:columns-settings="updateColumnsSettings"
+      @update:pagination-options="updatePaginationOptions"
       @clear:tag="clearTag"
     />
   </div>
@@ -150,7 +151,6 @@ import { LIVE_REPORTING_QUICK_RANGES, MODALS, USERS_PERMISSIONS } from '@/consta
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
-import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -359,7 +359,17 @@ export default {
         ...this.query,
 
         itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
+      };
+    },
+
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.updateContentInUserPreference({ itemsPerPage });
+
+      this.query = {
+        ...this.query,
+
+        page,
+        itemsPerPage,
       };
     },
 
