@@ -51,23 +51,23 @@ export const useCurrentUserPermissions = () => {
   const { currentUserPermissionsById } = useGetters(['currentUserPermissionsById']);
 
   const checkAccess = (permissionId, action = CRUD_ACTIONS.can) => (
-    checkUserAccess(currentUserPermissionsById[permissionId], action)
+    checkUserAccess(currentUserPermissionsById.value[permissionId], action)
   );
 
   const checkCreateAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById[permissionId], CRUD_ACTIONS.create)
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create)
   );
 
   const checkReadAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById[permissionId], CRUD_ACTIONS.read)
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read)
   );
 
   const checkUpdateAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById[permissionId], CRUD_ACTIONS.update)
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update)
   );
 
   const checkDeleteAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById[permissionId], CRUD_ACTIONS.delete)
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete)
   );
 
   return {

@@ -6,7 +6,6 @@ import CTablePagination from '@/components/common/pagination/c-table-pagination.
 
 const mockData = {
   page: Faker.datatype.number(),
-  itemsPerPage: Faker.datatype.number(),
   falseTotalItems: 0,
   totalItems: Faker.datatype.number({ min: 1 }),
 };
@@ -49,13 +48,32 @@ describe('c-table-pagination', () => {
     expect(wrapper).toEmit('update:page', page);
   });
 
-  it('Update pagination rows per page', () => {
-    const { itemsPerPage } = mockData;
-    const wrapper = factory();
+  it('Update pagination items per page (without page changing)', () => {
+    const itemsPerPage = 10;
+    const wrapper = factory({
+      propsData: {
+        page: 1,
+        itemsPerPage: 5,
+      },
+    });
 
     wrapper.find('.c-items-per-page-field').setValue(itemsPerPage);
 
     expect(wrapper).toEmit('update:items-per-page', itemsPerPage);
+  });
+
+  it('Update pagination items per page (with page changing)', () => {
+    const itemsPerPage = 20;
+    const wrapper = factory({
+      propsData: {
+        page: 2,
+        itemsPerPage: 5,
+      },
+    });
+
+    wrapper.find('.c-items-per-page-field').setValue(itemsPerPage);
+
+    expect(wrapper).toEmitInput({ page: 1, itemsPerPage });
   });
 
   it('Renders `c-table-pagination` with custom props', () => {

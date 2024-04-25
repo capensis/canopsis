@@ -9,7 +9,7 @@
     selectable
   >
     <template #toolbar="">
-      <v-layout class="gap-4 pa-4 pt-0" wrap align-end>
+      <v-layout class="gap-4 py-4 pt-0" wrap align-end>
         <v-flex>
           <c-advanced-search
             :fields="advancedSearchFields"

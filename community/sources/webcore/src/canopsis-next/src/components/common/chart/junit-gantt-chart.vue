@@ -24,6 +24,7 @@
       :page="query.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
@@ -293,6 +294,10 @@ export default {
 
     updatePage(page) {
       this.$emit('update:query', { ...this.query, page });
+    },
+
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.$emit('input', { ...this.query, page, itemsPerPage });
     },
   },
 };

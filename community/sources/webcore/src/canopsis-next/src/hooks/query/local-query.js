@@ -58,7 +58,7 @@ export const useLocalQuery = ({
 
     set(query.value, field, value);
 
-    if (!comparator(oldValue, value)) {
+    if (!isEqual(oldValue, value)) {
       onUpdate(query.value);
     }
   };
