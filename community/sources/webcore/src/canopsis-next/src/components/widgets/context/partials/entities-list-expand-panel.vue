@@ -152,7 +152,7 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
-    <template v-if="hasAccessToCommentsList">
+    <template v-if="commentsShown">
       <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
       <v-tab-item>
         <v-layout class="pa-3">
@@ -174,7 +174,7 @@
 </template>
 
 <script>
-import { GRID_SIZES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
@@ -259,6 +259,10 @@ export default {
 
     isAvailabilityEnabled() {
       return this.availability?.enabled;
+    },
+
+    commentsShown() {
+      return this.hasAccessToCommentsList && [ENTITY_TYPES.service, ENTITY_TYPES.resource].includes(this.item.type);
     },
   },
 };
