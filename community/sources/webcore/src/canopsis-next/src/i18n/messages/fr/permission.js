@@ -37,6 +37,18 @@ export default {
       name: 'Accès à la liste des variables disponibles',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des variables dans la liste des alarmes et la météo du service',
     },
+    [USERS_PERMISSIONS.business.context.actions.entityCommentsList]: {
+      name: 'Accès à la liste des commentaires des entités',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des commentaires de l\'entité',
+    },
+    [USERS_PERMISSIONS.business.context.actions.createEntityComment]: {
+      name: 'Accès à la création de commentaires d\'entité',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent créer des commentaires d\'entité',
+    },
+    [USERS_PERMISSIONS.business.context.actions.editEntityComment]: {
+      name: 'Accès à l\'édition des commentaires de l\'entité',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les commentaires de l\'entité',
+    },
 
     /**
      * Business Alarms List Permissions

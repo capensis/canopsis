@@ -147,9 +147,6 @@ export default {
         buttons: {
           addComment: 'Add comment',
         },
-        fields: {
-          message: 'Message',
-        },
       },
       color: {
         label: 'Use special color for this event?',

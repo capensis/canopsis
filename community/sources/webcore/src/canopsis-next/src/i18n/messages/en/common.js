@@ -300,6 +300,8 @@ export default {
   webhookStatus: 'Webhook status',
   webhookComplete: 'Webhook complete',
   noResponse: 'No response',
+  loadingItems: 'Loading items...',
+  lastComment: 'Last comment',
   variableTypes: {
     string: 'String',
     number: 'Number',

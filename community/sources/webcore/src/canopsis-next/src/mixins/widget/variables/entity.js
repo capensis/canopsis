@@ -28,17 +28,17 @@ export const entityVariablesMixin = {
 
     snoozeVariables() {
       return [
-        this.alarmStepTimestampVariable,
-        this.alarmStepAuthorVariable,
-        this.alarmStepMessageVariable,
+        this.stepTimestampVariable,
+        this.stepAuthorVariable,
+        this.stepMessageVariable,
       ];
     },
 
     lastCommentVariables() {
       return [
-        this.alarmStepTimestampVariable,
-        this.alarmStepAuthorVariable,
-        this.alarmStepMessageVariable,
+        this.stepTimestampVariable,
+        this.stepAuthorVariable,
+        this.stepMessageVariable,
       ];
     },
 
@@ -89,6 +89,10 @@ export const entityVariablesMixin = {
         { value: ENTITY_TEMPLATE_FIELDS.links },
         {
           value: ENTITY_TEMPLATE_FIELDS.alarmLastComment,
+          variables: this.lastCommentVariables,
+        },
+        {
+          value: ENTITY_TEMPLATE_FIELDS.lastComment,
           variables: this.lastCommentVariables,
         },
         { value: ENTITY_TEMPLATE_FIELDS.tags },

@@ -5,7 +5,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -2500,7 +2500,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -3008,7 +3008,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"

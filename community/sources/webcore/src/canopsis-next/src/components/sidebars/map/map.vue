@@ -115,6 +115,9 @@ export default {
       const excludeFields = [
         ENTITY_TEMPLATE_FIELDS.alarmLastComment,
         ENTITY_TEMPLATE_FIELDS.tags,
+        ENTITY_TEMPLATE_FIELDS.lastCommentedAt,
+        ENTITY_TEMPLATE_FIELDS.lastCommentMessage,
+        ENTITY_TEMPLATE_FIELDS.lastCommentAuthor,
       ];
 
       return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
