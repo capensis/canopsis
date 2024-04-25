@@ -139,7 +139,6 @@ export default {
     };
   },
   computed: {
-
     hasAccessToCreateEntity() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
     },

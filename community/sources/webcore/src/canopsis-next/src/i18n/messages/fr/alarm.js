@@ -175,7 +175,6 @@ export default {
     assignedInstructions: 'Consignes assignées',
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
-    lastComment: 'Dernier commentaire',
     lastCommentInitiator: 'Initiateur du dernier commentaire',
     ackBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',

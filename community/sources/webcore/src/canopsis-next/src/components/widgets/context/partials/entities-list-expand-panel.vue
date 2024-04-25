@@ -152,6 +152,24 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
+    <template v-if="hasAccessToCommentsList">
+      <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
+      <v-tab-item>
+        <v-layout class="pa-3">
+          <v-flex :class="cardFlexClass">
+            <v-card>
+              <v-card-text>
+                <entity-comments
+                  :entity="item"
+                  :addable="hasAccessToCreateComment"
+                  :editable="hasAccessToEditComment"
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </template>
   </v-tabs>
 </template>
 
@@ -160,11 +178,14 @@ import { GRID_SIZES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
+import { authMixin } from '@/mixins/auth';
+import { permissionsWidgetsEventComment } from '@/mixins/permissions/widgets/entity-comment';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 import EntityAvailability from '@/components/other/entity/entity-availability.vue';
+import EntityComments from '@/components/other/entity/entity-comments.vue';
 
 import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
 import InfosTab from './expand-panel-tabs/infos-tab.vue';
@@ -177,13 +198,18 @@ export default {
     EntityAvailability,
     EntityCharts,
     PbehaviorsSimpleList,
+    EntityComments,
     ImpactChainDependenciesTab,
     ImpactDependsTab,
     InfosTab,
     TreeOfDependenciesTab,
     EntityAlarmsListTable,
   },
-  mixins: [permissionsTechnicalExploitationPbehaviorMixin],
+  mixins: [
+    authMixin,
+    permissionsWidgetsEventComment,
+    permissionsTechnicalExploitationPbehaviorMixin,
+  ],
   props: {
     item: {
       type: Object,

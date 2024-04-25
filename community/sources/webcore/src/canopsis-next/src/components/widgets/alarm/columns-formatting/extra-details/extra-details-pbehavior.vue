@@ -27,7 +27,7 @@
             {{ $t('common.reason') }}: {{ pbehaviorInfo.reason_name }}
           </div>
           <div v-if="pbehaviorInfo.last_comment">
-            {{ $t('alarm.fields.lastComment') }}:
+            {{ $t('common.lastComment') }}:
             <div class="ml-2">
               -&nbsp;
               <template v-if="pbehaviorInfo.last_comment.author">

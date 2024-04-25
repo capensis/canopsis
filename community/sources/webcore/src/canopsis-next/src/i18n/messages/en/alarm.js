@@ -175,7 +175,6 @@ export default {
     assignedInstructions: 'Assigned instructions',
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
-    lastComment: 'Last comment',
     lastCommentInitiator: 'Last comment initiator',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
