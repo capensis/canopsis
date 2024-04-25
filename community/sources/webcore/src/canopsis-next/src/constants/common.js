@@ -450,3 +450,10 @@ export const KEY_CODES = {
   c: 67,
   v: 86,
 };
+
+export const VARIABLES_STEP_FIELDS = {
+  timestamp: 't',
+  value: 'val',
+  message: 'm',
+  author: 'a',
+};
