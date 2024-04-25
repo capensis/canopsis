@@ -76,14 +76,13 @@
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
-
-import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetOptionsMixin } from '@/mixins/widget/options';
@@ -172,20 +171,15 @@ export default {
   },
   methods: {
     updateItemsPerPage(itemsPerPage) {
-      this.$emit('update:query', {
-        ...this.query,
-
-        itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
-      });
+      this.$emit('update:query', { ...this.query, itemsPerPage });
     },
 
     updatePage(page) {
-      this.$emit('update:query', {
-        ...this.query,
+      this.$emit('update:query', { ...this.query, page });
+    },
 
-        page,
-      });
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.$emit('update:query', { ...this.query, page, itemsPerPage });
     },
 
     openRootCauseDiagram(entity) {

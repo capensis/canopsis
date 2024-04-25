@@ -5,7 +5,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -1684,7 +1684,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -2050,7 +2050,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -3311,7 +3311,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"

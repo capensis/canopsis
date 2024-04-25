@@ -16,7 +16,7 @@
         <v-expand-transition>
           <v-layout
             v-if="changedIds.length"
-            class="ml-3 mt-3"
+            class="mt-3"
           >
             <v-btn
               color="primary"
