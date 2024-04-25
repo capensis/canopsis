@@ -1138,6 +1138,21 @@ permission:
     _id: availability_exportAsCsv
     name: <Current()._id>
     description: Availability export as csv
+  permission_common_entityCommentsList:
+    <<: *permission
+    _id: common_entityCommentsList
+    name: <Current()._id>
+    description: Entity comments list
+  permission_common_createEntityComment:
+    <<: *permission
+    _id: common_createEntityComment
+    name: <Current()._id>
+    description: Create entity comment
+  permission_common_editEntityComment:
+    <<: *permission
+    _id: common_editEntityComment
+    name: <Current()._id>
+    description: Edit entity comment
 
   # API permissions
   permission_api_alarm_read:
