@@ -183,13 +183,16 @@ export const USERS_PERMISSIONS = {
 
         category: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_category`,
 
-        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
-
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
         addBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addBookmark`,
         removeBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeBookmark`,
         filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
+
+        /**
+         * COMMON
+         */
+        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
 
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
@@ -214,6 +217,13 @@ export const USERS_PERMISSIONS = {
         category: `${USER_PERMISSIONS_PREFIXES.business.context}_category`,
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.context}_exportAsCsv`,
+
+        /**
+         * COMMON
+         */
+        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`,
+        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`,
+        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`,
       },
     },
     serviceWeather: {
@@ -242,7 +252,14 @@ export const USERS_PERMISSIONS = {
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
 
+        /**
+         * COMMON
+         */
         variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
+
+        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`,
+        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`,
+        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`,
       },
     },
     counter: {

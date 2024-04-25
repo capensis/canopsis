@@ -628,13 +628,6 @@ export const ALARM_EVENT_INITIATORS = {
   external: 'external',
 };
 
-export const ALARM_STEP_FIELDS = {
-  timestamp: 't',
-  value: 'val',
-  message: 'm',
-  author: 'a',
-};
-
 export const ALARM_TEMPLATE_FIELDS = {
   id: `alarm.${ALARM_FIELDS.id}`,
   ack: `alarm.${ALARM_FIELDS.ack}`,
@@ -721,7 +714,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.connectorName]: 'common.connectorName',
   [ALARM_FIELDS.component]: 'common.component',
   [ALARM_FIELDS.resource]: 'common.resource',
-  [ALARM_FIELDS.lastComment]: 'alarm.fields.lastComment',
+  [ALARM_FIELDS.lastComment]: 'common.lastComment',
   [ALARM_FIELDS.lastCommentInitiator]: 'alarm.fields.lastCommentInitiator',
   [ALARM_FIELDS.ackBy]: 'alarm.fields.ackBy',
   [ALARM_FIELDS.ackMessage]: 'alarm.fields.ackMessage',

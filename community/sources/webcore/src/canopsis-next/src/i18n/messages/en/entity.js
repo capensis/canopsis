@@ -33,4 +33,7 @@ export default {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]: 'Show dependencies defining the state',
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.custom]: 'Show selector',
   },
+  comments: {
+    emptyList: 'No comments are added yet',
+  },
 };
