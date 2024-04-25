@@ -1612,15 +1612,13 @@ func (s *store) postProcessResult(
 func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 	pipeline := make([]bson.M, 0)
 	var sortQuery bson.M
-	var firstStepFunc, lastStepFunc string
+	var firstStepFunc string
 	if steps.Reversed {
 		sortQuery = bson.M{"$sort": bson.M{"step_index": -1}}
 		firstStepFunc = "$last"
-		lastStepFunc = "$first"
 	} else {
 		sortQuery = bson.M{"$sort": bson.M{"step_index": 1}}
 		firstStepFunc = "$first"
-		lastStepFunc = "$last"
 	}
 
 	var cond bson.M
@@ -1660,78 +1658,115 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 						"else": "$step_index",
 					}},
 				},
-				"data":         bson.M{"$first": "$data"},
-				"group":        bson.M{"$first": "$group"},
-				"step_index":   bson.M{firstStepFunc: "$step_index"},
-				"last_step":    bson.M{lastStepFunc: "$steps"},
-				"first_step":   bson.M{firstStepFunc: "$steps"},
+				"data":       bson.M{"$first": "$data"},
+				"group":      bson.M{"$first": "$group"},
+				"step_index": bson.M{firstStepFunc: "$step_index"},
+				"first_step": bson.M{firstStepFunc: "$steps"},
+				"ticket_step": bson.M{"$push": bson.M{"$cond": bson.M{
+					"if": bson.M{"$or": []bson.M{
+						{"$eq": bson.A{"$steps._t", types.AlarmStepDeclareTicket}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepDeclareTicketFail}},
+					}},
+					"then": "$steps",
+					"else": "$$REMOVE",
+				}}},
+				"complete_step": bson.M{"$push": bson.M{"$cond": bson.M{
+					"if": bson.M{"$or": []bson.M{
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+					}},
+					"then": "$steps",
+					"else": "$$REMOVE",
+				}}},
+				"start_step_count": bson.M{"$sum": bson.M{"$cond": bson.M{
+					"if":   bson.M{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookStart}},
+					"then": 1,
+					"else": 0,
+				}}},
+				"complete_step_count": bson.M{"$sum": bson.M{"$cond": bson.M{
+					"if": bson.M{"$or": []bson.M{
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+					}},
+					"then": 1,
+					"else": 0,
+				}}},
 				"nested_steps": bson.M{"$push": "$steps"},
+			}},
+			bson.M{"$addFields": bson.M{
+				"ticket_step":   bson.M{"$first": "$ticket_step"},
+				"complete_step": bson.M{"$first": "$complete_step"},
 			}},
 			bson.M{"$addFields": bson.M{
 				"steps": bson.M{"$cond": bson.M{
 					"if":   "$group",
-					"else": "$last_step",
-					"then": bson.M{"$switch": bson.M{
-						"default": bson.M{"$mergeObjects": bson.A{
-							"$last_step",
-							bson.M{
-								"t": "$first_step.t",
+					"else": "$first_step",
+					"then": bson.M{"$cond": bson.M{
+						"if": bson.M{"$eq": bson.A{"$first_step.initiator", types.InitiatorUser}},
+						"then": bson.M{"$switch": bson.M{
+							"branches": []bson.M{
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$start_step_count", "$complete_step_count"}},
+										{"$eq": bson.A{"$ticket_step._t", types.AlarmStepDeclareTicket}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$ticket_step",
+										bson.M{
+											"_t": AlarmStepDeclareTicketRuleComplete,
+											"t":  "$first_step.t",
+										},
+									}},
+								},
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$start_step_count", "$complete_step_count"}},
+										{"$eq": bson.A{"$ticket_step._t", types.AlarmStepDeclareTicketFail}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$ticket_step",
+										bson.M{
+											"_t": AlarmStepDeclareTicketRuleFail,
+											"t":  "$first_step.t",
+										},
+									}},
+								},
 							},
+							"default": bson.M{"$mergeObjects": bson.A{
+								"$first_step",
+								bson.M{
+									"_t": AlarmStepDeclareTicketRuleInProgress,
+								},
+							}},
 						}},
-						"branches": []bson.M{
-							{
-								"case": bson.M{"$and": []bson.M{
-									{"$eq": bson.A{"$last_step.initiator", types.InitiatorUser}},
-									{"$eq": bson.A{"$last_step._t", types.AlarmStepWebhookStart}},
-								}},
-								"then": bson.M{"$mergeObjects": bson.A{
-									"$last_step",
-									bson.M{
-										"_t": AlarmStepDeclareTicketRuleInProgress,
-										"t":  "$first_step.t",
-									},
-								}},
+						"else": bson.M{"$switch": bson.M{
+							"branches": []bson.M{
+								{
+									"case": "$ticket_step",
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$ticket_step",
+										bson.M{
+											"t": "$first_step.t",
+										},
+									}},
+								},
+								{
+									"case": "$complete_step",
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$complete_step",
+										bson.M{
+											"t": "$first_step.t",
+										},
+									}},
+								},
 							},
-							{
-								"case": bson.M{"$and": []bson.M{
-									{"$eq": bson.A{"$last_step.initiator", types.InitiatorUser}},
-									{"$in": bson.A{"$last_step._t", bson.A{types.AlarmStepWebhookComplete, types.AlarmStepDeclareTicket}}},
-								}},
-								"then": bson.M{"$mergeObjects": bson.A{
-									"$last_step",
-									bson.M{
-										"_t": AlarmStepDeclareTicketRuleComplete,
-										"t":  "$first_step.t",
-									},
-								}},
-							},
-							{
-								"case": bson.M{"$and": []bson.M{
-									{"$eq": bson.A{"$last_step.initiator", types.InitiatorUser}},
-									{"$in": bson.A{"$last_step._t", bson.A{types.AlarmStepWebhookFail, types.AlarmStepDeclareTicketFail}}},
-								}},
-								"then": bson.M{"$mergeObjects": bson.A{
-									"$last_step",
-									bson.M{
-										"_t": AlarmStepDeclareTicketRuleFail,
-										"t":  "$first_step.t",
-									},
-								}},
-							},
-							{
-								"case": bson.M{"$and": []bson.M{
-									{"$eq": bson.A{"$last_step.initiator", types.InitiatorSystem}},
-									{"$eq": bson.A{"$last_step._t", types.AlarmStepWebhookStart}},
-								}},
-								"then": bson.M{"$mergeObjects": bson.A{
-									"$last_step",
-									bson.M{
-										"_t": AlarmStepWebhookInProgress,
-										"t":  "$first_step.t",
-									},
-								}},
-							},
-						},
+							"default": bson.M{"$mergeObjects": bson.A{
+								"$first_step",
+								bson.M{
+									"_t": AlarmStepWebhookInProgress,
+								},
+							}},
+						}},
 					}},
 				}},
 			}},
