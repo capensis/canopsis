@@ -81,11 +81,27 @@ type Entity struct {
 	ComponentStateSettings         bool `bson:"component_state_settings,omitempty" json:"component_state_settings,omitempty"`
 	ComponentStateSettingsToAdd    bool `bson:"component_state_settings_to_add,omitempty" json:"component_state_settings_to_add,omitempty"`
 	ComponentStateSettingsToRemove bool `bson:"component_state_settings_to_remove,omitempty" json:"component_state_settings_to_remove,omitempty"`
+
+	Comments    []EntityComment `bson:"comments,omitempty" json:"comments,omitempty"`
+	LastComment *EntityComment  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 }
 
 type StateInfo struct {
 	ID               string          `bson:"_id" json:"_id"`
 	InheritedPattern *pattern.Entity `bson:"inherited_pattern,omitempty" json:"inherited_pattern,omitempty"`
+}
+
+type EntityComment struct {
+	ID        string           `bson:"_id" json:"_id"`
+	Timestamp datetime.CpsTime `bson:"t" json:"t"`
+	Author    *Author          `bson:"a" json:"a"`
+	Message   string           `bson:"m" json:"m"`
+}
+
+// Author in contrary to the author.Author struct without Name field
+type Author struct {
+	ID          string `bson:"_id" json:"_id"`
+	DisplayName string `bson:"display_name" json:"display_name"`
 }
 
 type Coordinates struct {

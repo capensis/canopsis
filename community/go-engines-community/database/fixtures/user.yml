@@ -1138,6 +1138,21 @@ permission:
     _id: availability_exportAsCsv
     name: <Current()._id>
     description: Availability export as csv
+  permission_common_entityCommentsList:
+    <<: *permission
+    _id: common_entityCommentsList
+    name: <Current()._id>
+    description: Entity comments list
+  permission_common_createEntityComment:
+    <<: *permission
+    _id: common_createEntityComment
+    name: <Current()._id>
+    description: Create entity comment
+  permission_common_editEntityComment:
+    <<: *permission
+    _id: common_editEntityComment
+    name: <Current()._id>
+    description: Edit entity comment
 
   # API permissions
   permission_api_alarm_read:
@@ -1190,6 +1205,11 @@ permission:
     _id: api_entitycategory
     name: <Current()._id>
     description: Entity categories
+  permission_api_entitycomment:
+    <<: *permission
+    _id: api_entitycomment
+    name: <Current()._id>
+    description: Entity comments
   permission_api_viewgroup:
     <<: *permission_crud
     _id: api_viewgroup
@@ -1633,6 +1653,7 @@ role:
       "@permission_api_dynamicinfos": 15
       "@permission_api_entityservice": 15
       "@permission_api_entitycategory": 15
+      "@permission_api_entitycomment": 1
       "@permission_api_viewgroup": 15
       "@permission_api_view": 15
       "@permission_api_widgettemplate": 15
