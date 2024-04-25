@@ -221,9 +221,9 @@ export const USERS_PERMISSIONS = {
         /**
          * COMMON
          */
-        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
-        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
-        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
+        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`,
+        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`,
+        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`,
       },
     },
     serviceWeather: {
