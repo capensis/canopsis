@@ -5,7 +5,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
@@ -407,7 +407,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"

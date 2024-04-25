@@ -8,7 +8,7 @@
         :page="page"
         :limit="itemsPerPage"
         :total="totalItems"
-        @input="$emit('update:page', $event)"
+        @input="updatePage"
       />
     </v-flex>
     <v-spacer />
@@ -18,19 +18,16 @@
         :items="items"
         class="pa-0"
         hide-details
-        @input="$emit('update:items-per-page', $event)"
+        @input="updateItemsPerPage"
       />
     </v-flex>
   </v-layout>
 </template>
 
 <script>
-import CPagination from './c-pagination.vue';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 export default {
-  components: {
-    CPagination,
-  },
   props: {
     items: {
       type: Array,
@@ -48,6 +45,27 @@ export default {
       type: Number,
       required: false,
     },
+    emitInput: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props, { emit }) {
+    const updatePage = page => emit('update:page', page);
+    const updateItemsPerPage = (itemsPerPage) => {
+      const page = getPageForNewItemsPerPage(itemsPerPage, props.itemsPerPage, props.page);
+
+      if (page !== props.page) {
+        return emit('input', { page, itemsPerPage });
+      }
+
+      return emit('update:items-per-page', itemsPerPage);
+    };
+
+    return {
+      updatePage,
+      updateItemsPerPage,
+    };
   },
 };
 </script>

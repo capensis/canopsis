@@ -5,7 +5,16 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
+        <v-textarea
+          v-if="textarea"
+          v-model="form.text"
+          v-validate="config.rules"
+          :label="config.label"
+          :error-messages="errors.collect('text')"
+          name="text"
+        />
         <text-editor-field
+          v-else
           v-model="form.text"
           v-validate="config.rules"
           :label="config.label"
@@ -76,6 +85,10 @@ export default {
 
     variables() {
       return this.config.variables;
+    },
+
+    textarea() {
+      return this.config.textarea;
     },
   },
   methods: {

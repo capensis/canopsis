@@ -6,7 +6,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
   disable-initial-sort=""
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <!---->
     <!---->
@@ -303,7 +303,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
   disable-initial-sort=""
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <!---->
     <!---->
@@ -1088,7 +1088,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
   disable-initial-sort=""
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <!---->
     <!---->

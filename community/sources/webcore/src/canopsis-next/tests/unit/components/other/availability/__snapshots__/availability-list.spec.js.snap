@@ -5,7 +5,7 @@ exports[`availability-list Renders \`availability-list\` with custom props 1`] =
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <!---->
     <!---->
@@ -586,7 +586,7 @@ exports[`availability-list Renders \`availability-list\` with default props 1`] 
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <!---->
     <!---->
