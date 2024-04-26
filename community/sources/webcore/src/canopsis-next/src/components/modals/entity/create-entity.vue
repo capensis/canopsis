@@ -12,7 +12,7 @@
           :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -30,13 +30,16 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { entityToForm, formToEntity } from '@/helpers/entities/entity/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
 
 import EntityForm from '@/components/other/entity/form/entity-form.vue';
 
@@ -52,39 +55,48 @@ export default {
     EntityForm,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+
+    const form = ref(entityToForm(config.value.entity));
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(formToEntity(form.value));
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    const title = computed(() => config.value.title || t('modals.createEntity.create.title'));
+
+    const prepareStateSettingForm = entity => ({
+      ...formToEntity(entity),
+      connector: config.value.entity.connector,
+      _id: entity._id,
+    });
+
     return {
-      form: entityToForm(this.modal.config.entity),
+      title,
+      config,
+      form,
+      isDisabled,
+      submitting,
+
+      close,
+      prepareStateSettingForm,
+      submit,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createEntity.create.title');
-    },
-  },
-  methods: {
-    prepareStateSettingForm(entity) {
-      return {
-        ...formToEntity(entity),
-        connector: this.config.entity.connector,
-        _id: entity._id,
-      };
-    },
-
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config.action(formToEntity(this.form));
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

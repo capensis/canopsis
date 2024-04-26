@@ -8,36 +8,36 @@ import { createFormStub } from '@unit/stubs/form';
 
 import ClickOutside from '@/services/click-outside';
 
-import { formToService, serviceToForm } from '@/helpers/entities/service/form';
+import { formToEntity, entityToForm } from '@/helpers/entities/entity/form';
 
-import CreateService from '@/components/modals/service/create-service.vue';
+import CreateEntity from '@/components/modals/entity/create-entity.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'service-form': true,
+  'entity-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'service-form': true,
+  'entity-form': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectServiceForm = wrapper => wrapper.find('service-form-stub');
+const selectEntityForm = wrapper => wrapper.find('entity-form-stub');
 
-describe('create-service', () => {
+describe('create-entity', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
   const consoleMock = mockConsole();
 
-  const defaultServiceForm = serviceToForm();
-  const defaultService = formToService(defaultServiceForm);
+  const defaultEntityForm = entityToForm();
+  const defaultEntity = formToEntity(defaultEntityForm);
 
-  const factory = generateShallowRenderer(CreateService, {
+  const factory = generateShallowRenderer(CreateEntity, {
     stubs,
     attachTo: document.body,
     mocks: { $modals, $popups },
@@ -47,7 +47,7 @@ describe('create-service', () => {
       },
     },
   });
-  const snapshotFactory = generateRenderer(CreateService, {
+  const snapshotFactory = generateRenderer(CreateEntity, {
     stubs: snapshotStubs,
     mocks: { $modals, $popups },
     parentComponent: {
@@ -74,7 +74,7 @@ describe('create-service', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(defaultService);
+    expect(action).toBeCalledWith(defaultEntity);
     expect($modals.hide).toHaveBeenCalledWith(modal);
   });
 
@@ -90,14 +90,14 @@ describe('create-service', () => {
       },
     });
 
-    const serviceForm = selectServiceForm(wrapper);
+    const entityForm = selectEntityForm(wrapper);
     const validator = wrapper.getValidator();
 
     validator.attach({
       name: 'name',
       rules: 'required:true',
       getter: () => false,
-      vm: serviceForm.vm,
+      vm: entityForm.vm,
     });
 
     selectSubmitButton(wrapper).trigger('click');
@@ -128,7 +128,6 @@ describe('create-service', () => {
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
       name: 'Name error',
-      category: 'Category error',
       enabled: 'Category error',
       infos: 'Category error',
     };
@@ -151,7 +150,7 @@ describe('create-service', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(defaultService);
+    expect(action).toBeCalledWith(defaultEntity);
     expect($modals.hide).not.toHaveBeenCalled();
   });
 
@@ -161,18 +160,15 @@ describe('create-service', () => {
       anotherUnavailableField: 'Second error',
     };
     const action = jest.fn().mockRejectedValue(errors);
-    const customService = {
-      ...defaultService,
+    const customEntity = {
+      ...defaultEntity,
       name: 'Custom name',
-      category: {
-        _id: 'custom-category',
-      },
     };
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
-            item: customService,
+            entity: customEntity,
             action,
           },
         },
@@ -188,9 +184,8 @@ describe('create-service', () => {
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
     expect(action).toBeCalledWith({
-      ...defaultService,
-      name: customService.name,
-      category: customService.category._id,
+      ...defaultEntity,
+      name: customEntity.name,
     });
     expect($modals.hide).not.toHaveBeenCalled();
   });
@@ -208,22 +203,18 @@ describe('create-service', () => {
     });
 
     const newForm = {
-      ...defaultServiceForm,
+      ...defaultEntityForm,
       name: Faker.datatype.string(),
-      category: {
-        _id: Faker.datatype.string(),
-      },
     };
 
-    await selectServiceForm(wrapper).triggerCustomEvent('input', newForm);
+    await selectEntityForm(wrapper).triggerCustomEvent('input', newForm);
     await selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      ...defaultService,
+      ...defaultEntity,
       name: newForm.name,
-      category: newForm.category._id,
     });
     expect($modals.hide).toBeCalled();
   });
@@ -244,7 +235,7 @@ describe('create-service', () => {
     expect($modals.hide).toBeCalled();
   });
 
-  test('Renders `create-service` with empty modal', () => {
+  test('Renders `create-entity` with empty modal', () => {
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
@@ -256,17 +247,17 @@ describe('create-service', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `create-service` with pbehavior', () => {
-    const service = {
-      ...defaultService,
-      name: 'Service name',
+  test('Renders `create-entity` with pbehavior', () => {
+    const entity = {
+      ...defaultEntity,
+      name: 'Entity name',
     };
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
           config: {
-            item: service,
-            title: 'Custom create service title',
+            entity,
+            title: 'Custom create entity title',
           },
         },
       },
