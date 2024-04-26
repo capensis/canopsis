@@ -77,11 +77,15 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import {
   ENTITY_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
 } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -108,32 +112,37 @@ export default {
       default: data => data,
     },
   },
-  computed: {
-    outputVariables() {
-      const messages = this.$t('serviceWeather.stateCounters');
+  setup() {
+    const { t } = useI18n();
+
+    const outputVariables = computed(() => {
+      const messages = t('serviceWeather.stateCounters');
 
       return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(field => ({
         text: messages[field],
         value: SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS[field],
       }));
-    },
+    });
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.connector,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.componentInfos,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const entityAttributes = computed(() => [
+      {
+        value: ENTITY_PATTERN_FIELDS.lastEventDate,
+        options: { disabled: true },
+      },
+      {
+        value: ENTITY_PATTERN_FIELDS.connector,
+        options: { disabled: true },
+      },
+      {
+        value: ENTITY_PATTERN_FIELDS.componentInfos,
+        options: { disabled: true },
+      },
+    ]);
+
+    return {
+      outputVariables,
+      entityAttributes,
+    };
   },
 };
 </script>
