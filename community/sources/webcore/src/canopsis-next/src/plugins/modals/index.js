@@ -31,6 +31,7 @@ export default {
           moduleName,
           dialogPropsMap,
 
+          isModalOpenedById: id => Boolean(store.state[moduleName].byId[id]),
           show: modal => store.dispatch(`${moduleName}/show`, modal),
           hide: ({ id } = {}) => store.dispatch(`${moduleName}/hide`, { id: id || get(this.modal, 'id') }),
           minimize: ({ id } = {}) => store.dispatch(`${moduleName}/minimize`, { id: id || get(this.modal, 'id') }),

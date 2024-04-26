@@ -22,7 +22,7 @@
 import { isNumber, isNaN } from 'lodash';
 import { computed, onBeforeUnmount, watch } from 'vue';
 
-import { useInjectValidator } from '@/hooks/validator/inject-validator';
+import { useValidator } from '@/hooks/validator/validator';
 import { useComponentInstance } from '@/hooks/vue';
 import { useI18n } from '@/hooks/i18n';
 
@@ -61,7 +61,7 @@ export default {
   },
   setup(props) {
     const { t } = useI18n();
-    const validator = useInjectValidator();
+    const validator = useValidator();
     const instance = useComponentInstance();
 
     const invalidMessage = computed(
