@@ -1,0 +1,260 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-form Renders \`service-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required=""
+    value="service-form"
+  />
+  <div
+    class="layout"
+  >
+    <div
+      class="flex pr-3 xs6"
+    >
+      <c-entity-category-field-stub
+        addable=""
+        class="mt-1"
+        required=""
+        value="[object Object]"
+      />
+    </div>
+    <div
+      class="flex pr-3 xs4"
+    >
+      <c-alarm-state-field-stub
+        label="Hi availability state"
+        required=""
+        value="3"
+      />
+    </div>
+    <div
+      class="flex xs2"
+    >
+      <c-impact-level-field-stub
+        required=""
+        value="2"
+      />
+    </div>
+  </div>
+  <c-coordinates-field-stub
+    row=""
+    value="[object Object]"
+  />
+  <text-editor-field-stub
+    config="[object Object]"
+    errormessages=""
+    label="Output template"
+    name="output_template"
+    value="output-template"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  />
+  <c-enabled-field-stub />
+  <entity-state-setting-stub
+    form="[object Object]"
+    preparer="[Function]"
+  />
+  <div
+    class="v-tabs v-tabs--centered theme--light"
+  >
+    <div
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
+    >
+      <div
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
+      >
+        <div
+          class="v-slide-group__content v-tabs-bar__content"
+        >
+          <div
+            class="v-tabs-slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs-slider primary"
+            />
+          </div>
+          <div
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
+          >
+      Entity patterns
+          </div>
+          <div
+            aria-selected="false"
+            class="validation-header v-tab"
+            role="tab"
+            tabindex="0"
+          >
+      Manage Infos
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+    </div>
+    <div
+      class="v-window v-item-group theme--light v-tabs-items"
+    >
+      <div
+        class="v-window__container"
+      >
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-form Renders \`service-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required=""
+  />
+  <div
+    class="layout"
+  >
+    <div
+      class="flex pr-3 xs6"
+    >
+      <c-entity-category-field-stub
+        addable=""
+        class="mt-1"
+        required=""
+      />
+    </div>
+    <div
+      class="flex pr-3 xs4"
+    >
+      <c-alarm-state-field-stub
+        label="Hi availability state"
+        required=""
+      />
+    </div>
+    <div
+      class="flex xs2"
+    >
+      <c-impact-level-field-stub
+        required=""
+      />
+    </div>
+  </div>
+  <c-coordinates-field-stub
+    row=""
+  />
+  <text-editor-field-stub
+    config="[object Object]"
+    errormessages=""
+    label="Output template"
+    name="output_template"
+    value=""
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  />
+  <c-enabled-field-stub />
+  <entity-state-setting-stub
+    form="[object Object]"
+    preparer="[Function]"
+  />
+  <div
+    class="v-tabs v-tabs--centered theme--light"
+  >
+    <div
+      class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+      role="tablist"
+    >
+      <div
+        class="v-slide-group__prev v-slide-group__prev--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+      <div
+        class="v-slide-group__wrapper"
+      >
+        <div
+          class="v-slide-group__content v-tabs-bar__content"
+        >
+          <div
+            class="v-tabs-slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs-slider primary"
+            />
+          </div>
+          <div
+            aria-selected="true"
+            class="v-tab v-tab--active"
+            role="tab"
+            tabindex="0"
+          >
+      Entity patterns
+          </div>
+          <div
+            aria-selected="false"
+            class="validation-header v-tab"
+            role="tab"
+            tabindex="0"
+          >
+      Manage Infos
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-slide-group__next v-slide-group__next--disabled"
+      >
+        <transition-stub
+          name="fade-transition"
+        />
+      </div>
+    </div>
+    <div
+      class="v-window v-item-group theme--light v-tabs-items"
+    >
+      <div
+        class="v-window__container"
+      >
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <!---->
+        </transition-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;
