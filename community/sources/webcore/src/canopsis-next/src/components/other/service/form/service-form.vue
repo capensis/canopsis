@@ -66,10 +66,7 @@
           entity-counters-type
         />
       </v-tab-item>
-      <v-tab
-        :disabled="advancedJsonWasChanged"
-        class="validation-header"
-      >
+      <v-tab class="validation-header">
         {{ $t('entity.manageInfos') }}
       </v-tab>
       <v-tab-item>
@@ -80,8 +77,6 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import {
   ENTITY_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
@@ -121,10 +116,6 @@ export default {
         text: messages[field],
         value: SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS[field],
       }));
-    },
-
-    advancedJsonWasChanged() {
-      return get(this.fields, ['advancedJson', 'changed']);
     },
 
     entityAttributes() {
