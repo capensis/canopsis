@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ config.title }}</span>
+        {{ config.title }}
       </template>
       <template #text="">
         <service-form v-model="form" :prepare-state-setting-form="prepareStateSettingForm" />
@@ -11,12 +11,12 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || advancedJsonWasChanged"
+          :disabled="isDisabled"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -29,16 +29,15 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { ref } from 'vue';
 
 import { ENTITY_TYPES, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/entities/service/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useInnerModal } from '@/hooks/modals';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
 
@@ -51,40 +50,43 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: { ServiceForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    entitiesContextEntityMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(serviceToForm(config.value.item));
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(formToService(form.value));
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    const prepareStateSettingForm = service => ({
+      ...formToService(service),
+      type: ENTITY_TYPES.service,
+      _id: service._id,
+    });
+
     return {
-      form: serviceToForm(this.modal.config.item),
+      config,
+      form,
+      isDisabled,
+      submitting,
+
+      close,
+      prepareStateSettingForm,
+      submit,
     };
-  },
-  computed: {
-    advancedJsonWasChanged() {
-      return get(this.fields, ['advancedJson', 'changed']);
-    },
-  },
-  methods: {
-    prepareStateSettingForm(service) {
-      return {
-        ...formToService(service),
-        type: ENTITY_TYPES.service,
-        _id: service._id,
-      };
-    },
-
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config.action(formToService(this.form));
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>
