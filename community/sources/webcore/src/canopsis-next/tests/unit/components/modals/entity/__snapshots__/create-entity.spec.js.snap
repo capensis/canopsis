@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-entity Renders \`create-entity\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close=""
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Create an entity
+      </span>
+    </div>
+    <div
+      class="text"
+    >
+      <entity-form-stub
+        form="[object Object]"
+        preparestatesettingform="[Function]"
+      />
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--text theme--light v-size--default"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Cancel
+        </span>
+      </button>
+      <button
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
+        type="submit"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Submit
+        </span>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-entity Renders \`create-entity\` with pbehavior 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close=""
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Custom create entity title
+      </span>
+    </div>
+    <div
+      class="text"
+    >
+      <entity-form-stub
+        form="[object Object]"
+        preparestatesettingform="[Function]"
+      />
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--text theme--light v-size--default"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Cancel
+        </span>
+      </button>
+      <button
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
+        type="submit"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Submit
+        </span>
+      </button>
+    </div>
+  </div>
+</form>
+`;
