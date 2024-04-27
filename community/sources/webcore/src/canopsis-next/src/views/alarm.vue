@@ -8,7 +8,6 @@
     expandable
     hide-pagination
     has-columns
-    hide-actions
   />
 </template>
 
