@@ -151,6 +151,10 @@ export default {
   },
   methods: {
     attachField() {
+      if (!this.name) {
+        return;
+      }
+
       const rules = {
         required: this.required,
       };
@@ -172,6 +176,10 @@ export default {
     },
 
     detachField() {
+      if (!this.name) {
+        return;
+      }
+
       this.$validator.detach(this.name);
     },
 
