@@ -33,6 +33,7 @@
       <v-expand-transition>
         <v-layout
           v-if="isShownDetails"
+          class="gap-4"
           column
         >
           <text-editor-blurred
@@ -40,10 +41,8 @@
             :label="$t('common.description')"
             hide-details
           />
-          <v-layout class="mt-4">
-            <span class="text-subtitle-1">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
-          </v-layout>
           <v-layout column>
+            <span class="text-subtitle-1">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
             <remediation-instruction-execute-assigned-jobs-table
               v-if="operation.jobs.length"
               :jobs="operation.jobs"
@@ -55,7 +54,7 @@
             />
           </v-layout>
           <v-layout
-            class="mb-2"
+            class="gap-3"
             justify-end
           >
             <v-btn
@@ -69,7 +68,7 @@
             <v-btn
               :disabled="previousPending"
               :loading="nextPending"
-              class="primary mr-0"
+              class="primary"
               @click="$listeners.next"
             >
               {{ $t('common.next') }}
