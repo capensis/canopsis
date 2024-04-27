@@ -12,7 +12,7 @@
         align-center
       >
         <v-flex
-          v-if="densable || !hideActions"
+          v-if="densable || selectable"
           class="alarms-list-table__top-pagination--left"
           xs6
         >
@@ -25,7 +25,7 @@
               :value="dense"
               @change="$emit('update:dense', $event)"
             />
-            <v-fade-transition v-if="!hideActions">
+            <v-fade-transition v-if="selectable">
               <v-flex
                 v-show="unresolvedSelected.length"
                 class="px-1"
@@ -328,7 +328,7 @@ export default {
   },
   computed: {
     shownTopPagination() {
-      return this.totalItems && (this.densable || !this.hideActions || !this.hidePagination);
+      return this.totalItems && (this.densable || this.selectable || !this.hidePagination);
     },
 
     wrapperListeners() {
