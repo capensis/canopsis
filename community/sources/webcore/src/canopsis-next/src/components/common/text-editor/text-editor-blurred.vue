@@ -110,8 +110,9 @@ export default {
 }
 
 .v-text-field {
+  padding-top: 28px !important;
+
   &__slot {
-    padding-top: 28px !important;
     min-height: 150px;
     max-width: 100%;
 
