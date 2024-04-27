@@ -23,7 +23,7 @@
       :no-data-text="$t('common.noData')"
       item-key="key"
     >
-      <template #items="{ item }">
+      <template #item="{ item }">
         <tr>
           <td>{{ item.name }}</td>
           <td>{{ item.value }}</td>

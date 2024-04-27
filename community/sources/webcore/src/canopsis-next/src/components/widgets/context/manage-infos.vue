@@ -13,22 +13,24 @@
       :no-data-text="$t('entity.emptyInfos')"
       item-key="name"
     >
-      <template #items="{ item, index }">
-        <td>{{ item.name }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.value }}</td>
-        <td>
-          <v-layout>
-            <c-action-btn
-              type="edit"
-              @click="showEditInfoModal(index, item)"
-            />
-            <c-action-btn
-              type="delete"
-              @click="removeItemFromArray(index)"
-            />
-          </v-layout>
-        </td>
+      <template #item="{ item, index }">
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.value }}</td>
+          <td>
+            <v-layout>
+              <c-action-btn
+                type="edit"
+                @click="showEditInfoModal(index, item)"
+              />
+              <c-action-btn
+                type="delete"
+                @click="removeItemFromArray(index)"
+              />
+            </v-layout>
+          </td>
+        </tr>
       </template>
     </v-data-table>
   </div>
