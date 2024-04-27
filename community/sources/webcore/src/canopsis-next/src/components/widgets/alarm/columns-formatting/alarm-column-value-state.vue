@@ -30,7 +30,7 @@
 import { get } from 'lodash';
 import { computed } from 'vue';
 
-import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+import { ALARM_LIST_STEPS } from '@/constants';
 
 /**
  * Component for the 'state' column of the alarms list
@@ -60,7 +60,7 @@ export default {
   setup(props) {
     const badgeValue = computed(() => get(props.alarm, 'v.events_count'));
     const stateId = computed(() => get(props.alarm, props.propertyKey));
-    const showIcon = computed(() => get(props.alarm, 'v.state._t') === ALARM_LIST_ACTIONS_TYPES.changeState);
+    const showIcon = computed(() => get(props.alarm, 'v.state._t') === ALARM_LIST_STEPS.changeState);
     const classes = computed(() => ({
       'alarm-column-value-state--badge': badgeValue.value,
       'alarm-column-value-state--small': props.small,
