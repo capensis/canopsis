@@ -19,7 +19,7 @@
       :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT"
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT"
       :style="layoutStyle"
-      :disabled="!editing"
+      :disabled="!editing || !visible"
     >
       <template #item="{ on, item }">
         <widget-edit-drag-handler
