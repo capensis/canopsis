@@ -1,13 +1,14 @@
 <template>
   <v-data-table
     :items="jobs"
-    :headers-length="4"
+    :headers="headers"
     class="jobs-assigned-table"
     item-key="_id"
     show-expand
     hide-default-footer
+    hide-default-header
   >
-    <template #headers="">
+    <template #header="">
       <tr>
         <th />
         <th class="text-center pre-line">
@@ -24,14 +25,15 @@
     <template #item="row">
       <remediation-instruction-assigned-jobs-row
         :job="row.item"
-        :expanded.sync="row.expanded"
+        :expanded="row.isExpanded"
         :executable="executable"
         :cancelable="cancelable"
         @execute-job="$emit('execute-job', $event)"
         @cancel-job-execution="$emit('cancel-job-execution', $event)"
+        @update:expanded="row.expand"
       />
     </template>
-    <template #expand="{ item }">
+    <template #expanded-item="{ item }">
       <remediation-instruction-assigned-jobs-expand-panel :job="item" />
     </template>
   </v-data-table>
@@ -60,10 +62,16 @@ export default {
       default: false,
     },
   },
-  methods: {
-    async executeJob(job) {
-      this.$emit('execute-job', { job });
-    },
+  setup() {
+    const headers = [
+      { value: 'name' },
+      { value: 'name' },
+      { value: 'startedAt' },
+      { value: 'launchedAt' },
+      { value: 'completedAt' },
+    ];
+
+    return { headers };
   },
 };
 </script>
