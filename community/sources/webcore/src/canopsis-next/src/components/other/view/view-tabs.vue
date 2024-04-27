@@ -3,7 +3,7 @@
     ref="tabs"
     :key="vTabsKey"
     :value="$route.fullPath"
-    :class="{ hidden: tabs.length &lt; 2 && !editing, 'tabs-editing': editing }"
+    :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }"
     :hide-slider="changed"
     class="view-tabs"
     background-color="secondary lighten-2"
@@ -23,7 +23,7 @@
         v-for="{ to, tab, title, key } in preparedTabs"
         :key="key"
         :to="to"
-        class="draggable-item"
+        class="draggable-item view-tabs__tab"
         exact
         ripple
       >
@@ -257,9 +257,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .view-tabs.hidden {
-    & ::v-deep > .v-tabs-bar {
-      display: none;
+  .view-tabs{
+    &.hidden {
+      & ::v-deep > .v-tabs-bar {
+        display: none;
+      }
+    }
+
+    & ::v-deep .v-tabs-bar &__tab:not(.v-tab--active) {
+      color: var(--v-text-dark-primary, rgba(255, 255, 255, 0.6));
     }
   }
 
