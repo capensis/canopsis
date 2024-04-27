@@ -73,16 +73,7 @@
               <v-data-table
                 :items="eventFilter.config.actions"
                 :headers="headers"
-              >
-                <template #items="{ item }">
-                  <td
-                    v-for="{ value } in headers"
-                    :key="value"
-                  >
-                    {{ item[value] }}
-                  </td>
-                </template>
-              </v-data-table>
+              />
             </v-flex>
           </v-layout>
         </v-tab-item>
