@@ -21,7 +21,7 @@
         </th>
       </tr>
     </template>
-    <template #items="row">
+    <template #item="row">
       <remediation-instruction-assigned-jobs-row
         :job="row.item"
         :expanded.sync="row.expanded"
