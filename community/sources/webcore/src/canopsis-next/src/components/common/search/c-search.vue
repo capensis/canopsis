@@ -48,7 +48,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    columns: {
+    fields: {
       type: Array,
       default: () => [],
     },
@@ -62,7 +62,7 @@ export default {
       clear,
     } = useSearchLocalValue({
       value: toRef(props, 'value'),
-      columns: toRef(props, 'columns'),
+      fields: toRef(props, 'fields'),
       onSubmit: addItem,
     }, emit);
 
