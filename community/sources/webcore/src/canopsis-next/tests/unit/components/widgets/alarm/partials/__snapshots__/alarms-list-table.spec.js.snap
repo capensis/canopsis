@@ -18,7 +18,20 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           <c-density-btn-toggle-stub
             value="1"
           />
-          <!---->
+          <transition-stub
+            name="fade-transition"
+          >
+            <div
+              class="flex px-1"
+              style="display: none;"
+            >
+              <mass-actions-panel-stub
+                items=""
+                refreshalarmslist="[Function]"
+                widget="[object Object]"
+              />
+            </div>
+          </transition-stub>
         </div>
       </div>
       <!---->
@@ -888,29 +901,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
     <div
       class="layout alarms-list-table__top-pagination px-4 position-relative align-center"
     >
-      <div
-        class="flex alarms-list-table__top-pagination--left xs6"
-      >
-        <div
-          class="layout align-center justify-start"
-        >
-          <!---->
-          <transition-stub
-            name="fade-transition"
-          >
-            <div
-              class="flex px-1"
-              style="display: none;"
-            >
-              <mass-actions-panel-stub
-                items=""
-                refreshalarmslist="[Function]"
-                widget="[object Object]"
-              />
-            </div>
-          </transition-stub>
-        </div>
-      </div>
+      <!---->
       <div
         class="flex alarms-list-table__top-pagination--center-absolute xs4"
       >
