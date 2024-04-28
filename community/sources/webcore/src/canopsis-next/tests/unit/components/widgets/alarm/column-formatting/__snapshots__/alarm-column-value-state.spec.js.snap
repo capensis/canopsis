@@ -8,12 +8,7 @@ exports[`alarm-column-value-state Renders \`alarm-column-value-state\` with alar
     badge-value="Events count"
     value="custom-state-val"
   />
-  <i
-    aria-hidden="true"
-    class="v-icon notranslate d-block material-icons theme--light purple--text"
-  >
-    account_circle
-  </i>
+  <!---->
 </div>
 `;
 
