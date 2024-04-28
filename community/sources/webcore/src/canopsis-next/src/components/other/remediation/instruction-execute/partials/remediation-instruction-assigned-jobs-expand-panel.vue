@@ -1,8 +1,5 @@
 <template>
-  <v-sheet
-    class="px-3 py-2"
-    color="grey lighten-3"
-  >
+  <v-sheet class="remediation-instruction-assigned-jobs-expand-panel px-3 py-2">
     <div v-if="isFailedJob">
       {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
       <span
@@ -45,3 +42,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-sheet.remediation-instruction-assigned-jobs-expand-panel {
+  background: var(--v-background-darken1);
+}
+</style>
