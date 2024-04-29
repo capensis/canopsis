@@ -22,7 +22,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name created updated enabled priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name created updated enabled priority"`
 }
 
 type EditRequest struct {
