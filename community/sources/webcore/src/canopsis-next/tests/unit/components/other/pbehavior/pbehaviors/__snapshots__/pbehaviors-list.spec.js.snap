@@ -320,9 +320,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </div>
             </th>
             <th
-              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="End of recurrence"
+              class="text-start"
               data-value="rrule_end"
               role="columnheader"
               scope="col"
@@ -335,13 +334,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 >
                   End of recurrence
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -2733,9 +2725,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </div>
             </th>
             <th
-              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="End of recurrence"
+              class="text-start"
               data-value="rrule_end"
               role="columnheader"
               scope="col"
@@ -2748,13 +2739,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 >
                   End of recurrence
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -3291,9 +3275,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </div>
             </th>
             <th
-              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="End of recurrence"
+              class="text-start"
               data-value="rrule_end"
               role="columnheader"
               scope="col"
@@ -3306,13 +3289,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 >
                   End of recurrence
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
