@@ -133,7 +133,7 @@ export default {
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },
-        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end' },
+        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end', sortable: false },
         { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
