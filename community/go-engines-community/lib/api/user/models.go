@@ -10,7 +10,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name enable source"`
+	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name display_name enable source"`
 	Permission string `form:"permission"`
 }
 
