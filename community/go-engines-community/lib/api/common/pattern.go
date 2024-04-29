@@ -266,8 +266,9 @@ func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 		mongo.ScenarioMongoCollection,
 		mongo.InstructionMongoCollection,
 		mongo.DeclareTicketRuleMongoCollection,
-		mongo.LinkRuleMongoCollection,
-		mongo.AlarmTagCollection:
+		mongo.LinkRuleMongoCollection:
+		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
+	case mongo.AlarmTagCollection:
 		return []string{"v.last_event_date", "v.last_update_date", "v.resolved", "tags"}
 	default:
 		return nil
