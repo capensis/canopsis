@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -146,8 +147,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 
 	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
+			ID:         response.ID,
 			NewPattern: response.EntityPattern,
 			NewType:    *response.Type,
+			Updated:    datetime.NewCpsTime(),
 		}
 	}
 
@@ -207,10 +210,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 
 	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
+			ID:         response.ID,
 			NewPattern: response.EntityPattern,
 			NewType:    *response.Type,
 			OldPattern: oldVersion.EntityPattern,
 			OldType:    oldVersion.Type,
+			Updated:    datetime.NewCpsTime(),
 		}
 	}
 
@@ -245,8 +250,10 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 	if oldVersion.Method == statesetting.MethodDependencies || oldVersion.Method == statesetting.MethodInherited {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
+			ID:         oldVersion.ID,
 			OldPattern: oldVersion.EntityPattern,
 			OldType:    oldVersion.Type,
+			Updated:    datetime.NewCpsTime(),
 		}
 	}
 
