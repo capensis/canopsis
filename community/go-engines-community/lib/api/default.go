@@ -403,9 +403,13 @@ func Default(
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 
-	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector, json.NewEncoder(), logger)
+	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector,
+		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
+	})
+	api.AddWorker("state_settings_worker", func(ctx context.Context) {
+		stateSettingsListener.Work(ctx)
 	})
 	api.AddWorker("entity_event_publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
