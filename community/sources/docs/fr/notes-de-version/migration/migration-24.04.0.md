@@ -423,7 +423,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Mise à jour de Canopsis
 
     ```sh
-    dnf install canopsis-pro-23.10.0 canopsis-webui-24.04.0
+    dnf install canopsis-pro-24.04.0 canopsis-webui-24.04.0
     ```
 
     Reconfiguration de Canopsis
@@ -462,5 +462,5 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
-![Healthcheck](./img/23.10.0-healthcheck.png)
+![Healthcheck](./img/24.04.0-healthcheck.png)
 
