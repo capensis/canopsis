@@ -1598,6 +1598,9 @@ role:
       "@permission_crudcontext_massEnable": 1
       "@permission_crudcontext_massDisable": 1
       "@permission_common_variablesHelp": 1
+      "@permission_common_entityCommentsList": 1
+      "@permission_common_createEntityComment": 1
+      "@permission_common_editEntityComment": 1
       "@permission_counter_alarmsList": 1
       "@permission_testingweather_alarmsList": 1
       "@permission_map_alarmsList": 1
