@@ -1,4 +1,4 @@
-import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
+import { ALARM_LIST_STEPS, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   liveReporting: 'Définir un intervalle de dates',
@@ -12,25 +12,13 @@ export default {
   actionsRequired: 'Des actions sont requises',
   acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
   acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
-  advancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
-    + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
-    + '<p>Le "-" avant la recherche est obligatoire</p>\n'
-    + '<p>Opérateurs:\n'
-    + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
-    + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
-    + '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
-    + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
-    + '</dl>',
   otherTickets: 'D\'autres tickets sont disponibles dans le panneau d\'expansion',
   noAlarmFound: 'Aucune alarme n\'a été trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',
   followLink: 'Suivez le lien "{title}"',
   hasBookmark: 'L\'alarme a un signet',
   filterByBookmark: 'Filtrer par signet',
+  runTest: 'Exécuter le test',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',
@@ -53,7 +41,7 @@ export default {
       changeState: 'Changer et verrouiller la criticité',
       variablesHelp: 'Liste des variables disponibles',
       history: 'Historique',
-      createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
+      linkToMetaAlarm: 'Lier à une méta-alarme',
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
       removeAlarmsFromAutoMetaAlarm: 'Dissocier l\'alarme de la méta-alarme',
       comment: 'Commenter l\'alarme',
@@ -76,52 +64,50 @@ export default {
       children: 'Conséquences',
     },
   },
-  timeLine: {
-    titlePaths: {
-      by: 'par',
-    },
-    stateCounter: {
-      header: 'Criticités compressées (depuis le dernier changement de statut)',
-      stateIncreased: 'Criticité augmentée',
-      stateDecreased: 'Criticité diminuée',
-    },
-    types: {
-      [EVENT_ENTITY_TYPES.ack]: 'Acquittement',
-      [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
-      [EVENT_ENTITY_TYPES.stateinc]: 'Augmentation de la criticité',
-      [EVENT_ENTITY_TYPES.statedec]: 'Diminution de la criticité',
-      [EVENT_ENTITY_TYPES.statusinc]: 'Augmentation du statut',
-      [EVENT_ENTITY_TYPES.statusdec]: 'Diminution du statut',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Association d\'un ticket',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Le ticket est déclaré avec succès',
-      [EVENT_ENTITY_TYPES.declareTicketFail]: 'La déclaration du ticket a échoué',
-      [EVENT_ENTITY_TYPES.webhookStart]: 'Webhook a démarré',
-      [EVENT_ENTITY_TYPES.webhookComplete]: 'Webhook exécuté avec succès',
-      [EVENT_ENTITY_TYPES.webhookFail]: 'Webhook échoué',
-      [EVENT_ENTITY_TYPES.snooze]: 'Alarme mise en veille',
-      [EVENT_ENTITY_TYPES.unsooze]: 'Alarme sortie de veille',
-      [EVENT_ENTITY_TYPES.changeState]: 'Changement et verrouillage de la criticité',
-      [EVENT_ENTITY_TYPES.pbhenter]: 'Comportement périodique activé',
-      [EVENT_ENTITY_TYPES.pbhleave]: 'Comportement périodique désactivé',
-      [EVENT_ENTITY_TYPES.cancel]: 'Alarme annulée',
-      [EVENT_ENTITY_TYPES.comment]: 'Alarme commentée',
-      [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarme liée à la méta alarme',
-      [EVENT_ENTITY_TYPES.instructionStart]: 'L\'exécution de la consigne a été déclenchée',
-      [EVENT_ENTITY_TYPES.instructionPause]: 'L\'exécution de la consigne a été mise en pause',
-      [EVENT_ENTITY_TYPES.instructionResume]: 'L\'exécution de la consigne a été reprise',
-      [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'exécution de la consigne a été terminée',
-      [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'exécution de la consigne a été abandonnée',
-      [EVENT_ENTITY_TYPES.instructionFail]: 'L\'exécution de la consigne a échoué',
-      [EVENT_ENTITY_TYPES.instructionJobStart]: 'L\'exécution d\'une tâche de remédiation a été démarrée',
-      [EVENT_ENTITY_TYPES.instructionJobComplete]: 'L\'exécution de la tâche de remédiation est terminée',
-      [EVENT_ENTITY_TYPES.instructionJobAbort]: 'L\'exécution de la tâche de remédiation a été abandonnée',
-      [EVENT_ENTITY_TYPES.instructionJobFail]: 'L\'exécution de la tâche de remédiation a échouée',
-      [EVENT_ENTITY_TYPES.autoInstructionStart]: 'La consigne automatique a été lancée',
-      [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'La consigne automatique a été complétée',
-      [EVENT_ENTITY_TYPES.autoInstructionFail]: 'La consigne automatique a échoué',
-      [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'La consigne automatique a déjà été lancée pour une autre alarme',
-      [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'La suite de tests a été mise à jour',
-      [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Le cas de test a été mis à jour',
+  timeline: {
+    by: 'par',
+    launched: 'lancé',
+    junit: 'JUnit',
+    groupItems: 'Éléments de groupe',
+    steps: {
+      [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
+      [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',
+      [ALARM_LIST_STEPS.changeState]: 'Sévérité modifiée',
+      [ALARM_LIST_STEPS.stateCounter]: 'Changements de sévérité regroupés (depuis le dernier changement de statut)',
+      [ALARM_LIST_STEPS.statusdec]: 'Statut modifié à {status}',
+      [ALARM_LIST_STEPS.statusinc]: 'Statut modifié à {status}',
+      [ALARM_LIST_STEPS.resolve]: 'Alarme résolue',
+      [ALARM_LIST_STEPS.activate]: 'Alarme activée',
+      [ALARM_LIST_STEPS.snooze]: 'Alarme mise en veille pendant {duration}',
+      [ALARM_LIST_STEPS.unsnooze]: 'Fin de veille de l\'alarme',
+      [ALARM_LIST_STEPS.ack]: 'Alarme acquittée',
+      [ALARM_LIST_STEPS.ackRemove]: 'Acquittement annulé',
+      [ALARM_LIST_STEPS.pbhenter]: 'Comportement périodique activé',
+      [ALARM_LIST_STEPS.pbhleave]: 'Comportement périodique désactivé',
+      [ALARM_LIST_STEPS.assocTicket]: 'Ticket associé',
+      [ALARM_LIST_STEPS.webhookStart]: 'Exécution du Webhook',
+      [ALARM_LIST_STEPS.webhookInProgress]: 'Webhook exécuté par {author} en cours...',
+      [ALARM_LIST_STEPS.webhookComplete]: 'Webhook exécuté avec succès',
+      [ALARM_LIST_STEPS.webhookFail]: 'Webhook en échec',
+      [ALARM_LIST_STEPS.declareTicket]: 'Ticket déclaré',
+      [ALARM_LIST_STEPS.declareTicketFail]: 'Déclaration de ticket en échec',
+      [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'Règle de déclaration de ticket exécutée par {author} en cours',
+      [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'Règle de déclaration du ticket terminée',
+      [ALARM_LIST_STEPS.declareTicketRuleFail]: 'Règle de déclaration de ticket en échec',
+      [ALARM_LIST_STEPS.instructionStart]: 'Remédiation démarrée',
+      [ALARM_LIST_STEPS.instructionPause]: 'Remédiation suspendue',
+      [ALARM_LIST_STEPS.instructionResume]: 'Reprise de la remédiation',
+      [ALARM_LIST_STEPS.instructionComplete]: 'Remédiation terminée',
+      [ALARM_LIST_STEPS.instructionAbort]: 'Remédiation interrompue',
+      [ALARM_LIST_STEPS.instructionFail]: 'Remédiation en échec',
+      [ALARM_LIST_STEPS.autoInstructionStart]: 'Remédiation automatique démarrée',
+      [ALARM_LIST_STEPS.autoInstructionComplete]: 'Remédiation automatique terminée',
+      [ALARM_LIST_STEPS.autoInstructionFail]: 'Remédiation automatique en échec',
+      [ALARM_LIST_STEPS.junitTestSuiteUpdate]: 'La suite de test est relancée',
+      [ALARM_LIST_STEPS.junitTestCaseUpdate]: 'Le cas de test est relancé',
+      [ALARM_LIST_STEPS.metaalarmattach]: 'Alarme liée à la méta-alarme',
+      [ALARM_LIST_STEPS.metaalarmdetach]: 'Alarme détachée de la méta-alarme',
+      [ALARM_LIST_STEPS.comment]: 'Commentaire ajouté',
     },
   },
   tabs: {
@@ -133,6 +119,7 @@ export default {
     impactChain: 'Chaîne d\'impact',
     entityGantt: 'Diagramme de Gantt',
     ticketsDeclared: 'Tickets déclarés',
+    remediation: 'Remédiation',
   },
   moreInfos: {
     defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -188,7 +175,6 @@ export default {
     assignedInstructions: 'Consignes assignées',
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
-    lastComment: 'Dernier commentaire',
     lastCommentInitiator: 'Initiateur du dernier commentaire',
     ackBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',
@@ -216,7 +202,6 @@ export default {
     ticketInitiator: 'Initiateur du ticket',
     ticketCreatedAt: 'Ticket créé à',
     ticketData: 'Données du ticket',
-    entityId: 'ID d\'entité',
     entityName: 'Nom de l\'entité',
     entityCategoryName: 'Nom de la catégorie d\'entité',
     entityType: 'Type d\'entité',

@@ -1,8 +1,8 @@
 <template>
   <g class="flowchart-points-editor">
     <component
-      is="foreignObject"
       v-for="{ point, x, y } in nonShapesIcons"
+      is="foreignObject"
       :key="point._id"
       :x="x"
       :y="y"
@@ -20,8 +20,8 @@
       />
     </component>
     <component
-      is="foreignObject"
       v-for="{ point, x, y } in shapesIcons"
+      is="foreignObject"
       :key="point._id"
       :height="iconSize"
       :width="iconSize"

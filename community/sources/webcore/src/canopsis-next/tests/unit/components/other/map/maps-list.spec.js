@@ -17,7 +17,7 @@ import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-search-field': true,
+  'c-search': true,
   'v-checkbox': true,
   'c-expand-btn': true,
   'c-action-btn': true,
@@ -145,7 +145,6 @@ describe('maps-list', () => {
         options: {
           page: 2,
           itemsPerPage: 10,
-          search: 'Filter',
           sortBy: ['updated'],
           sortDesc: [true],
         },

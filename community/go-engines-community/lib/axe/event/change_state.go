@@ -3,7 +3,6 @@ package event
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -16,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -25,7 +23,6 @@ import (
 
 func NewChangeStateProcessor(
 	client mongo.DbClient,
-	alarmConfigProvider config.AlarmConfigProvider,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
 	autoInstructionMatcher AutoInstructionMatcher,
@@ -42,7 +39,6 @@ func NewChangeStateProcessor(
 		client:                          client,
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		alarmConfigProvider:             alarmConfigProvider,
 		userInterfaceConfigProvider:     userInterfaceConfigProvider,
 		alarmStatusService:              alarmStatusService,
 		autoInstructionMatcher:          autoInstructionMatcher,
@@ -61,7 +57,6 @@ type changeStateProcessor struct {
 	client                          mongo.DbClient
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
-	alarmConfigProvider             config.AlarmConfigProvider
 	userInterfaceConfigProvider     config.UserInterfaceConfigProvider
 	alarmStatusService              alarmstatus.Service
 	autoInstructionMatcher          AutoInstructionMatcher
@@ -82,7 +77,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	if *event.Parameters.State == types.AlarmStateOK && !p.userInterfaceConfigProvider.Get().IsAllowChangeSeverityToInfo {
-		return result, fmt.Errorf("cannot change to ok state")
+		return result, errors.New("cannot change to ok state")
 	}
 
 	entity := *event.Entity
@@ -96,11 +91,6 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 	matchUpdate := getOpenAlarmMatch(event)
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-	conf := p.alarmConfigProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStepState := types.NewAlarmStep(types.AlarmStepChangeState, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	newStepState.Value = *event.Parameters.State
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	var componentStateChanged bool
@@ -120,6 +110,8 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			return err
 		}
 
+		newStepState := NewAlarmStep(types.AlarmStepChangeState, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		newStepState.Value = *event.Parameters.State
 		alarmChange := types.NewAlarmChange()
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
@@ -132,7 +124,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}
 
 		currentStatus := alarm.Value.Status.Value
-		newStatus := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
 		var update bson.M
 		if newStatus == currentStatus {
 			update = bson.M{
@@ -143,8 +135,8 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 				"$push": bson.M{"v.steps": newStepState},
 			}
 		} else {
-			newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+			newStepStatus := NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+			newStepStatus.Message = ConcatOutputAndRuleName(event.Parameters.Output, statusRuleName)
 			newStepStatus.Value = newStatus
 			if alarm.Value.Status.Value > newStatus {
 				newStepStatus.Type = types.AlarmStepStatusDecrease
@@ -186,7 +178,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}
 		}
 
-		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
 			p.entityServiceCountersCalculator,
 			p.componentCountersCalculator,
@@ -234,7 +226,7 @@ func (p *changeStateProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}

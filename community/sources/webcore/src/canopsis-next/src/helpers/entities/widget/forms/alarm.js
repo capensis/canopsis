@@ -29,6 +29,7 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 import { hasStateSetting } from '@/helpers/entities/entity/entity';
 import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
+import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
@@ -174,6 +175,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
+ * @property {AvailabilityField} availability
  */
 
 /**
@@ -381,6 +383,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
+  availability: availabilityFieldToForm(parameters.availability),
 });
 
 /**
@@ -569,10 +572,13 @@ export const getAlarmsListWidgetColumnComponentGetter = (
   switch (value) {
     case ALARM_FIELDS.state:
       return (context) => {
+        const state = context.alarm.v?.state;
         const component = {
           bind: {
-            is: 'alarm-column-value-state',
-            alarm: context.alarm,
+            is: 'c-alarm-state-chip',
+            value: state?.val,
+            type: state?._t,
+            badgeValue: context.alarm.v?.events_count,
             small: context.small,
           },
         };
@@ -581,7 +587,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
           component.bind.class = 'cursor-pointer';
           component.bind.appendIconName = '$vuetify.icons.root_cause';
           component.on = {
-            click: () => context.$emit('click:state', { ...context.alarm.entity, state: context.alarm.v?.state?.val }),
+            click: () => context.$emit('click:state', { ...context.alarm.entity, state: state?.val }),
           };
         }
 

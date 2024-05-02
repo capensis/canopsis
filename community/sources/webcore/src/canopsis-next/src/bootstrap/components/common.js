@@ -12,6 +12,7 @@ export { default as CRuntimeTemplate } from '@/components/common/runtime-templat
 export { default as CCompiledTemplate } from '@/components/common/runtime-template/c-compiled-template.vue';
 export { default as CCopyWrapper } from '@/components/common/runtime-template/c-copy-wrapper.vue';
 export { default as CLinksList } from '@/components/common/links/c-links-list.vue';
+export { default as CLinksChips } from '@/components/common/links/c-links-chips.vue';
 export { default as CRequestTextInformation } from '@/components/common/request/c-request-text-information.vue';
 export { default as CJsonTreeview } from '@/components/common/request/c-json-treeview.vue';
 export { default as CMiniBarChart } from '@/components/common/chart/c-mini-bar-chart.vue';
@@ -21,3 +22,7 @@ export { default as CCollapsePanel } from '@/components/common/block/c-collapse-
 export { default as CContextmenu } from '@/components/common/contextmenu/c-contextmenu.vue';
 export { default as CCircleBadge } from '@/components/common/badge/c-circle-badge.vue';
 export { default as CCalendar } from '@/components/common/calendar/c-calendar.vue';
+export { default as CSearch } from '@/components/common/search/c-search.vue';
+export { default as CSearchField } from '@/components/common/search/c-search-field.vue';
+export { default as CAdvancedSearch } from '@/components/common/search/c-advanced-search.vue';
+export { default as CAdvancedSearchField } from '@/components/common/search/c-advanced-search-field.vue';

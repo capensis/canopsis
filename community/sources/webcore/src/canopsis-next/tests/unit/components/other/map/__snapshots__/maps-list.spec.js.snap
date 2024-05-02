@@ -5,14 +5,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value="Filter"
-      />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -32,7 +30,7 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light v-data-table--selectable"
+    class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
     header-text="text"
   >
     <div
@@ -1117,12 +1115,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub />
+      <c-search-stub />
     </div>
     <div
       class="flex xs12"
@@ -1143,7 +1141,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div

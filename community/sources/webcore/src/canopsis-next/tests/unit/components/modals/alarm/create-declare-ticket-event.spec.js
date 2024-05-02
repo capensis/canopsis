@@ -1,11 +1,13 @@
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createDeclareTicketModule, createMockedStoreModules } from '@unit/utils/store';
+
+import { ALARM_LIST_STEPS, MODALS } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -31,8 +33,8 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 
 describe('create-declare-ticket-event', () => {
   const timestamp = 1386435600000;
+  jest.useFakeTimers({ now: timestamp });
 
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -124,6 +126,70 @@ describe('create-declare-ticket-event', () => {
 
     expect(action).toBeCalledTimes(1);
     expect(action).toBeCalledWith([], false);
+    expect($modals.hide).toBeCalledWith();
+  });
+
+  test('Confirmation modal showed after submit with exist tickets', async () => {
+    const action = jest.fn();
+    const ticketRuleId = Faker.datatype.string();
+    const alarmWithTickets = {
+      ...alarm,
+      v: {
+        ...alarm.v,
+        tickets: [
+          {
+            ticket_rule_id: ticketRuleId,
+            _t: ALARM_LIST_STEPS.declareTicket,
+          },
+        ],
+      },
+    };
+    const itemsWithTickets = [alarmWithTickets];
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        modal: {
+          config: {
+            items: itemsWithTickets,
+            action,
+            alarmsByTickets: {
+              [ticketRuleId]: {
+                alarms: [alarmWithTickets._id],
+              },
+            },
+            ticketsByAlarms: {},
+          },
+        },
+      },
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.confirmation,
+        config: expect.objectContaining({
+          action: expect.any(Function),
+        }),
+      },
+    );
+
+    const [{ config: confirmationModalConfig }] = $modals.show.mock.calls[0];
+
+    await confirmationModalConfig.action();
+
+    expect(action).toBeCalledTimes(1);
+    expect(action).toBeCalledWith([
+      {
+        _id: ticketRuleId,
+        alarms: [alarmWithTickets._id],
+        comment: '',
+        ticket_resources: false,
+      },
+    ], false);
     expect($modals.hide).toBeCalledWith();
   });
 

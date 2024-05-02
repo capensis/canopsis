@@ -1,31 +1,20 @@
 <template>
   <div class="c-advanced-data-table">
-    <v-layout
-      wrap
-      v-bind="toolbarProps"
-    >
-      <v-flex
-        v-if="shownSearch"
-        xs4
-      >
-        <c-search-field
+    <v-layout v-bind="toolbarProps" class="px-4" wrap>
+      <v-flex v-if="shownSearch" xs4>
+        <c-search
           v-if="search"
-          :value="options.search"
           @submit="updateSearchHandler"
-          @clear="clearSearchHandler"
         />
-        <c-advanced-search-field
-          v-else
-          :query="options"
-          :columns="headers"
-          :tooltip="searchTooltip"
-          @update:query="updateOptions"
+        <c-advanced-search
+          v-else-if="advancedSearch"
+          :fields="headers"
+          @submit="updateSearchHandler"
         />
       </v-flex>
       <slot
         :selected="selected"
         :update-search="updateSearchHandler"
-        :clear-search="clearSearchHandler"
         name="toolbar"
       />
       <v-flex
@@ -69,6 +58,10 @@
       checkbox-color="primary"
       @update:options="updateOptions"
     >
+      <template v-if="hasItemSlot" #item="props">
+        <slot name="item" v-bind="props" />
+      </template>
+
       <template
         v-for="header in headers"
         #[getItemSlotName(header)]="props"
@@ -129,15 +122,12 @@
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
 
 <script>
-import { omit } from 'lodash';
-
-import { getPageForNewItemsPerPage } from '@/helpers/pagination';
-
 export default {
   model: {
     prop: 'selected',
@@ -203,10 +193,6 @@ export default {
     headerText: {
       type: String,
       default: 'text',
-    },
-    searchTooltip: {
-      type: String,
-      default: '',
     },
     options: {
       type: Object,
@@ -291,6 +277,10 @@ export default {
       return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
     },
 
+    hasItemSlot() {
+      return this.$slots.item || this.$scopedSlots.item;
+    },
+
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
     },
@@ -324,20 +314,15 @@ export default {
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.updateOptions({
-        ...this.options,
-
-        itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
-      });
+      this.updateOptions({ ...this.options, itemsPerPage });
     },
 
     updatePage(page) {
       this.updateOptions({ ...this.options, page });
     },
 
-    clearSearchHandler() {
-      this.updateOptions(omit(this.options, ['search']));
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.updateOptions({ ...this.options, page, itemsPerPage });
     },
 
     clearSelected() {

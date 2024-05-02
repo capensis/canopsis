@@ -37,9 +37,9 @@ Importer le média dans « Administration » > « Media types », bouton «�
 
 Dans la liste des *Media types*, vous trouvez à présent « Canopsis ».
 
-Quelques paramètres doivent être renseignés pour correspondre à l'instance
-Canopsis cible. Modifier le nouveau média pour définir au moins ces quatre
-paramètres :
+Quelques paramètres doivent être renseignés systématiquement pour correspondre
+à l'instance Canopsis cible. Modifier le nouveau média pour définir au moins
+ces quatre paramètres :
 
 - `canopsis_url` : URL de l'API Canopsis (de la forme http://canopsis:8082/)
 - `canopsis_user` : nom d'utilisateur Canopsis utilisé pour l'API
@@ -96,4 +96,55 @@ Dans Zabbix on créera alors (exemple) :
         choisir l'utilisateur canopsis créé précédemment et le média Canopsis
         - Recovery operations : « Notify all involved »
 
-[doc-zab-webhook]: https://www.zabbix.com/documentation/5.0/en/manual/config/notifications/media/webhook#user-media
+## Configuration avancée
+
+Les paramètres du *Media type* Canopsis permettent d'effectuer différentes
+configurations plus avancées pour adapter les évènements produits par le
+connecteur à vos cas d'usage.
+
+#### Attributs standard
+
+Vous pouvez modifier le contenu qui sera mis par Zabbix dans chacun des
+attributs de l'évènement (`component`, `resource`, `output`, …) via les
+paramètres du même nom.
+
+#### Traduction des sévérités
+
+Vous pouvez personnaliser la correspondance entre les sévérités Zabbix et les
+sévérités Canopsis via les paramètres `state_for_*`.
+
+#### Attributs extra
+
+Vous pouvez aussi passer des attributs « extra » dans l'évènement Canopsis.
+
+Pour ce faire, ajoutez vos propres paramètres avec un nom de la forme `extra_*`
+et la valeur souhaitée (texte statique, [macros Zabbix][zbx-macros] supportées
+pour « Trigger-based notifications and commands », combinaison de statique et
+de macros…).
+
+Exemples :
+
+```
+extra_customnumber: 42
+extra_eventid: {EVENT.ID}
+extra_opdata: {EVENT.OPDATA}
+```
+
+Ceci ajouterait les attributs suivants à vos évènements (exemples) :
+
+```json
+{
+  "customnumber":"42",
+  "opdata":"not available (0)",
+  "eventid":"52",
+  "...": "..."
+}
+```
+
+Rappel : pour être utiles, ces attributs « extra » doivent être exploités lors
+du traitement des évènements Canopsis via des
+[règles d'enrichissement][enrich].
+
+[doc-zab-webhook]: https://www.zabbix.com/documentation/6.0/en/manual/config/notifications/media/webhook#user-media
+[zbx-macros]: https://www.zabbix.com/documentation/6.0/en/manual/appendix/macros/supported_by_location
+[enrich]: ../../guide-utilisation/menu-exploitation/filtres-evenements.md

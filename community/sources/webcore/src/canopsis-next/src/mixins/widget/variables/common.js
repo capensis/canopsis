@@ -1,53 +1,53 @@
-import { ALARM_STEP_FIELDS, PBEHAVIOR_INFO_FIELDS } from '@/constants';
+import { VARIABLES_STEP_FIELDS, PBEHAVIOR_INFO_FIELDS } from '@/constants';
 
 export const variablesMixin = {
   computed: {
-    alarmStepValueVariable() {
+    stepValueVariable() {
       return {
         text: this.$t('common.value'),
-        value: ALARM_STEP_FIELDS.value,
+        value: VARIABLES_STEP_FIELDS.value,
       };
     },
 
-    alarmStepTimestampVariable() {
+    stepTimestampVariable() {
       return {
         text: this.$t('common.timestamp'),
-        value: ALARM_STEP_FIELDS.timestamp,
+        value: VARIABLES_STEP_FIELDS.timestamp,
       };
     },
 
-    alarmStepMessageVariable() {
+    stepMessageVariable() {
       return {
         text: this.$t('common.message'),
-        value: ALARM_STEP_FIELDS.message,
+        value: VARIABLES_STEP_FIELDS.message,
       };
     },
 
-    alarmStepAuthorVariable() {
+    stepAuthorVariable() {
       return {
         text: this.$t('common.author'),
-        value: ALARM_STEP_FIELDS.author,
+        value: VARIABLES_STEP_FIELDS.author,
       };
     },
 
     stateVariables() {
-      return [this.alarmStepValueVariable];
+      return [this.stepValueVariable];
     },
 
     statusVariables() {
-      return [this.alarmStepValueVariable];
+      return [this.stepValueVariable];
     },
 
     ackVariables() {
       return [
-        this.alarmStepTimestampVariable,
-        this.alarmStepAuthorVariable,
-        this.alarmStepMessageVariable,
+        this.stepTimestampVariable,
+        this.stepAuthorVariable,
+        this.stepMessageVariable,
       ];
     },
 
     ticketVariables() {
-      return [this.alarmStepValueVariable];
+      return [this.stepValueVariable];
     },
 
     pbehaviorInfoVariables() {

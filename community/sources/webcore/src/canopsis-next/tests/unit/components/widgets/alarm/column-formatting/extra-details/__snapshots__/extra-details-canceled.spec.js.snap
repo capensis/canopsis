@@ -6,17 +6,10 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in 
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge blue-grey"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        delete
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#607d8b"
+      icon="delete"
+    />
   </span>
 </div>
 `;
@@ -53,17 +46,10 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with full can
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge blue-grey"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        delete
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#607d8b"
+      icon="delete"
+    />
   </span>
 </div>
 `;
@@ -100,17 +86,10 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` without messa
     class="v-tooltip c-extra-details v-tooltip--top"
   >
     <!---->
-    <span
-      class="c-extra-details__badge blue-grey"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light white--text"
-        style="font-size: 16px;"
-      >
-        delete
-      </i>
-    </span>
+    <c-alarm-extra-details-chip-stub
+      color="#607d8b"
+      icon="delete"
+    />
   </span>
 </div>
 `;

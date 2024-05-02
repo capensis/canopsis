@@ -7,7 +7,7 @@
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
-      :locked-filter="lockedFilter"
+      :locked-filter="query.lockedFilter"
       :filters="query.filter"
       :interval="query.interval"
       :sampling="query.sampling"
@@ -57,7 +57,7 @@ import { isCustomCriteria } from '@/helpers/entities/metric/form';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesGroupMetricsMixin } from '@/mixins/entities/group-metrics';
 
@@ -78,7 +78,7 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    metricsIntervalFilterMixin,
+    queryIntervalFilterMixin,
     widgetPeriodicRefreshMixin,
     entitiesGroupMetricsMixin,
   ],

@@ -28,8 +28,8 @@ $(BUILD_TARGET): prep-rpm
 	-e MOCK_TARGET=SPECS \
 	-v ./build/$@:/rpmbuild \
 	-v ./build/$@/canopsis.cfg:/etc/mock/canopsis.cfg \
-	-e DEFINE_Version_safe=${VERSION_SAFE} \
-	-e DEFINE_version=${VERSION} \
+	-e DEFINE_version_safe=${VERSION_SAFE} \
+	-e DEFINE_version_upstream=${VERSION} \
 	-e ENABLE_NETWORK=1 \
 	--privileged=true \
 	-i \

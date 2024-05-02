@@ -5,28 +5,10 @@ export default {
   begins: 'Begins',
   ends: 'Ends',
   lastAlarmDate: 'Last alarm date',
+  alarmCount: 'Alarms count',
   massRemove: 'Remove pbehaviors',
   massEnable: 'Enable pbehaviors',
   massDisable: 'Disable pbehaviors',
-  searchHelp: '<span>Help on the advanced research :</span>\n'
-    + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
-    + '<p>The "-" before the research is required</p>\n'
-    + '<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
-    + '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n'
-    + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
-    + '<dl>'
-    + '  <dt>Examples :</dt>'
-    + '  <dt>- name = "name_1"</dt>\n'
-    + '  <dd>Pbehavior name are "name_1"</dd>\n'
-    + '  <dt>- rrule = "rrule_1"</dt>\n'
-    + '  <dd>Pbehavior rrule are "rrule_1"</dd>\n'
-    + '  <dt>- filter = "filter_1"</dt>\n'
-    + '  <dd>Pbehavior filter are "filter_1"</dd>\n'
-    + '  <dt>- type.name = "type_name_1"</dt>\n'
-    + '  <dd>Pbehavior type name are "type_name_1"</dd>\n'
-    + '  <dt>- reason.name = "reason_name_1"</dt>\n'
-    + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
-    + '</dl>',
   periodsCalendar: 'Calendar with periods',
   notEditable: 'Cannot be modified',
   pbehaviorInfo: 'Pbehavior info',

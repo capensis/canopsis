@@ -10,7 +10,7 @@ import {
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
-import { DATETIME_FORMATS, MAX_LIMIT, RESPONSE_STATUSES } from '@/constants';
+import { DATETIME_FORMATS, RESPONSE_STATUSES } from '@/constants';
 
 import i18n from '@/i18n';
 
@@ -91,23 +91,6 @@ export function durationHelper(seconds) {
  */
 export function alarmStateHelper(state) {
   return new Handlebars.SafeString(`<c-alarm-chip value="${state}"></c-alarm-chip>`);
-}
-
-/**
- * Return tags chips (we can use it only on alarms list table)
- *
- * Example: {{tags}}
- *
- * @return {string}
- */
-export function alarmTagsHelper() {
-  return new Handlebars.SafeString(
-    `<c-alarm-tags-chips
-      :alarm="alarm"
-      inline-count="${MAX_LIMIT}"
-      @select="$emit('select:tag', $event)"
-    ></c-alarm-tags-chips>`,
-  );
 }
 
 /**

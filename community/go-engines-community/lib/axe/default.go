@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -36,6 +37,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
@@ -126,15 +128,15 @@ func NewEngine(
 
 	entityAdapter := entity.NewAdapter(dbClient)
 	alarmAdapter := libalarm.NewAdapter(dbClient)
-
+	eventGenerator := libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, libalarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
-		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), logger)
+		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventGenerator, logger)
 
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
 	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
 	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
 
@@ -155,6 +157,7 @@ func NewEngine(
 		externalTagUpdater,
 		internalTagAlarmMatcher,
 		amqpChannel,
+		eventGenerator,
 		logger,
 	)
 
@@ -278,7 +281,7 @@ func NewEngine(
 	)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.AxeEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	engineAxe.AddRoutine(func(ctx context.Context) error {
@@ -333,8 +336,8 @@ func NewEngine(
 		engineAxe.AddConsumer(dynamicInfosRpcClient)
 	}
 
-	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engineAxe.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAxe.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:      options.PeriodicalWaitTime,
 		AlarmStatusService:      alarmStatusService,
 		AutoInstructionMatcher:  autoInstructionMatcher,
@@ -364,7 +367,7 @@ func NewEngine(
 			TechMetricsSender:  techMetricsSender,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         amqpChannel,
-			AlarmService:       libalarm.NewService(libalarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
+			AlarmService:       libalarm.NewService(libalarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, eventGenerator, logger),
 			AlarmAdapter:       libalarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
@@ -372,6 +375,7 @@ func NewEngine(
 				libalarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				pbhRpcClientForIdleRules,
+				eventGenerator,
 				json.NewEncoder(),
 				logger,
 			),
@@ -392,7 +396,19 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("idle since", libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("clean_tags", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeCleanExternalTagsPeriodicalLockKey,
+		&cleanExternalTagPeriodicalWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: dataStorageConfigProvider,
+			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
+			Logger:                    logger,
+		},
+		logger,
+	))
+	engineAxe.AddPeriodicalWorker("idle_since", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeIdleSincePeriodicalLockKey,
 		&idleSincePeriodicalWorker{
@@ -451,6 +467,7 @@ func (m DependencyMaker) EventProcessor(
 	externalTagUpdater alarmtag.ExternalUpdater,
 	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	amqpPublisher amqp.Publisher,
+	eventGenerator libevent.Generator,
 	logger zerolog.Logger,
 ) event.Processor {
 	container := event.NewProcessorContainer()
@@ -460,19 +477,19 @@ func (m DependencyMaker) EventProcessor(
 		eventStatisticsSender, remediationRpcClient, externalTagUpdater, internalTagAlarmMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, json.NewEncoder(), logger))
 	container.Set(types.EventTypeNoEvents, event.NewNoEventsProcessor(dbClient, alarmConfigProvider, alarmStatusService,
 		pbhTypeResolver, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender,
-		remediationRpcClient, json.NewEncoder(), logger))
+		remediationRpcClient, internalTagAlarmMatcher, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAck, event.NewAckProcessor(dbClient, alarmConfigProvider, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
-	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, alarmConfigProvider, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
+	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, entityServiceCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeActivate, event.NewActivateProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAssocTicket, event.NewAssocTicketProcessor(dbClient, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeCancel, event.NewCancelProcessor(dbClient, metaAlarmEventProcessor, logger))
-	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, userInterfaceConfigProvider,
 		alarmStatusService, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeComment, event.NewCommentProcessor(dbClient, alarmConfigProvider, metaAlarmEventProcessor, logger))
+	container.Set(types.EventTypeComment, event.NewCommentProcessor(dbClient, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypePbhEnter, event.NewPbhEnterProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypePbhLeave, event.NewPbhLeaveProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypePbhLeaveAndEnter, event.NewPbhLeaveAndEnterProcessor(dbClient, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeDeclareTicketWebhook, event.NewDeclareTicketWebhookProcessor(dbClient, metricsSender, amqpPublisher, json.NewEncoder(), logger))
+	container.Set(types.EventTypeDeclareTicketWebhook, event.NewDeclareTicketWebhookProcessor(dbClient, metricsSender, amqpPublisher, eventGenerator, json.NewEncoder(), logger))
 	container.Set(types.EventTypeResolveCancel, event.NewResolveCancelProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeResolveClose, event.NewResolveCloseProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeResolveDeleted, event.NewResolveDeletedProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
@@ -483,14 +500,14 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeSnooze, event.NewSnoozeProcessor(dbClient, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeUncancel, event.NewUncancelProcessor(dbClient, alarmStatusService, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeUnsnooze, event.NewUnsnoozeProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeUpdateStatus, event.NewUpdateStatusProcessor(dbClient, alarmStatusService, alarmConfigProvider, metaAlarmEventProcessor, logger))
+	container.Set(types.EventTypeUpdateStatus, event.NewUpdateStatusProcessor(dbClient, alarmStatusService, metaAlarmEventProcessor, logger))
 	container.Set(types.EventTypeWebhookStarted, event.NewWebhookStartProcessor(dbClient))
-	container.Set(types.EventTypeWebhookCompleted, event.NewWebhookCompleteProcessor(dbClient, metaAlarmEventProcessor, metricsSender, amqpPublisher, json.NewEncoder(), logger))
+	container.Set(types.EventTypeWebhookCompleted, event.NewWebhookCompleteProcessor(dbClient, metaAlarmEventProcessor, metricsSender, amqpPublisher, eventGenerator, json.NewEncoder(), logger))
 	container.Set(types.EventTypeWebhookFailed, event.NewWebhookFailProcessor(dbClient))
 	container.Set(types.EventTypeAutoWebhookStarted, event.NewAutoWebhookStartProcessor(dbClient))
 	container.Set(types.EventTypeAutoWebhookCompleted, event.NewAutoWebhookCompleteProcessor(dbClient, metaAlarmEventProcessor, metricsSender, logger))
 	container.Set(types.EventTypeAutoWebhookFailed, event.NewAutoWebhookFailProcessor(dbClient))
-	instructionProcessor := event.NewInstructionProcessor(dbClient, metricsSender, amqpPublisher, json.NewEncoder(), logger)
+	instructionProcessor := event.NewInstructionProcessor(dbClient, metricsSender, amqpPublisher, eventGenerator, json.NewEncoder(), logger)
 	container.Set(types.EventTypeInstructionStarted, instructionProcessor)
 	container.Set(types.EventTypeInstructionPaused, instructionProcessor)
 	container.Set(types.EventTypeInstructionResumed, instructionProcessor)
@@ -513,6 +530,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeMetaAlarmAttachChildren, event.NewMetaAlarmAttachProcessor(metaAlarmEventProcessor, metricsSender, json.NewEncoder(), amqpPublisher, logger))
 	container.Set(types.EventTypeMetaAlarmDetachChildren, event.NewMetaAlarmDetachProcessor(metaAlarmEventProcessor))
 	container.Set(types.EventTypeMetaAlarmUngroup, event.NewForwardProcessor())
+	container.Set(types.EventTypeMetaAlarmUpdate, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmGroup, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmUngroup, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmUpdate, event.NewForwardProcessor())

@@ -39,6 +39,16 @@
             dense
           />
         </v-tab-item>
+        <template v-if="hasAccessToCommentsList">
+          <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
+          <v-tab-item>
+            <entity-comments
+              :entity="service"
+              :addable="hasAccessToCreateComment"
+              :editable="hasAccessToEditComment"
+            />
+          </v-tab-item>
+        </template>
       </v-tabs>
     </template>
     <template #actions="">
@@ -94,12 +104,15 @@ import Observer from '@/services/observer';
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
+import { localQueryMixin } from '@/mixins/query/query';
+import { permissionsWidgetsEventComment } from '@/mixins/permissions/widgets/entity-comment';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
+import EntityComments from '@/components/other/entity/entity-comments.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -111,12 +124,19 @@ export default {
     };
   },
   inject: ['$system'],
-  components: { PbehaviorsSimpleList, ServiceTemplate, ModalWrapper },
+  components: {
+    PbehaviorsSimpleList,
+    ServiceTemplate,
+    EntityComments,
+    ModalWrapper,
+  },
   mixins: [
     authMixin,
     localQueryMixin,
     modalInnerMixin,
+    entitiesAlarmTagMixin,
     entitiesServiceEntityMixin,
+    permissionsWidgetsEventComment,
     submittableMixinCreator(),
     confirmableModalMixinCreator({ field: 'actionsRequests' }),
   ],
@@ -204,6 +224,10 @@ export default {
       params.pbh_origin = PBEHAVIOR_ORIGINS.serviceWeather;
 
       await this.fetchServiceEntitiesList({ id: this.service._id, params });
+
+      if (!this.alarmTagsPending) {
+        this.fetchAlarmTagsList({ params: { paginate: false } });
+      }
 
       this.pending = false;
     },

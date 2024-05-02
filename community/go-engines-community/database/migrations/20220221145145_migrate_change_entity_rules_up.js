@@ -1,5 +1,12 @@
 function genID() {
-    return UUID().toString().split('"')[1];
+    var hex;
+    try {
+        hex = UUID().hex(); // mongo
+    } catch (e) {
+        hex = UUID().toString('hex'); // mongosh
+    }
+
+    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
 }
 
 db.eventfilter.find({
@@ -38,9 +45,9 @@ db.eventfilter.find({
         priority: doc.priority,
         enabled: doc.enabled,
         config: config,
-        external_data: doc.external_data,
+        external_data: doc.external_data || null,
         created: now,
         updated: now,
-        author: doc.author
+        author: doc.author || null
     });
 });

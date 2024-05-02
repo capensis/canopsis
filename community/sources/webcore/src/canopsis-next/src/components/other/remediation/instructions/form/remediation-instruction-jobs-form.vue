@@ -3,61 +3,48 @@
     class="mt-2"
     column
   >
-    <v-layout>
-      <v-flex
-        v-if="!jobs.length"
-        xs12
-      >
-        <v-alert type="info">
-          {{ $t('remediation.instruction.emptyJobs') }}
-        </v-alert>
-      </v-flex>
-    </v-layout>
-    <h3 class="text-subtitle-1 font-weight-bold">
-      {{ $t('remediation.instruction.listJobs') }}
-    </h3>
-    <c-draggable-list-field
-      v-field="jobs"
-      :disabled="disabled"
-      :group="draggableGroup"
-      handle=".job-drag-handler"
-      ghost-class="white"
+    <c-alert
+      v-if="!jobs.length"
+      type="info"
     >
-      <v-card
-        v-for="(job, index) in jobs"
-        :key="job.key"
-        class="my-2"
-      >
-        <v-card-text>
-          <remediation-instruction-job-field
-            v-field="jobs[index]"
-            :jobs="jobsItems"
-            :name="job.key"
-            :job-number="index + 1"
-            :disabled="disabled"
-            class="py-1"
-            @remove="removeItemFromArray(index)"
-          />
-        </v-card-text>
-      </v-card>
-    </c-draggable-list-field>
-    <v-layout align-center>
-      <v-btn
-        :color="hasJobsErrors ? 'error' : 'primary'"
+      {{ $t('remediation.instruction.emptyJobs') }}
+    </c-alert>
+    <c-information-block :title="$t('remediation.instruction.listJobs')">
+      <c-draggable-list-field
+        v-field="jobs"
         :disabled="disabled"
-        class="ml-0"
+        :group="draggableGroup"
+        handle=".job-drag-handler"
+        ghost-class="white"
+      >
+        <v-card
+          v-for="(job, index) in jobs"
+          :key="job.key"
+          class="my-2"
+        >
+          <v-card-text>
+            <remediation-instruction-job-field
+              v-field="jobs[index]"
+              :jobs="jobsItems"
+              :name="job.key"
+              :job-number="index + 1"
+              :disabled="disabled"
+              class="py-1"
+              @remove="removeItemFromArray(index)"
+            />
+          </v-card-text>
+        </v-card>
+      </c-draggable-list-field>
+
+      <c-btn-with-error
+        :error="hasJobsErrors ? $t('remediation.instruction.errors.jobRequired') : ''"
+        :disabled="disabled"
         outlined
         @click="addJob"
       >
         {{ $t('remediation.instruction.addJob') }}
-      </v-btn>
-      <span
-        v-show="hasJobsErrors"
-        class="error--text"
-      >
-        {{ $t('remediation.instruction.errors.jobRequired') }}
-      </span>
-    </v-layout>
+      </c-btn-with-error>
+    </c-information-block>
   </v-layout>
 </template>
 

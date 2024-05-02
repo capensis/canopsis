@@ -24,8 +24,8 @@
       @end="endDragging"
     >
       <remediation-instruction-operation-field
-        v-field="operations[index]"
         v-for="(operation, index) in operations"
+        v-field="operations[index]"
         :key="operation.key"
         :index="index"
         :operation-number="getOperationNumber(index)"
@@ -34,23 +34,14 @@
         @remove="removeOperation(index)"
       />
     </c-draggable-list-field>
-    <v-layout align-center>
-      <v-btn
-        :color="hasOperationsErrors ? 'error' : 'primary'"
-        :disabled="disabled"
-        class="mr-2"
-        outlined
-        @click="addOperation"
-      >
-        {{ $t('remediation.instruction.addOperation') }}
-      </v-btn>
-      <span
-        v-show="hasOperationsErrors"
-        class="error--text"
-      >
-        {{ $t('remediation.instruction.errors.operationRequired') }}
-      </span>
-    </v-layout>
+    <c-btn-with-error
+      :error="hasOperationsErrors ? $t('remediation.instruction.errors.operationRequired') : ''"
+      :disabled="disabled"
+      outlined
+      @click="addOperation"
+    >
+      {{ $t('remediation.instruction.addOperation') }}
+    </c-btn-with-error>
   </v-layout>
 </template>
 

@@ -44,7 +44,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -107,7 +107,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -148,11 +148,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "state.val",
-					Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
+					{
+						Field:     "state.val",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
+					},
 				},
 			},
 		},
@@ -170,7 +172,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -214,11 +216,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "icon",
-					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					{
+						Field:     "icon",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
 				},
 			},
 		},
@@ -236,6 +240,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
 	}})
@@ -247,7 +252,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
@@ -292,7 +296,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	}
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
-	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
@@ -343,22 +347,26 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 				},
 			},
 		},
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "icon",
-					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					{
+						Field:     "icon",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
 				},
 			},
 		},
 	}
 	filter2 := view.WidgetFilter{
 		ID: "test-filter-2",
-		WeatherServicePattern: view.WeatherServicePattern{
-			{
+		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
+			WeatherServicePattern: pattern.WeatherServicePattern{
 				{
-					Field:     "secondary_icon",
-					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					{
+						Field:     "secondary_icon",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
 				},
 			},
 		},
@@ -376,6 +384,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
 	}})
@@ -390,7 +399,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}}}}},
 	}
 	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{

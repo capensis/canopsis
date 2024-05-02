@@ -20,6 +20,7 @@ export default {
     [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
     [PATTERN_TYPES.entity]: 'Modèle d\'entité',
     [PATTERN_TYPES.pbehavior]: 'Modèle de comportements périodiques',
+    [PATTERN_TYPES.serviceWeather]: 'Modèle de météo des services',
   },
   errors: {
     ruleRequired: 'Veuillez ajouter au moins une règle',

@@ -2,10 +2,10 @@
   <c-draggable-list-field
     v-field="groups"
     :class="{ empty: isGroupsEmpty }"
-    :component-data="{ props: { expand: true, dark: true, focusable: true } }"
+    :component-data="{ props: expansionPanelsProps }"
     :group="draggableGroup"
     class="groups-panel secondary"
-    component="v-expansion-panel"
+    component="v-expansion-panels"
   >
     <group-panel
       v-for="(group, groupIndex) in groups"
@@ -64,6 +64,16 @@ export default {
         name: this.draggableGroupName,
         put: this.put ? [this.draggableGroupName] : false,
         pull: this.pull ? [this.draggableGroupName] : false,
+      };
+    },
+
+    expansionPanelsProps() {
+      return {
+        multiple: true,
+        dark: true,
+        accordion: true,
+        flat: true,
+        tile: true,
       };
     },
 

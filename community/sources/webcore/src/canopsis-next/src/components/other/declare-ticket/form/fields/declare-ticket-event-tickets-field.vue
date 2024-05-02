@@ -5,6 +5,7 @@
       :key="chip.value"
       :input-value="chip.active"
       :label="chip.text"
+      class="mt-0 pt-0"
       color="primary"
       hide-details
       @change="updateActive(chip.value)"
@@ -23,9 +24,8 @@
 <script>
 import { groupBy } from 'lodash';
 
-import { EVENT_ENTITY_TYPES } from '@/constants';
-
 import { filterValue } from '@/helpers/array';
+import { isSuccessStepTicketType } from '@/helpers/entities/alarm/step/entity';
 
 import { formMixin } from '@/mixins/form';
 
@@ -58,8 +58,7 @@ export default {
   },
   computed: {
     successAlarmTickets() {
-      return this.alarmTickets
-        .filter(ticket => [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket._t));
+      return this.alarmTickets.filter(ticket => isSuccessStepTicketType(ticket._t));
     },
 
     successAlarmTicketsByTicketId() {

@@ -2,6 +2,7 @@
   <c-select-field
     v-field="value"
     v-validate="rules"
+    v-bind="$attrs"
     :search-input="search"
     :label="label"
     :loading="loading"
@@ -58,10 +59,11 @@
         class="c-lazy-search-field__append"
       />
     </template>
-    <template #selection="{ item, index }">
+    <template #selection="{ item, index, parent }">
       <slot
         :item="item"
         :index="index"
+        :parent="parent"
         name="selection"
       >
         <v-chip
@@ -99,6 +101,7 @@ import { formArrayMixin } from '@/mixins/form';
 export default {
   inject: ['$validator'],
   mixins: [formArrayMixin],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
@@ -259,6 +262,10 @@ export default {
 
   .v-select__selections {
     max-width: calc(100% - 24px);
+  }
+
+  &.v-autocomplete:not(.v-input--is-focused).v-select--chips input {
+    max-height: 32px;
   }
 
   &__chip {

@@ -52,15 +52,17 @@ const (
 	AlarmStepStatusDecrease  = "statusdec"
 	AlarmStepAck             = "ack"
 	AlarmStepAckRemove       = "ackremove"
-	AlarmStepCancel          = "cancel"
-	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
 	AlarmStepSnooze          = "snooze"
+	AlarmStepUnsnooze        = "unsnooze"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+	AlarmStepMetaAlarmDetach = "metaalarmdetach"
+	AlarmStepActivate        = "activate"
+	AlarmStepResolve         = "resolve"
 
 	AlarmStepAssocTicket       = "assocticket"
 	AlarmStepDeclareTicket     = "declareticket"
@@ -81,19 +83,50 @@ const (
 	AlarmStepAutoInstructionStart    = "autoinstructionstart"
 	AlarmStepAutoInstructionComplete = "autoinstructioncomplete"
 	AlarmStepAutoInstructionFail     = "autoinstructionfail"
-	// Following alarm steps are used for job execution.
-	AlarmStepInstructionJobStart    = "instructionjobstart"
-	AlarmStepInstructionJobComplete = "instructionjobcomplete"
-	AlarmStepInstructionJobFail     = "instructionjobfail"
 
 	// Following alarm steps are used for junit.
 	AlarmStepJunitTestSuiteUpdate = "junittestsuiteupdate"
 	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
 )
 
-const (
-	StepEngineCorrelationAuthor = "engine.correlation"
-)
+func GetAlarmStepTypes() []string {
+	return []string{
+		AlarmStepStateIncrease,
+		AlarmStepStateDecrease,
+		AlarmStepStatusIncrease,
+		AlarmStepStatusDecrease,
+		AlarmStepAck,
+		AlarmStepAckRemove,
+		AlarmStepComment,
+		AlarmStepSnooze,
+		AlarmStepUnsnooze,
+		AlarmStepStateCounter,
+		AlarmStepChangeState,
+		AlarmStepPbhEnter,
+		AlarmStepPbhLeave,
+		AlarmStepMetaAlarmAttach,
+		AlarmStepMetaAlarmDetach,
+		AlarmStepActivate,
+		AlarmStepResolve,
+		AlarmStepAssocTicket,
+		AlarmStepDeclareTicket,
+		AlarmStepDeclareTicketFail,
+		AlarmStepWebhookStart,
+		AlarmStepWebhookComplete,
+		AlarmStepWebhookFail,
+		AlarmStepInstructionStart,
+		AlarmStepInstructionPause,
+		AlarmStepInstructionResume,
+		AlarmStepInstructionComplete,
+		AlarmStepInstructionFail,
+		AlarmStepInstructionAbort,
+		AlarmStepAutoInstructionStart,
+		AlarmStepAutoInstructionComplete,
+		AlarmStepAutoInstructionFail,
+		AlarmStepJunitTestSuiteUpdate,
+		AlarmStepJunitTestCaseUpdate,
+	}
+}
 
 // Alarm represents an alarm document.
 type Alarm struct {
@@ -101,9 +134,9 @@ type Alarm struct {
 	Time     datetime.CpsTime `bson:"t" json:"t"`
 	EntityID string           `bson:"d" json:"d"`
 
-	Tags                []string           `bson:"tags" json:"tags"`
-	ExternalTags        []string           `bson:"etags" json:"etags"`
-	InternalTags        []string           `bson:"itags" json:"itags"`
+	Tags                []string           `bson:"tags,omitempty" json:"tags,omitempty"`
+	ExternalTags        []string           `bson:"etags,omitempty" json:"etags,omitempty"`
+	InternalTags        []string           `bson:"itags,omitempty" json:"itags,omitempty"`
 	InternalTagsUpdated datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
@@ -143,12 +176,12 @@ type AlarmWithEntity struct {
 
 // CropSteps calls Crop() on Alarm.Value.Steps with alarm parameters.
 // returns true if the alarm was modified.
-func (a *Alarm) CropSteps() bool {
+func (a *Alarm) CropSteps(cropNum int) bool {
 	updated := false
 	if a.Value.Status != nil {
 		croppedSteps, cropUpdate := a.Value.Steps.Crop(
 			a.Value.Status,
-			AlarmStepCropMinStates,
+			cropNum,
 		)
 		// Updates the alarm steps
 		a.Value.Steps = croppedSteps
@@ -509,6 +542,11 @@ func (a *Alarm) GetRefField(f string) (interface{}, bool) {
 			return nil, true
 		}
 		return a.Value.ChangeState, true
+	case "v.meta":
+		if a.Value.Meta == "" {
+			return nil, true
+		}
+		return a.Value.Meta, true
 	default:
 		return nil, false
 	}

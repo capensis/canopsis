@@ -173,6 +173,9 @@ $stepper-light: (
   completed: var(--v-stepper-completed, rgba(map-get($shades, 'black'), 0.87)),
   hover: var(--v-stepper-hover, rgba(map-get($shades, 'black'), 0.54)),
 );
+$table-light: (
+  'hover': var(--v-table-hover-row-color-base, map-get($grey, 'lighten-3')),
+);
 
 $material-light: (
   'bg-color': var(--v-application-background-base, map-get($shades, 'white')),
@@ -182,6 +185,7 @@ $material-light: (
   icons: $icons-light,
   buttons: $buttons-light,
   stepper: $stepper-light,
+  table: $table-light,
   tabs: var(--v-text-light-primary, rgba(0, 0, 0, 0.54)),
   'item-divider-border-color': rgba(0, 0, 0, 0.12)
 );
@@ -205,6 +209,9 @@ $stepper-dark: (
   completed: var(--v-stepper-completed, rgba(map-get($shades, 'white'), 0.87)),
   hover: var(--v-stepper-hover, rgba(map-get($shades, 'white'), 0.75)),
 );
+$table-dark: (
+  'hover': var(--v-table-hover-row-color-base, map-get($grey, 'darken-2')),
+);
 
 $material-dark: (
   'bg-color': var(--v-application-background-base, #303030),
@@ -214,6 +221,7 @@ $material-dark: (
   icons: $icons-dark,
   buttons: $buttons-dark,
   stepper: $stepper-dark,
+  table: $table-dark,
   tabs: var(--v-text-dark-primary, rgba(map-get($shades, 'white'), 0.6)),
   'item-divider-border-color': rgba(255, 255, 255, 0.12)
 )

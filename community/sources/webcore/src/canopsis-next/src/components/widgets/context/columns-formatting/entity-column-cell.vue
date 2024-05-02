@@ -126,12 +126,36 @@ export default {
           },
         },
         state: this.stateCellProperties,
+        links: {
+          bind: {
+            is: 'c-links-chips',
+
+            links: this.entity.links,
+            onlyIcon: this.column.onlyIcon,
+            inlineCount: this.column.inlineLinksCount,
+          },
+        },
       };
 
       const cell = PROPERTIES_COMPONENTS_MAP[this.column.value];
 
       if (cell) {
         return cell;
+      }
+
+      if (this.column.value.startsWith('links.')) {
+        const category = this.column.value.replace('links.', '');
+
+        return {
+          bind: {
+            is: 'c-links-chips',
+
+            category,
+            links: this.entity.links,
+            onlyIcon: this.column.onlyIcon,
+            inlineCount: this.column.inlineLinksCount,
+          },
+        };
       }
 
       return {

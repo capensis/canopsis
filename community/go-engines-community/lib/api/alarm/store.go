@@ -4,12 +4,14 @@ package alarm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -79,6 +81,8 @@ type store struct {
 
 	tplExecutor template.Executor
 
+	alarmStepTypes []string
+
 	decoder encoding.Decoder
 
 	logger zerolog.Logger
@@ -111,6 +115,13 @@ func NewStore(
 		timezoneConfigProvider: timezoneConfigProvider,
 
 		tplExecutor: tplExecutor,
+
+		alarmStepTypes: append([]string{
+			AlarmStepDeclareTicketRuleInProgress,
+			AlarmStepDeclareTicketRuleComplete,
+			AlarmStepDeclareTicketRuleFail,
+			AlarmStepWebhookInProgress,
+		}, types.GetAlarmStepTypes()...),
 
 		decoder: decoder,
 
@@ -154,6 +165,11 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userId)
 	if err != nil {
 		return nil, err
+	}
+	if r.QueryLog {
+		if b, err := json.Marshal(pipeline); err == nil {
+			s.logger.Info().RawJSON("pipeline", b).Send()
+		}
 	}
 
 	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
@@ -443,64 +459,15 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		{"$unwind": "$" + entityLookupName},
 	}
 
-	pipeline = append(pipeline, getEntityCategoryLookup()...)
-	pipeline = append(pipeline, getEntityPbehaviorInfoTypeLookup()...)
+	pipeline = append(pipeline, dbquery.GetCategoryLookup(entityLookupName)...)
+	pipeline = append(pipeline, dbquery.GetPbehaviorInfoLastCommentLookup(s.authorProvider, entityLookupName)...)
 	if r.WithDependencies {
-		pipeline = append(pipeline, getImpactsCountPipeline()...)
-		pipeline = append(pipeline, getDependsCountPipeline()...)
+		pipeline = append(pipeline, dbquery.GetImpactsCountPipeline(entityLookupName)...)
+		pipeline = append(pipeline, dbquery.GetDependsCountPipeline(entityLookupName)...)
 	}
 
 	if r.Steps != nil {
-		stepMatch := bson.M{}
-		if r.Steps.Type != "" {
-			stepMatch["v.steps._t"] = r.Steps.Type
-		}
-
-		var stepsArray any = "$v.steps"
-		if len(stepMatch) > 0 {
-			pipeline = append(pipeline,
-				bson.M{"$unwind": bson.M{
-					"path":                       "$v.steps",
-					"preserveNullAndEmptyArrays": true,
-					"includeArrayIndex":          "step_index",
-				}},
-				bson.M{"$match": stepMatch},
-			)
-			if r.Steps.Reversed {
-				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": -1}})
-			} else {
-				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": 1}})
-			}
-			pipeline = append(pipeline,
-				bson.M{"$group": bson.M{
-					"_id":   "$_id",
-					"data":  bson.M{"$first": "$$ROOT"},
-					"steps": bson.M{"$push": "$v.steps"},
-				}},
-				bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{
-					"$mergeObjects": bson.A{
-						"$data",
-						bson.M{"v": bson.M{
-							"$mergeObjects": bson.A{
-								"$v",
-								bson.M{"steps": "$steps"},
-							},
-						}},
-					},
-				}}},
-			)
-		} else if r.Steps.Reversed {
-			stepsArray = bson.M{"$reverseArray": "$v.steps"}
-		}
-
-		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-			"steps.data": bson.M{"$slice": bson.A{
-				stepsArray,
-				(r.Steps.Page - 1) * r.Steps.Limit,
-				r.Steps.Limit},
-			},
-			"steps_count": bson.M{"$size": "$v.steps"},
-		}})
+		pipeline = append(pipeline, s.getStepsDetailsPipeline(*r.Steps)...)
 	}
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
@@ -1640,4 +1607,210 @@ func (s *store) postProcessResult(
 	}
 
 	return nil
+}
+
+func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
+	pipeline := make([]bson.M, 0)
+	var sortQuery bson.M
+	var firstStepFunc string
+	if steps.Reversed {
+		sortQuery = bson.M{"$sort": bson.M{"step_index": -1}}
+		firstStepFunc = "$last"
+	} else {
+		sortQuery = bson.M{"$sort": bson.M{"step_index": 1}}
+		firstStepFunc = "$first"
+	}
+
+	var cond bson.M
+	if steps.Type == "" {
+		// Remove deprecated steps
+		cond = bson.M{"$in": bson.A{"$$this._t", s.alarmStepTypes}}
+	} else {
+		cond = bson.M{"$eq": bson.A{"$$this._t", steps.Type}}
+	}
+
+	pipeline = append(pipeline,
+		bson.M{"$project": bson.M{
+			"data":  "$$ROOT",
+			"steps": "$v.steps",
+		}},
+		bson.M{"$unwind": bson.M{
+			"path":                       "$steps",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "step_index",
+		}},
+		bson.M{"$addFields": bson.M{
+			"steps._id": bson.M{"$toString": "$step_index"},
+		}},
+	)
+	if steps.Group {
+		pipeline = append(pipeline,
+			bson.M{"$addFields": bson.M{
+				"group": "$steps.dgroup",
+			}},
+			sortQuery,
+			bson.M{"$group": bson.M{
+				"_id": bson.M{
+					"_id": "$_id",
+					"group": bson.M{"$cond": bson.M{
+						"if":   "$group",
+						"then": "$group",
+						"else": "$step_index",
+					}},
+				},
+				"data":       bson.M{"$first": "$data"},
+				"group":      bson.M{"$first": "$group"},
+				"step_index": bson.M{firstStepFunc: "$step_index"},
+				"first_step": bson.M{firstStepFunc: "$steps"},
+				"ticket_step": bson.M{"$push": bson.M{"$cond": bson.M{
+					"if": bson.M{"$or": []bson.M{
+						{"$eq": bson.A{"$steps._t", types.AlarmStepDeclareTicket}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepDeclareTicketFail}},
+					}},
+					"then": "$steps",
+					"else": "$$REMOVE",
+				}}},
+				"complete_step": bson.M{"$push": bson.M{"$cond": bson.M{
+					"if": bson.M{"$or": []bson.M{
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+					}},
+					"then": "$steps",
+					"else": "$$REMOVE",
+				}}},
+				"start_step_count": bson.M{"$sum": bson.M{"$cond": bson.M{
+					"if":   bson.M{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookStart}},
+					"then": 1,
+					"else": 0,
+				}}},
+				"complete_step_count": bson.M{"$sum": bson.M{"$cond": bson.M{
+					"if": bson.M{"$or": []bson.M{
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+					}},
+					"then": 1,
+					"else": 0,
+				}}},
+				"nested_steps": bson.M{"$push": "$steps"},
+			}},
+			bson.M{"$addFields": bson.M{
+				"ticket_step":   bson.M{"$first": "$ticket_step"},
+				"complete_step": bson.M{"$first": "$complete_step"},
+			}},
+			bson.M{"$addFields": bson.M{
+				"steps": bson.M{"$cond": bson.M{
+					"if":   "$group",
+					"else": "$first_step",
+					"then": bson.M{"$cond": bson.M{
+						"if": bson.M{"$eq": bson.A{"$first_step.initiator", types.InitiatorUser}},
+						"then": bson.M{"$switch": bson.M{
+							"branches": []bson.M{
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$start_step_count", "$complete_step_count"}},
+										{"$eq": bson.A{"$ticket_step._t", types.AlarmStepDeclareTicket}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$ticket_step",
+										bson.M{
+											"_t": AlarmStepDeclareTicketRuleComplete,
+											"t":  "$first_step.t",
+										},
+									}},
+								},
+								{
+									"case": bson.M{"$and": []bson.M{
+										{"$eq": bson.A{"$start_step_count", "$complete_step_count"}},
+										{"$eq": bson.A{"$ticket_step._t", types.AlarmStepDeclareTicketFail}},
+									}},
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$ticket_step",
+										bson.M{
+											"_t": AlarmStepDeclareTicketRuleFail,
+											"t":  "$first_step.t",
+										},
+									}},
+								},
+							},
+							"default": bson.M{"$mergeObjects": bson.A{
+								"$first_step",
+								bson.M{
+									"_t": AlarmStepDeclareTicketRuleInProgress,
+								},
+							}},
+						}},
+						"else": bson.M{"$switch": bson.M{
+							"branches": []bson.M{
+								{
+									"case": "$ticket_step",
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$ticket_step",
+										bson.M{
+											"t": "$first_step.t",
+										},
+									}},
+								},
+								{
+									"case": "$complete_step",
+									"then": bson.M{"$mergeObjects": bson.A{
+										"$complete_step",
+										bson.M{
+											"t": "$first_step.t",
+										},
+									}},
+								},
+							},
+							"default": bson.M{"$mergeObjects": bson.A{
+								"$first_step",
+								bson.M{
+									"_t": AlarmStepWebhookInProgress,
+								},
+							}},
+						}},
+					}},
+				}},
+			}},
+			bson.M{"$addFields": bson.M{
+				"steps": bson.M{"$cond": bson.M{
+					"if": "$group",
+					"then": bson.M{"$mergeObjects": bson.A{
+						"$steps",
+						bson.M{
+							"steps": "$nested_steps",
+							"_id":   "$group",
+						},
+					}},
+					"else": "$steps",
+				}},
+			}},
+		)
+	}
+
+	pipeline = append(pipeline,
+		sortQuery,
+		bson.M{"$group": bson.M{
+			"_id":   "$data._id",
+			"data":  bson.M{"$first": "$data"},
+			"steps": bson.M{"$push": "$steps"},
+		}},
+		bson.M{"$addFields": bson.M{
+			"steps": bson.M{"$filter": bson.M{
+				"input": "$steps",
+				"cond":  cond,
+			}},
+		}},
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{
+				"steps": bson.M{"data": bson.M{"$slice": bson.A{
+					"$steps",
+					(steps.Page - 1) * steps.Limit,
+					steps.Limit,
+				}}},
+				"steps_count": bson.M{"$size": "$steps"},
+			},
+		}}}},
+	)
+
+	return pipeline
 }

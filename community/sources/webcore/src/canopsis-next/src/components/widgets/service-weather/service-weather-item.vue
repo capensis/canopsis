@@ -19,6 +19,7 @@
           <c-compiled-template
             :template="template"
             :context="templateContext"
+            :template-props="templateProps"
             class="service-weather-item__template pa-3"
           />
         </v-layout>
@@ -93,6 +94,8 @@ import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
+import { entityHandlebarsTagsHelper } from '@/mixins/widget/handlebars/entity-tags-helper';
+
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
 import AlarmPbehaviorCounters from './alarm-pbehavior-counters.vue';
@@ -106,6 +109,7 @@ export default {
     AlarmStateCounters,
     ImpactStateIndicator,
   },
+  mixins: [entityHandlebarsTagsHelper],
   props: {
     service: {
       type: Object,
@@ -171,6 +175,10 @@ export default {
   },
   computed: {
     templateContext() {
+      return { entity: this.service };
+    },
+
+    templateProps() {
       return { entity: this.service };
     },
 

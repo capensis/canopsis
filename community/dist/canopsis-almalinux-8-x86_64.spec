@@ -4,7 +4,7 @@ Version: %{version_safe}
 Release: 1%{?dist}
 Summary: Canopsis community edition
 License: AGPL-3.0-only
-Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
+Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version_upstream}/canopsis.tar.gz
 
 BuildRequires: make >= 3.81, gcc, nodejs, yarn, systemd-rpm-macros
 
@@ -19,7 +19,7 @@ Prefix: /opt
 Canopsis Community RPM Package
 
 %prep
-%setup -n %{name}-%{Version} -q
+%setup -n %{name}-%{version_upstream} -q
 GOLANG_VERSION=$(grep "^GOLANG_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
 echo "install golang $GOLANG_VERSION."
 wget https://go.dev/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
@@ -27,8 +27,8 @@ tar -C ~ -xzf go$GOLANG_VERSION.linux-amd64.tar.gz
 
 %build
 export PATH=$PATH:~/go/bin
-make -C community/go-engines-community VERSION=%{version}
-make -C community/sources/webcore/src/canopsis-next VERSION=%{version}
+make -C community/go-engines-community VERSION=%{version_upstream}
+make -C community/sources/webcore/src/canopsis-next VERSION=%{version_upstream}
 
 %install
 make -C community/go-engines-community DESTDIR=%{buildroot} install
@@ -60,8 +60,8 @@ fi
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
 /opt/canopsis/var/lib/icons
-/opt/canospis/var/lib/junit-files
-/opt/canospis/var/lib/upload-files
+/opt/canopsis/var/lib/upload-files
+%defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service
 

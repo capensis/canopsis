@@ -32,6 +32,7 @@ type SectionAlarm struct {
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
 	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
 	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
+	CropStepsNumber                   int  `toml:"CropStepsNumber"`
 }
 
 // SectionGlobal ...
@@ -108,8 +109,10 @@ type SectionMetrics struct {
 }
 
 type SectionTechMetrics struct {
-	Enabled          bool   `toml:"Enabled"`
-	DumpKeepInterval string `toml:"DumpKeepInterval"`
+	Enabled           bool     `toml:"Enabled"`
+	DumpKeepInterval  string   `toml:"DumpKeepInterval"`
+	GoMetricsInterval string   `toml:"GoMetricsInterval"`
+	GoMetrics         []string `toml:"GoMetrics"`
 }
 
 type SectionTemplate struct {

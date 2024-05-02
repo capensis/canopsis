@@ -7,7 +7,6 @@ import { find } from 'lodash';
 
 import {
   MODALS,
-  EVENT_ENTITY_TYPES,
   ALARM_LIST_ACTIONS_TYPES,
   LINK_RULE_ACTIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
@@ -15,7 +14,7 @@ import {
 
 import featuresService from '@/services/features';
 
-import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
 import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
@@ -32,7 +31,6 @@ import {
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
-import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
 import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
@@ -52,7 +50,6 @@ export default {
   mixins: [
     entitiesAlarmMixin,
     entitiesMetaAlarmMixin,
-    entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
     widgetActionsPanelAlarmExportPdfMixin,
@@ -178,7 +175,6 @@ export default {
           return {
             cssClass,
             type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
             disabled: hasRunningInstruction
               || (Boolean(pausedInstructions.length) && !find(pausedInstructions, { _id: instruction._id })),
             title: this.$t(`remediation.instruction.${titlePrefix}Instruction`, {
@@ -201,7 +197,6 @@ export default {
       if (!this.item.v?.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
         actions.unshift({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           title: this.$t('alarm.actions.titles.associateTicket'),
           method: this.showAssociateTicketModal,
         });
@@ -209,7 +204,6 @@ export default {
         if (assignedDeclareTicketRules.length) {
           actions.unshift({
             type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
             title: this.$t('alarm.actions.titles.declareTicket'),
             method: this.showDeclareTicketModal,
           });
@@ -229,19 +223,16 @@ export default {
 
       const variablesHelpAction = {
         type: ALARM_LIST_ACTIONS_TYPES.variablesHelp,
-        icon: 'help',
         title: this.$t('alarm.actions.titles.variablesHelp'),
         method: this.showVariablesHelperModal,
       };
       const exportPdfAction = {
         type: ALARM_LIST_ACTIONS_TYPES.exportPdf,
-        icon: 'assignment_returned',
         title: this.$t('alarm.actions.titles.exportPdf'),
         method: this.exportPdf,
       };
       const ackAction = {
         type: ALARM_LIST_ACTIONS_TYPES.ack,
-        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
         title: this.$t('alarm.actions.titles.ack'),
         method: this.showAckModal,
       };
@@ -251,13 +242,11 @@ export default {
           actions.push(
             {
               type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-              icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
               title: this.$t('alarm.actions.titles.ackRemove'),
               method: this.showAckRemoveModal,
             },
             {
               type: ALARM_LIST_ACTIONS_TYPES.changeState,
-              icon: getEntityEventIcon(EVENT_ENTITY_TYPES.changeState),
               title: this.$t('alarm.actions.titles.changeState'),
               method: this.showCreateChangeStateEventModal,
             },
@@ -271,7 +260,6 @@ export default {
             ackAction,
             {
               type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-              icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
               title: this.$t('alarm.actions.titles.fastAck'),
               method: this.createFastAckEvent,
             },
@@ -314,7 +302,6 @@ export default {
       if (this.isCancelledAlarm && !this.isResolvedAlarm) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.unCancel,
-          icon: 'delete_forever',
           title: this.$t('alarm.actions.titles.unCancel'),
           method: this.showUnCancelModal,
         });
@@ -324,7 +311,6 @@ export default {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.comment,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
             title: this.$t('alarm.actions.titles.comment'),
             method: this.showCreateCommentEventModal,
           },
@@ -339,13 +325,11 @@ export default {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.snooze,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
             title: this.$t('alarm.actions.titles.snooze'),
             method: this.showSnoozeModal,
           },
           {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
             title: this.$t('alarm.actions.titles.pbehavior'),
             method: this.showAddPbehaviorModal,
           },
@@ -356,13 +340,11 @@ export default {
         this.hasBookmark
           ? {
             type: ALARM_LIST_ACTIONS_TYPES.removeBookmark,
-            icon: '$vuetify.icons.bookmark_remove',
             title: this.$t('alarm.actions.titles.removeBookmark'),
             method: this.removeBookmark,
           }
           : {
             type: ALARM_LIST_ACTIONS_TYPES.addBookmark,
-            icon: '$vuetify.icons.bookmark_add',
             title: this.$t('alarm.actions.titles.addBookmark'),
             method: this.addBookmark,
           },
@@ -371,7 +353,6 @@ export default {
       if (isNotResolvedOpenedAlarm && this.item.entity) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.history,
-          icon: 'history',
           title: this.$t('alarm.actions.titles.history'),
           method: this.showHistoryModal,
         });
@@ -384,7 +365,6 @@ export default {
       if (!this.isResolvedAlarm && this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm),
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           method: this.showRemoveAlarmsFromManualMetaAlarmModal,
         });
@@ -393,7 +373,6 @@ export default {
       if (!this.isResolvedAlarm && this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmAutoMetaAlarm) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm),
           title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
           method: this.showRemoveAlarmsFromAutoMetaAlarmModal,
         });
@@ -434,6 +413,8 @@ export default {
     preparedActions() {
       return this.filteredActions.map(action => ({
         ...action,
+
+        icon: action.icon ?? getAlarmActionIcon(action.type),
         loading: this.isActionTypeInPending(action.type),
       }));
     },

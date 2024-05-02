@@ -103,7 +103,7 @@ export default createEntityModule({
     },
 
     fetchInfosKeysWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.entityInfosKeys, { params });
+      return request.get(API_ROUTES.entityInfosDictionaryKeys, { params });
     },
   },
 });

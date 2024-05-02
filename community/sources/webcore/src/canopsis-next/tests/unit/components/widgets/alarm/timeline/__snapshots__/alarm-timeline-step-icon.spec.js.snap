@@ -1,0 +1,429 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`ack\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#35485D"
+  >
+    check
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`ackremove\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#35485D"
+  >
+    remove_done
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`activate\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#01579B"
+  >
+    notifications
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`assocticket\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    $vuetify.icons.sticky_note_2
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`autoinstructioncomplete\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    assignment
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`autoinstructionfail\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    assignment
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`autoinstructionstart\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    assignment
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`changestate\` correctly 1`] = `
+<div>
+  <c-alarm-state-chip
+    type="changestate"
+    value="1"
+  />
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`comment\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#5B6E7F"
+  >
+    comment
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticket\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    note_add
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketfail\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    note_add
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketrulecomplete\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    note_add
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketrulefail\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    note_add
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`declareticketruleinprogress\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    note_add
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionabort\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.manual_instruction
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructioncomplete\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.manual_instruction
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionfail\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.manual_instruction
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionpause\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.manual_instruction
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionresume\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.manual_instruction
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionstart\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.manual_instruction
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`junittestcaseupdate\` correctly 1`] = `
+<div>
+  <c-alarm-extra-details-chip-stub
+    color="#979797"
+  >
+    <span
+      class="white--text"
+    >
+      JUnit
+    </span>
+  </c-alarm-extra-details-chip-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`junittestsuiteupdate\` correctly 1`] = `
+<div>
+  <c-alarm-extra-details-chip-stub
+    color="#979797"
+  >
+    <span
+      class="white--text"
+    >
+      JUnit
+    </span>
+  </c-alarm-extra-details-chip-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`metaalarmattach\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#8C1D18"
+  >
+    center_focus_weak
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`metaalarmdetach\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#8C1D18"
+  >
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`pbhenter\` correctly 1`] = `
+<div>
+  <c-alarm-pbehavior-chip-stub
+    color="color"
+    icon="icon_name"
+  />
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`pbhleave\` correctly 1`] = `
+<div>
+  <c-alarm-pbehavior-chip-stub
+    color="color"
+    icon="icon_name"
+  />
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`resolve\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    check_circle_outline
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`snooze\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#FF5252"
+  >
+    alarm
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statecounter\` correctly 1`] = `undefined`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statedec\` correctly 1`] = `
+<div>
+  <c-alarm-state-chip
+    type="statedec"
+    value="1"
+  />
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`stateinc\` correctly 1`] = `
+<div>
+  <c-alarm-state-chip
+    type="stateinc"
+    value="1"
+  />
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusdec\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-ongoing-base)"
+  >
+    warning
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`0\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-closed-base)"
+  >
+    check_circle_outline
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`1\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-ongoing-base)"
+  >
+    warning
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`2\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-stealthy-base)"
+  >
+    swap_vert
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`3\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-flapping-base)"
+  >
+    swap_vert
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`4\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-cancelled-base)"
+  >
+    highlight_off
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`5\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-noEvents-base)"
+  >
+    sync_problem
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-ongoing-base)"
+  >
+    warning
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`unsnooze\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    alarm_off
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`webhookcomplete\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.webhook
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`webhookfail\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.webhook
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`webhookinprogress\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.webhook
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`webhookstart\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="#6A6A6A"
+  >
+    $vuetify.icons.webhook
+  </v-icon-stub>
+</div>
+`;

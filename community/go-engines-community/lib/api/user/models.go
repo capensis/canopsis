@@ -10,7 +10,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name enable source"`
+	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name display_name enable source"`
 	Permission string `form:"permission"`
 }
 
@@ -54,7 +54,7 @@ type PatchRequest struct {
 	DefaultView            *string  `json:"defaultview"`
 }
 
-func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
+func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 	bsonModel := bson.M{
 		"_id":                       r.Name,
 		"name":                      r.Name,
@@ -62,7 +62,6 @@ func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 		"firstname":                 r.Firstname,
 		"email":                     r.Email,
 		"roles":                     r.Roles,
-		"password":                  string(passwordEncoder.EncodePassword([]byte(r.Password))),
 		"ui_language":               r.UILanguage,
 		"ui_theme":                  r.UITheme,
 		"ui_groups_navigation_type": r.UIGroupsNavigationType,
@@ -73,10 +72,17 @@ func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 		"external_id":               r.ExternalID,
 	}
 
-	return bsonModel
+	h, err := passwordEncoder.EncodePassword([]byte(r.Password))
+	if err != nil {
+		return nil, err
+	}
+
+	bsonModel["password"] = string(h)
+
+	return bsonModel, nil
 }
 
-func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
+func (r EditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 	bsonModel := bson.M{
 		"name":                      r.Name,
 		"lastname":                  r.Lastname,
@@ -90,13 +96,18 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 		"defaultview":               r.DefaultView,
 	}
 	if r.Password != "" {
-		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
+		h, err := passwordEncoder.EncodePassword([]byte(r.Password))
+		if err != nil {
+			return nil, err
+		}
+
+		bsonModel["password"] = string(h)
 	}
 
-	return bsonModel
+	return bsonModel, nil
 }
 
-func (r PatchRequest) getBson(passwordEncoder password.Encoder) bson.M {
+func (r PatchRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 	bsonModel := bson.M{}
 
 	if r.Name != nil {
@@ -140,10 +151,15 @@ func (r PatchRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	}
 
 	if r.Password != nil {
-		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(*r.Password)))
+		h, err := passwordEncoder.EncodePassword([]byte(*r.Password))
+		if err != nil {
+			return nil, err
+		}
+
+		bsonModel["password"] = string(h)
 	}
 
-	return bsonModel
+	return bsonModel, nil
 }
 
 type User struct {

@@ -23,13 +23,16 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
   <div
     class="portal"
   >
+    
         Portal to: additional-top-bar-items
+        
     <window-size-field-stub
       color="white"
       light="true"
       value="desktop"
     />
   </div>
+   
   <div
     class="grid-layout"
     style="height: 20px; max-width: 100%;"
@@ -39,6 +42,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
+       
       <div
         class="grid-item__resize-handler"
       >
@@ -63,6 +67,31 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
         </span>
       </div>
     </div>
+     
+  </div>
+</div>
+`;
+
+exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode without visible 1`] = `
+<div
+  class="view"
+  id="view-tab-tab-id"
+>
+  <div
+    class="portal"
+  >
+        Portal to: additional-top-bar-items
+    <window-size-field-stub
+      color="white"
+      light="true"
+      value="desktop"
+    />
+  </div>
+  <div
+    class="grid-layout grid-layout--disabled"
+    style="padding: 20px; column-gap: 20px; grid-template-columns: repeat(12, 1fr); max-width: 100%;"
+  >
+    <!---->
   </div>
 </div>
 `;
@@ -182,6 +211,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -222,6 +252,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -262,6 +293,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -354,6 +386,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -394,6 +427,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -434,6 +468,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -526,6 +561,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -566,6 +602,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -606,6 +643,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -698,6 +736,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -738,6 +777,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -778,6 +818,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -870,6 +911,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -910,6 +952,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>
@@ -950,6 +993,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
         <widget-wrapper-stub
           editing="true"
           tab="[object Object]"
+          visible="true"
           widget="[object Object]"
         />
       </div>

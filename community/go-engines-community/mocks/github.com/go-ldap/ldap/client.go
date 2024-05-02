@@ -5,6 +5,7 @@
 package mock_v3
 
 import (
+	context "context"
 	tls "crypto/tls"
 	reflect "reflect"
 	time "time"
@@ -120,6 +121,20 @@ func (m *MockClient) DirSync(arg0 *ldap.SearchRequest, arg1, arg2 int64, arg3 []
 func (mr *MockClientMockRecorder) DirSync(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DirSync", reflect.TypeOf((*MockClient)(nil).DirSync), arg0, arg1, arg2, arg3)
+}
+
+// DirSyncAsync mocks base method.
+func (m *MockClient) DirSyncAsync(arg0 context.Context, arg1 *ldap.SearchRequest, arg2 int, arg3, arg4 int64, arg5 []byte) ldap.Response {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DirSyncAsync", arg0, arg1, arg2, arg3, arg4, arg5)
+	ret0, _ := ret[0].(ldap.Response)
+	return ret0
+}
+
+// DirSyncAsync indicates an expected call of DirSyncAsync.
+func (mr *MockClientMockRecorder) DirSyncAsync(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DirSyncAsync", reflect.TypeOf((*MockClient)(nil).DirSyncAsync), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
 // ExternalBind mocks base method.
@@ -251,6 +266,20 @@ func (mr *MockClientMockRecorder) Search(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockClient)(nil).Search), arg0)
 }
 
+// SearchAsync mocks base method.
+func (m *MockClient) SearchAsync(arg0 context.Context, arg1 *ldap.SearchRequest, arg2 int) ldap.Response {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SearchAsync", arg0, arg1, arg2)
+	ret0, _ := ret[0].(ldap.Response)
+	return ret0
+}
+
+// SearchAsync indicates an expected call of SearchAsync.
+func (mr *MockClientMockRecorder) SearchAsync(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchAsync", reflect.TypeOf((*MockClient)(nil).SearchAsync), arg0, arg1, arg2)
+}
+
 // SearchWithPaging mocks base method.
 func (m *MockClient) SearchWithPaging(arg0 *ldap.SearchRequest, arg1 uint32) (*ldap.SearchResult, error) {
 	m.ctrl.T.Helper()
@@ -317,6 +346,20 @@ func (m *MockClient) StartTLS(arg0 *tls.Config) error {
 func (mr *MockClientMockRecorder) StartTLS(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartTLS", reflect.TypeOf((*MockClient)(nil).StartTLS), arg0)
+}
+
+// Syncrepl mocks base method.
+func (m *MockClient) Syncrepl(arg0 context.Context, arg1 *ldap.SearchRequest, arg2 int, arg3 ldap.ControlSyncRequestMode, arg4 []byte, arg5 bool) ldap.Response {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Syncrepl", arg0, arg1, arg2, arg3, arg4, arg5)
+	ret0, _ := ret[0].(ldap.Response)
+	return ret0
+}
+
+// Syncrepl indicates an expected call of Syncrepl.
+func (mr *MockClientMockRecorder) Syncrepl(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Syncrepl", reflect.TypeOf((*MockClient)(nil).Syncrepl), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
 // TLSConnectionState mocks base method.

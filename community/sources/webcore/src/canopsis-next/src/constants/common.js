@@ -159,19 +159,28 @@ export const QUICK_RANGES = {
     start: 'now-24h',
     stop: 'now',
   },
+  /**
+   * We've changed start from 'today-2d' to current to avoid problem with more bars on KPI
+   */
   last2Days: {
     value: 'last2Days',
-    start: 'today-2d',
+    start: 'today-1d',
     stop: 'today',
   },
+  /**
+   * We've changed start from 'today-7d' to current to avoid problem with more bars on KPI
+   */
   last7Days: {
     value: 'last7Days',
-    start: 'today-7d',
+    start: 'today-6d',
     stop: 'today',
   },
+  /**
+   * We've changed start from 'today-30d' to current to avoid problem with more bars on KPI
+   */
   last30Days: {
     value: 'last30Days',
-    start: 'today-30d',
+    start: 'today-29d',
     stop: 'today',
   },
   last1Year: {
@@ -224,6 +233,16 @@ export const QUICK_RANGES = {
     start: 'today/M',
     stop: 'now',
   },
+  last3Months: {
+    value: 'last3Months',
+    start: 'today-3M/M',
+    stop: 'today-1M/M',
+  },
+  last6Months: {
+    value: 'last6Months',
+    start: 'today-6M/M',
+    stop: 'today-1M/M',
+  },
   custom: {
     value: 'custom',
   },
@@ -264,6 +283,15 @@ export const METRICS_QUICK_RANGES = {
   [QUICK_RANGES.thisMonth.value]: QUICK_RANGES.thisMonth,
   [QUICK_RANGES.thisMonthSoFar.value]: QUICK_RANGES.thisMonthSoFar,
   [QUICK_RANGES.custom.value]: QUICK_RANGES.custom,
+};
+
+export const HEALTHCHECK_QUICK_RANGES = {
+  [QUICK_RANGES.last3Hour.value]: QUICK_RANGES.last3Hour,
+  [QUICK_RANGES.last6Hour.value]: QUICK_RANGES.last6Hour,
+  [QUICK_RANGES.last12Hour.value]: QUICK_RANGES.last12Hour,
+  [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
+
+  ...METRICS_QUICK_RANGES,
 };
 
 export const GRID_SIZES = {
@@ -370,8 +398,6 @@ export const CONTENT_TYPES = {
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
 };
 
-export const MAX_SEARCH_ITEMS = 8;
-
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
@@ -396,3 +422,38 @@ export const EXCLUDED_SERVER_ERROR_STATUSES = [
   RESPONSE_STATUSES.unauthorized,
   RESPONSE_STATUSES.forbidden,
 ];
+
+export const PAYLOADS_INFO_VARIABLES = {
+  value: '.Value',
+  description: '.Description',
+};
+
+export const WEBHOOK_EXECUTION_STATUSES = {
+  waiting: 0,
+  running: 1,
+  succeeded: 2,
+  failed: 3,
+};
+
+export const KEY_CODES = {
+  backspace: 8,
+  enter: 13,
+  shift: 16,
+  esc: 27,
+  left: 37,
+  up: 38,
+  right: 39,
+  down: 40,
+  end: 35,
+  home: 36,
+  delete: 46,
+  c: 67,
+  v: 86,
+};
+
+export const VARIABLES_STEP_FIELDS = {
+  timestamp: 't',
+  value: 'val',
+  message: 'm',
+  author: 'a',
+};

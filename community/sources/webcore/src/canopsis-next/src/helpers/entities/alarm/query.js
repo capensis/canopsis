@@ -7,7 +7,12 @@ import {
   isArray,
 } from 'lodash';
 
-import { ALARMS_OPENED_VALUES, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, QUICK_RANGES, SORT_ORDERS } from '@/constants';
+import {
+  ALARMS_OPENED_VALUES,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  LIVE_REPORTING_QUICK_RANGES,
+  SORT_ORDERS,
+} from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
@@ -118,8 +123,8 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = liveReporting.tstop;
     query.time_field = liveReporting.time_field;
   } else if (query.opened === ALARMS_OPENED_VALUES.resolved) {
-    query.tstart = QUICK_RANGES.last30Days.start;
-    query.tstop = QUICK_RANGES.last30Days.stop;
+    query.tstart = LIVE_REPORTING_QUICK_RANGES.last30Days.start;
+    query.tstop = LIVE_REPORTING_QUICK_RANGES.last30Days.stop;
   }
 
   const activeColumns = isArray(usedAlarmProperties)
@@ -193,6 +198,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {
       reversed: true,
+      group: true,
       page: 1,
       itemsPerPage: PAGINATION_LIMIT,
     },

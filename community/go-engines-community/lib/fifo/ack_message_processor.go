@@ -33,11 +33,20 @@ func (p *ackMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 
 	defer func() {
 		if event.ReceivedTimestamp.Time.Unix() > 0 {
-			p.TechMetricsSender.SendSimpleEvent(techmetrics.CanopsisEvent, techmetrics.EventMetric{
-				Timestamp: event.ReceivedTimestamp.Time,
-				EventType: event.EventType,
-				Interval:  time.Since(event.ReceivedTimestamp.Time),
-			})
+			eventMetric := techmetrics.CpsEventMetric{
+				EventMetric: techmetrics.EventMetric{
+					Timestamp: event.ReceivedTimestamp.Time,
+					EventType: event.EventType,
+					Interval:  time.Since(event.ReceivedTimestamp.Time),
+				},
+			}
+
+			if event.EventType == types.EventTypeCheck {
+				isOkState := event.State == types.AlarmStateOK
+				eventMetric.IsOkState = &isOkState
+			}
+
+			p.TechMetricsSender.SendCpsEvent(eventMetric)
 		}
 	}()
 

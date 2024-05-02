@@ -9,17 +9,10 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
     <span
       class="v-badge time-line-flag v-badge--overlap theme--light"
     >
-      <span
-        class="c-extra-details__badge blue"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light white--text"
-          style="font-size: 16px;"
-        >
-          report_problem
-        </i>
-      </span>
+      <c-alarm-extra-details-chip-stub
+        color="#2196F3"
+        icon="note_add"
+      />
       <span
         class="v-badge__wrapper"
       >
@@ -32,7 +25,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
             aria-live="polite"
             class="v-badge__badge transparent"
             role="status"
-            style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+            style="bottom: calc(100% - 15px); left: calc(100% - 12px);"
           >
             <i
               aria-hidden="true"
@@ -109,17 +102,10 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
     <span
       class="v-badge time-line-flag v-badge--overlap theme--light"
     >
-      <span
-        class="c-extra-details__badge blue"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light white--text"
-          style="font-size: 16px;"
-        >
-          report_problem
-        </i>
-      </span>
+      <c-alarm-extra-details-chip-stub
+        color="#2196F3"
+        icon="note_add"
+      />
       <span
         class="v-badge__wrapper"
       >
@@ -132,7 +118,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
             aria-live="polite"
             class="v-badge__badge transparent"
             role="status"
-            style="bottom: calc(100% - 12px); left: calc(100% - 12px); display: none;"
+            style="bottom: calc(100% - 15px); left: calc(100% - 12px); display: none;"
           >
             <i
               aria-hidden="true"

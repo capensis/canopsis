@@ -73,12 +73,14 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	var prevPbehaviorID string
 	var componentStateChanged bool
 	var newComponentState int
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
+		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -95,20 +97,19 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 
 		alarmChange := types.NewAlarmChange()
 		if alarm.ID == "" {
+			prevPbehaviorID = event.Entity.PbehaviorInfo.ID
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 		} else {
+			prevPbehaviorID = alarm.Value.PbehaviorInfo.ID
 			alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
 			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
-			newLeaveStep := types.NewAlarmStep(types.AlarmStepPbhLeave, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-			newLeaveStep.PbehaviorCanonicalType = alarm.Value.PbehaviorInfo.CanonicalType
-			newEnterStep := types.NewAlarmStep(types.AlarmStepPbhEnter, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-			newEnterStep.PbehaviorCanonicalType = event.Parameters.PbehaviorInfo.CanonicalType
+			newLeaveStep := NewPbhAlarmStep(types.AlarmStepPbhLeave, event.Parameters, alarm.Value.PbehaviorInfo)
+			newLeaveStep.Message = alarm.Value.PbehaviorInfo.GetStepMessage()
+			newEnterStep := NewPbhAlarmStep(types.AlarmStepPbhEnter, event.Parameters, event.Parameters.PbehaviorInfo)
 			set := bson.M{
 				"v.pbehavior_info": event.Parameters.PbehaviorInfo,
 			}
@@ -172,7 +173,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
 			p.entityServiceCountersCalculator,
 			p.componentCountersCalculator,
@@ -192,7 +193,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState, prevPbehaviorID)
 
 	return result, nil
 }
@@ -204,6 +205,7 @@ func (p *pbhLeaveAndEnterProcessor) postProcess(
 	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	componentStateChanged bool,
 	newComponentState int,
+	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -229,21 +231,31 @@ func (p *pbhLeaveAndEnterProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}
 	}
 
-	if result.Alarm.ID != "" {
+	if result.Alarm.ID == "" {
+		err := updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Entity.PbehaviorInfo.ID, result.Entity.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+	} else {
 		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
 		}
-	}
 
-	err := updatePbhLastAlarmDate(ctx, result, p.pbehaviorCollection)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot update pbehavior")
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, prevPbehaviorID)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
 	}
 }
