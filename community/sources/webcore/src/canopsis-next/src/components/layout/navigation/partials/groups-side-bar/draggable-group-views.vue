@@ -9,6 +9,7 @@
       v-for="view in views"
       :key="view._id"
       :view="view"
+      class="theme--dark"
     />
   </c-draggable-list-field>
 </template>
