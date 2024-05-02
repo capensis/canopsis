@@ -70,7 +70,8 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`changestate\` correctly 1`] = `
 <div>
-  <c-alarm-chip-stub
+  <c-alarm-state-chip
+    type="changestate"
     value="1"
   />
 </div>
@@ -283,7 +284,8 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statedec\` correctly 1`] = `
 <div>
-  <c-alarm-chip-stub
+  <c-alarm-state-chip
+    type="statedec"
     value="1"
   />
 </div>
@@ -291,7 +293,8 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`stateinc\` correctly 1`] = `
 <div>
-  <c-alarm-chip-stub
+  <c-alarm-state-chip
+    type="stateinc"
     value="1"
   />
 </div>

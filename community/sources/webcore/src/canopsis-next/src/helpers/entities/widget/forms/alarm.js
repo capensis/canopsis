@@ -572,10 +572,13 @@ export const getAlarmsListWidgetColumnComponentGetter = (
   switch (value) {
     case ALARM_FIELDS.state:
       return (context) => {
+        const state = context.alarm.v?.state;
         const component = {
           bind: {
-            is: 'alarm-column-value-state',
-            alarm: context.alarm,
+            is: 'c-alarm-state-chip',
+            value: state?.val,
+            type: state?._t,
+            badgeValue: context.alarm.v?.events_count,
             small: context.small,
           },
         };
@@ -584,7 +587,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
           component.bind.class = 'cursor-pointer';
           component.bind.appendIconName = '$vuetify.icons.root_cause';
           component.on = {
-            click: () => context.$emit('click:state', { ...context.alarm.entity, state: context.alarm.v?.state?.val }),
+            click: () => context.$emit('click:state', { ...context.alarm.entity, state: state?.val }),
           };
         }
 
