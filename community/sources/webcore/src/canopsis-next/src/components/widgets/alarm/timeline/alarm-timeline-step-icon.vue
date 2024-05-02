@@ -1,8 +1,9 @@
 <template>
   <div v-if="!isStateCounter">
-    <c-alarm-chip
-      v-if="isChangeState"
+    <c-alarm-state-chip
+      v-if="isState"
       :value="step.val"
+      :type="step._t"
     />
     <v-icon
       v-else-if="isChangeStatus"
@@ -44,7 +45,7 @@ import {
   isAssocTicketStepType,
   isAckStepType,
   isSnoozeStepType,
-  isChangeStateStepType,
+  isStateStepType,
   isJunitStepType,
   isPbehaviorStepType,
   isInstructionStepType,
@@ -63,7 +64,7 @@ export default {
   },
   setup(props) {
     const isStateCounter = computed(() => isStateCounterStepType(props.step._t));
-    const isChangeState = computed(() => isChangeStateStepType(props.step._t));
+    const isState = computed(() => isStateStepType(props.step._t));
     const isChangeStatus = computed(() => isChangeStatusStepType(props.step._t));
     const isJunit = computed(() => isJunitStepType(props.step._t));
     const isPbehavior = computed(() => isPbehaviorStepType(props.step._t));
@@ -88,7 +89,7 @@ export default {
 
     return {
       isStateCounter,
-      isChangeState,
+      isState,
       isChangeStatus,
       isJunit,
       isPbehavior,
