@@ -45,12 +45,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links with 
 />
 `;
 
-exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `
-<alarm-column-value-state-stub
-  alarm="[object Object]"
-  propertykey="v.state.val"
-/>
-`;
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `<c-alarm-state-chip-stub />`;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column status 1`] = `
 <alarm-column-value-status-stub

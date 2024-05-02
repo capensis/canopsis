@@ -66,7 +66,6 @@ import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
-import AlarmColumnValueState from './alarm-column-value-state.vue';
 import AlarmColumnValueStatus from './alarm-column-value-status.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 
@@ -82,7 +81,6 @@ import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue
 export default {
   components: {
     AlarmColumnCellPopupBody,
-    AlarmColumnValueState,
     AlarmColumnValueStatus,
     AlarmColumnValueExtraDetails,
     ColorIndicatorWrapper,
