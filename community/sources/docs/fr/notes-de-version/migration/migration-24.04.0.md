@@ -183,7 +183,7 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     enabled=1
     gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc' | tee /etc/yum.repos.d/mongodb-org-6.0.repo
     dnf makecache
-    dnf install mongodb-org-6.0.15 mongodb-org-database-6.0.15 mongodb-org-server-6.0.15 mongodb-org-mongos-6.0.15 mongodb-org-tools-6.0.15 mongodb-sh-6.0.15
+    dnf install mongodb-org-6.0.15 mongodb-org-database-6.0.15 mongodb-org-server-6.0.15 mongodb-org-mongos-6.0.15 mongodb-org-tools-6.0.15
     ```
 
     Redémarrage de `mongodb` :
@@ -201,7 +201,15 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     ```
 
     Mise à jour des paquets `mongodb` :
+ !!! warning "Avertissement"
 
+    Lors du passage de la version 6 à la version 7 l'option `storage.journal.enabled` est supprimé de mongodb ce qui empêchera le démarrage après la mise à jour.
+    
+    Pour le désactiver, il faut modifier le fichier `/etc/mongod.conf` et retirer les lignes suivantes:
+    ```
+    journal:
+        enabled: true
+    ```
     ```sh
     echo '[mongodb-org-7.0]
     name=MongoDB Repository
@@ -210,7 +218,7 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     enabled=1
     gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc' | tee /etc/yum.repos.d/mongodb-org-7.0.repo
     dnf makecache
-    dnf install mongodb-org-7.0.8 mongodb-org-database-7.0.8 mongodb-org-server-7.0.8 mongodb-org-mongos-7.0.8 mongodb-org-tools-7.0.8 mongodb-sh-7.0.8
+    dnf install mongodb-org-7.0.8 mongodb-org-database-7.0.8 mongodb-org-server-7.0.8 mongodb-org-mongos-7.0.8 mongodb-org-tools-7.0.8
     ```
 
     Redémarrage de `mongodb` :
@@ -223,10 +231,15 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 
     ```sh
     mongosh -u root -p root
-    > db.adminCommand( { setFeatureCompatibilityVersion: "7.0" } )
+    > db.adminCommand( { setFeatureCompatibilityVersion: "7.0", confirm: true } )
     exit
     ```
-
+ 
+Après avoir mis à jour mongodb, l'option de telemetry sera activé. Pour la désactiver il suffit de faire:
+```sh
+mongosh -u root -p root
+> disableTelemetry()
+```
 ### Mise à jour de TimescaleDB
 
 Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.9.3 à 2.14.2.
