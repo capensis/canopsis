@@ -920,6 +920,9 @@ export default {
     edit: {
       title: 'Edit link generator',
     },
+    duplicate: {
+      title: 'Duplicate a link generator',
+    },
   },
   createAlarmChart: {
     [WIDGET_TYPES.barChart]: {
