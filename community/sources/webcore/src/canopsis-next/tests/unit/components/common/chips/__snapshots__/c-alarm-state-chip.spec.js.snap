@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state 1`] = `
+<div
+  class="layout align-center c-alarm-state-chip--badge"
+>
+  <c-alarm-chip-stub
+    badge-value="Events count"
+    value="custom-state-val"
+  />
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate d-block material-icons theme--light purple--text"
+  >
+    account_circle
+  </i>
+</div>
+`;
+
+exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state, small and appendIconName 1`] = `
+<div
+  class="layout align-center c-alarm-state-chip--badge c-alarm-state-chip--small"
+>
+  <c-alarm-chip-stub
+    badge-value="Events count"
+    small="true"
+    value="custom-state-val"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light white--text"
+      style="font-size: 14px;"
+    >
+      lock
+    </i>
+  </c-alarm-chip-stub>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate d-block material-icons theme--light purple--text"
+    style="font-size: 14px;"
+  >
+    account_circle
+  </i>
+</div>
+`;
+
+exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with default props 1`] = `
+<div
+  class="layout align-center"
+>
+  <c-alarm-chip-stub
+    value="0"
+  />
+  <!---->
+</div>
+`;
