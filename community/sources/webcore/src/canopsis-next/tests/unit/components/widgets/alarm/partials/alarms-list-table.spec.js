@@ -219,13 +219,13 @@ describe('alarms-list-table', () => {
     expect(addEventListener).toHaveBeenNthCalledWith(
       7,
       'keydown',
-      wrapper.vm.enableSelecting,
+      wrapper.vm.handleKeyDown,
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
       8,
       'keyup',
-      wrapper.vm.disableSelecting,
+      wrapper.vm.handleKeyUp,
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
@@ -239,6 +239,11 @@ describe('alarms-list-table', () => {
       'mouseup',
       wrapper.vm.mouseupHandler,
     );
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      11,
+      'blur',
+      wrapper.vm.disableSelecting,
+    );
 
     await wrapper.setProps({
       stickyHeader: false,
@@ -249,7 +254,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(8);
+    expect(removeEventListener).toHaveBeenCalledTimes(9);
 
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
@@ -259,12 +264,12 @@ describe('alarms-list-table', () => {
     expect(removeEventListener).toHaveBeenNthCalledWith(
       2,
       'keydown',
-      wrapper.vm.enableSelecting,
+      wrapper.vm.handleKeyDown,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       3,
       'keyup',
-      wrapper.vm.disableSelecting,
+      wrapper.vm.handleKeyUp,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
@@ -278,17 +283,22 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
+      'blur',
+      wrapper.vm.disableSelecting,
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
       'resize',
       wrapper.vm.resizeHandler,
       { passive: true },
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
-      7,
+      8,
       'keydown',
       expect.any(Function),
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
-      8,
+      9,
       'keyup',
       expect.any(Function),
     );
@@ -370,7 +380,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(8);
+    expect(removeEventListener).toHaveBeenCalledTimes(9);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -398,6 +408,11 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
+      'blur',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
       'resize',
       expect.any(Function),
       { passive: true },
