@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"sort"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -48,10 +49,17 @@ type store struct {
 	stateSettingDbCollection  mongo.DbCollection
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
+	authorProvider            author.Provider
 	logger                    zerolog.Logger
 }
 
-func NewStore(db mongo.DbClient, linkGenerator link.Generator, enableSameServiceNames bool, logger zerolog.Logger) Store {
+func NewStore(
+	db mongo.DbClient,
+	linkGenerator link.Generator,
+	enableSameServiceNames bool,
+	authorProvider author.Provider,
+	logger zerolog.Logger,
+) Store {
 	return &store{
 		dbClient:                  db,
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
@@ -62,6 +70,7 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, enableSameService
 		stateSettingDbCollection:  db.Collection(mongo.StateSettingsMongoCollection),
 		linkGenerator:             linkGenerator,
 		enableSameServiceNames:    enableSameServiceNames,
+		authorProvider:            authorProvider,
 		logger:                    logger,
 	}
 }
@@ -471,7 +480,7 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 }
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
-	return entity.NewMongoQueryBuilder(s.dbClient)
+	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider)
 }
 
 func (s *store) findUser(ctx context.Context, id string) (link.User, error) {

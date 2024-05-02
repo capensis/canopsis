@@ -56,7 +56,7 @@ func runHttpServer(
 	logger zerolog.Logger,
 ) error {
 	mux := http.NewServeMux()
-	mux.Handle("/", NewHandler(checker, logger))
+	mux.Handle("GET /", NewHandler(checker, logger))
 
 	server := &http.Server{
 		Addr:              ":" + strconv.Itoa(port),

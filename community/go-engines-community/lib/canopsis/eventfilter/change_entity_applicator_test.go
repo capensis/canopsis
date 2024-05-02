@@ -318,7 +318,7 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, _, err := applicator.Apply(context.Background(), dataSet.rule, &dataSet.event, dataSet.regexMatches)
+			outcome, _, _, err := applicator.Apply(context.Background(), dataSet.rule, &dataSet.event, dataSet.regexMatches)
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
@@ -369,7 +369,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 		ConnectorName: "connector name",
 	}
 
-	outcome, _, err := applicator.Apply(
+	outcome, _, _, err := applicator.Apply(
 		context.Background(),
 		eventfilter.ParsedRule{
 			ExternalData: externalData,

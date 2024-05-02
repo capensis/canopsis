@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -44,7 +45,7 @@ type store struct {
 	defaultSearchByFields []string
 	defaultSortBy         string
 
-	pbhComputeChan chan<- []string
+	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
@@ -53,7 +54,7 @@ type store struct {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	pbhComputeChan chan<- []string,
+	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	authorProvider author.Provider,
 	logger zerolog.Logger,
@@ -249,7 +250,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	})
 
 	if len(pbhIds) > 0 {
-		s.pbhComputeChan <- pbhIds
+		s.pbhComputeChan <- rpc.PbehaviorRecomputeEvent{Ids: pbhIds}
 	}
 
 	if len(serviceIds) > 0 {
@@ -299,6 +300,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		filter = bson.M{"corporate_entity_pattern": pattern.ID}
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
+	case savedpattern.TypeWeatherService:
+		filter = bson.M{"corporate_weather_service_pattern": pattern.ID}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 	}
@@ -325,6 +328,11 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 			set = bson.M{
 				"pbehavior_pattern":                 pattern.PbehaviorPattern,
 				"corporate_pbehavior_pattern_title": pattern.Title,
+			}
+		case savedpattern.TypeWeatherService:
+			set = bson.M{
+				"weather_service_pattern":                 pattern.WeatherServicePattern,
+				"corporate_weather_service_pattern_title": pattern.Title,
 			}
 		default:
 			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
@@ -405,6 +413,8 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		f = "corporate_entity_pattern"
 	case savedpattern.TypePbehavior:
 		f = "corporate_pbehavior_pattern"
+	case savedpattern.TypeWeatherService:
+		f = "corporate_weather_service_pattern"
 	default:
 		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
 	}
@@ -828,6 +838,8 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 		model.EntityPattern = request.EntityPattern
 	case savedpattern.TypePbehavior:
 		model.PbehaviorPattern = request.PbehaviorPattern
+	case savedpattern.TypeWeatherService:
+		model.WeatherServicePattern = request.WeatherServicePattern
 	}
 
 	return model

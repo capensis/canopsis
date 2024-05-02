@@ -1,4 +1,4 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
+import { ALARM_STATES, ALARM_STATUSES, TIME_UNITS } from '@/constants';
 
 /**
  * @typedef {Object} AlarmOldLink
@@ -21,12 +21,13 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  */
 
 /**
- * @typedef {Object} AlarmEvent
+ * @typedef {Object} AlarmStep
  * @property {number} val
  * @property {string} a
  * @property {number} t
  * @property {string} _t
  * @property {string} m
+ * @property {boolean} [in_pbh]
  */
 
 /**
@@ -90,14 +91,14 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {Object} infos_rule_version
  * @property {InfosObject} infos
  * @property {string[]} parents
- * @property {AlarmEvent} ack
- * @property {AlarmEvent} state
- * @property {AlarmEvent} status
- * @property {AlarmEvent} ticket
- * @property {AlarmEvent} snooze
- * @property {AlarmEvent} canceled
- * @property {AlarmEvent} last_comment
- * @property {AlarmEvent[]} [steps]
+ * @property {AlarmStep} ack
+ * @property {AlarmStep} state
+ * @property {AlarmStep} status
+ * @property {AlarmStep} ticket
+ * @property {AlarmStep} snooze
+ * @property {AlarmStep} canceled
+ * @property {AlarmStep} last_comment
+ * @property {AlarmStep[]} [steps]
  * @property {AlarmValuePbehaviorInfo} [pbehavior_info]
  */
 
@@ -137,7 +138,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @param {Alarm} alarm
  * @returns {boolean}
  */
-export const isAlarmStateOk = alarm => alarm.v?.state?.val === ENTITIES_STATES.ok;
+export const isAlarmStateOk = alarm => alarm.v?.state?.val === ALARM_STATES.ok;
 
 /**
  * Check alarm status is closed
@@ -145,7 +146,7 @@ export const isAlarmStateOk = alarm => alarm.v?.state?.val === ENTITIES_STATES.o
  * @param {Alarm} alarm
  * @returns {boolean}
  */
-export const isAlarmStatusClosed = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.closed;
+export const isAlarmStatusClosed = alarm => alarm.v?.status?.val === ALARM_STATUSES.closed;
 
 /**
  * Check alarm status is cancelled
@@ -153,7 +154,7 @@ export const isAlarmStatusClosed = alarm => alarm.v?.status?.val === ENTITIES_ST
  * @param {Alarm} alarm
  * @returns {boolean}
  */
-export const isAlarmStatusCancelled = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.cancelled;
+export const isAlarmStatusCancelled = alarm => alarm.v?.status?.val === ALARM_STATUSES.cancelled;
 
 /**
  * Check alarm status is ongoing
@@ -161,7 +162,7 @@ export const isAlarmStatusCancelled = alarm => alarm.v?.status?.val === ENTITIES
  * @param {Alarm} alarm
  * @returns {boolean}
  */
-export const isAlarmStatusOngoing = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.ongoing;
+export const isAlarmStatusOngoing = alarm => alarm.v?.status?.val === ALARM_STATUSES.ongoing;
 
 /**
  * Check alarm status is flapping
@@ -169,7 +170,7 @@ export const isAlarmStatusOngoing = alarm => alarm.v?.status?.val === ENTITIES_S
  * @param {Alarm} alarm
  * @returns {boolean}
  */
-export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.flapping;
+export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ALARM_STATUSES.flapping;
 
 /**
  * @typedef {Object} SnoozeAction
@@ -188,7 +189,7 @@ export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ENTITIES_
  * @param {Alarm} alarm - alarm entity
  * @returns {boolean}
  */
-export const isCancelledAlarmStatus = alarm => alarm.v.status.val === ENTITIES_STATUSES.cancelled;
+export const isCancelledAlarmStatus = alarm => alarm.v.status.val === ALARM_STATUSES.cancelled;
 
 /**
  * Checks if alarm is closed
@@ -196,7 +197,7 @@ export const isCancelledAlarmStatus = alarm => alarm.v.status.val === ENTITIES_S
  * @param {Alarm} alarm - alarm entity
  * @returns {boolean}
  */
-export const isClosedAlarmStatus = alarm => alarm.v.status.val === ENTITIES_STATUSES.closed;
+export const isClosedAlarmStatus = alarm => alarm.v.status.val === ALARM_STATUSES.closed;
 
 /**
  * Checks if alarm is resolved
@@ -238,7 +239,7 @@ export const isActionAvailableForAlarm = (alarm, widget) => {
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isAlarmStateNotOk = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
+export const isAlarmStateNotOk = alarm => ALARM_STATES.ok !== alarm.v.state.val;
 
 /**
  * Convert snooze object to form snooze

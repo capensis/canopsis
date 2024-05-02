@@ -20,6 +20,7 @@ const stubs = {
   'storage-settings-pbehavior-form': true,
   'storage-settings-remediation-form': true,
   'storage-settings-alarm-form': true,
+  'storage-settings-alarm-external-tag-form': true,
 };
 
 const selectStorageSettingsPerfDataMetricsForm = wrapper => wrapper.find('storage-settings-perf-data-metrics-form-stub');

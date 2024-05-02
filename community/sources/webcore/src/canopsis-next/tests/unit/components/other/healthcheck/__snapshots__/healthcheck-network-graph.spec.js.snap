@@ -1,0 +1,533 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`healthcheck-network-graph Renders \`healthcheck-network-graph\` with custom props 1`] = `
+<div
+  class="network-graph healthcheck-network-graph"
+>
+  <div
+    class="network-graph__canvas-wrapper __________cytoscape_container"
+  >
+    <div
+      style="position: relative; z-index: 0; overflow: hidden; width: 1000px; height: 1000px;"
+    >
+      <canvas
+        data-id="layer0-selectbox"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 3; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <canvas
+        data-id="layer1-drag"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 2; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <canvas
+        data-id="layer2-node"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 1; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <div
+        style="position: absolute; z-index: 10; width: 500px; margin: 0px; padding: 0px; border: 0px; outline: 0px; webkit-transform: translate(546.434466820733px,292.64608781776167px) scale(0.6404754044239023); transform: translate(546.434466820733px,292.64608781776167px) scale(0.6404754044239023); webkit-transform-origin: top left; transform-origin: top left;"
+      >
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,-307.50px) ; transform: translate(0%,-50%) translate(174.50px,-307.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              FIFO
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,-81.50px) ; transform: translate(0%,-50%) translate(174.50px,-81.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              CHE
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,144.50px) ; transform: translate(0%,-50%) translate(174.50px,144.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              AXE
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,370.50px) ; transform: translate(0%,-50%) translate(-51.50px,370.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Correlation
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,370.50px) ; transform: translate(0%,-50%) translate(174.50px,370.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Remediation
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(400.50px,370.50px) ; transform: translate(0%,-50%) translate(400.50px,370.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Pbehavior
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,596.50px) ; transform: translate(0%,-50%) translate(-51.50px,596.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Dynamic infos
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,822.50px) ; transform: translate(0%,-50%) translate(-51.50px,822.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Action
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,1048.50px) ; transform: translate(0%,-50%) translate(-51.50px,1048.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Webhook
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,0%) translate(-515.50px,-277.50px) ; transform: translate(-50%,0%) translate(-515.50px,-277.50px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            MongoDB
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,0%) translate(-75.50px,-277.50px) ; transform: translate(-50%,0%) translate(-75.50px,-277.50px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            Redis
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-100%,0%) translate(-105.50px,-57.50px) ; transform: translate(-100%,0%) translate(-105.50px,-57.50px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            RabbitMQ
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,0%) translate(-515.50px,-57.50px) ; transform: translate(-50%,0%) translate(-515.50px,-57.50px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            TimescaleDB
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,-50%) translate(-75.50px,132.50px) ; transform: translate(-50%,-50%) translate(-75.50px,132.50px) ;"
+        >
+          <div
+            class="headline"
+          >
+            Events
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,-50%) translate(-295.50px,-417.50px) ; transform: translate(-50%,-50%) translate(-295.50px,-417.50px) ;"
+        >
+          <div
+            class="headline"
+          >
+            Healthcheck
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-100%) translate(-265.50px,-337.50px) ; transform: translate(0%,-100%) translate(-265.50px,-337.50px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            Canopsis API
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,-50%) translate(144.50px,-417.50px) ; transform: translate(-50%,-50%) translate(144.50px,-417.50px) ;"
+        >
+          <div
+            class=""
+          >
+            <span
+              class="headline"
+            >
+              Engines chain
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-tooltip__content menuable__content__active network-graph__tooltip"
+  />
+</div>
+`;
+
+exports[`healthcheck-network-graph Renders \`healthcheck-network-graph\` with custom props and snmp node 1`] = `
+<div
+  class="network-graph healthcheck-network-graph"
+>
+  <div
+    class="network-graph__canvas-wrapper __________cytoscape_container"
+  >
+    <div
+      style="position: relative; z-index: 0; overflow: hidden; width: 1000px; height: 1000px;"
+    >
+      <canvas
+        data-id="layer0-selectbox"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 3; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <canvas
+        data-id="layer1-drag"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 2; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <canvas
+        data-id="layer2-node"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 1; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <div
+        style="position: absolute; z-index: 10; width: 500px; margin: 0px; padding: 0px; border: 0px; outline: 0px; webkit-transform: translate(540.5448255981551px,285.67166330354564px) scale(0.5592389737676564); transform: translate(540.5448255981551px,285.67166330354564px) scale(0.5592389737676564); webkit-transform-origin: top left; transform-origin: top left;"
+      >
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,-138.00px) ; transform: translate(0%,-50%) translate(174.50px,-138.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              FIFO
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,88.00px) ; transform: translate(0%,-50%) translate(174.50px,88.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              CHE
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,314.00px) ; transform: translate(0%,-50%) translate(174.50px,314.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              AXE
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,540.00px) ; transform: translate(0%,-50%) translate(-51.50px,540.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Correlation
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,540.00px) ; transform: translate(0%,-50%) translate(174.50px,540.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Remediation
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(400.50px,540.00px) ; transform: translate(0%,-50%) translate(400.50px,540.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Pbehavior
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,766.00px) ; transform: translate(0%,-50%) translate(-51.50px,766.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Dynamic infos
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,992.00px) ; transform: translate(0%,-50%) translate(-51.50px,992.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Action
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(-51.50px,1218.00px) ; transform: translate(0%,-50%) translate(-51.50px,1218.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              Webhook
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(174.50px,-364.00px) ; transform: translate(0%,-50%) translate(174.50px,-364.00px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              SNMP
+            </div>
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,0%) translate(-515.50px,-108.00px) ; transform: translate(-50%,0%) translate(-515.50px,-108.00px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            MongoDB
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,0%) translate(-75.50px,-108.00px) ; transform: translate(-50%,0%) translate(-75.50px,-108.00px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            Redis
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-100%,0%) translate(-105.50px,112.00px) ; transform: translate(-100%,0%) translate(-105.50px,112.00px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            RabbitMQ
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,0%) translate(-515.50px,112.00px) ; transform: translate(-50%,0%) translate(-515.50px,112.00px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            TimescaleDB
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,-50%) translate(-75.50px,302.00px) ; transform: translate(-50%,-50%) translate(-75.50px,302.00px) ;"
+        >
+          <div
+            class="headline"
+          >
+            Events
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,-50%) translate(-295.50px,-248.00px) ; transform: translate(-50%,-50%) translate(-295.50px,-248.00px) ;"
+        >
+          <div
+            class="headline"
+          >
+            Healthcheck
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-100%) translate(-265.50px,-168.00px) ; transform: translate(0%,-100%) translate(-265.50px,-168.00px) ;"
+        >
+          <div
+            class="subtitle-1"
+          >
+            Canopsis API
+          </div>
+        </div>
+        <div
+          style="position: absolute; webkit-transform: translate(-50%,-50%) translate(144.50px,-468.00px) ; transform: translate(-50%,-50%) translate(144.50px,-468.00px) ;"
+        >
+          <div
+            class=""
+          >
+            <span
+              class="headline"
+            >
+              Engines chain
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-tooltip__content menuable__content__active network-graph__tooltip"
+  />
+</div>
+`;
+
+exports[`healthcheck-network-graph Renders \`healthcheck-network-graph\` with default props 1`] = `
+<div
+  class="network-graph healthcheck-network-graph"
+>
+  <div
+    class="network-graph__canvas-wrapper __________cytoscape_container"
+  >
+    <div
+      style="position: relative; z-index: 0; overflow: hidden; width: 1000px; height: 1000px;"
+    >
+      <canvas
+        data-id="layer0-selectbox"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 3; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <canvas
+        data-id="layer1-drag"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 2; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <canvas
+        data-id="layer2-node"
+        height="1000"
+        style="user-select: none; outline-style: none; position: absolute; z-index: 1; width: 1000px; height: 1000px;"
+        width="1000"
+      />
+      <div
+        style="position: absolute; z-index: 10; width: 500px; margin: 0px; padding: 0px; border: 0px; outline: 0px; webkit-transform: translate(452.75px,452.75px) scale(1.5); transform: translate(452.75px,452.75px) scale(1.5); webkit-transform-origin: top left; transform-origin: top left;"
+      >
+        <div
+          style="position: absolute; webkit-transform: translate(0%,-50%) translate(61.50px,31.50px) ; transform: translate(0%,-50%) translate(61.50px,31.50px) ;"
+        >
+          <div
+            class="ml-2"
+          >
+            <div
+              class="subtitle-1"
+            >
+              FIFO
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-tooltip__content menuable__content__active network-graph__tooltip"
+  />
+</div>
+`;

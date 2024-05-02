@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 )
@@ -13,7 +14,7 @@ func (f *Feeder) sendIterable(ctx context.Context, iterable []interface{}) error
 		_, ok := v.(map[string]interface{})
 
 		if !ok {
-			return fmt.Errorf("sending event: not a map[string]interface{}")
+			return errors.New("sending event: not a map[string]interface{}")
 		}
 
 		bv, err := json.Marshal(v)

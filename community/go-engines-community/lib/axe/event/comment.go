@@ -5,11 +5,9 @@ import (
 	"errors"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -18,13 +16,11 @@ import (
 
 func NewCommentProcessor(
 	client mongo.DbClient,
-	configProvider config.AlarmConfigProvider,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	logger zerolog.Logger,
 ) Processor {
 	return &commentProcessor{
 		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		configProvider:          configProvider,
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
 		logger:                  logger,
 	}
@@ -32,7 +28,6 @@ func NewCommentProcessor(
 
 type commentProcessor struct {
 	alarmCollection         mongo.DbCollection
-	configProvider          config.AlarmConfigProvider
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	logger                  zerolog.Logger
 }
@@ -44,13 +39,12 @@ func (p *commentProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Res
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	conf := p.configProvider.Get()
-	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStep := types.NewAlarmStep(types.AlarmStepComment, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$set":  bson.M{"v.last_comment": newStep},
-		"$push": bson.M{"v.steps": newStep},
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepComment, event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.last_comment": newStepQuery,
+			"v.steps":        addStepUpdateQuery(newStepQuery),
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	alarm := types.Alarm{}

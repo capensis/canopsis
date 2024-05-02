@@ -672,6 +672,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 			{
 				ID:        utils.NewID(),
 				Author:    r.Author,
+				Origin:    r.Origin,
 				Timestamp: &now,
 				Message:   r.Comment,
 			},

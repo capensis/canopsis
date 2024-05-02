@@ -147,16 +147,10 @@ export default {
         buttons: {
           addComment: 'Ajouter un commentaire',
         },
-        fields: {
-          message: 'Message',
-        },
       },
       color: {
         label: 'Utiliser une couleur spéciale pour cet événement ?',
       },
-    },
-    errors: {
-      invalid: 'Invalide',
     },
     success: {
       create: 'Comportement périodique créé avec succès !',
@@ -273,6 +267,9 @@ export default {
       },
       [WIDGET_TYPES.alarmStatistics]: {
         title: 'Statistiques des alarmes',
+      },
+      [WIDGET_TYPES.availability]: {
+        title: 'Disponibilité',
       },
       chart: {
         title: 'Graphique',
@@ -409,7 +406,6 @@ export default {
       success: 'Information dynamique supprimée avec succès !',
     },
     errors: {
-      invalid: 'Invalide',
       emptyInfos: 'Au moins une information doit être ajoutée.',
     },
     steps: {
@@ -536,11 +532,11 @@ export default {
     },
     emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
-  createManualMetaAlarm: {
-    title: 'Gestion manuelle des méta-alarmes',
+  linkToMetaAlarm: {
+    title: 'Lier à une méta-alarme',
     noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
     fields: {
-      metaAlarm: 'Méta-alarme manuelle',
+      metaAlarm: 'Sélectionnez une méta-alarme ou créez-en une nouvelle',
     },
   },
   createRemediationInstruction: {
@@ -843,6 +839,22 @@ export default {
       title: 'Modifier le filtre partagé de comportement périodique',
     },
   },
+  createServiceWeatherPattern: {
+    create: {
+      title: 'Créer un modèle de météo des services',
+    },
+    edit: {
+      title: 'Modifier le modèle de météo des services',
+    },
+  },
+  createCorporateServiceWeatherPattern: {
+    create: {
+      title: 'Créer un modèle partagé de météo des services',
+    },
+    edit: {
+      title: 'Editer un modèle partagé de météo des services',
+    },
+  },
   createMap: {
     title: 'Créer une carte',
   },
@@ -941,6 +953,9 @@ export default {
     edit: {
       title: 'Modifier le générateur de liens',
     },
+    duplicate: {
+      title: 'Dupliquer un générateur de liens',
+    },
   },
   createAlarmChart: {
     [WIDGET_TYPES.barChart]: {
@@ -983,6 +998,14 @@ export default {
   confirmationLeaveMaintenance: {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
+  },
+  confirmationCreateNewTicketForAlarm: {
+    title: 'Confirmer la création de tickets',
+    text: 'Au moins un ticket existe déjà pour cette alarme.\nVoulez-vous en créer un nouveau ?',
+  },
+  confirmationCreateNewTicketForAlarms: {
+    title: 'Confirmer la création de tickets',
+    text: 'Des tickets existent déjà pour certaines alarmes.\nVoulez-vous en créer de nouveaux pour celles-ci ?',
   },
   createTag: {
     create: {

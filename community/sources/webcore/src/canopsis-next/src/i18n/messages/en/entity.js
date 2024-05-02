@@ -24,6 +24,7 @@ export default {
     componentInfos: 'Component infos',
     alarmDisplayName: 'Alarm display name',
     alarmCreationDate: 'Alarm creation date',
+    alarmLastComment: 'Alarm last comment',
     importSource: 'Import source',
     imported: 'Imported date',
   },
@@ -31,5 +32,8 @@ export default {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Show all dependencies',
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]: 'Show dependencies defining the state',
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.custom]: 'Show selector',
+  },
+  comments: {
+    emptyList: 'No comments are added yet',
   },
 };

@@ -742,6 +742,38 @@ describe('pattern form converters', () => {
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
+  it('should be converted to form and back to pattern with is meta alarm', () => {
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.meta,
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.meta,
+      operator: PATTERN_OPERATORS.isMetaAlarm,
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with inactive', () => {
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.meta,
+      cond: { type: PATTERN_CONDITIONS.exist, value: false },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.meta,
+      operator: PATTERN_OPERATORS.isNotMetaAlarm,
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
   it('should be converted to form and back to pattern with `relative time` condition for activation date', () => {
     const lastHour = 3600;
     const patternRule = {

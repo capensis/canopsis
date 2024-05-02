@@ -97,7 +97,9 @@ export default {
     },
 
     message() {
-      const message = this.$t(`pageHeaders.${this.name}.message`);
+      const message = this.hasMessage
+        ? this.$t(`pageHeaders.${this.name}.message`)
+        : '';
 
       return this.learMoreMessage ? `${message}\n${this.learMoreMessage}` : message;
     },

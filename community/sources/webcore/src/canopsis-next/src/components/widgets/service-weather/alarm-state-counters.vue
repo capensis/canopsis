@@ -28,9 +28,9 @@
 import { get } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { ENTITIES_STATES, SERVICE_WEATHER_STATE_COUNTERS, SERVICE_WEATHER_STATE_COUNTERS_ICONS } from '@/constants';
+import { ALARM_STATES, SERVICE_WEATHER_STATE_COUNTERS, SERVICE_WEATHER_STATE_COUNTERS_ICONS } from '@/constants';
 
-import { getEntityStateColor } from '@/helpers/entities/entity/color';
+import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
 import AlarmCounter from './alarm-counter.vue';
 
@@ -51,9 +51,9 @@ export default {
       return {
         [SERVICE_WEATHER_STATE_COUNTERS.all]: CSS_COLORS_VARS.error,
         [SERVICE_WEATHER_STATE_COUNTERS.active]: CSS_COLORS_VARS.error,
-        [SERVICE_WEATHER_STATE_COUNTERS.minor]: getEntityStateColor(ENTITIES_STATES.minor),
-        [SERVICE_WEATHER_STATE_COUNTERS.major]: getEntityStateColor(ENTITIES_STATES.major),
-        [SERVICE_WEATHER_STATE_COUNTERS.critical]: getEntityStateColor(ENTITIES_STATES.critical),
+        [SERVICE_WEATHER_STATE_COUNTERS.minor]: getAlarmStateColor(ALARM_STATES.minor),
+        [SERVICE_WEATHER_STATE_COUNTERS.major]: getAlarmStateColor(ALARM_STATES.major),
+        [SERVICE_WEATHER_STATE_COUNTERS.critical]: getAlarmStateColor(ALARM_STATES.critical),
       };
     },
 

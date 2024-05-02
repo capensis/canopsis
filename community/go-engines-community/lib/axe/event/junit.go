@@ -51,10 +51,11 @@ func (p *junitProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newStep := types.NewAlarmStep(alarmStepType, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$push": bson.M{"v.steps": newStep},
+	newStepQuery := stepUpdateQueryWithInPbhInterval(alarmStepType, event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.steps": addStepUpdateQuery(newStepQuery),
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	alarm := types.Alarm{}

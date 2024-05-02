@@ -16,36 +16,30 @@ type OptionalStringArray struct {
 }
 
 func (a *OptionalStringArray) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
-	case bson.TypeArray:
-		var raw bson.Raw
-		err := bson.Unmarshal(b, &raw)
-		if err != nil {
-			return err
-		}
-
-		array, err := raw.Values()
-		if err != nil {
-			return err
-		}
-
-		for _, v := range array {
-			stringValue, ok := v.StringValueOK()
-			if !ok {
-				return fmt.Errorf("unable to parse string element")
-			}
-
-			a.Value = append(a.Value, stringValue)
-		}
-	default:
-		return fmt.Errorf("unable to parse array")
+	if valueType != bson.TypeArray {
+		return errors.New("unable to parse array")
+	}
+	var raw bson.Raw
+	err := bson.Unmarshal(b, &raw)
+	if err != nil {
+		return err
 	}
 
-	if len(a.Value) == 0 {
-		a.Set = false
-	} else {
-		a.Set = true
+	array, err := raw.Values()
+	if err != nil {
+		return err
 	}
+
+	for _, v := range array {
+		stringValue, ok := v.StringValueOK()
+		if !ok {
+			return errors.New("unable to parse string element")
+		}
+
+		a.Value = append(a.Value, stringValue)
+	}
+
+	a.Set = len(a.Value) > 0
 
 	return nil
 }
@@ -106,7 +100,7 @@ func (i *OptionalInt64) UnmarshalBSONValue(valueType bsontype.Type, b []byte) er
 		}
 
 	default:
-		return fmt.Errorf("unable to parse integer")
+		return errors.New("unable to parse integer")
 	}
 
 	i.Set = true
@@ -151,7 +145,7 @@ func (s *OptionalBool) UnmarshalBSONValue(valueType bsontype.Type, b []byte) err
 
 		s.Value = value
 	default:
-		return fmt.Errorf("unable to parse bool")
+		return errors.New("unable to parse bool")
 	}
 
 	s.Set = true
@@ -196,7 +190,7 @@ func (s *OptionalString) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 
 		s.Value = value
 	default:
-		return fmt.Errorf("unable to parse string")
+		return errors.New("unable to parse string")
 	}
 
 	s.Set = true
@@ -314,7 +308,7 @@ func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 			r.Value = re
 		}
 	default:
-		return fmt.Errorf("unable to parse regular expression")
+		return errors.New("unable to parse regular expression")
 	}
 
 	r.Set = true

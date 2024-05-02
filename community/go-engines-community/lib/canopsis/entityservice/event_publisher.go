@@ -25,6 +25,7 @@ type eventPublisher struct {
 	contentType string
 	// exchange, routingKey is amqp queue to publish message.
 	exchange, routingKey string
+	connector            string
 	logger               zerolog.Logger
 }
 
@@ -46,6 +47,7 @@ func NewEventPublisher(
 	encoder encoding.Encoder,
 	contentType string,
 	exchange, routingKey string,
+	connector string,
 	logger zerolog.Logger,
 ) EventPublisher {
 	return &eventPublisher{
@@ -54,6 +56,7 @@ func NewEventPublisher(
 		contentType:   contentType,
 		exchange:      exchange,
 		routingKey:    routingKey,
+		connector:     connector,
 		logger:        logger,
 	}
 }
@@ -95,12 +98,12 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 
 	event := types.Event{
 		EventType:     eventType,
-		Connector:     types.ConnectorApi,
-		ConnectorName: types.ConnectorApi,
+		Connector:     p.connector,
+		ConnectorName: p.connector,
 		Component:     msg.ID,
 		Timestamp:     datetime.NewCpsTime(),
-		Author:        canopsis.DefaultEventAuthor,
 		SourceType:    types.SourceTypeService,
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 	}
 
@@ -120,19 +123,22 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 		event = types.Event{
 			Connector:     strings.ReplaceAll(msg.ID, "/"+msg.Name, ""),
 			ConnectorName: msg.Name,
+			SourceType:    types.SourceTypeConnector,
 		}
 	case types.EntityTypeComponent:
 		event = types.Event{
-			Connector:     types.ConnectorApi,
-			ConnectorName: types.ConnectorApi,
+			Connector:     p.connector,
+			ConnectorName: p.connector,
 			Component:     msg.ID,
+			SourceType:    types.SourceTypeComponent,
 		}
 	case types.EntityTypeResource:
 		event = types.Event{
-			Connector:     types.ConnectorApi,
-			ConnectorName: types.ConnectorApi,
+			Connector:     p.connector,
+			ConnectorName: p.connector,
 			Component:     msg.Component,
 			Resource:      msg.Name,
+			SourceType:    types.SourceTypeResource,
 		}
 	}
 
@@ -145,7 +151,6 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	event.Timestamp = datetime.NewCpsTime()
 	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
-	event.SourceType = event.DetectSourceType()
 	err := p.publishEvent(ctx, event)
 	if err != nil {
 		p.logger.Err(err).Str("entity_id", msg.ID).Msg("cannot send event to amqp")
@@ -160,10 +165,10 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 			Connector:     event.Connector,
 			ConnectorName: event.ConnectorName,
 			Component:     event.Component,
+			SourceType:    types.SourceTypeResource,
 			Timestamp:     event.Timestamp,
 			Author:        event.Author,
-			SourceType:    types.SourceTypeResource,
-			Initiator:     types.InitiatorSystem,
+			Initiator:     event.Initiator,
 		}
 
 		for _, resID := range msg.Resources {

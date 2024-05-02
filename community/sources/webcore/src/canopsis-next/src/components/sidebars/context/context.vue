@@ -31,6 +31,7 @@
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
       <field-tree-of-dependencies-settings v-model="form.parameters.treeOfDependenciesShowType" />
+      <field-availability-graph-settings v-model="form.parameters.availability" />
       <field-root-cause-settings v-model="form.parameters" />
       <field-columns
         v-model="form.parameters.activeAlarmsColumns"
@@ -93,6 +94,7 @@ import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/c
 
 import FieldTreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
 
+import FieldAvailabilityGraphSettings from '../availability/form/fields/availability-graph-settings.vue';
 import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
 import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
@@ -110,6 +112,7 @@ export default {
   name: SIDE_BARS.contextSettings,
   components: {
     FieldGridRangeSize,
+    FieldAvailabilityGraphSettings,
     FieldRootCauseSettings,
     FieldTreeOfDependenciesSettings,
     FieldTitle,

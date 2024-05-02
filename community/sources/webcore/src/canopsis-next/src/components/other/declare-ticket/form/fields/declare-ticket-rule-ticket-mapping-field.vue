@@ -40,11 +40,13 @@
           :disabled="disabled"
           :name="ticketIdFieldName"
           :required="ticketIdRequired"
+          :variables="payloadVariablesFromPreviousStep"
         />
         <declare-ticket-rule-ticket-url-field
           v-field="value.ticket_url"
           :disabled="disabled"
           :name="ticketUrlFieldName"
+          :variables="payloadVariablesFromPreviousStep"
         />
         <declare-ticket-rule-ticket-custom-fields-field
           v-field="value.mapping"
@@ -58,6 +60,7 @@
 
 <script>
 import { formMixin } from '@/mixins/form';
+import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './declare-ticket-rule-ticket-custom-fields-field.vue';
@@ -70,7 +73,7 @@ export default {
     DeclareTicketRuleTicketCustomFieldsField,
     DeclareTicketRuleTicketIdField,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, payloadVariablesMixin],
   model: {
     prop: 'value',
     event: 'input',

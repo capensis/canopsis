@@ -62,7 +62,7 @@ export const MODALS = {
   createPbehaviorException: 'create-pbehavior-exception',
   importPbehaviorException: 'import-pbehavior-exception',
 
-  createManualMetaAlarm: 'create-manual-meta-alarm',
+  linkToMetaAlarm: 'link-to-meta-alarm',
   removeAlarmsFromMetaAlarm: 'remove-alarms-from-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',

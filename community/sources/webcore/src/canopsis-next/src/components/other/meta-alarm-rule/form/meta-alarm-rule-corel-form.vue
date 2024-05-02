@@ -1,62 +1,97 @@
 <template>
   <v-layout column>
-    <v-text-field
-      v-field.number="config.corel_id"
-      v-validate="'required'"
+    <v-layout>
+      <v-flex xs6>
+        <c-number-field
+          v-field="config.threshold_count"
+          :min="0"
+          :label="$t('metaAlarmRule.thresholdCount')"
+          name="thresholdCount"
+        >
+          <template #append-outer>
+            <c-help-icon
+              :text="$t('metaAlarmRule.thresholdCountHelpText')"
+              max-width="300"
+              icon="help"
+              top
+            />
+          </template>
+        </c-number-field>
+      </v-flex>
+    </v-layout>
+    <meta-alarm-rule-time-based-form v-field="config" with-child-inactive-delay />
+    <c-payload-text-field
+      v-field="config.corel_id"
       :label="$t('metaAlarmRule.corelId')"
-      :error-messages="errors.collect('corelId')"
+      :variables="variables"
       name="corelId"
-    >
-      <template #append="">
-        <c-help-icon
-          :text="$t('metaAlarmRule.corelIdHelp')"
-          icon="help"
-          left
-        />
-      </template>
-    </v-text-field>
-    <v-text-field
-      v-field.number="config.corel_status"
-      v-validate="'required'"
-      :label="$t('metaAlarmRule.corelStatus')"
-      :error-messages="errors.collect('corelStatus')"
-      name="corelStatus"
-    >
-      <template #append="">
-        <c-help-icon
-          :text="$t('metaAlarmRule.corelStatusHelp')"
-          icon="help"
-          left
-        />
-      </template>
-    </v-text-field>
-    <v-text-field
-      v-field.number="config.corel_parent"
-      v-validate="'required'"
-      :label="$t('metaAlarmRule.corelParent')"
-      :error-messages="errors.collect('corelParent')"
-      name="corelParent"
-    />
-    <v-text-field
-      v-field.number="config.corel_child"
-      v-validate="'required'"
-      :label="$t('metaAlarmRule.corelChild')"
-      :error-messages="errors.collect('corelChild')"
-      name="corelChild"
-    />
-    <c-number-field
-      v-field="config.threshold_count"
-      :label="$t('metaAlarmRule.thresholdCount')"
-      :min="0"
-      name="thresholdCount"
       required
-    />
+    >
+      <template #append-outer="">
+        <c-help-icon
+          :text="$t('metaAlarmRule.corelIdHelpText')"
+          max-width="300"
+          icon="help"
+          left
+        />
+      </template>
+    </c-payload-text-field>
+    <c-payload-text-field
+      v-field="config.corel_status"
+      :label="$t('metaAlarmRule.corelStatus')"
+      :variables="variables"
+      name="corelStatus"
+      required
+    >
+      <template #append-outer="">
+        <c-help-icon
+          :text="$t('metaAlarmRule.corelStatusHelpText')"
+          max-width="300"
+          icon="help"
+          left
+        />
+      </template>
+    </c-payload-text-field>
+    <c-payload-text-field
+      v-field="config.corel_parent"
+      :label="$t('metaAlarmRule.corelParent')"
+      :variables="variables"
+      name="corelParent"
+      required
+    >
+      <template #append-outer="">
+        <c-help-icon
+          :text="$t('metaAlarmRule.corelParentHelpText')"
+          max-width="300"
+          icon="help"
+          left
+        />
+      </template>
+    </c-payload-text-field>
+    <c-payload-text-field
+      v-field="config.corel_child"
+      :label="$t('metaAlarmRule.corelChild')"
+      :variables="variables"
+      name="corelChild"
+      required
+    >
+      <template #append-outer="">
+        <c-help-icon
+          :text="$t('metaAlarmRule.corelChildHelpText')"
+          max-width="300"
+          icon="help"
+          left
+        />
+      </template>
+    </c-payload-text-field>
   </v-layout>
 </template>
 
 <script>
+import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
+
 export default {
-  inject: ['$validator'],
+  components: { MetaAlarmRuleTimeBasedForm },
   model: {
     prop: 'config',
     event: 'input',
@@ -65,6 +100,10 @@ export default {
     config: {
       type: Object,
       default: () => ({}),
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
 };

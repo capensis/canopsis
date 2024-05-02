@@ -82,8 +82,10 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	}()
 
 	alarmConfig := p.AlarmConfigProvider.Get()
-	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
-	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
+	if event.Initiator == types.InitiatorExternal {
+		event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
+		event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
+	}
 
 	var updatedEntitiesForEvent []types.Entity
 	var updatedEntityIdsForMetrics []string
@@ -148,11 +150,12 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 			updateCountersEvent = types.Event{
 				EventType:     types.EventTypeUpdateCounters,
 				SourceType:    types.SourceTypeComponent,
-				Connector:     event.Connector,
-				ConnectorName: event.ConnectorName,
+				Connector:     canopsis.CheConnector,
+				ConnectorName: canopsis.CheConnector,
 				Component:     ent.Component,
 				Timestamp:     now,
 				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
 				Initiator:     types.InitiatorSystem,
 			}
 		case types.EntityTypeConnector:
@@ -163,6 +166,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 				ConnectorName: event.ConnectorName,
 				Timestamp:     now,
 				Entity:        &ent,
+				Author:        canopsis.DefaultEventAuthor,
 				Initiator:     types.InitiatorSystem,
 			}
 		}

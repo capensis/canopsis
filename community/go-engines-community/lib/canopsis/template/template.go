@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"reflect"
 	"regexp"
@@ -95,7 +94,7 @@ func (e *executor) Parse(text string) ParsedTemplate {
 func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
 	buf, ok := e.bufPool.Get().(*bytes.Buffer)
 	if !ok {
-		return "", fmt.Errorf("unknown buffer type")
+		return "", errors.New("unknown buffer type")
 	}
 
 	defer e.bufPool.Put(buf)

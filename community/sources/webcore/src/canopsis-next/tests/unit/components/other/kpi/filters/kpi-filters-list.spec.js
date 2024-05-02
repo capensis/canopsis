@@ -5,7 +5,7 @@ import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
-  'c-search-field': true,
+  'c-search': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
@@ -107,7 +107,6 @@ describe('kpi-filters-list', () => {
         options: {
           page: 2,
           itemsPerPage: 10,
-          search: 'Filter',
           sortBy: ['created'],
           sortDesc: [],
         },
@@ -129,7 +128,6 @@ describe('kpi-filters-list', () => {
         options: {
           page: 1,
           itemsPerPage: 10,
-          search: '',
           sortBy: [],
           sortDesc: [],
         },
@@ -149,7 +147,6 @@ describe('kpi-filters-list', () => {
         options: {
           page: 1,
           itemsPerPage: 10,
-          search: '',
           sortBy: [],
           sortDesc: [],
         },

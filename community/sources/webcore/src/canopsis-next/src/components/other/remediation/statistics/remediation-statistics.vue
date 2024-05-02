@@ -38,7 +38,7 @@ import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { saveFile } from '@/helpers/file/files';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { exportMixinCreator } from '@/mixins/widget/export';

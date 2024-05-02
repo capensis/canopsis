@@ -3,7 +3,7 @@
     v-field="value"
     :label="$t('declareTicket.ticketURL')"
     :name="name"
-    :variables="payloadVariablesFromPreviousStep"
+    :variables="variables"
     :disabled="disabled"
   >
     <template #append="">
@@ -18,10 +18,7 @@
 </template>
 
 <script>
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
-
 export default {
-  mixins: [payloadVariablesMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -38,6 +35,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
 };

@@ -10,6 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -29,7 +31,7 @@ type API interface {
 
 type api struct {
 	store        Store
-	computeChan  chan<- []string
+	computeChan  chan<- rpc.PbehaviorRecomputeEvent
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 
@@ -38,7 +40,7 @@ type api struct {
 
 func NewApi(
 	store Store,
-	computeChan chan<- []string,
+	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
@@ -220,7 +222,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask([]string{pbh.ID})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
 
 	c.JSON(http.StatusCreated, pbh)
 }
@@ -273,7 +275,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask([]string{pbh.ID})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -330,7 +332,7 @@ func (a *api) Patch(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask([]string{pbh.ID})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -356,7 +358,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask([]string{id})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -388,7 +390,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask([]string{id})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -423,7 +425,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids})
 	}
 }
 
@@ -462,7 +464,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids})
 	}
 }
 
@@ -492,7 +494,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids})
 	}
 }
 
@@ -500,6 +502,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 // @Param body body []BulkEntityCreateRequestItem true "body"
 func (a *api) BulkEntityCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
+	username := c.MustGet(auth.Username).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityCreateRequestItem) (string, error) {
 		pbh, err := a.store.EntityInsert(c, request)
@@ -522,7 +525,12 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
+			Ids:       ids,
+			Author:    username,
+			UserID:    userId,
+			Initiator: types.InitiatorUser,
+		})
 	}
 }
 
@@ -530,6 +538,7 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 // @Param body body []BulkEntityDeleteRequestItem true "body"
 func (a *api) BulkEntityDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
+	username := c.MustGet(auth.Username).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityDeleteRequestItem) (string, error) {
 		id, err := a.store.EntityDelete(c, request)
@@ -552,7 +561,12 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
+			Ids:       ids,
+			Author:    username,
+			UserID:    userId,
+			Initiator: types.InitiatorUser,
+		})
 	}
 }
 
@@ -560,7 +574,7 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 // @Param body body []BulkConnectorCreateRequestItem true "body"
 func (a *api) BulkConnectorCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	ids := make([]string, 0)
+	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkConnectorCreateRequestItem) (string, error) {
 		pbh, err := a.store.ConnectorCreate(c, request)
@@ -578,15 +592,19 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 		}
 
 		if _, ok := exists[pbh.ID]; !ok {
-			ids = append(ids, pbh.ID)
+			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
 			exists[pbh.ID] = struct{}{}
 		}
 
 		return pbh.ID, nil
 	}, a.logger)
 
-	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+	for origin, ids := range idsByOrigin {
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
+			Ids:       ids,
+			Author:    origin,
+			Initiator: types.InitiatorExternal,
+		})
 	}
 }
 
@@ -594,7 +612,7 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 // @Param body body []BulkConnectorDeleteRequestItem true "body"
 func (a *api) BulkConnectorDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	ids := make([]string, 0)
+	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkConnectorDeleteRequestItem) (string, error) {
 		id, err := a.store.ConnectorDelete(c, request)
@@ -612,20 +630,24 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 		}
 
 		if _, ok := exists[id]; !ok {
-			ids = append(ids, id)
+			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
 			exists[id] = struct{}{}
 		}
 
 		return id, nil
 	}, a.logger)
 
-	if len(ids) > 0 {
-		a.sendComputeTask(ids)
+	for origin, ids := range idsByOrigin {
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
+			Ids:       ids,
+			Author:    origin,
+			Initiator: types.InitiatorExternal,
+		})
 	}
 }
 
-func (a *api) sendComputeTask(ids []string) {
-	a.computeChan <- ids
+func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {
+	a.computeChan <- event
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
-import { CANOPSIS_EDITION } from '@/constants';
+import { CANOPSIS_EDITION, EXPORT_STATUSES } from '@/constants';
 
 import request from '@/services/request';
 
@@ -589,6 +589,10 @@ export const createServiceModule = () => {
 export const createEntityModule = () => {
   const fetchStateSettingWithoutStore = jest.fn();
 
+  afterEach(() => {
+    fetchStateSettingWithoutStore.mockClear();
+  });
+
   const entityModule = {
     name: 'entity',
     actions: {
@@ -770,6 +774,7 @@ export const createAlarmModule = () => {
   const bulkCreateAlarmChangestateEvent = jest.fn();
   const addBookmarkToAlarm = jest.fn();
   const removeBookmarkFromAlarm = jest.fn();
+  const fetchExecutionsWithoutStore = jest.fn().mockResolvedValue({});
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
@@ -785,6 +790,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmChangestateEvent.mockClear();
     addBookmarkToAlarm.mockClear();
     removeBookmarkFromAlarm.mockClear();
+    fetchExecutionsWithoutStore.mockClear();
   });
 
   const alarmModule = {
@@ -803,6 +809,7 @@ export const createAlarmModule = () => {
       bulkCreateAlarmChangestateEvent,
       addBookmarkToAlarm,
       removeBookmarkFromAlarm,
+      fetchExecutionsWithoutStore,
     },
   };
 
@@ -820,6 +827,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmChangestateEvent,
     addBookmarkToAlarm,
     removeBookmarkFromAlarm,
+    fetchExecutionsWithoutStore,
     alarmModule,
   };
 };
@@ -946,42 +954,16 @@ export const createInfosModule = () => {
   };
 };
 
-export const createManualMetaAlarmModule = () => {
-  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
-  const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const removeAlarmsFromManualMetaAlarm = jest.fn().mockResolvedValue([]);
-
-  afterEach(() => {
-    fetchManualMetaAlarmsListWithoutStore.mockClear();
-    createManualMetaAlarm.mockClear();
-    addAlarmsIntoManualMetaAlarm.mockClear();
-    removeAlarmsFromManualMetaAlarm.mockClear();
-  });
-
-  const manualMetaAlarmModule = {
-    name: 'manualMetaAlarm',
-    actions: {
-      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
-      create: createManualMetaAlarm,
-      addAlarms: addAlarmsIntoManualMetaAlarm,
-      removeAlarms: removeAlarmsFromManualMetaAlarm,
-    },
-  };
-
-  return {
-    fetchManualMetaAlarmsListWithoutStore,
-    createManualMetaAlarm,
-    addAlarmsIntoManualMetaAlarm,
-    removeAlarmsFromManualMetaAlarm,
-    manualMetaAlarmModule,
-  };
-};
-
 export const createMetaAlarmModule = () => {
   const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
+  const fetchMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
+  const createMetaAlarm = jest.fn().mockResolvedValue([]);
+  const addAlarmsIntoMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
+    fetchMetaAlarmsListWithoutStore.mockClear();
+    createMetaAlarm.mockClear();
+    addAlarmsIntoMetaAlarm.mockClear();
     removeAlarmsFromMetaAlarm.mockClear();
   });
 
@@ -989,10 +971,16 @@ export const createMetaAlarmModule = () => {
     name: 'metaAlarm',
     actions: {
       removeAlarms: removeAlarmsFromMetaAlarm,
+      fetchListWithoutStore: fetchMetaAlarmsListWithoutStore,
+      create: createMetaAlarm,
+      addAlarms: addAlarmsIntoMetaAlarm,
     },
   };
 
   return {
+    fetchMetaAlarmsListWithoutStore,
+    createMetaAlarm,
+    addAlarmsIntoMetaAlarm,
     removeAlarmsFromMetaAlarm,
     metaAlarmModule,
   };
@@ -1330,5 +1318,64 @@ export const createPlaylistModule = () => {
     playlistModule,
     playlists,
     fetchPlaylistsList,
+  };
+};
+
+export const createAvailabilityModule = () => {
+  const exportAvailabilityData = {
+    _id: 'export-availability-id',
+    status: EXPORT_STATUSES.completed,
+  };
+
+  const getAvailabilityPendingByWidgetId = jest.fn().mockReturnValue(false);
+  const getAvailabilityListByWidgetId = jest.fn().mockReturnValue([]);
+  const getAvailabilityMetaByWidgetId = jest.fn().mockReturnValue({
+    total_count: 0,
+  });
+
+  const fetchAvailabilityWithoutStore = jest.fn().mockResolvedValue({
+    availability: {
+      uptime: 10,
+      downtime: 20,
+      inactive_time: 5,
+    },
+  });
+  const fetchAvailabilityHistoryWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchAvailabilityList = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchAvailabilityHistoryExport = jest.fn().mockReturnValue(exportAvailabilityData);
+
+  afterEach(() => {
+    fetchAvailabilityList.mockClear();
+    fetchAvailabilityWithoutStore.mockClear();
+    fetchAvailabilityHistoryWithoutStore.mockClear();
+    fetchAvailabilityHistoryExport.mockClear();
+  });
+
+  const availabilityModule = {
+    name: 'availability',
+    getters: {
+      getPendingByWidgetId: () => getAvailabilityPendingByWidgetId,
+      getListByWidgetId: () => getAvailabilityListByWidgetId,
+      getMetaByWidgetId: () => getAvailabilityMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchAvailabilityList,
+      fetchAvailabilityWithoutStore,
+      fetchAvailabilityHistoryWithoutStore,
+      fetchAvailabilityHistoryExport,
+    },
+  };
+
+  return {
+    availabilityModule,
+    fetchAvailabilityList,
+    exportAvailabilityData,
+    fetchAvailabilityWithoutStore,
+    fetchAvailabilityHistoryWithoutStore,
+    fetchAvailabilityHistoryExport,
   };
 };

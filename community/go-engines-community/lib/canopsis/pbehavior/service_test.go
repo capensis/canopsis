@@ -66,8 +66,8 @@ func TestService(t *testing.T) {
 						return
 					}
 
-					if r.ResolvedType != data.expected {
-						t.Errorf("expected output: %q, but got %q", data.expected.ID, r.ResolvedType.ID)
+					if r.Type != data.expected {
+						t.Errorf("expected output: %q, but got %q", data.expected.ID, r.Type.ID)
 					}
 				})
 			}

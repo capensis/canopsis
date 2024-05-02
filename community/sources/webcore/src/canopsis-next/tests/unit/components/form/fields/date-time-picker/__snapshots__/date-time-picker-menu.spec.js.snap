@@ -9,7 +9,7 @@ exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with default pr
   transition="slide-y-transition"
 >
   <button
-    class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small secondary--text"
+    class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small"
     type="button"
   >
     <span
@@ -42,7 +42,7 @@ exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened men
   transition="slide-y-transition"
 >
   <button
-    class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small secondary--text"
+    class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small"
     type="button"
   >
     <span

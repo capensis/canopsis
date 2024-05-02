@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-display-parameter-radio-field Renders \`availability-display-parameter-radio-field\` with custom props 1`] = `
+<div
+  class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+      style="height: auto;"
+    >
+      <div
+        class="v-input--radio-group__input"
+        role="radiogroup"
+      >
+        <legend
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          Custom label
+        </legend>
+        <div
+          class="v-radio theme--light"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
+            <input
+              aria-checked="false"
+              name="customName"
+              role="radio"
+              type="radio"
+              value="0"
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Uptime
+          </label>
+        </div>
+        <div
+          class="v-radio theme--light v-item--active"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
+            <input
+              aria-checked="true"
+              name="customName"
+              role="radio"
+              type="radio"
+              value="1"
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Downtime
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`availability-display-parameter-radio-field Renders \`availability-display-parameter-radio-field\` with required props 1`] = `
+<div
+  class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+      style="height: auto;"
+    >
+      <div
+        class="v-input--radio-group__input"
+        role="radiogroup"
+      >
+        <div
+          class="v-radio theme--light v-item--active"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
+            <input
+              aria-checked="true"
+              name="parameter"
+              role="radio"
+              type="radio"
+              value="0"
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Uptime
+          </label>
+        </div>
+        <div
+          class="v-radio theme--light"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
+            <input
+              aria-checked="false"
+              name="parameter"
+              role="radio"
+              type="radio"
+              value="1"
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+          </div>
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Downtime
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -82,6 +82,7 @@ export const USER_PERMISSIONS_PREFIXES = {
     numbers: 'numbers',
     userStatistics: 'userStatistics',
     alarmStatistics: 'alarmStatistics',
+    availability: 'availability',
   },
   api: 'api',
 };
@@ -182,13 +183,16 @@ export const USERS_PERMISSIONS = {
 
         category: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_category`,
 
-        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
-
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
         addBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addBookmark`,
         removeBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeBookmark`,
         filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
+
+        /**
+         * COMMON
+         */
+        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
 
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
@@ -213,6 +217,13 @@ export const USERS_PERMISSIONS = {
         category: `${USER_PERMISSIONS_PREFIXES.business.context}_category`,
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.context}_exportAsCsv`,
+
+        /**
+         * COMMON
+         */
+        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`,
+        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`,
+        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`,
       },
     },
     serviceWeather: {
@@ -241,7 +252,14 @@ export const USERS_PERMISSIONS = {
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
 
+        /**
+         * COMMON
+         */
         variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
+
+        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`,
+        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`,
+        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`,
       },
     },
     counter: {
@@ -334,6 +352,18 @@ export const USERS_PERMISSIONS = {
         editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`,
         addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`,
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_userFilter`,
+      },
+    },
+    availability: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.availability}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.availability}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_userFilter`,
+
+        exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.availability}_exportAsCsv`,
       },
     },
   },
@@ -432,7 +462,7 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.history]: USERS_PERMISSIONS.business.alarmsList.actions.history,
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
-    [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
+    [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,

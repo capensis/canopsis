@@ -10,13 +10,13 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
+	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -52,9 +52,10 @@ func TestService_Process(t *testing.T) {
 	alarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	storage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 	activationService := mock_alarm.NewMockActivationService(ctrl)
+	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
 		storage, json.NewEncoder(), json.NewDecoder(), amqpChannelMock, canopsis.FIFOAckExchangeName,
-		canopsis.FIFOAckQueueName, activationService, logger)
+		canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
 
 	var dataSets = []struct {
 		testName string
@@ -205,9 +206,11 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			alarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 			storage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 			activationService := mock_alarm.NewMockActivationService(ctrl)
+			mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
+			mockTechMetricsSender.EXPECT().SendActionEvent(gomock.Any()).Times(len(dataset.scenarioInfos))
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
 				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
-				canopsis.FIFOAckQueueName, activationService, logger)
+				canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
 
 			actionService.ListenScenarioFinish(ctx, scenarioInfoChannel)
 
@@ -223,8 +226,8 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				getInOrder = append(getInOrder, get)
 
 				if info.Err == nil {
-					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-						Do(func(_ context.Context, alarm types.Alarm, _ datetime.MicroTime, _ string, _ bool) {
+					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any()).
+						Do(func(_ context.Context, alarm types.Alarm, _ types.Event) {
 							if alarm.ID != info.Alarm.ID {
 								t.Errorf("expected alarm %s but got %s", info.Alarm.ID, alarm.ID)
 							}
@@ -479,9 +482,10 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 					Return(nil)
 			}
 
+			mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
 				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
-				canopsis.FIFOAckQueueName, activationService, logger)
+				canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
 
 			var wg sync.WaitGroup
 			if dataset.expectExecute {

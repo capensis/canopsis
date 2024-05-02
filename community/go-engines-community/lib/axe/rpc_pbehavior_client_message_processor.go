@@ -51,7 +51,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "RPC PBehavior Client: invalid event", msg.Body)
 
-		return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
+		return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(errors.New("invalid event")))
 	}
 
 	var alarmChangeType types.AlarmChangeType

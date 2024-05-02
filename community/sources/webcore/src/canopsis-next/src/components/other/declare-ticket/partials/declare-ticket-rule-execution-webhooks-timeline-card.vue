@@ -1,34 +1,12 @@
 <template>
-  <v-layout column>
-    <v-layout
-      class="mb-2"
-      align-center
-    >
-      <c-expand-btn
-        v-if="expandable"
-        :expanded="expanded"
-        :loading="pending"
-        color="grey"
-        @expand="expandResponse"
-      />
-      <span class="ml-2">{{ $t(`alarm.timeLine.types.${step._t}`) }}</span>
-      <span v-if="step.message">: {{ step.message }}</span>
-    </v-layout>
-    <v-expand-transition>
-      <v-card
-        v-show="expanded"
-        light
-      >
-        <v-card-text>
-          <c-request-text-information
-            v-if="response"
-            :value="response"
-          />
-          <span v-else>{{ $t('declareTicket.noResponse') }}</span>
-        </v-card-text>
-      </v-card>
-    </v-expand-transition>
-  </v-layout>
+  <alarm-webhook-execution-timeline-card
+    :step="step"
+    :expandable="expandable"
+    :expanded="expanded"
+    :expanding="pending"
+    :response="response"
+    @expand="expandResponse"
+  />
 </template>
 
 <script>
@@ -36,9 +14,12 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
+
 const { mapActions: mapDeclareTicketRuleActions } = createNamespacedHelpers('declareTicketRule');
 
 export default {
+  components: { AlarmWebhookExecutionTimelineCard },
   props: {
     step: {
       type: Object,

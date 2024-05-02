@@ -79,7 +79,7 @@ services:
     <<: *service_base
     image: mongo:${MONGO_TAG}
     ports:
-      - "27027:27017"
+      - "27017:27017"
     env_file:
       - compose.env
     volumes:
@@ -149,7 +149,7 @@ services:
 
   reconfigure:
     <<: *inital_config_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}community/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
     command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
 
   #
@@ -158,23 +158,23 @@ services:
 
   action:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-action:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-action:${CANOPSIS_IMAGE_TAG}
 
   axe:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-axe:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-axe:${CANOPSIS_IMAGE_TAG}
 
   che:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-che:${CANOPSIS_IMAGE_TAG}
 
   fifo:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-fifo:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-fifo:${CANOPSIS_IMAGE_TAG}
 
   nginx:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}nginx:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}community/nginx:${CANOPSIS_IMAGE_TAG}
     ports:
       - "80:8080"
       - "443:8443"
@@ -183,11 +183,11 @@ services:
 
   pbehavior:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-pbehavior:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}community/engine-pbehavior:${CANOPSIS_IMAGE_TAG}
 
   api:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
       - junitsharedata:/tmp/canopsis/junit
       - uploadfiles:/opt/canopsis/var/lib/upload-files

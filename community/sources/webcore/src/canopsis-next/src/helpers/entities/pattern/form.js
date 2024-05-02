@@ -763,6 +763,7 @@ export const patternRuleToForm = (rule = {}) => {
           [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
           [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
           [ALARM_PATTERN_FIELDS.activationDate]: PATTERN_OPERATORS.activated,
+          [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.isMetaAlarm,
         }[rule.field];
       } else {
         form.operator = {
@@ -771,6 +772,7 @@ export const patternRuleToForm = (rule = {}) => {
           [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
           [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
           [ALARM_PATTERN_FIELDS.activationDate]: PATTERN_OPERATORS.inactive,
+          [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.isNotMetaAlarm,
         }[rule.field];
       }
 
@@ -1087,6 +1089,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:
     case PATTERN_OPERATORS.activated:
+    case PATTERN_OPERATORS.isMetaAlarm:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = true;
       break;
@@ -1096,6 +1099,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.notSnoozed:
     case PATTERN_OPERATORS.notAcked:
     case PATTERN_OPERATORS.inactive:
+    case PATTERN_OPERATORS.isNotMetaAlarm:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = false;
       break;
@@ -1143,17 +1147,14 @@ export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(for
 export const formToPattern = (form) => {
   const { groups, id, ...pattern } = form;
 
-  switch (form.type) {
-    case PATTERN_TYPES.alarm:
-      pattern.alarm_pattern = formGroupsToPatternRules(groups);
-      break;
-    case PATTERN_TYPES.entity:
-      pattern.entity_pattern = formGroupsToPatternRules(groups);
-      break;
-    case PATTERN_TYPES.pbehavior:
-      pattern.pbehavior_pattern = formGroupsToPatternRules(groups);
-      break;
-  }
+  const patternsKey = {
+    [PATTERN_TYPES.alarm]: PATTERNS_FIELDS.alarm,
+    [PATTERN_TYPES.entity]: PATTERNS_FIELDS.entity,
+    [PATTERN_TYPES.pbehavior]: PATTERNS_FIELDS.pbehavior,
+    [PATTERN_TYPES.serviceWeather]: PATTERNS_FIELDS.serviceWeather,
+  }[form.type];
+
+  pattern[patternsKey] = formGroupsToPatternRules(groups);
 
   return pattern;
 };

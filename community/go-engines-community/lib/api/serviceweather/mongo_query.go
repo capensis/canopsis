@@ -91,7 +91,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
@@ -119,7 +119,7 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
 		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()},
 	}
@@ -206,7 +206,6 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	q.addHideGreyFilter(r, &additionalMatch)
 	if len(additionalMatch) > 0 {
 		q.lookupsForAdditionalMatch["alarm"] = true
-		q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
 		q.lookupsForAdditionalMatch["counters"] = true
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": additionalMatch}})
 	}
@@ -258,7 +257,7 @@ func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
 	}
 
 	if r.WeatherServicePattern != "" {
-		var weatherPattern view.WeatherServicePattern
+		var weatherPattern pattern.WeatherServicePattern
 		err := json.Unmarshal([]byte(r.WeatherServicePattern), &weatherPattern)
 		if err != nil {
 			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
@@ -285,8 +284,8 @@ func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) er
 	return nil
 }
 
-func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern view.WeatherServicePattern) error {
-	weatherPatternQuery, err := weatherServicePattern.ToMongoQuery("")
+func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern pattern.WeatherServicePattern) error {
+	weatherPatternQuery, err := db.WeatherServicePatternToMongoQuery(weatherServicePattern, "")
 	if err != nil {
 		return err
 	}
@@ -297,7 +296,6 @@ func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern vi
 		if weatherServicePattern.HasField("is_grey") ||
 			weatherServicePattern.HasField("icon") ||
 			weatherServicePattern.HasField("secondary_icon") {
-			q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
 			q.lookupsForAdditionalMatch["counters"] = true
 		}
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
@@ -358,17 +356,19 @@ func getAlarmLookup() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"connector":        "$alarm.v.connector",
-			"connector_name":   "$alarm.v.connector_name",
-			"component":        "$alarm.v.component",
-			"resource":         "$alarm.v.resource",
-			"output":           "$alarm.v.output",
-			"last_update_date": "$alarm.v.last_update_date",
-			"state":            "$alarm.v.state",
-			"status":           "$alarm.v.status",
-			"snooze":           "$alarm.v.snooze",
-			"ack":              "$alarm.v.ack",
-			"impact_state":     bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
+			"connector":          "$alarm.v.connector",
+			"connector_name":     "$alarm.v.connector_name",
+			"component":          "$alarm.v.component",
+			"resource":           "$alarm.v.resource",
+			"output":             "$alarm.v.output",
+			"last_update_date":   "$alarm.v.last_update_date",
+			"state":              "$alarm.v.state",
+			"status":             "$alarm.v.status",
+			"snooze":             "$alarm.v.snooze",
+			"ack":                "$alarm.v.ack",
+			"alarm_last_comment": "$alarm.v.last_comment",
+			"tags":               "$alarm.tags",
+			"impact_state":       bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
 			// For dependencies query
 			"alarm_id":      "$alarm._id",
 			"creation_date": "$alarm.v.creation_date",

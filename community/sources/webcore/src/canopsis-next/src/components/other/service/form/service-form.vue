@@ -20,7 +20,7 @@
         class="pr-3"
         xs4
       >
-        <c-entity-state-field
+        <c-alarm-state-field
           v-field="form.sli_avail_state"
           :label="$t('service.availabilityState')"
           required

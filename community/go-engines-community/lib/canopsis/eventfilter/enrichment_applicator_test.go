@@ -2,7 +2,7 @@ package eventfilter_test
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"reflect"
 	"testing"
 
@@ -46,7 +46,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
 
 	event := types.Event{}
-	resOutcome, _, resError := applicator.Apply(
+	resOutcome, _, _, resError := applicator.Apply(
 		context.Background(),
 		eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}},
 		&event,
@@ -88,12 +88,12 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		regexMatch eventfilter.RegexMatch,
 		externalData map[string]interface{},
 	) (bool, error) {
-		return false, fmt.Errorf("error")
+		return false, errors.New("error")
 	})
 
 	event := types.Event{}
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
-	resOutcome, _, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, eventfilter.RegexMatch{})
+	resOutcome, _, _, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, eventfilter.RegexMatch{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -141,7 +141,7 @@ func TestApplyWithExternalData(t *testing.T) {
 		ConnectorName: "connector name",
 	}
 
-	outcome, _, err := applicator.Apply(
+	outcome, _, _, err := applicator.Apply(
 		context.Background(),
 		eventfilter.ParsedRule{
 			ExternalData: externalData,

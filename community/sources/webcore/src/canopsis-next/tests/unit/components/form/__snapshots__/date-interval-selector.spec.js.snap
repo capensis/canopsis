@@ -16,7 +16,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
           label="Start date"
           name="tstart"
           roundhours="true"
-          value="today-2d"
+          value="today-1d"
         />
         <date-time-picker-text-field-stub
           dateobjectpreparer="[Function]"
@@ -31,6 +31,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
       class="flex pl-1 xs6"
     >
       <c-quick-date-interval-type-field-stub
+        item-value="function () { [native code] }"
         return-object=""
         value="[object Object]"
       />
@@ -160,6 +161,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
       class="flex pl-1 xs6"
     >
       <c-quick-date-interval-type-field-stub
+        item-value="function () { [native code] }"
         return-object=""
         value="[object Object]"
       />

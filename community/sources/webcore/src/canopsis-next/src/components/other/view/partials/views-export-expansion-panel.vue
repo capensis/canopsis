@@ -23,6 +23,7 @@
             color="primary"
             @change="changeGroup(group, $event)"
           />
+          <span>{{ group.title }}</span>
         </v-layout>
       </template>
       <group-view-panel
@@ -107,9 +108,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.group-title {
-  overflow: auto;
-}
-</style>

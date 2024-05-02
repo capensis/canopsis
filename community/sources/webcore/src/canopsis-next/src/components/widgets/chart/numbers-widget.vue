@@ -7,8 +7,8 @@
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
-      :locked-value="lockedFilter"
-      :filters="mainFilter"
+      :locked-filter="query.lockedFilter"
+      :filters="query.filter"
       :interval="query.interval"
       :sampling="query.sampling"
       :show-filter="hasAccessToUserFilter"
@@ -28,7 +28,7 @@
     >
       <chart-loader
         v-if="aggregatedMetricsPending"
-        :has-metrics="hasMetrics"
+        :has-data="hasMetrics"
       />
       <numbers-metrics
         v-if="hasMetrics"
@@ -58,7 +58,7 @@ import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -85,7 +85,7 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    metricsIntervalFilterMixin,
+    queryIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,

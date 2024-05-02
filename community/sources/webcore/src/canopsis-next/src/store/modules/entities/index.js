@@ -50,7 +50,6 @@ import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
-import manualMetaAlarmModule from './manual-meta-alarm';
 import metaAlarmModule from './meta-alarm';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
@@ -63,6 +62,7 @@ import groupMetricsModule from './group-metrics';
 import tagModule from './tag';
 import themeModule from './theme';
 import iconModule from './icon';
+import availabilityModule from './availability';
 
 export default {
   alarm: alarmModule,
@@ -117,7 +117,6 @@ export default {
   shareToken: shareTokenModule,
   techMetrics: techMetricsModule,
   widgetTemplate: widgetTemplateModule,
-  manualMetaAlarm: manualMetaAlarmModule,
   metaAlarm: metaAlarmModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
@@ -130,4 +129,5 @@ export default {
   tag: tagModule,
   theme: themeModule,
   icon: iconModule,
+  availability: availabilityModule,
 };

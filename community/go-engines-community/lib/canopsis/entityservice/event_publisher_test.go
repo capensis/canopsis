@@ -41,11 +41,9 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				Component:  "test-component",
 			},
 			ExpectedEvent: types.Event{
-				EventType:     types.EventTypeEntityUpdated,
-				Connector:     types.ConnectorApi,
-				ConnectorName: types.ConnectorApi,
-				Component:     "test-component",
-				SourceType:    types.SourceTypeComponent,
+				EventType:  types.EventTypeEntityUpdated,
+				Component:  "test-component",
+				SourceType: types.SourceTypeComponent,
 			},
 		},
 		"given updated resource should send entityupdated event": {
@@ -56,12 +54,10 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				Component:  "test-component",
 			},
 			ExpectedEvent: types.Event{
-				EventType:     types.EventTypeEntityUpdated,
-				Connector:     types.ConnectorApi,
-				ConnectorName: types.ConnectorApi,
-				Component:     "test-component",
-				Resource:      "test-resource",
-				SourceType:    types.SourceTypeResource,
+				EventType:  types.EventTypeEntityUpdated,
+				Component:  "test-component",
+				Resource:   "test-resource",
+				SourceType: types.SourceTypeResource,
 			},
 		},
 		"given toggled entity should send entitytoggled event": {
@@ -73,12 +69,10 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				IsToggled:  true,
 			},
 			ExpectedEvent: types.Event{
-				EventType:     types.EventTypeEntityToggled,
-				Connector:     types.ConnectorApi,
-				ConnectorName: types.ConnectorApi,
-				Component:     "test-component",
-				Resource:      "test-resource",
-				SourceType:    types.SourceTypeResource,
+				EventType:  types.EventTypeEntityToggled,
+				Component:  "test-component",
+				Resource:   "test-resource",
+				SourceType: types.SourceTypeResource,
 			},
 		},
 	}
@@ -122,7 +116,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				})).
 				Return(nil)
 
-			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, logger)
+			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, "", logger)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
@@ -151,11 +145,9 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				EntityType: types.EntityTypeService,
 			},
 			ExpectedEvent: types.Event{
-				EventType:     types.EventTypeEntityUpdated,
-				Connector:     types.ConnectorApi,
-				ConnectorName: types.ConnectorApi,
-				Component:     "test-service",
-				SourceType:    types.SourceTypeService,
+				EventType:  types.EventTypeEntityUpdated,
+				Component:  "test-service",
+				SourceType: types.SourceTypeService,
 			},
 		},
 		"given toggled service should send recomputeentityservice event": {
@@ -165,11 +157,9 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				IsToggled:  true,
 			},
 			ExpectedEvent: types.Event{
-				EventType:     types.EventTypeRecomputeEntityService,
-				Connector:     types.ConnectorApi,
-				ConnectorName: types.ConnectorApi,
-				Component:     "test-service",
-				SourceType:    types.SourceTypeService,
+				EventType:  types.EventTypeRecomputeEntityService,
+				Component:  "test-service",
+				SourceType: types.SourceTypeService,
 			},
 		},
 		"given updated service pattern should send recomputeentityservice event": {
@@ -179,11 +169,9 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				IsServicePatternChanged: true,
 			},
 			ExpectedEvent: types.Event{
-				EventType:     types.EventTypeRecomputeEntityService,
-				Connector:     types.ConnectorApi,
-				ConnectorName: types.ConnectorApi,
-				Component:     "test-service",
-				SourceType:    types.SourceTypeService,
+				EventType:  types.EventTypeRecomputeEntityService,
+				Component:  "test-service",
+				SourceType: types.SourceTypeService,
 			},
 		},
 	}
@@ -227,7 +215,7 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				})).
 				Return(nil)
 
-			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, logger)
+			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, "", logger)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()

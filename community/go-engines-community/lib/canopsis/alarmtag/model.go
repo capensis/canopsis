@@ -11,14 +11,15 @@ const (
 )
 
 type AlarmTag struct {
-	ID      string           `bson:"_id" json:"_id"`
-	Type    int64            `bson:"type" json:"type"`
-	Value   string           `bson:"value" json:"value"`
-	Label   string           `bson:"label" json:"label"`
-	Color   string           `bson:"color" json:"color"`
-	Author  string           `bson:"author" json:"author"`
-	Created datetime.CpsTime `bson:"created" json:"created"`
-	Updated datetime.CpsTime `bson:"updated" json:"updated"`
+	ID            string           `bson:"_id" json:"_id"`
+	Type          int64            `bson:"type" json:"type"`
+	Value         string           `bson:"value" json:"value"`
+	Label         string           `bson:"label" json:"label"`
+	Color         string           `bson:"color" json:"color"`
+	Author        string           `bson:"author" json:"author"`
+	Created       datetime.CpsTime `bson:"created" json:"created"`
+	Updated       datetime.CpsTime `bson:"updated" json:"updated"`
+	LastEventDate datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

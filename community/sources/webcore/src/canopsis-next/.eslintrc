@@ -26,7 +26,7 @@
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc", "Vue", "browser", "wrapper"] }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-return-assign": "off",
-    "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original"] }],
+    "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original", "_modulesNamespaceMap"] }],
     "no-bitwise": ["error", { "allow": ["&"] }],
     "no-continue": "off",
     "no-cond-assign": "off",
@@ -140,7 +140,7 @@
           "position": "before"
         },
         {
-          "pattern": "@/mixins/**",
+          "pattern": "@/+(mixins|hooks)/**",
           "group": "internal",
           "position": "before"
         },

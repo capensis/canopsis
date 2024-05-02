@@ -17,6 +17,7 @@ type Adapter interface {
 	UpdateHistoryJunit(ctx context.Context, t datetime.CpsTime) error
 	UpdateHistoryRemediation(ctx context.Context, t datetime.CpsTime) error
 	UpdateHistoryAlarm(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryAlarmExternalTag(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryEntityDisabled(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryEntityUnlinked(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryEntityCleaned(ctx context.Context, history HistoryWithCount) error
@@ -44,6 +45,9 @@ type Config struct {
 		ArchiveAfter *datetime.DurationWithEnabled `bson:"archive_after,omitempty" json:"archive_after"`
 		DeleteAfter  *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"alarm" json:"alarm"`
+	AlarmExternalTag struct {
+		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"alarm_external_tag" json:"alarm_external_tag"`
 	Pbehavior struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"pbehavior" json:"pbehavior"`
@@ -69,6 +73,7 @@ type History struct {
 	Junit              *datetime.CpsTime `bson:"junit" json:"junit" swaggertype:"integer"`
 	Remediation        *datetime.CpsTime `bson:"remediation" json:"remediation" swaggertype:"integer"`
 	Alarm              *HistoryWithCount `bson:"alarm" json:"alarm"`
+	AlarmExternalTag   *HistoryWithCount `bson:"alarm_external_tag" json:"alarm_external_tag"`
 	EntityDisabled     *HistoryWithCount `bson:"entity_disabled" json:"entity_disabled"`
 	EntityUnlinked     *HistoryWithCount `bson:"entity_unlinked" json:"entity_unlinked"`
 	EntityCleaned      *HistoryWithCount `bson:"entity_cleaned" json:"entity_cleaned"`

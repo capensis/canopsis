@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -64,7 +65,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	if event.Entity == nil {
-		return nil, nil, eventMetric, fmt.Errorf("unexpected empty resource")
+		return nil, nil, eventMetric, errors.New("unexpected empty resource")
 	}
 
 	eventMetric.EntityType = event.Entity.Type
@@ -76,7 +77,8 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		isInfosUpdated, err := p.eventFilterService.ProcessEvent(ctx, event)
+		var isInfosUpdated bool
+		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}
@@ -132,6 +134,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		toCountersUpdate = toCountersUpdate[:0]
 
 		eventMetric.IsServicesUpdated = false
+		eventMetric.IsStateSettingUpdated = false
 
 		var resource types.Entity
 		var component types.Entity
@@ -162,7 +165,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		if resource.ID == "" {
-			return fmt.Errorf("resource was deleted during event processing")
+			return errors.New("resource was deleted during event processing")
 		}
 
 		// todo: decide if needed
@@ -185,7 +188,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 				toCountersUpdate = append(toCountersUpdate, component)
 			}
 
-			_, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
+			eventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
 			if err != nil {
 				return fmt.Errorf("cannot assign state settings for a component: %w", err)
 			}

@@ -14,9 +14,9 @@ import { isRatioMetric, isCustomCriteria } from '@/helpers/entities/metric/form'
  * @returns {boolean}
  */
 export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
-  const isFromChanged = query.interval.from !== oldQuery.interval.from;
-  const isFromEqualMinDate = query.interval.from === minDate;
-  const isToChanged = query.interval.to !== oldQuery.interval.to;
+  const isFromChanged = query.interval?.from !== oldQuery.interval?.from;
+  const isFromEqualMinDate = query.interval?.from === minDate;
+  const isToChanged = query.interval?.to !== oldQuery.interval?.to;
   const isQueryWithoutIntervalChanged = !isOmitEqual(query, oldQuery, ['interval']);
 
   return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualMinDate) || isToChanged;

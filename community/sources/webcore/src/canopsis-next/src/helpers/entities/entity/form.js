@@ -1,6 +1,6 @@
 import { isNumber, omit } from 'lodash';
 
-import { ENTITY_TYPES, BASIC_ENTITY_TYPES, ENTITIES_STATES } from '@/constants';
+import { ENTITY_TYPES, BASIC_ENTITY_TYPES, ALARM_STATES } from '@/constants';
 
 import { infosToArray } from '@/helpers/entities/shared/form';
 
@@ -47,7 +47,7 @@ export const entityToForm = (entity = {}) => ({
   enabled: entity.enabled ?? true,
   infos: infosToArray(entity.infos),
   impact_level: entity.impact_level,
-  sli_avail_state: entity.sli_avail_state ?? ENTITIES_STATES.ok,
+  sli_avail_state: entity.sli_avail_state ?? ALARM_STATES.ok,
   coordinates: entity.coordinates ?? {
     lat: undefined,
     lng: undefined,

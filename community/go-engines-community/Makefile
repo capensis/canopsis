@@ -196,6 +196,8 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 	# Create configuration directories
 	@echo "==> Creating configuration directories"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/var/lib/icons"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/var/lib/upload-files"
 	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/api/security"
 	
@@ -214,7 +216,6 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 install: install-common
 	# Create configuration directories
 	@echo "==> Creating Canopsis $(CANOPSIS_EDITION) specific configuration directories"
-	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter"
 	# Database migration script and fixtures
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/fixtures"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/migrations"
@@ -233,7 +234,6 @@ install: install-common
 	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/tech_postgres_migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/tech_postgres_migrations"
 	
 	#Install other configuration files
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/connector-centreon-downtime-adapter/config.yml.example" "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter/config.yml"
 
 systemd_install-common:
 	@echo "==> installing Canopsis $(CANOPSIS_EDITION) systemd unit"
@@ -246,6 +246,7 @@ systemd_install: systemd_install-common
 	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
 	install -c -m 755 -p -- $(foreach systemd_units,$(SYSTEMD_UNITS),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@$(systemd_units).service") "$(DESTDIR)/usr/lib/systemd/system/"
 	install -c -m 755 -p -- $(foreach services,$(SERVICES),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@$(services).service") "$(DESTDIR)/usr/lib/systemd/system/"
+	install -c -m 655 -p -- "$(CURRENT_ROOT_DIR)/systemd/canopsis-reconfigure.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-reconfigure.service"
 
 #
 # TESTS

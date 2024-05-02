@@ -48,15 +48,14 @@ func (p *assocTicketProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 
 	entity := *event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
-	newStep := types.NewTicketStep(types.AlarmStepAssocTicket, event.Parameters.Timestamp, event.Parameters.Author,
-		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-		event.Parameters.TicketInfo)
-	update := bson.M{
-		"$set": bson.M{"v.ticket": newStep},
-		"$push": bson.M{
-			"v.steps":   newStep,
-			"v.tickets": newStep,
-		},
+	newStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepAssocTicket, "",
+		event.Parameters.Output, event.Parameters)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.ticket":  newStepQuery,
+			"v.steps":   addStepUpdateQuery(newStepQuery),
+			"v.tickets": addTicketUpdateQuery(newStepQuery),
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {

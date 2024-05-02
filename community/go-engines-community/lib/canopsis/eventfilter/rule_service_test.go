@@ -36,17 +36,17 @@ func TestProcessEventSuccess(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 			event.Resource = "apply 1"
 
-			return eventfilter.OutcomePass, false, nil
+			return eventfilter.OutcomePass, false, nil, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 			event.Component = "apply 2"
 
-			return eventfilter.OutcomePass, false, nil
+			return eventfilter.OutcomePass, false, nil, nil
 		})
 
 	container := mock_eventfilter.NewMockRuleApplicatorContainer(ctrl)
@@ -82,7 +82,7 @@ func TestProcessEventSuccess(t *testing.T) {
 		Component: "test component",
 	}
 
-	_, err = ruleService.ProcessEvent(ctx, &event)
+	_, _, _, err = ruleService.ProcessEvent(ctx, &event)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -112,17 +112,17 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 			event.Resource = "apply 1"
 
-			return eventfilter.OutcomeBreak, false, nil
+			return eventfilter.OutcomeBreak, false, nil, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 			event.Component = "apply 2"
 
-			return eventfilter.OutcomePass, false, nil
+			return eventfilter.OutcomePass, false, nil, nil
 		})
 
 	container := mock_eventfilter.NewMockRuleApplicatorContainer(ctrl)
@@ -157,7 +157,7 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 		Component: "test component",
 	}
 
-	_, err = ruleService.ProcessEvent(ctx, &event)
+	_, _, _, err = ruleService.ProcessEvent(ctx, &event)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -187,17 +187,17 @@ func TestProcessEventDropOutcome(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 			event.Resource = "apply 1"
 
-			return eventfilter.OutcomeDrop, false, nil
+			return eventfilter.OutcomeDrop, false, nil, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
 			event.Component = "apply 2"
 
-			return eventfilter.OutcomePass, false, nil
+			return eventfilter.OutcomePass, false, nil, nil
 		})
 
 	container := mock_eventfilter.NewMockRuleApplicatorContainer(ctrl)
@@ -232,7 +232,7 @@ func TestProcessEventDropOutcome(t *testing.T) {
 		Component: "test component",
 	}
 
-	_, err = ruleService.ProcessEvent(ctx, &event)
+	_, _, _, err = ruleService.ProcessEvent(ctx, &event)
 	if !errors.Is(err, eventfilter.ErrDropOutcome) {
 		t.Errorf("expected error %v, but got %v", eventfilter.ErrDropOutcome, err)
 	}

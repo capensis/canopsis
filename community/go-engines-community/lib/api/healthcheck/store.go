@@ -135,7 +135,7 @@ func (s *store) Load(ctx context.Context) {
 
 	ticker := time.NewTicker(s.configProvider.Get().ParseUpdateInterval(s.logger))
 
-	defer func() {
+	defer func() { // nolint: contextcheck
 		s.mxChangedParamsCh.Lock()
 		s.changedParamsCh = nil
 		s.mxChangedParamsCh.Unlock()
@@ -220,8 +220,8 @@ func (s *store) doLoad(ctx context.Context) {
 	s.loadConfig(ctx)
 	s.loadServices(ctx)
 	s.loadEngines(ctx)
-	s.websocketHub.Send(ctx, websocket.RoomHealthcheck, s.GetInfo())
-	s.websocketHub.Send(ctx, websocket.RoomHealthcheckStatus, s.GetStatus())
+	s.websocketHub.Send(websocket.RoomHealthcheck, s.GetInfo())
+	s.websocketHub.Send(websocket.RoomHealthcheckStatus, s.GetStatus())
 }
 
 func (s *store) loadEngines(ctx context.Context) {
