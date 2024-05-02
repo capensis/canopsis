@@ -201,13 +201,18 @@ describe('alarms-list-table', () => {
     expect(addEventListener).toHaveBeenNthCalledWith(
       3,
       'keydown',
-      expect.any(Function),
+      wrapper.vm.handleKeyDown,
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
       4,
       'keyup',
-      expect.any(Function),
+      wrapper.vm.handleKeyUp,
+    );
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      7,
+      'blur',
+      wrapper.vm.disableSelecting,
     );
 
     await wrapper.setProps({
@@ -219,7 +224,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(6);
+    expect(removeEventListener).toHaveBeenCalledTimes(7);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -228,12 +233,12 @@ describe('alarms-list-table', () => {
     expect(removeEventListener).toHaveBeenNthCalledWith(
       2,
       'keydown',
-      expect.any(Function),
+      wrapper.vm.handleKeyDown,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       3,
       'keyup',
-      expect.any(Function),
+      wrapper.vm.handleKeyUp,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
@@ -247,6 +252,11 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
+      'blur',
+      wrapper.vm.disableSelecting,
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
       'resize',
       expect.any(Function),
       { passive: true },
@@ -329,7 +339,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(6);
+    expect(removeEventListener).toHaveBeenCalledTimes(7);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -357,6 +367,11 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
+      'blur',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
       'resize',
       expect.any(Function),
       { passive: true },
