@@ -123,13 +123,13 @@ export const isChangeStatusStepType = type => [
 ].includes(type);
 
 /**
- * Checks if the provided type is one of the change state step types.
+ * Checks if the provided type is one of the state step types.
  *
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is either `changestate`, `stateinc`, or `statedec`,
  * otherwise, returns `false`.
  */
-export const isChangeStateStepType = type => [
+export const isStateStepType = type => [
   ALARM_LIST_STEPS.changeState,
   ALARM_LIST_STEPS.stateinc,
   ALARM_LIST_STEPS.statedec,
