@@ -13,7 +13,6 @@
     <template #mass-actions="{ selected }">
       <c-action-btn
         v-if="removable"
-        class="ml-3"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
@@ -21,8 +20,8 @@
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
-    <template #created="{ item }">
-      {{ item.created | date }}
+    <template #author.name="{ item }">
+      {{ item.author?.display_name }}
     </template>
     <template #updated="{ item }">
       {{ item.updated | date }}
@@ -33,6 +32,11 @@
           v-if="updatable"
           type="edit"
           @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
         />
         <c-action-btn
           v-if="removable"
@@ -67,6 +71,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    duplicable: {
+      type: Boolean,
+      default: false,
+    },
     updatable: {
       type: Boolean,
       default: false,
@@ -76,9 +84,9 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.enabled'), value: 'enabled' },
+        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
-        { text: this.$t('common.lastModifiedBy'), value: 'author.display_name' },
+        { text: this.$t('common.lastModifiedBy'), value: 'author.name' },
         {
           text: this.$t('common.actionsLabel'),
           value: 'actions',
