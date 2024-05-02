@@ -33,12 +33,12 @@ import { usePopups } from '@/hooks/popups';
  */
 export const useSubmittableForm = ({ form, method }) => {
   const popups = usePopups();
-  const { $validator, setFormErrors } = useValidationFormErrors(form);
+  const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
 
   const submitHandler = async (...args) => {
     try {
-      const isFormValid = await $validator.validateAll();
+      const isFormValid = await validator.validateAll();
 
       if (isFormValid) {
         await method(...args);
@@ -61,7 +61,7 @@ export const useSubmittableForm = ({ form, method }) => {
     handler: submit,
   } = usePendingHandler(submitHandler);
 
-  const isDisabled = computed(() => submitting.value || $validator.errors?.any?.());
+  const isDisabled = computed(() => submitting.value || validator.errors?.any?.());
 
   return {
     submit,

@@ -18,7 +18,7 @@ import { useValidator } from './validator';
  * };
  *
  * // Using the useValidationFormErrors function
- * const { $validator, setFormErrors } = useValidationFormErrors(form);
+ * const { validator, setFormErrors } = useValidationFormErrors(form);
  *
  * // Example error object that might be returned from a server on form submission
  * const errorsFromServer = {
@@ -33,9 +33,9 @@ import { useValidator } from './validator';
  * }
  */
 export const useValidationFormErrors = (form) => {
-  const $validator = useValidator();
+  const validator = useValidator();
 
-  const fieldsByName = computed(() => keyBy($validator.fields.items, 'name'));
+  const fieldsByName = computed(() => keyBy(validator.fields.items, 'name'));
 
   /**
    * Get errors for exists fields in current form
@@ -52,7 +52,7 @@ export const useValidationFormErrors = (form) => {
    * @param {[string, string][]} existsFieldsErrors
    */
   const addExistsFieldsErrors = (existsFieldsErrors) => {
-    $validator.errors.add(existsFieldsErrors.map(([field, msg]) => ({ field, msg })));
+    validator.errors.add(existsFieldsErrors.map(([field, msg]) => ({ field, msg })));
   };
 
   /**
@@ -62,7 +62,7 @@ export const useValidationFormErrors = (form) => {
    * @return {boolean}
    */
   const setFormErrors = (errors = {}) => {
-    if (!$validator) {
+    if (!validator) {
       return false;
     }
 
@@ -78,7 +78,7 @@ export const useValidationFormErrors = (form) => {
   };
 
   return {
-    $validator,
+    validator,
     setFormErrors,
   };
 };
