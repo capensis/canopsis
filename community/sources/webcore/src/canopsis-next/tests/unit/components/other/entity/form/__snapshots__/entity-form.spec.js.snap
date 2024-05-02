@@ -1,0 +1,294 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity-form Renders \`entity-form\` with custom props 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+          Form
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Manage Infos
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout mt-3 column"
+          >
+            <c-name-field-stub
+              disabled=""
+              value="entity-form"
+            />
+            <c-description-field-stub
+              value="entity-form-description"
+            />
+            <div
+              class="layout justify-space-between"
+            >
+              <div
+                class="flex xs3"
+              >
+                <c-enabled-field-stub />
+              </div>
+              <div
+                class="flex xs9"
+              >
+                <div
+                  class="layout"
+                >
+                  <div
+                    class="flex pr-3 xs3"
+                  >
+                    <c-impact-level-field-stub
+                      required=""
+                      value="2"
+                    />
+                  </div>
+                  <div
+                    class="flex pr-3 xs3"
+                  >
+                    <c-alarm-state-field-stub
+                      label="Hi availability state"
+                      required=""
+                      value="3"
+                    />
+                  </div>
+                  <div
+                    class="flex xs6"
+                  >
+                    <c-entity-type-field-stub
+                      disabled=""
+                      required=""
+                      value="resource"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <c-coordinates-field-stub
+              row=""
+              value="[object Object]"
+            />
+            <!---->
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <manage-infos-stub
+            infos=""
+          />
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`entity-form Renders \`entity-form\` with default form 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+          Form
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Manage Infos
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout mt-3 column"
+          >
+            <c-name-field-stub
+              disabled=""
+              value=""
+            />
+            <c-description-field-stub
+              value=""
+            />
+            <div
+              class="layout justify-space-between"
+            >
+              <div
+                class="flex xs3"
+              >
+                <c-enabled-field-stub
+                  value="true"
+                />
+              </div>
+              <div
+                class="flex xs9"
+              >
+                <div
+                  class="layout"
+                >
+                  <div
+                    class="flex pr-3 xs3"
+                  >
+                    <c-impact-level-field-stub
+                      required=""
+                    />
+                  </div>
+                  <div
+                    class="flex pr-3 xs3"
+                  >
+                    <c-alarm-state-field-stub
+                      label="Hi availability state"
+                      required=""
+                      value="0"
+                    />
+                  </div>
+                  <div
+                    class="flex xs6"
+                  >
+                    <c-entity-type-field-stub
+                      disabled=""
+                      required=""
+                      value="connector"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <c-coordinates-field-stub
+              row=""
+              value="[object Object]"
+            />
+            <!---->
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <manage-infos-stub
+            infos=""
+          />
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
