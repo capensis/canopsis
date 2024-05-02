@@ -16,10 +16,10 @@ export const useInjectClickOutside = () => inject('$clickOutside');
  * @param {Function} handler - The function to be executed when a click outside event is detected.
  */
 export const useRegisterClickOutsideHandler = (handler) => {
-  const $clickOutside = useInjectClickOutside();
-  $clickOutside.register(handler);
+  const clickOutside = useInjectClickOutside();
+  clickOutside.register(handler);
 
   onBeforeUnmount(() => {
-    $clickOutside.unregister(handler);
+    clickOutside.unregister(handler);
   });
 };
