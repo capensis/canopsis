@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ title }}</span>
+        {{ title }}
       </template>
       <template #text="">
         <entity-form v-model="form" :prepare-state-setting-form="prepareStateSettingForm" />

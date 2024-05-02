@@ -119,12 +119,30 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
         <transition-stub
           name=""
         >
-          <!---->
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <c-patterns-field-stub
+              class="mt-2"
+              entity-attributes="[object Object],[object Object],[object Object]"
+              entity-counters-type=""
+              value="[object Object]"
+              with-entity=""
+            />
+          </div>
         </transition-stub>
         <transition-stub
           name=""
         >
-          <!---->
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <manage-infos-stub
+              infos=""
+            />
+          </div>
         </transition-stub>
       </div>
     </div>
@@ -246,12 +264,29 @@ exports[`service-form Renders \`service-form\` with default props 1`] = `
         <transition-stub
           name=""
         >
-          <!---->
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <c-patterns-field-stub
+              class="mt-2"
+              entity-attributes="[object Object],[object Object],[object Object]"
+              entity-counters-type=""
+              with-entity=""
+            />
+          </div>
         </transition-stub>
         <transition-stub
           name=""
         >
-          <!---->
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <manage-infos-stub
+              infos=""
+            />
+          </div>
         </transition-stub>
       </div>
     </div>

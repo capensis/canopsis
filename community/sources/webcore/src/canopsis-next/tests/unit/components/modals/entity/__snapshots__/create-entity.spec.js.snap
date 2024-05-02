@@ -12,9 +12,7 @@ exports[`create-entity Renders \`create-entity\` with empty modal 1`] = `
     <div
       class="title"
     >
-      <span>
-        Create an entity
-      </span>
+      Create an entity
     </div>
     <div
       class="text"
@@ -64,9 +62,7 @@ exports[`create-entity Renders \`create-entity\` with pbehavior 1`] = `
     <div
       class="title"
     >
-      <span>
-        Custom create entity title
-      </span>
+      Custom create entity title
     </div>
     <div
       class="text"
