@@ -14,11 +14,11 @@ import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-t
 
 const stubs = {
   'alarm-column-cell-popup-body': true,
-  'alarm-column-value-state': true,
   'alarm-column-value-status': true,
   'color-indicator-wrapper': true,
   'alarm-column-value-categories': true,
   'alarm-column-value-extra-details': true,
+  'c-alarm-state-chip': true,
   'c-alarm-links-chips': true,
   'c-runtime-template': CRuntimeTemplate,
   'c-compiled-template': CCompiledTemplate,

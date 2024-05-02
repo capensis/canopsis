@@ -36,7 +36,7 @@ import { computed } from 'vue';
 
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { formatNotificationAlarmStep } from '@/helpers/entities/alarm/step/formatting';
-import { isChangeStateStepType } from '@/helpers/entities/alarm/step/entity';
+import { isStateStepType } from '@/helpers/entities/alarm/step/entity';
 
 import AlarmTimelineStepTitle from './alarm-timeline-step-title.vue';
 
@@ -49,7 +49,7 @@ export default {
     },
   },
   setup(props) {
-    const isChangeState = computed(() => isChangeStateStepType(props.step._t));
+    const isChangeState = computed(() => isStateStepType(props.step._t));
     const style = computed(() => formatNotificationAlarmStep(props.step));
     const sanitizedStepMessage = computed(() => sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))));
 
