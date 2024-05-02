@@ -30,6 +30,8 @@ export default {
     advanced: 'Advanced',
   },
   errors: {
+    invalidRange: 'The field must be between {min} and {max}',
+    invalidRangeNegative: 'The field must be between {min} and {max}, or between -{max} and -{min}',
     main: 'Please note that the recurrence rule you chose is not valid. We strongly advise you to modify it before saving changes.',
   },
   periodsRanges: {

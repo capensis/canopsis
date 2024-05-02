@@ -30,35 +30,43 @@ func (a *enrichmentApplicator) Apply(
 	rule ParsedRule,
 	event *types.Event,
 	regexMatch RegexMatch,
-) (string, bool, error) {
+) (string, bool, map[string]int64, error) {
 	var entityUpdated bool
-
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
+	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
 	if err != nil {
-		return rule.Config.OnFailure, false, err
+		return rule.Config.OnFailure, false, nil, err
 	}
 
 	for _, action := range rule.Config.Actions {
 		isUpdated, err := a.actionProcessor.Process(ctx, rule.ID, action, event, regexMatch, externalData)
 		if err != nil {
-			return rule.Config.OnFailure, false, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
+			return rule.Config.OnFailure, false, nil, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
 
 		entityUpdated = entityUpdated || isUpdated
 	}
 
-	return rule.Config.OnSuccess, entityUpdated, nil
+	return rule.Config.OnSuccess, entityUpdated, externalRequestCount, nil
 }
 
-func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
-	externalData := make(map[string]interface{})
+func getExternalData(
+	ctx context.Context,
+	rule ParsedRule,
+	event *types.Event,
+	regexMatch RegexMatch,
+	externalDataContainer *ExternalDataContainer,
+	failureService FailureService,
+) (map[string]any, map[string]int64, error) {
+	externalData := make(map[string]any)
+	externalRequestCount := make(map[string]int64)
 
 	for name, parameters := range rule.ExternalData {
-		getter, ok := a.externalDataContainer.Get(parameters.Type)
+		getter, ok := externalDataContainer.Get(parameters.Type)
 		if !ok {
 			failReason := fmt.Sprintf("external data %q has invalid type %q", name, parameters.Type)
-			a.failureService.Add(rule.ID, FailureTypeOther, failReason, nil)
-			return nil, fmt.Errorf("no such data source: %s", parameters.Type)
+			failureService.Add(rule.ID, FailureTypeOther, failReason, nil)
+
+			return nil, nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
 
 		data, err := getter.Get(ctx, rule.ID, name, event, parameters, Template{
@@ -66,11 +74,12 @@ func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule ParsedR
 			RegexMatch: regexMatch,
 		})
 		if err != nil {
-			return externalData, err
+			return nil, nil, err
 		}
 
 		externalData[name] = data
+		externalRequestCount[parameters.Type]++
 	}
 
-	return externalData, nil
+	return externalData, externalRequestCount, nil
 }

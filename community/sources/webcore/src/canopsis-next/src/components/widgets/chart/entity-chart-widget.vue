@@ -19,7 +19,7 @@
     >
       <chart-loader
         v-if="pending"
-        :has-metrics="hasMetrics"
+        :has-data="hasMetrics"
       />
       <component
         v-if="hasMetrics"
@@ -42,8 +42,8 @@ import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date'
 import { convertWidgetToQuery } from '@/helpers/entities/widget/query';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
-import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { localQueryMixin } from '@/mixins/query/query';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
@@ -67,7 +67,7 @@ export default {
   },
   mixins: [
     localQueryMixin,
-    metricsIntervalFilterMixin,
+    queryIntervalFilterMixin,
     entitiesVectorMetricsMixin,
     widgetChartMetricsMap,
     widgetChartExportMixinCreator({

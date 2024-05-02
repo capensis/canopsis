@@ -1,4 +1,21 @@
 .v-data-table {
+  &.theme--dark,
+  &.theme--light {
+    background-color: var(--v-table-background-base);
+  }
+
+  & tbody tr:nth-of-type(4n + 1) {
+    background-color: var(--v-table-shift-row-color-base, var(--v-table-row-color-base)) !important
+  }
+
+  &:not(&--expand) tbody tr:nth-of-type(2n + 1) {
+    background-color: var(--v-table-shift-row-color-base, var(--v-table-row-color-base)) !important
+  }
+
+  & tbody tr:not(.v-datatable__expand-row):hover {
+    background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base)) !important
+  }
+
   &__wrapper {
     padding-top: 8px;
   }

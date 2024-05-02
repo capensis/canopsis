@@ -12,7 +12,7 @@
         align-center
       >
         <v-flex
-          v-if="densable || !hideActions"
+          v-if="densable || selectable"
           class="alarms-list-table__top-pagination--left"
           xs6
         >
@@ -25,7 +25,7 @@
               :value="dense"
               @change="$emit('update:dense', $event)"
             />
-            <v-fade-transition v-if="!hideActions">
+            <v-fade-transition v-if="selectable">
               <v-flex
                 v-show="unresolvedSelected.length"
                 class="px-1"
@@ -83,7 +83,7 @@
         :loading="loading || columnsFiltersPending"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
-        class="alarms-list-table"
+        class="alarms-list-table v-data-table--expand"
         item-key="_id"
         loader-height="2"
         hide-default-footer
@@ -152,6 +152,7 @@
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
+            @clear:tag="$emit('clear:tag')"
             @click:state="openRootCauseDiagram"
             @expand="expand"
             @input="select"
@@ -178,6 +179,7 @@
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
     <component
       v-bind="additionalComponent.props"
@@ -211,6 +213,7 @@ import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-select
 import { widgetColumnResizingAlarmMixin } from '@/mixins/widget/columns/alarm-resizing';
 import { widgetColumnDraggingAlarmMixin } from '@/mixins/widget/columns/alarm-dragging';
 import { widgetHeaderStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky-header';
+import { alarmHandlebarsTagsHelper } from '@/mixins/widget/handlebars/alarm-tags-helper';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -237,6 +240,7 @@ export default {
     widgetRowsSelectingAlarmMixin,
     widgetColumnResizingAlarmMixin,
     widgetColumnDraggingAlarmMixin,
+    alarmHandlebarsTagsHelper,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -324,7 +328,7 @@ export default {
   },
   computed: {
     shownTopPagination() {
-      return this.totalItems && (this.densable || !this.hideActions || !this.hidePagination);
+      return this.totalItems && (this.densable || this.selectable || !this.hidePagination);
     },
 
     wrapperListeners() {
@@ -587,6 +591,10 @@ export default {
 
     updatePage(page) {
       this.$emit('update:page', page);
+    },
+
+    updatePaginationOptions(query) {
+      this.$emit('update:pagination-options', query);
     },
 
     openRootCauseDiagram(entity) {

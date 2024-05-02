@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with downtime and duration type props 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  6 hrs 30 mins 56 secs
+  <!---->
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with downtime and percent type props 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  27.8%
+  <!---->
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with trend and duration type 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  21%
+  <!---->
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with trend down and percent type 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  44%
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light error--text availability-list-column-value__trend"
+    style="font-size: 16px;"
+  >
+    arrow_downward
+  </i>
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with trend up and percent type 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  55%
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light success--text availability-list-column-value__trend availability-list-column-value__trend--up"
+    style="font-size: 16px;"
+  >
+    arrow_downward
+  </i>
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with uptime and duration type props 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  1 day 13 hrs 22 mins 47 secs
+  <!---->
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` with uptime and percent type props 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  72.2%
+  <!---->
+</span>
+`;
+
+exports[`availability-list-column-value Renders \`availability-list-column-value\` without trend changes and percent type 1`] = `
+<span
+  class="availability-list-column-value"
+>
+  23%
+  <!---->
+</span>
+`;

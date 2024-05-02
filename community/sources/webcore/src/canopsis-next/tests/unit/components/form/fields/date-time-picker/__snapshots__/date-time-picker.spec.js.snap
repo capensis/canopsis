@@ -32,6 +32,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
         class="flex v-date-time-picker__subtitle-wrapper"
       >
         <time-picker-field-stub
+          allowedtime="[Function]"
           class="v-date-time-picker__subtitle"
           roundhours="true"
           stepsinhours="4"
@@ -298,6 +299,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
         class="flex v-date-time-picker__subtitle-wrapper"
       >
         <time-picker-field-stub
+          allowedtime="[Function]"
           class="v-date-time-picker__subtitle"
           stepsinhours="4"
           value="18:00"
@@ -563,6 +565,7 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
         class="flex v-date-time-picker__subtitle-wrapper"
       >
         <time-picker-field-stub
+          allowedtime="[Function]"
           class="v-date-time-picker__subtitle"
           stepsinhours="4"
         />

@@ -22,6 +22,7 @@ const stubs = {
   'numbers-widget': true,
   'user-statistics-widget': true,
   'alarm-statistics-widget': true,
+  'availability-widget': true,
 };
 
 describe('widget-wrapper', () => {

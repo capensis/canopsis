@@ -146,13 +146,19 @@ export const convertDateToDateObject = (date, format) => convertDateToMoment(dat
  * @param {LocalDate} timestamp
  * @param {string} sourceTimezone
  * @param {string} [targetTimezone = getLocaleTimezone()]
+ * @param {string} [defaultValue]
  * @returns {Object}
  */
 export const convertDateToMomentByTimezone = (
   timestamp,
   sourceTimezone = getLocaleTimezone(),
   targetTimezone = getLocaleTimezone(),
+  defaultValue,
 ) => {
+  if (!timestamp) {
+    return defaultValue;
+  }
+
   const dateObject = convertDateToMoment(timestamp);
 
   if (sourceTimezone === targetTimezone) {
@@ -261,7 +267,7 @@ export const convertDateToStringWithFormatForToday = (date, format, defaultValue
  * @return {string}
  */
 export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue) => convertDateToString(
-  convertDateToMomentByTimezone(date, timezone),
+  convertDateToMomentByTimezone(date, timezone, defaultValue),
   format,
   defaultValue,
 );

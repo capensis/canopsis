@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
-import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModule, createMockedStoreModules, createServiceModule } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 
 import { API_HOST, API_ROUTES } from '@/config';
@@ -12,7 +12,7 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   MODALS,
-  QUICK_RANGES,
+  LIVE_REPORTING_QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
   USERS_PERMISSIONS,
@@ -23,7 +23,7 @@ import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widge
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
 const stubs = {
-  'c-advanced-search-field': true,
+  'c-advanced-search': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -44,7 +44,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
-  'c-advanced-search-field': true,
+  'c-advanced-search': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -74,8 +74,6 @@ describe('alarms-list', () => {
 
   const nowTimestamp = 1386435600000;
   const nowSubtractOneYearUnix = 1354834800;
-
-  jest.useFakeTimers({ now: nowTimestamp });
 
   const totalItems = 10;
   const alarms = fakeStaticAlarms({
@@ -116,8 +114,8 @@ describe('alarms-list', () => {
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
     itemsPerPage: userPreferences.content.itemsPerPage,
-    tstart: QUICK_RANGES.last1Year.start,
-    tstop: QUICK_RANGES.last1Year.stop,
+    tstart: LIVE_REPORTING_QUICK_RANGES.last1Year.start,
+    tstop: LIVE_REPORTING_QUICK_RANGES.last1Year.stop,
     opened: null,
     search: 'search',
   };
@@ -249,6 +247,8 @@ describe('alarms-list', () => {
     },
   };
 
+  const { serviceModule, fetchEntityInfosKeysWithoutStore } = createServiceModule();
+
   const store = createMockedStoreModules([
     alarmModule,
     sideBarModule,
@@ -258,6 +258,7 @@ describe('alarms-list', () => {
     userPreferenceModule,
     authModule,
     alarmTagModule,
+    serviceModule,
   ]);
 
   const factory = generateShallowRenderer(AlarmsList, {
@@ -283,6 +284,10 @@ describe('alarms-list', () => {
     },
   });
 
+  beforeEach(() => {
+    jest.useFakeTimers({ now: nowTimestamp });
+  });
+
   afterEach(() => {
     fetchUserPreference.mockClear();
     updateUserPreference.mockClear();
@@ -290,6 +295,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
     hideSideBar.mockClear();
     fetchTagsList.mockClear();
+    fetchEntityInfosKeysWithoutStore.mockClear();
   });
 
   it('Query updated after mount', async () => {
@@ -369,6 +375,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -431,6 +438,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -493,6 +501,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -791,8 +800,8 @@ describe('alarms-list', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     const actionValue = {
-      tstart: QUICK_RANGES.last3Hour.start,
-      tstop: QUICK_RANGES.last3Hour.stop,
+      tstart: LIVE_REPORTING_QUICK_RANGES.last3Hour.start,
+      tstop: LIVE_REPORTING_QUICK_RANGES.last3Hour.stop,
     };
 
     modalArguments.config.action(actionValue);
@@ -822,6 +831,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -965,6 +975,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -999,7 +1010,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1050,6 +1061,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1090,7 +1102,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1117,6 +1129,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1157,7 +1170,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1193,6 +1206,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1268,6 +1282,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1315,6 +1330,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1366,6 +1382,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...alarmModule,
           actions: {
@@ -1708,6 +1725,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1747,6 +1765,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         alarmTagModule,
+        serviceModule,
         {
           ...authModule,
           getters: {

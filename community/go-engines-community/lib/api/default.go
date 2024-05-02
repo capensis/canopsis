@@ -49,13 +49,19 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
-const chanBuf = 10
+const (
+	chanBuf = 10
+
+	websocketReadBufferSize  = 1024
+	websocketWriteBufferSize = 2048
+)
 
 //go:embed swaggerui/*
 var docsUiFile embed.FS
@@ -201,19 +207,39 @@ func Default(
 	}
 
 	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
+	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
+
+	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
+		ReadBufferSize:  websocketReadBufferSize,
+		WriteBufferSize: websocketWriteBufferSize,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	})
+
+	websocketAuthorizer := websocket.NewAuthorizer(enforcer, security.GetTokenProviders())
+	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, logger)
+	err = registerWebsocketRooms(websocketHub)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot register websocket rooms: %w", err)
+	}
+
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
 		author.NewProvider(dbClient, p.ApiConfigProvider), tplExecutor, json.NewDecoder(), logger)
-	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
-		dbClient, alarmStore, logger)
+	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+
+	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(dbClient, pgPoolProvider),
+		json.NewEncoder(), json.NewDecoder(), flags.IntegrationPeriodicalWaitTime, logger)
+
+	err = registerWebsocketGroups(websocketHub, alarmWatcher, messageRateWatcher)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
+		return nil, nil, fmt.Errorf("cannot register websocket groups: %w", err)
 	}
 
 	broadcastMessageChan := make(chan bool)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
 
@@ -283,6 +309,8 @@ func Default(
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
 	api.AddRouter(func(router *gin.Engine) {
+		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
+		router.Use(middleware.Recovery(logger))
 		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {
@@ -375,9 +403,13 @@ func Default(
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 
-	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector, json.NewEncoder(), logger)
+	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector,
+		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
+	})
+	api.AddWorker("state_settings_worker", func(ctx context.Context) {
+		stateSettingsListener.Work(ctx)
 	})
 	api.AddWorker("entity_event_publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
@@ -432,59 +464,45 @@ func Default(
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)
 	})
-	api.AddWorker("messageratestats", messageratestats.GetWebsocketHandler(websocketHub, pgPoolProvider, logger, flags.IntegrationPeriodicalWaitTime))
 
 	return api, docsFile, nil
 }
 
-func newWebsocketHub(
-	enforcer libsecurity.Enforcer,
-	tokenProviders []libsecurity.TokenProvider,
-	checkAuthInterval time.Duration,
-	dbClient mongo.DbClient,
-	alarmStore alarmapi.Store,
-	logger zerolog.Logger,
-) (websocket.Hub, error) {
-	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 2048,
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	})
-	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
-	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
+func registerWebsocketRooms(websocketHub websocket.Hub) error {
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
-		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
-		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheck, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
-		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheckStatus, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
-		return nil, fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomMessageRates, apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan); err != nil {
-		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
-		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
-	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+	return nil
+}
+
+func registerWebsocketGroups(
+	websocketHub websocket.Hub,
+	alarmWatcher alarmapi.Watcher,
+	messageRateWatcher messageratestats.Watcher,
+) error {
 	err := websocketHub.RegisterGroup(websocket.RoomAlarmsGroup, websocket.GroupParameters{
 		OnJoin:  alarmWatcher.StartWatch,
 		OnLeave: alarmWatcher.StopWatch,
 	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
 	if err != nil {
-		return nil, fmt.Errorf("fail to register websocket group: %w", err)
+		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
 	err = websocketHub.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.GroupParameters{
@@ -492,10 +510,18 @@ func newWebsocketHub(
 		OnLeave: alarmWatcher.StopWatch,
 	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
 	if err != nil {
-		return nil, fmt.Errorf("fail to register websocket group: %w", err)
+		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
-	return websocketHub, nil
+	err = websocketHub.RegisterGroup(websocket.RoomMessageRates, websocket.GroupParameters{
+		OnJoin:  messageRateWatcher.StartWatch,
+		OnLeave: messageRateWatcher.StopWatch,
+	}, apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan)
+	if err != nil {
+		return fmt.Errorf("fail to register websocket group: %w", err)
+	}
+
+	return nil
 }
 
 func GetSessionKeyVar(logger zerolog.Logger) []byte {

@@ -305,31 +305,31 @@ func (m *MockHub) EXPECT() *MockHubMockRecorder {
 }
 
 // CloseGroupRoom mocks base method.
-func (m *MockHub) CloseGroupRoom(arg0 context.Context, arg1, arg2 string) error {
+func (m *MockHub) CloseGroupRoom(arg0, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseGroupRoom", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "CloseGroupRoom", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CloseGroupRoom indicates an expected call of CloseGroupRoom.
-func (mr *MockHubMockRecorder) CloseGroupRoom(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockHubMockRecorder) CloseGroupRoom(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseGroupRoom", reflect.TypeOf((*MockHub)(nil).CloseGroupRoom), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseGroupRoom", reflect.TypeOf((*MockHub)(nil).CloseGroupRoom), arg0, arg1)
 }
 
 // CloseGroupRoomAndNotify mocks base method.
-func (m *MockHub) CloseGroupRoomAndNotify(arg0 context.Context, arg1, arg2 string) error {
+func (m *MockHub) CloseGroupRoomAndNotify(arg0, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseGroupRoomAndNotify", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "CloseGroupRoomAndNotify", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CloseGroupRoomAndNotify indicates an expected call of CloseGroupRoomAndNotify.
-func (mr *MockHubMockRecorder) CloseGroupRoomAndNotify(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockHubMockRecorder) CloseGroupRoomAndNotify(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseGroupRoomAndNotify", reflect.TypeOf((*MockHub)(nil).CloseGroupRoomAndNotify), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseGroupRoomAndNotify", reflect.TypeOf((*MockHub)(nil).CloseGroupRoomAndNotify), arg0, arg1)
 }
 
 // Connect mocks base method.
@@ -441,39 +441,39 @@ func (mr *MockHubMockRecorder) RegisterRoom(arg0 interface{}, arg1 ...interface{
 }
 
 // Send mocks base method.
-func (m *MockHub) Send(arg0 context.Context, arg1 string, arg2 interface{}) {
+func (m *MockHub) Send(arg0 string, arg1 interface{}) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Send", arg0, arg1, arg2)
+	m.ctrl.Call(m, "Send", arg0, arg1)
 }
 
 // Send indicates an expected call of Send.
-func (mr *MockHubMockRecorder) Send(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockHubMockRecorder) Send(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockHub)(nil).Send), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockHub)(nil).Send), arg0, arg1)
 }
 
 // SendGroupRoom mocks base method.
-func (m *MockHub) SendGroupRoom(arg0 context.Context, arg1, arg2 string, arg3 interface{}) {
+func (m *MockHub) SendGroupRoom(arg0, arg1 string, arg2 interface{}) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendGroupRoom", arg0, arg1, arg2, arg3)
+	m.ctrl.Call(m, "SendGroupRoom", arg0, arg1, arg2)
 }
 
 // SendGroupRoom indicates an expected call of SendGroupRoom.
-func (mr *MockHubMockRecorder) SendGroupRoom(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockHubMockRecorder) SendGroupRoom(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoom", reflect.TypeOf((*MockHub)(nil).SendGroupRoom), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoom", reflect.TypeOf((*MockHub)(nil).SendGroupRoom), arg0, arg1, arg2)
 }
 
 // SendGroupRoomByConnections mocks base method.
-func (m *MockHub) SendGroupRoomByConnections(arg0 context.Context, arg1 []string, arg2, arg3 string, arg4 interface{}) {
+func (m *MockHub) SendGroupRoomByConnections(arg0 []string, arg1, arg2 string, arg3 interface{}) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendGroupRoomByConnections", arg0, arg1, arg2, arg3, arg4)
+	m.ctrl.Call(m, "SendGroupRoomByConnections", arg0, arg1, arg2, arg3)
 }
 
 // SendGroupRoomByConnections indicates an expected call of SendGroupRoomByConnections.
-func (mr *MockHubMockRecorder) SendGroupRoomByConnections(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+func (mr *MockHubMockRecorder) SendGroupRoomByConnections(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoomByConnections", reflect.TypeOf((*MockHub)(nil).SendGroupRoomByConnections), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoomByConnections", reflect.TypeOf((*MockHub)(nil).SendGroupRoomByConnections), arg0, arg1, arg2, arg3)
 }
 
 // Start mocks base method.

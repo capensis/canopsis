@@ -65,6 +65,13 @@
         top
         @click.stop="showCreateAlarmPatternModal"
       />
+      <c-action-fab-btn
+        :tooltip="createServiceWeatherTitle"
+        icon="view_module"
+        color="secondary lighten-2"
+        top
+        @click.stop="showCreateServiceWeatherPatternModal"
+      />
     </c-fab-expand-btn>
   </div>
 </template>
@@ -72,7 +79,7 @@
 <script>
 import { MODALS, PATTERN_TABS, PATTERN_TYPES } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 import { entitiesCorporatePatternsMixin } from '@/mixins/entities/pattern/corporate';
 import {
@@ -123,6 +130,12 @@ export default {
       return this.isCorporatePatternsTab
         ? this.$t('modals.createCorporatePbehaviorPattern.create.title')
         : this.$t('modals.createPbehaviorPattern.create.title');
+    },
+
+    createServiceWeatherTitle() {
+      return this.isCorporatePatternsTab
+        ? this.$t('modals.createCorporateServiceWeatherPattern.create.title')
+        : this.$t('modals.createServiceWeatherPattern.create.title');
     },
   },
   methods: {
@@ -182,12 +195,29 @@ export default {
       });
     },
 
+    showCreateServiceWeatherPatternModal() {
+      this.$modals.show({
+        name: MODALS.createPattern,
+        config: {
+          pattern: { is_corporate: this.isCorporatePatternsTab },
+          title: this.createServiceWeatherTitle,
+          type: PATTERN_TYPES.serviceWeather,
+          action: async (pattern) => {
+            await this.createPattern({ data: pattern });
+
+            return this.refresh();
+          },
+        },
+      });
+    },
+
     getEditPatternModalTitle(pattern) {
       if (pattern.is_corporate) {
         return {
           [PATTERN_TYPES.alarm]: this.$t('modals.createCorporateAlarmPattern.edit.title'),
           [PATTERN_TYPES.entity]: this.$t('modals.createCorporateEntityPattern.edit.title'),
           [PATTERN_TYPES.pbehavior]: this.$t('modals.createCorporatePbehaviorPattern.edit.title'),
+          [PATTERN_TYPES.serviceWeather]: this.$t('modals.createCorporateServiceWeatherPattern.edit.title'),
         }[pattern.type];
       }
 
@@ -195,6 +225,7 @@ export default {
         [PATTERN_TYPES.alarm]: this.$t('modals.createAlarmPattern.edit.title'),
         [PATTERN_TYPES.entity]: this.$t('modals.createEntityPattern.edit.title'),
         [PATTERN_TYPES.pbehavior]: this.$t('modals.createPbehaviorPattern.edit.title'),
+        [PATTERN_TYPES.serviceWeather]: this.$t('modals.createServiceWeatherPattern.edit.title'),
       }[pattern.type];
     },
 

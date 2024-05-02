@@ -32,6 +32,6 @@ export const useComponentModel = () => {
 
   return {
     event: model?.event ?? 'input',
-    prop: model?.event ?? 'value',
+    prop: model?.prop ?? 'value',
   };
 };

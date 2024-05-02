@@ -5,19 +5,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value="Filter"
-      />
+      <c-search-stub />
     </div>
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -753,17 +751,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub />
+      <c-search-stub />
     </div>
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -924,19 +922,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -1572,19 +1568,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <!---->
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div

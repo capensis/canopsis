@@ -5,8 +5,8 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    advanced-pagination
     search
+    advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
     <template #status="{ item }">

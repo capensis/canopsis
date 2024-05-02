@@ -30,6 +30,8 @@ export default {
     advanced: 'Avancé',
   },
   errors: {
+    invalidRange: 'Le champ doit être compris entre {min} et {max}',
+    invalidRangeNegative: 'Le champ doit être compris entre {min} et {max}, ou entre -{max} et -{min}',
     main: 'La récurrence choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
   },
   periodsRanges: {

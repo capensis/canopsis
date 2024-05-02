@@ -48,6 +48,18 @@ func (mr *MockSenderMockRecorder) Run(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockSender)(nil).Run), arg0)
 }
 
+// SendActionEvent mocks base method.
+func (m *MockSender) SendActionEvent(arg0 techmetrics.ActionEventMetric) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendActionEvent", arg0)
+}
+
+// SendActionEvent indicates an expected call of SendActionEvent.
+func (mr *MockSenderMockRecorder) SendActionEvent(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendActionEvent", reflect.TypeOf((*MockSender)(nil).SendActionEvent), arg0)
+}
+
 // SendApiRequest mocks base method.
 func (m *MockSender) SendApiRequest(arg0 techmetrics.ApiRequestMetric) {
 	m.ctrl.T.Helper()
@@ -108,6 +120,18 @@ func (mr *MockSenderMockRecorder) SendCheEvent(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCheEvent", reflect.TypeOf((*MockSender)(nil).SendCheEvent), arg0)
 }
 
+// SendCorrelationEvent mocks base method.
+func (m *MockSender) SendCorrelationEvent(arg0 techmetrics.CorrelationEventMetric) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendCorrelationEvent", arg0)
+}
+
+// SendCorrelationEvent indicates an expected call of SendCorrelationEvent.
+func (mr *MockSenderMockRecorder) SendCorrelationEvent(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCorrelationEvent", reflect.TypeOf((*MockSender)(nil).SendCorrelationEvent), arg0)
+}
+
 // SendCorrelationRetries mocks base method.
 func (m *MockSender) SendCorrelationRetries(arg0 techmetrics.CorrelationRetriesMetric) {
 	m.ctrl.T.Helper()
@@ -118,6 +142,42 @@ func (m *MockSender) SendCorrelationRetries(arg0 techmetrics.CorrelationRetriesM
 func (mr *MockSenderMockRecorder) SendCorrelationRetries(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCorrelationRetries", reflect.TypeOf((*MockSender)(nil).SendCorrelationRetries), arg0)
+}
+
+// SendCpsEvent mocks base method.
+func (m *MockSender) SendCpsEvent(arg0 techmetrics.CpsEventMetric) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendCpsEvent", arg0)
+}
+
+// SendCpsEvent indicates an expected call of SendCpsEvent.
+func (mr *MockSenderMockRecorder) SendCpsEvent(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCpsEvent", reflect.TypeOf((*MockSender)(nil).SendCpsEvent), arg0)
+}
+
+// SendDynamicInfosEvent mocks base method.
+func (m *MockSender) SendDynamicInfosEvent(arg0 techmetrics.DynamicInfoEventMetric) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendDynamicInfosEvent", arg0)
+}
+
+// SendDynamicInfosEvent indicates an expected call of SendDynamicInfosEvent.
+func (mr *MockSenderMockRecorder) SendDynamicInfosEvent(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendDynamicInfosEvent", reflect.TypeOf((*MockSender)(nil).SendDynamicInfosEvent), arg0)
+}
+
+// SendFifoEvent mocks base method.
+func (m *MockSender) SendFifoEvent(arg0 techmetrics.FifoEventMetric) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendFifoEvent", arg0)
+}
+
+// SendFifoEvent indicates an expected call of SendFifoEvent.
+func (mr *MockSenderMockRecorder) SendFifoEvent(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendFifoEvent", reflect.TypeOf((*MockSender)(nil).SendFifoEvent), arg0)
 }
 
 // SendPBehaviorPeriodical mocks base method.
@@ -142,16 +202,4 @@ func (m *MockSender) SendQueue(arg0 string, arg1 time.Time, arg2 int64) {
 func (mr *MockSenderMockRecorder) SendQueue(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendQueue", reflect.TypeOf((*MockSender)(nil).SendQueue), arg0, arg1, arg2)
-}
-
-// SendSimpleEvent mocks base method.
-func (m *MockSender) SendSimpleEvent(arg0 string, arg1 techmetrics.EventMetric) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendSimpleEvent", arg0, arg1)
-}
-
-// SendSimpleEvent indicates an expected call of SendSimpleEvent.
-func (mr *MockSenderMockRecorder) SendSimpleEvent(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendSimpleEvent", reflect.TypeOf((*MockSender)(nil).SendSimpleEvent), arg0, arg1)
 }

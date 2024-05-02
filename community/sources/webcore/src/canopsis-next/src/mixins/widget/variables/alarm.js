@@ -13,7 +13,7 @@ export const alarmVariablesMixin = {
   mixins: [variablesMixin],
   computed: {
     ticketVariables() {
-      return [this.alarmStepValueVariable, this.alarmStepAuthorVariable];
+      return [this.stepValueVariable, this.stepAuthorVariable];
     },
 
     pbehaviorInfoVariables() {

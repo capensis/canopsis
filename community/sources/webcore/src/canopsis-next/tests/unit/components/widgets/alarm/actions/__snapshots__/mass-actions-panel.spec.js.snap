@@ -15,9 +15,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     Fast ack|done_all|fastAck
   </button>
   <button
-    class="action-createManualMetaAlarm"
+    class="action-linkToMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+    Link to a meta alarm|center_focus_strong|linkToMetaAlarm
   </button>
 </div>
 `;
@@ -77,9 +77,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
     Snooze alarm|alarm|snooze
   </button>
   <button
-    class="action-createManualMetaAlarm"
+    class="action-linkToMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+    Link to a meta alarm|center_focus_strong|linkToMetaAlarm
   </button>
 </div>
 `;
@@ -134,9 +134,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     Snooze alarm|alarm|snooze
   </button>
   <button
-    class="action-createManualMetaAlarm"
+    class="action-linkToMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+    Link to a meta alarm|center_focus_strong|linkToMetaAlarm
   </button>
 </div>
 `;
@@ -191,9 +191,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 
     Snooze alarm|alarm|snooze
   </button>
   <button
-    class="action-createManualMetaAlarm"
+    class="action-linkToMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+    Link to a meta alarm|center_focus_strong|linkToMetaAlarm
   </button>
 </div>
 `;
@@ -248,9 +248,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
     Snooze alarm|alarm|snooze
   </button>
   <button
-    class="action-createManualMetaAlarm"
+    class="action-linkToMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+    Link to a meta alarm|center_focus_strong|linkToMetaAlarm
   </button>
   <button
     class="action-rule_id..with rule id"
