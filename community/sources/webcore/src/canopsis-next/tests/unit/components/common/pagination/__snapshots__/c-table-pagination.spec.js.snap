@@ -11,7 +11,6 @@ exports[`c-table-pagination Renders \`c-table-pagination\` with custom props 1`]
       limit="10"
       page="3"
       total="100"
-      type="bottom"
     />
   </div>
   <div

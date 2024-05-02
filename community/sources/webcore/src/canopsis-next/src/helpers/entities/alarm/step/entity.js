@@ -123,13 +123,13 @@ export const isChangeStatusStepType = type => [
 ].includes(type);
 
 /**
- * Checks if the provided type is one of the change state step types.
+ * Checks if the provided type is one of the state step types.
  *
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is either `changestate`, `stateinc`, or `statedec`,
  * otherwise, returns `false`.
  */
-export const isChangeStateStepType = type => [
+export const isStateStepType = type => [
   ALARM_LIST_STEPS.changeState,
   ALARM_LIST_STEPS.stateinc,
   ALARM_LIST_STEPS.statedec,
@@ -231,4 +231,29 @@ export const isWebhookStepType = type => [
 export const isMetaAlarmStepType = type => [
   ALARM_LIST_STEPS.metaalarmattach,
   ALARM_LIST_STEPS.metaalarmdetach,
+].includes(type);
+
+/**
+ * Determines if the provided type corresponds to a failure step.
+ *
+ * @param {string} type - The step type to check.
+ * @returns {boolean} Returns true if the type is a failure step, otherwise false.
+ */
+export const isFailStepType = type => [
+  ALARM_LIST_STEPS.autoInstructionFail,
+  ALARM_LIST_STEPS.webhookFail,
+  ALARM_LIST_STEPS.instructionFail,
+  ALARM_LIST_STEPS.declareTicketFail,
+  ALARM_LIST_STEPS.declareTicketRuleFail,
+].includes(type);
+
+/**
+ * Determines if the provided type corresponds to a success ticket step.
+ *
+ * @param {string} type - The step type to check.
+ * @returns {boolean} Returns true if the type is a success ticket step, otherwise false.
+ */
+export const isSuccessStepTicketType = type => [
+  ALARM_LIST_STEPS.declareTicket,
+  ALARM_LIST_STEPS.assocTicket,
 ].includes(type);

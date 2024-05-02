@@ -91,7 +91,7 @@ func (s *service) check(ctx context.Context, previous map[string]bool, onChange 
 	for _, v := range messages {
 		ids[v.ID] = true
 	}
-	s.websocketHub.Send(ctx, websocket.RoomBroadcastMessages, messages)
+	s.websocketHub.Send(websocket.RoomBroadcastMessages, messages)
 
 	return ids
 }

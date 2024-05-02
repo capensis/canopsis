@@ -4,7 +4,7 @@ import Faker from 'faker';
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { triggerDocumentMouseEvent, triggerDocumentKeyboardEvent } from '@unit/utils/events';
 
-import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
+import { CONNECTOR_SIDES, KEY_CODES, SHAPES } from '@/constants';
 
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
@@ -297,7 +297,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.delete,
+      keyCode: KEY_CODES.delete,
     });
 
     await flushPromises();
@@ -317,7 +317,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.arrowUp,
+      keyCode: KEY_CODES.up,
     });
 
     await flushPromises();
@@ -350,7 +350,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.arrowRight,
+      keyCode: KEY_CODES.right,
     });
 
     await flushPromises();
@@ -385,7 +385,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.arrowDown,
+      keyCode: KEY_CODES.down,
     });
 
     await flushPromises();
@@ -418,7 +418,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.arrowLeft,
+      keyCode: KEY_CODES.left,
     });
 
     await flushPromises();
@@ -459,7 +459,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.keyC,
+      keyCode: KEY_CODES.c,
       ctrlKey: true,
     });
 
@@ -474,7 +474,7 @@ describe('flowchart-editor', () => {
     await flushPromises();
 
     triggerDocumentKeyboardEvent('keydown', {
-      keyCode: FLOWCHART_KEY_CODES.keyV,
+      keyCode: KEY_CODES.v,
       ctrlKey: true,
     });
 

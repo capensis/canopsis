@@ -4,6 +4,7 @@
     :disabled="disabled"
     :name="name"
     :required="required"
+    :type="$constants.PATTERN_TYPES.serviceWeather"
     :attributes="availableServiceWeatherAttributes"
     :with-type="withType"
     :counter="counter"

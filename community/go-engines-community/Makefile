@@ -196,6 +196,7 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 	# Create configuration directories
 	@echo "==> Creating configuration directories"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/var/lib/icons"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/var/lib/upload-files"
 	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/api/security"
@@ -215,7 +216,6 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 install: install-common
 	# Create configuration directories
 	@echo "==> Creating Canopsis $(CANOPSIS_EDITION) specific configuration directories"
-	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter"
 	# Database migration script and fixtures
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/fixtures"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/migrations"
@@ -234,7 +234,6 @@ install: install-common
 	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/tech_postgres_migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/tech_postgres_migrations"
 	
 	#Install other configuration files
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/connector-centreon-downtime-adapter/config.yml.example" "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter/config.yml"
 
 systemd_install-common:
 	@echo "==> installing Canopsis $(CANOPSIS_EDITION) systemd unit"

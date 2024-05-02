@@ -102,6 +102,11 @@ export default {
 <style lang="scss" scoped>
 .timeline-step {
   --alarm-timeline-step-margins: 35px;
+  --alarm-timeline-step-time-width: 56px;
+
+  &__time {
+    width: var(--alarm-timeline-step-time-width);
+  }
 
   &__main-content {
     border-bottom: 1px solid var(--v-background-darken1);

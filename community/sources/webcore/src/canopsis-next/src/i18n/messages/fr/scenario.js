@@ -40,5 +40,6 @@ export default {
     actionRequired: 'Veuillez ajouter au moins une action',
     deprecatedTriggerExist: 'Ce scénario n\'est plus pris en charge en raison de son ancien format et donc désactivé. \n'
       + 'Veuillez mettre à jour les déclencheurs de scénario ou créer une nouvelle règle de déclaration de ticket.',
+    testQueryRequireSteps: 'La requête de test n\'est pas disponible : aucun webhook n\'a été ajouté au scénario',
   },
 };

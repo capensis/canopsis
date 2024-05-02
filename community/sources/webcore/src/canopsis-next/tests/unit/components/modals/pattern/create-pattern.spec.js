@@ -6,7 +6,7 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 
-import { PATTERN_TYPES } from '@/constants';
+import { PATTERN_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -221,7 +221,12 @@ describe('create-pattern', () => {
     consoleErrorSpy.mockClear();
   });
 
-  test('Modal submitted with correct data after trigger form', async () => {
+  test.each([
+    { type: PATTERN_TYPES.alarm, expectedField: PATTERNS_FIELDS.alarm },
+    { type: PATTERN_TYPES.entity, expectedField: PATTERNS_FIELDS.entity },
+    { type: PATTERN_TYPES.pbehavior, expectedField: PATTERNS_FIELDS.pbehavior },
+    { type: PATTERN_TYPES.serviceWeather, expectedField: PATTERNS_FIELDS.serviceWeather },
+  ])('Modal submitted with type: "$type" data after trigger form', async ({ type, expectedField }) => {
     const action = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -236,23 +241,23 @@ describe('create-pattern', () => {
       },
     });
 
-    const patternForm = selectPatternForm(wrapper);
-
     const newForm = {
-      all: false,
-      auto: false,
-      manual: false,
-      with: false,
-      instructions: [{}],
+      type,
+      name: Faker.datatype.string(),
+      groups: [],
     };
 
-    patternForm.triggerCustomEvent('input', newForm);
+    selectPatternForm(wrapper).triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(newForm);
+    expect(action).toBeCalledWith({
+      type: newForm.type,
+      name: newForm.name,
+      [expectedField]: [],
+    });
     expect($modals.hide).toBeCalled();
   });
 

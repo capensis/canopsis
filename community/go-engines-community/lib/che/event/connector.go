@@ -75,7 +75,8 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		isInfosUpdated, err := p.eventFilterService.ProcessEvent(ctx, event)
+		var isInfosUpdated bool
+		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}

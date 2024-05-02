@@ -233,6 +233,16 @@ export const QUICK_RANGES = {
     start: 'today/M',
     stop: 'now',
   },
+  last3Months: {
+    value: 'last3Months',
+    start: 'today-3M/M',
+    stop: 'today-1M/M',
+  },
+  last6Months: {
+    value: 'last6Months',
+    start: 'today-6M/M',
+    stop: 'today-1M/M',
+  },
   custom: {
     value: 'custom',
   },
@@ -388,8 +398,6 @@ export const CONTENT_TYPES = {
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
 };
 
-export const MAX_SEARCH_ITEMS = 8;
-
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
@@ -414,3 +422,38 @@ export const EXCLUDED_SERVER_ERROR_STATUSES = [
   RESPONSE_STATUSES.unauthorized,
   RESPONSE_STATUSES.forbidden,
 ];
+
+export const PAYLOADS_INFO_VARIABLES = {
+  value: '.Value',
+  description: '.Description',
+};
+
+export const WEBHOOK_EXECUTION_STATUSES = {
+  waiting: 0,
+  running: 1,
+  succeeded: 2,
+  failed: 3,
+};
+
+export const KEY_CODES = {
+  backspace: 8,
+  enter: 13,
+  shift: 16,
+  esc: 27,
+  left: 37,
+  up: 38,
+  right: 39,
+  down: 40,
+  end: 35,
+  home: 36,
+  delete: 46,
+  c: 67,
+  v: 86,
+};
+
+export const VARIABLES_STEP_FIELDS = {
+  timestamp: 't',
+  value: 'val',
+  message: 'm',
+  author: 'a',
+};

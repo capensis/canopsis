@@ -9,3 +9,4 @@ export * from './service-weather';
 export * from './kpi';
 export * from './map';
 export * from './theme';
+export * from './event';

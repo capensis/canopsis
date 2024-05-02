@@ -10,16 +10,7 @@
       :headers="headers"
       :search="searchingText"
       item-key="name"
-    >
-      <template #items="{ item }">
-        <td
-          v-for="column in headers"
-          :key="column.value"
-        >
-          {{ item | get(column.value) }}
-        </td>
-      </template>
-    </v-data-table>
+    />
   </v-layout>
 </template>
 

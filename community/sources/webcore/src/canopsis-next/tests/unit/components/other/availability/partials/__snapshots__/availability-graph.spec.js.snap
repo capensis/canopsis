@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`availability-graph Renders \`availability-graph\` with custom props 1`] = `
+<div
+  class="layout availability-graph position-relative align-start justify-center"
+>
+  <c-progress-overlay-stub />
+  <div
+    class="availability-graph__content"
+  >
+    <availability-history-stub
+      availabilities=""
+      defaultshowtype="1"
+      displayparameter="1"
+      query="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`availability-graph Renders \`availability-graph\` with default props. 1`] = `
+<div
+  class="layout availability-graph position-relative align-start justify-center"
+>
+  <c-progress-overlay-stub />
+  <div
+    class="availability-graph__content"
+  >
+    <availability-history-stub
+      availabilities=""
+      defaultshowtype="0"
+      displayparameter="0"
+      query="[object Object]"
+    />
+  </div>
+</div>
+`;

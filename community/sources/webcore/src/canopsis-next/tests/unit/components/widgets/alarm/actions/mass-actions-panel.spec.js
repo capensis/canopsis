@@ -5,10 +5,10 @@ import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/
 import {
   createAlarmModule,
   createAuthModule,
-  createManualMetaAlarmModule,
+  createMetaAlarmModule,
   createMockedStoreModules,
 } from '@unit/utils/store';
-import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { mockModals } from '@unit/utils/mock-hooks';
 
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -43,7 +43,7 @@ const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
 
 describe('mass-actions-panel', () => {
   const timestamp = 1386435600000;
-  mockDateNow(timestamp);
+  jest.useFakeTimers({ now: timestamp });
 
   const $modals = mockModals();
 
@@ -132,11 +132,11 @@ describe('mass-actions-panel', () => {
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
   } = createAlarmModule();
-  const { manualMetaAlarmModule, addAlarmsIntoManualMetaAlarm, createManualMetaAlarm } = createManualMetaAlarmModule();
+  const { metaAlarmModule, addAlarmsIntoMetaAlarm, createMetaAlarm } = createMetaAlarmModule();
 
   const items = [alarm, metaAlarm];
 
-  const store = createMockedStoreModules([authModuleWithAccess, alarmModule, manualMetaAlarmModule]);
+  const store = createMockedStoreModules([authModuleWithAccess, alarmModule, metaAlarmModule]);
 
   const widget = {
     parameters: {
@@ -634,15 +634,15 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm);
+    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm);
 
     ackRemoveAction.trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.createManualMetaAlarm,
+        name: MODALS.linkToMetaAlarm,
         config: {
-          title: 'Manual meta alarm management',
+          title: 'Link to a meta alarm',
           items,
           action: expect.any(Function),
         },
@@ -658,7 +658,7 @@ describe('mass-actions-panel', () => {
 
     await config.action(manualMetaAlarmEventWithId);
 
-    expect(addAlarmsIntoManualMetaAlarm).toBeCalledWith(
+    expect(addAlarmsIntoMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
         id: manualMetaAlarmEventWithId.id,
@@ -670,7 +670,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
 
-    addAlarmsIntoManualMetaAlarm.mockClear();
+    addAlarmsIntoMetaAlarm.mockClear();
     refreshAlarmsList.mockClear();
 
     const manualMetaAlarmEventWithoutId = {
@@ -680,7 +680,7 @@ describe('mass-actions-panel', () => {
 
     await config.action(manualMetaAlarmEventWithoutId);
 
-    expect(createManualMetaAlarm).toBeCalledWith(
+    expect(createMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
         id: manualMetaAlarmEventWithoutId.id,

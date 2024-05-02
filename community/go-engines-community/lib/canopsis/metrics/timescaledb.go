@@ -170,12 +170,14 @@ func (s *timescaleDBSender) SendSliMetric(_ time.Time, _ types.Alarm, _ types.En
 
 }
 
-func (s *timescaleDBSender) SendMessageRate(timestamp time.Time) {
-	query := "INSERT INTO " + MessageRate + " (time) VALUES ($1)"
+func (s *timescaleDBSender) SendMessageRate(timestamp time.Time, eventType, connectorName string) {
+	query := "INSERT INTO " + MessageRate + " (time, event_type, connector_name) VALUES ($1, $2, $3)"
 	s.addBatch(MessageRate, batchItem{
 		query: query,
 		arguments: []any{
 			timestamp.UTC(),
+			eventType,
+			connectorName,
 		},
 	})
 }

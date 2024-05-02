@@ -9,12 +9,9 @@
     select-all
     advanced-pagination
   >
-    <template #toolbar="{ clearSearch, updateSearch }">
+    <template #toolbar="{ updateSearch }">
       <v-layout>
-        <c-search-field
-          @submit="updateSearch"
-          @clear="clearSearch"
-        />
+        <c-search @submit="updateSearch" />
       </v-layout>
     </template>
     <template #actions="{ disabled, item }">
@@ -41,7 +38,7 @@
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 
 export default {

@@ -33,3 +33,6 @@ export * from './counter';
 export * from './calendar';
 export * from './event';
 export * from './icon';
+export * from './availability';
+export * from './meta-alarm-rule';
+export * from './advanced-search';

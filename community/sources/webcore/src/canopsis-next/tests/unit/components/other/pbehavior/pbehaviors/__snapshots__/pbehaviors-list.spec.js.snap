@@ -5,30 +5,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        query="[object Object]"
-        tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
-  <dd>Pbehavior name are \\"name_1\\"</dd>
-  <dt>- rrule = \\"rrule_1\\"</dt>
-  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
-  <dt>- filter = \\"filter_1\\"</dt>
-  <dd>Pbehavior filter are \\"filter_1\\"</dd>
-  <dt>- type.name = \\"type_name_1\\"</dt>
-  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
-  <dt>- reason.name = \\"reason_name_1\\"</dt>
-  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
+      <c-advanced-search-stub
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
@@ -52,7 +35,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light v-data-table--selectable"
+    class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
     header-text="text"
   >
     <div
@@ -337,9 +320,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </div>
             </th>
             <th
-              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="End of recurrence"
+              class="text-start"
               data-value="rrule_end"
               role="columnheader"
               scope="col"
@@ -352,13 +334,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 >
                   End of recurrence
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -512,9 +487,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </div>
             </th>
             <th
-              aria-label="Alarms count: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Alarms count"
+              class="text-start"
               data-value="alarm_count"
               role="columnheader"
               scope="col"
@@ -527,13 +501,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 >
                   Alarms count
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -2525,30 +2492,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        query="[object Object]"
-        tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
-  <dd>Pbehavior name are \\"name_1\\"</dd>
-  <dt>- rrule = \\"rrule_1\\"</dt>
-  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
-  <dt>- filter = \\"filter_1\\"</dt>
-  <dd>Pbehavior filter are \\"filter_1\\"</dd>
-  <dt>- type.name = \\"type_name_1\\"</dt>
-  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
-  <dt>- reason.name = \\"reason_name_1\\"</dt>
-  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
+      <c-advanced-search-stub
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
@@ -2569,7 +2519,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -2775,9 +2725,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </div>
             </th>
             <th
-              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="End of recurrence"
+              class="text-start"
               data-value="rrule_end"
               role="columnheader"
               scope="col"
@@ -2790,13 +2739,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 >
                   End of recurrence
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -2950,9 +2892,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </div>
             </th>
             <th
-              aria-label="Alarms count: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Alarms count"
+              class="text-start"
               data-value="alarm_count"
               role="columnheader"
               scope="col"
@@ -2965,13 +2906,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 >
                   Alarms count
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -3058,30 +2992,13 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        query="[object Object]"
-        tooltip="<span>Help on the advanced research :</span>
-<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The \\"-\\" before the research is required</p>
-<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
-<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
-  <dd>Pbehavior name are \\"name_1\\"</dd>
-  <dt>- rrule = \\"rrule_1\\"</dt>
-  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
-  <dt>- filter = \\"filter_1\\"</dt>
-  <dd>Pbehavior filter are \\"filter_1\\"</dd>
-  <dt>- type.name = \\"type_name_1\\"</dt>
-  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
-  <dt>- reason.name = \\"reason_name_1\\"</dt>
-  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
+      <c-advanced-search-stub
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
@@ -3102,7 +3019,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
     </div>
   </div>
   <div
-    class="v-data-table theme--light"
+    class="v-data-table theme--light v-data-table--expand"
     header-text="text"
   >
     <div
@@ -3358,9 +3275,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </div>
             </th>
             <th
-              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="End of recurrence"
+              class="text-start"
               data-value="rrule_end"
               role="columnheader"
               scope="col"
@@ -3373,13 +3289,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 >
                   End of recurrence
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -3533,9 +3442,8 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </div>
             </th>
             <th
-              aria-label="Alarms count: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Alarms count"
+              class="text-start"
               data-value="alarm_count"
               role="columnheader"
               scope="col"
@@ -3548,13 +3456,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 >
                   Alarms count
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th

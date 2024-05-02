@@ -22,12 +22,12 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name created updated enabled priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name created updated enabled priority"`
 }
 
 type EditRequest struct {
 	Name                 string                     `json:"name" binding:"required,max=255"`
-	Author               string                     `json:"author" binding:"required,max=255"`
+	Author               string                     `json:"author" swaggerignore:"true"`
 	Enabled              *bool                      `json:"enabled" binding:"required"`
 	Priority             int64                      `json:"priority" binding:"min=0"`
 	Triggers             []Trigger                  `json:"triggers" binding:"required,notblank,dive"`

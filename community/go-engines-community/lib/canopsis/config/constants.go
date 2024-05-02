@@ -27,7 +27,8 @@ const (
 	MetricsMaxSliInterval         = time.Hour
 	MetricsUserSessionGapInterval = time.Hour
 
-	TechMetricsDumpKeepInterval = time.Hour
+	TechMetricsDumpKeepInterval  = time.Hour
+	TechMetricsGoMetricsInterval = time.Second
 
 	UserInterfaceMaxMatchedItems          = 10000
 	UserInterfaceCheckCountRequestTimeout = 30

@@ -98,6 +98,7 @@ export const SOCKET_ROOMS = {
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
   icons: 'icons',
+  testscenario: 'testscenario',
 };
 
 export const API_ROUTES = {
@@ -118,6 +119,7 @@ export const API_ROUTES = {
   alarmDisplayNames: '/api/v4/alarm-display-names',
   alarmExecutions: '/api/v4/cat/alarm-executions',
   entity: '/api/v4/entities',
+  entityComments: '/api/v4/entity-comments',
   entityContextGraph: '/api/v4/entities/context-graph',
   entityCheckStateSetting: '/api/v4/entities/check-state-setting',
   entityStateSetting: '/api/v4/entities/state-setting',
@@ -128,7 +130,7 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
-  entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
+  entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   alarmTag: {
@@ -208,6 +210,8 @@ export const API_ROUTES = {
   },
   scenario: {
     scenarios: '/api/v4/scenarios',
+    testExecution: '/api/v4/cat/test-scenario-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-scenario-webhooks',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
@@ -281,6 +285,8 @@ export const API_ROUTES = {
     exportAggregate: '/api/v4/cat/metrics-export/aggregate',
     exportRemediation: '/api/v4/cat/metrics-export/remediation',
     exportMetric: '/api/v4/cat/metrics-export',
+    exportAvailabilityByEntity: '/api/v4/cat/metrics-export/availability-by-entity',
+    exportAvailability: '/api/v4/cat/metrics-export/availability',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
     remediation: '/api/v4/cat/metrics/remediation',
@@ -288,13 +294,15 @@ export const API_ROUTES = {
     perfDataMetrics: '/api/v4/cat/perf-data-metrics',
     entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
     entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
+    entityAvailability: '/api/v4/cat/entity-metrics/availability',
+    entityAggregateAvailability: '/api/v4/cat/entity-metrics/aggregate-availability',
     group: '/api/v4/cat/metrics/group',
     exportGroup: '/api/v4/cat/metrics-export/group',
+    availability: '/api/v4/cat/metrics/availability',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
-  manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
   metaAlarm: '/api/v4/cat/meta-alarms',
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',
@@ -621,6 +629,8 @@ export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
 
 export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
+
+export const AVAILABILITY_FILENAME_PREFIX = 'availability';
 
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 

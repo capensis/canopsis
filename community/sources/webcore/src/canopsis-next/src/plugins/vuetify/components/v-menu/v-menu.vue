@@ -20,6 +20,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ignoreClickOutsideOnActivator: {
+      type: Boolean,
+      default: false,
+    },
     scrollCalculator: {
       type: Function,
       required: false,
@@ -68,7 +72,11 @@ export default {
         // eslint-disable-next-line no-underscore-dangle
           && !this._isDestroyed
           && this.closeOnClick
-          && !this.$refs.content.contains(e.target);
+          && !this.$refs.content.contains(e.target)
+          && (
+            (this.ignoreClickOutsideOnActivator && !this.activatorElement?.contains(e.target))
+            || !this.ignoreClickOutsideOnActivator
+          );
     },
 
     genContent() {

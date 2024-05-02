@@ -4,45 +4,44 @@
     :items="alarmExecutions"
     hide-default-footer
   >
-    <template #items="{ item }">
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.connector_name }}
-      </td>
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.connector }}
-      </td>
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.component }}
-      </td>
-      <td class="text-left pre-wrap">
-        {{ item.alarm.v.resource }}
-      </td>
-      <template v-if="!isOneExecution">
+    <template #item="{ item }">
+      <tr>
         <td class="text-left pre-wrap">
-          {{ item.ruleName }}
+          {{ item.alarm.v.connector_name }}
         </td>
-        <td class="text-left">
-          <declare-ticket-rule-execution-status
-            :running="isExecutionRunning(item)"
-            :success="isExecutionSucceeded(item)"
-            :fail-reason="item.fail_reason"
-          />
+        <td class="text-left pre-wrap">
+          {{ item.alarm.v.connector }}
         </td>
-      </template>
+        <td class="text-left pre-wrap">
+          {{ item.alarm.v.component }}
+        </td>
+        <td class="text-left pre-wrap">
+          {{ item.alarm.v.resource }}
+        </td>
+        <template v-if="!isOneExecution">
+          <td class="text-left pre-wrap">
+            {{ item.ruleName }}
+          </td>
+          <td class="text-left">
+            <alarm-webhook-execution-status
+              :running="isExecutionRunning(item)"
+              :success="isExecutionSucceeded(item)"
+              :fail-reason="item.fail_reason"
+            />
+          </td>
+        </template>
+      </tr>
     </template>
   </v-data-table>
 </template>
 
 <script>
-import {
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
-import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
 export default {
-  components: { DeclareTicketRuleExecutionStatus },
+  components: { AlarmWebhookExecutionStatus },
   props: {
     alarmExecutions: {
       type: Array,
@@ -89,11 +88,11 @@ export default {
   },
   methods: {
     isExecutionRunning(execution) {
-      return isDeclareTicketExecutionRunning(execution);
+      return isWebhookExecutionRunning(execution);
     },
 
     isExecutionSucceeded(execution) {
-      return isDeclareTicketExecutionSucceeded(execution);
+      return isWebhookExecutionSucceeded(execution);
     },
   },
 };

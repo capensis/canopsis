@@ -147,16 +147,10 @@ export default {
         buttons: {
           addComment: 'Add comment',
         },
-        fields: {
-          message: 'Message',
-        },
       },
       color: {
         label: 'Use special color for this event?',
       },
-    },
-    errors: {
-      invalid: 'Invalid',
     },
     success: {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
@@ -273,6 +267,9 @@ export default {
       },
       [WIDGET_TYPES.alarmStatistics]: {
         title: 'Alarm statistics',
+      },
+      [WIDGET_TYPES.availability]: {
+        title: 'Availability',
       },
       chart: {
         title: 'Chart',
@@ -409,7 +406,6 @@ export default {
       success: 'Dynamic information successfully removed!',
     },
     errors: {
-      invalid: 'Invalid',
       emptyInfos: 'At least one info must be added.',
     },
     steps: {
@@ -536,11 +532,11 @@ export default {
     },
     emptyExdates: 'No exdates added yet',
   },
-  createManualMetaAlarm: {
-    title: 'Manual meta alarm management',
+  linkToMetaAlarm: {
+    title: 'Link to a meta alarm',
     noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
     fields: {
-      metaAlarm: 'Manual meta alarm',
+      metaAlarm: 'Select meta alarm or create a new one',
     },
   },
   createRemediationInstruction: {
@@ -843,6 +839,22 @@ export default {
       title: 'Edit shared pbehavior filter',
     },
   },
+  createServiceWeatherPattern: {
+    create: {
+      title: 'Create service weather filter',
+    },
+    edit: {
+      title: 'Edit service weather filter',
+    },
+  },
+  createCorporateServiceWeatherPattern: {
+    create: {
+      title: 'Create shared service weather filter',
+    },
+    edit: {
+      title: 'Edit shared service weather filter',
+    },
+  },
   createMap: {
     title: 'Create a map',
   },
@@ -941,6 +953,9 @@ export default {
     edit: {
       title: 'Edit link generator',
     },
+    duplicate: {
+      title: 'Duplicate a link generator',
+    },
   },
   createAlarmChart: {
     [WIDGET_TYPES.barChart]: {
@@ -983,6 +998,14 @@ export default {
   confirmationLeaveMaintenance: {
     title: 'Leave maintenance mode',
     text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
+  },
+  confirmationCreateNewTicketForAlarm: {
+    title: 'Confirm create tickets',
+    text: 'This alarm already has tickets created.\nDo you want to create a new one?',
+  },
+  confirmationCreateNewTicketForAlarms: {
+    title: 'Confirm create tickets',
+    text: 'Some alarms already have tickets created.\nDo you want to create new tickets for them?',
   },
   createTag: {
     create: {

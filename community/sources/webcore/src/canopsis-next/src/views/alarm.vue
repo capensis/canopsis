@@ -48,7 +48,9 @@ export default {
     },
 
     alarmItems() {
-      return this.getAlarmsList([this.id]);
+      const alarm = this.getAlarmItem(this.id);
+
+      return alarm ? [alarm] : [];
     },
 
     columns() {

@@ -19,14 +19,7 @@
                 :items="info.infos"
                 :headers="infosTableHeaders"
                 :no-data-text="$t('common.noData')"
-              >
-                <template #items="{ item }">
-                  <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.value }}</td>
-                  </tr>
-                </template>
-              </v-data-table>
+              />
             </v-card-text>
           </v-card>
         </v-flex>

@@ -21,6 +21,7 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Droits pour le widget : Nombres',
     [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Droits pour le widget : Statistiques des utilisateurs',
     [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Droits pour le widget : Statistiques des alarmes',
+    [USER_PERMISSIONS_PREFIXES.business.availability]: 'Droits pour le widget : Disponibilité',
   },
   api: {
     general: 'Général',
@@ -35,6 +36,18 @@ export default {
     [USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp]: {
       name: 'Accès à la liste des variables disponibles',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des variables dans la liste des alarmes et la météo du service',
+    },
+    [USERS_PERMISSIONS.business.context.actions.entityCommentsList]: {
+      name: 'Accès à la liste des commentaires des entités',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des commentaires de l\'entité',
+    },
+    [USERS_PERMISSIONS.business.context.actions.createEntityComment]: {
+      name: 'Accès à la création de commentaires d\'entité',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent créer des commentaires d\'entité',
+    },
+    [USERS_PERMISSIONS.business.context.actions.editEntityComment]: {
+      name: 'Accès à l\'édition des commentaires de l\'entité',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les commentaires de l\'entité',
     },
 
     /**
@@ -495,6 +508,34 @@ export default {
     [USERS_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
       name: 'Droits sur les statistiques des alarmes : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
+    },
+
+    /**
+     * Business Availability
+     */
+    [USERS_PERMISSIONS.business.availability.actions.interval]: {
+      name: 'Droits à la disponibilité : Intervalle',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'intervalle de temps pour les données affichées',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.listFilters]: {
+      name: 'Droits à la disponibilité : Afficher les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.editFilter]: {
+      name: 'Droits à la disponibilité : Modifier les filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.addFilter]: {
+      name: 'Droits à la disponibilité : Ajouter des filtres',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.userFilter]: {
+      name: 'Droits à la disponibilité : Afficher les filtres',
+      description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
+    },
+    [USERS_PERMISSIONS.business.availability.actions.exportAsCsv]: {
+      name: 'Droits de disponibilité : Exporter au format CSV',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent exporter les disponibilités sous forme de fichier CSV',
     },
 
     /**

@@ -197,9 +197,14 @@ func (s *entityServiceCountersCalculator) RecomputeAll(ctx context.Context) erro
 	return nil
 }
 
-func (s *entityServiceCountersCalculator) CalculateCounters(ctx context.Context, entity *types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]entitycounters.UpdatedServicesInfo, error) {
+func (s *entityServiceCountersCalculator) CalculateCounters(
+	ctx context.Context,
+	entity *types.Entity,
+	alarm *types.Alarm,
+	alarmChange types.AlarmChange,
+) (bool, map[string]entitycounters.UpdatedServicesInfo, error) {
 	if entity == nil {
-		return nil, nil
+		return false, nil, nil
 	}
 
 	var strategy EntityServiceCountersStrategy
@@ -209,13 +214,13 @@ func (s *entityServiceCountersCalculator) CalculateCounters(ctx context.Context,
 		strategy = entityservice.NoChangeStrategy{}
 	case types.AlarmChangeTypeCreate:
 		if alarm == nil || alarm.ID == "" {
-			return nil, nil
+			return false, nil, nil
 		}
 
 		strategy = entityservice.CreateStrategy{}
 	case types.AlarmChangeTypeCreateAndPbhEnter:
 		if alarm == nil || alarm.ID == "" {
-			return nil, nil
+			return false, nil, nil
 		}
 
 		strategy = entityservice.CreateAndPbhEnterStrategy{}
@@ -227,25 +232,25 @@ func (s *entityServiceCountersCalculator) CalculateCounters(ctx context.Context,
 		strategy = entityservice.PbhLeaveAndEnterStrategy{}
 	case types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeChangeState:
 		if alarm == nil || alarm.ID == "" {
-			return nil, nil
+			return false, nil, nil
 		}
 
 		strategy = entityservice.ChangeStateStrategy{}
 	case types.AlarmChangeTypeResolve:
 		if alarm == nil || alarm.ID == "" {
-			return nil, nil
+			return false, nil, nil
 		}
 
 		strategy = entityservice.ResolveStrategy{}
 	case types.AlarmChangeTypeAck:
 		if alarm == nil || alarm.ID == "" {
-			return nil, nil
+			return false, nil, nil
 		}
 
 		strategy = entityservice.AckStrategy{}
 	case types.AlarmChangeTypeAckremove:
 		if alarm == nil || alarm.ID == "" {
-			return nil, nil
+			return false, nil, nil
 		}
 
 		strategy = entityservice.AckRemoveStrategy{}
@@ -253,22 +258,28 @@ func (s *entityServiceCountersCalculator) CalculateCounters(ctx context.Context,
 		// on toggle event when entity becomes enabled, nothing actually happens with an alarm, so it is basically the same as noChange strategy.
 		strategy = entityservice.NoChangeStrategy{}
 	default:
-		return nil, nil
+		return false, nil, nil
 	}
 
 	return s.calculateCounters(ctx, entity, alarm, alarmChange, strategy)
 }
 
-func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context, entity *types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange, strategy EntityServiceCountersStrategy) (map[string]entitycounters.UpdatedServicesInfo, error) {
+func (s *entityServiceCountersCalculator) calculateCounters(
+	ctx context.Context,
+	entity *types.Entity,
+	alarm *types.Alarm,
+	alarmChange types.AlarmChange,
+	strategy EntityServiceCountersStrategy,
+) (isAnyServiceCountersUpdated bool, updatedServicesInfos map[string]entitycounters.UpdatedServicesInfo, _ error) {
 	// Some services data may be changed if another event for the same entity was processed or because of transaction retry.
 	// Always get the fresh data.
 	info, err := s.getServicesInfo(ctx, entity.ID)
 	if err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
 	if len(info.Services) == 0 && len(info.ServicesToRemove) == 0 {
-		return nil, err
+		return false, nil, err
 	}
 
 	var calcData entitycounters.EntityServiceCountersCalcData
@@ -316,11 +327,11 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 	}
 
 	if strategy.CanSkip(calcData) {
-		return nil, err
+		return false, nil, err
 	}
 
 	serviceIDs := append(info.Services, info.ServicesToRemove...)
-
+	countersUpdated := false
 	updatedServiceInfos := make(map[string]entitycounters.UpdatedServicesInfo)
 	updateCountersModels := make(
 		[]mongodriver.WriteModel,
@@ -333,35 +344,33 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 
 	cursor, err := s.serviceCountersCollection.Find(ctx, bson.M{"_id": bson.M{"$in": serviceIDs}})
 	if err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
 		var counters entitycounters.EntityCounters
-
 		err = cursor.Decode(&counters)
 		if err != nil {
-			return nil, err
+			return false, nil, err
 		}
 
 		if counters.Rule != nil && counters.Rule.InheritedEntityPattern != nil {
 			calcData.Inherited, err = match.MatchEntityPattern(*counters.Rule.InheritedEntityPattern, entity)
 			if err != nil {
-				return nil, err
+				return false, nil, err
 			}
 		}
 
 		calcData.Counters = counters.Copy()
-
 		newCounters := strategy.Calculate(calcData)
-
 		newOutput, err := s.templateExecutor.Execute(newCounters.OutputTemplate, newCounters)
 		if err != nil {
-			return nil, err
+			return false, nil, err
 		}
 
+		countersUpdated = true
 		updateCountersModels = append(
 			updateCountersModels,
 			mongodriver.
@@ -370,7 +379,6 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 				SetUpdate(bson.M{"$inc": newCounters.Sub(counters), "$set": bson.M{"output": newOutput}}).
 				SetUpsert(true),
 		)
-
 		newWorstState := newCounters.GetWorstState()
 		if counters.Output == newOutput && counters.GetWorstState() == newWorstState {
 			continue
@@ -384,7 +392,7 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 		if len(updateCountersModels) == canopsis.DefaultBulkSize {
 			_, err = s.serviceCountersCollection.BulkWrite(ctx, updateCountersModels)
 			if err != nil {
-				return nil, err
+				return false, nil, err
 			}
 
 			updateCountersModels = updateCountersModels[:0]
@@ -394,7 +402,7 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 	if len(updateCountersModels) > 0 {
 		_, err = s.serviceCountersCollection.BulkWrite(ctx, updateCountersModels)
 		if err != nil {
-			return nil, err
+			return false, nil, err
 		}
 	}
 
@@ -403,8 +411,8 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 		bson.M{"_id": entity.ID},
 		bson.M{"$unset": bson.M{"services_to_add": 1, "services_to_remove": 1}})
 	if err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
-	return updatedServiceInfos, nil
+	return countersUpdated, updatedServiceInfos, nil
 }

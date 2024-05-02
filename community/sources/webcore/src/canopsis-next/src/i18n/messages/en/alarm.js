@@ -12,25 +12,13 @@ export default {
   actionsRequired: 'Actions required',
   acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
   acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
-  advancedSearch: '<span>Help on the advanced research :</span>\n'
-    + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
-    + '<p>The "-" before the research is required</p>\n'
-    + '<p>Operators :\n'
-    + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
-    + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
-    + '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
-    + '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
-    + '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
-    + '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n'
-    + '</dl>',
   otherTickets: 'Other tickets are available in the expand panel',
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
   followLink: 'Follow the link "{title}"',
   hasBookmark: 'Alarm has bookmark',
   filterByBookmark: 'Filter by bookmark',
+  runTest: 'Run test',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
@@ -53,7 +41,7 @@ export default {
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      createManualMetaAlarm: 'Manual meta alarm management',
+      linkToMetaAlarm: 'Link to a meta alarm',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
@@ -187,7 +175,6 @@ export default {
     assignedInstructions: 'Assigned instructions',
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
-    lastComment: 'Last comment',
     lastCommentInitiator: 'Last comment initiator',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
@@ -215,7 +202,6 @@ export default {
     ticketCreatedAt: 'Ticket created at',
     ticketData: 'Ticket data',
     alarmInfos: 'Alarm infos',
-    entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
     entityType: 'Entity type',

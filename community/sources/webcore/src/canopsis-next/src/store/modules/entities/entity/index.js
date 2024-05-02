@@ -11,6 +11,8 @@ import i18n from '@/i18n';
 import { entitySchema } from '@/store/schemas';
 import { createEntityModule } from '@/store/plugins/entities';
 
+import entityCommentModule from './comment';
+
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
@@ -27,6 +29,7 @@ export default createEntityModule({
   withMeta: true,
   types,
 }, {
+  modules: { comment: entityCommentModule },
   state: {
     widgets: {},
   },
