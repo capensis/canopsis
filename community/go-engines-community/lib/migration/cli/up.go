@@ -34,7 +34,7 @@ type upCmd struct {
 }
 
 func (c *upCmd) Exec(ctx context.Context) error {
-	files, err := filepath.Glob(filepath.Join(c.path, fmt.Sprintf("*%s", fileNameSuffixUp)))
+	files, err := filepath.Glob(filepath.Join(c.path, "*"+fileNameSuffixUp))
 	if err != nil {
 		return fmt.Errorf("cannot read directory %q: %w", c.path, err)
 	}
@@ -57,6 +57,9 @@ func (c *upCmd) Exec(ctx context.Context) error {
 	}
 
 	if len(ids) == 0 {
+		if len(files) != 0 {
+			return fmt.Errorf("no migration files found in %q, total files %d", c.path, len(files))
+		}
 		return nil
 	}
 

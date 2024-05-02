@@ -74,7 +74,7 @@ func (e *engine) Run(ctx context.Context) error {
 		Int("routines", len(e.routines)).
 		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
-	defer func() {
+	defer func() { // nolint: contextcheck
 		if e.deferFunc != nil {
 			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
 			defer deferCancel()

@@ -197,20 +197,6 @@ func (mr *MockManagerMockRecorder) UpdateImpactedServicesFromDependencies(arg0 i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateImpactedServicesFromDependencies", reflect.TypeOf((*MockManager)(nil).UpdateImpactedServicesFromDependencies), arg0)
 }
 
-// UpdateLastEventDate mocks base method.
-func (m *MockManager) UpdateLastEventDate(arg0 context.Context, arg1 *types.Event, arg2 bool) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateLastEventDate indicates an expected call of UpdateLastEventDate.
-func (mr *MockManagerMockRecorder) UpdateLastEventDate(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLastEventDate", reflect.TypeOf((*MockManager)(nil).UpdateLastEventDate), arg0, arg1, arg2)
-}
-
 // MockEntityServiceStorage is a mock of EntityServiceStorage interface.
 type MockEntityServiceStorage struct {
 	ctrl     *gomock.Controller

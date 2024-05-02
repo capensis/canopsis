@@ -185,6 +185,11 @@ Wrapper.prototype.triggerCustomEvent = function triggerCustomEvent(name, ...data
 
   return this?.vm?.$nextTick?.();
 };
+Wrapper.prototype.triggerCustomEventForFirstChild = function triggerCustomEventForFirstChild(name, ...data) {
+  this.vm?.$children?.[0]?.$emit?.(name, ...data);
+
+  return this?.vm?.$nextTick?.();
+};
 
 /**
  * Generate render function
@@ -210,23 +215,27 @@ export const generateRenderer = (
     }
   });
 
-  return ({ propsData, ...options } = {}) => testUtilsMount(
-    component,
-    {
-      vuetify,
-      ...merge(
-        {},
-        { mocks, stubs },
-        baseOptions,
-        options,
-        { i18n },
-      ),
-      propsData: {
-        ...basePropsData,
-        ...propsData,
+  return ({ propsData, ...options } = {}) => {
+    wrapper = testUtilsMount(
+      component,
+      {
+        vuetify,
+        ...merge(
+          {},
+          { mocks, stubs },
+          baseOptions,
+          options,
+          { i18n },
+        ),
+        propsData: {
+          ...basePropsData,
+          ...propsData,
+        },
       },
-    },
-  );
+    );
+
+    return wrapper;
+  };
 };
 
 /**
@@ -248,22 +257,26 @@ export const generateShallowRenderer = (
     wrapper?.destroy?.();
   });
 
-  return ({ propsData, ...options } = {}) => testUtilsShallowMount(
-    component,
-    {
-      vuetify,
-      ...merge(
-        {},
-        baseOptions,
-        options,
-        { mocks, i18n, stubs },
-      ),
-      propsData: {
-        ...basePropsData,
-        ...propsData,
+  return ({ propsData, ...options } = {}) => {
+    wrapper = testUtilsShallowMount(
+      component,
+      {
+        vuetify,
+        ...merge(
+          {},
+          baseOptions,
+          options,
+          { mocks, i18n, stubs },
+        ),
+        propsData: {
+          ...basePropsData,
+          ...propsData,
+        },
       },
-    },
-  );
+    );
+
+    return wrapper;
+  };
 };
 
 export { flushPromises };

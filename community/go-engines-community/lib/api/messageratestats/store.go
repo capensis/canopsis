@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -51,10 +52,10 @@ func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResp
 		return nil, err
 	}
 
-	bucket := "1 minute"
-	table := metrics.MessageRate
-	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('"+bucket+"', time), count(*) FROM "+table+
-		" WHERE time >= $1 AND time <= $2 GROUP BY time_bucket_gapfill('"+bucket+"', time)", r.From.UTC(), r.To.UTC())
+	search, args := s.getSearchQuery(r)
+
+	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('1 minute', time), count(*) FROM "+metrics.MessageRate+
+		search+" GROUP BY time_bucket_gapfill('1 minute', time)", args)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,10 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 		return nil, err
 	}
 
-	bucket := "1 hour"
-	table := metrics.MessageRateHourly
-	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('"+bucket+"', time), sum(count) FROM "+table+
-		" WHERE time >= $1 AND time <= $2 GROUP BY time_bucket_gapfill('"+bucket+"', time)", r.From.UTC(), r.To.UTC())
+	search, args := s.getSearchQuery(r)
+
+	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('1 hour', time), sum(count) FROM "+metrics.MessageRateHourly+
+		search+" GROUP BY time_bucket_gapfill('1 hour', time)", args)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 
 		i := int((rate.ID - from) / interval)
 		if i < 0 || i >= len(rates) {
-			return nil, fmt.Errorf("invalid postgres query, rates must contain gaps")
+			return nil, errors.New("invalid postgres query, rates must contain gaps")
 		}
 
 		rates[i].Rate += rate.Rate
@@ -173,4 +174,36 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime
 	}
 
 	return &datetime.CpsTime{Time: t}, nil
+}
+
+func (s *store) getSearchQuery(r ListRequest) (string, pgx.NamedArgs) {
+	var start, end time.Time
+
+	if r.From.IsZero() || r.To.IsZero() {
+		nowTrunc := time.Now().Truncate(time.Minute).UTC()
+
+		// add one minute to include current minute to response
+		end = nowTrunc.Add(time.Minute)
+		start = end.Add(-time.Hour)
+	} else {
+		start = r.From.UTC()
+		end = r.To.UTC()
+	}
+
+	search := " WHERE time >= @start AND time <= @end "
+
+	if len(r.EventTypes) > 0 {
+		search += "AND event_type = ANY(@event_types) "
+	}
+
+	if len(r.ConnectorNames) > 0 {
+		search += " AND connector_name = ANY(@connector_names) "
+	}
+
+	return search, pgx.NamedArgs{
+		"start":           start,
+		"end":             end,
+		"event_types":     r.EventTypes,
+		"connector_names": r.ConnectorNames,
+	}
 }

@@ -52,6 +52,7 @@
       class="mt-1"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
@@ -63,7 +64,6 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
-import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -182,12 +182,11 @@ export default {
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.$emit('update:options', {
-        ...this.options,
+      this.$emit('update:options', { ...this.options, itemsPerPage });
+    },
 
-        itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
-      });
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.$emit('update:options', { ...this.options, page, itemsPerPage });
     },
   },
 };

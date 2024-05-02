@@ -35,7 +35,10 @@ func ProvideAuthorizedIds(
 
 		ids := make([]string, 0)
 		for _, role := range roles {
-			perms := enforcer.GetPermissionsForUser(role)
+			perms, err := enforcer.GetPermissionsForUser(role)
+			if err != nil {
+				panic(err)
+			}
 			for _, perm := range perms {
 				if len(perm) != 3 {
 					continue

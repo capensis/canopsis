@@ -6,7 +6,7 @@ const {
   ALARMS_SHARED_ACTIONS_WITH_ACK,
   ALARMS_SHARED_DROPDOWN_ACTIONS_WITH_ACK,
 } = require('../../../constants');
-const { ENTITIES_STATES } = require('@/constants');
+const { ALARM_STATES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 const DROP_DOWN_ACTION_COUNT = 5;
@@ -181,7 +181,7 @@ module.exports = {
       .clickNote()
       .clearNote()
       .setNote('Note')
-      .clickCriticity(ENTITIES_STATES.major);
+      .clickCriticity(ALARM_STATES.major);
 
     alarmsWidget.waitFirstEventXHR(
       () => createChangeStateEventModal.clickSubmitButton(),

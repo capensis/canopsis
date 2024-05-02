@@ -12,6 +12,7 @@
         v-field="form.value"
         :name="name"
         :disabled="disabled"
+        :variables="variables"
       />
       <declare-ticket-rule-ticket-url-text-field
         v-else
@@ -48,6 +49,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
 };

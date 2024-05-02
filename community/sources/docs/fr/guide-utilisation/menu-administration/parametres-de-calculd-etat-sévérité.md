@@ -49,7 +49,7 @@ Nous pourrions par exemple exprimer le fait que le service sera en état :
 Pour cela, des conditions peuvent être définies pour chaque état final du
 service, comme dans l'illustration ci-dessous :
 
-![services-calcul-etat2](../img/services-calcul-etat2.png)
+![services-calcul-etat2](../menu-administration/img/services-calcul-etat2.png)
 
 
 

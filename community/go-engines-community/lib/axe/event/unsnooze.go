@@ -48,8 +48,10 @@ func (p *unsnoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	match := getOpenAlarmMatch(event)
 	match["v.snooze"] = bson.M{"$ne": nil}
+	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepUnsnooze, event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
+			"v.steps": addStepUpdateQuery(newStepQuery),
 			"v.snooze_duration": bson.M{"$sum": bson.A{
 				"$v.snooze_duration",
 				bson.M{"$subtract": bson.A{

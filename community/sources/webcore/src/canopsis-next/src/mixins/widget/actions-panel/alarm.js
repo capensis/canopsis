@@ -18,7 +18,7 @@ import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
-import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
+import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
 import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
 import { clipboardMixin } from '@/mixins/clipboard';
 
@@ -29,9 +29,9 @@ export const widgetActionsPanelAlarmMixin = {
     authMixin,
     queryMixin,
     clipboardMixin,
+    entitiesMetaAlarmMixin,
     entitiesPbehaviorMixin,
     entitiesAlarmLinksMixin,
-    entitiesManualMetaAlarmMixin,
     entitiesDeclareTicketRuleMixin,
   ],
   data() {
@@ -304,18 +304,18 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showCreateManualMetaAlarmModalByAlarms(alarms) {
+    showLinkToMetaAlarmModalByAlarms(alarms) {
       this.$modals.show({
-        name: MODALS.createManualMetaAlarm,
+        name: MODALS.linkToMetaAlarm,
         config: {
           items: alarms,
 
-          title: this.$t('modals.createManualMetaAlarm.title'),
-          action: async (manualMetaAlarmEvent) => {
-            if (manualMetaAlarmEvent.id) {
-              await this.addAlarmsIntoManualMetaAlarm({ id: manualMetaAlarmEvent.id, data: manualMetaAlarmEvent });
+          title: this.$t('modals.linkToMetaAlarm.title'),
+          action: async (data) => {
+            if (data.id) {
+              await this.addAlarmsIntoMetaAlarm({ id: data.id, data });
             } else {
-              await this.createManualMetaAlarm({ data: manualMetaAlarmEvent });
+              await this.createMetaAlarm({ data });
             }
 
             await this.afterSubmit();
@@ -331,10 +331,10 @@ export const widgetActionsPanelAlarmMixin = {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
-          action: async (removeAlarmsFromMetaAlarmEvent) => {
-            await this.removeAlarmsFromManualMetaAlarm({
+          action: async (data) => {
+            await this.removeAlarmsFromMetaAlarm({
               id: this.parentAlarm?._id,
-              data: removeAlarmsFromMetaAlarmEvent,
+              data,
             });
 
             await this.afterSubmit();
@@ -350,10 +350,10 @@ export const widgetActionsPanelAlarmMixin = {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
           isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
-          action: async (removeAlarmsFromMetaAlarmEvent) => {
+          action: async (data) => {
             await this.removeAlarmsFromMetaAlarm({
               id: this.parentAlarm?._id,
-              data: removeAlarmsFromMetaAlarmEvent,
+              data,
             });
 
             await this.afterSubmit();

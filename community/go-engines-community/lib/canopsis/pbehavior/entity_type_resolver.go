@@ -91,7 +91,7 @@ func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string,
 
 	res := make(map[string]ResolveResult, len(pbhs))
 	for _, pbh := range pbhs {
-		res[pbh.ResolvedPbhID] = pbh
+		res[pbh.ID] = pbh
 	}
 
 	return res, nil

@@ -12,12 +12,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 
@@ -69,6 +71,7 @@ func NewEngineAction(
 	m := DependencyMaker{}
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
@@ -78,6 +81,9 @@ func NewEngineAction(
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
 		action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(canopsis.ActionEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
 	storage := action.NewRedisScenarioExecutionStorage(redis.ActionScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
 		json.NewDecoder(), options.LastRetryInterval, logger)
@@ -85,7 +91,7 @@ func NewEngineAction(
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName), logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName), techMetricsSender, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
@@ -117,7 +123,8 @@ func NewEngineAction(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, templateExecutor),
+				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(),
+					logger, templateExecutor, alarmConfigProvider),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -147,6 +154,7 @@ func NewEngineAction(
 				DelayedScenarioManager: delayedScenarioManager,
 				AmqpChannel:            amqpChannel,
 				Queue:                  canopsis.FIFOQueueName,
+				EventGenerator:         libevent.NewGenerator(canopsis.ActionConnector, canopsis.ActionConnector),
 				Encoder:                json.NewEncoder(),
 				Logger:                 logger,
 			}
@@ -176,17 +184,12 @@ func NewEngineAction(
 		logger,
 	)
 
-	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
-		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-
 	engineAction.AddRoutine(func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
 		return nil
 	})
 
 	mainMessageProcessor := &messageProcessor{
-		TechMetricsSender:        techMetricsSender,
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		ActionService:            actionService,
 		Decoder:                  json.NewDecoder(),
@@ -207,13 +210,13 @@ func NewEngineAction(
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+	engineAction.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAction.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
 	})
-	engineAction.AddPeriodicalWorker("abandon executions", engine.NewLockedPeriodicalWorker(
+	engineAction.AddPeriodicalWorker("abandon_executions", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.ActionPeriodicalLockKey,
 		&scenarioPeriodicalWorker{
@@ -230,6 +233,7 @@ func NewEngineAction(
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,
+		alarmConfigProvider,
 	))
 
 	healthcheck.Start(ctx, healthcheck.NewChecker(

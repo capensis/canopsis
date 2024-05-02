@@ -82,8 +82,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	defer close(taskChannel)
 
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-
-	pool := action.NewWorkerPool(5, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), tplExecutor)
+	alarmConfigProvider := config.NewAlarmConfigProvider(config.CanopsisConf{}, zerolog.Nop())
+	pool := action.NewWorkerPool(5, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), tplExecutor, alarmConfigProvider)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")
@@ -98,6 +98,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	}{
 		{
 			task: action.Task{
+				ScenarioName: "test-scenario-name",
 				Action: action.Action{
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: p,
@@ -123,7 +124,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				ExecutionCacheKey: "execution_1",
 				Step:              2,
 			},
-			expectedOutput: "output 1",
+			expectedOutput: "Scenario: test-scenario-name. Comment: output 1.",
 			expectedAuthor: "author 1",
 		},
 		{
@@ -148,6 +149,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		},
 		{
 			task: action.Task{
+				ScenarioName: "test-scenario-name",
 				Action: action.Action{
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: p,
@@ -173,12 +175,13 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				ExecutionCacheKey: "execution_3",
 				Step:              4,
 			},
-			expectedOutput: "output 3",
+			expectedOutput: "Scenario: test-scenario-name. Comment: output 3.",
 			expectedAuthor: "author 3",
 		},
 		{
 			testName: "should render templates",
 			task: action.Task{
+				ScenarioName: "test-scenario-name",
 				Action: action.Action{
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: p,
@@ -205,7 +208,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				ExecutionCacheKey: "execution_1",
 				Step:              2,
 			},
-			expectedOutput: "rendered output: test",
+			expectedOutput: "Scenario: test-scenario-name. Comment: rendered output: test.",
 			expectedAuthor: "rendered author: 9",
 		},
 	}
@@ -302,9 +305,9 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 	}).AnyTimes()
 
 	taskChannel := make(chan action.Task)
-
+	alarmConfigProvider := config.NewAlarmConfigProvider(config.CanopsisConf{}, zerolog.Nop())
 	poolSize := 5
-	pool := action.NewWorkerPool(poolSize, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), nil)
+	pool := action.NewWorkerPool(poolSize, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), nil, alarmConfigProvider)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")

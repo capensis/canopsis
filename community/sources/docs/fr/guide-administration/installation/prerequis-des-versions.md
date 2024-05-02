@@ -11,7 +11,7 @@ Solution       | Version    |
 Architecture   | x86-64     |
 Docker CE      | ≥ 20.10.17 avec le plugin Compose |
 Noyau Linux    | ≥ 4.4 (uniquement pour l'installation via Docker Compose)             |
-OS             | = CentOS 7 ou RHEL 8 (uniquement pour l'installation via paquets RPM) |
+OS             | = RHEL 8 (uniquement pour l'installation via paquets RPM) |
 Python         | 3          |
 
 Pour rappel, SELinux n'est pas supporté. 

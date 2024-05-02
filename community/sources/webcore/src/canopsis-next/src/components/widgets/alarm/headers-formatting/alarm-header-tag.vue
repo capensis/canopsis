@@ -4,6 +4,7 @@
     <c-alarm-action-chip
       v-if="selectedTag"
       :color="getTagColor(selectedTag)"
+      class="px-2"
       closable
       @close="$emit('clear')"
     >

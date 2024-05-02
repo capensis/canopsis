@@ -2,27 +2,26 @@
   <div class="alarms-list">
     <v-layout
       v-if="!hideToolbar"
-      :class="['alarms-list__toolbar', { 'mb-4': !dense }]"
+      :class="['alarms-list__toolbar gap-4 px-4', { 'mb-4': !dense }]"
       wrap
       justify-space-between
       align-end
     >
       <v-flex>
-        <c-advanced-search-field
-          :query.sync="query"
-          :columns="widget.parameters.widgetColumns"
-          :tooltip="$t('alarm.advancedSearch')"
-          :items="searches"
+        <c-advanced-search
+          :fields="advancedSearchFields"
+          :saved-items="searches"
           combobox
-          @submit="updateSearchesInUserPreferences"
-          @toggle-pin="togglePinSearchInUserPreferences"
-          @remove="removeSearchFromUserPreferences"
+          @submit="updateSearchInQuery"
+          @add:item="addSearchIntoUserPreferences"
+          @toggle-pin:item="togglePinSearchInUserPreferences"
+          @remove:item="removeSearchFromUserPreferences"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
           :category="query.category"
-          class="mr-3 mt-0"
+          class="ma-0"
           hide-details
           @input="updateCategory"
         />
@@ -43,11 +42,11 @@
           align-end
         >
           <filter-selector
+            :value="query.filter"
+            :locked-value="query.lockedFilter"
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
             :locked-filters="widget.filters"
-            :locked-value="lockedFilter"
-            :value="mainFilter"
             :disabled="!hasAccessToListFilters"
             :clearable="!widget.parameters.clearFilterDisabled"
             hide-details
@@ -138,6 +137,7 @@
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
       @update:columns-settings="updateColumnsSettings"
+      @update:pagination-options="updatePaginationOptions"
       @clear:tag="clearTag"
     />
   </div>
@@ -146,17 +146,19 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, USERS_PERMISSIONS } from '@/constants';
+import { LIVE_REPORTING_QUICK_RANGES, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
-import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetSearchMixin } from '@/mixins/widget/search';
+import {
+  widgetAdvancedSearchSavedItemsMixin,
+  widgetAdvancedSearchAlarmFieldsMixin,
+} from '@/mixins/widget/advanced-search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
@@ -198,7 +200,8 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetSearchMixin,
+    widgetAdvancedSearchSavedItemsMixin,
+    widgetAdvancedSearchAlarmFieldsMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
@@ -249,16 +252,10 @@ export default {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findQuickRangeValue(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop, LIVE_REPORTING_QUICK_RANGES, LIVE_REPORTING_QUICK_RANGES.custom);
       }
 
       return null;
-    },
-
-    firstAlarmExpanded() {
-      const [alarm] = this.alarms;
-
-      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
     },
 
     hasAccessToExportAsCsv() {
@@ -362,7 +359,17 @@ export default {
         ...this.query,
 
         itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
+      };
+    },
+
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.updateContentInUserPreference({ itemsPerPage });
+
+      this.query = {
+        ...this.query,
+
+        page,
+        itemsPerPage,
       };
     },
 

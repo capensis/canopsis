@@ -10,13 +10,14 @@ type WebhookDeclareTicket struct {
 	EmptyResponse bool              `bson:"empty_response" json:"empty_response"`
 	IsRegexp      bool              `bson:"is_regexp" json:"is_regexp"`
 	TicketID      string            `bson:"ticket_id,omitempty" json:"ticket_id"`
+	TicketIdTpl   string            `bson:"ticket_id_tpl,omitempty" json:"ticket_id_tpl"`
 	TicketUrl     string            `bson:"ticket_url,omitempty" json:"ticket_url"`
 	TicketUrlTpl  string            `bson:"ticket_url_tpl,omitempty" json:"ticket_url_tpl"`
 	CustomFields  map[string]string `bson:",inline"`
 }
 
 func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 	err := json.Unmarshal(b, &m)
 	if err != nil {
 		return err
@@ -46,6 +47,8 @@ func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 			switch k {
 			case "ticket_id":
 				t.TicketID = strVal
+			case "ticket_id_tpl":
+				t.TicketIdTpl = strVal
 			case "ticket_url":
 				t.TicketUrl = strVal
 			case "ticket_url_tpl":
@@ -63,10 +66,11 @@ func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 }
 
 func (t WebhookDeclareTicket) MarshalJSON() ([]byte, error) {
-	m := map[string]interface{}{
+	m := map[string]any{
 		"empty_response": t.EmptyResponse,
 		"is_regexp":      t.IsRegexp,
 		"ticket_id":      t.TicketID,
+		"ticket_id_tpl":  t.TicketIdTpl,
 		"ticket_url":     t.TicketUrl,
 		"ticket_url_tpl": t.TicketUrlTpl,
 	}

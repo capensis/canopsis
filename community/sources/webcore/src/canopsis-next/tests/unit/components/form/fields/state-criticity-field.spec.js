@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ALARM_STATES } from '@/constants';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -24,13 +24,13 @@ describe('state-criticity-field', () => {
   it('Value changed after trigger click on the button', () => {
     const wrapper = factory({
       propsData: {
-        value: ENTITIES_STATES.major,
+        value: ALARM_STATES.major,
       },
     });
 
-    wrapper.find('input.v-btn-toggle').setValue(ENTITIES_STATES.ok);
+    wrapper.find('input.v-btn-toggle').setValue(ALARM_STATES.ok);
 
-    expect(wrapper).toEmitInput(ENTITIES_STATES.ok);
+    expect(wrapper).toEmitInput(ALARM_STATES.ok);
   });
 
   it('Renders `state-criticity-field` with default props correctly', () => {
@@ -42,7 +42,7 @@ describe('state-criticity-field', () => {
   it('Renders `state-criticity-field` with custom props correctly', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: ENTITIES_STATES.major,
+        value: ALARM_STATES.major,
         mandatory: true,
         stateValues: {
           ok: 0,

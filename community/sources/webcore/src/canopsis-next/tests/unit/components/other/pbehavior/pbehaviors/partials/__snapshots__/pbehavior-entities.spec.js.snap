@@ -5,14 +5,12 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <!---->
   </div>
@@ -409,14 +407,12 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
   class="c-advanced-data-table"
 >
   <div
-    class="layout wrap"
+    class="layout px-4 wrap"
   >
     <div
       class="flex xs4"
     >
-      <c-search-field-stub
-        value=""
-      />
+      <c-search-stub />
     </div>
     <!---->
   </div>

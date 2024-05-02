@@ -41,7 +41,7 @@ Vérifiez votre version du noyau à l'aide de la commande suivante :
 uname -r
 ```
 
-Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution plus à jour, ou bien installer un noyau plus récent (par exemple *via* [ELRepo](https://elrepo.org/tiki/kernel-lt) dans le cas de CentOS 7).
+Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution plus à jour, ou bien installer un noyau plus récent (par exemple *via* [ELRepo](https://elrepo.org/tiki/kernel-lt).
 
 !!! important
     L'utilisation de Docker Compose avec un noyau inférieur à 4.4 n'est pas prise en charge.

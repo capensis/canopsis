@@ -4,6 +4,11 @@ package metrics
 
 import "context"
 
+type AsyncMetaUpdater interface {
+	MetaUpdater
+	Run(ctx context.Context)
+}
+
 type MetaUpdater interface {
 	UpdateAll(ctx context.Context)
 	UpdateById(ctx context.Context, ids ...string)

@@ -6,7 +6,7 @@
     <template #title="">
       <v-layout align-center>
         <span>{{ title }}</span>
-        <declare-ticket-rule-execution-status
+        <alarm-webhook-execution-status
           v-if="modal.minimized"
           :running="isAllExecutionsRunning"
           :success="isAllExecutionsSucceeded"
@@ -66,21 +66,21 @@
 import { groupBy, keyBy } from 'lodash';
 
 import { SOCKET_ROOMS } from '@/config';
-import { DECLARE_TICKET_EXECUTION_STATUSES, MODALS } from '@/constants';
+import { WEBHOOK_EXECUTION_STATUSES, MODALS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import {
-  isDeclareTicketExecutionFailed,
-  isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+  isWebhookExecutionFinished,
+  isWebhookExecutionRunning,
+  isWebhookExecutionSucceeded,
+} from '@/helpers/entities/webhook-execution/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
-import DeclareTicketRuleExecutionStatus from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-status.vue';
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -90,7 +90,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.executeDeclareTickets,
   components: {
-    DeclareTicketRuleExecutionStatus,
+    AlarmWebhookExecutionStatus,
     DeclareTicketRuleExecutionsGroup,
     ModalWrapper,
   },
@@ -114,7 +114,7 @@ export default {
       return this.successExecutions.reduce((acc, { executionId, ruleName, alarms }) => {
         alarms.forEach((alarm) => {
           const status = this.executionsStatusesById[executionId] ?? {
-            status: DECLARE_TICKET_EXECUTION_STATUSES.running,
+            status: WEBHOOK_EXECUTION_STATUSES.running,
           };
 
           acc.push({
@@ -134,11 +134,11 @@ export default {
     },
 
     isAllExecutionsRunning() {
-      return this.alarmExecutions.some(isDeclareTicketExecutionRunning);
+      return this.alarmExecutions.some(isWebhookExecutionRunning);
     },
 
     isAllExecutionsSucceeded() {
-      return this.alarmExecutions.every(isDeclareTicketExecutionSucceeded);
+      return this.alarmExecutions.every(isWebhookExecutionSucceeded);
     },
 
     isAllExecutionsFinished() {
@@ -184,7 +184,7 @@ export default {
     },
 
     isExecutionFinished(execution) {
-      return isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution);
+      return isWebhookExecutionFinished(execution);
     },
 
     /**
@@ -207,6 +207,11 @@ export default {
       this.$modals.hide();
     },
 
+    handleSocketError() {
+      this.fetchExecutionsStatuses();
+      this.config.onExecute?.();
+    },
+
     /**
      * Join from execution room
      */
@@ -221,6 +226,7 @@ export default {
         this.$socket
           .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+          .on(Socket.EVENTS_TYPES.error, this.handleSocketError)
           .join(this.getSocketRoomName(executionId))
           .addListener(this.setExecutionStatus);
       });
@@ -234,6 +240,7 @@ export default {
         this.$socket
           .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .off(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+          .off(Socket.EVENTS_TYPES.error, this.handleSocketError)
           .leave(this.getSocketRoomName(executionId))
           .removeListener(this.setExecutionStatus);
       });

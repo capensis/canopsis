@@ -109,7 +109,7 @@ func (s *store) SetComputed(ctx context.Context, computed ComputeResult) error {
 
 	var cursor uint64
 	for {
-		res := s.client.Scan(ctx, cursor, fmt.Sprintf("%s*", s.computedKey), redisStep)
+		res := s.client.Scan(ctx, cursor, s.computedKey+"*", redisStep)
 		if err := res.Err(); err != nil {
 			return fmt.Errorf("cannot scan computed: %w", err)
 		}
@@ -149,7 +149,7 @@ func (s *store) GetComputed(ctx context.Context) (ComputeResult, error) {
 	pbhs := make(map[string]ComputedPbehavior)
 
 	for {
-		res := s.client.Scan(ctx, cursor, fmt.Sprintf("%s*", s.computedKey), redisStep)
+		res := s.client.Scan(ctx, cursor, s.computedKey+"*", redisStep)
 		if err := res.Err(); err != nil {
 			return computed, fmt.Errorf("cannot scan computed: %w", err)
 		}

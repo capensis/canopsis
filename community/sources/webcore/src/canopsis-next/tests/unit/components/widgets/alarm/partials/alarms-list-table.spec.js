@@ -28,6 +28,7 @@ const selectTable = wrapper => wrapper.findComponent({ name: 'VDataTable' });
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
+const selectTablePagination = wrapper => wrapper.find('c-table-pagination-stub');
 
 describe('alarms-list-table', () => {
   const $modals = mockModals();
@@ -218,13 +219,13 @@ describe('alarms-list-table', () => {
     expect(addEventListener).toHaveBeenNthCalledWith(
       7,
       'keydown',
-      wrapper.vm.enableSelecting,
+      wrapper.vm.handleKeyDown,
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
       8,
       'keyup',
-      wrapper.vm.disableSelecting,
+      wrapper.vm.handleKeyUp,
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
@@ -238,6 +239,11 @@ describe('alarms-list-table', () => {
       'mouseup',
       wrapper.vm.mouseupHandler,
     );
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      11,
+      'blur',
+      wrapper.vm.disableSelecting,
+    );
 
     await wrapper.setProps({
       stickyHeader: false,
@@ -248,7 +254,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(8);
+    expect(removeEventListener).toHaveBeenCalledTimes(9);
 
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
@@ -258,12 +264,12 @@ describe('alarms-list-table', () => {
     expect(removeEventListener).toHaveBeenNthCalledWith(
       2,
       'keydown',
-      wrapper.vm.enableSelecting,
+      wrapper.vm.handleKeyDown,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       3,
       'keyup',
-      wrapper.vm.disableSelecting,
+      wrapper.vm.handleKeyUp,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
@@ -277,17 +283,22 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
+      'blur',
+      wrapper.vm.disableSelecting,
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
       'resize',
       wrapper.vm.resizeHandler,
       { passive: true },
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
-      7,
+      8,
       'keydown',
       expect.any(Function),
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
-      8,
+      9,
       'keyup',
       expect.any(Function),
     );
@@ -369,7 +380,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(8);
+    expect(removeEventListener).toHaveBeenCalledTimes(9);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -397,6 +408,11 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
+      'blur',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
       'resize',
       expect.any(Function),
       { passive: true },
@@ -520,6 +536,27 @@ describe('alarms-list-table', () => {
     /**
      * TODO: Should be tested show modal
      */
+  });
+
+  test('Table pagination emits input event correctly', () => {
+    const newPaginationOptions = { page: 1, itemsPerPage: 20 };
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+        stickyHeader: true,
+      },
+      mocks: { $modals },
+    });
+
+    const tablePagination = selectTablePagination(wrapper);
+
+    tablePagination.triggerCustomEvent('input', newPaginationOptions);
+
+    expect(wrapper).toEmit('update:pagination-options', newPaginationOptions);
   });
 
   test('Renders `alarms-list-table` with default and required props', () => {

@@ -52,6 +52,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil
+		result = Result{}
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
@@ -59,7 +60,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return err
 		}
 
-		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
 			p.entityServiceCountersCalculator,
 			p.componentCountersCalculator,
@@ -96,7 +97,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	if componentStateChanged {
-		err = p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err = p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			return result, fmt.Errorf("failed to update component state: %w", err)
 		}

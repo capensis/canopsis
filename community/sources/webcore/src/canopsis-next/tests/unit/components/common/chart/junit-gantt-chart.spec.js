@@ -309,7 +309,6 @@ describe('junit-gantt-chart', () => {
     await flushPromises();
 
     const tooltip = wrapper.find('.v-tooltip__content');
-    const canvas = wrapper.find('canvas');
 
     wrapper.vm.getTooltip({
       tooltip: {
@@ -320,7 +319,7 @@ describe('junit-gantt-chart', () => {
     });
 
     expect(tooltip.element).toMatchSnapshot();
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `junit-gantt-chart` historical tooltip (no icon).', async () => {
@@ -430,9 +429,7 @@ describe('junit-gantt-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `junit-gantt-chart` with items prop.', async () => {
@@ -444,9 +441,7 @@ describe('junit-gantt-chart', () => {
 
     await flushPromises();
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 
   it('Renders `junit-gantt-chart` with default, required props and updated items.', async () => {
@@ -458,8 +453,6 @@ describe('junit-gantt-chart', () => {
 
     await wrapper.setProps({ items: updatedItems });
 
-    const canvas = wrapper.find('canvas');
-
-    expect(canvas.element).toMatchCanvasSnapshot();
+    expect(wrapper).toMatchCanvasSnapshot();
   });
 });

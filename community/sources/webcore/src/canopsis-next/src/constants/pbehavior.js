@@ -24,6 +24,13 @@ export const PBEHAVIOR_TYPE_TYPES = {
   pause: 'pause',
 };
 
+export const PBEHAVIOR_TYPE_TYPES_ICONS = {
+  [PBEHAVIOR_TYPE_TYPES.active]: 'wb_sunny',
+  [PBEHAVIOR_TYPE_TYPES.inactive]: 'nightlight_round',
+  [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
+  [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
+};
+
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
 
 export const PBEHAVIOR_PATTERN_FIELDS = {

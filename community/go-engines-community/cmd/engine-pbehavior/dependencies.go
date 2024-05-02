@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 
@@ -54,7 +55,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
-	eventManager := pbehavior.NewEventManager()
+	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
@@ -64,7 +65,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.PBehaviorEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	computeRruleStartWorker := &computeRruleStartPeriodicalWorker{
@@ -135,8 +136,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		DbClient:                 dbClient,
 		PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
-		EventManager:             pbehavior.NewEventManager(),
+		EventManager:             eventManager,
 		TimezoneConfigProvider:   timezoneConfigProvider,
+		PubChannel:               amqpChannel,
 		Decoder:                  json.NewDecoder(),
 		Encoder:                  json.NewEncoder(),
 		Logger:                   logger,
@@ -167,7 +169,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
 			PbehaviorCollection:      dbClient.Collection(mongo.PbehaviorMongoCollection),
 			EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
-			EventGenerator:           libevent.NewGenerator("engine", "pbehavior"),
 			EventManager:             eventManager,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
@@ -178,7 +179,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
+	enginePbehavior.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
 	enginePbehavior.AddPeriodicalWorker("alarms", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
@@ -191,9 +192,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			EntityAdapter:          entity.NewAdapter(dbClient),
 			EventManager:           eventManager,
 			FrameDuration:          frameDuration,
+			TimezoneConfigProvider: timezoneConfigProvider,
 			Encoder:                json.NewEncoder(),
 			Logger:                 logger,
-			TimezoneConfigProvider: timezoneConfigProvider,
 		},
 		logger,
 	))

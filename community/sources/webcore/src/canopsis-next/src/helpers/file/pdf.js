@@ -5,8 +5,8 @@ import {
   ALARM_EXPORT_PDF_FIELDS,
   ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
   DATETIME_FORMATS,
-  ENTITIES_STATES,
-  ENTITIES_STATUSES,
+  ALARM_STATES,
+  ALARM_STATUSES,
 } from '@/constants';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
@@ -42,14 +42,14 @@ import { convertDurationToString } from '../date/duration';
  * @property {Object} infos
  * @property {Object} pbehavior_info
  * @property {Object} ticket_info
- * @property {AlarmEvent[]} comments
+ * @property {AlarmStep[]} comments
  * @property {string[]} tags
  * @property {AlarmLinks} links
  */
 
 /**
  * @typedef {Alarm} AlarmWithComments
- * @property {AlarmEvent[]} comments
+ * @property {AlarmStep[]} comments
  */
 
 class AlarmExportToPdfVisitor extends Visitor {
@@ -74,29 +74,29 @@ class AlarmExportToPdfVisitor extends Visitor {
 /**
  * Prepare alarm state fpr exporting
  *
- * @param {AlarmEvent} state
+ * @param {AlarmStep} state
  * @returns {string}
  */
 export const prepareAlarmStateForExport = state => ({
-  [ENTITIES_STATES.ok]: '0 - OK',
-  [ENTITIES_STATES.minor]: '1 - Minor',
-  [ENTITIES_STATES.major]: '2 - Major',
-  [ENTITIES_STATES.critical]: '3 - Critical',
+  [ALARM_STATES.ok]: '0 - OK',
+  [ALARM_STATES.minor]: '1 - Minor',
+  [ALARM_STATES.major]: '2 - Major',
+  [ALARM_STATES.critical]: '3 - Critical',
 }[state?.val] ?? `Invalid value (${state?.val})`);
 
 /**
  * Prepare alarm status fpr exporting
  *
- * @param {AlarmEvent} status
+ * @param {AlarmStep} status
  * @returns {string}
  */
 const prepareAlarmStatusForExport = status => ({
-  [ENTITIES_STATUSES.closed]: 'Closed',
-  [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-  [ENTITIES_STATUSES.flapping]: 'Flapping',
-  [ENTITIES_STATUSES.stealthy]: 'Stealth',
-  [ENTITIES_STATUSES.cancelled]: 'Canceled',
-  [ENTITIES_STATUSES.noEvents]: 'No events',
+  [ALARM_STATUSES.closed]: 'Closed',
+  [ALARM_STATUSES.ongoing]: 'Ongoing',
+  [ALARM_STATUSES.flapping]: 'Flapping',
+  [ALARM_STATUSES.stealthy]: 'Stealth',
+  [ALARM_STATUSES.cancelled]: 'Canceled',
+  [ALARM_STATUSES.noEvents]: 'No events',
 }[status?.val] ?? `Invalid value (${status?.val})`);
 
 /**

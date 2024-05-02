@@ -36,6 +36,7 @@ func NewEntityToggledProcessor(
 		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -52,6 +53,7 @@ type entityToggledProcessor struct {
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
 	resolvedAlarmCollection         mongo.DbCollection
+	pbehaviorCollection             mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -76,6 +78,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			updatedServiceStates = nil
+			result = Result{}
 
 			alarm := types.Alarm{}
 			err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
@@ -89,7 +92,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
 
-			updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 				ctx,
 				p.entityServiceCountersCalculator,
 				p.componentCountersCalculator,
@@ -110,7 +113,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	match := getOpenAlarmMatch(event)
-	update := getResolveAlarmUpdate(datetime.NewCpsTime())
+	update := getResolveAlarmUpdate(datetime.NewCpsTime(), event.Parameters)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
@@ -175,7 +178,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
 			p.entityServiceCountersCalculator,
 			p.componentCountersCalculator,
@@ -202,6 +205,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		p.metaAlarmEventProcessor,
 		p.metricsSender,
 		p.remediationRpcClient,
+		p.pbehaviorCollection,
 		p.encoder,
 		p.logger,
 	)
@@ -224,7 +228,7 @@ func (p *entityToggledProcessor) postProcess(
 	}
 
 	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, event.Entity.Connector, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
 			p.logger.Err(err).Msg("failed to update component state")
 		}

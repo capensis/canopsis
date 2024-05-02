@@ -2,7 +2,7 @@
 
 exports[`declare-ticket-rule-patterns-form Renders \`declare-ticket-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
   both-counters=""
   entity-attributes="[object Object]"
   some-required=""
@@ -15,7 +15,7 @@ exports[`declare-ticket-rule-patterns-form Renders \`declare-ticket-rule-pattern
 
 exports[`declare-ticket-rule-patterns-form Renders \`declare-ticket-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
   both-counters=""
   entity-attributes="[object Object]"
   some-required=""

@@ -3,7 +3,6 @@ package techmetrics
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -169,7 +168,7 @@ func (e *taskExecutor) Run(ctx context.Context) {
 
 func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
 	if !e.configProvider.Get().Enabled {
-		return Task{}, fmt.Errorf("tech metrics are disabled")
+		return Task{}, errors.New("tech metrics are disabled")
 	}
 
 	pgPool, err := e.getPgPool(ctx)

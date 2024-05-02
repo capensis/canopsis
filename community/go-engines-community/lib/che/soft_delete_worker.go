@@ -248,8 +248,8 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 
 func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityData, now datetime.CpsTime) (types.Event, error) {
 	event := types.Event{
-		Connector:     canopsis.EngineConnector,
-		ConnectorName: canopsis.CheEngineName,
+		Connector:     canopsis.CheConnector,
+		ConnectorName: canopsis.CheConnector,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
@@ -262,7 +262,6 @@ func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityDat
 		event.Component = ent.ID
 	case types.EntityTypeResource:
 		event.SourceType = types.SourceTypeResource
-
 		event.Resource = ent.Name
 		event.Component = ent.Component
 		if event.Component == "" {

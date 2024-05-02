@@ -37,8 +37,6 @@ type Manager interface {
 	RecomputeService(ctx context.Context, serviceID string, commRegister mongo.CommandsRegister) (types.Entity, error)
 	// ProcessComponentDependencies processes component's dependencies to update component infos or state setting parameters.
 	ProcessComponentDependencies(ctx context.Context, component *types.Entity, commRegister mongo.CommandsRegister) ([]string, error)
-	// UpdateLastEventDate updates last event date field in the entity document
-	UpdateLastEventDate(ctx context.Context, event *types.Event, updateConnectorLastEventDate bool) error
 	// InheritComponentFields fills resource with component infos and check if resource is matched by component state setting.
 	InheritComponentFields(resource, component *types.Entity, commRegister mongo.CommandsRegister) error
 }

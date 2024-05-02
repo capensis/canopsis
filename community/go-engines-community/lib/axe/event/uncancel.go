@@ -60,29 +60,25 @@ func (p *uncancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			return err
 		}
 
-		uncancelStep := types.NewAlarmStep(types.AlarmStepUncancel, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
 		alarm.Value.Canceled = nil
-		newStatus := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
-		newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-		newStepStatus.Value = newStatus
+		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		alarmStepType := types.AlarmStepStatusIncrease
 		if alarm.Value.Status.Value > newStatus {
-			newStepStatus.Type = types.AlarmStepStatusDecrease
+			alarmStepType = types.AlarmStepStatusDecrease
 		}
 
-		update := bson.M{
-			"$unset": bson.M{
-				"v.canceled": "",
-			},
-			"$set": bson.M{
-				"v.status":                            newStepStatus,
+		statusStepMessage := ConcatOutputAndRuleName(event.Parameters.Output, statusRuleName)
+		newStepStatusQuery := valStepUpdateQueryWithInPbhInterval(alarmStepType, newStatus, statusStepMessage, event.Parameters)
+		update := []bson.M{
+			{"$unset": bson.A{
+				"v.canceled",
+			}},
+			{"$set": bson.M{
+				"v.status":                            newStepStatusQuery,
 				"v.state_changes_since_status_update": 0,
 				"v.last_update_date":                  event.Parameters.Timestamp,
-			},
-			"$push": bson.M{
-				"v.steps": bson.M{"$each": bson.A{uncancelStep, newStepStatus}},
-			},
+				"v.steps":                             addStepUpdateQuery(newStepStatusQuery),
+			}},
 		}
 		opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 		updatedAlarm := types.Alarm{}

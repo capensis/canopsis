@@ -2,19 +2,18 @@
 
 exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with custom props 1`] = `
 <div
-  class="d-inline-flex"
+  class="c-date-time-interval-field col-gap-3"
 >
   <date-time-picker-field-stub
     disabled="true"
-    hide-details="true"
+    hidedetails="true"
     label="From"
     name="custom_name.from"
     value="1386435600000"
   />
   <date-time-picker-field-stub
-    class="pl-3"
     disabled="true"
-    hide-details="true"
+    hidedetails="true"
     label="To"
     name="custom_name.to"
     value="1386435599000"
@@ -24,7 +23,7 @@ exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with 
 
 exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with default props 1`] = `
 <div
-  class="d-inline-flex"
+  class="c-date-time-interval-field col-gap-3"
 >
   <date-time-picker-field-stub
     label="From"
@@ -32,7 +31,6 @@ exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with 
     value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
   />
   <date-time-picker-field-stub
-    class="pl-3"
     label="To"
     name="interval.to"
     value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"

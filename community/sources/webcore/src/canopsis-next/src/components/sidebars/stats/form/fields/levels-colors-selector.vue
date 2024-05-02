@@ -2,8 +2,8 @@
   <widget-settings-item :title="$t('settings.colorsSelector.title')">
     <v-layout column>
       <c-color-picker-field
-        v-field="levelsColors[level]"
         v-for="level in $constants.STATS_CRITICITY"
+        v-field="levelsColors[level]"
         :key="level"
         :label="getButtonText(level)"
         :type="colorType"

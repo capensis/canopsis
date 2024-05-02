@@ -13,6 +13,7 @@
       <template #form-event="{ event, close }">
         <pbehavior-create-event
           :event="event"
+          :entity-pattern="entityPattern"
           @close="close"
           @submit="addEventWithClose($event, close)"
           @remove="removePbehavior"

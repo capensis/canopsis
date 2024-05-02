@@ -2,8 +2,10 @@ package pbehavior_test
 
 import (
 	"testing"
-	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/golang/mock/gomock"
@@ -24,6 +26,7 @@ func TestGetEvent(t *testing.T) {
 		TypeID:        "test-type-active",
 		TypeName:      "Active type",
 		CanonicalType: pbehavior.TypeActive,
+		Author:        canopsis.DefaultEventAuthor,
 	}
 	anotherActiveInfo := types.PbehaviorInfo{
 		ID:            "test-another-pbh-active",
@@ -33,6 +36,7 @@ func TestGetEvent(t *testing.T) {
 		TypeID:        "test-another-type-active",
 		TypeName:      "Another active type",
 		CanonicalType: pbehavior.TypeActive,
+		Author:        canopsis.DefaultEventAuthor,
 	}
 	maintenanceInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-maintenance",
@@ -42,6 +46,7 @@ func TestGetEvent(t *testing.T) {
 		TypeID:        "test-type-maintenance",
 		TypeName:      "Maintenance type",
 		CanonicalType: pbehavior.TypeMaintenance,
+		Author:        canopsis.DefaultEventAuthor,
 	}
 	anotherMaintenanceInfo := types.PbehaviorInfo{
 		ID:            "test-another-pbh-maintenance",
@@ -51,67 +56,67 @@ func TestGetEvent(t *testing.T) {
 		TypeID:        "test-another-type-maintenance",
 		TypeName:      "Another maintenance type",
 		CanonicalType: pbehavior.TypeMaintenance,
+		Author:        canopsis.DefaultEventAuthor,
 	}
 
 	resolvedCanonicalActive := pbehavior.ResolveResult{}
 	resolvedActive := pbehavior.ResolveResult{
-		ResolvedType: pbehavior.Type{
+		Type: pbehavior.Type{
 			ID:   "test-type-active",
 			Name: "Active type",
 			Type: pbehavior.TypeActive,
 		},
-		ResolvedPbhID:         "test-pbh-active",
-		ResolvedPbhName:       "Pbh active",
-		ResolvedPbhReasonID:   "Reason active",
-		ResolvedPbhReasonName: "Reason active name",
+		ID:         "test-pbh-active",
+		Name:       "Pbh active",
+		ReasonID:   "Reason active",
+		ReasonName: "Reason active name",
 	}
 	resolvedAnotherActive := pbehavior.ResolveResult{
-		ResolvedType: pbehavior.Type{
+		Type: pbehavior.Type{
 			ID:   "test-another-type-active",
 			Name: "Another active type",
 			Type: pbehavior.TypeActive,
 		},
-		ResolvedPbhID:         "test-another-pbh-active",
-		ResolvedPbhName:       "Another pbh active",
-		ResolvedPbhReasonID:   "Another reason active",
-		ResolvedPbhReasonName: "Another reason active name",
+		ID:         "test-another-pbh-active",
+		Name:       "Another pbh active",
+		ReasonID:   "Another reason active",
+		ReasonName: "Another reason active name",
 	}
 	resolvedMaintenance := pbehavior.ResolveResult{
-		ResolvedType: pbehavior.Type{
+		Type: pbehavior.Type{
 			ID:   "test-type-maintenance",
 			Name: "Maintenance type",
 			Type: pbehavior.TypeMaintenance,
 		},
-		ResolvedPbhID:         "test-pbh-maintenance",
-		ResolvedPbhName:       "Pbh maintenance",
-		ResolvedPbhReasonID:   "Reason maintenance",
-		ResolvedPbhReasonName: "Reason maintenance name",
+		ID:         "test-pbh-maintenance",
+		Name:       "Pbh maintenance",
+		ReasonID:   "Reason maintenance",
+		ReasonName: "Reason maintenance name",
 	}
 	resolvedAnotherMaintenance := pbehavior.ResolveResult{
-		ResolvedType: pbehavior.Type{
+		Type: pbehavior.Type{
 			ID:   "test-another-type-maintenance",
 			Name: "Another maintenance type",
 			Type: pbehavior.TypeMaintenance,
 		},
-		ResolvedPbhID:         "test-another-pbh-maintenance",
-		ResolvedPbhName:       "Another pbh maintenance",
-		ResolvedPbhReasonID:   "Another reason maintenance",
-		ResolvedPbhReasonName: "Another reason maintenance name",
+		ID:         "test-another-pbh-maintenance",
+		Name:       "Another pbh maintenance",
+		ReasonID:   "Another reason maintenance",
+		ReasonName: "Another reason maintenance name",
 	}
 
 	var dataSets = []struct {
 		testName             string
-		alarm                types.Alarm
+		entity               types.Entity
 		resolveResult        pbehavior.ResolveResult
 		expectedEventType    string
 		expectedAlarmPbhInfo types.PbehaviorInfo
 	}{
 		{
 			"An alarm has no behaviors and resolved type is canonical active behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: canonicalActiveInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: canonicalActiveInfo,
 			},
 			resolvedCanonicalActive,
 			"",
@@ -119,10 +124,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has no behaviors and resolved type is active behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: canonicalActiveInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: canonicalActiveInfo,
 			},
 			resolvedActive,
 			types.EventTypePbhEnter,
@@ -130,10 +134,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has no behaviors and resolved type is maintenance behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: canonicalActiveInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: canonicalActiveInfo,
 			},
 			resolvedMaintenance,
 			types.EventTypePbhEnter,
@@ -141,10 +144,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has an active behavior and resolved type is canonical active behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: activeInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: activeInfo,
 			},
 			resolvedCanonicalActive,
 			types.EventTypePbhLeave,
@@ -152,10 +154,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has an active behavior and resolved type is maintenance behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: activeInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: activeInfo,
 			},
 			resolvedMaintenance,
 			types.EventTypePbhLeaveAndEnter,
@@ -163,10 +164,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has an active behavior and resolved type is the same behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: activeInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: activeInfo,
 			},
 			resolvedActive,
 			"",
@@ -174,10 +174,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has an active behavior and resolved type is another active behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: activeInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: activeInfo,
 			},
 			resolvedAnotherActive,
 			types.EventTypePbhLeaveAndEnter,
@@ -185,10 +184,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has a maintenance behavior and resolved type is canonical active behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: maintenanceInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: maintenanceInfo,
 			},
 			resolvedCanonicalActive,
 			types.EventTypePbhLeave,
@@ -196,10 +194,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has a maintenance behavior and resolved type is the same behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: maintenanceInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: maintenanceInfo,
 			},
 			resolvedMaintenance,
 			"",
@@ -207,10 +204,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has a maintenance behavior and resolved type is active behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: maintenanceInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: maintenanceInfo,
 			},
 			resolvedActive,
 			types.EventTypePbhLeaveAndEnter,
@@ -218,10 +214,9 @@ func TestGetEvent(t *testing.T) {
 		},
 		{
 			"An alarm has a maintenance behavior and resolved type is another maintenance behavior",
-			types.Alarm{
-				Value: types.AlarmValue{
-					PbehaviorInfo: maintenanceInfo,
-				},
+			types.Entity{
+				Type:          types.EntityTypeResource,
+				PbehaviorInfo: maintenanceInfo,
 			},
 			resolvedAnotherMaintenance,
 			types.EventTypePbhLeaveAndEnter,
@@ -231,9 +226,12 @@ func TestGetEvent(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			manager := pbehavior.NewEventManager()
+			manager := pbehavior.NewEventManager(libevent.NewGenerator("", ""))
 
-			event := manager.GetEvent(dataset.resolveResult, dataset.alarm, time.Now())
+			event, err := manager.GetEvent(dataset.resolveResult, dataset.entity, datetime.NewCpsTime())
+			if err != nil {
+				t.Fatalf("expected no error but got %v", err)
+			}
 
 			if event.EventType != dataset.expectedEventType {
 				t.Errorf("expected %s event type, got %s", dataset.expectedEventType, event.EventType)

@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 
@@ -91,7 +92,7 @@ func Default(
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, eventFilterFailureService, templateExecutor))
 	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter, eventFilterFailureService, templateExecutor, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.FIFOEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
@@ -197,8 +198,8 @@ func Default(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("outdated_rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,
 		&deleteOutdatedRatesWorker{
@@ -239,7 +240,7 @@ func Default(
 			}
 		})
 	} else {
-		engine.AddPeriodicalWorker("local cache", &periodicalWorker{
+		engine.AddPeriodicalWorker("local_cache", &periodicalWorker{
 			RuleService:        eventfilterService,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,

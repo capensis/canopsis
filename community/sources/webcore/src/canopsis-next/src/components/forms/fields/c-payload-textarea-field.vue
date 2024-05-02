@@ -24,7 +24,7 @@
       <div class="c-payload-textarea-field__append">
         <variables-menu
           v-if="variables"
-          :variables="availableVariables"
+          :items="availableVariables"
           :visible="variablesShown"
           :value="variablesMenuValue"
           :position-x="variablesMenuPosition.x"

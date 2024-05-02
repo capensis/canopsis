@@ -23,11 +23,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const (
-	defaultConnector     = "taskhandler"
-	defaultConnectorName = "task_importctx"
-)
-
 type parseResult struct {
 	writeModels []mongo.WriteModel
 
@@ -61,13 +56,22 @@ type worker struct {
 	publisher         EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
 
+	connector string
+
 	logger zerolog.Logger
 }
+
+var (
+	ErrEmptyImport          = errors.New("empty import")
+	ErrCantCreateAndDisable = errors.New("can't create and disable component simutaneously")
+	ErrCantCreateAndDelete  = errors.New("can't create and delete component simutaneously")
+)
 
 func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
+	connector string,
 	logger zerolog.Logger,
 ) Worker {
 	return &worker{
@@ -78,6 +82,8 @@ func NewWorker(
 
 		publisher:         publisher,
 		metricMetaUpdater: metricMetaUpdater,
+
+		connector: connector,
 
 		logger: logger,
 	}
@@ -95,7 +101,7 @@ func (w *worker) Work(ctx context.Context, filename, source string) (stats Stats
 	}
 
 	if len(res.writeModels) == 0 {
-		return stats, fmt.Errorf("empty import")
+		return stats, ErrEmptyImport
 	}
 
 	stats.Updated, stats.Deleted, err = w.bulkWrite(ctx, res.writeModels, canopsis.DefaultBulkSize, canopsis.DefaultBulkBytesSize)
@@ -127,7 +133,7 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 	}
 
 	if len(res.writeModels) == 0 {
-		return stats, fmt.Errorf("empty import")
+		return stats, ErrEmptyImport
 	}
 
 	stats.Updated, stats.Deleted, err = w.bulkWrite(ctx, res.writeModels, canopsis.DefaultBulkSize, canopsis.DefaultBulkBytesSize)
@@ -241,7 +247,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 	}
 
 	if t != json.Delim('[') {
-		return res, fmt.Errorf("cis should be an array")
+		return res, errors.New("cis should be an array")
 	}
 
 	entityParseRes, err = w.parseEntities(ctx, decoder, source, withEvents)
@@ -510,7 +516,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
 			case types.EntityTypeResource:
-				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.ID, ci.Component, now))
+				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.Name, ci.Component, now))
 			case types.EntityTypeComponent:
 				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(eventType, ci.ID, now))
 			}
@@ -519,11 +525,11 @@ func (w *worker) parseEntities(
 
 	for componentName, exists := range componentsExist {
 		if componentsToDelete[componentName] {
-			return res, fmt.Errorf("can't create and delete component simutaneously")
+			return res, ErrCantCreateAndDelete
 		}
 
 		if componentsToDisable[componentName] {
-			return res, fmt.Errorf("can't create and disable component simutaneously")
+			return res, ErrCantCreateAndDisable
 		}
 
 		if !exists {
@@ -550,7 +556,7 @@ func (w *worker) parseEntities(
 				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
 			} else {
 				if !oldEntity.Enabled {
-					return res, fmt.Errorf("can't create resource for disabled component")
+					return res, errors.New("can't create resource for disabled component")
 				}
 
 				componentInfos[componentName] = oldEntity.Infos
@@ -593,8 +599,8 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 
 		err = w.publisher.SendEvent(ctx, types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
-			Connector:     defaultConnector,
-			ConnectorName: defaultConnectorName,
+			Connector:     w.connector,
+			ConnectorName: w.connector,
 			Component:     service.ID,
 			Timestamp:     datetime.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
@@ -675,11 +681,11 @@ func (w *worker) validate(ci EntityConfiguration) error {
 	}
 
 	if ci.Name == "" {
-		return fmt.Errorf("empty name is not allowed")
+		return errors.New("empty name is not allowed")
 	}
 
 	if ci.Type != types.EntityTypeService && len(ci.EntityPattern) > 0 {
-		return fmt.Errorf("contains entity pattern, but ci is not a service")
+		return errors.New("contains entity pattern, but ci is not a service")
 	}
 
 	return nil
@@ -787,8 +793,8 @@ func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, no
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
-		Connector:     defaultConnector,
-		ConnectorName: defaultConnectorName,
+		Connector:     w.connector,
+		ConnectorName: w.connector,
 		Component:     ci.ID,
 		SourceType:    types.SourceTypeService,
 		Initiator:     types.InitiatorSystem,
@@ -797,8 +803,8 @@ func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, no
 
 func (w *worker) createResourceEvent(eventType, name, component string, now datetime.CpsTime) types.Event {
 	return types.Event{
-		Connector:     defaultConnector,
-		ConnectorName: defaultConnectorName,
+		Connector:     w.connector,
+		ConnectorName: w.connector,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
@@ -811,8 +817,8 @@ func (w *worker) createResourceEvent(eventType, name, component string, now date
 
 func (w *worker) createComponentEvent(eventType, name string, now datetime.CpsTime) types.Event {
 	return types.Event{
-		Connector:     defaultConnector,
-		ConnectorName: defaultConnectorName,
+		Connector:     w.connector,
+		ConnectorName: w.connector,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,

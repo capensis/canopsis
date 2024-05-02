@@ -132,6 +132,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 
 			if matched {
 				additionalData.Trigger = trigger
+				additionalData.AlarmChangeType = trigger
 				err := s.delayedScenarioManager.AddDelayedScenario(ctx, alarm, scenario, additionalData)
 				if err != nil {
 					return err

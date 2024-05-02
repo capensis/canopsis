@@ -1,4 +1,4 @@
-import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
+import { ALARM_LIST_STEPS, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   liveReporting: 'Set a custom date range',
@@ -12,25 +12,13 @@ export default {
   actionsRequired: 'Actions required',
   acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
   acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
-  advancedSearch: '<span>Help on the advanced research :</span>\n'
-    + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
-    + '<p>The "-" before the research is required</p>\n'
-    + '<p>Operators :\n'
-    + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
-    + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
-    + '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
-    + '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
-    + '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
-    + '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n'
-    + '</dl>',
   otherTickets: 'Other tickets are available in the expand panel',
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
   followLink: 'Follow the link "{title}"',
   hasBookmark: 'Alarm has bookmark',
   filterByBookmark: 'Filter by bookmark',
+  runTest: 'Run test',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
@@ -53,7 +41,7 @@ export default {
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      createManualMetaAlarm: 'Manual meta alarm management',
+      linkToMetaAlarm: 'Link to a meta alarm',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
@@ -76,52 +64,50 @@ export default {
       children: 'Consequences',
     },
   },
-  timeLine: {
-    titlePaths: {
-      by: 'by',
-    },
-    stateCounter: {
-      header: 'Cropped Severity (since last change of status)',
-      stateIncreased: 'State increased',
-      stateDecreased: 'State decreases',
-    },
-    types: {
-      [EVENT_ENTITY_TYPES.ack]: 'Ack',
-      [EVENT_ENTITY_TYPES.ackRemove]: 'Ack removed',
-      [EVENT_ENTITY_TYPES.stateinc]: 'State increased',
-      [EVENT_ENTITY_TYPES.statedec]: 'State decreased',
-      [EVENT_ENTITY_TYPES.statusinc]: 'Status increased',
-      [EVENT_ENTITY_TYPES.statusdec]: 'Status decreased',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Ticket associated',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Ticket is declared successfully',
-      [EVENT_ENTITY_TYPES.declareTicketFail]: 'Ticket declaration is failed',
-      [EVENT_ENTITY_TYPES.webhookStart]: 'Webhook has started',
-      [EVENT_ENTITY_TYPES.webhookComplete]: 'Webhook is executed successfully',
-      [EVENT_ENTITY_TYPES.webhookFail]: 'Webhook is failed',
-      [EVENT_ENTITY_TYPES.snooze]: 'Alarm snoozed',
-      [EVENT_ENTITY_TYPES.unsooze]: 'Alarm unsnoozed',
-      [EVENT_ENTITY_TYPES.changeState]: 'Change and lock severity',
-      [EVENT_ENTITY_TYPES.pbhenter]: 'Periodic behavior enabled',
-      [EVENT_ENTITY_TYPES.pbhleave]: 'Periodic behavior disabled',
-      [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
-      [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
-      [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
-      [EVENT_ENTITY_TYPES.instructionStart]: 'Instruction has been started',
-      [EVENT_ENTITY_TYPES.instructionPause]: 'Instruction has been paused',
-      [EVENT_ENTITY_TYPES.instructionResume]: 'Instruction has been resumed',
-      [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
-      [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
-      [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
-      [EVENT_ENTITY_TYPES.instructionJobStart]: 'Instruction job has been started',
-      [EVENT_ENTITY_TYPES.instructionJobComplete]: 'Instruction job has been completed',
-      [EVENT_ENTITY_TYPES.instructionJobAbort]: 'Instruction job has been aborted',
-      [EVENT_ENTITY_TYPES.instructionJobFail]: 'Instruction job has been failed',
-      [EVENT_ENTITY_TYPES.autoInstructionStart]: 'Instruction has been started automatically',
-      [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'Instruction has been completed automatically',
-      [EVENT_ENTITY_TYPES.autoInstructionFail]: 'Instruction has been failed automatically',
-      [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'Instruction has been started automatically for another alarm',
-      [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'Test suite has been updated',
-      [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Test case has been updated',
+  timeline: {
+    by: 'by',
+    launched: 'launched',
+    junit: 'JUnit',
+    groupItems: 'Group items',
+    steps: {
+      [ALARM_LIST_STEPS.statedec]: 'State decreased',
+      [ALARM_LIST_STEPS.stateinc]: 'State increased',
+      [ALARM_LIST_STEPS.changeState]: 'State changed',
+      [ALARM_LIST_STEPS.stateCounter]: 'Cropped severity (since the last change of the status)',
+      [ALARM_LIST_STEPS.statusdec]: 'Status changed to {status}',
+      [ALARM_LIST_STEPS.statusinc]: 'Status changed to {status}',
+      [ALARM_LIST_STEPS.resolve]: 'Alarm resolved',
+      [ALARM_LIST_STEPS.activate]: 'Alarm is active',
+      [ALARM_LIST_STEPS.snooze]: 'Alarm snoozed for {duration}',
+      [ALARM_LIST_STEPS.unsnooze]: 'Alarm unsnoozed',
+      [ALARM_LIST_STEPS.ack]: 'Ack',
+      [ALARM_LIST_STEPS.ackRemove]: 'Cancel ack',
+      [ALARM_LIST_STEPS.pbhenter]: 'Periodical behavior activated',
+      [ALARM_LIST_STEPS.pbhleave]: 'Periodical behavior deactivated',
+      [ALARM_LIST_STEPS.assocTicket]: 'Ticket associated',
+      [ALARM_LIST_STEPS.webhookStart]: 'Webhook is launched',
+      [ALARM_LIST_STEPS.webhookInProgress]: 'Webhook launched by {author} in progress...',
+      [ALARM_LIST_STEPS.webhookComplete]: 'Webhook is executed successfully',
+      [ALARM_LIST_STEPS.webhookFail]: 'Webhook is failed',
+      [ALARM_LIST_STEPS.declareTicket]: 'Ticket is declared',
+      [ALARM_LIST_STEPS.declareTicketFail]: 'Ticket declaration is failed',
+      [ALARM_LIST_STEPS.declareTicketRuleInProgress]: 'Ticket declaration rule launched by {author} in progress',
+      [ALARM_LIST_STEPS.declareTicketRuleComplete]: 'Ticket declaration rule is complete',
+      [ALARM_LIST_STEPS.declareTicketRuleFail]: 'Ticket declaration rule is failed',
+      [ALARM_LIST_STEPS.instructionStart]: 'Instruction is launched',
+      [ALARM_LIST_STEPS.instructionPause]: 'Instruction paused',
+      [ALARM_LIST_STEPS.instructionResume]: 'Instruction resumed',
+      [ALARM_LIST_STEPS.instructionComplete]: 'Instruction is complete',
+      [ALARM_LIST_STEPS.instructionAbort]: 'Instruction is aborted',
+      [ALARM_LIST_STEPS.instructionFail]: 'Instruction is failed',
+      [ALARM_LIST_STEPS.autoInstructionStart]: 'Instruction is launched by the system',
+      [ALARM_LIST_STEPS.autoInstructionComplete]: 'Instruction is complete',
+      [ALARM_LIST_STEPS.autoInstructionFail]: 'Instruction is failed',
+      [ALARM_LIST_STEPS.junitTestSuiteUpdate]: 'Test suite is relaunched',
+      [ALARM_LIST_STEPS.junitTestCaseUpdate]: 'Test case is relaunched',
+      [ALARM_LIST_STEPS.metaalarmattach]: 'Alarm linked to meta alarm',
+      [ALARM_LIST_STEPS.metaalarmdetach]: 'Alarm unlinked from meta alarm',
+      [ALARM_LIST_STEPS.comment]: 'Comment added',
     },
   },
   tabs: {
@@ -133,6 +119,7 @@ export default {
     impactChain: 'Impact chain',
     entityGantt: 'Gantt chart',
     ticketsDeclared: 'Tickets declared',
+    remediation: 'Remediation',
   },
   moreInfos: {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',
@@ -188,7 +175,6 @@ export default {
     assignedInstructions: 'Assigned instructions',
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
-    lastComment: 'Last comment',
     lastCommentInitiator: 'Last comment initiator',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
@@ -216,7 +202,6 @@ export default {
     ticketCreatedAt: 'Ticket created at',
     ticketData: 'Ticket data',
     alarmInfos: 'Alarm infos',
-    entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
     entityType: 'Entity type',

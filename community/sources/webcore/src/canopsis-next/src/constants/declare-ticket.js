@@ -12,10 +12,3 @@ export const DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES = {
   output: '.AdditionalData.Output',
   ruleName: '.AdditionalData.RuleName',
 };
-
-export const DECLARE_TICKET_EXECUTION_STATUSES = {
-  waiting: 0,
-  running: 1,
-  succeeded: 2,
-  failed: 3,
-};
