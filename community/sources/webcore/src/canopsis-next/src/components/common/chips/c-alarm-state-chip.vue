@@ -31,12 +31,6 @@ import { computed } from 'vue';
 
 import { ALARM_LIST_STEPS, ALARM_STATES } from '@/constants';
 
-/**
- * Component for the 'state' column of the alarms list
- *
- * @prop {Object} alarm - Object representing the alarm
- * @prop {String} propertyKey - Property name
- */
 export default {
   props: {
     value: {
