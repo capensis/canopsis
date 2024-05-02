@@ -24,6 +24,11 @@
           @click="$emit('edit', item)"
         )
         c-action-btn(
+          v-if="duplicable",
+          type="duplicate",
+          @click="$emit('duplicate', item)"
+        )
+        c-action-btn(
           v-if="removable",
           type="delete",
           @click="$emit('remove', item._id)"
@@ -53,6 +58,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    duplicable: {
+      type: Boolean,
+      default: false,
+    },
     updatable: {
       type: Boolean,
       default: false,
@@ -62,7 +71,7 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.enabled'), value: 'enabled' },
+        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
         { text: this.$t('common.lastModifiedBy'), value: 'author.display_name' },
         {
