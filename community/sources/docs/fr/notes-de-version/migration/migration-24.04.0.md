@@ -201,15 +201,17 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     ```
 
     Mise à jour des paquets `mongodb` :
- !!! warning "Avertissement"
 
-    Lors du passage de la version 6 à la version 7 l'option `storage.journal.enabled` est supprimé de mongodb ce qui empêchera le démarrage après la mise à jour.
+    !!! warning "Avertissement"
+
+        Lors du passage de la version 6 à la version 7 l'option `storage.journal.enabled` est supprimée de mongodb.
+        
+        Si vous l'utilisiez, vous devez modifier le fichier `/etc/mongod.conf` et retirer les lignes suivantes:
+        ```
+        journal:
+            enabled: true
+        ```
     
-    Pour le désactiver, il faut modifier le fichier `/etc/mongod.conf` et retirer les lignes suivantes:
-    ```
-    journal:
-        enabled: true
-    ```
     ```sh
     echo '[mongodb-org-7.0]
     name=MongoDB Repository
@@ -220,6 +222,7 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     dnf makecache
     dnf install mongodb-org-7.0.8 mongodb-org-database-7.0.8 mongodb-org-server-7.0.8 mongodb-org-mongos-7.0.8 mongodb-org-tools-7.0.8
     ```
+
 
     Redémarrage de `mongodb` :
 
