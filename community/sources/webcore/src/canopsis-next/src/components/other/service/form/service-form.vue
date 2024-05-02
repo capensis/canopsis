@@ -57,7 +57,7 @@
       <v-tab :class="{ 'error--text': errors.has('entity_patterns') }">
         {{ $t('common.entityPatterns') }}
       </v-tab>
-      <v-tab-item>
+      <v-tab-item eager>
         <c-patterns-field
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
@@ -69,7 +69,7 @@
       <v-tab class="validation-header">
         {{ $t('entity.manageInfos') }}
       </v-tab>
-      <v-tab-item>
+      <v-tab-item eager>
         <manage-infos v-field="form.infos" />
       </v-tab-item>
     </v-tabs>
