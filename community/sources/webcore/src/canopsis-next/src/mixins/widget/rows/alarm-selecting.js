@@ -27,10 +27,11 @@ export const widgetRowsSelectingAlarmMixin = {
 
   async mounted() {
     if (this.selectable) {
-      window.addEventListener('keydown', this.enableSelecting);
-      window.addEventListener('keyup', this.disableSelecting);
+      window.addEventListener('keydown', this.handleKeyDown);
+      window.addEventListener('keyup', this.handleKeyUp);
       window.addEventListener('mousedown', this.mousedownHandler);
       window.addEventListener('mouseup', this.mouseupHandler);
+      window.addEventListener('blur', this.disableSelecting);
     }
   },
   updated() {
@@ -39,10 +40,11 @@ export const widgetRowsSelectingAlarmMixin = {
     }
   },
   beforeDestroy() {
-    window.removeEventListener('keydown', this.enableSelecting);
-    window.removeEventListener('keyup', this.disableSelecting);
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
     window.removeEventListener('mousedown', this.mousedownHandler);
     window.removeEventListener('mouseup', this.mouseupHandler);
+    window.removeEventListener('blur', this.disableSelecting);
   },
 
   methods: {
@@ -127,15 +129,23 @@ export const widgetRowsSelectingAlarmMixin = {
       this.selected = [];
     },
 
-    enableSelecting({ key }) {
+    enableSelecting() {
+      this.selecting = true;
+    },
+
+    disableSelecting() {
+      this.selecting = false;
+    },
+
+    handleKeyDown({ key }) {
       if (key === 'Control') {
-        this.selecting = true;
+        this.enableSelecting();
       }
     },
 
-    disableSelecting({ key }) {
+    handleKeyUp({ key }) {
       if (key === 'Control') {
-        this.selecting = false;
+        this.disableSelecting();
       }
     },
   },
