@@ -1938,6 +1938,50 @@ definitions:
     required:
     - name
     type: object
+  entitycomment.Comment:
+    properties:
+      author:
+        $ref: '#/definitions/types.Author'
+      message:
+        type: string
+      t:
+        type: integer
+    type: object
+  entitycomment.Request:
+    properties:
+      entity:
+        type: string
+      message:
+        maxLength: 200
+        type: string
+    required:
+    - entity
+    - message
+    type: object
+  entitycomment.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/types.Author'
+      entity:
+        type: string
+      message:
+        type: string
+      t:
+        type: integer
+    type: object
+  entitycomment.UpdateRequest:
+    properties:
+      entity:
+        type: string
+      message:
+        maxLength: 200
+        type: string
+    required:
+    - entity
+    - message
+    type: object
   entityinfodictionary.Result:
     properties:
       value:
@@ -3504,7 +3548,14 @@ definitions:
         - alarm
         - entity
         - pbehavior
+        - weather_service
         type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     required:
     - is_corporate
     - title
@@ -3554,6 +3605,12 @@ definitions:
         type: string
       updated:
         type: integer
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
   pbehavior.BulkConnectorCreateRequestItem:
     properties:
@@ -4625,9 +4682,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4649,7 +4703,6 @@ definitions:
     required:
     - _id
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4662,9 +4715,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4685,7 +4735,6 @@ definitions:
         type: array
     required:
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4696,9 +4745,6 @@ definitions:
         items:
           $ref: '#/definitions/scenario.ActionRequest'
         type: array
-      author:
-        maxLength: 255
-        type: string
       delay:
         $ref: '#/definitions/datetime.DurationWithUnit'
       disable_during_periods:
@@ -4719,7 +4765,6 @@ definitions:
         type: array
     required:
     - actions
-    - author
     - enabled
     - name
     - triggers
@@ -4923,6 +4968,8 @@ definitions:
         type: string
       alarm_id:
         type: string
+      alarm_last_comment:
+        $ref: '#/definitions/common.AlarmStep'
       assigned_declare_ticket_rules:
         items:
           $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
@@ -4969,6 +5016,8 @@ definitions:
         type: integer
       is_grey:
         type: boolean
+      last_comment:
+        $ref: '#/definitions/entitycomment.Comment'
       last_update_date:
         type: integer
       links:
@@ -5011,6 +5060,10 @@ definitions:
         items:
           type: string
         type: array
+      tags:
+        items:
+          type: string
+        type: array
       ticket:
         $ref: '#/definitions/common.AlarmStep'
       tickets:
@@ -5036,6 +5089,8 @@ definitions:
       _id:
         type: string
       ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_comment:
         $ref: '#/definitions/common.AlarmStep'
       category:
         $ref: '#/definitions/entity.Category'
@@ -5063,6 +5118,8 @@ definitions:
         type: boolean
       is_grey:
         type: boolean
+      last_comment:
+        $ref: '#/definitions/entitycomment.Comment'
       last_update_date:
         type: integer
       name:
@@ -5085,6 +5142,10 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       status:
         $ref: '#/definitions/common.AlarmStep'
+      tags:
+        items:
+          type: string
+        type: array
     type: object
   sharetoken.EditRequest:
     properties:
@@ -5331,6 +5392,13 @@ definitions:
         items:
           $ref: '#/definitions/validator.WrnReport'
         type: array
+    type: object
+  types.Author:
+    properties:
+      _id:
+        type: string
+      display_name:
+        type: string
     type: object
   types.Coordinates:
     properties:
@@ -5918,6 +5986,8 @@ definitions:
         type: string
       corporate_pbehavior_pattern:
         type: string
+      corporate_weather_service_pattern:
+        type: string
       entity_pattern:
         items:
           items:
@@ -5982,6 +6052,8 @@ definitions:
         type: string
       corporate_pbehavior_pattern:
         type: string
+      corporate_weather_service_pattern:
+        type: string
       entity_pattern:
         items:
           items:
@@ -6032,6 +6104,10 @@ definitions:
       corporate_pbehavior_pattern:
         type: string
       corporate_pbehavior_pattern_title:
+        type: string
+      corporate_weather_service_pattern:
+        type: string
+      corporate_weather_service_pattern_title:
         type: string
       created:
         type: integer

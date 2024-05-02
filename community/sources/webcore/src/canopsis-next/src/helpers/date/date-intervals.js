@@ -373,6 +373,21 @@ export const getQuickRangeByDiffBetweenStartAndStop = (
 ) => ranges.find(range => getDiffBetweenStartAndStopQuickInterval(range.value) === diff) || QUICK_RANGES.custom;
 
 /**
+ * Find quick range by interval
+ *
+ * @param {Object} interval
+ * @param {Array} ranges
+ * @return {Object}
+ */
+export const findQuickRangeByInterval = (
+  interval,
+  ranges = Object.values(QUICK_RANGES),
+) => ranges.find(
+  range => range.start === interval.from && range.stop === interval.to,
+)
+  || QUICK_RANGES.custom;
+
+/**
  * Convert interval form to timestamp interval
  *
  * @param {IntervalForm} [interval = {}]
@@ -393,5 +408,27 @@ export const convertMetricIntervalToTimestamp = ({
   return {
     from: convertDateToTimestampByTimezone(fromStartedOfDay, timezone),
     to: convertDateToTimestampByTimezone(toStartedOfDay, timezone),
+  };
+};
+
+/**
+ * Convert interval form to timestamp interval
+ *
+ * @param {IntervalForm} [interval = {}]
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
+ * @param {string} [timezone = getLocaleTimezone()]
+ * @returns {Interval}
+ */
+export const convertQueryIntervalToTimestamp = ({
+  interval = {},
+  format = DATETIME_FORMATS.datePicker,
+  timezone = getLocaleTimezone(),
+}) => {
+  const from = convertStartDateIntervalToTimestamp(interval.from, format, TIME_UNITS.hour);
+  const to = convertStopDateIntervalToTimestamp(interval.to, format, TIME_UNITS.hour);
+
+  return {
+    from: convertDateToTimestampByTimezone(from, timezone),
+    to: convertDateToTimestampByTimezone(to, timezone),
   };
 };

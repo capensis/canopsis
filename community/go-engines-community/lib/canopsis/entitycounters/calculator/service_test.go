@@ -11718,7 +11718,7 @@ func runServicesDataset(
 		)
 	}
 
-	resultStateServicesInfo, err := componentService.CalculateCounters(ctx, &dSet.entity, dSet.alarm, dSet.alarmChange)
+	_, resultStateServicesInfo, err := componentService.CalculateCounters(ctx, &dSet.entity, dSet.alarm, dSet.alarmChange)
 	if err != nil {
 		t.Fatalf("expected no err, but got %v", err)
 	}

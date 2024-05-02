@@ -45,9 +45,6 @@ type Task struct {
 	IsMetaAlarmUpdated   bool
 	SkipForInstruction   bool
 	IsInstructionMatched bool
-	Header               map[string]string
-	Response             map[string]interface{}
-	ResponseMap          map[string]interface{}
 	AdditionalData       AdditionalData
 }
 
@@ -58,8 +55,6 @@ type TaskResult struct {
 	ExecutionCacheKey string
 	AlarmChangeType   types.AlarmChangeType
 	Status            int
-	Header            map[string]string
-	Response          map[string]interface{}
 	Err               error
 }
 
@@ -307,20 +302,6 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 }
 
 func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookEvent, bool, error) {
-	children := make([]types.Alarm, 0)
-	if len(task.Alarm.Value.Children) > 0 {
-		cursor, err := s.alarmCollection.Find(ctx, bson.M{
-			"d":          bson.M{"$in": task.Alarm.Value.Children},
-			"v.resolved": nil,
-		})
-		if err != nil {
-			return nil, false, fmt.Errorf("cannot find children: %w", err)
-		}
-		err = cursor.All(ctx, &children)
-		if err != nil {
-			return nil, false, fmt.Errorf("cannot decode children: %w", err)
-		}
-	}
 	// Skip if instruction is in progress
 	if task.SkipForInstruction && task.IsInstructionMatched {
 		return nil, true, nil
@@ -348,35 +329,6 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		return nil, false, err
 	}
 
-	tplData := map[string]interface{}{
-		"Alarm":          task.Alarm,
-		"Entity":         task.Entity,
-		"Children":       children,
-		"Response":       task.Response,
-		"ResponseMap":    task.ResponseMap,
-		"Header":         task.Header,
-		"AdditionalData": additionalData,
-	}
-
-	request := *task.Action.Parameters.Request
-	request.URL, err = s.templateExecutor.Execute(request.URL, tplData)
-	if err != nil {
-		return nil, false, fmt.Errorf("cannot render request url template scenario=%s: %w", task.ScenarioID, err)
-	}
-	request.Payload, err = s.templateExecutor.Execute(request.Payload, tplData)
-	if err != nil {
-		return nil, false, fmt.Errorf("cannot render request payload template scenario=%s: %w", task.ScenarioID, err)
-	}
-
-	headers := make(map[string]string, len(request.Headers))
-	for k, v := range request.Headers {
-		headers[k], err = s.templateExecutor.Execute(v, tplData)
-		if err != nil {
-			return nil, false, fmt.Errorf("cannot render request header %q template scenario=%s: %w", k, task.ScenarioID, err)
-		}
-	}
-	request.Headers = headers
-
 	history := libwebhook.History{
 		ID:        utils.NewID(),
 		Alarms:    []string{task.Alarm.ID},
@@ -385,15 +337,18 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		Execution: task.ExecutionID,
 		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
 
-		SystemName:    task.Action.Parameters.TicketSystemName,
-		Status:        libwebhook.StatusCreated,
-		Comment:       task.Action.Comment,
-		Request:       request,
-		DeclareTicket: task.Action.Parameters.DeclareTicket,
-		UserID:        additionalData.User,
-		Username:      additionalData.Author,
-		Initiator:     types.InitiatorSystem,
-		CreatedAt:     datetime.NewCpsTime(),
+		SystemName:     task.Action.Parameters.TicketSystemName,
+		Status:         libwebhook.StatusCreated,
+		Comment:        task.Action.Comment,
+		Request:        *task.Action.Parameters.Request,
+		DeclareTicket:  task.Action.Parameters.DeclareTicket,
+		UserID:         additionalData.User,
+		Username:       additionalData.Author,
+		Initiator:      types.InitiatorSystem,
+		CreatedAt:      datetime.NewCpsTime(),
+		EventInitiator: additionalData.Initiator,
+		EventOutput:    additionalData.Output,
+		Trigger:        additionalData.Trigger,
 	}
 
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,

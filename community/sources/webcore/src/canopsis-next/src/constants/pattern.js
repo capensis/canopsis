@@ -4,6 +4,7 @@ export const PATTERN_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
   pbehavior: 'pbehavior',
+  serviceWeather: 'weather_service',
 };
 
 export const PATTERN_OPERATORS = {

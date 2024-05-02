@@ -4625,6 +4625,145 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entity-comments:
+    get:
+      tags:
+        - entity-comments
+      summary: Find entity comments
+      description: |
+        Get paginated list of entity comments.
+        
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-comments-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - name: entity
+          required: true
+          in: query
+          description: entity ID
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - entity-comments
+      summary: Create entity comment
+      description: |
+        Create entity comment.
+        
+        -  PERMISSIONS: `api_entitycomment`
+      operationId: entity-comments-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Request'
+            examples:
+              create:
+                summary: Create
+                description: Create a comment.
+                value: {
+                  "entity": "5f5b3b3b-1b3b-4b3b-9b3b-3b3b3b3b3b3b/1f3a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "message": "This is a comment"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entity-comments/{id}:
+    put:
+      tags:
+        - entity-comments
+      summary: Update entity comment by id
+      description: |
+        Update entity last comment by id.
+        
+        -  PERMISSIONS: `api_entitycomment`
+      operationId: entity-comments-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: comment id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Request'
+            examples:
+              update:
+                summary: Update
+                description: Update a comment.
+                value: {
+                  "entity": "5f5b3b3b-1b3b-4b3b-9b3b-3b3b3b3b3b3b/1f3a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "message": "This is a comment"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entitycomment.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entity-export:
     post:
       tags:
@@ -7414,6 +7553,22 @@ paths:
           required: true
           schema:
             type: integer
+        - name: event_types[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: connector_names[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -10406,7 +10561,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,
@@ -10978,7 +11133,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,

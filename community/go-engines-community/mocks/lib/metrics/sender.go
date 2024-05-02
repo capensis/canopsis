@@ -229,15 +229,15 @@ func (mr *MockSenderMockRecorder) SendInstructionExecutionForInstruction(arg0, a
 }
 
 // SendMessageRate mocks base method.
-func (m *MockSender) SendMessageRate(arg0 time.Time) {
+func (m *MockSender) SendMessageRate(arg0 time.Time, arg1, arg2 string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendMessageRate", arg0)
+	m.ctrl.Call(m, "SendMessageRate", arg0, arg1, arg2)
 }
 
 // SendMessageRate indicates an expected call of SendMessageRate.
-func (mr *MockSenderMockRecorder) SendMessageRate(arg0 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendMessageRate(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessageRate", reflect.TypeOf((*MockSender)(nil).SendMessageRate), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessageRate", reflect.TypeOf((*MockSender)(nil).SendMessageRate), arg0, arg1, arg2)
 }
 
 // SendNotAckedInDayDec mocks base method.

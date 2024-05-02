@@ -11,7 +11,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name created updated"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name created updated"`
 }
 
 type EditRequest struct {

@@ -10,10 +10,9 @@
   >
     <template #toolbar="">
       <v-flex>
-        <c-advanced-search-field
-          :query.sync="query"
-          :columns="columns"
-          :tooltip="$t('context.advancedSearch')"
+        <c-advanced-search
+          :fields="columns"
+          @submit="updateSearchInQuery"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
@@ -29,7 +28,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import { localQueryMixin } from '@/mixins/query-local/query';
+import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
@@ -72,6 +71,15 @@ export default {
     this.fetchList();
   },
   methods: {
+    updateSearchInQuery(search) {
+      this.query = {
+        ...this.query,
+
+        search,
+        page: 1,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 

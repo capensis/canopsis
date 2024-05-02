@@ -6,7 +6,6 @@ const (
 	CheEvent          = "che_event"
 	AxeEvent          = "axe_event"
 	CorrelationEvent  = "correlation_event"
-	ServiceEvent      = "service_event"
 	DynamicInfosEvent = "dynamic_infos_event"
 	ActionEvent       = "action_event"
 
@@ -17,4 +16,6 @@ const (
 	ApiRequests         = "api_requests"
 
 	CorrelationRetries = "correlation_retries"
+
+	GoMetrics = "go_metrics"
 )

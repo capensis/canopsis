@@ -5,7 +5,7 @@
         v-field="comment.message"
         v-validate="rules"
         :disabled="!!comment._id"
-        :label="$t('modals.createPbehavior.steps.comments.fields.message')"
+        :label="$t('common.message')"
         :error-messages="errors.collect(messageFieldName)"
         :name="messageFieldName"
       />

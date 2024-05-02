@@ -2,6 +2,7 @@
   <c-compiled-template
     :template="template"
     :context="templateContext"
+    :template-props="templateProps"
   />
 </template>
 
@@ -29,6 +30,10 @@ export default {
   },
   computed: {
     templateContext() {
+      return { entity: this.entity };
+    },
+
+    templateProps() {
       return { entity: this.entity };
     },
   },

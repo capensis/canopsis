@@ -9,6 +9,7 @@
       :with-template="withTemplate"
       :with-html="withHtml"
       :with-color-indicator="withColorIndicator"
+      :excluded-columns="excludedColumns"
       @update:template="updateTemplate"
     />
   </widget-settings-item>
@@ -59,6 +60,10 @@ export default {
     withColorIndicator: {
       type: Boolean,
       default: false,
+    },
+    excludedColumns: {
+      type: Array,
+      required: false,
     },
   },
   methods: {

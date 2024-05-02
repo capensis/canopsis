@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity-availability Renders \`entity-availability\` with custom props 1`] = `
+<div
+  class="layout entity-availability position-relative align-start justify-center"
+>
+  <c-progress-overlay-stub />
+  <availability-bar-stub
+    availability="[object Object]"
+    class="entity-availability__content"
+    defaultshowtype="1"
+    query="[object Object]"
+  />
+</div>
+`;
+
+exports[`entity-availability Renders \`entity-availability\` with default props 1`] = `
+<div
+  class="layout entity-availability position-relative align-start justify-center"
+>
+  <c-progress-overlay-stub />
+  <availability-bar-stub
+    availability="[object Object]"
+    class="entity-availability__content"
+    defaultshowtype="0"
+    query="[object Object]"
+  />
+</div>
+`;

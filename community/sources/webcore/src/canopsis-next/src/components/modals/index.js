@@ -40,8 +40,8 @@ export const AddInfoPopup = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './alarm/info-popup-setting/add-info-popup.vue'),
   loading: LoaderOverlay,
 });
-export const CreateManualMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/create-manual-meta-alarm.vue'),
+export const LinkToMetaAlarm = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/link-to-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
 export const RemoveAlarmsFromMetaAlarm = () => ({

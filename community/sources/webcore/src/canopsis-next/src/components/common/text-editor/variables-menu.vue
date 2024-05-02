@@ -10,8 +10,11 @@
     @input="$emit('close')"
   >
     <variables-list
-      :variables="variables"
+      :items="items"
+      :return-object="returnObject"
+      :children-key="childrenKey"
       :value="value"
+      :dense="dense"
       :z-index="submenuZIndex"
       :show-value="showValue"
       @input="$emit('input', $event)"
@@ -41,7 +44,7 @@ export default {
       type: Number,
       required: false,
     },
-    variables: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -52,6 +55,18 @@ export default {
     ignoreClickOutside: {
       type: Boolean,
       default: false,
+    },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    childrenKey: {
+      type: String,
+      default: 'variables',
     },
   },
   data() {

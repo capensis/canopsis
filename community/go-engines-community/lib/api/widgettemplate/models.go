@@ -9,7 +9,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title type author.name created updated"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title type author.name author.display_name created updated"`
 	Type   string `json:"type" form:"type"`
 }
 

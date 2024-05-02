@@ -17,6 +17,7 @@
           :value="dateTextValue"
           :append-icon="clearable ? 'close' : ''"
           :disabled="disabled"
+          :hide-details="hideDetails"
           readonly
           @click:append="clear"
         />
@@ -26,6 +27,7 @@
       :value="value"
       :label="label"
       :round-hours="roundHours"
+      :allowed-dates="allowedDates"
       @close="close"
       @input="input"
     />
@@ -92,6 +94,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    allowedDates: {
+      type: Function,
+      required: false,
     },
   },
   data() {

@@ -11,7 +11,7 @@
     "e2e": "vue-cli-service test:e2e --mode=developement --config ./tests/e2e/nightwatch.config.js",
     "e2e:consistently": "E2E_TESTS_MODE=consistently yarn e2e",
     "e2e:parallel": "E2E_TESTS_MODE=parallel yarn e2e",
-    "unit": "vue-cli-service test:unit",
+    "unit": "node --no-compilation-cache --expose-gc node_modules/.bin/vue-cli-service test:unit",
     "postinstall": "cd ../../../../.. && husky install community/sources/webcore/src/canopsis-next/.husky",
     "benchmarks": "node ./benchmarks/index.js"
   },
@@ -28,7 +28,6 @@
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-node-html-label": "^1.2.2",
     "deep-freeze": "^0.0.1",
-    "escape-string-regexp": "^2.0.0",
     "file-saver": "^2.0.2",
     "flat": "^4.1.0",
     "handlebars": "4.7.8",

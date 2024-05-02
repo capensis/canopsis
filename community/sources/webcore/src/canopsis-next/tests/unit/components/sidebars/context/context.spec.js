@@ -23,6 +23,8 @@ import {
   WIDGET_TYPES,
   TREE_OF_DEPENDENCIES_SHOW_TYPES,
   ENTITY_TYPES,
+  QUICK_RANGES,
+  AVAILABILITY_SHOW_TYPE,
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
@@ -37,6 +39,7 @@ import {
   generateDefaultContextWidget,
 } from '@/helpers/entities/widget/form';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
+import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
 
 import ContextSettings from '@/components/sidebars/context/context.vue';
 
@@ -49,6 +52,7 @@ const stubs = {
   'field-columns': createInputStub('field-columns'),
   'field-tree-of-dependencies-settings': createInputStub('field-tree-of-dependencies-settings'),
   'field-root-cause-settings': createInputStub('field-root-cause-settings'),
+  'field-availability-graph-settings': createInputStub('field-availability-graph-settings'),
   'field-filters': createInputStub('field-filters'),
   'field-context-entities-types-filter': createInputStub('field-context-entities-types-filter'),
   'field-grid-range-size': createInputStub('field-grid-range-size'),
@@ -66,6 +70,7 @@ const snapshotStubs = {
   'field-columns': true,
   'field-tree-of-dependencies-settings': true,
   'field-root-cause-settings': true,
+  'field-availability-graph-settings': true,
   'field-filters': true,
   'field-context-entities-types-filter': true,
   'field-grid-range-size': true,
@@ -86,6 +91,7 @@ const selectChartsForm = wrapper => wrapper.find('input.charts-form');
 const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
+const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
 
 describe('context', () => {
   const $sidebar = mockSidebar();
@@ -602,6 +608,35 @@ describe('context', () => {
             parameters: newParameters,
           }),
         ),
+      },
+    });
+  });
+
+  test('Availability field changed after trigger availability settings field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const newAvailability = availabilityFieldToForm({
+      enabled: true,
+      default_time_range: QUICK_RANGES.yesterday.value,
+      default_show_type: AVAILABILITY_SHOW_TYPE.duration,
+    });
+    selectFieldAvailabilityGraphSettings(wrapper).triggerCustomEvent('input', newAvailability);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'availability', newAvailability),
       },
     });
   });

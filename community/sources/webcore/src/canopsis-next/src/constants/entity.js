@@ -35,6 +35,9 @@ export const ENTITY_FIELDS = {
   alarmCreationDate: 'alarm_creation_date',
   importSource: 'import_source',
   imported: 'imported',
+  alarmLastComment: 'alarm_last_comment',
+  tags: 'tags',
+  lastComment: 'last_comment',
 
   /**
    * OBJECTS
@@ -44,6 +47,42 @@ export const ENTITY_FIELDS = {
   ticket: 'ticket',
   snooze: 'snooze',
 };
+
+export const ENTITY_ADVANCED_SEARCH_FIELDS = [
+  ENTITY_FIELDS.id,
+  ENTITY_FIELDS.name,
+  ENTITY_FIELDS.categoryName,
+  ENTITY_FIELDS.component,
+  ENTITY_FIELDS.connector,
+  ENTITY_FIELDS.connectorName,
+  ENTITY_FIELDS.resource,
+  ENTITY_FIELDS.impactLevel,
+  ENTITY_FIELDS.lastEventDate,
+  ENTITY_FIELDS.lastPbehaviorDate,
+  ENTITY_FIELDS.lastUpdateDate,
+  ENTITY_FIELDS.koEvents,
+  ENTITY_FIELDS.okEvents,
+  ENTITY_FIELDS.statsOk,
+  ENTITY_FIELDS.statsKo,
+  ENTITY_FIELDS.pbehaviorInfo,
+  ENTITY_FIELDS.impactState,
+  ENTITY_FIELDS.idleSince,
+  ENTITY_FIELDS.infos,
+  ENTITY_FIELDS.componentInfos,
+  ENTITY_FIELDS.alarmDisplayName,
+  ENTITY_FIELDS.alarmCreationDate,
+  ENTITY_FIELDS.importSource,
+  ENTITY_FIELDS.imported,
+  ENTITY_FIELDS.alarmLastComment,
+
+  /**
+   * OBJECTS
+   */
+  ENTITY_FIELDS.ack,
+  ENTITY_FIELDS.category,
+  ENTITY_FIELDS.ticket,
+  ENTITY_FIELDS.snooze,
+];
 
 export const EVENT_ENTITY_TYPES = { // TODO: remove it in the future
   ack: 'ack', // TODO: ServiceWeather
@@ -127,7 +166,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
   [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
-  [EVENT_ENTITY_TYPES.assocTicket]: 'sticky_note_2',
+  [EVENT_ENTITY_TYPES.assocTicket]: '$vuetify.icons.sticky_note_2',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
@@ -335,6 +374,9 @@ export const ENTITY_TEMPLATE_FIELDS = {
   statsOk: `entity.${ENTITY_FIELDS.statsOk}`,
   statsKo: `entity.${ENTITY_FIELDS.statsKo}`,
   links: `entity.${ENTITY_FIELDS.links}`,
+  alarmLastComment: `entity.${ENTITY_FIELDS.alarmLastComment}`,
+  tags: `entity.${ENTITY_FIELDS.tags}`,
+  lastComment: `entity.${ENTITY_FIELDS.lastComment}`,
 };
 
 export const ENTITY_FIELDS_TO_LABELS_KEYS = {
@@ -367,6 +409,9 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
   [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
   [ENTITY_FIELDS.imported]: 'entity.fields.imported',
+  [ENTITY_FIELDS.alarmLastComment]: 'entity.fields.alarmLastComment',
+  [ENTITY_FIELDS.tags]: 'common.tag',
+  [ENTITY_FIELDS.lastComment]: 'common.lastComment',
 
   /**
    * OBJECTS
@@ -386,7 +431,17 @@ export const ENTITY_UNSORTABLE_FIELDS = [
 export const ENTITY_PAYLOADS_VARIABLES = {
   entity: '.Entity',
   entities: '.Entities',
+  id: '.ID',
   name: '.Name',
+  type: '.Type',
+  infos: '.Infos',
+  infosName: '.Infos.%name%',
+  connector: '.Connector',
+  component: '.Component',
+  connectorName: '.ConnectorName',
+  resource: '.Resource',
+  impactLevel: '.ImpactLevel',
+  category: '.Category',
   infosValue: '(index .Infos "%infos_name%").Value',
 };
 

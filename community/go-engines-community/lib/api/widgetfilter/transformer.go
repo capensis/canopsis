@@ -15,6 +15,7 @@ type PatternFieldsTransformer interface {
 	TransformAlarmPatternFieldsRequest(ctx context.Context, r common.AlarmPatternFieldsRequest, isPrivate bool, user string) (common.AlarmPatternFieldsRequest, error)
 	TransformEntityPatternFieldsRequest(ctx context.Context, r common.EntityPatternFieldsRequest, isPrivate bool, user string) (common.EntityPatternFieldsRequest, error)
 	TransformPbehaviorPatternFieldsRequest(ctx context.Context, r common.PbehaviorPatternFieldsRequest, isPrivate bool, user string) (common.PbehaviorPatternFieldsRequest, error)
+	TransformWeatherServicePatternFieldsRequest(ctx context.Context, r common.WeatherServicePatternFieldsRequest, isPrivate bool, user string) (common.WeatherServicePatternFieldsRequest, error)
 }
 
 type patternTransformer struct {
@@ -72,6 +73,24 @@ func (t *patternTransformer) TransformPbehaviorPatternFieldsRequest(ctx context.
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, common.ErrNotExistCorporatePbehaviorPattern
+			}
+
+			return r, err
+		}
+	}
+
+	return r, nil
+}
+
+func (t *patternTransformer) TransformWeatherServicePatternFieldsRequest(ctx context.Context, r common.WeatherServicePatternFieldsRequest, isPrivate bool, user string) (common.WeatherServicePatternFieldsRequest, error) {
+	if r.CorporateWeatherServicePattern != "" {
+		filter := t.getCommonFilter(isPrivate, user)
+		filter["_id"] = r.CorporateWeatherServicePattern
+		filter["type"] = savedpattern.TypeWeatherService
+		err := t.patternCollection.FindOne(ctx, filter).Decode(&r.CorporatePattern)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return r, common.ErrNotExistCorporateWeatherServicePattern
 			}
 
 			return r, err

@@ -92,6 +92,80 @@ export const ALARM_OUTPUT_FIELDS = [
   ALARM_FIELDS.initialLongOutput,
 ];
 
+export const ALARM_ADVANCED_SEARCH_FIELDS = [
+  ALARM_FIELDS.id,
+  ALARM_FIELDS.assignedInstructions,
+  ALARM_FIELDS.displayName,
+  ALARM_FIELDS.output,
+  ALARM_FIELDS.longOutput,
+  ALARM_FIELDS.initialOutput,
+  ALARM_FIELDS.initialLongOutput,
+  ALARM_FIELDS.connector,
+  ALARM_FIELDS.connectorName,
+  ALARM_FIELDS.component,
+  ALARM_FIELDS.resource,
+  ALARM_FIELDS.lastComment,
+  ALARM_FIELDS.lastCommentInitiator,
+  ALARM_FIELDS.ackBy,
+  ALARM_FIELDS.ackMessage,
+  ALARM_FIELDS.ackInitiator,
+  ALARM_FIELDS.stateMessage,
+  ALARM_FIELDS.statusMessage,
+  ALARM_FIELDS.totalStateChanges,
+  ALARM_FIELDS.timestamp,
+  ALARM_FIELDS.creationDate,
+  ALARM_FIELDS.lastUpdateDate,
+  ALARM_FIELDS.lastEventDate,
+  ALARM_FIELDS.ackAt,
+  ALARM_FIELDS.stateAt,
+  ALARM_FIELDS.statusAt,
+  ALARM_FIELDS.resolved,
+  ALARM_FIELDS.activationDate,
+  ALARM_FIELDS.duration,
+  ALARM_FIELDS.currentStateDuration,
+  ALARM_FIELDS.snoozeDuration,
+  ALARM_FIELDS.pbhInactiveDuration,
+  ALARM_FIELDS.activeDuration,
+  ALARM_FIELDS.eventsCount,
+  ALARM_FIELDS.tags,
+  ALARM_FIELDS.impactState,
+  ALARM_FIELDS.ticketAuthor,
+  ALARM_FIELDS.ticketMessage,
+  ALARM_FIELDS.ticketInitiator,
+  ALARM_FIELDS.ticketValue,
+  ALARM_FIELDS.ticketCreatedAt,
+  ALARM_FIELDS.changeState,
+  ALARM_FIELDS.meta,
+  ALARM_FIELDS.entityId,
+  ALARM_FIELDS.entityName,
+  ALARM_FIELDS.entityCategoryName,
+  ALARM_FIELDS.entityType,
+  ALARM_FIELDS.entityComponent,
+  ALARM_FIELDS.entityConnector,
+  ALARM_FIELDS.entityImpactLevel,
+  ALARM_FIELDS.entityKoEvents,
+  ALARM_FIELDS.entityOkEvents,
+  ALARM_FIELDS.entityInfos,
+  ALARM_FIELDS.entityComponentInfos,
+  ALARM_FIELDS.entityLastPbehaviorDate,
+
+  /**
+   * OBJECTS
+   */
+  ALARM_FIELDS.ack,
+  ALARM_FIELDS.ticket,
+  ALARM_FIELDS.ticketData,
+  ALARM_FIELDS.canceled,
+  ALARM_FIELDS.canceledInitiator,
+  ALARM_FIELDS.snooze,
+  ALARM_FIELDS.pbehaviorInfo,
+
+  /**
+   * VIRTUAL
+   */
+  ALARM_FIELDS.activated,
+];
+
 export const ALARM_LEVELS = {
   minor: 20,
   major: 30,
@@ -170,7 +244,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
   history: 'history',
   exportPdf: 'exportPdf',
-  createManualMetaAlarm: 'createManualMetaAlarm',
+  linkToMetaAlarm: 'linkToMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
   comment: 'comment',
@@ -212,7 +286,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'help',
   [ALARM_LIST_ACTIONS_TYPES.history]: 'history',
   [ALARM_LIST_ACTIONS_TYPES.exportPdf]: 'assignment_returned',
-  [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]: 'center_focus_strong',
+  [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]: 'center_focus_strong',
   [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
   [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]: 'link_off',
   [ALARM_LIST_ACTIONS_TYPES.comment]: 'comment',
@@ -397,26 +471,6 @@ export const ALARM_UNKNOWN_VALUE = {
   icon: 'clear',
 };
 
-export const META_ALARMS_RULE_TYPES = {
-  relation: 'relation',
-  timebased: 'timebased',
-  attribute: 'attribute',
-  complex: 'complex',
-  valuegroup: 'valuegroup',
-  corel: 'corel',
-
-  /**
-   * Manual group type doesn't use in the form
-   * We are using it only inside alarms list widget
-   */
-  manualgroup: 'manualgroup',
-};
-
-export const META_ALARMS_THRESHOLD_TYPES = {
-  thresholdRate: 'thresholdRate',
-  thresholdCount: 'thresholdCount',
-};
-
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
@@ -574,13 +628,6 @@ export const ALARM_EVENT_INITIATORS = {
   external: 'external',
 };
 
-export const ALARM_STEP_FIELDS = {
-  timestamp: 't',
-  value: 'val',
-  message: 'm',
-  author: 'a',
-};
-
 export const ALARM_TEMPLATE_FIELDS = {
   id: `alarm.${ALARM_FIELDS.id}`,
   ack: `alarm.${ALARM_FIELDS.ack}`,
@@ -667,7 +714,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.connectorName]: 'common.connectorName',
   [ALARM_FIELDS.component]: 'common.component',
   [ALARM_FIELDS.resource]: 'common.resource',
-  [ALARM_FIELDS.lastComment]: 'alarm.fields.lastComment',
+  [ALARM_FIELDS.lastComment]: 'common.lastComment',
   [ALARM_FIELDS.lastCommentInitiator]: 'alarm.fields.lastCommentInitiator',
   [ALARM_FIELDS.ackBy]: 'alarm.fields.ackBy',
   [ALARM_FIELDS.ackMessage]: 'alarm.fields.ackMessage',
@@ -702,7 +749,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
   [ALARM_FIELDS.ticketInitiator]: 'alarm.fields.ticketInitiator',
   [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
-  [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
+  [ALARM_FIELDS.entityId]: 'common.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
   [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',
   [ALARM_FIELDS.entityType]: 'alarm.fields.entityType',
@@ -749,8 +796,16 @@ export const ALARM_DENSE_TYPES = {
 export const ALARM_PAYLOADS_VARIABLES = {
   alarm: '.Alarm',
   alarms: '.Alarms',
+  id: '.ID',
+  displayName: '.Value.DisplayName',
+  connector: '.Value.Connector',
   component: '.Value.Component',
+  connectorName: '.Value.ConnectorName',
   resource: '.Value.Resource',
+  infos: '.Value.Infos',
+  infosName: '.Value.Infos.%name%',
+  initialOutput: '.Value.InitialOutput',
+  tags: '.Value.Tags',
   stateMessage: '.Value.State.Message',
   stateValue: '.Value.State.Value',
   statusValue: '.Value.Status.Value',
@@ -784,6 +839,7 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   entityGantt: 'entityGantt',
   charts: 'charts',
   remediation: 'remediation',
+  availability: 'availability',
 };
 
 export const ALARM_LINK_ICON_CHIP_WIDTH = 24;

@@ -1,7 +1,7 @@
 import { EXPORT_FETCHING_INTERVAL } from '@/config';
 import { EXPORT_STATUSES } from '@/constants';
 
-import { removeTrailingSlashes } from '@/helpers/url';
+import { openUrlInNewTab } from '@/helpers/url';
 
 /**
  * @typedef {Object} ExportCsvMixin
@@ -34,7 +34,7 @@ export const exportMixinCreator = ({
     },
 
     downloadFile(url) {
-      window.open(removeTrailingSlashes(url), '_blank');
+      openUrlInNewTab(url);
     },
 
     waitGeneratingFile({ id, ...params }) {
