@@ -4,7 +4,7 @@
     align-center
   >
     <c-alarm-chip
-      :value="stateId"
+      :value="value"
       :badge-value="badgeValue"
       :small="small"
       @click="$emit('click', $event)"
@@ -27,26 +27,23 @@
 </template>
 
 <script>
-import { get } from 'lodash';
 import { computed } from 'vue';
 
-import { ALARM_LIST_STEPS } from '@/constants';
+import { ALARM_LIST_STEPS, ALARM_STATES } from '@/constants';
 
-/**
- * Component for the 'state' column of the alarms list
- *
- * @prop {Object} alarm - Object representing the alarm
- * @prop {String} propertyKey - Property name
- */
 export default {
   props: {
-    alarm: {
-      type: Object,
-      required: true,
+    value: {
+      type: [Number, String],
+      default: ALARM_STATES.ok,
     },
-    propertyKey: {
+    type: {
       type: String,
-      default: 'v.state.val',
+      default: '',
+    },
+    badgeValue: {
+      type: [Number, String],
+      required: false,
     },
     small: {
       type: Boolean,
@@ -58,17 +55,13 @@ export default {
     },
   },
   setup(props) {
-    const badgeValue = computed(() => get(props.alarm, 'v.events_count'));
-    const stateId = computed(() => get(props.alarm, props.propertyKey));
-    const showIcon = computed(() => get(props.alarm, 'v.state._t') === ALARM_LIST_STEPS.changeState);
+    const showIcon = computed(() => props.type === ALARM_LIST_STEPS.changeState);
     const classes = computed(() => ({
-      'alarm-column-value-state--badge': badgeValue.value,
-      'alarm-column-value-state--small': props.small,
+      'c-alarm-state-chip--badge': props.badgeValue,
+      'c-alarm-state-chip--small': props.small,
     }));
 
     return {
-      badgeValue,
-      stateId,
       showIcon,
       classes,
     };
@@ -77,7 +70,7 @@ export default {
 </script>
 
 <style lang="scss">
-.alarm-column-value-state {
+.c-alarm-state-chip {
   &--badge {
     margin-top: 12px;
   }
