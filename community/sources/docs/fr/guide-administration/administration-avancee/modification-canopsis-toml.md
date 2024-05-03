@@ -31,7 +31,7 @@ Il est recommandé de ne pas modifier cette valeur.
 ## Modification et maintenance du fichier
 
 Le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
-Ce fichier ne contiens donc que les configuration qui diffèrent avec la configuration par défaut.
+Ce fichier ne contient donc que les configurations qui diffèrent d'avec la configuration par défaut
 
 === "En environnement paquets RPM"
 
@@ -41,19 +41,16 @@ Ce fichier ne contiens donc que les configuration qui diffèrent avec la configu
 
 === "En environnement Docker Compose"
 
-    Le fichier est situé dans le conteneur `reconfigure` au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+    Le fichier est situé dans le conteneur `reconfigure` dans le chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
     Montez y votre fichier personnalisé a l'aide d'un volume.
 
-    Par exemple en mettant ce morceau de configuration à la fin du fichier `docker-compose.override.yml`
+    Vous pouvez par exemple utiliser cette configuration à la fin du fichier `docker-compose.override.yml` : 
     ```yaml
     reconfigure:
       command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     volumes:
       - ./files-pro/reconfigure/reconfigure.override.toml:/opt/canopsis/etc/conf.d/canopsis-override.toml
     ```
-
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées.
-
 
 ## Étape obligatoire pour la prise en compte des modifications
 
