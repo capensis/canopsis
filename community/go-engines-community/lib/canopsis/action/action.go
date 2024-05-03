@@ -8,6 +8,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const PbehaviorOrigin = "scenario"
+
 type Scenario struct {
 	ID                   string                     `bson:"_id,omitempty" json:"_id,omitempty"`
 	Name                 string                     `bson:"name" json:"name"`
@@ -87,6 +89,8 @@ type Parameters struct {
 	Tstop *datetime.CpsTime `json:"tstop,omitempty" bson:"tstop,omitempty" swaggertype:"integer"`
 	// StartOnTrigger is used in pbehavior action.
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
+	// Color is used in pbehavior action.
+	Color string `json:"color,omitempty" bson:"color,omitempty"`
 	// Request is used in webhook action.
 	Request *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
 	// SkipForChild is used in webhook action.

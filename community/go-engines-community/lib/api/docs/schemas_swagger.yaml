@@ -65,6 +65,9 @@ definitions:
     properties:
       author:
         type: string
+      color:
+        description: Color is used in pbehavior action.
+        type: string
       declare_ticket:
         $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
@@ -4659,7 +4662,9 @@ definitions:
         - cancel
         - changestate
         - pbehavior
+        - pbehaviorremove
         - snooze
+        - unsnooze
         - webhook
         type: string
     required:
