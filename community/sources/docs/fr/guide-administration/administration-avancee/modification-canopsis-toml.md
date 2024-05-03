@@ -16,9 +16,8 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 | Type d'environnement | Emplacement du fichier            |
 |----------------------|-----------------------------------|
 | Paquets RPM                                         | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose ( Canopsis < 4.4.0 )                 | `/canopsis.toml` dans le service `reconfigure` |
-| Docker Compose ( Canopsis Pro >= 4.4.0 )            | `/canopsis-pro.toml` dans le service `reconfigure` |
-| Docker Compose ( Canopsis Community >= 4.4.0 )      | `/canopsis-community.toml` dans le service `reconfigure` |
+| Docker Compose ( Canopsis Pro )            | `/canopsis-pro.toml` dans le service `reconfigure` |
+| Docker Compose ( Canopsis Community )      | `/canopsis-community.toml` dans le service `reconfigure` |
 
 !!! tip "Astuce"
     Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`.
@@ -30,22 +29,6 @@ La [variable d'environnement `CPS_DEFAULT_CFG`](variables-environnement.md) perm
 Il est recommandé de ne pas modifier cette valeur.
 
 ## Modification et maintenance du fichier
-
-### Canopsis < 4.6.0
-
-=== "En environnement paquets RPM"
-
-    Éditez directement le fichier `/opt/canopsis/etc/canopsis.toml` (ou le fichier de surcharge `/opt/canopsis/etc/conf.d/canopsis-override.toml`), et suivez le reste de cette procédure.
-
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées par le gestionnaire de paquets `yum`. Vous devrez alors effectuer une synchronisation manuelle entre vos modifications passées et toute éventuelle nouvelle mise à jour du fichier.
-
-=== "En environnement Docker Compose"
-
-    Surchargez la totalité du fichier `/canopsis.toml` existant du conteneur `reconfigure`, à l'aide d'un volume.
-
-    Lors des mises à jour de Canopsis, puisque vous effectuez une surcharge complète du fichier et que Docker Compose ne gère pas la mise à jour de fichiers de configuration, veillez tout particulièrement à comparer votre `canopsis.toml` surchargé localement avec la dernière version de `canopsis.toml` présente dans l'image de base.
-
-### Canopsis >= 4.6.0
 
 Depuis Canopsis 4.6.0, le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
 Ce fichier ne contiens donc que les configuration qui diffèrent avec la configuration par défaut.
@@ -75,8 +58,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
     ```bash
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure
-    canoctl restart
+    /opt/canopsis/bin/canopsis-reconfigure -edition [Votre Edition] -conf /opt/canopsis/etc/canopsis-pro.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     ```
 
 === "En environnement Docker Compose"
@@ -171,7 +153,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | Attribut            | Exemple de valeur                           | Description                                             |
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
 | Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
-| NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
+| NoColor             | true                                        | Active ou désactive les couleurs dans les logs (Nécessite un redémarrage de Canopsis) |
 | TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../guide-utilisation/templates-go/index.md) |
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
