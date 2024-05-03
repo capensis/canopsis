@@ -1,5 +1,5 @@
-build_doc:
-  stage: build
+build:
+  stage: release
   tags: 
     - executor-docker
   image: python:alpine
@@ -33,8 +33,8 @@ build_doc:
   rules:
     - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro"
 
-publish_doc:
-  stage: publish
+publish:
+  stage: release
   tags:
   - executor-docker
   image: alpine
