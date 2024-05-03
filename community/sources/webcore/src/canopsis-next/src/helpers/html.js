@@ -44,7 +44,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
 const DEFAULT_LINKIFY_OPTIONS = {
   target: '_blank',
   ignoreTags: ['script', 'style'],
-  validate: (str, type, token) => token.hasProtocol(),
+  validate: (str, type, token) => token?.hasProtocol?.(),
 };
 
 /**
