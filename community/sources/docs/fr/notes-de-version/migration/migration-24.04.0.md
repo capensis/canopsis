@@ -78,11 +78,6 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     Canopsis 24.04 est livré avec un nouveau jeu de configurations de référence.
     Vous devez télécharger ces configurations et y reporter vos personnalisations.  
 
-
-!!! warning "Avertissement"
-
-    Les changements notables les plus importants sont :  
-
 === "Docker Compose"
 
     Si vous êtes utilisateur de l'édition `community`, voici les étapes à suivre.
@@ -126,7 +121,7 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     Modifiez la variable `MONGO_TAG` du fichier `.env` de cette façon :
 
     ```diff
-    -MONGO_TAG=5.0.14-focal
+    -MONGO_TAG=7.0.8-jammy
     +MONGO_TAG=6.0.15-jammy
     ```
 
@@ -164,6 +159,14 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     CPS_EDITION=pro docker compose exec mongodb bash
     mongosh -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "7.0", "confirm" : true } )
+    ```
+
+    Après avoir mis à jour mongodb, l'option de telemetry sera activée. Pour la désactiver, exécutez la commande suivante :
+    
+    ```sh
+    CPS_EDITION=pro docker compose exec mongodb bash
+    mongosh -u root -p root
+    > disableTelemetry()
     exit
     ```
 
@@ -238,11 +241,13 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     exit
     ```
  
-Après avoir mis à jour mongodb, l'option de telemetry sera activé. Pour la désactiver il suffit de faire:
-```sh
-mongosh -u root -p root
-> disableTelemetry()
-```
+    Après avoir mis à jour mongodb, l'option de telemetry sera activée. Pour la désactiver, exécutez la commande suivante :
+    
+    ```sh
+    mongosh -u root -p root
+    > disableTelemetry()
+    ```
+
 ### Mise à jour de TimescaleDB
 
 Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.9.3 à 2.14.2.
@@ -318,9 +323,6 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
 
 Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.13.  
 
-Vous pouvez effectuer cette opération en utilisant l'interface graphique de management de RabbitMQ.
-
-
 === "Docker Compose"
 
     Il suffit de démarrer le conteneur
@@ -379,8 +381,8 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
     !!! Attention
 
-    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
-    L'outil est en effet pré paramétré pour fonctionner naturellement.
+        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
+        L'outil est en effet pré paramétré pour fonctionner naturellement.
 
     ```sh
     CPS_EDITION=pro docker compose up -d reconfigure
