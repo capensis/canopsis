@@ -1,7 +1,10 @@
-db.user.updateMany({}, [
-    {
-        $set: {
-            password: {$toLower: "$password"}
+db.user.updateMany(
+    {password: {$not: {$regex: /^\$2a/}}},
+    [
+        {
+            $set: {
+                password: {$toLower: "$password"}
+            }
         }
-    }
-]);
+    ]
+);
