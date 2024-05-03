@@ -16,9 +16,8 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 | Type d'environnement | Emplacement du fichier            |
 |----------------------|-----------------------------------|
 | Paquets RPM                                         | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose ( Canopsis < 4.4.0 )                 | `/canopsis.toml` dans le service `reconfigure` |
-| Docker Compose ( Canopsis Pro >= 4.4.0 )            | `/canopsis-pro.toml` dans le service `reconfigure` |
-| Docker Compose ( Canopsis Community >= 4.4.0 )      | `/canopsis-community.toml` dans le service `reconfigure` |
+| Docker Compose ( Canopsis Pro )            | `/canopsis-pro.toml` dans le service `reconfigure` |
+| Docker Compose ( Canopsis Community )      | `/canopsis-community.toml` dans le service `reconfigure` |
 
 !!! tip "Astuce"
     Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`.
@@ -31,24 +30,8 @@ Il est recommandé de ne pas modifier cette valeur.
 
 ## Modification et maintenance du fichier
 
-### Canopsis < 4.6.0
-
-=== "En environnement paquets RPM"
-
-    Éditez directement le fichier `/opt/canopsis/etc/canopsis.toml` (ou le fichier de surcharge `/opt/canopsis/etc/conf.d/canopsis-override.toml`), et suivez le reste de cette procédure.
-
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées par le gestionnaire de paquets `yum`. Vous devrez alors effectuer une synchronisation manuelle entre vos modifications passées et toute éventuelle nouvelle mise à jour du fichier.
-
-=== "En environnement Docker Compose"
-
-    Surchargez la totalité du fichier `/canopsis.toml` existant du conteneur `reconfigure`, à l'aide d'un volume.
-
-    Lors des mises à jour de Canopsis, puisque vous effectuez une surcharge complète du fichier et que Docker Compose ne gère pas la mise à jour de fichiers de configuration, veillez tout particulièrement à comparer votre `canopsis.toml` surchargé localement avec la dernière version de `canopsis.toml` présente dans l'image de base.
-
-### Canopsis >= 4.6.0
-
-Depuis Canopsis 4.6.0, le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
-Ce fichier ne contiens donc que les configuration qui diffèrent avec la configuration par défaut.
+Le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
+Ce fichier ne contient donc que les configurations qui diffèrent d'avec la configuration par défaut
 
 === "En environnement paquets RPM"
 
@@ -58,12 +41,16 @@ Ce fichier ne contiens donc que les configuration qui diffèrent avec la configu
 
 === "En environnement Docker Compose"
 
-    Le fichier est situé dans le conteneur `reconfigure` au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+    Le fichier est situé dans le conteneur `reconfigure` dans le chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
     Montez y votre fichier personnalisé a l'aide d'un volume.
 
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées.
-
-
+    Vous pouvez par exemple utiliser cette configuration à la fin du fichier `docker-compose.override.yml` : 
+    ```yaml
+    reconfigure:
+      command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    volumes:
+      - ./files-pro/reconfigure/reconfigure.override.toml:/opt/canopsis/etc/conf.d/canopsis-override.toml
+    ```
 
 ## Étape obligatoire pour la prise en compte des modifications
 
@@ -75,8 +62,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
     ```bash
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure
-    canoctl restart
+    /opt/canopsis/bin/canopsis-reconfigure -edition "pro|community" -conf /opt/canopsis/etc/canopsis-pro.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     ```
 
 === "En environnement Docker Compose"
@@ -167,6 +153,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | Writer              | "stdout"           | Canal de sortie du logger. **`stdout`** ou **`stderr`** |
 
 ### Sous-section [Canopsis.logger.console_writer]
+Toute modification dans cette section nécessite un redémarrage de Canopsis
 
 | Attribut            | Exemple de valeur                           | Description                                             |
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
