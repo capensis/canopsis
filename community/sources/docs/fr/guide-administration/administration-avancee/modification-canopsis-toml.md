@@ -13,10 +13,10 @@ Le fichier `canopsis.toml` regroupe la plupart des réglages fondamentaux des di
 
 L'emplacement du fichier de configuration diffère entre les différents types d'environnement d'installation proposés par Canopsis.
 
-| Type d'environnement                       | Emplacement du fichier            |
-|--------------------------------------------|-----------------------------------|
-| Paquets RPM                                | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose ( Canopsis Pro )            | `/canopsis-pro.toml` dans le service `reconfigure` |
+| Type d'environnement                       | Emplacement du fichier                                   |
+|--------------------------------------------|----------------------------------------------------------|
+| Paquets RPM                                | `/opt/canopsis/etc/canopsis.toml`                        |
+| Docker Compose ( Canopsis Pro )            | `/canopsis-pro.toml` dans le service `reconfigure`       |
 | Docker Compose ( Canopsis Community )      | `/canopsis-community.toml` dans le service `reconfigure` |
 
 !!! tip "Astuce"
