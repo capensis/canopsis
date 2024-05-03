@@ -59,7 +59,7 @@ Vous pouvez vérifier les limites de ressources systèmes avec la commande suiva
 ulimit -a
 ```
 
-Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v5.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
+Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v7.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
 
 ```sh
 cat << EOF > /etc/security/limits.d/mongo.conf
@@ -106,13 +106,13 @@ dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/p
 Ajout du dépôt pour MongoDB :
 
 ```sh
-cat << EOF > /etc/yum.repos.d/mongodb-org-5.0.repo
-[mongodb-org-5.0]
+cat << EOF > /etc/yum.repos.d/mongodb-org-7.0.repo
+[mongodb-org-7.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/5.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/7.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc
+gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
 EOF
 ```
 
@@ -205,7 +205,7 @@ dnf module enable redis:6
 ### Installation
 
 ```sh
-dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.9.3 timescaledb-2-loader-postgresql-13-2.9.3
+dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.14.2 timescaledb-2-loader-postgresql-13-2.14.2
 dnf install --repo rabbitmq_erlang --repo rabbitmq_server rabbitmq-server
 ```
 
@@ -272,10 +272,16 @@ systemctl enable --now mongod.service
 
 L'instance MongoDB étant démarrée, il reste à la configurer.
 
-On se connecte dans un shell `mongo` et on initialise le *replicaset* :
+On se connecte dans un shell `mongo` et on désactive la télémétrie :
 
 ```sh
-mongo
+mongosh
+> disableTelemetry()
+```
+
+On initialise le *replicaset* :
+
+```sh
 > rs.initiate()
 ```
 
@@ -306,7 +312,7 @@ On se reconnecte avec le shell `mongo`, cette fois-ci en s'authentifiant en tant
 que `root` MongoDB :
 
 ```sh
-mongo -u root -p UNMOTDEPASSEFORT
+mongosh -u root -p UNMOTDEPASSEFORT
 > use canopsis
 > db.createUser({user: "cpsmongo", pwd: "canopsis", roles: [ { role: "dbOwner", db: "canopsis" }, { role: "clusterMonitor", db: "admin"}]})
 > exit
@@ -511,6 +517,7 @@ l'édition choisie.
                            canopsis-engine-go@engine-remediation.service \
                            canopsis-engine-go@engine-webhook.service \
                            canopsis-service@canopsis-api.service \
+                           canopsis-engine-python-snmp.service \
                            canopsis.service
     ```
 
