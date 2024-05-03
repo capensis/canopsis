@@ -4,6 +4,7 @@ package rpc
 
 import (
 	json "encoding/json"
+
 	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -3306,6 +3307,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes1(in, out.Entity)
 			}
+		case "type":
+			out.Type = string(in.String())
 		case "params":
 			easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisRpc6(in, &out.Params)
 		case "healthcheck":
@@ -3341,6 +3344,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes1(out, *in.Entity)
 		}
+	}
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix)
+		out.String(string(in.Type))
 	}
 	{
 		const prefix string = ",\"params\":"
@@ -3441,6 +3449,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "rule_name":
 			out.RuleName = string(in.String())
+		case "color":
+			out.Color = string(in.String())
+		case "origin":
+			out.Origin = string(in.String())
+		case "comment":
+			out.Comment = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -3509,6 +3523,21 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"rule_name\":"
 		out.RawString(prefix)
 		out.String(string(in.RuleName))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
+	}
+	if in.Origin != "" {
+		const prefix string = ",\"origin\":"
+		out.RawString(prefix)
+		out.String(string(in.Origin))
+	}
+	if in.Comment != "" {
+		const prefix string = ",\"comment\":"
+		out.RawString(prefix)
+		out.String(string(in.Comment))
 	}
 	out.RawByte('}')
 }
@@ -4105,6 +4134,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				*out.StartOnTrigger = bool(in.Bool())
 			}
+		case "color":
+			out.Color = string(in.String())
+		case "comment":
+			out.Comment = string(in.String())
+		case "origin":
+			out.Origin = string(in.String())
 		case "execution":
 			out.Execution = string(in.String())
 		case "instruction":
@@ -4398,6 +4433,21 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"start_on_trigger\":"
 		out.RawString(prefix)
 		out.Bool(bool(*in.StartOnTrigger))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
+	}
+	if in.Comment != "" {
+		const prefix string = ",\"comment\":"
+		out.RawString(prefix)
+		out.String(string(in.Comment))
+	}
+	if in.Origin != "" {
+		const prefix string = ",\"origin\":"
+		out.RawString(prefix)
+		out.String(string(in.Origin))
 	}
 	if in.Execution != "" {
 		const prefix string = ",\"execution\":"
