@@ -39,6 +39,8 @@ const DEFAULT_SANITIZE_OPTIONS = {
     ],
   },
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
+  disallowedTagsMode: 'escape',
+  disallowedTagsAutoClose: false,
 };
 
 const DEFAULT_LINKIFY_OPTIONS = {
