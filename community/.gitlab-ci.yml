@@ -3,6 +3,8 @@ stages:
   - build
   - publish
   - release
+  - build_doc
+  - publish_doc
 
 before_script:
   - cd community/
