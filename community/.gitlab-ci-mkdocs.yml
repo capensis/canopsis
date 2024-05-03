@@ -1,5 +1,5 @@
 build:
-  stage: release
+  stage: build
   tags: 
     - executor-docker
   image: python:alpine
@@ -31,10 +31,10 @@ build:
     paths:
       - "community/mkdocs.tar.gz"
   rules:
-    - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro"
+    - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro" && $CI_COMMIT_BRANCH =~ /^release-\d+\.\d+$/
 
 publish:
-  stage: release
+  stage: publish
   tags:
   - executor-docker
   image: alpine
@@ -50,4 +50,4 @@ publish:
     - rsync -e "ssh -o StrictHostKeychecking=no" -avz "community/mkdocs.tar.gz" $DOC_USER@$DOC_HOST:/opt/docs/
     - ssh -o StrictHostKeychecking=no $DOC_USER@$DOC_HOST "sh /opt/push_doc-mike.sh"
   rules:
-    - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro"
+    - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro" && $CI_COMMIT_BRANCH =~ /^release-\d+\.\d+$/
