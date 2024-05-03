@@ -30,7 +30,7 @@ Il est recommandé de ne pas modifier cette valeur.
 
 ## Modification et maintenance du fichier
 
-Depuis Canopsis 4.6.0, le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
+Le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
 Ce fichier ne contiens donc que les configuration qui diffèrent avec la configuration par défaut.
 
 === "En environnement paquets RPM"
@@ -44,8 +44,15 @@ Ce fichier ne contiens donc que les configuration qui diffèrent avec la configu
     Le fichier est situé dans le conteneur `reconfigure` au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
     Montez y votre fichier personnalisé a l'aide d'un volume.
 
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées.
+    Par exemple en mettant ce morceau de configuration à la fin du fichier `docker-compose.override.yml`
+    ```yaml
+    reconfigure:
+      command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    volumes:
+      - ./files-pro/reconfigure/reconfigure.override.toml:/opt/canopsis/etc/conf.d/canopsis-override.toml
+    ```
 
+    Lors de la mise à jour de Canopsis, vos modifications seront préservées.
 
 
 ## Étape obligatoire pour la prise en compte des modifications
@@ -58,7 +65,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
     ```bash
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -edition [Votre Edition] -conf /opt/canopsis/etc/canopsis-pro.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    /opt/canopsis/bin/canopsis-reconfigure -edition "pro|community" -conf /opt/canopsis/etc/canopsis-pro.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     ```
 
 === "En environnement Docker Compose"
@@ -149,11 +156,12 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | Writer              | "stdout"           | Canal de sortie du logger. **`stdout`** ou **`stderr`** |
 
 ### Sous-section [Canopsis.logger.console_writer]
+Toute modification dans cette section nécessite un redémarrage de Canopsis
 
 | Attribut            | Exemple de valeur                           | Description                                             |
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
 | Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
-| NoColor             | true                                        | Active ou désactive les couleurs dans les logs (Nécessite un redémarrage de Canopsis) |
+| NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
 | TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../guide-utilisation/templates-go/index.md) |
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
