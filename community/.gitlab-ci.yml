@@ -3,8 +3,6 @@ stages:
   - build
   - publish
   - release
-  - build_doc
-  - publish_doc
 
 before_script:
   - cd community/
@@ -23,7 +21,6 @@ include:
   - community/.gitlab-ci-common.yml
   - community/.gitlab-ci-template.yml
   - community/.gitlab-ci-builder.yml
-  - community/.gitlab-ci-mkdocs.yml
 
 create_release:
   extends: .create_release
