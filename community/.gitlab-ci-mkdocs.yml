@@ -1,4 +1,4 @@
-build:
+build_doc:
   stage: build
   tags: 
     - executor-docker
@@ -12,14 +12,18 @@ build:
     - apk add git
     - git config user.name $ACCESS_TOKEN_NAME
     - git config user.email ${ACCESS_TOKEN_NAME}@${CI_SERVER_HOST}
+    - export LAST_VERSION=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | head -1 | cut -d "." -f 1,2)
+    - export TARGET_VERSION=$(echo ${CI_COMMIT_BRANCH}| cut -d "-" -f 2)
   script:
-    - export LAST_VERSION=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | head -1)
     - cd community
     - |
-      if [ $CI_COMMIT_TAG = $LAST_VERSION ]; then
-        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG latest;
+      LOW_VERSION=$(echo -e "$TARGET_VERSION\n$LAST_VERSION" | sort -V | head -n 1)
+      if [ $LOW_VERSION = $TARGET_VERSION ]; then
+        echo "TARGET_VERSION ($TARGET_VERSION) = LAST_VERSION ($LAST_VERSION)"
+        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $TARGET_VERSION;
       else
-        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG;
+        echo "TARGET_VERSION ($TARGET_VERSION) != LAST_VERSION ($LAST_VERSION)"
+        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $TARGET_VERSION latest;
       fi
     - mike set-default --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH latest
     - mkdir build
@@ -33,7 +37,7 @@ build:
   rules:
     - if: $CI_COMMIT_MESSAGE =~ '/build_doc/' && $CI_COMMIT_BRANCH =~ '/^release.*/'
 
-publish:
+publish_doc:
   stage: publish
   tags:
     - executor-docker
