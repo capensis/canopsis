@@ -13,30 +13,30 @@ build:
     - git config user.name $ACCESS_TOKEN_NAME
     - git config user.email ${ACCESS_TOKEN_NAME}@${CI_SERVER_HOST}
   script:
-   - export LAST_VERSION=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | head -1)
-   - cd community
-   - |
-     if [ $CI_COMMIT_TAG = $LAST_VERSION ]; then
-       mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG latest;
-     else
-       mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG;
-     fi
-   - mike set-default --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH latest
-   - mkdir build
-   - git --work-tree=build/ checkout $MKDOCS_BRANCH -- .
-   - tar -czf mkdocs.tar.gz build/*
+    - export LAST_VERSION=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | head -1)
+    - cd community
+    - |
+      if [ $CI_COMMIT_TAG = $LAST_VERSION ]; then
+        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG latest;
+      else
+        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG;
+      fi
+    - mike set-default --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH latest
+    - mkdir build
+    - git --work-tree=build/ checkout $MKDOCS_BRANCH -- .
+    - tar -czf mkdocs.tar.gz build/*
   artifacts:
     when: on_success
     expire_in: "3 days"
     paths:
       - "community/mkdocs.tar.gz"
   rules:
-    - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro" && $CI_COMMIT_BRANCH =~ /^release-\d+\.\d+$/
+    - if: $CI_COMMIT_MESSAGE =~ '/build_doc/' && $CI_COMMIT_BRANCH =~ '/^release.*/'
 
 publish:
   stage: publish
   tags:
-  - executor-docker
+    - executor-docker
   image: alpine
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apk add openssh-client )'
@@ -50,4 +50,4 @@ publish:
     - rsync -e "ssh -o StrictHostKeychecking=no" -avz "community/mkdocs.tar.gz" $DOC_USER@$DOC_HOST:/opt/docs/
     - ssh -o StrictHostKeychecking=no $DOC_USER@$DOC_HOST "sh /opt/push_doc-mike.sh"
   rules:
-    - if: $CI_COMMIT_TITLE =~ '/^build_doc.*/' && $CI_PROJECT_NAME == "canopsis-pro" && $CI_COMMIT_BRANCH =~ /^release-\d+\.\d+$/
+    - if: $CI_COMMIT_MESSAGE =~ '/build_doc/' && $CI_COMMIT_BRANCH =~ '/^release.*/'
