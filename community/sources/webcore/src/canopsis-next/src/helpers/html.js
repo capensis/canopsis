@@ -39,12 +39,14 @@ const DEFAULT_SANITIZE_OPTIONS = {
     ],
   },
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
+  disallowedTagsMode: 'escape',
+  disallowedTagsAutoClose: false,
 };
 
 const DEFAULT_LINKIFY_OPTIONS = {
   target: '_blank',
   ignoreTags: ['script', 'style'],
-  validate: (str, type, token) => token.hasProtocol(),
+  validate: (str, type, token) => token?.hasProtocol?.(),
 };
 
 /**
