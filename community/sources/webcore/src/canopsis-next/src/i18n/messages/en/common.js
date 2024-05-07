@@ -302,6 +302,7 @@ export default {
   noResponse: 'No response',
   loadingItems: 'Loading items...',
   lastComment: 'Last comment',
+  launch: 'Launch',
   variableTypes: {
     string: 'String',
     number: 'Number',
