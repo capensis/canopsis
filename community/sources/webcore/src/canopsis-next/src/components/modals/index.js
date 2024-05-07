@@ -427,3 +427,13 @@ export const CreateIcon = () => ({
   component: import(/* webpackChunkName: "Common" */ './icon/create-icon.vue'),
   loading: LoaderOverlay,
 });
+
+export const EventsRecording = () => ({
+  component: import(/* webpackChunkName: "Common" */ './events-recording/events-recording.vue'),
+  loading: LoaderOverlay,
+});
+
+export const LaunchEventsRecording = () => ({
+  component: import(/* webpackChunkName: "Common" */ './events-recording/launch-events-recording.vue'),
+  loading: LoaderOverlay,
+});

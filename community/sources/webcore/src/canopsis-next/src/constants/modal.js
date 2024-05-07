@@ -120,4 +120,7 @@ export const MODALS = {
   archiveDisabledEntities: 'archive-disabled-entities',
 
   createIcon: 'create-icon',
+
+  eventsRecording: 'events-recording',
+  launchEventsRecording: 'launch-events-recording',
 };

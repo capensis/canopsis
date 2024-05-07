@@ -1041,4 +1041,7 @@ export default {
       success: 'Icon was removed',
     },
   },
+  launchEventsRecording: {
+    title: 'Launch events recording',
+  },
 };

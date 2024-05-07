@@ -121,15 +121,6 @@ export default {
       ];
     },
 
-    entitiesValueField() {
-      return {
-        is: 'c-entity-field',
-        props: {
-          required: true,
-        },
-      };
-    },
-
     connectorOptions() {
       return {
         operators: this.entitiesOperators,
@@ -189,14 +180,6 @@ export default {
             itemValue: 'name',
           },
         },
-      };
-    },
-
-    entitiesOptions() {
-      return {
-        operators: this.entitiesOperators,
-        defaultValue: '',
-        valueField: this.entitiesValueField,
       };
     },
 

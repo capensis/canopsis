@@ -121,6 +121,7 @@ export const USERS_PERMISSIONS = {
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
+    eventsRecording: `${USER_PERMISSIONS_PREFIXES.technical.admin}_stateSetting`, // TODO: change to _eventsRecording
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,

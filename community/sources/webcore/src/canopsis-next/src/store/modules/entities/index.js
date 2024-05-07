@@ -63,6 +63,7 @@ import tagModule from './tag';
 import themeModule from './theme';
 import iconModule from './icon';
 import availabilityModule from './availability';
+import eventsRecordingModule from './events-recording';
 
 export default {
   alarm: alarmModule,
@@ -130,4 +131,5 @@ export default {
   theme: themeModule,
   icon: iconModule,
   availability: availabilityModule,
+  eventsRecording: eventsRecordingModule,
 };
