@@ -322,6 +322,7 @@ export default {
               multiple: isMultiple,
               deletableChips: isMultiple,
               smallChips: isMultiple,
+              itemValue: 'display_name',
             };
           },
         },
