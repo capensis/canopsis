@@ -115,6 +115,11 @@ export default {
     administrationGeneralLinks() {
       return [
         {
+          route: { name: ROUTES_NAMES.adminEventsRecordings },
+          icon: '$vuetify.icons.mark_unread_chat_alt',
+          permission: USERS_PERMISSIONS.technical.eventsRecording,
+        },
+        {
           route: { name: ROUTES_NAMES.adminParameters },
           icon: 'settings',
           permission: USERS_PERMISSIONS.technical.parameters,

@@ -248,6 +248,7 @@ export const API_ROUTES = {
     enginesOrder: '/api/v4/healthcheck/engines-order',
     parameters: '/api/v4/healthcheck/parameters',
   },
+  eventsRecording: '/api/v4/events-recording',
 
   /**
    * Cat routes
