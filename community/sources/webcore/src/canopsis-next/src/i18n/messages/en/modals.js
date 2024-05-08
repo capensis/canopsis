@@ -1044,4 +1044,9 @@ export default {
   launchEventsRecording: {
     title: 'Launch events recording',
   },
+  eventsRecording: {
+    title: 'Events recording {date}',
+    subtitle: '{count} events from RabbitMQ received',
+    buttonTooltip: 'Delete received events',
+  },
 };

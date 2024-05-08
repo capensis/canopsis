@@ -26,7 +26,7 @@ import { computed, nextTick, onBeforeUnmount, watch } from 'vue';
 import { defaultPrimitiveArrayItemCreator } from '@/helpers/entities/shared/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useInjectValidator } from '@/hooks/validator/inject-validator';
+import { useValidator } from '@/hooks/validator/validator';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 export default {
@@ -61,7 +61,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = useInjectValidator();
+    const validator = useValidator();
     const { addItemIntoArray, updateFieldInArrayItem, removeItemFromArray } = useArrayModelField(props, emit);
     const {
       attachRequiredRule,

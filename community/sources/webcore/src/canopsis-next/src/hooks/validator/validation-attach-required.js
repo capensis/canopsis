@@ -1,6 +1,6 @@
 import { useComponentInstance } from '../vue';
 
-import { useInjectValidator } from './inject-validator';
+import { useValidator } from './validator';
 
 /**
  * Hook for add and remove validation rule for field
@@ -9,7 +9,7 @@ import { useInjectValidator } from './inject-validator';
  * @return {Object}
  */
 export const useValidationAttachRequired = (name) => {
-  const validator = useInjectValidator();
+  const validator = useValidator();
   const instance = useComponentInstance();
 
   const attachRequiredRule = (getter) => {

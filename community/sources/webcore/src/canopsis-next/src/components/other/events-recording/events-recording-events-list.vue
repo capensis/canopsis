@@ -1,7 +1,7 @@
 <template>
   <c-advanced-data-table
     :headers="headers"
-    :items="eventsRecording"
+    :items="events"
     :loading="pending"
     :total-items="totalItems"
     :options="options"
@@ -10,31 +10,50 @@
     advanced-pagination
     @update:options="updateOptions"
   >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        :tooltip="$tc('eventsRecording.resendEvents', selected.length)"
+        icon="play_arrow"
+        color="#134A9F"
+        @click="resendSelected(selected)"
+      />
+      <c-action-btn
+        :tooltip="$t('eventsRecording.export')"
+        icon="file_download"
+        @click="exportJsonSelected(selected)"
+      />
+      <c-action-btn
+        type="delete"
+        @click="removeSelected(selected)"
+      />
+    </template>
     <template #created="{ item }">
       {{ item.created | date }}
     </template>
     <template #actions="{ item }">
-      <v-layout v-if="!item.inProgress">
-        <c-action-btn
-          :tooltip="$t('eventsRecording.resendEvent')"
-          icon="play"
-          color="#134A9F"
-          @click="show(item)"
-        />
-        <c-action-btn
-          :tooltip="$t('eventsRecording.export')"
-          icon="file_download"
-          @click="exportJson(item)"
-        />
-        <c-action-btn
-          type="delete"
-          @click="remove(item)"
-        />
-      </v-layout>
+      <c-action-btn
+        :tooltip="$tc('eventsRecording.resendEvents', 1)"
+        icon="play_arrow"
+        color="#134A9F"
+        @click="resend(item)"
+      />
+      <c-action-btn
+        :tooltip="$t('eventsRecording.export')"
+        icon="file_download"
+        @click="exportJson(item)"
+      />
+      <c-action-btn
+        type="delete"
+        @click="remove(item)"
+      />
     </template>
     <template #expand="{ item }">
       <div class="secondary pa-3">
-        <c-json-treeview :json="item" />
+        <v-card>
+          <v-card-text>
+            <c-json-treeview :json="item | json" />
+          </v-card-text>
+        </v-card>
       </div>
     </template>
   </c-advanced-data-table>
@@ -47,7 +66,7 @@ import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
-    eventsRecording: {
+    events: {
       type: Array,
       required: true,
     },
@@ -66,7 +85,6 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const inProgress = computed(() => props.eventsRecording.status === 0);
     const headers = computed(() => [
       {
         text: t('common.timestamp'),
@@ -110,18 +128,23 @@ export default {
       },
     ]);
 
-    const show = eventsRecording => emit('show', eventsRecording._id);
-    const exportJson = eventsRecording => emit('export', eventsRecording._id);
-    const remove = eventsRecording => emit('remove', eventsRecording._id);
+    const resend = event => emit('resend', event);
+    const exportJson = event => emit('export', event);
+    const remove = event => emit('remove', event._id);
+    const resendSelected = selected => emit('resend:selected', selected);
+    const exportJsonSelected = selected => emit('export:selected', selected);
+    const removeSelected = selected => emit('remove:selected', selected);
     const updateOptions = options => emit('update:options', options);
 
     return {
-      inProgress,
       headers,
 
-      show,
+      resend,
       exportJson,
       remove,
+      resendSelected,
+      exportJsonSelected,
+      removeSelected,
       updateOptions,
     };
   },
