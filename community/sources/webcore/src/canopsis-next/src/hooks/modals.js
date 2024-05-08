@@ -23,11 +23,12 @@ export const useInnerModal = (props) => {
   const modals = useModals();
 
   const modal = computed(() => props.modal);
-  const config = computed(() => modal.value.config);
+  const config = computed(() => modal.value?.config ?? {});
 
   const close = () => modals.hide(props.modal);
 
   return {
+    modals,
     close,
     modal,
     config,

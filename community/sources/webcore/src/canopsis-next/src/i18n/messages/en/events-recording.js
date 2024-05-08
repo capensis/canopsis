@@ -7,4 +7,7 @@ export default {
   inProgress: 'Recording in progress...',
   viewEvents: 'View events',
   export: 'Export to JSON',
+  resendEvents: 'Resend event | Resend events',
+  applyEventFilter: 'Apply event filter',
+  delayBetweenEvents: 'Delay between events',
 };

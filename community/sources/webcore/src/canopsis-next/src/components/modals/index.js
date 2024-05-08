@@ -153,6 +153,10 @@ export const Info = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/info.vue'),
   loading: LoaderOverlay,
 });
+export const Duration = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/duration.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
   loading: LoaderOverlay,
@@ -429,11 +433,11 @@ export const CreateIcon = () => ({
 });
 
 export const EventsRecording = () => ({
-  component: import(/* webpackChunkName: "Common" */ './events-recording/events-recording.vue'),
+  component: import(/* webpackChunkName: "EventsRecording" */ './events-recording/events-recording.vue'),
   loading: LoaderOverlay,
 });
 
 export const LaunchEventsRecording = () => ({
-  component: import(/* webpackChunkName: "Common" */ './events-recording/launch-events-recording.vue'),
+  component: import(/* webpackChunkName: "EventsRecording" */ './events-recording/launch-events-recording.vue'),
   loading: LoaderOverlay,
 });

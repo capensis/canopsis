@@ -1,4 +1,5 @@
 export const TIME_UNITS = {
+  millisecond: 'ms',
   second: 's',
   minute: 'm',
   hour: 'h',

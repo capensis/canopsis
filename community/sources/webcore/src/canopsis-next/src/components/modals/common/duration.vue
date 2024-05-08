@@ -2,15 +2,14 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ $t('modals.launchEventsRecording.title') }}</span>
+        <span>{{ title }}</span>
       </template>
       <template #text="">
-        <c-alarm-patterns-field
+        <c-duration-field
           v-model="form"
-          :attributes="attributes"
-          name="patterns"
+          :label="label"
+          :units="units"
           required
-          @input="errors.remove('patterns')"
         />
       </template>
       <template #actions="">
@@ -27,7 +26,7 @@
           class="primary"
           type="submit"
         >
-          {{ $t('common.launch') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -35,12 +34,13 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
-import { ENTITY_PATTERN_FIELDS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { patternToForm } from '@/helpers/entities/pattern/form';
+import { durationToForm } from '@/helpers/date/duration';
 
+import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
@@ -48,7 +48,7 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.launchEventsRecording,
+  name: MODALS.duration,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
@@ -61,15 +61,17 @@ export default {
     },
   },
   setup(props) {
-    const form = ref(patternToForm());
-    const attributes = computed(() => [
-      {
-        value: ENTITY_PATTERN_FIELDS.lastEventDate,
-        options: { disabled: true },
-      },
-    ]); // TODO: finish it
-
+    const { t, tc } = useI18n();
     const { config, close } = useInnerModal(props);
+
+    const form = ref(durationToForm(config.value.duration));
+
+    const title = computed(() => config.value.title ?? t('common.duration'));
+    const label = computed(() => config.value.label ?? t('common.duration'));
+    const units = computed(() => (
+      config.value.units?.map(unit => ({ ...unit, text: tc(unit.text, form.value.value) }))
+    ));
+
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
@@ -82,12 +84,14 @@ export default {
 
     return {
       form,
-      attributes,
+      title,
+      label,
+      units,
       isDisabled,
       submitting,
 
-      submit,
       close,
+      submit,
     };
   },
 };
