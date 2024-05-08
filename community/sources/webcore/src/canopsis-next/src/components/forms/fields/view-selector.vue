@@ -46,7 +46,7 @@ export default {
 
       const userDefaultView = this.getViewById(this.value);
 
-      return userDefaultView ? userDefaultView.title : null;
+      return userDefaultView?.title ?? null;
     },
   },
   methods: {
