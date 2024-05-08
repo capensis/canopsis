@@ -40,6 +40,10 @@ export default {
   },
   computed: {
     defaultViewTitle() {
+      if (!this.value) {
+        return null;
+      }
+
       const userDefaultView = this.getViewById(this.value);
 
       return userDefaultView ? userDefaultView.title : null;
