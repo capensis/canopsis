@@ -2,17 +2,44 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ $t('modals.launchEventsRecording.title') }}</span>
+        <span>{{ title }}</span>
       </template>
       <template #text="">
+        <v-layout class="gap-3 my-4" justify-center align-center>
+          <span class="text-subtitle-2">
+            {{ $t('modals.eventsRecording.subtitle', { count: config.eventsRecording.count }) }}
+          </span>
+          <c-action-btn
+            :tooltip="$t('modals.eventsRecording.buttonTooltip')"
+            type="delete"
+            @click="remove"
+          />
+        </v-layout>
+        <v-layout class="gap-3 my-4">
+          <v-btn
+            color="primary"
+            @click="applyEventFilter"
+          >
+            {{ $t('eventsRecording.applyEventFilter') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="exportJson"
+          >
+            <v-icon class="mr-2" color="white">
+              file_download
+            </v-icon>
+            <span>{{ $t('common.exportToJson') }}</span>
+          </v-btn>
+        </v-layout>
         <events-recording-events-list
           :events="events"
           :pending="pending"
           :options="query"
           :total-items="meta.total_count"
-          @resend="resend"
-          @export="exportJson"
-          @remove="remove"
+          @resend="resendEvent"
+          @export="exportJsonEvent"
+          @remove="removeEvent"
           @update:options="updateQuery"
         />
       </template>
@@ -30,11 +57,14 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
-import { MODALS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
+import { MODALS, TIME_UNITS } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
+
+import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useEventsRecording } from '@/hooks/store/modules/events-recording';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -47,11 +77,18 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.eventsRecording,
   components: { EventsRecordingEventsList, ModalWrapper },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
   setup(props) {
     const events = ref([]);
     const meta = ref({});
 
-    const { config, close } = useInnerModal(props);
+    const { t, tc } = useI18n();
+    const { config, close, modals } = useInnerModal(props);
 
     /**
      * EVENTS RECORDING STORE MODULE
@@ -87,9 +124,27 @@ export default {
       onUpdate: fetchList,
     });
 
-    const resend = () => {};
-    const exportJson = () => {};
+    const resendEvent = () => modals.show({
+      name: MODALS.duration,
+      config: {
+        title: tc('eventsRecording.resendEvents', 1),
+        label: t('eventsRecording.delayBetweenEvents'),
+        units: [
+          { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
+          { value: TIME_UNITS.second, text: 'common.times.second' },
+        ],
+        action: () => {},
+      },
+    });
+    const exportJsonEvent = () => {};
+    const removeEvent = () => {};
     const remove = () => {};
+    const applyEventFilter = () => {};
+    const exportJson = () => {};
+
+    const title = computed(() => (
+      t('modals.eventsRecording.title', { date: convertDateToString(config.created) })
+    ));
 
     onMounted(() => fetchList(query.value));
 
@@ -99,12 +154,16 @@ export default {
       meta,
       config,
       query,
+      title,
 
       close,
       updateQuery,
-      resend,
-      exportJson,
+      resendEvent,
+      exportJsonEvent,
+      removeEvent,
       remove,
+      applyEventFilter,
+      exportJson,
     };
   },
 };

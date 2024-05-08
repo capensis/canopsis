@@ -123,4 +123,6 @@ export const MODALS = {
 
   eventsRecording: 'events-recording',
   launchEventsRecording: 'launch-events-recording',
+
+  duration: 'duration',
 };

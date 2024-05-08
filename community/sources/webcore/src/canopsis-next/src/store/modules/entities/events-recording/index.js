@@ -19,16 +19,16 @@ export default {
     fetchEventsListWithoutStore() {
       return {
         data: [
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
-          { timestamp: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 1, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 2, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 3, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 4, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 5, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 6, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 7, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 8, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 9, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
+          { _id: 10, created: 123123123, event_type: 'check', source_type: 'resource', connector: 'centreon', connector_name: 'centreon_0_SUP_43', component: 'centreon_0_SUP_43', resource: 'check_ping' },
         ],
         meta: {
           page: 1,

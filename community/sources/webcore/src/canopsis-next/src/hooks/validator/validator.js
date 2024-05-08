@@ -1,5 +1,7 @@
 import { inject } from 'vue';
 
+import { useComponentInstance } from '@/hooks/vue';
+
 /**
  * Injects the validator object into the component.
  *
@@ -8,4 +10,8 @@ import { inject } from 'vue';
  *
  * @returns {Object}
  */
-export const useInjectValidator = () => inject('$validator');
+export const useValidator = () => {
+  const vm = useComponentInstance();
+
+  return vm.$validator || inject('$validator');
+};
