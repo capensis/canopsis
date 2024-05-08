@@ -254,8 +254,10 @@ func updateVersionConfig(ctx context.Context, f flags, dbClient mongo.DbClient) 
 	buildInfo := canopsis.GetBuildInfo()
 	conf := config.VersionConf{
 		Version: buildInfo.Version,
-		Edition: f.edition,
 		Stack:   "go",
+	}
+	if f.edition != "" {
+		conf.Edition = f.edition
 	}
 
 	if prevConf.Version != conf.Version {
