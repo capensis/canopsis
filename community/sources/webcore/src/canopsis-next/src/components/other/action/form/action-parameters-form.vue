@@ -1,6 +1,7 @@
 <template>
   <div>
     <component
+      v-if="props.is"
       v-bind="props"
       :is="props.is"
       v-field="value"
@@ -56,6 +57,7 @@ export default {
       return {
         [ACTION_TYPES.changeState]: 'c-change-state-field',
         [ACTION_TYPES.snooze]: 'action-snooze-form',
+        [ACTION_TYPES.unsnooze]: 'action-note-form',
         [ACTION_TYPES.pbehavior]: 'action-pbehavior-form',
         [ACTION_TYPES.assocticket]: 'action-assocticket-form',
         [ACTION_TYPES.ack]: 'action-note-form',

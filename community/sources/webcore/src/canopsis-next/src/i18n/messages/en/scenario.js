@@ -25,7 +25,9 @@ export default {
     + '}</pre>',
   actions: {
     [ACTION_TYPES.snooze]: 'Snooze',
+    [ACTION_TYPES.unsnooze]: 'Unsnooze',
     [ACTION_TYPES.pbehavior]: 'Pbehavior',
+    [ACTION_TYPES.pbehaviorRemove]: 'Pbehavior remove',
     [ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
     [ACTION_TYPES.ack]: 'Acknowledge',
     [ACTION_TYPES.ackremove]: 'Acknowledge remove',
