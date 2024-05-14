@@ -178,6 +178,7 @@ export default {
       classes.push('sortable');
 
       const icon = this.$createElement('span', [this.$createElement(VIcon, {
+        class: 'v-datatable-header__icon',
         props: {
           small: true,
         },
@@ -233,7 +234,7 @@ export default {
             'span',
             {
               attrs: this.ellipsisHeaders ? { title: header[this.headerText] } : {},
-              class: { 'v-datatable-header-span--ellipsis': this.ellipsisHeaders },
+              class: { 'v-datatable-header__span--ellipsis': this.ellipsisHeaders },
             },
             header[this.headerText],
           ),

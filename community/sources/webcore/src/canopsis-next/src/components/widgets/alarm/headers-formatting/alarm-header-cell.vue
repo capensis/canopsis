@@ -60,7 +60,7 @@ export default {
 
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];
       const bind = this.ellipsisHeaders
-        ? { class: 'v-datatable-header-span--ellipsis', title: this.header.text }
+        ? { class: 'v-datatable-header__span--ellipsis', title: this.header.text }
         : {};
 
       return {
