@@ -91,9 +91,14 @@
     }
   }
 
-  &-header-span--ellipsis {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+  &-header {
+    &__span--ellipsis {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    &__icon {
+      white-space: nowrap;
+    }
   }
 }
