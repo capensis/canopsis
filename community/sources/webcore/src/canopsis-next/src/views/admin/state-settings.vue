@@ -50,7 +50,7 @@ export default {
             await this.createStateSetting({ data: newStateSetting });
 
             this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
-            this.fabListeners?.refresh();
+            this.fetchList();
           },
         },
       });
