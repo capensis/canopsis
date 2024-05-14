@@ -83,7 +83,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -107,7 +107,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -131,7 +131,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -155,7 +155,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -179,7 +179,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -203,7 +203,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -810,7 +810,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -834,7 +834,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -858,7 +858,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -882,7 +882,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -906,7 +906,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -930,7 +930,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
