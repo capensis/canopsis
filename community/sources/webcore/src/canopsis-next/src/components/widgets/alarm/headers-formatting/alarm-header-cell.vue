@@ -62,7 +62,7 @@ export default {
 
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];
       const bind = this.ellipsisHeaders
-        ? { class: 'v-data-table-header-span--ellipsis', title: this.header.text }
+        ? { class: 'v-data-table-header__span--ellipsis', title: this.header.text }
         : { style: { 'white-space': 'normal' } };
 
       return {

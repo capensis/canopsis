@@ -72,7 +72,7 @@ export default {
       children.push(this.$scopedSlots[header.value] ? this.$scopedSlots[header.value]({
         header,
       }) : this.$createElement('span', {
-        class: { 'v-data-table-header-span--ellipsis': this.ellipsisHeaders },
+        class: { 'v-data-table-header__span--ellipsis': this.ellipsisHeaders },
         attrs: this.ellipsisHeaders ? { title: header.text } : {},
       }, [header.text]));
 
