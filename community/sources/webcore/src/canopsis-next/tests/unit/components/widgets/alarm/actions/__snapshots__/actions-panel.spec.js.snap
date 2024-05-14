@@ -618,6 +618,11 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
     Add bookmark|$vuetify.icons.bookmark_add|addBookmark
   </button>
   <button
+    class="action-removeAlarmsFromManualMetaAlarm"
+  >
+    Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
+  </button>
+  <button
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
