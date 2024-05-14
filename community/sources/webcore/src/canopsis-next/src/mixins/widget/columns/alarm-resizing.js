@@ -8,7 +8,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
     minColumnWidth: {
       type: Number,
-      default: 10,
+      default: 40,
     },
   },
   data() {
@@ -40,17 +40,8 @@ export const widgetColumnResizingAlarmMixin = {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
     },
 
-    minColumnsWidth() {
-      /**
-       * 24 - max padding size
-       * 22 - max sort position icon width
-       * 16 - max sort direction icon width
-       */
-      return (24 + 22 + 16 + this.minColumnWidth);
-    },
-
     minColumnsWidthInPercent() {
-      return this.minColumnsWidth * this.percentsInPixel;
+      return this.minColumnWidth * this.percentsInPixel;
     },
   },
   methods: {

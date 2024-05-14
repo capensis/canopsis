@@ -48,7 +48,9 @@ export default {
           is: 'alarm-header-tag',
           text: this.header.text,
           bind: {
+            class: 'v-data-table-header__span--ellipsis',
             selectedTag: this.selectedTag,
+            title: this.header.text,
           },
           on: {
             clear: () => this.$emit('clear:tag'),
