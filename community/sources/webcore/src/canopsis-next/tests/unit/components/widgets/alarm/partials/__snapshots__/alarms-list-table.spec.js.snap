@@ -91,7 +91,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   <span>
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon material-icons theme--light v-datatable-header__icon"
                       style="font-size: 16px;"
                     >
                       arrow_upward
@@ -298,7 +298,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <div class="layout align-center">
                   <alarm-header-cell-stub header="[object Object]" selectedtag="" ellipsisheaders="true"></alarm-header-cell-stub>
                   <!---->
-                  <!----><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span>
+                  <!----><span><i aria-hidden="true" class="v-icon material-icons theme--light v-datatable-header__icon" style="font-size: 16px;">arrow_upward</i></span>
                 </div>
               </th>
               <th role="columnheader" scope="col" aria-label="Actions: Not sorted." data-value="actions" aria-sort="none" class="column text-xs-left alarms-list-table__draggable-column">
@@ -340,7 +340,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 <div class="layout align-center">
                   <alarm-header-cell-stub header="[object Object]" selectedtag=""></alarm-header-cell-stub>
                   <!---->
-                  <!----><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span>
+                  <!----><span><i aria-hidden="true" class="v-icon material-icons theme--light v-datatable-header__icon" style="font-size: 16px;">arrow_upward</i></span>
                 </div>
               </th>
               <th role="columnheader" scope="col" aria-label="Actions: Not sorted." data-value="actions" aria-sort="none" class="column text-xs-left alarms-list-table__draggable-column">
@@ -407,7 +407,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   <span>
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon material-icons theme--light v-datatable-header__icon"
                       style="font-size: 16px;"
                     >
                       arrow_upward
@@ -502,7 +502,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   <span>
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon material-icons theme--light v-datatable-header__icon"
                       style="font-size: 16px;"
                     >
                       arrow_upward
@@ -630,7 +630,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   <span>
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon material-icons theme--light v-datatable-header__icon"
                       style="font-size: 16px;"
                     >
                       arrow_upward
@@ -760,7 +760,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   <span>
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon material-icons theme--light v-datatable-header__icon"
                       style="font-size: 16px;"
                     >
                       arrow_upward
@@ -911,7 +911,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   <span>
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon material-icons theme--light v-datatable-header__icon"
                       style="font-size: 16px;"
                     >
                       arrow_upward

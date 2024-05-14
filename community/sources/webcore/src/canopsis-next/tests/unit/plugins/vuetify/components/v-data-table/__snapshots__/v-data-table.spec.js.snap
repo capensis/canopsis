@@ -301,7 +301,7 @@ exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
               <span>
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon material-icons theme--light v-datatable-header__icon"
                   style="font-size: 16px;"
                 >
                   arrow_upward
@@ -329,7 +329,7 @@ exports[`v-data-table Renders \`v-data-table\` with items and headers 1`] = `
               <span>
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon material-icons theme--light v-datatable-header__icon"
                   style="font-size: 16px;"
                 >
                   arrow_upward
@@ -470,10 +470,10 @@ exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis 
       <thead>
         <tr>
           <th role="columnheader" scope="col" aria-label="Header 1: Sorted ascending. Activate to sort descending." data-value="property1" aria-sort="ascending" tabindex="0" class="column active asc sortable text-xs-left">
-            <div class="layout align-center"><span title="Header 1" class="v-datatable-header__span--ellipsis">Header 1</span><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span></div>
+            <div class="layout align-center"><span title="Header 1" class="v-datatable-header__span--ellipsis">Header 1</span><span><i aria-hidden="true" class="v-icon material-icons theme--light v-datatable-header__icon" style="font-size: 16px;">arrow_upward</i></span></div>
           </th>
           <th role="columnheader" scope="col" aria-label="Header 2: Not sorted. Activate to sort ascending." data-value="property2" aria-sort="none" tabindex="0" class="column sortable text-xs-left">
-            <div class="layout align-center"><span title="Header 2" class="v-datatable-header__span--ellipsis">Header 2</span><span><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">arrow_upward</i></span></div>
+            <div class="layout align-center"><span title="Header 2" class="v-datatable-header__span--ellipsis">Header 2</span><span><i aria-hidden="true" class="v-icon material-icons theme--light v-datatable-header__icon" style="font-size: 16px;">arrow_upward</i></span></div>
           </th>
         </tr>
         <tr class="v-datatable__progress">
