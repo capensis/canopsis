@@ -86,7 +86,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -124,7 +124,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -148,7 +148,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -728,7 +728,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -766,7 +766,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
