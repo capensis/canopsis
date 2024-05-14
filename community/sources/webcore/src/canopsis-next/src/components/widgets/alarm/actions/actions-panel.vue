@@ -362,7 +362,7 @@ export default {
         actions.push(variablesHelpAction, exportPdfAction);
       }
 
-      if (!this.isResolvedAlarm && this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
+      if (this.isParentAlarmManualMetaAlarm) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
