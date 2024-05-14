@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -130,7 +131,8 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 		return nil, err
 	}
 
-	resolver, err := p.PbhService.RecomputeByIds(ctx, append([]string{pbehavior.ID}, oldPbhIds...))
+	oldPbhIds = append(oldPbhIds, pbehavior.ID)
+	resolver, err := p.PbhService.RecomputeByIds(ctx, oldPbhIds)
 	if err != nil {
 		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
 	}
@@ -255,7 +257,7 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	pbehavior := libpbehavior.PBehavior{
 		ID:       utils.NewID(),
 		Enabled:  true,
-		Comments: make([]*libpbehavior.Comment, 0),
+		Comments: make([]libpbehavior.Comment, 0),
 		Name:     params.Name,
 		Reason:   params.Reason,
 		RRule:    params.RRule,
@@ -283,14 +285,9 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	}
 
 	if params.Comment != "" {
-		commentAuthor := params.Author
-		if commentAuthor == "" {
-			commentAuthor = canopsis.DefaultEventAuthor
-		}
-
-		pbehavior.Comments = append(pbehavior.Comments, &libpbehavior.Comment{
+		pbehavior.Comments = append(pbehavior.Comments, libpbehavior.Comment{
 			ID:        utils.NewID(),
-			Origin:    commentAuthor,
+			Origin:    cmp.Or(params.Author, canopsis.DefaultEventAuthor),
 			Timestamp: &now,
 			Message:   params.Comment,
 		})
@@ -311,7 +308,7 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		defer cursor.Close(ctx)
 		for cursor.Next(ctx) {
 			pbh := libpbehavior.PBehavior{}
-			err := cursor.Decode(&pbh)
+			err = cursor.Decode(&pbh)
 			if err != nil {
 				return err
 			}
