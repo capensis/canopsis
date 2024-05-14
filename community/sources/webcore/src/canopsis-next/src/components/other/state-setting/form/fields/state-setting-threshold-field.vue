@@ -109,9 +109,9 @@ export default {
     },
 
     states() {
-      return Object.keys(ALARM_STATES)
-        .map(key => ({
-          text: this.$t(`stateSetting.states.${key}`),
+      return Object.entries(ALARM_STATES)
+        .map(([key, value]) => ({
+          text: this.$t(`common.stateTypes.${value}`),
           value: key,
         }));
     },
