@@ -30,7 +30,7 @@ type Type struct {
 	Color       string `bson:"color" json:"color"`
 }
 
-type Comments []*Comment
+type Comments []Comment
 
 // PBehavior represents a canopsis periodical behavior.
 type PBehavior struct {
