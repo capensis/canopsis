@@ -22,8 +22,8 @@ build_doc:
     - cp $COMMUNITY_SWAGGER_PATH/{swagger.yaml,schemas_swagger.yaml} $DOC_PATH/swagger-community/
     - cp $PRO_SWAGGER_PATH/{swagger.yaml,schemas_swagger.yaml} $DOC_PATH/swagger-pro/
     # set the correct release number
-    - sed -i "s/version: .*/version: $TARGET_VERSION/g" "$DOC_PATH/swagger-community/swagger.yaml"
-    - sed -i "s/version: .*/version: $TARGET_VERSION/g" "$DOC_PATH/swagger-pro/swagger.yaml"
+    - 'sed -i "s/version: .*/version: $TARGET_VERSION/g" $DOC_PATH/swagger-community/swagger.yaml'
+    - 'sed -i "s/version: .*/version: $TARGET_VERSION/g" $DOC_PATH/swagger-pro/swagger.yaml'
     # build mkdoc
     - cd community
     - mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $TARGET_VERSION
