@@ -111,7 +111,7 @@ const stateSettingThresholdToForm = (threshold = {}) => ({
  * @return {StateSettingThresholdsForm}
  */
 const stateSettingThresholdsToForm = (thresholds = {}) => (
-  mapValues(Object.keys(ALARM_STATES), stateKey => stateSettingThresholdToForm(thresholds[stateKey])) // TODO: remove
+  mapValues(ALARM_STATES, (stateValue, stateKey) => stateSettingThresholdToForm(thresholds[stateKey]))
 );
 
 /**
