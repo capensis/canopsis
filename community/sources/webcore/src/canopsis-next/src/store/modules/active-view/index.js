@@ -1,3 +1,5 @@
+import activeWidgets from './active-widgets';
+
 export const types = {
   TOGGLE_EDITING: 'TOGGLE_EDITING',
   TOGGLE_EDITING_FINISHED: 'TOGGLE_EDITING_FINISHED',
@@ -14,6 +16,7 @@ export const types = {
 
 export default {
   namespaced: true,
+  modules: { activeWidgets },
   state: {
     id: null,
     pending: false,
@@ -109,8 +112,9 @@ export default {
       }
     },
 
-    clear({ commit }) {
+    clear({ commit, dispatch }) {
       commit(types.CLEAR);
+      dispatch('activeWidgets/clear');
     },
   },
 };
