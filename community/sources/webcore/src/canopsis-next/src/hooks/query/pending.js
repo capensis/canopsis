@@ -8,11 +8,11 @@ import { ref } from 'vue';
  * `true` when the handler begins execution and set back to `false` once the handler completes or throws an error.
  *
  * @param {Function} handler - The asynchronous function to be wrapped.
- * @param {boolean} [initialValue=false] - The initial value of the pending state.
+ * @param {boolean} [initialPending=false] - The initial value of the pending state.
  * @returns {Object} An object containing the `pending` reactive state and the `wrappedHandler` as `handler`.
  */
-export const usePendingHandler = (handler, initialValue = false) => {
-  const pending = ref(initialValue);
+export const usePendingHandler = (handler, initialPending = false) => {
+  const pending = ref(initialPending);
 
   const wrappedHandler = async (...args) => {
     try {
