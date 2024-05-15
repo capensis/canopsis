@@ -1,23 +1,19 @@
 <template>
-  <div>
-    <c-page-header />
-    <v-card class="ma-4 mt-0">
-      <events-recordings-header
-        :progress="meta.inProgress"
-        @launch="launch"
-        @stop="stop"
-      />
-      <events-recordings-list
-        :events-recording="eventsRecordings"
-        :pending="pending"
-        :options="query"
-        :total-items="meta.total_count"
-        @show="showEventsRecordingModal"
-        @remove="showRemoveEventsRecordingModal"
-        @update:options="updateQuery"
-      />
-    </v-card>
-  </div>
+  <c-page @refresh="fetchList">
+    <events-recordings-header
+      :progress="meta.inProgress"
+      @launch="launch"
+      @stop="stop"
+    />
+    <events-recordings-list
+      :events-recording="eventsRecordings"
+      :pending="pending"
+      :options.sync="options"
+      :total-items="meta.total_count"
+      @show="showEventsRecordingModal"
+      @remove="showRemoveEventsRecordingModal"
+    />
+  </c-page>
 </template>
 
 <script>
@@ -26,10 +22,10 @@ import { ref, onMounted } from 'vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
-import { useLocalQuery } from '@/hooks/query/local-query';
 import { useModals } from '@/hooks/modals';
 import { useEventsRecording } from '@/hooks/store/modules/events-recording';
-import { usePendingHandler } from '@/hooks/query/pending';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useQueryOptions } from '@/hooks/query/options';
 
 import EventsRecordingsHeader from '@/components/other/events-recording/events-recordings-header.vue';
 import EventsRecordingsList from '@/components/other/events-recording/events-recordings-list.vue';
@@ -42,7 +38,7 @@ export default {
     const modals = useModals();
 
     /**
-     * EVENTS RECORDING STORE MODULE
+     * STORE
      */
     const {
       launchEventsRecording,
@@ -52,34 +48,29 @@ export default {
     } = useEventsRecording();
 
     /**
-     * PENDING
-     */
-    const {
-      pending,
-      handler: fetchList,
-    } = usePendingHandler(async (fetchQuery) => {
-      const response = await fetchEventsRecordingsListWithoutStore({
-        params: {
-          limit: fetchQuery.itemsPerPage,
-          page: fetchQuery.page,
-        },
-      });
-
-      eventsRecordings.value = response.data;
-      meta.value = response.meta;
-    });
-
-    /**
      * QUERY
      */
     const {
       query,
+      pending,
       updateQuery,
-    } = useLocalQuery({
+      handler: fetchList,
+    } = usePendingWithLocalQuery({
       initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
-      onUpdate: fetchList,
+      fetchHandler: async (fetchQuery) => {
+        const response = await fetchEventsRecordingsListWithoutStore({
+          params: {
+            limit: fetchQuery.itemsPerPage,
+            page: fetchQuery.page,
+          },
+        });
+
+        eventsRecordings.value = response.data;
+        meta.value = response.meta;
+      },
     });
-    const fetchListWithPreviousParams = () => fetchList(query.value);
+
+    const { options } = useQueryOptions(query, updateQuery);
 
     /**
      * METHODS
@@ -90,7 +81,7 @@ export default {
         action: async (pattern) => {
           await launchEventsRecording(pattern);
 
-          return fetchListWithPreviousParams();
+          return fetchList();
         },
       },
     });
@@ -108,7 +99,7 @@ export default {
         action: async () => {
           await removeEventsRecording({ id });
 
-          return fetchListWithPreviousParams();
+          return fetchList();
         },
       },
     });
@@ -119,9 +110,9 @@ export default {
 
     return {
       eventsRecordings,
-      pending,
       meta,
-      query,
+      pending,
+      options,
 
       launch,
       stop,
@@ -129,6 +120,7 @@ export default {
       showRemoveEventsRecordingModal,
       downloadEventsRecording,
       updateQuery,
+      fetchList,
     };
   },
 };

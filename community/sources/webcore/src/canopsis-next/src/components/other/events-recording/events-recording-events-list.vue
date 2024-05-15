@@ -34,7 +34,7 @@
       <c-action-btn
         :tooltip="$tc('eventsRecording.resendEvents', 1)"
         icon="play_arrow"
-        color="#134A9F"
+        color="blue darken-3"
         @click="resend(item)"
       />
       <c-action-btn
