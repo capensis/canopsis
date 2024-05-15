@@ -1,3 +1,5 @@
+import { computed } from 'vue';
+
 import { CRUD_ACTIONS } from '@/constants';
 
 import { checkUserAccess } from '@/helpers/entities/permissions/list';
@@ -77,5 +79,84 @@ export const useCurrentUserPermissions = () => {
     checkReadAccess,
     checkUpdateAccess,
     checkDeleteAccess,
+  };
+};
+
+/**
+ * A Vue composition function that checks if the current user has access based on a specified permission.
+ * This function utilizes the `useCurrentUserPermissions` hook to retrieve the necessary checkAccess method,
+ * and then uses Vue's computed property to reactively handle the permission check.
+ *
+ * @param {string} permission - The permission ID to check access against.
+ * @returns {Object} An object containing a reactive `hasAccess` property that indicates whether the user has the
+ * specified permission.
+ *
+ * @example
+ * // Example of using useCanPermission in a Vue component
+ * import { useCanPermission } from `./path/to/useCanPermission`;
+ *
+ * export default {
+ *   setup() {
+ *     const { hasAccess } = useCanPermission(`123`);
+ *     return { hasAccess };
+ *   }
+ * }
+ */
+export const useCanPermission = (permission) => {
+  const { checkAccess } = useCurrentUserPermissions();
+
+  const hasAccess = computed(() => checkAccess(permission));
+
+  return { hasAccess };
+};
+
+/**
+ * Provides reactive Vue computed properties to check CRUD permissions for a specific permission ID.
+ * This function utilizes the `useCurrentUserPermissions` hook to access check functions for create, read, update, and
+ * delete permissions.
+ *
+ * @param {string} permission - The permission ID to check access against.
+ * @returns {Object} An object containing Vue computed properties for each CRUD operation's access status.
+ * @example
+ * // Example of using useCRUDPermissions in a Vue component
+ * import { useCRUDPermissions } from `./path/to/useCRUDPermissions`;
+ *
+ * export default {
+ *   setup() {
+ *     const permissionId = `123`;
+ *     const {
+ *       hasCreateAccess,
+ *       hasReadAccess,
+ *       hasUpdateAccess,
+ *       hasDeleteAccess,
+ *     } = useCRUDPermissions(permissionId);
+ *
+ *     return {
+ *       hasCreateAccess,
+ *       hasReadAccess,
+ *       hasUpdateAccess,
+ *       hasDeleteAccess,
+ *     };
+ *   }
+ * }
+ */
+export const useCRUDPermissions = (permission) => {
+  const {
+    checkCreateAccess,
+    checkReadAccess,
+    checkUpdateAccess,
+    checkDeleteAccess,
+  } = useCurrentUserPermissions();
+
+  const hasCreateAccess = computed(() => checkCreateAccess(permission));
+  const hasReadAccess = computed(() => checkReadAccess(permission));
+  const hasUpdateAccess = computed(() => checkUpdateAccess(permission));
+  const hasDeleteAccess = computed(() => checkDeleteAccess(permission));
+
+  return {
+    hasCreateAccess,
+    hasReadAccess,
+    hasUpdateAccess,
+    hasDeleteAccess,
   };
 };

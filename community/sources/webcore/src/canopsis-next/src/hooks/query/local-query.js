@@ -49,7 +49,7 @@ export const useLocalQuery = ({
     query.value = newQuery;
 
     if (!comparator(oldQuery, newQuery)) {
-      onUpdate(query.value);
+      onUpdate(newQuery);
     }
   };
 
@@ -63,6 +63,8 @@ export const useLocalQuery = ({
     }
   };
 
+  const handler = (handlerQuery = query.value) => onUpdate(handlerQuery);
+
   const updateQueryFieldsMethods = Object.keys(initialQuery).reduce((acc, field) => {
     acc[`updateQuery${upperFirst(camelCase(field))}`] = value => updateQueryField(field, value);
 
@@ -75,5 +77,6 @@ export const useLocalQuery = ({
     query,
     updateQuery,
     updateQueryField,
+    handler,
   };
 };
