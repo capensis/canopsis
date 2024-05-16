@@ -15,10 +15,6 @@ import detailsModule from './details';
 import linksModule from './links';
 
 export const types = {
-  FETCH_LIST: 'FETCH_LIST',
-  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
-  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
-
   SET_ALARMS: 'SET_ALARMS',
 };
 

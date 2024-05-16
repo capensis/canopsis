@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { ROUTES_NAMES } from '@/constants';
 
 import Observer from '@/services/observer';
@@ -30,8 +28,6 @@ import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/techni
 
 import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
-
-const { mapActions } = createNamespacedHelpers('activeView/activeWidget');
 
 export default {
   provide() {
@@ -111,10 +107,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      clearActiveWidget: 'clear',
-    }),
-
     async refreshView() {
       await this.fetchActiveView({ id: this.id });
 
