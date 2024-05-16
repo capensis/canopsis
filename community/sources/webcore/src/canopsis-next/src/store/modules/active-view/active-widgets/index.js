@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-const localTypes = {
+export const localTypes = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
@@ -8,11 +8,11 @@ const localTypes = {
   CLEAR: 'CLEAR',
 };
 
-const localGetters = {
-  GET_ALL_IDS_BY_WIDGET_ID: 'getAllIdsByWidgetId',
-  GET_META_BY_WIDGET_ID: 'getMetaByWidgetId',
-  GET_PENDING_BY_WIDGET_ID: 'getPendingByWidgetId',
-  GET_FETCHING_PARAMS_BY_WIDGET_ID: 'getFetchingParamsByWidgetId',
+export const localGetters = {
+  GET_ALL_IDS_BY_WIDGET_ID: 'GET_ALL_IDS_BY_WIDGET_ID',
+  GET_META_BY_WIDGET_ID: 'GET_META_BY_WIDGET_ID',
+  GET_PENDING_BY_WIDGET_ID: 'GET_PENDING_BY_WIDGET_ID',
+  GET_FETCHING_PARAMS_BY_WIDGET_ID: 'GET_FETCHING_PARAMS_BY_WIDGET_ID',
 };
 
 export const modulePrefix = 'activeView/activeWidgets';
