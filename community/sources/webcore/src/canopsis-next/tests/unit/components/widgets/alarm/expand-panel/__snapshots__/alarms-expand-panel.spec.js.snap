@@ -94,7 +94,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -249,7 +249,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -407,7 +407,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -542,7 +542,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
