@@ -75,6 +75,7 @@ plugins:
         lang:
           - en
     - render_swagger
+    - awesome-pages
 
 extra:
   social:
