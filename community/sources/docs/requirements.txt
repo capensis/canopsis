@@ -20,3 +20,6 @@ mkdocs-render-swagger-plugin==0.1.1
 
 # To enable versionning (https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/)
 mike==1.1.2
+
+# An MkDocs plugin that simplifies configuring page titles and their order
+mkdocs-awesome-pages-plugin==2.9.2
