@@ -7,9 +7,9 @@ build_doc:
     MKDOCS_BRANCH: mkdocs
     URL_REPO: https://${ACCESS_TOKEN_NAME}:${ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
     GIT_DEPTH: 0
-    COMMUNITY_SWAGGER_PATH: $CI_PROJECT_DIR/community/go-engines-community/lib/api/docs/
-    PRO_SWAGGER_PATH: $CI_PROJECT_DIR/pro/go-engines-pro/lib/api/docs/
-    DOC_PATH: $CI_PROJECT_DIR/community/sources/docs/fr/
+    COMMUNITY_SWAGGER_PATH: $CI_PROJECT_DIR/community/go-engines-community/lib/api/docs
+    PRO_SWAGGER_PATH: $CI_PROJECT_DIR/pro/go-engines-pro/lib/api/docs
+    DOC_PATH: $CI_PROJECT_DIR/community/sources/docs/fr
   before_script:
     - pip install -r community/sources/docs/requirements.txt
     - apk add git
@@ -19,8 +19,10 @@ build_doc:
     - export TARGET_VERSION=$(echo ${CI_COMMIT_BRANCH}| cut -d "-" -f 2)
   script:
     # import swagger
-    - cp $COMMUNITY_SWAGGER_PATH/{swagger.yaml,schemas_swagger.yaml} $DOC_PATH/swagger-community/
-    - cp $PRO_SWAGGER_PATH/{swagger.yaml,schemas_swagger.yaml} $DOC_PATH/swagger-pro/
+    - cp $COMMUNITY_SWAGGER_PATH/swagger.yaml $DOC_PATH/swagger-community/
+    - cp $COMMUNITY_SWAGGER_PATH/schemas_swagger.yaml $DOC_PATH/swagger-community/
+    - cp $PRO_SWAGGER_PATH/swagger.yaml $DOC_PATH/swagger-pro/
+    - cp $PRO_SWAGGER_PATH/schemas_swagger.yaml $DOC_PATH/swagger-pro/
     # set the correct release number
     - 'sed -i "s/version: .*/version: $TARGET_VERSION/g" $DOC_PATH/guide-developpement/swagger-community/swagger.yaml'
     - 'sed -i "s/version: .*/version: $TARGET_VERSION/g" $DOC_PATH/guide-developpement/swagger-pro/swagger.yaml'
