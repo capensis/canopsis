@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -321,12 +322,21 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		prevPbh := pbehavior.PBehavior{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
-		if err == nil {
-			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+
+		if prevPbh.Origin != "" {
+			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+			if !*r.Enabled || r.RRule != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
+				return valErr
+			}
+
+			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+				return valErr
+			}
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -339,6 +349,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 
 		pbh, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 
@@ -411,12 +422,28 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		prevPbh := pbehavior.PBehavior{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
-		if err == nil {
-			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+
+		if prevPbh.Origin != "" {
+			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+			if r.Enabled != nil && !*r.Enabled ||
+				r.RRule != nil && *r.RRule != "" ||
+				len(r.Exdates) > 0 ||
+				len(r.Exceptions) > 0 ||
+				r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
+
+				return valErr
+			}
+
+			if r.EntityPattern != nil {
+				if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+					return valErr
+				}
+			}
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
