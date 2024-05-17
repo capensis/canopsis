@@ -22,7 +22,7 @@ Composant   | Version          |
 ------------|------------------|
 MongoDB     | 7.0              |
 Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
-PostgreSQL  | 13               |
+PostgreSQL  | >= 13               |
 TimescaleDB | 2.14.2           |
 RabbitMQ    | 3.12.13             |
 Redis       | ≥ 5.0, < 7.0     |
