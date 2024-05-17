@@ -8,7 +8,8 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
-  SORT_ORDERS, GRID_SIZES,
+  SORT_ORDERS,
+  GRID_SIZES,
 } from '@/constants';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
