@@ -25,7 +25,7 @@ build_doc:
     - 'sed -i "s/version: .*/version: $TARGET_VERSION/g" $DOC_PATH/guide-developpement/swagger-community/swagger.yaml'
     - 'sed -i "s/version: .*/version: $TARGET_VERSION/g" $DOC_PATH/guide-developpement/swagger-pro/swagger.yaml'
     # set the correct release note order
-    - 'find $DOC_PATH/notes-de-version/ -maxdepth 1 -not -type d | cut -d / -f 5 |sort -rh |grep -vE "hidden|pages" > $DOC_PATH/notes-de-version/.pages'
+    - 'find $DOC_PATH/notes-de-version/ -maxdepth 1 -not -type d | cut -d / -f 6 |sort -rh |grep -vE "hidden|pages" > $DOC_PATH/notes-de-version/.pages'
     - 'sed -i "s/^/  - /" $DOC_PATH/notes-de-version/.pages'
     - 'sed -i "1s/^/nav:\n/" sources/docs/fr/notes-de-version/.pages'
     # build mkdoc
