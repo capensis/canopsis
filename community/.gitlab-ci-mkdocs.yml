@@ -19,6 +19,8 @@ build_doc:
     - export TARGET_VERSION=$(echo ${CI_COMMIT_BRANCH}| cut -d "-" -f 2)
   script:
     # import swagger
+    - mkdir $DOC_PATH/swagger-community
+    - mkdir $DOC_PATH/swagger-pro
     - cp $COMMUNITY_SWAGGER_PATH/swagger.yaml $DOC_PATH/swagger-community/
     - cp $COMMUNITY_SWAGGER_PATH/schemas_swagger.yaml $DOC_PATH/swagger-community/
     - cp $PRO_SWAGGER_PATH/swagger.yaml $DOC_PATH/swagger-pro/
