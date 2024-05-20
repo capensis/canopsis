@@ -45,6 +45,7 @@ type SectionGlobal struct {
 
 	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
 	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
+	InfosDictionaryLimit        int  `toml:"InfosDictionaryLimit"`
 
 	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
 }
