@@ -85,10 +85,21 @@
         />
       </v-flex>
       <v-flex xs6>
-        <c-enabled-field
-          v-field="form.disabled_transitions"
-          :label="$t('userInterface.disabledTransitions')"
-        />
+        <v-layout>
+          <c-enabled-field
+            v-field="form.disabled_transitions"
+            :label="$t('userInterface.disabledTransitions')"
+          >
+            <template #append>
+              <c-help-icon
+                :text="$t('userInterface.disabledTransitionsTooltip')"
+                color="grey darken-1"
+                icon="help"
+                top
+              />
+            </template>
+          </c-enabled-field>
+        </v-layout>
       </v-flex>
     </v-layout>
     <v-layout>
