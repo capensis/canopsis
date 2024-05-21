@@ -5,8 +5,16 @@ html {
   background-color: var(--v-application-background-base);
 }
 
-.v-app--disabled-transitions * {
-  transition: none !important;
+.v-app--disabled-transitions {
+  .v-navigation-drawer {
+    &, .v-item-group, .v-expansion-panel {
+      transition: none !important;
+    }
+  }
+
+  .v-main, .v-toolbar {
+    transition: none !important;
+  }
 }
 
 .v-toolbar--fixed {

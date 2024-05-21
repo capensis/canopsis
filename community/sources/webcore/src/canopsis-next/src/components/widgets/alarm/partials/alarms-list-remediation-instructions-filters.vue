@@ -17,6 +17,7 @@
     <v-tooltip
       v-if="addable"
       bottom
+      disable-resize
     >
       <template #activator="{ on }">
         <v-btn
