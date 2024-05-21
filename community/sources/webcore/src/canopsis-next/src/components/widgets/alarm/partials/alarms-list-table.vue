@@ -127,7 +127,7 @@
             />
           </template>
         </template>
-        <template #item="{ isSelected, isExpanded, item, select, expand }">
+        <template #item="{ isSelected, isExpanded, item, select, expand, index }">
           <alarms-list-row
             :ref="`row${item._id}`"
             :key="item._id"
@@ -136,6 +136,7 @@
             :expandable="expandable"
             :expanded="isExpanded"
             :alarm="item"
+            :index="index"
             :widget="widget"
             :headers="headers"
             :parent-alarm="parentAlarm"
@@ -149,6 +150,8 @@
             :show-instruction-icon="hasInstructionsAlarms"
             :actions-inline-count="actionsInlineCount"
             :actions-ignore-media-query="resizableColumn"
+            :all-booted-ready="allBootedReady"
+            :ready="readyRows[item._id]"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -174,6 +177,7 @@
     </div>
     <c-table-pagination
       v-if="!hidePagination"
+      :items="[5, 10, 20, 50, 100, 200]"
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
@@ -204,6 +208,13 @@ import {
 
 import featuresService from '@/services/features';
 
+import { mapIds } from '@/helpers/array';
+import {
+  recursiveRaf,
+  getNearestAndFarthestIndexes,
+  getNearestViewportIndexesBoundForTable,
+  splitIdsToChunk,
+} from '@/helpers/render';
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
@@ -325,6 +336,12 @@ export default {
       type: String,
       default: '',
     },
+  },
+  data() {
+    return {
+      readyRows: {},
+      allBootedReady: false,
+    };
   },
   computed: {
     shownTopPagination() {
@@ -520,6 +537,9 @@ export default {
   watch: {
     alarms(alarms) {
       this.selected = intersectionBy(alarms, this.selected, '_id');
+
+      this.setReadyRows();
+      this.setAllBootedReady();
     },
 
     columns() {
@@ -545,7 +565,51 @@ export default {
       },
     },
   },
+  mounted() {
+    this.$tbodyEl = this.$el.querySelector('tbody');
+  },
   methods: {
+    setAllBootedReady() {
+      this.allBootedReady = false;
+
+      setTimeout(() => this.allBootedReady = true, 2000);
+    },
+
+    setReadyRows() {
+      if (!this.$tbodyEl) {
+        return;
+      }
+
+      const { length } = this.alarms;
+
+      if (!length) {
+        return;
+      }
+
+      const { start, end } = getNearestViewportIndexesBoundForTable({
+        tbodyEl: this.$tbodyEl,
+        length,
+      });
+
+      const { nearest, farthest } = getNearestAndFarthestIndexes({
+        start,
+        end,
+        ids: mapIds(this.alarms),
+      });
+
+      this.readyRows = nearest.reduce((acc, id) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      const chunkFarthest = splitIdsToChunk(farthest, 10);
+
+      chunkFarthest.forEach((ids, index) => recursiveRaf(() => (
+        ids.forEach(id => this.$set(this.readyRows, id, true))
+      ), index + 1));
+    },
+
     updateColumnsSettings() {
       const settings = {};
 

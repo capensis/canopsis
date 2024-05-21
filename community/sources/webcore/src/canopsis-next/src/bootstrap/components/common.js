@@ -26,3 +26,5 @@ export { default as CSearch } from '@/components/common/search/c-search.vue';
 export { default as CSearchField } from '@/components/common/search/c-search-field.vue';
 export { default as CAdvancedSearch } from '@/components/common/search/c-advanced-search.vue';
 export { default as CAdvancedSearchField } from '@/components/common/search/c-advanced-search-field.vue';
+export { default as CPlaceholderLoader } from '@/components/common/placeholder/c-placeholder-loader.vue';
+export { default as CBootedPlaceholderLoader } from '@/components/common/placeholder/c-booted-placeholder-loader.vue';
