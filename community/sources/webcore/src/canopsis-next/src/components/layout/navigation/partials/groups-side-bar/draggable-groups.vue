@@ -2,7 +2,7 @@
   <c-draggable-list-field
     v-field="groups"
     :class="{ empty: isGroupsEmpty }"
-    :component-data="{ props: expansionPanelsProps }"
+    :component-data="draggableComponentData"
     :group="draggableGroup"
     class="groups-panel secondary"
     component="v-expansion-panels"
@@ -67,18 +67,20 @@ export default {
       };
     },
 
-    expansionPanelsProps() {
-      return {
-        multiple: true,
-        dark: true,
-        accordion: true,
-        flat: true,
-        tile: true,
-      };
-    },
-
     isGroupsEmpty() {
       return this.groups.length === 0;
+    },
+
+    draggableComponentData() {
+      return {
+        props: {
+          multiple: true,
+          dark: true,
+          accordion: true,
+          flat: true,
+          tile: true,
+        },
+      };
     },
   },
   methods: {
