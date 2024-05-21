@@ -305,8 +305,9 @@ func benchmarkMessageProcessor(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
+	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, metaAlarmStatesService,
 		template.NewExecutor(templateConfigProvider, tzConfigProvider), libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
@@ -336,6 +337,7 @@ func benchmarkMessageProcessor(
 			calculator.NewComponentCountersCalculator(dbClient, eventsSender),
 			eventsSender,
 			metaAlarmEventProcessor,
+			metaAlarmStatesService,
 			metricsSender,
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
 			nil,
