@@ -9,7 +9,7 @@
     <v-app-bar-nav-icon
       v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation"
       class="ml-0 white--text"
-      @click="$emit('toggleSideBar')"
+      @click="$emit('toggle:sideBar')"
     />
     <v-layout
       v-else
