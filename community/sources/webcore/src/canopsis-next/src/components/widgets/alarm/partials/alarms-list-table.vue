@@ -422,7 +422,7 @@ export default {
             ...header,
             width: header.width
               ? header.width
-              : width && `${width}%`,
+              : width && `${width}px`,
           };
         });
       }
@@ -440,10 +440,10 @@ export default {
         [this.isMediumDense]: ALARM_DENSE_TYPES.medium,
       }.true ?? ALARM_DENSE_TYPES.large;
       const width = this.getColumnWidthByField('actions') ?? 0;
-      const widthInPixelWithoutPaddings = (width / this.percentsInPixel) - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
+      const widthWithoutPaddings = width - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
       const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[denseType] + ALARM_ACTION_BUTTON_MARGINS[denseType];
 
-      return Math.floor(widthInPixelWithoutPaddings / actionWidth) || 1;
+      return Math.floor(widthWithoutPaddings / actionWidth) || 1;
     },
 
     vDataTableClass() {
@@ -614,10 +614,6 @@ export default {
 
       if (this.selecting) {
         this.calculateRowsPositions();
-      }
-
-      if (!this.resizingMode) {
-        this.throttledCalculateColumnsWidths();
       }
     },
   },

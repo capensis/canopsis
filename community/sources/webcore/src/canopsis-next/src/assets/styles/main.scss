@@ -5,6 +5,10 @@ html {
   background-color: var(--v-application-background-base);
 }
 
+.v-app--disabled-transitions * {
+  transition: none !important;
+}
+
 .v-toolbar--fixed {
   z-index: 3;
 }
