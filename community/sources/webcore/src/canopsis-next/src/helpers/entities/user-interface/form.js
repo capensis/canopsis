@@ -23,6 +23,7 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} [logo]
  * @property {number} [max_matched_items]
  * @property {number} [check_count_request_timeout]
+ * @property {number} [disabled_transitions]
  */
 
 /**
@@ -71,4 +72,5 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   max_matched_items: userInterface.max_matched_items ?? '',
   check_count_request_timeout: userInterface.check_count_request_timeout ?? '',
   popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
+  disabled_transitions: userInterface.disabled_transitions ?? false,
 });

@@ -78,10 +78,18 @@
       </v-flex>
     </v-layout>
     <v-layout>
-      <c-enabled-field
-        v-field="form.required_instruction_approve"
-        :label="$t('userInterface.requiredInstructionApprove')"
-      />
+      <v-flex xs6>
+        <c-enabled-field
+          v-field="form.required_instruction_approve"
+          :label="$t('userInterface.requiredInstructionApprove')"
+        />
+      </v-flex>
+      <v-flex xs6>
+        <c-enabled-field
+          v-field="form.disabled_transitions"
+          :label="$t('userInterface.disabledTransitions')"
+        />
+      </v-flex>
     </v-layout>
     <v-layout>
       <v-flex>

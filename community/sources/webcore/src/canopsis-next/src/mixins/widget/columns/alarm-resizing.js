@@ -15,14 +15,12 @@ export const widgetColumnResizingAlarmMixin = {
     return {
       resizingMode: false,
       resizingColumnIndex: null,
-      percentsInPixel: null,
       columnsWidthByField: {},
-      aggregatedMovementDiff: 0,
     };
   },
   created() {
+    this.aggregatedMovementDiff = 0;
     this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
-    this.throttledCalculateColumnsWidths = throttle(this.calculateColumnsWidths, 50);
   },
   beforeDestroy() {
     this.finishColumnResize();
@@ -38,10 +36,6 @@ export const widgetColumnResizingAlarmMixin = {
 
     sumOfColumnsWidth() {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
-    },
-
-    minColumnsWidthInPercent() {
-      return this.minColumnWidth * this.percentsInPixel;
     },
   },
   methods: {
@@ -68,17 +62,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     getNormalizedWidth(field, newWidth) {
-      return Math.max(newWidth, this.minColumnsWidthInPercent);
-    },
-
-    setPercentsInPixel() {
-      if (!this.tableRow) {
-        return;
-      }
-
-      const { width: rowWidth } = this.tableRow.getBoundingClientRect();
-
-      this.percentsInPixel = 100 / rowWidth;
+      return Math.max(newWidth, this.minColumnWidth);
     },
 
     calculateFullColumnsWidth(columnsWidth) {
@@ -86,15 +70,12 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     calculateElementNormalizedWidth(element, field) {
-      const { width: headerWidth } = element.getBoundingClientRect();
-      const width = headerWidth * this.percentsInPixel;
+      const { width } = element.getBoundingClientRect();
 
       return this.getNormalizedWidth(field, width);
     },
 
     calculateColumnsWidths() {
-      this.setPercentsInPixel();
-
       this.columnsWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
@@ -128,7 +109,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     handleColumnResize(event) {
-      this.aggregatedMovementDiff += event.movementX * this.percentsInPixel;
+      this.aggregatedMovementDiff += event.movementX;
 
       this.throttledResizeColumnByDiff(this.resizingColumnIndex);
     },

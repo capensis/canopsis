@@ -2,6 +2,7 @@ import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
+import localStorage from '@/services/local-storage';
 
 import { durationToSeconds } from '@/helpers/date/duration';
 
@@ -48,6 +49,7 @@ export default {
     isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
     isOauthAuthEnabled: state => !!state.appInfo?.login?.oauth2config?.enable,
     eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
+    disabledTransitions: state => state.appInfo?.disabled_transitions,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {
@@ -67,8 +69,12 @@ export default {
         commit(types.FETCH_APP_INFO);
 
         const appInfo = await request.get(API_ROUTES.infos.app);
+        const preparedAppInfo = {
+          ...appInfo,
+          disabled_transitions: String(localStorage.get('disabled_transitions')) === 'true',
+        }; // TODO: remove it
 
-        commit(types.FETCH_APP_INFO_COMPLETED, { appInfo });
+        commit(types.FETCH_APP_INFO_COMPLETED, { appInfo: preparedAppInfo }); // TODO: remove it
 
         if (appInfo.language) {
           dispatch('i18n/setGlobalLocale', appInfo.language, { root: true });
@@ -85,6 +91,8 @@ export default {
     },
 
     updateUserInterface(context, { data } = {}) {
+      localStorage.set('disabled_transitions', data.disabled_transitions);
+
       return request.post(API_ROUTES.infos.userInterface, data);
     },
 
