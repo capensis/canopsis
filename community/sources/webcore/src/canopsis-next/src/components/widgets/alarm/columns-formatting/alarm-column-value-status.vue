@@ -9,6 +9,7 @@
   <v-tooltip
     v-else
     top
+    disable-resize
   >
     <template #activator="{ on }">
       <v-icon

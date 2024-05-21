@@ -3,6 +3,7 @@
     <v-tooltip
       v-if="!hideAckResources"
       top
+      disable-resize
     >
       <template #activator="{ on }">
         <v-checkbox

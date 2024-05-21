@@ -6,6 +6,7 @@
     :open-on-click="false"
     class="alarms-column-cell"
     offset-x
+    disable-resize
   >
     <template #activator="{ on }">
       <v-layout

@@ -5,6 +5,7 @@
     :bottom="bottom"
     :left="left"
     :disabled="disabled"
+    disable-resize
   >
     <template #activator="{ on: tooltipOn }">
       <slot
