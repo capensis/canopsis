@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip top disable-resize>
     <template #activator="{ on }">
       <v-icon
         :class="iconClass"
