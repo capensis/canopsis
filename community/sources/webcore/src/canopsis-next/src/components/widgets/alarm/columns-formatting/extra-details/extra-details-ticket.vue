@@ -3,6 +3,7 @@
     <v-tooltip
       class="c-extra-details extra-details-ticket"
       top
+      disable-resize
     >
       <template #activator="{ on }">
         <v-badge

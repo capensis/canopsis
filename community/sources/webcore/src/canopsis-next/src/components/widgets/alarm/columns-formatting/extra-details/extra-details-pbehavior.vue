@@ -3,6 +3,7 @@
     <v-tooltip
       class="c-extra-details"
       top
+      disable-resize
     >
       <template #activator="{ on }">
         <c-alarm-pbehavior-chip
