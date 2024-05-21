@@ -11,55 +11,7 @@
         :on="tooltipOn"
         name="button"
       >
-        <v-badge
-          v-if="badgeValue"
-          :color="badgeColor"
-          class="c-action-btn__badge"
-          overlap
-        >
-          <template #badge="">
-            <v-tooltip
-              :top="top"
-              :right="right"
-              :bottom="bottom"
-              :left="left"
-              :disabled="!badgeTooltip"
-            >
-              <template #activator="{ on: badgeTooltipOn }">
-                <slot
-                  :on="badgeTooltipOn"
-                  name="badgeIcon"
-                >
-                  <v-icon
-                    color="white"
-                    v-on="badgeTooltipOn"
-                  >
-                    {{ badgeIcon }}
-                  </v-icon>
-                </slot>
-              </template>
-              <span>{{ badgeTooltip }}</span>
-            </v-tooltip>
-          </template>
-          <v-btn
-            :disabled="disabled"
-            :loading="loading"
-            :small="small"
-            :color="btnColor"
-            :dark="dark"
-            :input-value="inputValue"
-            class="ma-0 c-action-btn__button"
-            icon
-            v-on="tooltipOn"
-            @click.stop.prevent="$listeners.click"
-          >
-            <v-icon :color="preparedProps.color">
-              {{ preparedProps.icon }}
-            </v-icon>
-          </v-btn>
-        </v-badge>
         <v-btn
-          v-else
           :disabled="disabled"
           :loading="loading"
           :small="small"
@@ -135,22 +87,6 @@ export default {
     btnColor: {
       type: String,
       required: false,
-    },
-    badgeValue: {
-      type: Boolean,
-      default: false,
-    },
-    badgeIcon: {
-      type: String,
-      default: 'priority_high',
-    },
-    badgeColor: {
-      type: String,
-      default: 'error',
-    },
-    badgeTooltip: {
-      type: String,
-      default: '',
     },
     dark: {
       type: Boolean,
