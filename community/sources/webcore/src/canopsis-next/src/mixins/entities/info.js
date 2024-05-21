@@ -41,6 +41,7 @@ export const entitiesInfoMixin = {
       maintenance: 'maintenance',
       defaultColorTheme: 'defaultColorTheme',
       eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
+      disabledTransitions: 'disabledTransitions',
     }),
 
     isProVersion() {
