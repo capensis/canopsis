@@ -2,6 +2,7 @@ package saml
 
 import (
 	"bytes"
+	"cmp"
 	"compress/flate"
 	"context"
 	"crypto/tls"
@@ -375,14 +376,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 }
 
 func (sp *serviceProvider) getAssocAttribute(attrs saml2.Values, canopsisName, defaultValue string) string {
-	v := defaultValue
-
-	idpAssoc, ok := sp.config.IdpAttributesMap[canopsisName]
-	if ok {
-		v = attrs.Get(idpAssoc)
-	}
-
-	return v
+	return cmp.Or(attrs.Get(sp.config.IdpAttributesMap[canopsisName]), defaultValue)
 }
 
 func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
