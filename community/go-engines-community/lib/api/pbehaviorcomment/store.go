@@ -46,17 +46,6 @@ func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{
-			"_id":    r.Pbehavior,
-			"origin": bson.M{"$ne": nil},
-		}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
-		if err == nil {
-			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
-		}
-
 		res, err := s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": r.Pbehavior},
@@ -96,15 +85,14 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updated = false
 
-		err := s.dbCollection.FindOne(ctx, bson.M{
-			"comments._id": id,
-			"origin":       bson.M{"$ne": nil},
-		}).Err()
+		pbh := pbehavior.PBehavior{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"comments._id": id}).Decode(&pbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
-		if err == nil {
-			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+
+		if pbh.Origin != "" && len(pbh.Comments) > 0 && pbh.Comments[0].ID == id {
+			return common.NewValidationError("_id", "Cannot remove main comment.")
 		}
 
 		res, err := s.dbCollection.UpdateOne(
