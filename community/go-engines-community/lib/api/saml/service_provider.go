@@ -447,14 +447,12 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 }
 
 func (sp *serviceProvider) getAssocAttribute(attrs saml2.Values, canopsisName, defaultValue string) string {
-	v := defaultValue
-
-	idpAssoc, ok := sp.config.Security.Saml.IdpAttributesMap[canopsisName]
-	if ok {
-		v = attrs.Get(idpAssoc)
+	attr := attrs.Get(sp.config.Security.Saml.IdpAttributesMap[canopsisName])
+	if attr != "" {
+		return attr
 	}
 
-	return v
+	return defaultValue
 }
 
 func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
