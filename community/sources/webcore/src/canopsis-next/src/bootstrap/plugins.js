@@ -77,7 +77,6 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createEventFilter]: { maxWidth: 1280 },
       [MODALS.testSuite]: { maxWidth: 920 },
       [MODALS.createPattern]: { maxWidth: 1280 },
-      [MODALS.remediationPatterns]: { maxWidth: 1280 },
       [MODALS.pbehaviorPatterns]: { maxWidth: 1280 },
       [MODALS.createIdleRule]: { maxWidth: 1280 },
       [MODALS.createScenario]: { maxWidth: 1280 },

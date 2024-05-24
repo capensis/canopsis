@@ -17,6 +17,7 @@
           :disabled="disabled"
           :is-new="isNew"
           :required-approve="requiredInstructionApprove"
+          :no-pattern="noPattern"
         />
       </template>
       <template #actions="">
@@ -43,13 +44,14 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, VALIDATION_DELAY, PATTERNS_FIELDS } from '@/constants';
 
 import {
   formToRemediationInstruction,
   remediationInstructionErrorsToForm,
   remediationInstructionToForm,
 } from '@/helpers/entities/remediation/instruction/form';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
@@ -84,7 +86,15 @@ export default {
   ],
   data() {
     return {
-      form: remediationInstructionToForm(this.modal.config.remediationInstruction),
+      form: { ...remediationInstructionToForm(this.modal.config.remediationInstruction),
+        patterns: {
+          ...filterPatternsToForm(
+            this.modal.config.remediationInstruction,
+            [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+          ),
+          active_on_pbh: this.modal.config.remediationInstruction?.active_on_pbh ?? [],
+          disabled_on_pbh: this.modal.config.remediationInstruction?.disabled_on_pbh ?? [],
+        } },
     };
   },
   computed: {
@@ -129,6 +139,10 @@ export default {
     alertComment() {
       return this.approval?.dismiss_comment ?? this.approval?.comment;
     },
+
+    noPattern() {
+      return !!this.config.noPattern;
+    },
   },
   methods: {
     async submit() {
@@ -137,7 +151,12 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            await this.config.action(formToRemediationInstruction(this.form));
+            await this.config.action({
+              ...formToRemediationInstruction(this.form),
+              ...formFilterToPatterns(this.form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+              active_on_pbh: this.form.patterns.active_on_pbh,
+              disabled_on_pbh: this.form.patterns.disabled_on_pbh,
+            });
           }
 
           this.$modals.hide();

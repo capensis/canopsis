@@ -11,6 +11,7 @@
           :form="updatedForm"
           disabled-common
           disabled
+          no-pattern
         />
       </v-tab-item>
     </template>
@@ -20,6 +21,7 @@
         :form="originalForm"
         disabled-common
         disabled
+        no-pattern
       />
     </v-tab-item>
   </v-tabs>

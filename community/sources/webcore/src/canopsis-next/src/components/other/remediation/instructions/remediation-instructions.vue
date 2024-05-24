@@ -9,7 +9,6 @@
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"
       @remove-selected="showRemoveSelectedRemediationInstructionModal"
-      @assign-patterns="showAssignPatternsModal"
       @duplicate="showDuplicateRemediationInstructionModal"
       @remove="showRemoveRemediationInstructionModal"
       @approve="showApproveRemediationInstructionModal"
@@ -19,15 +18,9 @@
 </template>
 
 <script>
-import { isEqual, omit } from 'lodash';
+import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
-
-import {
-  remediationInstructionToForm,
-  formToRemediationInstruction,
-} from '@/helpers/entities/remediation/instruction/form';
-import { isSeveralEqual } from '@/helpers/collection';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query/query';
@@ -89,44 +82,6 @@ export default {
         config: {
           remediationInstructionId: remediationInstruction._id,
           afterSubmit: this.fetchList,
-        },
-      });
-    },
-
-    showAssignPatternsModal(instruction) {
-      this.$modals.show({
-        name: MODALS.remediationPatterns,
-        config: {
-          instruction,
-
-          action: async (data) => {
-            const isPbehaviorsEqual = isSeveralEqual(instruction, data, [
-              'active_on_pbh',
-              'disabled_on_pbh',
-            ]);
-
-            const isAlarmPatternEqual = instruction.corporate_alarm_pattern === data.corporate_alarm_pattern
-              || isEqual(instruction.alarm_pattern, data.alarm_pattern);
-
-            const isEntityPatternEqual = instruction.corporate_entity_pattern === data.corporate_entity_pattern
-              || isEqual(instruction.entity_pattern, data.entity_pattern);
-
-            if (isPbehaviorsEqual && isAlarmPatternEqual && isEntityPatternEqual) {
-              return;
-            }
-
-            const form = {
-              ...remediationInstructionToForm(instruction),
-              ...data,
-            };
-
-            await this.updateRemediationInstruction({
-              id: instruction._id,
-              data: formToRemediationInstruction(form),
-            });
-
-            await this.fetchList();
-          },
         },
       });
     },
