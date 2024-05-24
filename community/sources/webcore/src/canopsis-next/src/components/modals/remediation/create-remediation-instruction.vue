@@ -17,7 +17,6 @@
           :disabled="disabled"
           :is-new="isNew"
           :required-approve="requiredInstructionApprove"
-          :no-pattern="noPattern"
         />
       </template>
       <template #actions="">
@@ -138,10 +137,6 @@ export default {
 
     alertComment() {
       return this.approval?.dismiss_comment ?? this.approval?.comment;
-    },
-
-    noPattern() {
-      return !!this.config.noPattern;
     },
   },
   methods: {
