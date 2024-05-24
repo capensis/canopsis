@@ -1,0 +1,39 @@
+diff --git a/node_modules/vuetify/dist/vuetify.js b/node_modules/vuetify/dist/vuetify.js
+index 8f3bab6..1cabec3 100644
+--- a/node_modules/vuetify/dist/vuetify.js
++++ b/node_modules/vuetify/dist/vuetify.js
+@@ -21953,7 +21953,7 @@ function validateAttachTarget(val) {
+             if (_this.activatorNode) {
+                 var activator = Array.isArray(_this.activatorNode) ? _this.activatorNode : [_this.activatorNode];
+                 activator.forEach(function (node) {
+-                    node.elm && _this.$el.parentNode.insertBefore(node.elm, _this.$el);
++                    node.elm && _this.$el.parentNode && _this.$el.parentNode.insertBefore(node.elm, _this.$el);
+                 });
+             }
+         });
+diff --git a/node_modules/vuetify/es5/mixins/detachable.js b/node_modules/vuetify/es5/mixins/detachable.js
+index a64b47b..d50d2a0 100644
+--- a/node_modules/vuetify/es5/mixins/detachable.js
++++ b/node_modules/vuetify/es5/mixins/detachable.js
+@@ -55,7 +55,7 @@ exports.default = {
+             if (_this.activatorNode) {
+                 var activator = Array.isArray(_this.activatorNode) ? _this.activatorNode : [_this.activatorNode];
+                 activator.forEach(function (node) {
+-                    node.elm && _this.$el.parentNode.insertBefore(node.elm, _this.$el);
++                    node.elm && _this.$el.parentNode && _this.$el.parentNode.insertBefore(node.elm, _this.$el);
+                 });
+             }
+         });
+diff --git a/node_modules/vuetify/src/mixins/detachable.js b/node_modules/vuetify/src/mixins/detachable.js
+index afbe737..336d8c5 100644
+--- a/node_modules/vuetify/src/mixins/detachable.js
++++ b/node_modules/vuetify/src/mixins/detachable.js
+@@ -43,7 +43,7 @@ export default {
+       if (this.activatorNode) {
+         const activator = Array.isArray(this.activatorNode) ? this.activatorNode : [this.activatorNode]
+         activator.forEach(node => {
+-          node.elm && this.$el.parentNode.insertBefore(node.elm, this.$el)
++          node.elm && this.$el.parentNode && this.$el.parentNode.insertBefore(node.elm, this.$el)
+         })
+       }
+     })
