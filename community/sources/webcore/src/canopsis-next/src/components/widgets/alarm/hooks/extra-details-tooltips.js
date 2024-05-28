@@ -77,9 +77,7 @@ export const useExtraDetailsLastCommentTooltip = (props) => {
           <strong>${t('alarm.actions.iconsTitles.comment')}</strong>
           <div>${t('common.by')}: ${escape(props.lastComment.a)}</div>
           <div>${t('common.date')}: ${date.value}</div>
-          <div class="c-extra-details__message">${tc('common.comment')}:&nbsp;
-            <div>${sanitizedLastComment.value}</div>
-          </div>
+          <div class="c-extra-details__message">${tc('common.comment')}:&nbsp;<div>${sanitizedLastComment.value}</div></div>
         </div>`));
 
   return { tooltipContent };
