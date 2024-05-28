@@ -4,6 +4,7 @@ import ExtraDetailsParents from '@/components/widgets/alarm/columns-formatting/e
 
 const stubs = {
   'c-alarm-extra-details-chip': true,
+  'c-simple-tooltip': true,
 };
 
 describe('extra-details-parents', () => {
@@ -28,7 +29,7 @@ describe('extra-details-parents', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-parents` with full parents', async () => {
+  it('Renders `extra-details-parents` with full parents', () => {
     const wrapper = snapshotFactory({
       propsData: {
         total,
@@ -37,11 +38,9 @@ describe('extra-details-parents', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-parents` without rules', async () => {
+  it('Renders `extra-details-parents` without rules', () => {
     const wrapper = snapshotFactory({
       propsData: {
         total,
@@ -49,7 +48,5 @@ describe('extra-details-parents', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });
