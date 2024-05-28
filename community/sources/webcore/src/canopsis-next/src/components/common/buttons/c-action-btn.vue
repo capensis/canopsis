@@ -1,65 +1,18 @@
 <template>
-  <v-tooltip
+  <c-simple-tooltip
     :top="top"
     :right="right"
     :bottom="bottom"
     :left="left"
     :disabled="disabled"
+    :content="preparedProps.tooltip"
   >
     <template #activator="{ on: tooltipOn }">
       <slot
         :on="tooltipOn"
         name="button"
       >
-        <v-badge
-          v-if="badgeValue"
-          :color="badgeColor"
-          class="c-action-btn__badge"
-          overlap
-        >
-          <template #badge="">
-            <v-tooltip
-              :top="top"
-              :right="right"
-              :bottom="bottom"
-              :left="left"
-              :disabled="!badgeTooltip"
-            >
-              <template #activator="{ on: badgeTooltipOn }">
-                <slot
-                  :on="badgeTooltipOn"
-                  name="badgeIcon"
-                >
-                  <v-icon
-                    color="white"
-                    v-on="badgeTooltipOn"
-                  >
-                    {{ badgeIcon }}
-                  </v-icon>
-                </slot>
-              </template>
-              <span>{{ badgeTooltip }}</span>
-            </v-tooltip>
-          </template>
-          <v-btn
-            :disabled="disabled"
-            :loading="loading"
-            :small="small"
-            :color="btnColor"
-            :dark="dark"
-            :input-value="inputValue"
-            class="ma-0 c-action-btn__button"
-            icon
-            v-on="tooltipOn"
-            @click.stop.prevent="$listeners.click"
-          >
-            <v-icon :color="preparedProps.color">
-              {{ preparedProps.icon }}
-            </v-icon>
-          </v-btn>
-        </v-badge>
         <v-btn
-          v-else
           :disabled="disabled"
           :loading="loading"
           :small="small"
@@ -77,8 +30,7 @@
         </v-btn>
       </slot>
     </template>
-    <span>{{ preparedProps.tooltip }}</span>
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
@@ -136,22 +88,6 @@ export default {
       type: String,
       required: false,
     },
-    badgeValue: {
-      type: Boolean,
-      default: false,
-    },
-    badgeIcon: {
-      type: String,
-      default: 'priority_high',
-    },
-    badgeColor: {
-      type: String,
-      default: 'error',
-    },
-    badgeTooltip: {
-      type: String,
-      default: '',
-    },
     dark: {
       type: Boolean,
       default: false,
@@ -190,21 +126,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-action-btn__badge {
-  margin: 6px 4px;
-
-  & ::v-deep .v-badge__badge {
-    font-size: 11px;
-    top: -4px;
-    right: -4px;
-    height: 16px;
-    width: 16px;
-
-    .v-icon {
-      font-size: 11px;
-    }
-  }
-}
-</style>

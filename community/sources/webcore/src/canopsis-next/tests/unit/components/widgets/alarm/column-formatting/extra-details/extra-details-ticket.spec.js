@@ -7,6 +7,7 @@ import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/ex
 
 const stubs = {
   'c-alarm-extra-details-chip': true,
+  'c-simple-tooltip': true,
 };
 
 describe('extra-details-ticket', () => {
@@ -37,7 +38,7 @@ describe('extra-details-ticket', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-ticket` with full tickets', async () => {
+  it('Renders `extra-details-ticket` with full tickets', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tickets,
@@ -45,11 +46,9 @@ describe('extra-details-ticket', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-ticket` with full tickets and without failed last ticket', async () => {
+  it('Renders `extra-details-ticket` with full tickets and without failed last ticket', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tickets: [...tickets].reverse(),
@@ -57,7 +56,5 @@ describe('extra-details-ticket', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

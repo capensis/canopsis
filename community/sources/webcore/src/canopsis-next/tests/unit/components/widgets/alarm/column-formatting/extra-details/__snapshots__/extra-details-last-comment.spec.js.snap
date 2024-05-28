@@ -1,41 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with date in previous month 1`] = `
-<div
-  class="c-clickable-tooltip c-extra-details"
+<c-simple-tooltip-stub
+  clickable=""
+  content="<div class=\\"text-md-center\\">
+          <strong>Comment</strong>
+          <div>By: lastComment-author</div>
+          <div>Date: 07/08/2013 19:00:00</div>
+          <div class=\\"c-extra-details__message\\">Comment:&nbsp;
+            <div>lastComment-message</div>
+          </div>
+        </div>"
+  top=""
 >
-  <div>
-    <c-alarm-extra-details-chip-stub
-      color="#ba68c8"
-      icon="comment"
-    />
-  </div>
-  <span
-    class="v-tooltip v-tooltip--top"
-  >
-    <!---->
-  </span>
-</div>
+  <c-alarm-extra-details-chip-stub
+    color="#ba68c8"
+    icon="comment"
+  />
+</c-simple-tooltip-stub>
 `;
-
-exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with date in previous month 2`] = `undefined`;
 
 exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 1`] = `
-<div
-  class="c-clickable-tooltip c-extra-details"
+<c-simple-tooltip-stub
+  clickable=""
+  content="<div class=\\"text-md-center\\">
+          <strong>Comment</strong>
+          <div>By: lastComment-author</div>
+          <div>Date: 6:00:00</div>
+          <div class=\\"c-extra-details__message\\">Comment:&nbsp;
+            <div>lastComment-message</div>
+          </div>
+        </div>"
+  top=""
 >
-  <div>
-    <c-alarm-extra-details-chip-stub
-      color="#ba68c8"
-      icon="comment"
-    />
-  </div>
-  <span
-    class="v-tooltip v-tooltip--top"
-  >
-    <!---->
-  </span>
-</div>
+  <c-alarm-extra-details-chip-stub
+    color="#ba68c8"
+    icon="comment"
+  />
+</c-simple-tooltip-stub>
 `;
-
-exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 2`] = `undefined`;
