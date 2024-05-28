@@ -53,6 +53,7 @@ import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-
  * @property {number} heightFactor
  * @property {number} modalItemsPerPage
  * @property {boolean} isPriorityEnabled
+ * @property {boolean} isHideGrayEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {boolean} entitiesActionsInQueue
  */
@@ -103,6 +104,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
       state_types: [],
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
+  isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
   entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
 });
 
