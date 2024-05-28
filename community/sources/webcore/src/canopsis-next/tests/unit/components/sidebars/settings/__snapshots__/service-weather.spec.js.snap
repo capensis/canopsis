@@ -147,6 +147,13 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <hr
       class="v-divider theme--light"
     />
+    <field-switcher-stub
+      title="Show hide gray"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
     <field-modal-type-stub
       name="modalType"
       value="both"
@@ -311,6 +318,13 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     />
     <field-switcher-stub
       title="Show priority"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Show hide gray"
       value="true"
     />
     <hr
