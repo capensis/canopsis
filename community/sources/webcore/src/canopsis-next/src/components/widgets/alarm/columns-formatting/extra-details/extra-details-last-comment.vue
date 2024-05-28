@@ -4,8 +4,8 @@
     top
     clickable
   >
-    <template #activator="">
-      <c-alarm-extra-details-chip :icon="icon" :color="color" />
+    <template #activator="{ on }">
+      <c-alarm-extra-details-chip :icon="icon" :color="color" v-on="on" />
     </template>
   </c-simple-tooltip>
 </template>
