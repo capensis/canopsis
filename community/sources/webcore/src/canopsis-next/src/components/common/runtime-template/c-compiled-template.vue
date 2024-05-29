@@ -9,13 +9,17 @@
 
 <script>
 import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
-import { compile } from '@/helpers/handlebars';
+import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars';
 
 export default {
   inject: ['$system'],
   inheritAttrs: false,
   props: {
     template: {
+      type: String,
+      default: '',
+    },
+    templateId: {
       type: String,
       default: '',
     },
@@ -45,7 +49,7 @@ export default {
   methods: {
     async compileTemplate() {
       try {
-        const compiledTemplate = await compile(this.template, {
+        const context = {
           theme: {
             ...this.$system.theme,
 
@@ -53,7 +57,11 @@ export default {
           },
 
           ...this.context,
-        });
+        };
+
+        const compiledTemplate = hasTemplate(this.templateId)
+          ? await runTemplate(this.templateId, context)
+          : await compile(this.template, context);
 
         this.compiledTemplate = `<${this.parentElement}>${
           normalizeHtml(sanitizeHtml(linkifyHtml(compiledTemplate)))
