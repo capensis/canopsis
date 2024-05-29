@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top disable-resize>
+  <c-simple-tooltip :content="$t('alarm.hasBookmark')" top>
     <template #activator="{ on }">
       <v-icon
         class="cursor-default"
@@ -9,6 +9,5 @@
         bookmark
       </v-icon>
     </template>
-    <span>{{ $t('alarm.hasBookmark') }}</span>
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>

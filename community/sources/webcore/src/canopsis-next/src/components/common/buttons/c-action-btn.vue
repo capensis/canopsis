@@ -1,11 +1,11 @@
 <template>
-  <v-tooltip
+  <c-simple-tooltip
     :top="top"
     :right="right"
     :bottom="bottom"
     :left="left"
     :disabled="disabled"
-    disable-resize
+    :content="preparedProps.tooltip"
   >
     <template #activator="{ on: tooltipOn }">
       <slot
@@ -30,8 +30,7 @@
         </v-btn>
       </slot>
     </template>
-    <span>{{ preparedProps.tooltip }}</span>
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
@@ -127,21 +126,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-action-btn__badge {
-  margin: 6px 4px;
-
-  & ::v-deep .v-badge__badge {
-    font-size: 11px;
-    top: -4px;
-    right: -4px;
-    height: 16px;
-    width: 16px;
-
-    .v-icon {
-      font-size: 11px;
-    }
-  }
-}
-</style>
