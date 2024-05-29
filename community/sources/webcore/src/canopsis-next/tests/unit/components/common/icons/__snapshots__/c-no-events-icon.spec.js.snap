@@ -1,55 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correctly 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies"
+  max-width="1120"
+  top="true"
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate d-block material-icons theme--light secondary--text"
   >
     sync_problem
   </i>
-</span>
-`;
-
-exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correctly 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: 1120px; top: 12px; z-index: 8;"
->
-  <span>
-    No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`c-no-events-icon Renders \`c-no-events-icon\` with default props correctly 1`] = `undefined`;
 
-exports[`c-no-events-icon Renders \`c-no-events-icon\` with default props correctly 2`] = `undefined`;
-
 exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 1`] = `
-<span
-  class="v-tooltip"
+<c-simple-tooltip-stub
+  content="No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies"
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate d-block material-icons theme--light error--text"
   >
     sync_problem
   </i>
-</span>
-`;
-
-exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;

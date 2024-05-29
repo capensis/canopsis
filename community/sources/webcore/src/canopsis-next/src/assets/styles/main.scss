@@ -166,11 +166,9 @@ html {
   flex-shrink: 0;
 }
 
-.c-extra-details {
-  &__message {
-    max-width: 600px;
-    white-space: pre-line;
-  }
+.c-extra-details__message {
+  max-width: 600px;
+  white-space: pre-line;
 }
 
 .c-table-header {

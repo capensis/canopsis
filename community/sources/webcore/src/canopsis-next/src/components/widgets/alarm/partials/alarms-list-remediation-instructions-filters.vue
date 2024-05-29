@@ -14,8 +14,9 @@
       :closable="editable"
       @input="$listeners['update:filters']"
     />
-    <v-tooltip
+    <c-simple-tooltip
       v-if="addable"
+      :content="$t('remediation.instructionsFilter.button')"
       bottom
       disable-resize
     >
@@ -31,8 +32,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>{{ $t('remediation.instructionsFilter.button') }}</span>
-    </v-tooltip>
+    </c-simple-tooltip>
   </v-layout>
 </template>
 

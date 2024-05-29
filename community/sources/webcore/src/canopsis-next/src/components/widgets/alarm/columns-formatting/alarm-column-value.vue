@@ -1,6 +1,7 @@
 <template>
   <c-compiled-template
     v-if="column.template"
+    :template-id="templateId"
     :template="column.template"
     :context="templateContext"
     class="alarm-column-value"
@@ -72,6 +73,10 @@ export default {
     },
   },
   computed: {
+    templateId() {
+      return `${this.widget._id}-${this.column.value}`;
+    },
+
     templateContext() {
       return {
         value: get(this.alarm, this.column.value, ''),
