@@ -23,8 +23,8 @@ var ErrDisabled = errors.New("maintenance mode has already been disabled")
 const defaultColor = "#e75e40"
 
 type Store interface {
-	Enable(ctx context.Context, message, color string) error
-	Disable(ctx context.Context) error
+	Enable(ctx context.Context, message, color, userId string) error
+	Disable(ctx context.Context, userId string) error
 }
 
 type store struct {
@@ -54,7 +54,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Enable(ctx context.Context, message, color string) error {
+func (s *store) Enable(ctx context.Context, message, color, userId string) error {
 	broadcastID := utils.NewID()
 
 	_, err := s.configCollection.UpdateOne(
@@ -101,13 +101,14 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 			return err
 		}
 
-		_, err = s.broadcastCollection.InsertOne(ctx, broadcastmessage.BroadcastMessage{
+		_, err = s.broadcastCollection.InsertOne(ctx, broadcastmessage.CreateRequest{
 			ID: broadcastID,
-			Payload: broadcastmessage.Payload{
+			EditRequest: broadcastmessage.EditRequest{
 				Color:   color,
 				Message: message,
 				Start:   now,
 				End:     datetime.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
+				Author:  userId,
 				Created: &now,
 				Updated: &now,
 			},
@@ -117,23 +118,30 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 	})
 }
 
-func (s *store) Disable(ctx context.Context) error {
-	var state config.MaintenanceConf
+func (s *store) Disable(ctx context.Context, userId string) error {
+	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		var state config.MaintenanceConf
 
-	err := s.configCollection.FindOneAndUpdate(
-		ctx,
-		bson.M{"_id": config.MaintenanceKeyName, "enabled": true},
-		bson.M{"$set": bson.M{"enabled": false}},
-	).Decode(&state)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return ErrDisabled
+		err := s.configCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": config.MaintenanceKeyName, "enabled": true},
+			bson.M{"$set": bson.M{"enabled": false}},
+		).Decode(&state)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return ErrDisabled
+			}
+
+			return err
 		}
 
+		// required to get the author in action log listener.
+		res, err := s.broadcastCollection.UpdateOne(ctx, bson.M{"_id": state.BroadcastID}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		_, err = s.broadcastCollection.DeleteOne(ctx, bson.M{"_id": state.BroadcastID})
 		return err
-	}
-
-	_, err = s.broadcastCollection.DeleteOne(ctx, bson.M{"_id": state.BroadcastID})
-
-	return err
+	})
 }

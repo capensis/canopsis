@@ -1,6 +1,7 @@
 package idlerule
 
 import (
+	"cmp"
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -19,14 +20,12 @@ type Store interface {
 	Find(context.Context, FilteredQuery) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Rule, error)
 	Update(context.Context, UpdateRequest) (*Rule, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 type store struct {
 	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
-	entityCollection      mongo.DbCollection
-	alarmCollection       mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -36,8 +35,6 @@ func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              db,
 		collection:            db.Collection(mongo.IdleRuleMongoCollection),
-		entityCollection:      db.Collection(mongo.EntityMongoCollection),
-		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
 		defaultSortBy:         "created",
@@ -102,11 +99,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
-	if r.ID == "" {
-		r.ID = utils.NewID()
-	}
 
-	rule.ID = r.ID
+	rule.ID = cmp.Or(r.ID, utils.NewID())
 	rule.Created = now
 	rule.Updated = now
 
@@ -122,7 +116,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 		if err != nil {
 			return err
 		}
-		idleRule, err = s.GetOneBy(ctx, r.ID)
+		idleRule, err = s.GetOneBy(ctx, rule.ID)
 		return err
 	})
 
@@ -137,6 +131,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
 	model.Updated = datetime.NewCpsTime()
+
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
@@ -161,21 +156,27 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	return idleRule, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
 
-	return deleted > 0, nil
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func (s *store) getSort(r FilteredQuery) bson.M {
-	sortBy := s.defaultSortBy
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
-
+	sortBy := cmp.Or(r.SortBy, s.defaultSortBy)
 	if sortBy == "duration" {
 		sortBy = "duration.value"
 	}

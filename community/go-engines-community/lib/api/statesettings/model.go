@@ -1,21 +1,30 @@
 package statesettings
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
 type EditRequest struct {
 	ID           string `json:"-" bson:"_id"`
 	StateSetting `bson:"inline"`
+
+	Author  string            `json:"author,omitempty" bson:"author,omitempty" swaggerignore:"true"`
+	Created *datetime.CpsTime `json:"-" bson:"created,omitempty"`
+	Updated *datetime.CpsTime `json:"-" bson:"updated,omitempty"`
 }
 
 type Response struct {
 	ID           string `json:"_id" bson:"_id"`
 	StateSetting `bson:"inline"`
 
-	Editable  bool `bson:"editable" json:"editable"`
-	Deletable bool `bson:"deletable" json:"deletable"`
+	Author    *author.Author    `json:"author,omitempty" bson:"author,omitempty"`
+	Created   *datetime.CpsTime `json:"created,omitempty" bson:"created,omitempty" swaggertype:"integer"`
+	Updated   *datetime.CpsTime `json:"updated,omitempty" bson:"updated,omitempty" swaggertype:"integer"`
+	Editable  bool              `bson:"editable" json:"editable"`
+	Deletable bool              `bson:"deletable" json:"deletable"`
 }
 
 type StateSetting struct {

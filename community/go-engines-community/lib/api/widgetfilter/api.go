@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -21,23 +20,20 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	enforcer     security.Enforcer
-	transformer  PatternFieldsTransformer
-	actionLogger logger.ActionLogger
+	store       Store
+	enforcer    security.Enforcer
+	transformer PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
 	transformer PatternFieldsTransformer,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		enforcer:     enforcer,
-		transformer:  transformer,
-		actionLogger: actionLogger,
+		store:       store,
+		enforcer:    enforcer,
+		transformer: transformer,
 	}
 }
 
@@ -159,15 +155,6 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeWidgetFilter,
-		ValueID:   filter.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, filter)
 }
 
@@ -247,15 +234,6 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeWidgetFilter,
-		ValueID:   filter.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, filter)
 }
 
@@ -307,15 +285,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeWidgetFilter,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.Status(http.StatusNoContent)

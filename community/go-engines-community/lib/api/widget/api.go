@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -26,21 +25,17 @@ type api struct {
 	store       Store
 	enforcer    security.Enforcer
 	transformer *RequestTransformer
-
-	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
 	transformer *RequestTransformer,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		enforcer:     enforcer,
-		transformer:  transformer,
-		actionLogger: actionLogger,
+		store:       store,
+		enforcer:    enforcer,
+		transformer: transformer,
 	}
 }
 
@@ -64,8 +59,6 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-
 	request := CreateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -93,15 +86,6 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   widget.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, widget)
 }
 
@@ -109,7 +93,6 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -139,23 +122,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   widget.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, widget)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -165,15 +136,6 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.Status(http.StatusNoContent)
 }
 
@@ -181,7 +143,6 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := CreateRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -203,15 +164,6 @@ func (a *api) Copy(c *gin.Context) {
 	if widget == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   widget.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, widget)

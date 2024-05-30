@@ -1,13 +1,11 @@
 package pbehaviortype
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
@@ -20,26 +18,20 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	transformer  ModelTransformer
-	computeChan  chan<- rpc.PbehaviorRecomputeEvent
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	computeChan chan<- rpc.PbehaviorRecomputeEvent
+	logger      zerolog.Logger
 }
 
 func NewApi(
-	transformer ModelTransformer,
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		transformer:  transformer,
-		store:        store,
-		computeChan:  computeChan,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		computeChan: computeChan,
+		logger:      logger,
 	}
 }
 
@@ -71,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} pbehavior.Type
 func (a *api) Get(c *gin.Context) {
-	pt, err := a.store.GetOneBy(c, c.Param("id"))
+	pt, err := a.store.GetById(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -93,8 +85,8 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	pt := a.transformer.TransformCreateRequestToModel(request)
-	if err := a.store.Insert(c, pt); err != nil {
+	res, err := a.store.Insert(c, request)
+	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -110,17 +102,13 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err := a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypePbehaviorType,
-		ValueID:   pt.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	a.sendComputeTask()
-	c.JSON(http.StatusCreated, pt)
+	c.JSON(http.StatusCreated, res)
 }
 
 // Update
@@ -136,8 +124,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	pt := a.transformer.TransformUpdateRequestToModel(request)
-	ok, err := a.store.Update(c, c.Param("id"), pt)
+	res, err := a.store.Update(c, request)
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
@@ -154,26 +141,17 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	if !ok {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePbehaviorType,
-		ValueID:   pt.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.sendComputeTask()
-	c.JSON(http.StatusOK, pt)
+	c.JSON(http.StatusOK, res)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
@@ -187,15 +165,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePbehaviorType,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.Status(http.StatusNoContent)

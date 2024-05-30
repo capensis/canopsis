@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 
@@ -20,9 +21,9 @@ const permissionPrefix = "Rights on playlist :"
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	GetById(ctx context.Context, id string) (*Response, error)
-	Insert(ctx context.Context, userID string, r EditRequest) (*Response, error)
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -61,10 +62,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := s.defaultSortBy
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
+	sortBy := cmp.Or(r.SortBy, s.defaultSortBy)
 	if sortBy == "interval" {
 		sortBy = "interval.value"
 	}
@@ -116,11 +114,11 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Response, error) {
-	id := utils.NewID()
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
+
 	model := Playlist{
-		ID:         id,
+		ID:         utils.NewID(),
 		Author:     r.Author,
 		Name:       r.Name,
 		Enabled:    *r.Enabled,
@@ -139,12 +137,12 @@ func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Resp
 			return err
 		}
 
-		err = s.createPermission(ctx, userID, id, r.Name)
+		err = s.createPermission(ctx, r.Author, model.ID, r.Name)
 		if err != nil {
 			return err
 		}
 
-		response, err = s.GetById(ctx, id)
+		response, err = s.GetById(ctx, model.ID)
 		return err
 	})
 	if err != nil {
@@ -194,25 +192,32 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted := false
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
+
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		deleted = false
-		d, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-		if err != nil || d == 0 {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
 
-		err = s.deletePermission(ctx, id)
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || deleted == 0 {
+			return err
+		}
+
+		err = s.deletePermission(ctx, id, userId)
 		if err != nil {
 			return err
 		}
 
-		deleted = true
 		return nil
 	})
 
-	return deleted, err
+	return deleted > 0, err
 }
 
 func (s *store) createPermission(ctx context.Context, userID, playlistID, playlistName string) error {
@@ -246,15 +251,14 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		},
 		bson.M{
 			"$set": bson.M{
+				"author":  userID,
+				"updated": datetime.NewCpsTime(),
 				"permissions." + playlistID: securitymodel.PermissionBitmaskRead |
 					securitymodel.PermissionBitmaskUpdate |
 					securitymodel.PermissionBitmaskDelete,
 			},
 		},
 	)
-	if err != nil {
-		return err
-	}
 
 	return err
 }
@@ -272,12 +276,16 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 	return err
 }
 
-func (s *store) deletePermission(ctx context.Context, playlistID string) error {
+func (s *store) deletePermission(ctx context.Context, playlistID, userID string) error {
 	_, err := s.roleCollection.UpdateMany(ctx,
 		bson.M{
 			"permissions." + playlistID: bson.M{"$exists": true},
 		},
 		bson.M{
+			"$set": bson.M{
+				"author":  userID,
+				"updated": datetime.NewCpsTime(),
+			},
 			"$unset": bson.M{"permissions." + playlistID: ""},
 		},
 	)
