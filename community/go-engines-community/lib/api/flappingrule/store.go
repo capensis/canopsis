@@ -1,6 +1,7 @@
 package flappingrule
 
 import (
+	"cmp"
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -19,7 +20,7 @@ type Store interface {
 	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 type store struct {
@@ -45,12 +46,9 @@ func NewStore(
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-	rule := transformRequestToModel(r.EditRequest)
-	if r.ID == "" {
-		r.ID = utils.NewID()
-	}
 
-	rule.ID = r.ID
+	rule := transformRequestToModel(r.EditRequest)
+	rule.ID = cmp.Or(r.ID, utils.NewID())
 	rule.Created = now
 	rule.Updated = now
 
@@ -107,15 +105,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := "created"
-	if query.SortBy != "" {
-		sortBy = query.SortBy
-	}
-
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, query.Sort),
+		common.GetSortQuery(cmp.Or(query.SortBy, "created"), query.Sort),
 	))
 
 	if err != nil {
@@ -160,13 +153,23 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return resp, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
 
-	return deleted > 0, nil
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func transformRequestToModel(r EditRequest) flappingrule.Rule {

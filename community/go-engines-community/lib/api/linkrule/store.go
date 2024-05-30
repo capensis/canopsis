@@ -1,6 +1,7 @@
 package linkrule
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 
@@ -22,7 +23,7 @@ type Store interface {
 	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 	GetCategories(ctx context.Context, r CategoriesRequest) (*CategoryResponse, error)
 }
 
@@ -97,15 +98,10 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := s.defaultSortBy
-	if request.SortBy != "" {
-		sortBy = request.SortBy
-	}
-
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, request.Sort),
+		common.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort),
 	))
 
 	if err != nil {
@@ -148,8 +144,22 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
+
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
 	return deleted > 0, err
 }
 

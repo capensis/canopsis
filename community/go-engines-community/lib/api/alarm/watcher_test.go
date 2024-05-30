@@ -61,8 +61,8 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
 	mockStore := mock_alarm.NewMockStore(ctrl)
-	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userId1), gomock.Any()).Return(alarmResForUserId1, nil)
-	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userId2), gomock.Any()).Return(alarmResForUserId2, nil)
+	mockStore.EXPECT().GetById(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userId1), gomock.Any()).Return(alarmResForUserId1, nil)
+	mockStore.EXPECT().GetById(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userId2), gomock.Any()).Return(alarmResForUserId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
 	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForUserId1))
@@ -166,8 +166,8 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
 	mockStore := mock_alarm.NewMockStore(ctrl)
-	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId1), gomock.Eq(userId), gomock.Any()).Return(alarmResForConnId1, nil)
-	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId2), gomock.Eq(userId), gomock.Any()).Return(alarmResForConnId2, nil)
+	mockStore.EXPECT().GetById(gomock.Any(), gomock.Eq(alarmId1), gomock.Eq(userId), gomock.Any()).Return(alarmResForConnId1, nil)
+	mockStore.EXPECT().GetById(gomock.Any(), gomock.Eq(alarmId2), gomock.Eq(userId), gomock.Any()).Return(alarmResForConnId2, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
 	mockHub.EXPECT().SendGroupRoomByConnections(gomock.Eq([]string{connId1}), gomock.Any(),
 		gomock.Eq(roomId), gomock.Eq(alarmResForConnId1))

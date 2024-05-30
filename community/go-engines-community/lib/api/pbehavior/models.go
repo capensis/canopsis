@@ -86,24 +86,24 @@ type FindByEntityIDRequest struct {
 }
 
 type Response struct {
-	ID            string                         `bson:"_id" json:"_id"`
-	Author        *author.Author                 `bson:"author" json:"author"`
-	Comments      []pbehaviorcomment.Response    `bson:"comments" json:"comments"`
-	Enabled       bool                           `bson:"enabled" json:"enabled"`
-	Name          string                         `bson:"name" json:"name"`
-	Reason        *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
-	RRule         string                         `bson:"rrule" json:"rrule"`
-	RRuleEnd      *datetime.CpsTime              `bson:"rrule_end" json:"rrule_end" swaggertype:"integer"`
-	Start         *datetime.CpsTime              `bson:"tstart" json:"tstart" swaggertype:"integer"`
-	Stop          *datetime.CpsTime              `bson:"tstop" json:"tstop" swaggertype:"integer"`
-	Created       *datetime.CpsTime              `bson:"created" json:"created" swaggertype:"integer"`
-	Updated       *datetime.CpsTime              `bson:"updated" json:"updated" swaggertype:"integer"`
-	Type          *pbehavior.Type                `bson:"type" json:"type"`
-	Color         string                         `bson:"color" json:"color"`
-	Exdates       []pbehaviorexception.Exdate    `bson:"exdates" json:"exdates"`
-	Exceptions    []pbehaviorexception.Exception `bson:"exceptions" json:"exceptions"`
-	LastAlarmDate *datetime.CpsTime              `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
-	AlarmCount    int64                          `bson:"alarm_count" json:"alarm_count"`
+	ID            string                        `bson:"_id" json:"_id"`
+	Author        *author.Author                `bson:"author" json:"author"`
+	Comments      []pbehaviorcomment.Response   `bson:"comments" json:"comments"`
+	Enabled       bool                          `bson:"enabled" json:"enabled"`
+	Name          string                        `bson:"name" json:"name"`
+	Reason        *pbehaviorreason.Response     `bson:"reason" json:"reason"`
+	RRule         string                        `bson:"rrule" json:"rrule"`
+	RRuleEnd      *datetime.CpsTime             `bson:"rrule_end" json:"rrule_end" swaggertype:"integer"`
+	Start         *datetime.CpsTime             `bson:"tstart" json:"tstart" swaggertype:"integer"`
+	Stop          *datetime.CpsTime             `bson:"tstop" json:"tstop" swaggertype:"integer"`
+	Created       *datetime.CpsTime             `bson:"created" json:"created" swaggertype:"integer"`
+	Updated       *datetime.CpsTime             `bson:"updated" json:"updated" swaggertype:"integer"`
+	Type          *pbehavior.Type               `bson:"type" json:"type"`
+	Color         string                        `bson:"color" json:"color"`
+	Exdates       []pbehaviorexception.Exdate   `bson:"exdates" json:"exdates"`
+	Exceptions    []pbehaviorexception.Response `bson:"exceptions" json:"exceptions"`
+	LastAlarmDate *datetime.CpsTime             `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
+	AlarmCount    int64                         `bson:"alarm_count" json:"alarm_count"`
 	// IsActiveStatus represents if pbehavior is in action for current time.
 	IsActiveStatus *bool `bson:"-" json:"is_active_status,omitempty"`
 

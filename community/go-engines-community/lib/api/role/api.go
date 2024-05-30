@@ -1,13 +1,11 @@
 package role
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
@@ -19,17 +17,14 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store Store
 }
 
 func NewApi(
 	store Store,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store: store,
 	}
 }
 
@@ -91,14 +86,6 @@ func (a *api) Create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeRole,
-		ValueID:   role.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.JSON(http.StatusCreated, role)
 }
@@ -131,15 +118,6 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeRole,
-		ValueID:   role.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, role)
 }
 
@@ -151,7 +129,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrLinkedToUser) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -164,15 +142,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeRole,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.Status(http.StatusNoContent)

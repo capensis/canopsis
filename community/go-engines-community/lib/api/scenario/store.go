@@ -1,6 +1,7 @@
 package scenario
 
 import (
+	"cmp"
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -18,7 +19,7 @@ type Store interface {
 	Find(ctx context.Context, q FilteredQuery) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Scenario, error)
 	Update(ctx context.Context, r UpdateRequest) (*Scenario, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 type store struct {
@@ -160,21 +161,27 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 	return result, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.collection.DeleteMany(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
 
-	return deleted > 0, nil
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func (s *store) getSort(r FilteredQuery) bson.M {
-	sortBy := s.defaultSortBy
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
-
+	sortBy := cmp.Or(r.SortBy, s.defaultSortBy)
 	if sortBy == "delay" {
 		sortBy = "delay.value"
 	}

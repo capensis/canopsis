@@ -14,7 +14,7 @@ import (
 
 type Store interface {
 	Find(ctx context.Context, userId, widgetId string) (*Response, error)
-	Update(ctx context.Context, userId string, request EditRequest) (*Response, bool, error)
+	Update(ctx context.Context, userId string, request EditRequest) (*Response, error)
 }
 
 type store struct {
@@ -115,14 +115,13 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	return &res, nil
 }
 
-func (s *store) Update(ctx context.Context, userId string, request EditRequest) (*Response, bool, error) {
+func (s *store) Update(ctx context.Context, userId string, request EditRequest) (*Response, error) {
 	var response *Response
-	isNew := false
+
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		isNew = false
 
-		res, err := s.collection.UpdateOne(ctx, bson.M{
+		_, err := s.collection.UpdateOne(ctx, bson.M{
 			"user":   userId,
 			"widget": request.Widget,
 		}, bson.M{
@@ -141,10 +140,9 @@ func (s *store) Update(ctx context.Context, userId string, request EditRequest) 
 			return err
 		}
 
-		isNew = res.UpsertedCount > 0
 		response, err = s.Find(ctx, userId, request.Widget)
 		return err
 	})
 
-	return response, isNew, err
+	return response, err
 }

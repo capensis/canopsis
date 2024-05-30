@@ -292,7 +292,17 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
-		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id, "$or": bson.A{
+
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id, "$or": bson.A{
+			bson.M{"author": userId},
+			bson.M{"is_user_preference": false},
+		}}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
+		_, err = s.collection.DeleteOne(ctx, bson.M{"_id": id, "$or": bson.A{
 			bson.M{"author": userId},
 			bson.M{"is_user_preference": false},
 		}})
@@ -300,11 +310,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			return err
 		}
 
-		if delCount == 0 {
-			return nil
-		}
-
-		err = s.updateWidgets(ctx, id)
+		err = s.updateWidgets(ctx, id, userId)
 		if err != nil {
 			return err
 		}
@@ -385,10 +391,11 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, use
 	return res, err
 }
 
-func (s *store) updateWidgets(ctx context.Context, filterId string) error {
+func (s *store) updateWidgets(ctx context.Context, filterId, userId string) error {
 	_, err := s.widgetCollection.UpdateMany(ctx, bson.M{
 		"parameters.mainFilter": filterId,
 	}, bson.M{
+		"$set":   bson.M{"author": userId, "updated": datetime.NewCpsTime()},
 		"$unset": bson.M{"parameters.mainFilter": ""},
 	})
 

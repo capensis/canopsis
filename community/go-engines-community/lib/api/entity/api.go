@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -10,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -43,7 +41,6 @@ type api struct {
 	cleanTaskChan        chan<- CleanTask
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
 	metricMetaUpdater    metrics.MetaUpdater
-	actionLogger         logger.ActionLogger
 	encoder              encoding.Encoder
 	logger               zerolog.Logger
 }
@@ -54,7 +51,6 @@ func NewApi(
 	cleanTaskChan chan<- CleanTask,
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
-	actionLogger logger.ActionLogger,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) API {
@@ -76,7 +72,6 @@ func NewApi(
 		cleanTaskChan:        cleanTaskChan,
 		entityChangeListener: entityChangeListener,
 		metricMetaUpdater:    metricMetaUpdater,
-		actionLogger:         actionLogger,
 		encoder:              encoder,
 		logger:               logger,
 	}
@@ -326,8 +321,9 @@ func (a *api) GetStateSetting(c *gin.Context) {
 
 func (a *api) toggle(c *gin.Context, enabled bool) {
 	userId := c.MustGet(auth.UserKey).(string)
+
 	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
-		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, enabled)
+		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userId, enabled)
 		if err != nil || simplifiedEntity.ID == "" {
 			return "", err
 		}
@@ -347,21 +343,6 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			}
 
 			a.sendChangeMessage(msg)
-		}
-
-		entry := logger.LogEntry{
-			Action:    logger.ActionUpdate,
-			ValueType: logger.ValueTypeEntity,
-			ValueID:   simplifiedEntity.ID,
-		}
-
-		if simplifiedEntity.Type == types.EntityTypeService {
-			entry.ValueType = logger.ValueTypeEntityService
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, entry)
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		a.metricMetaUpdater.UpdateById(c, simplifiedEntity.ID)

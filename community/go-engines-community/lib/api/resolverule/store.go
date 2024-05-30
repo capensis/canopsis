@@ -1,6 +1,7 @@
 package resolverule
 
 import (
+	"cmp"
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -19,7 +20,7 @@ type Store interface {
 	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 type store struct {
@@ -45,20 +46,11 @@ func NewStore(
 
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
+
 	model := s.transformRequestToDocument(request.EditRequest)
-
-	if request.ID == "" {
-		request.ID = utils.NewID()
-	}
-
-	model.ID = request.ID
+	model.ID = cmp.Or(request.ID, utils.NewID())
 	model.Created = now
 	model.Updated = now
-
-	id := request.ID
-	if id == "" {
-		id = utils.NewID()
-	}
 
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -69,12 +61,12 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, id, request.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, model.ID, request.Priority)
 		if err != nil {
 			return err
 		}
 
-		res, err = s.GetById(ctx, id)
+		res, err = s.GetById(ctx, model.ID)
 		return err
 	})
 	if err != nil {
@@ -113,15 +105,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := "created"
-	if query.SortBy != "" {
-		sortBy = query.SortBy
-	}
-
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, query.Sort),
+		common.GetSortQuery(cmp.Or(query.SortBy, "created"), query.Sort),
 	))
 
 	if err != nil {
@@ -169,17 +156,27 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	return res, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	if id == resolverule.DefaultRule {
 		return false, ErrDefaultRule
 	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	var deleted int64
 
-	return deleted > 0, nil
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {

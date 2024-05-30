@@ -1,6 +1,7 @@
 package pbehavior
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -43,8 +44,8 @@ type Store interface {
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
-	DeleteByName(ctx context.Context, name string) (string, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
+	DeleteByName(ctx context.Context, name, userId string) (string, error)
 	FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error)
 	EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error)
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
@@ -95,10 +96,7 @@ func NewStore(
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
-	doc.ID = r.ID
-	if doc.ID == "" {
-		doc.ID = utils.NewID()
-	}
+	doc.ID = cmp.Or(r.ID, utils.NewID())
 
 	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
@@ -280,11 +278,6 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := request.SortBy
-	if sortBy == "" {
-		sortBy = s.entitiesDefaultSortBy
-	}
-
 	project := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,
@@ -297,7 +290,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	cursor, err := s.entityDbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, request.Sort),
+		common.GetSortQuery(cmp.Or(request.SortBy, s.entitiesDefaultSortBy), request.Sort),
 		project,
 	))
 
@@ -524,27 +517,50 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	return pbh, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
 
-	return deleted > 0, nil
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
-func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
+func (s *store) DeleteByName(ctx context.Context, name, userId string) (string, error) {
 	pbh := pbehavior.PBehavior{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"name": name}).Decode(&pbh)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return "", nil
-		}
-		return "", err
-	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
-	if err != nil || deleted == 0 {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		pbh = pbehavior.PBehavior{}
+
+		// required to get the author in action log listener.
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"name": name},
+			bson.M{"$set": bson.M{"author": userId}},
+		).Decode(&pbh)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		_, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
+
+		return err
+	})
+	if err != nil {
 		return "", err
 	}
 

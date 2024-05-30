@@ -32,7 +32,7 @@ type Store interface {
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
 	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 	Copy(ctx context.Context, id string, r EditRequest) (*Response, error)
 	Export(ctx context.Context, r ExportRequest) (ExportResponse, error)
 	Import(ctx context.Context, r ImportRequest, userId string) error
@@ -250,10 +250,17 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
+
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
 		if err != nil || delCount == 0 {
 			return err
@@ -264,7 +271,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 
-		err = s.deleteTabs(ctx, id)
+		err = s.deleteTabs(ctx, id, userId)
 		if err != nil {
 			return err
 		}
@@ -843,6 +850,8 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 		setRole["permissions."+viewId] = securitymodel.PermissionBitmaskRead |
 			securitymodel.PermissionBitmaskUpdate |
 			securitymodel.PermissionBitmaskDelete
+		setRole["author"] = userID
+		setRole["updated"] = datetime.NewCpsTime()
 	}
 	_, err := s.permissionCollection.InsertMany(ctx, newPermissions)
 	if err != nil {
@@ -1015,7 +1024,7 @@ func (s *store) writePositions(
 	return nil
 }
 
-func (s *store) deleteTabs(ctx context.Context, id string) error {
+func (s *store) deleteTabs(ctx context.Context, id, userId string) error {
 	tabCursor, err := s.tabCollection.Find(ctx, bson.M{"view": id})
 	if err != nil {
 		return err
@@ -1029,6 +1038,12 @@ func (s *store) deleteTabs(ctx context.Context, id string) error {
 	tabIds := make([]string, len(tabs))
 	for i, tab := range tabs {
 		tabIds[i] = tab.ID
+	}
+
+	// required to get the author in action log listener.
+	_, err = s.tabCollection.UpdateMany(ctx, bson.M{"view": id}, bson.M{"$set": bson.M{"author": userId}})
+	if err != nil {
+		return err
 	}
 
 	_, err = s.tabCollection.DeleteMany(ctx, bson.M{"view": id})
@@ -1049,6 +1064,12 @@ func (s *store) deleteTabs(ctx context.Context, id string) error {
 	widgetIds := make([]string, len(widgets))
 	for i, w := range widgets {
 		widgetIds[i] = w.ID
+	}
+
+	// required to get the author in action log listener.
+	_, err = s.widgetCollection.UpdateMany(ctx, bson.M{"tab": bson.M{"$in": tabIds}}, bson.M{"$set": bson.M{"author": userId}})
+	if err != nil {
+		return err
 	}
 
 	_, err = s.widgetCollection.DeleteMany(ctx, bson.M{"tab": bson.M{"$in": tabIds}})

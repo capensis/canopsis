@@ -24,6 +24,10 @@ definitions:
         type: integer
       authkey:
         type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
       defaultview:
         $ref: '#/definitions/user.View'
       display_name:
@@ -55,11 +59,13 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        $ref: '#/definitions/colortheme.Theme'
+        $ref: '#/definitions/colortheme.Response'
       ui_tours:
         additionalProperties:
           type: boolean
         type: object
+      updated:
+        type: integer
     type: object
   action.Parameters:
     properties:
@@ -928,7 +934,7 @@ definitions:
       check_count_request_timeout:
         type: integer
       default_color_theme:
-        $ref: '#/definitions/colortheme.Theme'
+        $ref: '#/definitions/colortheme.Response'
       edition:
         type: string
       events_count_trigger_default_threshold:
@@ -1093,23 +1099,17 @@ definitions:
       name:
         type: string
     type: object
-  broadcastmessage.BroadcastMessage:
+  broadcastmessage.CreateRequest:
     properties:
       _id:
         type: string
       color:
         type: string
-      created:
-        type: integer
       end:
         type: integer
-      maintenance:
-        type: boolean
       message:
         type: string
       start:
-        type: integer
-      updated:
         type: integer
     required:
     - color
@@ -1117,8 +1117,12 @@ definitions:
     - message
     - start
     type: object
-  broadcastmessage.Payload:
+  broadcastmessage.Response:
     properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
       color:
         type: string
       created:
@@ -1132,6 +1136,17 @@ definitions:
       start:
         type: integer
       updated:
+        type: integer
+    type: object
+  broadcastmessage.UpdateRequest:
+    properties:
+      color:
+        type: string
+      end:
+        type: integer
+      message:
+        type: string
+      start:
         type: integer
     required:
     - color
@@ -1226,12 +1241,16 @@ definitions:
     - font_size
     - name
     type: object
-  colortheme.Theme:
+  colortheme.Response:
     properties:
       _id:
         type: string
+      author:
+        $ref: '#/definitions/author.Author'
       colors:
         $ref: '#/definitions/colortheme.Colors'
+      created:
+        type: integer
       deletable:
         type: boolean
       font_size:
@@ -2177,6 +2196,8 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       alarm_last_update_date:
         type: integer
+      author:
+        $ref: '#/definitions/author.Author'
       category:
         $ref: '#/definitions/entity.Category'
       component:
@@ -2908,6 +2929,8 @@ definitions:
   icon.Response:
     properties:
       _id:
+        type: string
+      author:
         type: string
       content:
         type: string
@@ -3857,6 +3880,8 @@ definitions:
     properties:
       _id:
         type: string
+      author:
+        type: string
       created:
         type: integer
       description:
@@ -3866,6 +3891,8 @@ definitions:
         type: boolean
       name:
         type: string
+      updated:
+        type: integer
     required:
     - description
     - name
@@ -3902,7 +3929,7 @@ definitions:
         type: array
       exceptions:
         items:
-          $ref: '#/definitions/pbehaviorexception.Exception'
+          $ref: '#/definitions/pbehaviorexception.Response'
         type: array
       exdates:
         items:
@@ -3919,7 +3946,7 @@ definitions:
       origin:
         type: string
       reason:
-        $ref: '#/definitions/pbehaviorreason.Reason'
+        $ref: '#/definitions/pbehaviorreason.Response'
       rrule:
         type: string
       rrule_end:
@@ -4014,22 +4041,24 @@ definitions:
       ts:
         type: integer
     type: object
-  pbehaviorexception.Exception:
+  pbehaviorexception.CreateRequest:
     properties:
       _id:
         type: string
-      created:
-        type: integer
-      deletable:
-        type: boolean
       description:
+        maxLength: 255
         type: string
       exdates:
         items:
-          $ref: '#/definitions/pbehaviorexception.Exdate'
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
       name:
+        maxLength: 255
         type: string
+    required:
+    - description
+    - exdates
+    - name
     type: object
   pbehaviorexception.Exdate:
     properties:
@@ -4053,7 +4082,28 @@ definitions:
     - end
     - type
     type: object
-  pbehaviorexception.Request:
+  pbehaviorexception.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      deletable:
+        type: boolean
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exdate'
+        type: array
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
+  pbehaviorexception.UpdateRequest:
     properties:
       description:
         maxLength: 255
@@ -4070,10 +4120,31 @@ definitions:
     - exdates
     - name
     type: object
-  pbehaviorreason.Reason:
+  pbehaviorreason.CreateRequest:
     properties:
       _id:
         type: string
+      description:
+        maxLength: 255
+        type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  pbehaviorreason.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
       deletable:
         type: boolean
       description:
@@ -4082,8 +4153,10 @@ definitions:
         type: boolean
       name:
         type: string
+      updated:
+        type: integer
     type: object
-  pbehaviorreason.Request:
+  pbehaviorreason.UpdateRequest:
     properties:
       description:
         maxLength: 255
@@ -4179,8 +4252,12 @@ definitions:
     properties:
       _id:
         type: string
+      author:
+        type: string
       color:
         type: string
+      created:
+        type: integer
       default:
         type: boolean
       deletable:
@@ -4198,6 +4275,8 @@ definitions:
         type: integer
       type:
         type: string
+      updated:
+        type: integer
     type: object
   pbehaviortype.UpdateRequest:
     properties:
@@ -4550,6 +4629,10 @@ definitions:
         type: string
       auth_config:
         $ref: '#/definitions/security.AuthMethodConf'
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
       defaultview:
         $ref: '#/definitions/role.View'
       deletable:
@@ -4564,6 +4647,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      updated:
+        type: integer
     type: object
   role.Template:
     properties:
@@ -5258,6 +5343,10 @@ definitions:
     properties:
       _id:
         type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
       deletable:
         type: boolean
       editable:
@@ -5300,6 +5389,8 @@ definitions:
         - component
         - service
         type: string
+      updated:
+        type: integer
     required:
     - method
     type: object
@@ -5603,6 +5694,10 @@ definitions:
         type: integer
       authkey:
         type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
       defaultview:
         $ref: '#/definitions/user.View'
       display_name:
@@ -5630,7 +5725,9 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        $ref: '#/definitions/colortheme.Theme'
+        $ref: '#/definitions/colortheme.Response'
+      updated:
+        type: integer
     type: object
   user.View:
     properties:

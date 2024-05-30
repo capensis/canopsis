@@ -28,6 +28,7 @@ type Info struct {
 type Entity struct {
 	ID             string             `bson:"_id" json:"_id"`
 	Name           string             `bson:"name" json:"name"`
+	Author         string             `bson:"author,omitempty" json:"author,omitempty"`
 	Description    string             `bson:"description" json:"description"`
 	EnableHistory  []datetime.CpsTime `bson:"enable_history" json:"enable_history"`
 	Measurements   interface{}        `bson:"measurements" json:"measurements"` // unused collection ids
@@ -38,6 +39,7 @@ type Entity struct {
 	Category       string             `bson:"category" json:"category"`
 	ImpactLevel    int64              `bson:"impact_level" json:"impact_level"`
 	Created        datetime.CpsTime   `bson:"created" json:"created"`
+	Updated        *datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitempty"`
 	LastEventDate  *datetime.CpsTime  `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`

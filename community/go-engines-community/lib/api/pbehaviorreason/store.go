@@ -1,9 +1,11 @@
 package pbehaviorreason
 
 import (
+	"cmp"
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -17,17 +19,19 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, model *Reason) error
+	Insert(ctx context.Context, model CreateRequest) (*Response, error)
 	Find(ctx context.Context, query ListRequest) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, filter bson.M) (*Reason, error)
-	Update(ctx context.Context, model *Reason) (bool, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	GetById(ctx context.Context, id string) (*Response, error)
+	Update(ctx context.Context, model UpdateRequest) (*Response, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 	IsLinkedToPbehavior(ctx context.Context, id string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
+		dbCollection:          dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "created",
 	}
@@ -35,6 +39,8 @@ func NewStore(dbClient mongo.DbClient) Store {
 
 type store struct {
 	dbClient              mongo.DbClient
+	dbCollection          mongo.DbCollection
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -55,23 +61,19 @@ func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := query.SortBy
-	if sortBy == "" {
-		sortBy = s.defaultSortBy
-	}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	var project []bson.M
 	if query.WithFlags {
 		project = getDeletablePipeline()
 	}
 
-	collection := s.dbClient.Collection(pbehavior.ReasonCollectionName)
-	cursor, err := collection.Aggregate(
+	cursor, err := s.dbCollection.Aggregate(
 		ctx,
 		pagination.CreateAggregationPipeline(
 			query.Query,
 			pipeline,
-			common.GetSortQuery(sortBy, query.Sort),
+			common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
 			project,
 		),
 		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}),
@@ -93,58 +95,83 @@ func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult
 	return &result, nil
 }
 
-func (s *store) Insert(ctx context.Context, model *Reason) error {
-	doc := transformModelToDoc(model)
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
+	doc := transformModelToDoc(r.EditRequest)
 
-	if model.ID == "" {
-		model.ID = utils.NewID()
-	}
-
-	doc.ID = model.ID
+	doc.ID = cmp.Or(r.ID, utils.NewID())
 	doc.Created = datetime.NewCpsTime()
+	doc.Updated = datetime.NewCpsTime()
 
-	_, err := s.dbClient.Collection(pbehavior.ReasonCollectionName).InsertOne(ctx, doc)
+	var res *Response
 
-	if err != nil {
-		return err
-	}
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
 
-	return nil
-}
-
-func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Reason, error) {
-	var reason Reason
-
-	err := s.dbClient.Collection(pbehavior.ReasonCollectionName).FindOne(ctx, filter).Decode(&reason)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
+		_, err := s.dbCollection.InsertOne(ctx, doc)
+		if err != nil {
+			return err
 		}
 
+		res, err = s.GetById(ctx, doc.ID)
+		return err
+	})
+	if err != nil {
 		return nil, err
 	}
 
-	return &reason, nil
+	return res, nil
 }
 
-func (s *store) Update(ctx context.Context, model *Reason) (bool, error) {
-	doc := transformModelToDoc(model)
-	result, err := s.dbClient.Collection(pbehavior.ReasonCollectionName).UpdateOne(
-		ctx,
-		bson.M{"_id": model.ID},
-		bson.M{
-			"$set": doc,
-		},
-	)
+func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	return result.MatchedCount > 0, nil
+	if cursor.Next(ctx) {
+		var res Response
+
+		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+
+		return &res, nil
+	}
+
+	return nil, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
+	doc := transformModelToDoc(r.EditRequest)
+
+	doc.ID = r.ID
+	doc.Updated = datetime.NewCpsTime()
+
+	var res *Response
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
+
+		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
+		res, err = s.GetById(ctx, doc.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	isLinkedToPbehavior, err := s.IsLinkedToPbehavior(ctx, id)
 	if err != nil {
 		return false, err
@@ -163,12 +190,22 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrLinkedReasonToAction
 	}
 
-	deleted, err := s.dbClient.Collection(pbehavior.ReasonCollectionName).DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	var deleted int64
 
-	return deleted > 0, nil
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 // IsLinkedToPbehavior checks if there is pbehavior with linked reason.
@@ -208,11 +245,12 @@ func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func transformModelToDoc(reason *Reason) *pbehavior.Reason {
+func transformModelToDoc(r EditRequest) *pbehavior.Reason {
 	return &pbehavior.Reason{
-		Name:        reason.Name,
-		Description: reason.Description,
-		Hidden:      reason.Hidden,
+		Name:        r.Name,
+		Description: r.Description,
+		Hidden:      r.Hidden,
+		Author:      r.Author,
 	}
 }
 

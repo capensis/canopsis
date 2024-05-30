@@ -23,7 +23,9 @@ color_theme:
         row_color: '#fff'
         hover_row_color: '#eee'
     font_size: 2
-    updated: <NowUnix()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
     deletable: false
   canopsis_dark:
     _id: "canopsis_dark"
@@ -49,7 +51,9 @@ color_theme:
         row_color: '#424242'
         hover_row_color: '#616161'
     font_size: 2
-    updated: <NowUnix()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
     deletable: false
   color_blind:
     _id: "color_blind"
@@ -75,7 +79,9 @@ color_theme:
         row_color: '#fff'
         hover_row_color: '#eee'
     font_size: 2
-    updated: <NowUnix()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
     deletable: false
   color_blind_dark:
     _id: "color_blind_dark"
@@ -101,5 +107,7 @@ color_theme:
         row_color: '#424242'
         hover_row_color: '#616161'
     font_size: 2
-    updated: <NowUnix()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
     deletable: false

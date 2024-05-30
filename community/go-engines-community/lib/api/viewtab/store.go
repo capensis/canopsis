@@ -24,7 +24,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 	Copy(ctx context.Context, tabID string, r CreateRequest) (*Response, error)
 	CopyForView(ctx context.Context, viewID, newViewID, author string, isPrivate bool) error
 	UpdatePositions(ctx context.Context, tabs []Response) (bool, error)
@@ -262,7 +262,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
@@ -274,12 +274,18 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return ValidationError{err: errors.New("view tab is linked to playlist")}
 		}
 
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
 		if err != nil || delCount == 0 {
 			return err
 		}
 
-		err = s.deleteWidgets(ctx, id)
+		err = s.deleteWidgets(ctx, id, userId)
 		if err != nil {
 			return err
 		}
@@ -435,7 +441,7 @@ func (s *store) isLinked(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) deleteWidgets(ctx context.Context, id string) error {
+func (s *store) deleteWidgets(ctx context.Context, id, userId string) error {
 	widgetCursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": id})
 	if err != nil {
 		return err
@@ -451,12 +457,24 @@ func (s *store) deleteWidgets(ctx context.Context, id string) error {
 		widgetIds[i] = w.ID
 	}
 
+	// required to get the author in action log listener.
+	_, err = s.widgetCollection.UpdateMany(ctx, bson.M{"tab": id}, bson.M{"$set": bson.M{"author": userId}})
+	if err != nil {
+		return err
+	}
+
 	_, err = s.widgetCollection.DeleteMany(ctx, bson.M{"tab": id})
 	if err != nil {
 		return err
 	}
 
 	_, err = s.userPrefCollection.DeleteMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}})
+	if err != nil {
+		return err
+	}
+
+	// required to get the author in action log listener.
+	_, err = s.filterCollection.UpdateMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}}, bson.M{"$set": bson.M{"author": userId}})
 	if err != nil {
 		return err
 	}

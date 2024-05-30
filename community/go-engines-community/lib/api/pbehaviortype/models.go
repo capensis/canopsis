@@ -1,7 +1,9 @@
 package pbehaviortype
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type ListRequest struct {
@@ -18,6 +20,7 @@ type EditRequest struct {
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
 	Priority    int64  `json:"priority" binding:"required,min=1"`
 	Color       string `json:"color" binding:"required,iscolor"`
+	Author      string `json:"author" swaggerignore:"true"`
 
 	Hidden *bool `json:"hidden,omitempty"`
 }
@@ -47,11 +50,20 @@ type Type struct {
 
 	// Hidden is used in API to hide documents from the list response
 	Hidden *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
+
+	Author  string            `bson:"author" json:"author"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+}
+
+type Response struct {
+	Type   `bson:",inline"`
+	Author *author.Author `bson:"author" json:"author"`
 }
 
 type AggregationResult struct {
-	Data       []Type `bson:"data" json:"data"`
-	TotalCount int64  `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r AggregationResult) GetTotal() int64 {

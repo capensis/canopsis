@@ -1,12 +1,10 @@
 package account
 
 import (
-	"context"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,16 +13,14 @@ type API interface {
 	Update(c *gin.Context)
 }
 
-func NewApi(store Store, actionLogger logger.ActionLogger) API {
+func NewApi(store Store) API {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store: store,
 	}
 }
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store Store
 }
 
 // Me
@@ -52,6 +48,8 @@ func (a *api) Update(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
 		ID: userID,
+		// author is needed for action logs, in that case the user modifies himself, so he's the author.
+		Author: userID,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -67,15 +65,6 @@ func (a *api) Update(c *gin.Context) {
 	if user == nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeUser,
-		ValueID:   userID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusOK, user)

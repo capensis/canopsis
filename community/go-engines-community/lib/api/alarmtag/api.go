@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -20,23 +19,20 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	transformer  common.PatternFieldsTransformer
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	transformer common.PatternFieldsTransformer
+	logger      zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	transformer common.PatternFieldsTransformer,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:        store,
-		transformer:  transformer,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		transformer: transformer,
+		logger:      logger,
 	}
 }
 
@@ -68,7 +64,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	response, err := a.store.GetByID(c, c.Param("id"))
+	response, err := a.store.GetById(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -112,15 +108,6 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeAlarmTag,
-		ValueID:   response.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, response)
 }
 
@@ -162,22 +149,13 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeAlarmTag,
-		ValueID:   response.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, response)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	tag, err := a.store.GetByID(c, id)
+	tag, err := a.store.GetById(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -187,7 +165,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -195,15 +173,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeAlarmTag,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusNoContent, nil)
@@ -215,18 +184,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID, userId)
 		if err != nil || !ok {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypeAlarmTag,
-			ValueID:   request.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		return request.ID, nil

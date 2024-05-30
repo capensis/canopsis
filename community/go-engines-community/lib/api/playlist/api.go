@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
@@ -16,23 +15,20 @@ import (
 )
 
 type api struct {
-	store        Store
-	tabStore     viewtab.Store
-	enforcer     security.Enforcer
-	actionLogger logger.ActionLogger
+	store    Store
+	tabStore viewtab.Store
+	enforcer security.Enforcer
 }
 
 func NewApi(
 	store Store,
 	tabStore viewtab.Store,
 	enforcer security.Enforcer,
-	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
-		store:        store,
-		tabStore:     tabStore,
-		enforcer:     enforcer,
-		actionLogger: actionLogger,
+		store:    store,
+		tabStore: tabStore,
+		enforcer: enforcer,
 	}
 }
 
@@ -93,8 +89,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	ok, err := a.checkAccess(c, request.TabsList, userId)
+	ok, err := a.checkAccess(c, request.TabsList, request.Author)
 	if err != nil {
 		panic(err)
 	}
@@ -103,18 +98,9 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	playlist, err := a.store.Insert(c, userId, request)
+	playlist, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypePlayList,
-		ValueID:   playlist.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, playlist)
@@ -153,21 +139,12 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePlayList,
-		ValueID:   playlist.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, playlist)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -175,15 +152,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePlayList,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.Status(http.StatusNoContent)

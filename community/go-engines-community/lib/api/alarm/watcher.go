@@ -109,7 +109,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 
 			connIdsByUserId := w.getConnIds(roomId, k)
 			for userId, connIds := range connIdsByUserId {
-				res, err := w.store.GetByID(streamCtx, changeEvent.DocumentKey.ID, userId, true)
+				res, err := w.store.GetById(streamCtx, changeEvent.DocumentKey.ID, userId, true)
 				if err != nil {
 					w.logger.Err(err).Msgf("cannot get alarm")
 					continue

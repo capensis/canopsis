@@ -1,13 +1,11 @@
 package pbehaviorexception
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
@@ -20,31 +18,25 @@ type API interface {
 }
 
 func NewApi(
-	transformer ModelTransformer,
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		transformer:  transformer,
-		store:        store,
-		computeChan:  computeChan,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		computeChan: computeChan,
+		logger:      logger,
 	}
 }
 
 type api struct {
-	transformer  ModelTransformer
-	store        Store
-	computeChan  chan<- rpc.PbehaviorRecomputeEvent
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	computeChan chan<- rpc.PbehaviorRecomputeEvent
+	logger      zerolog.Logger
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Exception}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -69,45 +61,36 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Create
-// @Param body body Request true "body"
-// @Success 201 {object} Exception
+// @Param body body CreateRequest true "body"
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	exception, err := a.transformer.TransformCreateRequestToModel(c, request)
+	res, err := a.store.Insert(c, request)
 	if err != nil {
 		if errors.Is(err, ErrTypeNotExists) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
+
 		panic(err)
 	}
 
-	err = a.store.Insert(c, exception)
-	if err != nil {
-		panic(err)
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypePbehaviorException,
-		ValueID:   exception.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
-	c.JSON(http.StatusCreated, exception)
+	c.JSON(http.StatusCreated, res)
 }
 
 // Update
-// @Param body body Request true "body"
-// @Success 200 {object} Exception
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -118,50 +101,37 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.transformer.TransformUpdateRequestToModel(c, request)
+	res, err := a.store.Update(c, request)
 	if err != nil {
 		if errors.Is(err, ErrTypeNotExists) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
+
 		panic(err)
 	}
 
-	ok, err := a.store.Update(c, exception)
-	if err != nil {
-		panic(err)
-	}
-
-	if !ok {
+	if res == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	isLinked, err := a.store.IsLinked(c, exception.ID)
+	isLinked, err := a.store.IsLinked(c, res.ID)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePbehaviorException,
-		ValueID:   exception.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	if isLinked {
 		a.sendComputeTask()
 	}
 
-	c.JSON(http.StatusOK, exception)
+	c.JSON(http.StatusOK, res)
 }
 
 // Get
-// @Success 200 {object} Exception
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	exception, err := a.store.GetOneById(c, c.Param("id"))
+	exception, err := a.store.GetById(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -175,7 +145,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 
 	if err != nil {
 		if errors.Is(err, ErrLinkedException) {
@@ -191,20 +161,11 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePbehaviorException,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusNoContent, nil)
 }
 
 // Import
-// @Success 200 {object} Exception
+// @Success 200 {object} Response
 func (a *api) Import(c *gin.Context) {
 	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
@@ -234,7 +195,7 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.store.Import(c, name, pbhType, f, fh)
+	exception, err := a.store.Import(c, name, pbhType, c.MustGet(auth.UserKey).(string), f, fh)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {

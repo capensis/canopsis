@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sort"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -26,7 +27,7 @@ type Store interface {
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
 	RetrieveMaintenanceState(ctx context.Context) (bool, error)
-	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error)
+	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Response, error)
 }
 
 type store struct {
@@ -35,16 +36,19 @@ type store struct {
 	colorThemeCollection mongo.DbCollection
 	maintenanceAdapter   config.MaintenanceAdapter
 	securityConfig       security.Config
+	authorProvider       author.Provider
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, securityConfig security.Config) Store {
+func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter,
+	securityConfig security.Config, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:             db,
 		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
 		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
 		maintenanceAdapter:   maintenanceAdapter,
 		securityConfig:       securityConfig,
+		authorProvider:       authorProvider,
 	}
 }
 
@@ -209,8 +213,27 @@ func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
 	return err
 }
 
-func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error) {
-	var t colortheme.Theme
+func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": colortheme.Canopsis}}}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
-	return t, s.colorThemeCollection.FindOne(ctx, bson.M{"_id": colortheme.Canopsis}).Decode(&t)
+	response := colortheme.Response{}
+
+	cursor, err := s.colorThemeCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return response, err
+	}
+
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err := cursor.Decode(&response)
+		if err != nil {
+			return response, err
+		}
+
+		return response, nil
+	}
+
+	return response, errors.New("no default theme found")
 }

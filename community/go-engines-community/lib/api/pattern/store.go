@@ -30,7 +30,7 @@ type Store interface {
 	GetById(ctx context.Context, id, userId string) (*Response, error)
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, pattern Response) (bool, error)
+	Delete(ctx context.Context, pattern Response, userId string) (bool, error)
 	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
 	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
 }
@@ -229,7 +229,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		err = s.updateLinkedModels(ctx, *response)
+		err = s.updateLinkedModels(ctx, *response, request.Author)
 		if err != nil {
 			return err
 		}
@@ -266,28 +266,33 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, pattern Response) (bool, error) {
-	res := false
+func (s *store) Delete(ctx context.Context, pattern Response, userId string) (bool, error) {
+	var deleted int64
+
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		res = false
-		deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
+		deleted = 0
+
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": pattern.ID}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
 		if err != nil || deleted == 0 {
 			return err
 		}
 
-		err = s.cleanLinkedModels(ctx, pattern)
-		if err != nil {
-			return err
-		}
-
-		res = true
-		return nil
+		return s.cleanLinkedModels(ctx, pattern, userId)
 	})
+	if err != nil {
+		return false, err
+	}
 
-	return res, err
+	return deleted > 0, nil
 }
 
-func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error {
+func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string) error {
 	if !pattern.IsCorporate {
 		return nil
 	}
@@ -307,33 +312,29 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 	}
 
 	for _, collection := range s.linkedCollections {
-		var set bson.M
+		set := bson.M{
+			"updated": datetime.NewCpsTime(),
+			"author":  author,
+		}
+
 		switch pattern.Type {
 		case savedpattern.TypeAlarm:
-			set = bson.M{
-				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(collection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
-				),
-				"corporate_alarm_pattern_title": pattern.Title,
-			}
+			set["alarm_pattern"] = pattern.AlarmPattern.RemoveFields(
+				common.GetForbiddenFieldsInAlarmPattern(collection),
+				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+			)
+			set["corporate_alarm_pattern_title"] = pattern.Title
 		case savedpattern.TypeEntity:
-			set = bson.M{
-				"entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(collection),
-				),
-				"corporate_entity_pattern_title": pattern.Title,
-			}
+			set["entity_pattern"] = pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(collection),
+			)
+			set["corporate_entity_pattern_title"] = pattern.Title
 		case savedpattern.TypePbehavior:
-			set = bson.M{
-				"pbehavior_pattern":                 pattern.PbehaviorPattern,
-				"corporate_pbehavior_pattern_title": pattern.Title,
-			}
+			set["pbehavior_pattern"] = pattern.PbehaviorPattern
+			set["corporate_pbehavior_pattern_title"] = pattern.Title
 		case savedpattern.TypeWeatherService:
-			set = bson.M{
-				"weather_service_pattern":                 pattern.WeatherServicePattern,
-				"corporate_weather_service_pattern_title": pattern.Title,
-			}
+			set["weather_service_pattern"] = pattern.WeatherServicePattern
+			set["corporate_weather_service_pattern_title"] = pattern.Title
 		default:
 			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 		}
@@ -355,6 +356,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 					common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
 				),
 				"corporate_total_entity_pattern_title": pattern.Title,
+				"updated":                              datetime.NewCpsTime(),
+				"author":                               author,
 			},
 		})
 		if err != nil {
@@ -369,6 +372,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 					common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
 				),
 				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
+				"updated": datetime.NewCpsTime(),
+				"author":  author,
 			}},
 			options.Update().SetArrayFilters(options.ArrayFilters{
 				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
@@ -387,6 +392,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(scenarioCollection),
 				),
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
+				"updated": datetime.NewCpsTime(),
+				"author":  author,
 			}},
 			options.Update().SetArrayFilters(options.ArrayFilters{
 				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
@@ -400,7 +407,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 	return nil
 }
 
-func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
+func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author string) error {
 	if !pattern.IsCorporate {
 		return nil
 	}
@@ -421,6 +428,10 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 
 	for _, collection := range s.linkedCollections {
 		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{f: pattern.ID}, bson.M{
+			"$set": bson.M{
+				"updated": datetime.NewCpsTime(),
+				"author":  author,
+			},
 			"$unset": bson.M{
 				f:            "",
 				f + "_title": "",
@@ -434,6 +445,10 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 	switch pattern.Type {
 	case savedpattern.TypeEntity:
 		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$set": bson.M{
+				"updated": datetime.NewCpsTime(),
+				"author":  author,
+			},
 			"$unset": bson.M{
 				"corporate_total_entity_pattern":       "",
 				"corporate_total_entity_pattern_title": "",
@@ -445,10 +460,16 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 
 		_, err = s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_entity_pattern": pattern.ID},
-			bson.M{"$unset": bson.M{
-				"actions.$[action].corporate_entity_pattern":       "",
-				"actions.$[action].corporate_entity_pattern_title": "",
-			}},
+			bson.M{
+				"$set": bson.M{
+					"updated": datetime.NewCpsTime(),
+					"author":  author,
+				},
+				"$unset": bson.M{
+					"actions.$[action].corporate_entity_pattern":       "",
+					"actions.$[action].corporate_entity_pattern_title": "",
+				},
+			},
 			options.Update().SetArrayFilters(options.ArrayFilters{
 				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
 			}),
@@ -459,10 +480,16 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 	case savedpattern.TypeAlarm:
 		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
-			bson.M{"$unset": bson.M{
-				"actions.$[action].corporate_alarm_pattern":       "",
-				"actions.$[action].corporate_alarm_pattern_title": "",
-			}},
+			bson.M{
+				"$set": bson.M{
+					"updated": datetime.NewCpsTime(),
+					"author":  author,
+				},
+				"$unset": bson.M{
+					"actions.$[action].corporate_alarm_pattern":       "",
+					"actions.$[action].corporate_alarm_pattern_title": "",
+				},
+			},
 			options.Update().SetArrayFilters(options.ArrayFilters{
 				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
 			}),

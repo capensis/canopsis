@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -30,10 +29,9 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	computeChan  chan<- rpc.PbehaviorRecomputeEvent
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	computeChan chan<- rpc.PbehaviorRecomputeEvent
+	logger      zerolog.Logger
 
 	transformer common.PatternFieldsTransformer
 }
@@ -42,15 +40,13 @@ func NewApi(
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	transformer common.PatternFieldsTransformer,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:        store,
-		computeChan:  computeChan,
-		transformer:  transformer,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		computeChan: computeChan,
+		transformer: transformer,
+		logger:      logger,
 	}
 }
 
@@ -66,7 +62,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), r)
+	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -90,7 +86,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.FindEntity(c.Request.Context(), r.ID)
+	entity, err := a.store.FindEntity(c, r.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -99,7 +95,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.FindByEntityID(c.Request.Context(), *entity, r)
+	res, err := a.store.FindByEntityID(c, *entity, r)
 	if err != nil {
 		panic(err)
 	}
@@ -117,7 +113,7 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.FindEntity(c.Request.Context(), r.ID)
+	entity, err := a.store.FindEntity(c, r.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -126,7 +122,7 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.CalendarByEntityID(c.Request.Context(), *entity, r)
+	res, err := a.store.CalendarByEntityID(c, *entity, r)
 	if err != nil {
 		panic(err)
 	}
@@ -137,7 +133,7 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pbh, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	pbh, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -162,7 +158,7 @@ func (a *api) ListEntities(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.FindEntities(c.Request.Context(), c.Param("id"), r)
+	aggregationResult, err := a.store.FindEntities(c, c.Param("id"), r)
 	if err != nil {
 		panic(err)
 	}
@@ -193,7 +189,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -203,7 +199,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	pbh, err := a.store.Insert(c.Request.Context(), request)
+	pbh, err := a.store.Insert(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
 		if errors.As(err, &validationErr) {
@@ -211,15 +207,6 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypePbehavior,
-		ValueID:   pbh.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
@@ -241,7 +228,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -251,7 +238,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	pbh, err := a.store.Update(c.Request.Context(), request)
+	pbh, err := a.store.Update(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
 		if errors.As(err, &validationErr) {
@@ -264,15 +251,6 @@ func (a *api) Update(c *gin.Context) {
 	if pbh == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePbehavior,
-		ValueID:   pbh.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
@@ -293,7 +271,7 @@ func (a *api) Patch(c *gin.Context) {
 	}
 
 	if request.CorporateEntityPattern != nil {
-		r, err := a.transformer.TransformEntityPatternFieldsRequest(c.Request.Context(), common.EntityPatternFieldsRequest{
+		r, err := a.transformer.TransformEntityPatternFieldsRequest(c, common.EntityPatternFieldsRequest{
 			CorporateEntityPattern: *request.CorporateEntityPattern,
 		})
 		if err != nil {
@@ -309,7 +287,7 @@ func (a *api) Patch(c *gin.Context) {
 		}
 	}
 
-	pbh, err := a.store.UpdateByPatch(c.Request.Context(), request)
+	pbh, err := a.store.UpdateByPatch(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -323,15 +301,6 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePbehavior,
-		ValueID:   pbh.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
 
 	c.JSON(http.StatusOK, pbh)
@@ -339,7 +308,7 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -347,15 +316,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePbehavior,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}})
@@ -371,7 +331,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		return
 	}
 
-	id, err := a.store.DeleteByName(c.Request.Context(), request.Name)
+	id, err := a.store.DeleteByName(c, request.Name, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -381,15 +341,6 @@ func (a *api) DeleteByName(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePbehavior,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}})
 	c.JSON(http.StatusNoContent, nil)
 }
@@ -397,7 +348,6 @@ func (a *api) DeleteByName(c *gin.Context) {
 // BulkCreate
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		err := a.transformEditRequest(c, &request.EditRequest)
@@ -408,15 +358,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 		pbh, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionCreate,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   pbh.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		ids = append(ids, pbh.ID)
@@ -432,7 +373,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	ids := make([]string, 0)
 	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
@@ -444,15 +384,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		pbh, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || pbh == nil {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionUpdate,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   pbh.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		if _, ok := exists[pbh.ID]; !ok {
@@ -472,20 +403,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
+
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID, userId)
 		if err != nil || !ok {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   request.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		ids = append(ids, request.ID)
@@ -508,15 +431,6 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 		pbh, err := a.store.EntityInsert(c, request)
 		if err != nil || pbh == nil {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionCreate,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   pbh.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		ids = append(ids, pbh.ID)
@@ -546,15 +460,6 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 			return "", err
 		}
 
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   id,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
-
 		ids = append(ids, id)
 
 		return id, nil
@@ -573,22 +478,12 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 // BulkConnectorCreate
 // @Param body body []BulkConnectorCreateRequestItem true "body"
 func (a *api) BulkConnectorCreate(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkConnectorCreateRequestItem) (string, error) {
 		pbh, err := a.store.ConnectorCreate(c, request)
 		if err != nil || pbh == nil {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionCreate,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   pbh.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		if _, ok := exists[pbh.ID]; !ok {
@@ -611,22 +506,12 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 // BulkConnectorDelete
 // @Param body body []BulkConnectorDeleteRequestItem true "body"
 func (a *api) BulkConnectorDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkConnectorDeleteRequestItem) (string, error) {
 		id, err := a.store.ConnectorDelete(c, request)
 		if err != nil || id == "" {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   id,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		if _, ok := exists[id]; !ok {

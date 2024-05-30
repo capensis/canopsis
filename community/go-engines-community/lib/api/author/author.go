@@ -28,15 +28,13 @@ type Provider interface {
 	GetDisplayNameQuery(field string) bson.M
 }
 
-func NewProvider(client mongo.DbClient, configProvider config.ApiConfigProvider) Provider {
+func NewProvider(configProvider config.ApiConfigProvider) Provider {
 	return &provider{
-		collection:     client.Collection(mongo.UserCollection),
 		configProvider: configProvider,
 	}
 }
 
 type provider struct {
-	collection     mongo.DbCollection
 	configProvider config.ApiConfigProvider
 }
 

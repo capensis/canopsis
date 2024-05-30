@@ -27,7 +27,7 @@ import (
 
 type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
-	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
+	Toggle(ctx context.Context, id, userId string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error)
@@ -38,7 +38,6 @@ type store struct {
 	db                      mongo.DbClient
 	dbExport                mongo.DbClient
 	mainCollection          mongo.DbCollection
-	archivedCollection      mongo.DbCollection
 	stateSettingsCollection mongo.DbCollection
 	timezoneConfigProvider  config.TimezoneConfigProvider
 	authorProvider          author.Provider
@@ -55,7 +54,6 @@ func NewStore(
 		db:                      db,
 		dbExport:                dbExport,
 		mainCollection:          db.Collection(mongo.EntityMongoCollection),
-		archivedCollection:      db.Collection(mongo.ArchivedEntitiesMongoCollection),
 		stateSettingsCollection: db.Collection(mongo.StateSettingsMongoCollection),
 		timezoneConfigProvider:  timezoneConfigProvider,
 		authorProvider:          authorProvider,
@@ -94,9 +92,11 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	return &res, nil
 }
 
-func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error) {
+func (s *store) Toggle(ctx context.Context, id, userId string, enabled bool) (bool, SimplifiedEntity, error) {
 	var isToggled bool
 	var oldSimplifiedEntity SimplifiedEntity
+
+	now := datetime.NewCpsTime()
 
 	err := s.db.WithTransaction(ctx, func(ctx context.Context) error {
 		isToggled = false
@@ -134,7 +134,13 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 			return nil
 		}
 
-		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"enabled": enabled}})
+		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
+			"$set": bson.M{
+				"enabled": enabled,
+				"author":  userId,
+				"updated": now,
+			},
+		})
 		if err != nil {
 			return err
 		}
@@ -155,7 +161,11 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:to]}},
-				bson.M{"$set": bson.M{"enabled": enabled}},
+				bson.M{"$set": bson.M{
+					"enabled": enabled,
+					"author":  userId,
+					"updated": now,
+				}},
 			)
 			if err != nil {
 				return isToggled, oldSimplifiedEntity, err
@@ -168,7 +178,11 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:depLen]}},
-				bson.M{"$set": bson.M{"enabled": enabled}},
+				bson.M{"$set": bson.M{
+					"enabled": enabled,
+					"author":  userId,
+					"updated": now,
+				}},
 			)
 			if err != nil {
 				return isToggled, oldSimplifiedEntity, err
