@@ -164,7 +164,7 @@ func (p *modelProvider) GetExceptions(ctx context.Context) (map[string]Exception
 }
 
 func (p *modelProvider) GetReasons(ctx context.Context) (map[string]Reason, error) {
-	cursor, err := p.dbClient.Collection(ReasonCollectionName).Find(ctx, bson.M{})
+	cursor, err := p.dbClient.Collection(mongo.PbehaviorReasonMongoCollection).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}

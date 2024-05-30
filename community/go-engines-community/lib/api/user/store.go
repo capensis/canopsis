@@ -1,6 +1,7 @@
 package user
 
 import (
+	"cmp"
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -18,7 +19,7 @@ type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*User, error)
 	Update(ctx context.Context, r UpdateRequest) (*User, error)
 	Patch(ctx context.Context, r PatchRequest) (*User, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 func NewStore(
@@ -78,6 +79,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 			"display_name": s.authorProvider.GetDisplayNameQuery(""),
 		}},
 	}
+	project = append(project, s.authorProvider.Pipeline()...)
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 || r.Permission != "" {
@@ -95,17 +97,12 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	project = append(project, getViewPipeline()...)
-	project = append(project, getUiThemePipeline()...)
-
-	sortBy := s.defaultSortBy
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
+	project = append(project, getUiThemePipeline(s.authorProvider)...)
 
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 		project,
 	))
 
@@ -247,14 +244,24 @@ func (s *store) Patch(ctx context.Context, r PatchRequest) (*User, error) {
 	return user, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
 
-	if delCount == 0 {
-		return false, nil
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	if err != nil || deleted == 0 {
+		return false, err
 	}
 
 	err = s.deleteUserPreferences(ctx, id)
@@ -360,7 +367,8 @@ func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 	}
 	pipeline = append(pipeline, getRolePipeline()...)
 	pipeline = append(pipeline, getViewPipeline()...)
-	pipeline = append(pipeline, getUiThemePipeline()...)
+	pipeline = append(pipeline, getUiThemePipeline(authorProvider)...)
+	pipeline = append(pipeline, authorProvider.Pipeline()...)
 
 	return pipeline
 }
@@ -413,8 +421,8 @@ func getViewPipeline() []bson.M {
 	}
 }
 
-func getUiThemePipeline() []bson.M {
-	return []bson.M{
+func getUiThemePipeline(authorProvider author.Provider) []bson.M {
+	pipeline := []bson.M{
 		{
 			"$addFields": bson.M{
 				"ui_theme": bson.M{
@@ -443,4 +451,6 @@ func getUiThemePipeline() []bson.M {
 			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
 		},
 	}
+
+	return append(pipeline, authorProvider.PipelineForField("ui_theme.author")...)
 }

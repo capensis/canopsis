@@ -23,13 +23,14 @@ type Store interface {
 	Create(context.Context, EditRequest) (*Response, error)
 	Update(context.Context, EditRequest) (*Response, error)
 	Patch(context.Context, PatchRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 	List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error)
 	Get(ctx context.Context, id string) (*Response, error)
 	GetFilepath(model Response) string
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	storage               libfile.Storage
 	defaultSortBy         string
@@ -48,6 +49,7 @@ type readWorkerResult struct {
 
 func NewStore(dbClient mongo.DbClient, storage libfile.Storage) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.IconCollection),
 		storage:               storage,
 		defaultSortBy:         "title",
@@ -63,11 +65,14 @@ func (s *store) Create(ctx context.Context, r EditRequest) (*Response, error) {
 	}
 
 	now := datetime.NewCpsTime()
+
 	res.ID = id
 	res.Title = r.Title
 	res.MimeType = r.MimeType
+	res.Author = r.Author
 	res.Created = now
 	res.Updated = now
+
 	_, err = s.dbCollection.InsertOne(ctx, res)
 	if err != nil {
 		return nil, err
@@ -102,6 +107,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	res.ID = id
 	res.Title = r.Title
 	res.MimeType = r.MimeType
+	res.Author = r.Author
 	res.Created = old.Created
 	res.Updated = now
 	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": res})
@@ -151,6 +157,7 @@ func (s *store) Patch(ctx context.Context, r PatchRequest) (*Response, error) {
 
 	now := datetime.NewCpsTime()
 	res.ID = id
+	res.Author = r.Author
 	res.Created = old.Created
 	res.Updated = now
 	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": res})
@@ -166,13 +173,28 @@ func (s *store) Patch(ctx context.Context, r PatchRequest) (*Response, error) {
 	return res, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	f := Response{}
-	err := s.dbCollection.FindOneAndDelete(ctx, bson.M{"_id": id}).Decode(&f)
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		f = Response{}
+
+		// required to get the author in action log listener.
+		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": id},
+			bson.M{"$set": bson.M{"author": userId, "updated": datetime.NewCpsTime()}}).Decode(&f)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
 		}
+
 		return false, err
 	}
 

@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -21,23 +20,20 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	transformer  common.PatternFieldsTransformer
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	transformer common.PatternFieldsTransformer
+	logger      zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	transformer common.PatternFieldsTransformer,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:        store,
-		transformer:  transformer,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		transformer: transformer,
+		logger:      logger,
 	}
 }
 
@@ -45,7 +41,6 @@ func NewApi(
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -65,15 +60,6 @@ func (a *api) Create(c *gin.Context) {
 	rule, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeLinkRule,
-		ValueID:   rule.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, rule)
@@ -146,7 +132,6 @@ func (a *api) GetCategories(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
@@ -175,22 +160,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeLinkRule,
-		ValueID:   rule.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, rule)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -200,15 +174,6 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeLinkRule,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -216,19 +181,11 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
+
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID, userId)
 		if err != nil || !ok {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypeLinkRule,
-			ValueID:   request.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		return request.ID, nil

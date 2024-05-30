@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +33,8 @@ func (a *api) Maintenance(c *gin.Context) {
 		return
 	}
 
+	userId := c.MustGet(auth.UserKey).(string)
+
 	// can be sure that enabled is not nil after ShouldBindJSON, because of binding=required
 	if *r.Enabled {
 		if r.Message == "" {
@@ -39,9 +42,9 @@ func (a *api) Maintenance(c *gin.Context) {
 			return
 		}
 
-		err = a.store.Enable(c, r.Message, r.Color)
+		err = a.store.Enable(c, r.Message, r.Color, userId)
 	} else {
-		err = a.store.Disable(c)
+		err = a.store.Disable(c, userId)
 	}
 
 	if err != nil {

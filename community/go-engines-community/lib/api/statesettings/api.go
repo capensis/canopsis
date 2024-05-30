@@ -1,31 +1,26 @@
 package statesettings
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"github.com/gin-gonic/gin"
 )
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store Store
 }
 
 func NewApi(
 	store Store,
-	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store: store,
 	}
 }
 
@@ -92,15 +87,6 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeStateSetting,
-		ValueID:   stateSetting.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, stateSetting)
 }
 
@@ -138,20 +124,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeStateSetting,
-		ValueID:   stateSetting.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, stateSetting)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrDefaultRule) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -164,15 +141,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeStateSetting,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusNoContent, nil)

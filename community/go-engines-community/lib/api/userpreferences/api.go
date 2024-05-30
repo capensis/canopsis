@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -19,23 +18,20 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	widgetStore  widget.Store
-	enforcer     security.Enforcer
-	actionLogger logger.ActionLogger
+	store       Store
+	widgetStore widget.Store
+	enforcer    security.Enforcer
 }
 
 func NewApi(
 	store Store,
 	widgetStore widget.Store,
 	enforcer security.Enforcer,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		widgetStore:  widgetStore,
-		enforcer:     enforcer,
-		actionLogger: actionLogger,
+		store:       store,
+		widgetStore: widgetStore,
+		enforcer:    enforcer,
 	}
 }
 
@@ -45,7 +41,7 @@ func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	widgetId := c.Param("id")
 
-	ok, err := a.checkAccess(c.Request.Context(), widgetId, userId)
+	ok, err := a.checkAccess(c, widgetId, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +50,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	response, err := a.store.Find(c.Request.Context(), userId, widgetId)
+	response, err := a.store.Find(c, userId, widgetId)
 	if err != nil {
 		panic(err)
 	}
@@ -70,7 +66,7 @@ func (a *api) Get(c *gin.Context) {
 // Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-func (a api) Update(c *gin.Context) {
+func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -78,7 +74,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccess(c.Request.Context(), request.Widget, userId)
+	ok, err := a.checkAccess(c, request.Widget, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -87,7 +83,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	response, isNew, err := a.store.Update(c.Request.Context(), userId, request)
+	response, err := a.store.Update(c, userId, request)
 	if err != nil {
 		panic(err)
 	}
@@ -95,20 +91,6 @@ func (a api) Update(c *gin.Context) {
 	if response == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	action := logger.ActionUpdate
-	if isNew {
-		action = logger.ActionCreate
-	}
-
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    action,
-		ValueType: logger.ValueTypeUserPreferences,
-		ValueID:   response.Widget,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusOK, response)

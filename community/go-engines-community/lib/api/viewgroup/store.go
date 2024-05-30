@@ -20,7 +20,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
 	Insert(ctx context.Context, r EditRequest) (*ViewGroup, error)
 	Update(ctx context.Context, r EditRequest) (*ViewGroup, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userId string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -332,10 +332,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := false
+func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+	var deleted int64
+
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		res = false
 		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
 		if err != nil {
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -345,16 +345,17 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return ErrLinkedToView
 		}
 
-		delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-		if err != nil {
+		// required to get the author in action log listener.
+		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		if err != nil || result.MatchedCount == 0 {
 			return err
 		}
 
-		res = delCount > 0
-		return nil
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
 	})
 
-	return res, err
+	return deleted > 0, err
 }
 
 func (s *store) getNextPosition(ctx context.Context) (int64, error) {

@@ -1,7 +1,6 @@
 package icon
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"mime"
@@ -12,7 +11,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
@@ -32,14 +30,12 @@ type API interface {
 func NewApi(
 	store Store,
 	websocketHub websocket.Hub,
-	actionLogger logger.ActionLogger,
 	maxSize int64,
 	mimeTypes []string,
 ) API {
 	return &api{
 		store:        store,
 		websocketHub: websocketHub,
-		actionLogger: actionLogger,
 		maxSize:      maxSize,
 		mimeTypes:    mimeTypes,
 	}
@@ -48,7 +44,6 @@ func NewApi(
 type api struct {
 	store        Store
 	websocketHub websocket.Hub
-	actionLogger logger.ActionLogger
 	maxSize      int64
 	mimeTypes    []string
 }
@@ -61,7 +56,10 @@ type websocketMsg struct {
 // Create
 // @Success 200 {array} Response
 func (a *api) Create(c *gin.Context) {
-	request := EditRequest{}
+	userId := c.MustGet(auth.UserKey).(string)
+	request := EditRequest{
+		Author: userId,
+	}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -83,15 +81,6 @@ func (a *api) Create(c *gin.Context) {
 		}
 
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeIcon,
-		ValueID:   res.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
@@ -142,8 +131,10 @@ func (a *api) List(c *gin.Context) {
 // Update
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
-		ID: c.Param("id"),
+		ID:     c.Param("id"),
+		Author: userId,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -174,15 +165,6 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeIcon,
-		ValueID:   res.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeUpdate,
@@ -193,8 +175,10 @@ func (a *api) Update(c *gin.Context) {
 // Patch
 // @Success 200 {object} Response
 func (a *api) Patch(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
 	request := PatchRequest{
-		ID: c.Param("id"),
+		ID:     c.Param("id"),
+		Author: userId,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -228,15 +212,6 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeIcon,
-		ValueID:   res.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
 		ID:   res.ID,
 		Type: websocketMsgTypeUpdate,
@@ -246,7 +221,7 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -254,15 +229,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeIcon,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{

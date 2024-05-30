@@ -106,7 +106,7 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	alarm, err := a.store.GetByID(c, c.Param("id"), userId, false)
+	alarm, err := a.store.GetById(c, c.Param("id"), userId, false)
 	if err != nil {
 		panic(err)
 	}
