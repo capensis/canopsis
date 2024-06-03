@@ -1,38 +1,39 @@
 <template>
   <div class="position-relative">
-    <c-placeholder-loader v-if="!localReady" class="position-absolute" />
-    <div v-if="booted" v-show="localReady">
+    <c-placeholder-loader v-if="!allBooted" class="position-absolute" />
+    <div v-if="booted" v-show="allBooted">
       <slot />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, watch, nextTick } from 'vue';
+import { ref, inject, onBeforeUnmount } from 'vue';
 
 export default {
   props: {
-    booted: {
-      type: Boolean,
-      default: false,
-    },
-    ready: {
-      type: Boolean,
-      default: false,
+    asyncBootingProvider: {
+      type: String,
+      default: '$asyncBooting',
     },
   },
   setup(props) {
-    const localReady = ref();
+    const booted = ref(false);
+    const allBooted = ref(false);
+    const asyncBooting = inject(props.asyncBootingProvider);
+    const asyncBootingKey = Symbol('asyncBootingKey');
 
-    const unwatch = watch(() => props.ready, (ready) => {
-      if (ready) {
-        localReady.value = ready;
+    const setBooted = () => booted.value = true;
+    const setAllBooted = () => allBooted.value = true;
 
-        nextTick(() => unwatch());
-      }
-    }, { immediate: true });
+    asyncBooting.register(asyncBootingKey, setBooted, setAllBooted);
 
-    return { localReady };
+    onBeforeUnmount(() => asyncBooting.unregister(asyncBootingKey));
+
+    return {
+      booted,
+      allBooted,
+    };
   },
 };
 </script>

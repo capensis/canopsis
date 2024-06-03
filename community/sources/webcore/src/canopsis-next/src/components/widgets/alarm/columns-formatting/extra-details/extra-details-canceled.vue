@@ -3,7 +3,6 @@
     <c-simple-tooltip
       :content="tooltipContent"
       top
-      disable-resize
     >
       <template #activator="{ on }">
         <c-alarm-extra-details-chip :icon="icon" :color="color" v-on="on" />

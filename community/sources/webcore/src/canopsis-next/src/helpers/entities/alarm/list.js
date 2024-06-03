@@ -43,3 +43,15 @@ export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) => (
   + (ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1))
   + (ALARM_LINK_TD_PADDINGS[dense] * 2)}px`
 );
+
+export const getAlarmWidgetMoreInfoTemplateId = (widgetId = '') => (
+  `${widgetId}-moreInfoTemplate`
+);
+
+export const getAlarmWidgetColumnTemplateId = (widgetId = '', value = '') => (
+  `${widgetId}-widgetColumns-${value}-template`
+);
+
+export const getAlarmWidgetColumnPopupTemplateId = (widgetId = '', value = '') => (
+  `${widgetId}-widgetColumns-${value}-popupTemplate`
+);

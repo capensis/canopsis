@@ -18,7 +18,6 @@
       v-if="addable"
       :content="$t('remediation.instructionsFilter.button')"
       bottom
-      disable-resize
     >
       <template #activator="{ on }">
         <v-btn

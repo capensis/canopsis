@@ -2,7 +2,6 @@
   <v-list-group
     v-bind="$attrs"
     color=""
-    eager
   >
     <template #activator="">
       <v-list-item-content class="widget-settings-item-title">
