@@ -13,7 +13,7 @@ Canopsis est disponible dans deux éditions :
 
 ## Méthodes d'installation de Canopsis
 
-Canopsis peut être installé à l'aide de paquets sur RHEL 8, ou bien avec Docker Compose.
+Canopsis peut être installé à l'aide de paquets sur RHEL 8, Docker Compose, ou bien Helm
 
 *  [Installation de paquets RHEL 8](installation-paquets.md)
 *  [Installation avec Docker Compose](installation-conteneurs.md)

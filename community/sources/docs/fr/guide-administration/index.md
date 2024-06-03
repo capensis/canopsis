@@ -11,7 +11,7 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 ### Installation et mise à jour
 
-*  [Installation de Canopsis](installation/index.md) : installation par paquets RHEL 8 ou avec Docker Compose
+*  [Installation de Canopsis](installation/index.md) : installation par paquets RHEL 8, Docker Compose ou Helm
 *  [Mise à jour de Canopsis](mise-a-jour/index.md)
 *  [Exemples d'interconnexions à Canopsis](exemples-interconnexions/index.md)
 
