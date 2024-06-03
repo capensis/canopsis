@@ -10,7 +10,6 @@
     v-else
     :content="$t(`common.statusTypes.${statusValue}`)"
     top
-    disable-resize
   >
     <template #activator="{ on }">
       <v-icon

@@ -12,20 +12,21 @@ export const recursiveRaf = (callback = noop, depth = 0) => {
     return;
   }
 
-  setTimeout(() => recursiveRaf(callback, depth - 1), 15);
+  window.requestAnimationFrame(() => recursiveRaf(callback, depth - 1));
 };
 
 /**
- * Calculate the nearest viewport indexes bound for a table based on the provided parameters.
+ * Calculate the nearest viewport indexes bound based on the provided parameters.
+ *
  * @param {Object} options - The options object.
- * @param {HTMLElement} options.tbodyEl - The table body element.
+ * @param {HTMLElement} options.wrapperEl - The table body element.
  * @param {number} [options.length = 0] - The array of ids.
  * @param {number} [options.height = 24] - The height of each item.
  * @param {number} [options.threshold = 0.2] - The threshold value.
  * @returns {{ start: number, end: number }} The start and end indexes for the viewport.
  */
-export const getNearestViewportIndexesBoundForTable = ({
-  tbodyEl,
+export const getNearestViewportIndexesBound = ({
+  wrapperEl,
   length = 0,
   height = 24,
   threshold = 0.2,
@@ -33,7 +34,7 @@ export const getNearestViewportIndexesBoundForTable = ({
   let start = 0;
   let end = length - 1;
 
-  if (!tbodyEl || !length) {
+  if (!wrapperEl || !length) {
     return { start, end };
   }
 
@@ -43,11 +44,11 @@ export const getNearestViewportIndexesBoundForTable = ({
 
   end = Math.min(batchSize, end);
 
-  const { height: tbodyHeight } = tbodyEl.getBoundingClientRect();
+  const { top: wrapperTop } = wrapperEl.getBoundingClientRect();
   const middleOfVisible = window.scrollY + (window.innerHeight / 2);
 
-  if (tbodyHeight < window.scrollY) {
-    const middleItemIndex = Math.abs(Math.round((middleOfVisible - tbodyHeight) / height));
+  if (wrapperTop < window.scrollY) {
+    const middleItemIndex = Math.abs(Math.round((middleOfVisible - (wrapperTop + window.scrollY)) / height));
 
     start = Math.max(halfBatchSize - middleItemIndex, 0);
     end = Math.min(halfBatchSize + middleItemIndex, length - 1);
