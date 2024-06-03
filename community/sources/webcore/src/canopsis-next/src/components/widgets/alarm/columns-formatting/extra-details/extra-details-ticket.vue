@@ -3,7 +3,6 @@
     <c-simple-tooltip
       :content="tooltipContent"
       top
-      disable-resize
     >
       <template #activator="{ on }">
         <v-badge
