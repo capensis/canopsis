@@ -151,7 +151,6 @@ import { LIVE_REPORTING_QUICK_RANGES, MODALS, USERS_PERMISSIONS } from '@/consta
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
-import { registerTemplate } from '@/helpers/handlebars';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -164,6 +163,9 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
+import {
+  widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
+} from '@/mixins/widget/handlebars/alarms-list-precompile-templates';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
@@ -207,6 +209,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
+    widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
     entitiesWidgetMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,
@@ -281,14 +284,6 @@ export default {
 
     draggableColumn() {
       return !!this.widget.parameters?.columns?.draggable;
-    },
-  },
-  watch: {
-    'widget.parameters.widgetColumns': {
-      handler(columns) {
-        columns.forEach(({ value, template }) => template && registerTemplate(`${this.widget._id}-${value}`, template));
-      },
-      immediate: true,
     },
   },
   created() {
