@@ -20,9 +20,20 @@ Pour déployer Canopsis en utilisant Helm, il est nécessaire d'avoir un cluster
 
 !!! information
     Il est possible de récupérer le chart de deux manières :
-        - En utilisant le **repo** Helm Canopsis ;
-        - En utilisant les **sources** du chart.
 
+    - En utilisant le **repo** Helm Canopsis ;
+    
+    - En utilisant les **sources** du chart.
+
+
+## Compatibilité
+
+Des tests de compatibilités ont été réalisés sur les versions suivantes : 
+
+| Kubernetes | kubectl | helm   |
+|:----------:|:-------:|:-----: |
+|   1.26     |  1.27.4 | 0.23.0 |
+|   1.30     |  1.30.1 | 3.15.0 |
 
 ## Récupérer le chart en utilisant le repo Helm
 
@@ -50,29 +61,36 @@ helm repo add --username oauth2 --password $TOKEN canopsis \
 https://git.canopsis.net/api/v4/projects/603/packages/helm/stable
 ```
 
-___En option___ Ajouter le repo en version devel :
-```sh
-helm repo add --username oauth2 --password $TOKEN canopsis-devel https://git.canopsis.net/api/v4/projects/603/packages/helm/devel
+!!! Remarque
+    ___En option___, ajouter le repo en version devel :
+    ```sh
+    helm repo add --username oauth2 --password $TOKEN canopsis-devel https://git.canopsis.net/api/v4/projects/603/packages/helm/devel
 
-```
+    ```
 
-Mettre à jour les repos
+Mettre à jour les repos :
 ```sh
 helm repo update
 ```
 
+Vérifier si les repos ont bien été mis à jour :
+```sh
+helm search repo canopsis
+helm search repo canopsis-devel
+```
+
+
 ## Récupérer le chart en utilisant les sources Helm
 
-Cloner le repo en utilisant le protocole **SSH** :
-```sh
-git clone git@git.canopsis.net:helm/charts/canopsis-pro.git
-```
-**ou**
+=== "Cloner le repo en utilisant le protocole SSH"
+    ```sh
+    git clone git@git.canopsis.net:helm/charts/canopsis-pro.git
+    ```
 
-Cloner le repo en utilisant le protocole **HTTPS** :
-```sh
-git clone https://git.canopsis.net/helm/charts/canopsis-pro.git
-```
+=== "Cloner le repo en utilisant le protocole HTTPS"
+    ```sh
+    git clone https://git.canopsis.net/helm/charts/canopsis-pro.git
+    ```
 
 Se rendre dans le dossier des sources :
 ```
@@ -84,7 +102,7 @@ Si votre installation de Helm ne connaît pas encore le dépot Bitmani, ajouter 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
-Builder les dépendances : 
+Builder les dépendances :
 ```
 helm dependency build
 ```
@@ -119,23 +137,50 @@ kubectl create secret generic canopsisregistry \
 
 ## Surcharge des valeurs du fichier Helm
 
-Créer un fichier ```support-value.yaml``` avec au moins le contenu suivant : 
-```
-imagePullSecrets:
-  - name: canopsisregistry
 
-mongodb:
-  enabled: true
-rabbitmq:
-  enabled: true
-redis:
-  enabled: true
-timescaledb:
-  enabled: true
-```
+=== "Lab"
+    Exemple de fichier ```customer-value.yaml``` : 
+    ```
+    imagePullSecrets:
+      - name: canopsisregistry
+
+    mongodb:
+      enabled: true
+    rabbitmq:
+      enabled: true
+    redis:
+      enabled: true
+    timescaledb:
+      enabled: true
+    ```
+
+=== "Prod"
+    Exemple de fichier ```customer-value.yaml``` : 
+      ```
+      imagePullSecrets:
+        - name: canopsisregistry
+
+      mongodb:
+        enabled: true
+      rabbitmq:
+        enabled: true
+      redis:
+        enabled: true
+      timescaledb:
+        enabled: true
+      backendUrls:
+        mongodb: mongodb://cpsmongo:canopsis@mongodb:27017/canopsis
+        rabbitmq: amqp://cpsrabbit:canopsis@rabbitmq:5672/canopsis
+        redis: redis://:canopsis@redis:6379/0
+        timescaledb: postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+
+      ```
+    En production, il est recommandé d'exécuter les services backend de Canopsis (bases de données, RabbitMQ) sur des serveurs dédiés, et non dans des conteneurs. Il faut donc veillez à définir les URL backend appropriées comme ci-dessus. 
 
 !!! Remarque
-    Vous pouvez également remplacer tout autre paramètre activé dans le fichier des valeurs du chart, comme indiqué dans le README du chart. Ce qui précède est le minimum nécessaire pour obtenir un laboratoire Helm Canopsis Pro entièrement fonctionnel lorsque vous souhaitez tester l'ensemble dans Helm/K8S (services backend inclus).
+    Vous pouvez également remplacer tout autre paramètre activé dans le fichier des valeurs du chart, comme indiqué dans le [README](https://git.canopsis.net/helm/charts/canopsis-pro/-/tree/develop?ref_type=heads) du chart. Ce qui précède est le minimum nécessaire pour obtenir un laboratoire Helm Canopsis Pro entièrement fonctionnel lorsque vous souhaitez tester l'ensemble dans Helm/K8S (services backend inclus).
+
+    **Si vous n'avez pas accès au README, merci de vous rapprocher de votre référent.**
 
 ## Déploiement
 
@@ -152,20 +197,19 @@ Le nom de la version est à votre choix ; il permet plusieurs déploiements du m
     - longueur maximale de 53 caractères.
 
 Définir le nom de votre instance : 
-```
+```sh
 export RELEASE_NAME="canopsis-lab"
 ```
 
-Initier le déploiement depuis le repo Helm : 
-```
-helm install ${RELEASE_NAME} canopsis/canopsis-pro -f support-values.yaml
-```
-**ou**
+=== "Initier le déploiement depuis le repo Helm" 
+    ```sh
+    helm install ${RELEASE_NAME} canopsis/canopsis-pro -f support-values.yaml
+    ```
 
-Initier le déploiement depuis les sources : 
-```
-helm install ${RELEASE_NAME} canopsis-pro -f support-values.yaml
-```
+=== "Initier le déploiement depuis les sources" 
+    ```sh
+    helm install ${RELEASE_NAME} canopsis-pro -f support-values.yaml
+    ```
   
 Superviser le déploiement :
 ```
@@ -180,7 +224,9 @@ kubectl port-forward svc/${RELEASE_NAME}-nginx 8443:443
 !!! Information
     Cette commande ouvrira le port 8443 en local et redirigera les connexions vers le port 443 du service Nginx
 
-### Désinstaller Canopsis : 
+    Il est également possible d'exposer l'interface Web en utilisant un ingress, par exemple [ingress-nginx](https://kubernetes.github.io/ingress-nginx/deploy/)
+
+## Désinstaller Canopsis : 
 ```
 helm uninstall ${RELEASE_NAME}
 ```
