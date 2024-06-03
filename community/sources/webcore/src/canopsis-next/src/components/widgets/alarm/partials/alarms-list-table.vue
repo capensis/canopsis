@@ -127,7 +127,7 @@
             />
           </template>
         </template>
-        <template #item="{ isSelected, isExpanded, item, select, expand, index }">
+        <template #item="{ isSelected, isExpanded, item, select, expand }">
           <alarms-list-row
             :ref="`row${item._id}`"
             :key="item._id"
@@ -136,7 +136,6 @@
             :expandable="expandable"
             :expanded="isExpanded"
             :alarm="item"
-            :index="index"
             :widget="widget"
             :headers="headers"
             :parent-alarm="parentAlarm"
@@ -150,8 +149,6 @@
             :show-instruction-icon="hasInstructionsAlarms"
             :actions-inline-count="actionsInlineCount"
             :actions-ignore-media-query="resizableColumn"
-            :all-booted-ready="allBootedReady"
-            :ready="readyRows[item._id]"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -177,7 +174,7 @@
     </div>
     <c-table-pagination
       v-if="!hidePagination"
-      :items="[5, 10, 20, 50, 100, 200]"
+      :items="paginationItems"
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
@@ -207,14 +204,9 @@ import {
 } from '@/constants';
 
 import featuresService from '@/services/features';
+import { AsyncBooting } from '@/services/async-booting';
 
-import { mapIds } from '@/helpers/array';
-import {
-  recursiveRaf,
-  getNearestAndFarthestIndexes,
-  getNearestViewportIndexesBoundForTable,
-  splitIdsToChunk,
-} from '@/helpers/render';
+import { getNearestAndFarthestIndexes, getNearestViewportIndexesBound, splitIdsToChunk } from '@/helpers/render';
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
@@ -238,6 +230,12 @@ import AlarmsListRow from './alarms-list-row.vue';
  * @module alarm
  */
 export default {
+  provide() {
+    return {
+      $asyncBootingRows: this.$asyncBootingRows,
+      $asyncBootingActionsPanel: this.$asyncBootingActionsPanel,
+    };
+  },
   components: {
     MassActionsPanel,
     AlarmHeaderCell,
@@ -336,12 +334,6 @@ export default {
       type: String,
       default: '',
     },
-  },
-  data() {
-    return {
-      readyRows: {},
-      allBootedReady: false,
-    };
   },
   computed: {
     shownTopPagination() {
@@ -498,7 +490,7 @@ export default {
         const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
 
         return {
-          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}%)`,
+          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}px)`,
         };
       }
 
@@ -532,14 +524,18 @@ export default {
     parentAlarmId() {
       return this.parentAlarm?._id;
     },
+
+    paginationItems() {
+      return [5, 10, 20, 50, 100, 200];
+    },
   },
 
   watch: {
     alarms(alarms) {
       this.selected = intersectionBy(alarms, this.selected, '_id');
 
-      this.setReadyRows();
-      this.setAllBootedReady();
+      this.$asyncBootingRows.clear();
+      this.$nextTick(() => this.runAsyncBooting(alarms));
     },
 
     columns() {
@@ -565,49 +561,42 @@ export default {
       },
     },
   },
+
+  beforeCreate() {
+    this.$asyncBootingRows = new AsyncBooting();
+    this.$asyncBootingActionsPanel = new AsyncBooting();
+  },
+
   mounted() {
     this.$tbodyEl = this.$el.querySelector('tbody');
   },
+
   methods: {
-    setAllBootedReady() {
-      this.allBootedReady = false;
-
-      setTimeout(() => this.allBootedReady = true, 2000);
-    },
-
-    setReadyRows() {
-      if (!this.$tbodyEl) {
+    runAsyncBooting(items, itemsPerRender = 10) {
+      if (!this.$tbodyEl || !items.length) {
         return;
       }
 
-      const { length } = this.alarms;
+      const indexes = Array.from(Array(items.length), (_, index) => index);
 
-      if (!length) {
-        return;
-      }
-
-      const { start, end } = getNearestViewportIndexesBoundForTable({
-        tbodyEl: this.$tbodyEl,
-        length,
+      const { start, end } = getNearestViewportIndexesBound({
+        wrapperEl: this.$tbodyEl,
+        length: indexes.length,
       });
 
       const { nearest, farthest } = getNearestAndFarthestIndexes({
         start,
         end,
-        ids: mapIds(this.alarms),
+        ids: indexes,
       });
 
-      this.readyRows = nearest.reduce((acc, id) => {
-        acc[id] = true;
+      const chunks = [nearest, ...splitIdsToChunk(farthest, itemsPerRender)];
 
-        return acc;
-      }, {});
-
-      const chunkFarthest = splitIdsToChunk(farthest, 10);
-
-      chunkFarthest.forEach((ids, index) => recursiveRaf(() => (
-        ids.forEach(id => this.$set(this.readyRows, id, true))
-      ), index + 1));
+      this.$nextTick(() => {
+        this.$asyncBootingRows.runForChunks(chunks, () => {
+          this.$nextTick(() => this.$asyncBootingActionsPanel.run());
+        });
+      });
     },
 
     updateColumnsSettings() {
