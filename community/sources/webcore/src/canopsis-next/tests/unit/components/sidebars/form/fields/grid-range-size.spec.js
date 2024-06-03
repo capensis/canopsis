@@ -1,4 +1,4 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
 import { createNumberInputStub } from '@unit/stubs/input';
 
 import GridRangeSize from '@/components/sidebars/form/fields/grid-range-size.vue';
@@ -8,6 +8,7 @@ const stubs = {
 };
 
 const selectRangeSliderField = wrapper => wrapper.find('input.v-range-slider');
+const selectListTitle = wrapper => wrapper.find('.v-list-item__title');
 
 describe('grid-range-size', () => {
   const factory = generateShallowRenderer(GridRangeSize, { stubs,
@@ -16,8 +17,8 @@ describe('grid-range-size', () => {
         list: {
           register: jest.fn(),
           unregister: jest.fn(),
+          listClick: jest.fn(),
         },
-        listClick: jest.fn(),
       },
     },
   });
@@ -28,8 +29,8 @@ describe('grid-range-size', () => {
         list: {
           register: jest.fn(),
           unregister: jest.fn(),
+          listClick: jest.fn(),
         },
-        listClick: jest.fn(),
       },
     },
   });
@@ -50,7 +51,17 @@ describe('grid-range-size', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `grid-range-size` with custom props', () => {
+  it('Renders `grid-range-size` with default and required props (opened)', async () => {
+    const wrapper = snapshotFactory();
+
+    selectListTitle(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `grid-range-size` with custom props (opened)', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: [2, 10],
@@ -60,6 +71,10 @@ describe('grid-range-size', () => {
         title: 'Custom title',
       },
     });
+
+    selectListTitle(wrapper).trigger('click');
+
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
   });

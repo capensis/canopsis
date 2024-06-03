@@ -27,6 +27,17 @@ export function registerTemplate(id, template, instance = Handlebars) {
 }
 
 /**
+ * Unregisters a template by deleting it from the provided Handlebars instance.
+ *
+ * @param {string} id - The ID of the template to unregister.
+ * @param {Handlebars} [instance = Handlebars] - The Handlebars instance from which to unregister the template.
+ */
+export function unregisterTemplate(id, instance = Handlebars) {
+  // eslint-disable-next-line no-param-reassign
+  delete instance.partials?.[id];
+}
+
+/**
  * Run handlebars prepared template by id
  *
  * @param {string} id

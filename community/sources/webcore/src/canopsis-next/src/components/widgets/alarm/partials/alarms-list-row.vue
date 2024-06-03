@@ -1,98 +1,99 @@
 <template>
-  <v-fade-transition mode="out-in">
-    <tr v-if="!localReady">
-      <td :colspan="headers.length" />
-    </tr>
-    <tr
-      v-else
-      :class="classes"
-      class="alarm-list-row"
-      v-on="listeners"
+  <tr v-if="!booted">
+    <td :colspan="availableHeaders.length + Number(hasRowActions)" />
+  </tr>
+  <tr
+    v-else
+    :class="classes"
+    class="alarm-list-row"
+    v-on="listeners"
+  >
+    <td
+      v-if="hasRowActions"
+      class="alarm-list-row__icons pr-0"
     >
-      <td
-        v-if="hasRowActions"
-        class="alarm-list-row__icons pr-0"
+      <v-layout
+        align-center
+        justify-space-between
       >
-        <v-layout
-          align-center
-          justify-space-between
-        >
-          <v-layout class="alarm-list-row__checkbox">
-            <template v-if="selectable">
-              <v-simple-checkbox
-                v-if="isAlarmSelectable"
-                v-field="selected"
-                class="ma-0"
-                color="primary"
-                hide-details
-              />
-              <v-simple-checkbox
-                v-else
-                disabled
-                hide-details
-              />
-            </template>
-          </v-layout>
-          <v-layout
-            v-if="hasAlarmInstruction"
-            align-center
-          >
-            <alarms-list-row-instructions-icon :alarm="alarm" />
-          </v-layout>
-          <v-layout
-            v-if="hasBookmark"
-            align-center
-          >
-            <alarms-list-row-bookmark-icon />
-          </v-layout>
-          <alarms-expand-panel-btn
-            v-if="expandable"
-            :expanded="expanded"
-            :alarm="alarm"
-            :widget="widget"
-            :small="small"
-            :search="search"
-            @input="$emit('expand', $event)"
-          />
+        <v-layout class="alarm-list-row__checkbox">
+          <template v-if="selectable">
+            <v-simple-checkbox
+              v-if="isAlarmSelectable"
+              v-field="selected"
+              class="ma-0"
+              color="primary"
+              hide-details
+            />
+            <v-simple-checkbox
+              v-else
+              disabled
+              hide-details
+            />
+          </template>
         </v-layout>
-      </td>
-      <td
-        v-for="header in availableHeaders"
-        :key="header.value"
-        class="alarm-list-row__cell"
-      >
-        <c-booted-placeholder-loader v-if="header.value === 'actions'" :booted="booted" :ready="allBootedReady">
-          <actions-panel
-            :item="alarm"
-            :widget="widget"
-            :parent-alarm="parentAlarm"
-            :refresh-alarms-list="refreshAlarmsList"
-            :small="small"
-            :ignore-media-query="actionsIgnoreMediaQuery"
-            :inline-count="actionsInlineCount"
-          />
-        </c-booted-placeholder-loader>
-        <alarm-column-value
-          v-else
+        <v-layout
+          v-if="hasAlarmInstruction"
+          align-center
+        >
+          <alarms-list-row-instructions-icon :alarm="alarm" />
+        </v-layout>
+        <v-layout
+          v-if="hasBookmark"
+          align-center
+        >
+          <alarms-list-row-bookmark-icon />
+        </v-layout>
+        <alarms-expand-panel-btn
+          v-if="expandable"
+          :expanded="expanded"
           :alarm="alarm"
           :widget="widget"
-          :column="header"
-          :selected-tag="selectedTag"
           :small="small"
-          @activate="activateRow"
-          @select:tag="$emit('select:tag', $event)"
-          @clear:tag="$emit('clear:tag')"
-          @click:state="$emit('click:state', $event)"
+          :search="search"
+          @input="$emit('expand', $event)"
         />
-        <span
-          v-if="resizing"
-          class="alarms-list-table__resize-handler"
-          @mousedown.prevent="$emit('start:resize', header.value)"
-          @click.stop=""
+      </v-layout>
+    </td>
+    <td
+      v-for="header in availableHeaders"
+      :key="header.value"
+      class="alarm-list-row__cell"
+    >
+      <c-booted-placeholder-loader
+        v-if="header.value === 'actions'"
+        async-booting-provider="$asyncBootingActionsPanel"
+      >
+        <actions-panel
+          :item="alarm"
+          :widget="widget"
+          :parent-alarm="parentAlarm"
+          :refresh-alarms-list="refreshAlarmsList"
+          :small="small"
+          :ignore-media-query="actionsIgnoreMediaQuery"
+          :inline-count="actionsInlineCount"
         />
-      </td>
-    </tr>
-  </v-fade-transition>
+      </c-booted-placeholder-loader>
+      <alarm-column-value
+        v-else
+        :alarm="alarm"
+        :widget="widget"
+        :column="header"
+        :selected-tag="selectedTag"
+        :small="small"
+        @activate="activateRow"
+        @select:tag="$emit('select:tag', $event)"
+        @clear:tag="$emit('clear:tag')"
+        @click:state="$emit('click:state', $event)"
+      />
+      <span
+        v-if="resizing"
+        class="alarms-list-table__resize-handler"
+        @mousedown.prevent="$emit('start:resize', header.value)"
+        @click.stop=""
+      />
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -112,7 +113,7 @@ import AlarmsListRowInstructionsIcon from './alarms-list-row-instructions-icon.v
 import AlarmsListRowBookmarkIcon from './alarms-list-row-bookmark-icon.vue';
 
 export default {
-  inject: ['$system'],
+  inject: ['$system', '$asyncBootingRows'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
@@ -202,23 +203,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    index: {
-      type: Number,
-      default: 0,
-    },
-    ready: {
-      type: Boolean,
-      default: false,
-    },
-    allBootedReady: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
       active: false,
-      localReady: this.ready,
       booted: false,
     };
   },
@@ -281,18 +269,17 @@ export default {
     },
   },
   created() {
-    const unwatch = this.$watch(() => this.ready, (ready) => {
-      if (ready) {
-        this.localReady = ready;
-
-        this.$nextTick(() => unwatch());
-      }
-    }, { immediate: true });
+    this.asyncBootingKey = Symbol('asyncBootingKey');
+    this.$asyncBootingRows?.register(this.asyncBootingKey, this.setBooted);
   },
-  mounted() {
-    setTimeout(() => this.booted = true, 50 * Math.floor(this.index / 20));
+  beforeDestroy() {
+    this.$asyncBootingRows?.unregister(this.asyncBootingKey);
   },
   methods: {
+    setBooted() {
+      this.booted = true;
+    },
+
     mouseSelecting(event) {
       if (event.ctrlKey && event.buttons) {
         event.preventDefault();

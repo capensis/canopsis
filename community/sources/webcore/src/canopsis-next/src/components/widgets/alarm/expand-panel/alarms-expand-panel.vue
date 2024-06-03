@@ -77,6 +77,7 @@
           <alarms-expand-panel-more-infos
             :alarm="alarm"
             :template="widget.parameters.moreInfoTemplate"
+            :template-id="moreInfosTemplateId"
             :selected-tag="selectedTag"
             @select:tag="$emit('select:tag', $event)"
             @clear:tag="$emit('clear:tag')"
@@ -214,6 +215,7 @@ import { alarmToServiceDependency } from '@/helpers/entities/service-dependencie
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
+import { getAlarmWidgetMoreInfoTemplateId } from '@/helpers/entities/alarm/list';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -346,6 +348,10 @@ export default {
 
     isAvailabilityEnabled() {
       return this.widget.parameters.availability?.enabled;
+    },
+
+    moreInfosTemplateId() {
+      return getAlarmWidgetMoreInfoTemplateId(this.widget._id);
     },
   },
   watch: {
