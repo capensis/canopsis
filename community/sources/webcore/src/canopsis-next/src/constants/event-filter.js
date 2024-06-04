@@ -15,7 +15,6 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   setField: 'set_field',
   setFieldFromTemplate: 'set_field_from_template',
   setEntityInfoFromTemplate: 'set_entity_info_from_template',
-  setEntityInfoFromDictionary: 'set_entity_info_from_dictionary',
   copy: 'copy',
   setEntityInfo: 'set_entity_info',
   copyToEntityInfo: 'copy_to_entity_info',
