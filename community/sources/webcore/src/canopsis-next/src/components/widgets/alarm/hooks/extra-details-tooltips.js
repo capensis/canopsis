@@ -7,6 +7,12 @@ import { isSuccessTicketDeclaration } from '@/helpers/entities/declare-ticket/ev
 
 import { useI18n } from '@/hooks/i18n';
 
+/**
+ * Function to provide tooltip content for Ack action in extra details.
+ *
+ * @param {Object} props - The props object containing ack information.
+ * @returns {Object} - The tooltip content for Ack action.
+ */
 export const useExtraDetailsAckTooltip = (props) => {
   const { t, tc } = useI18n();
 
@@ -31,6 +37,12 @@ export const useExtraDetailsAckTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Canceled action in extra details.
+ *
+ * @param {Object} props - The props object containing canceled information.
+ * @returns {Object} - The tooltip content for Canceled action.
+ */
 export const useExtraDetailsCanceledTooltip = (props) => {
   const { t, tc } = useI18n();
 
@@ -51,6 +63,12 @@ export const useExtraDetailsCanceledTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Children action in extra details.
+ *
+ * @param {Object} props - The props object containing children information.
+ * @returns {Object} - The tooltip content for Children action.
+ */
 export const useExtraDetailsChildrenTooltip = (props) => {
   const { t } = useI18n();
 
@@ -67,6 +85,12 @@ export const useExtraDetailsChildrenTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Last Comment action in extra details.
+ *
+ * @param {Object} props - The props object containing last comment information.
+ * @returns {Object} - The tooltip content for Last Comment action.
+ */
 export const useExtraDetailsLastCommentTooltip = (props) => {
   const { t, tc } = useI18n();
 
@@ -83,6 +107,12 @@ export const useExtraDetailsLastCommentTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Parents action in extra details.
+ *
+ * @param {Object} props - The props object containing parents information.
+ * @returns {Object} - The tooltip content for Parents action.
+ */
 export const useExtraDetailsParentsTooltip = (props) => {
   const { t, tc } = useI18n();
 
@@ -102,6 +132,12 @@ export const useExtraDetailsParentsTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Pbehavior action in extra details.
+ *
+ * @param {Object} props - The props object containing pbehavior information.
+ * @returns {Object} - The tooltip content for Pbehavior action.
+ */
 export const useExtraDetailsPbehaviorTooltip = (props) => {
   const { t } = useI18n();
 
@@ -146,6 +182,12 @@ export const useExtraDetailsPbehaviorTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Snooze action in extra details.
+ *
+ * @param {Object} props - The props object containing snooze information.
+ * @returns {Object} - The tooltip content for Snooze action.
+ */
 export const useExtraDetailsSnoozeTooltip = (props) => {
   const { t, tc } = useI18n();
 
@@ -172,6 +214,12 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
   return { tooltipContent };
 };
 
+/**
+ * Function to provide tooltip content for Ticket action in extra details.
+ *
+ * @param {Object} props - The props object containing ticket information.
+ * @returns {Object} - The tooltip content for Ticket action.
+ */
 export const useExtraDetailsTicketTooltip = (props) => {
   const { t, tc } = useI18n();
 
