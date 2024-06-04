@@ -611,6 +611,7 @@ export default {
 
   beforeDestroy() {
     this.$intersectionObserver?.disconnect();
+    this.$asyncBootingActionsPanel.clear();
   },
 
   methods: {
@@ -651,6 +652,9 @@ export default {
           chunk.forEach(id => this.$set(this.bootedRows, id, true));
 
           if (index === chunks.length - 1) {
+            /**
+             * Render actions panels
+             */
             window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
           }
         }, index + 1);
