@@ -1,6 +1,7 @@
 <template>
   <v-list-group
     v-bind="$attrs"
+    :eager="eager"
     color=""
   >
     <template #activator="">
@@ -44,6 +45,10 @@ export default {
     optional: {
       type: Boolean,
       default: false,
+    },
+    eager: {
+      type: Boolean,
+      default: true,
     },
   },
 };

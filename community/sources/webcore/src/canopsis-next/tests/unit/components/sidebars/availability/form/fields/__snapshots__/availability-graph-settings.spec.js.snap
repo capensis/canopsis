@@ -2,6 +2,7 @@
 
 exports[`availability-graph-settings Renders \`availability-graph-settings\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Availability graph settings"
 >
   <c-enabled-field-stub
@@ -29,6 +30,7 @@ exports[`availability-graph-settings Renders \`availability-graph-settings\` wit
 
 exports[`availability-graph-settings Renders \`availability-graph-settings\` with required props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Availability graph settings"
 >
   <c-enabled-field-stub />

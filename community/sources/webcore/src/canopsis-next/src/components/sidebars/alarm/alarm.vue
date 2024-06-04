@@ -179,6 +179,10 @@
         v-model="form.parameters.isActionsAllowWithOkState"
         :title="$t('settings.isActionsAllowWithOkState')"
       />
+      <field-switcher
+        v-model="form.parameters.isVirtualScrollEnabled"
+        :title="$t('settings.isVirtualScrollEnabled')"
+      />
     </widget-settings-group>
     <charts-form v-model="form.parameters.charts" />
   </widget-settings>
