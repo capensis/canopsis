@@ -2,6 +2,7 @@
 
 exports[`quick-date-interval-type Renders \`quick-date-interval-type\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default time range"
 >
   <c-quick-date-interval-type-field-stub
@@ -14,6 +15,7 @@ exports[`quick-date-interval-type Renders \`quick-date-interval-type\` with cust
 
 exports[`quick-date-interval-type Renders \`quick-date-interval-type\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default time range"
 >
   <c-quick-date-interval-type-field-stub

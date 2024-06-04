@@ -2,6 +2,7 @@
 
 exports[`field-color-indicator Renders \`field-color-indicator\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Color indicator"
 >
   <c-color-indicator-field-stub
@@ -12,6 +13,7 @@ exports[`field-color-indicator Renders \`field-color-indicator\` with custom pro
 
 exports[`field-color-indicator Renders \`field-color-indicator\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Color indicator"
 >
   <c-color-indicator-field-stub
