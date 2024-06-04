@@ -1,7 +1,7 @@
 <template>
   <div class="more-infos">
     <c-compiled-template
-      v-if="templateId"
+      v-if="template"
       :template-id="templateId"
       :template="template"
       :context="templateContext"
