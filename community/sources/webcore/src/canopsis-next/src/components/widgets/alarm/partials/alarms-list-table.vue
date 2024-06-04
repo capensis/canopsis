@@ -549,7 +549,7 @@ export default {
     alarms(alarms) {
       this.selected = intersectionBy(alarms, this.selected, '_id');
 
-      this.runAsyncBooting(alarms);
+      this.setBootedRows(alarms);
     },
 
     columns() {
@@ -615,7 +615,7 @@ export default {
   },
 
   methods: {
-    runAsyncBooting(items, itemsPerRender = 10) {
+    setBootedRows(items, itemsPerRender = 10) {
       if (!this.$tbodyEl || !items.length) {
         return;
       }
