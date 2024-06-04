@@ -2,6 +2,7 @@
 
 exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Export CSV"
 >
   <div
@@ -176,6 +177,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
 
 exports[`export-csv Renders \`export-csv\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Export CSV"
 >
   <div
