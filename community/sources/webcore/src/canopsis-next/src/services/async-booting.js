@@ -81,32 +81,6 @@ export class AsyncBooting {
   }
 
   /**
-   * Run asynchronous booting for chunks of components.
-   *
-   * @param {number[][]} [chunks] - An array of arrays containing indexes of components to process in chunks.
-   * @param {Function} [onFinishCallbackRoot] - Callback which will calls after all bootCallbacks
-   */
-  runForChunks(chunks = [], onFinishCallbackRoot) {
-    chunks.forEach((indexes, chunkIndex) => {
-      indexes.forEach((index) => {
-        const registered = this.registered[index];
-
-        if (registered) {
-          this.recursiveRAF(registered.bootCallback, chunkIndex, registered.key);
-        }
-      });
-    });
-
-    const afterRAFs = chunks.length + 1;
-
-    this.recursiveRAF(() => {
-      this.registered.forEach(({ onFinishCallback }) => onFinishCallback?.());
-      onFinishCallbackRoot?.();
-      this.clear();
-    }, afterRAFs);
-  }
-
-  /**
    * Clear all registered components and rAFs.
    */
   clear() {

@@ -26,29 +26,22 @@ export default {
 }
 
 .placeholder {
+  --c-placeholder-loader-background: darkgray;
+
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 0;
 
   &__background {
-    opacity: .2;
+    opacity: .4;
     transform: translate3d(-50%, -50%, 0);
     top: 50%;
     left: 50%;
     height: 86%;
     position: relative;
-    animation: placeholder-glow 2s ease-in-out infinite;
-    animation-iteration-count: 2;
-
-    .v-application.theme--light & {
-      background: darkgray; // TODO: use vars
-    }
-
-    .v-application.theme--dark & {
-      background: darkgray; // TODO: use vars
-    }
+    background: var(--c-placeholder-loader-background);
   }
 }
 </style>
