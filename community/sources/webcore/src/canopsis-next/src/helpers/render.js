@@ -1,14 +1,14 @@
-import { noop, chunk } from 'lodash';
+import { chunk } from 'lodash';
 
 /**
  * A recursive function that calls the provided callback function using requestAnimationFrame.
  *
- * @param {Function} [callback = noop] - The callback function to be called recursively.
+ * @param {Function} [callback] - The callback function to be called recursively.
  * @param {number} [depth = 0] - The depth of recursion.
  */
-export const recursiveRaf = (callback = noop, depth = 0) => {
+export const recursiveRaf = (callback, depth = 0) => {
   if (depth <= 0) {
-    callback();
+    callback?.();
     return;
   }
 
@@ -80,7 +80,7 @@ export const getNearestAndFarthestIndexes = ({
     nearest.push(ids[i]);
   }
 
-  for (let i = start - 1, j = end + 1; i >= 0 || j <= length; i -= 1, j += 1) {
+  for (let i = start - 1, j = end + 1; i >= 0 || j < length; i -= 1, j += 1) {
     if (i >= 0) {
       farthest.push(ids[i]);
     }

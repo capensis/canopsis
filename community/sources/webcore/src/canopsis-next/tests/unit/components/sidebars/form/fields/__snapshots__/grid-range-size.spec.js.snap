@@ -146,7 +146,25 @@ exports[`grid-range-size Renders \`grid-range-size\` with default and required p
   <transition-stub
     name="expand-transition"
   >
-    <!---->
+    <div
+      class="v-list-group__items"
+      style="display: none;"
+    >
+      <div
+        class="container"
+      >
+        <input
+          always-dirty=""
+          class="v-range-slider mt-3"
+          hide-details=""
+          max="12"
+          min="0"
+          step="1"
+          thumb-label=""
+          ticks="always"
+        />
+      </div>
+    </div>
   </transition-stub>
 </div>
 `;

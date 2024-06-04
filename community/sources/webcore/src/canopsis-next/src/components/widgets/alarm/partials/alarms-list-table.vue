@@ -149,6 +149,9 @@
             :show-instruction-icon="hasInstructionsAlarms"
             :actions-inline-count="actionsInlineCount"
             :actions-ignore-media-query="resizableColumn"
+            :virtual-scroll="widget.parameters.isVirtualScrollEnabled"
+            :booted="bootedRows[item._id]"
+            :visible="visibleRows[item._id]"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -206,7 +209,13 @@ import {
 import featuresService from '@/services/features';
 import { AsyncBooting } from '@/services/async-booting';
 
-import { getNearestAndFarthestIndexes, getNearestViewportIndexesBound, splitIdsToChunk } from '@/helpers/render';
+import { mapIds } from '@/helpers/array';
+import {
+  getNearestAndFarthestIndexes,
+  getNearestViewportIndexesBound,
+  recursiveRaf,
+  splitIdsToChunk,
+} from '@/helpers/render';
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
@@ -232,8 +241,8 @@ import AlarmsListRow from './alarms-list-row.vue';
 export default {
   provide() {
     return {
-      $asyncBootingRows: this.$asyncBootingRows,
       $asyncBootingActionsPanel: this.$asyncBootingActionsPanel,
+      $intersectionObserver: this.$intersectionObserver,
     };
   },
   components: {
@@ -334,6 +343,12 @@ export default {
       type: String,
       default: '',
     },
+  },
+  data() {
+    return {
+      bootedRows: {},
+      visibleRows: {},
+    };
   },
   computed: {
     shownTopPagination() {
@@ -534,8 +549,7 @@ export default {
     alarms(alarms) {
       this.selected = intersectionBy(alarms, this.selected, '_id');
 
-      this.$asyncBootingRows.clear();
-      this.$nextTick(() => this.runAsyncBooting(alarms));
+      this.runAsyncBooting(alarms);
     },
 
     columns() {
@@ -560,15 +574,43 @@ export default {
         }
       },
     },
+
+    'widget.parameters.isVirtualScrollEnabled': {
+      handler(isVirtualScrollEnabled) {
+        if (isVirtualScrollEnabled) {
+          this.$intersectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              const { id } = entry.target.dataset;
+
+              if (this.visibleRows[id] !== entry.isIntersecting) {
+                this.$set(this.visibleRows, id, entry.isIntersecting);
+              }
+            });
+          }, {
+            root: null,
+            rootMargin: '400px 0px',
+            threshold: 0,
+          });
+
+          return;
+        }
+
+        this.$intersectionObserver?.disconnect();
+      },
+      immediate: true,
+    },
   },
 
   beforeCreate() {
-    this.$asyncBootingRows = new AsyncBooting();
     this.$asyncBootingActionsPanel = new AsyncBooting();
   },
 
   mounted() {
     this.$tbodyEl = this.$el.querySelector('tbody');
+  },
+
+  beforeDestroy() {
+    this.$intersectionObserver?.disconnect();
   },
 
   methods: {
@@ -577,25 +619,41 @@ export default {
         return;
       }
 
-      const indexes = Array.from(Array(items.length), (_, index) => index);
-
-      const { start, end } = getNearestViewportIndexesBound({
-        wrapperEl: this.$tbodyEl,
-        length: indexes.length,
-      });
-
-      const { nearest, farthest } = getNearestAndFarthestIndexes({
+      const {
         start,
         end,
-        ids: indexes,
+      } = getNearestViewportIndexesBound({
+        wrapperEl: this.$tbodyEl,
+        length: items.length,
       });
 
-      const chunks = [nearest, ...splitIdsToChunk(farthest, itemsPerRender)];
+      const {
+        nearest,
+        farthest,
+      } = getNearestAndFarthestIndexes({
+        start,
+        end,
+        ids: mapIds(items),
+      });
 
-      this.$nextTick(() => {
-        this.$asyncBootingRows.runForChunks(chunks, () => {
-          this.$nextTick(() => this.$asyncBootingActionsPanel.run());
-        });
+      this.bootedRows = nearest.reduce((acc, id) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      this.visibleRows = { ...this.bootedRows };
+
+      const chunks = splitIdsToChunk(farthest, itemsPerRender);
+
+      chunks.forEach((chunk, index) => {
+        recursiveRaf(() => {
+          chunk.forEach(id => this.$set(this.bootedRows, id, true));
+
+          if (index === chunks.length - 1) {
+            window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
+          }
+        }, index + 1);
       });
     },
 
@@ -688,7 +746,7 @@ export default {
     min-height: 48px;
     background: var(--v-background-base);
     z-index: 2;
-    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
     transition-property: opacity, background-color;
 
     &:after {
@@ -750,7 +808,7 @@ export default {
     &:after {
       content: ' ';
       position: absolute;
-      transition: .3s cubic-bezier(.25, .8, .5,1);
+      transition: .3s cubic-bezier(.25, .8, .5, 1);
       top: 0;
       right: 0;
       bottom: 0;
@@ -864,7 +922,7 @@ export default {
 
   thead {
     position: relative;
-    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
     transition-property: opacity, background-color;
     z-index: 1;
 
@@ -880,7 +938,7 @@ export default {
 
     tr {
       background: var(--v-table-background-base);
-      transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+      transition: background-color .3s cubic-bezier(.25, .8, .5, 1);
 
       .theme--dark & {
         background: var(--v-table-background-base);

@@ -2,6 +2,7 @@
 
 exports[`availability-display-parameter Renders \`availability-display-parameter\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default parameter to display"
 >
   <availability-display-parameter-radio-field-stub
@@ -14,6 +15,7 @@ exports[`availability-display-parameter Renders \`availability-display-parameter
 
 exports[`availability-display-parameter Renders \`availability-display-parameter\` with required props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default parameter to display"
 >
   <availability-display-parameter-radio-field-stub

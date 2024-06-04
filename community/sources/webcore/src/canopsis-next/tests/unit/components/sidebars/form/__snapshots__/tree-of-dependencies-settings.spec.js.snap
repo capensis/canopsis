@@ -2,6 +2,7 @@
 
 exports[`tree-of-dependencies-settings Renders \`tree-of-dependencies-settings\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Tree of dependencies settings"
 >
   <div
@@ -121,6 +122,7 @@ exports[`tree-of-dependencies-settings Renders \`tree-of-dependencies-settings\`
 
 exports[`tree-of-dependencies-settings Renders \`tree-of-dependencies-settings\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Tree of dependencies settings"
 >
   <div
