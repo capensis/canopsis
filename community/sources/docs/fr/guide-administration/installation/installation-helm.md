@@ -334,12 +334,12 @@ export RELEASE_NAME="canopsis-lab"
 
 === "Initier le déploiement depuis le repo Helm" 
     ```sh
-    helm install ${RELEASE_NAME} canopsis/canopsis-pro -f support-values.yaml
+    helm install ${RELEASE_NAME} canopsis/canopsis-pro -f customer-value.yaml
     ```
 
 === "Initier le déploiement depuis les sources" 
     ```sh
-    helm install ${RELEASE_NAME} canopsis-pro -f support-values.yaml
+    helm install ${RELEASE_NAME} canopsis-pro -f customer-value.yaml
     ```
   
 Superviser le déploiement :
