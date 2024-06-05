@@ -134,11 +134,78 @@ kubectl create secret generic canopsisregistry \
     --from-file=.dockerconfigjson=$HOME/.docker/config.json \
     --type=kubernetes.io/dockerconfigjson
 ```
+### Déploiement nginx-ingress controller
+
+Le contrôleur NGINX Ingress permet de gérer l'accès aux applications hébergées dans un cluster Kubernetes en exposant ces applications au monde extérieur à travers des points d'entrée HTTP et HTTPS, tout en offrant des fonctionnalités avancées comme le routage basé sur les chemins et les hôtes, la répartition de charge, la terminaison SSL et plus encore.
+
+Déploiement de l'ingress controller, ici nginx : 
+```sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+```
+
+Vous pouvez surveillez la progression du déploiement avec la commande : 
+```sh
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=90s
+```
+
+Une fois le déploiment terminé, la commande vous rend la main.
+
+Par la suite, 2 choix s'offrent à vous pour exposer l'IHM Canopsis : 
+
+  - Ingress-controller ( voir le point ci-dessous concernant l'ingress)
+  - [Port forwarding](#acceder-a-linterface-web)
+
+
+Si vous faites le choix de l'ingress, il vous faudra disposer d'un nom de domaine, ainsi qu'un certificat SSL associé.
+
+Ici, nous utiliserons le nom de domaine **canopsis.k8s.lan**. La résolution DNS se fera en modifiant notre fichier ```/etc/hosts```
+
+Editer ledit fichier :
+```sh
+sudo /etc/hosts
+```
+Y ajouter la ligne:
+```sh
+127.0.0.1 canopsis.k8s.lan
+```
+
+Pour générer le certificat SSL auto-signé, créer une clé privée : 
+```sh
+openssl genrsa -out canopsis.k8s.lan.key 2048
+```
+
+Créer une demande de signature de certificat (CSR):
+```sh
+openssl req -new -key canopsis.k8s.lan.key -out canopsis.k8s.lan.csr
+```
+Des informations vous sera demandés comme ci-dessous : 
+```sh
+Country Name (2 letter code) [XX]:FR
+State or Province Name (full name) []:Île-de-France
+Locality Name (eg, city) [Default City]:Paris
+Organization Name (eg, company) [Default Company Ltd]:Capensis
+Organizational Unit Name (eg, section) []:IT Department
+Common Name (eg, your name or your server's hostname) []:canopsis.k8s.lan
+Email Address []:admin@canopsis.k8s.lan
+```
+
+Ensuite, générer le certificat auto-signé : 
+```sh
+openssl x509 -req -days 365 -in canopsis.k8s.lan.csr -signkey canopsis.k8s.lan.key -out canopsis.k8s.lan.crt
+```
+
+Pour que le certificat puisse être utilisé par l'ingress, il est nécessaire de créer un secret en procédant de la manière suivante :
+```sh
+kubectl create secret tls cano0-front-tls-secret --cert=cano0.k8s.lan.crt --key=cano0.k8s.lan.key
+```
 
 ## Surcharge des valeurs du fichier Helm
 
 
-=== "Lab"
+=== "Lab - sans ingress"
     Exemple de fichier ```customer-value.yaml``` : 
     ```
     imagePullSecrets:
@@ -154,7 +221,35 @@ kubectl create secret generic canopsisregistry \
       enabled: true
     ```
 
-=== "Prod"
+=== "Lab - avec ingress"
+    Exemple de fichier ```customer-value.yaml``` : 
+    ```
+    imagePullSecrets:
+      - name: canopsisregistry
+
+    ingress:
+      enabled: true
+      hosts:
+        - host: canopsis.k8s.lan
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: canopsis-front-tls-secret
+          hosts:
+            - canopsis.k8s.lan
+
+    mongodb:
+      enabled: true
+    rabbitmq:
+      enabled: true
+    redis:
+      enabled: true
+    timescaledb:
+      enabled: true
+    ```
+
+=== "Prod - sans ingress"
     Exemple de fichier ```customer-value.yaml``` : 
       ```
       imagePullSecrets:
@@ -176,6 +271,42 @@ kubectl create secret generic canopsisregistry \
 
       ```
     En production, il est recommandé d'exécuter les services backend de Canopsis (bases de données, RabbitMQ) sur des serveurs dédiés, et non dans des conteneurs. Il faut donc veillez à définir les URL backend appropriées comme ci-dessus. 
+
+=== "Prod - avec ingress"
+    Exemple de fichier ```customer-value.yaml``` : 
+      ```
+      imagePullSecrets:
+        - name: canopsisregistry
+
+      ingress:
+        enabled: true
+        hosts:
+          - host: canopsis.k8s.lan
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - secretName: canopsis-front-tls-secret
+            hosts:
+              - canopsis.k8s.lan
+
+      mongodb:
+        enabled: true
+      rabbitmq:
+        enabled: true
+      redis:
+        enabled: true
+      timescaledb:
+        enabled: true
+      backendUrls:
+        mongodb: mongodb://cpsmongo:canopsis@mongodb:27017/canopsis
+        rabbitmq: amqp://cpsrabbit:canopsis@rabbitmq:5672/canopsis
+        redis: redis://:canopsis@redis:6379/0
+        timescaledb: postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+
+      ```
+    En production, il est recommandé d'exécuter les services backend de Canopsis (bases de données, RabbitMQ) sur des serveurs dédiés, et non dans des conteneurs. Il faut donc veillez à définir les URL backend appropriées comme ci-dessus. 
+
 
 !!! Remarque
     Vous pouvez également remplacer tout autre paramètre activé dans le fichier des valeurs du chart, comme indiqué dans le [README](https://git.canopsis.net/helm/charts/canopsis-pro/-/tree/develop?ref_type=heads) du chart. Ce qui précède est le minimum nécessaire pour obtenir un laboratoire Helm Canopsis Pro entièrement fonctionnel lorsque vous souhaitez tester l'ensemble dans Helm/K8S (services backend inclus).
@@ -217,14 +348,19 @@ watch kubectl get pod
 ```
 
 ### Accéder à l'interface Web :
+
+Si vous utilisez l'ingress, il sera directement possible d'accéder à l'IHM de Canopsis en y accédant via le nom de domaine configuré, par exemple : 
+```sh
+https://canopsis.k8s.lan
 ```
+
+Ou si vous n'utilisez pas l'ingress :
+```sh
 kubectl port-forward svc/${RELEASE_NAME}-nginx 8443:443
 ```
 
 !!! Information
     Cette commande ouvrira le port 8443 en local et redirigera les connexions vers le port 443 du service Nginx
-
-    Il est également possible d'exposer l'interface Web en utilisant un ingress, par exemple [ingress-nginx](https://kubernetes.github.io/ingress-nginx/deploy/)
 
 ## Désinstaller Canopsis : 
 ```
