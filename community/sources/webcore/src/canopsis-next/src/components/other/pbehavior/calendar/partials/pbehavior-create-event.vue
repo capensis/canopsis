@@ -141,6 +141,6 @@ export default {
   .pbehavior-form {
     overflow: auto;
     width: 500px;
-    max-height: 615px;
+    max-height: 100%;
   }
 </style>
