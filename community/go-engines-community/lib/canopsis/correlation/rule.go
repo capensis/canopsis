@@ -53,6 +53,14 @@ func (r *Rule) IsManual() bool {
 	return r.Type == RuleTypeManualGroup
 }
 
+func (r *Rule) GetStateID(group string) string {
+	if group != "" {
+		return r.ID + "&&" + group
+	}
+
+	return r.ID
+}
+
 type TotalEntityPatternFields struct {
 	TotalEntityPattern pattern.Entity `bson:"total_entity_pattern" json:"total_entity_pattern,omitempty"`
 
