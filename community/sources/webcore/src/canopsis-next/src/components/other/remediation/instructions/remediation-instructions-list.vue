@@ -57,12 +57,6 @@
           @click="$emit('edit', item)"
         />
         <c-action-btn
-          v-if="updatable"
-          :tooltip="$t('modals.patterns.title')"
-          icon="assignment"
-          @click="$emit('assign-patterns', item)"
-        />
-        <c-action-btn
           v-if="duplicable"
           type="duplicate"
           @click="$emit('duplicate', item)"

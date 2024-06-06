@@ -4,7 +4,7 @@
     centered
   >
     <v-tab>{{ $t('entity.form') }}</v-tab>
-    <v-tab-item>
+    <v-tab-item eager>
       <v-layout
         class="mt-3"
         column
@@ -61,14 +61,16 @@
       </v-layout>
     </v-tab-item>
     <v-tab>{{ $t('entity.manageInfos') }}</v-tab>
-    <v-tab-item>
+    <v-tab-item eager>
       <manage-infos v-field="form.infos" />
     </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
-import { ENTITY_TYPES } from '@/constants';
+import { computed } from 'vue';
+
+import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
@@ -93,10 +95,12 @@ export default {
       default: data => data,
     },
   },
-  computed: {
-    hasStateSetting() {
-      return this.form.type === ENTITY_TYPES.component;
-    },
+  setup(props) {
+    const hasStateSetting = computed(() => isEntityComponentType(props.form.type));
+
+    return {
+      hasStateSetting,
+    };
   },
 };
 </script>

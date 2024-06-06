@@ -70,7 +70,6 @@ export const MODALS = {
   createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   executeRemediationSimpleInstruction: 'execute-remediation-simple-instruction',
-  remediationPatterns: 'remediation-patterns',
   pbehaviorPatterns: 'pbehavior-patterns',
   remediationInstructionApproval: 'remediation-instruction-approval',
 
