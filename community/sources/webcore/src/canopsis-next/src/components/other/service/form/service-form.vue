@@ -57,7 +57,7 @@
       <v-tab :class="{ 'error--text': errors.has('entity_patterns') }">
         {{ $t('common.entityPatterns') }}
       </v-tab>
-      <v-tab-item>
+      <v-tab-item eager>
         <c-patterns-field
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
@@ -66,13 +66,10 @@
           entity-counters-type
         />
       </v-tab-item>
-      <v-tab
-        :disabled="advancedJsonWasChanged"
-        class="validation-header"
-      >
+      <v-tab class="validation-header">
         {{ $t('entity.manageInfos') }}
       </v-tab>
-      <v-tab-item>
+      <v-tab-item eager>
         <manage-infos v-field="form.infos" />
       </v-tab-item>
     </v-tabs>
@@ -80,13 +77,15 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { computed } from 'vue';
 
 import {
   ENTITY_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
 } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -113,36 +112,37 @@ export default {
       default: data => data,
     },
   },
-  computed: {
-    outputVariables() {
-      const messages = this.$t('serviceWeather.stateCounters');
+  setup() {
+    const { t } = useI18n();
+
+    const outputVariables = computed(() => {
+      const messages = t('serviceWeather.stateCounters');
 
       return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(field => ({
         text: messages[field],
         value: SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS[field],
       }));
-    },
+    });
 
-    advancedJsonWasChanged() {
-      return get(this.fields, ['advancedJson', 'changed']);
-    },
+    const entityAttributes = computed(() => [
+      {
+        value: ENTITY_PATTERN_FIELDS.lastEventDate,
+        options: { disabled: true },
+      },
+      {
+        value: ENTITY_PATTERN_FIELDS.connector,
+        options: { disabled: true },
+      },
+      {
+        value: ENTITY_PATTERN_FIELDS.componentInfos,
+        options: { disabled: true },
+      },
+    ]);
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.connector,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.componentInfos,
-          options: { disabled: true },
-        },
-      ];
-    },
+    return {
+      outputVariables,
+      entityAttributes,
+    };
   },
 };
 </script>
