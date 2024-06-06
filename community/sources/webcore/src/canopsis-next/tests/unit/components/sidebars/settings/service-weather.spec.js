@@ -684,6 +684,7 @@ describe('service-weather', () => {
                 heightFactor: 22,
                 counters: {},
                 isPriorityEnabled: true,
+                isHideGrayEnabled: true,
                 modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
               },
             },

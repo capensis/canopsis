@@ -306,6 +306,7 @@ describe('service-weather', () => {
           title: 'Default service weather',
           parameters: {
             columnDesktop: 2,
+            isHideGrayEnabled: false,
           },
         },
         editing: false,

@@ -26,6 +26,7 @@
               private
             )
           c-enabled-field.ml-3(
+            v-if="isHideGrayEnabled"
             :value="query.hide_grey",
             :label="$t('serviceWeather.hideGrey')",
             @input="updateHideGray"
@@ -97,6 +98,10 @@ export default {
     hasNoData() {
       return this.services.length === 0;
     },
+
+    isHideGrayEnabled() {
+      return this.widget.parameters.isHideGrayEnabled ?? true;
+  },
   },
   methods: {
     updateHideGray(hideGrey) {
