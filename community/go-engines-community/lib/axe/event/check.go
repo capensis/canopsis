@@ -344,7 +344,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 			inc["v.state_changes_since_status_update"] = 1
 		}
 	} else {
-		match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+		if len(alarm.Value.Steps) <= types.AlarmStepsHardLimit {
+			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+		}
 		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, author,
 			params.Output, params.User, params.Role, params.Initiator)
 		statusStep.Value = newStatus
