@@ -7,7 +7,7 @@
     <template v-if="updated">
       <v-tab>{{ $t('modals.remediationInstructionApproval.tabs.updated') }}</v-tab>
       <v-tab-item class="pt-3">
-        <remediation-instruction-form
+        <remediation-instruction-general-form
           :form="updatedForm"
           disabled-common
           disabled
@@ -16,7 +16,7 @@
     </template>
     <v-tab>{{ $t('modals.remediationInstructionApproval.tabs.original') }}</v-tab>
     <v-tab-item class="pt-3">
-      <remediation-instruction-form
+      <remediation-instruction-general-form
         :form="originalForm"
         disabled-common
         disabled
@@ -28,10 +28,10 @@
 <script>
 import { remediationInstructionToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import RemediationInstructionForm from '../form/remediation-instruction-form.vue';
+import RemediationInstructionGeneralForm from '../form/remediation-instruction-general-form.vue';
 
 export default {
-  components: { RemediationInstructionForm },
+  components: { RemediationInstructionGeneralForm },
   props: {
     original: {
       type: Object,
