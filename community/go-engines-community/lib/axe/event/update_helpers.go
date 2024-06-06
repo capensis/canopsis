@@ -8,6 +8,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -34,6 +35,51 @@ func NewAlarmStep(t string, params rpc.AxeParameters, inPbehaviorInterval bool) 
 func NewPbhAlarmStep(t string, params rpc.AxeParameters, pbehaviorInfo types.PbehaviorInfo) types.AlarmStep {
 	return types.NewPbhAlarmStep(t, params.Timestamp, params.Author, params.Output, params.User, params.Role,
 		params.Initiator, pbehaviorInfo.CanonicalType, pbehaviorInfo.IconName, pbehaviorInfo.Color)
+}
+
+func ConcatOutputAndRuleName(output, ruleName string) string {
+	if ruleName != "" {
+		if output != "" {
+			output += "\n"
+		}
+
+		output += ruleName
+	}
+
+	return output
+}
+
+func RemoveMetaAlarmState(
+	ctx context.Context,
+	metaAlarm types.Alarm,
+	rule correlation.Rule,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
+) error {
+	if rule.IsManual() {
+		return nil
+	}
+
+	stateID := rule.GetStateID(metaAlarm.Value.MetaValuePath)
+	metaAlarmState, err := metaAlarmStatesService.GetMetaAlarmState(ctx, stateID)
+	if err != nil {
+		return fmt.Errorf("cannot get meta alarm state: %w", err)
+	}
+
+	if metaAlarmState.ID == "" {
+		return nil
+	}
+
+	_, err = metaAlarmStatesService.ArchiveState(ctx, metaAlarmState)
+	if err != nil {
+		return fmt.Errorf("cannot archive meta alarm state: %w", err)
+	}
+
+	_, err = metaAlarmStatesService.DeleteState(ctx, stateID)
+	if err != nil {
+		return fmt.Errorf("cannot delete meta alarm state: %w", err)
+	}
+
+	return nil
 }
 
 func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now datetime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
@@ -321,8 +367,9 @@ func processResolve(
 	event rpc.AxeEvent,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
 	dbClient mongo.DbClient,
-	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
+	alarmCollection, entityCollection, resolvedCollection, metaAlarmRuleCollection mongo.DbCollection,
 ) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
 	update := getResolveAlarmUpdate(datetime.NewCpsTime(), event.Parameters)
 	result := Result{}
@@ -408,8 +455,25 @@ func processResolve(
 			&entity,
 			result.AlarmChange,
 		)
+		if err != nil {
+			return err
+		}
 
-		return err
+		if !result.Alarm.IsMetaAlarm() {
+			return nil
+		}
+
+		var rule correlation.Rule
+		err = metaAlarmRuleCollection.FindOne(ctx, bson.M{"_id": result.Alarm.Value.Meta}).Decode(&rule)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return fmt.Errorf("meta alarm rule %s not found", result.Alarm.Value.Meta)
+			}
+
+			return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+		}
+
+		return RemoveMetaAlarmState(ctx, result.Alarm, rule, metaAlarmStatesService)
 	})
 	if err != nil || result.Alarm.ID == "" {
 		return result, nil, "", false, 0, err
@@ -555,16 +619,4 @@ func getResolveEntityUpdate() bson.M {
 		"idle_since":           "",
 		"last_idle_rule_apply": "",
 	}}
-}
-
-func ConcatOutputAndRuleName(output, ruleName string) string {
-	if ruleName != "" {
-		if output != "" {
-			output += "\n"
-		}
-
-		output += ruleName
-	}
-
-	return output
 }
