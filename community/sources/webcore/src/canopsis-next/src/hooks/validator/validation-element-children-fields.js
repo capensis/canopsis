@@ -2,7 +2,7 @@ import { computed, unref } from 'vue';
 
 import { isParent } from '@/helpers/vue-base';
 
-import { useInjectValidator } from './inject-validator';
+import { useValidator } from './validator';
 
 const EMPTY_VALIDATOR_FIELDS = [];
 
@@ -16,7 +16,7 @@ const EMPTY_VALIDATOR_FIELDS = [];
  * @returns {import('vue').ComputedRef<Array>}
  */
 export const useValidationElementChildrenFields = (parent) => {
-  const validator = useInjectValidator();
+  const validator = useValidator();
 
   return computed(() => {
     if (!validator) {
