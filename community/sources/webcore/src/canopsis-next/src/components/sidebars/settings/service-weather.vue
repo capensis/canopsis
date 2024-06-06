@@ -91,6 +91,8 @@
       v-divider
       field-switcher(v-model="form.parameters.isPriorityEnabled", :title="$t('settings.isPriorityEnabled')")
       v-divider
+      field-switcher(v-model="form.parameters.isHideGrayEnabled", :title="$t('settings.isHideGrayEnabled')")
+      v-divider
       field-modal-type(v-model="form.parameters.modalType")
       v-divider
       field-switcher(v-model="form.parameters.entitiesActionsInQueue", :title="$t('settings.entitiesActionsInQueue')")
