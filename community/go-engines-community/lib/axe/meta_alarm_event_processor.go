@@ -122,11 +122,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 			metaAlarm.Value.DisplayName = event.Parameters.DisplayName
 		}
 
-		stateID := rule.ID
-		if event.Parameters.MetaAlarmValuePath != "" {
-			stateID = fmt.Sprintf("%s&&%s", rule.ID, event.Parameters.MetaAlarmValuePath)
-		}
-
+		stateID := rule.GetStateID(event.Parameters.MetaAlarmValuePath)
 		var childEntityIDs []string
 		var archived bool
 
@@ -985,7 +981,7 @@ func (p *metaAlarmEventProcessor) resolveParents(
 						return fmt.Errorf("cannot update alarm: %w", err)
 					}
 
-					return nil
+					return libaxeevent.RemoveMetaAlarmState(ctx, parentAlarm.Alarm, rule, p.metaAlarmStatesService)
 				})
 				if err != nil {
 					return err
