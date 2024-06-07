@@ -20,9 +20,19 @@
             key="description"
           )
           v-layout
-            v-flex(xs5)
+            v-flex(v-if="!isStringDictionaryValueType", xs5)
               c-name-field(v-field="form.name", key="name", required)
-            v-flex(xs7)
+            v-flex(v-if="isStringDictionaryValueType")
+              c-payload-text-field(
+                v-field="form.value",
+                :label="$t('common.value')",
+                :variables="variables",
+                :name="valueFieldName",
+                key="value",
+                required,
+                clearable
+              )
+            v-flex(v-else, xs7)
               c-payload-text-field.ml-2(
                 v-if="isStringTemplateValueType",
                 v-field="form.value",
@@ -107,6 +117,10 @@ export default {
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
       ].includes(this.form.type);
+    },
+
+    isStringDictionaryValueType() {
+      return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === this.form.type;
     },
   },
   watch: {
