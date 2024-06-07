@@ -5,9 +5,7 @@
 </template>
 
 <script>
-import { DEFAULT_SANITIZE_OPTIONS } from '@/config';
-
-import { setSeveralFields } from '@/helpers/immutable';
+import { TEXT_WIDGET_SANITIZE_OPTIONS } from '@/constants/sanitize';
 
 export default {
   props: {
@@ -18,22 +16,7 @@ export default {
   },
   computed: {
     sanitizeOptions() {
-      return setSeveralFields(DEFAULT_SANITIZE_OPTIONS, {
-        allowedTags: tags => [...tags, 'iframe'],
-        'allowedAttributes.iframe': [
-          'allowtransparency',
-          'frameborder',
-          'hspace',
-          'marginheight',
-          'marginwidth',
-          'sandbox',
-          'scrolling',
-          'seamless',
-          'src',
-          'srcdoc',
-          'vspace',
-        ],
-      });
+      return TEXT_WIDGET_SANITIZE_OPTIONS;
     },
 
     template() {
