@@ -49,6 +49,10 @@ export default {
       type: Object,
       required: false,
     },
+    sanitizeOptions: {
+      type: Object,
+      required: false,
+    },
   },
   computed: {
     isValueEmpty() {
@@ -63,6 +67,7 @@ export default {
         config: {
           text: this.value,
           variables: this.variables,
+          sanitizeOptions: this.sanitizeOptions,
           action: value => this.updateModel(value),
         },
       });
