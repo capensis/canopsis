@@ -339,7 +339,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
 	if newStatus == previousStatus {
 		if stateStep.Type != "" {
-			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+			if newState != types.AlarmStateOK {
+				match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+			}
 			push["v.steps"] = stateStep
 			inc["v.state_changes_since_status_update"] = 1
 		}
