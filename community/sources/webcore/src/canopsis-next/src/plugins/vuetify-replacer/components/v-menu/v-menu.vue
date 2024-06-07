@@ -36,6 +36,19 @@ export default {
       }px`;
     },
 
+    /**
+     * We've added offsetOverflow to condition
+     *
+     * @return {string}
+     */
+    calcTop() {
+      return `${
+        this.isAttached && !this.offsetOverflow
+          ? this.computedTop
+          : this.calcYOverflow(this.computedTop)
+      }px`;
+    },
+
     calcScrollPosition() {
       const $el = this.$refs.content;
       const activeTile = $el.querySelector('.v-list__tile--active');
