@@ -47,6 +47,13 @@ La restructuration apportée dans les bases de données pour cette version de Ca
         > exit
         ```
 
+    === "Helm"
+        ```sh
+        export MONGODB_ROOT_PASSWORD=$(kubectl get secret canopsis-mongodb -o jsonpath='{.data.mongodb-root-password}' | base64 --decode)
+        
+        kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
+        ```
+
     Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "5.0" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
 
@@ -69,6 +76,11 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     systemctl stop postgresql-13
     systemctl stop rabbitmq-server
     systemctl stop redis
+    ```
+
+=== "Helm"
+    ```sh
+    kubectl delete --all deployments
     ```
 
 ## Mise à jour Canopsis
@@ -106,7 +118,9 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Non concerné car ces configurations sont livrées directemement dans les paquets RPM.
 
+=== "Helm"
 
+    Non concerné car ces configurations sont livrées directement dans les charts helm
 
 ### Mise à jour de MongoDB
 
@@ -247,6 +261,41 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     mongosh -u root -p root
     > disableTelemetry()
     ```
+
+  === "Helm"
+    Dump de la base de données Canopsis :
+    ```sh
+    kubectl exec -n canopsis canopsis-mongodb-0 -- mongodump --uri="mongodb://cpsmongo:canopsis@localhost:27017/canopsis" --gzip --out /tmp/dump_canopsis.gz
+    ```
+
+    Récupération en local du dump :
+    ```sh
+    kubectl cp canopsis/canopsis-mongodb-0:/tmp/dump_canopsis.gz .
+    ```
+
+    Arrêt des pods mongodb :
+    ```sh
+    kubectl scale statefulset canopsis-mongodb --replicas=0
+    ```
+
+    Une fois que les pods sont tous arrêtés, suppresion des PVCs mongodb :
+    ```sh
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
+    ```
+
+    Mise à jour de mongodb :
+    ```sh
+    helm repo update
+
+    helm upgrade canopsis bitnami/mongodb --set auth.enabled=true --set architecture=replicaset --set replicaCount=3 --set auth.enabled=true --set auth.usernames={'cpsmongo'} --set auth.passwords={'canopsis'} --set auth.databases={'canopsis'} --set externalAccess.enable=true --set replicaSetName=rs0 --set persistence.resourcePolicy=keep --set externalAccess.service.type=ClusterIP --set arbiter.enabled=false --version 15.6.2
+    ```
+
+    Lorsque les trois replicasets sont UP, import de la DB : 
+    ```sh
+    kubectl cp ./canopsis canopsis-mongodb-0:/tmp/
+
+    mongorestore -u cpsmongo --gzip --db canopsis /tmp/canopsis
+    ``` 
 
 ### Mise à jour de TimescaleDB
 
