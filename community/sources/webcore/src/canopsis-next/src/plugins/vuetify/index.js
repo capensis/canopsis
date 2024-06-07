@@ -4,6 +4,7 @@ import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 import icons from './components/icons';
 import ClickOutside from './directives/click-outside';
 import VTabs from './components/v-tabs/v-tabs.vue';
+import VTab from './components/v-tabs/v-tab.vue';
 import VSelect from './components/v-select';
 import VTextarea from './components/v-textarea/v-textarea.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
@@ -45,6 +46,7 @@ export default {
     Vue.component('v-textarea', VTextarea);
     Vue.component('v-select', VSelect);
     Vue.component('v-tabs', VTabs);
+    Vue.component('v-tab', VTab);
 
     Vue.directive('click-outside', ClickOutside);
   },
