@@ -38,10 +38,10 @@ func NewApi(
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	widgetId := c.Param("id")
 
-	ok, err := a.checkAccess(c, widgetId, userId)
+	ok, err := a.checkAccess(c, widgetId, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +50,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	response, err := a.store.Find(c, userId, widgetId)
+	response, err := a.store.Find(c, userID, widgetId)
 	if err != nil {
 		panic(err)
 	}
@@ -67,14 +67,14 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.checkAccess(c, request.Widget, userId)
+	ok, err := a.checkAccess(c, request.Widget, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +83,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	response, err := a.store.Update(c, userId, request)
+	response, err := a.store.Update(c, userID, request)
 	if err != nil {
 		panic(err)
 	}
@@ -96,18 +96,18 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (a *api) checkAccess(ctx context.Context, widgetId, userId string) (bool, error) {
+func (a *api) checkAccess(ctx context.Context, widgetId, userID string) (bool, error) {
 	tabInfos, err := a.widgetStore.FindTabPrivacySettings(ctx, []string{widgetId})
 	if err != nil || len(tabInfos) == 0 {
 		return false, err
 	}
 
 	for _, tabInfo := range tabInfos {
-		if tabInfo.IsPrivate && tabInfo.Author == userId {
+		if tabInfo.IsPrivate && tabInfo.Author == userID {
 			continue
 		}
 
-		ok, err := a.enforcer.Enforce(userId, tabInfo.View, model.PermissionRead)
+		ok, err := a.enforcer.Enforce(userID, tabInfo.View, model.PermissionRead)
 		if err != nil || !ok {
 			return false, err
 		}

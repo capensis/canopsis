@@ -56,9 +56,9 @@ type websocketMsg struct {
 // Create
 // @Success 200 {array} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
-		Author: userId,
+		Author: userID,
 	}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -131,10 +131,10 @@ func (a *api) List(c *gin.Context) {
 // Update
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
 		ID:     c.Param("id"),
-		Author: userId,
+		Author: userID,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -175,10 +175,10 @@ func (a *api) Update(c *gin.Context) {
 // Patch
 // @Success 200 {object} Response
 func (a *api) Patch(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := PatchRequest{
 		ID:     c.Param("id"),
-		Author: userId,
+		Author: userID,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -221,7 +221,7 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}

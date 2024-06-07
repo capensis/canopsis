@@ -131,7 +131,7 @@ func (a *api) Update(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	exception, err := a.store.GetById(c, c.Param("id"))
+	exception, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

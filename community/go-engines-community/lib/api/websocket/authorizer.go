@@ -18,7 +18,7 @@ type Authorizer interface {
 	// Authenticate authenticates user by token.
 	Authenticate(ctx context.Context, token string) (string, error)
 	// Authorize checks if user has access to room.
-	Authorize(ctx context.Context, userId, room string) (bool, error)
+	Authorize(ctx context.Context, userID, room string) (bool, error)
 	// AddRoom adds room with permissions.
 	AddRoom(room string, perms []string) error
 	AddGroup(group string, perms []string, check GroupCheckExists) error
@@ -65,11 +65,11 @@ func (a *authorizer) Authenticate(ctx context.Context, token string) (string, er
 	return "", nil
 }
 
-func (a *authorizer) Authorize(ctx context.Context, userId, room string) (bool, error) {
-	ok, err := a.authorizeRoom(userId, room)
+func (a *authorizer) Authorize(ctx context.Context, userID, room string) (bool, error) {
+	ok, err := a.authorizeRoom(userID, room)
 	if err != nil {
 		if errors.Is(err, ErrNotFoundRoom) {
-			return a.authorizeGroupRoom(ctx, userId, room)
+			return a.authorizeGroupRoom(ctx, userID, room)
 		}
 
 		return false, err
@@ -135,7 +135,7 @@ func (a *authorizer) RemoveGroupRoom(group, id string) error {
 	return nil
 }
 
-func (a *authorizer) authorizeRoom(userId, room string) (bool, error) {
+func (a *authorizer) authorizeRoom(userID, room string) (bool, error) {
 	a.mx.RLock()
 	defer a.mx.RUnlock()
 
@@ -145,11 +145,11 @@ func (a *authorizer) authorizeRoom(userId, room string) (bool, error) {
 			return true, nil
 		}
 
-		if userId == "" {
+		if userID == "" {
 			return false, nil
 		}
 
-		vals := []any{userId}
+		vals := []any{userID}
 		for _, v := range perms {
 			vals = append(vals, v)
 		}
@@ -160,7 +160,7 @@ func (a *authorizer) authorizeRoom(userId, room string) (bool, error) {
 	return false, ErrNotFoundRoom
 }
 
-func (a *authorizer) authorizeGroupRoom(ctx context.Context, userId, room string) (bool, error) {
+func (a *authorizer) authorizeGroupRoom(ctx context.Context, userID, room string) (bool, error) {
 	a.mx.Lock()
 	defer a.mx.Unlock()
 
@@ -187,11 +187,11 @@ func (a *authorizer) authorizeGroupRoom(ctx context.Context, userId, room string
 			return true, nil
 		}
 
-		if userId == "" {
+		if userID == "" {
 			return false, nil
 		}
 
-		vals := []any{userId}
+		vals := []any{userID}
 		for _, v := range perms {
 			vals = append(vals, v)
 		}

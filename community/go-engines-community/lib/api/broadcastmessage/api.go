@@ -72,7 +72,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	bm, err := a.store.GetById(c, c.Param("id"))
+	bm, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

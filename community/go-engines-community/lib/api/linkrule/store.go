@@ -20,10 +20,10 @@ const defaultCategoriesLimit = 100
 
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetCategories(ctx context.Context, r CategoriesRequest) (*CategoryResponse, error)
 }
 
@@ -62,14 +62,14 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID)
+		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
@@ -137,21 +137,21 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID)
+		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}

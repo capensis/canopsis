@@ -17,14 +17,14 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequest, userID string) (*AggregationResult, error)
 	FindViewId(ctx context.Context, id string) (string, string, bool, error)
 	FindViewIdByWidget(ctx context.Context, widgetId string) (string, string, bool, error)
-	GetOneBy(ctx context.Context, id, userId string) (*Response, error)
+	GetOneBy(ctx context.Context, id, userID string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
-	UpdatePositions(ctx context.Context, filters []string, widgetId, userId string, isPrivate bool) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
+	UpdatePositions(ctx context.Context, filters []string, widgetId, userID string, isPrivate bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -125,16 +125,16 @@ func (s *store) FindViewIdByWidget(ctx context.Context, widgetId string) (string
 	return "", "", false, nil
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequest, userID string) (*AggregationResult, error) {
 	match := bson.M{"widget": r.Widget}
 
 	if r.Private == nil {
 		match["$or"] = []bson.M{
-			{"author": userId},
+			{"author": userID},
 			{"is_user_preference": false},
 		}
 	} else if *r.Private {
-		match["author"] = userId
+		match["author"] = userID
 		match["is_user_preference"] = true
 	} else {
 		match["is_user_preference"] = false
@@ -183,12 +183,12 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, error) {
+func (s *store) GetOneBy(ctx context.Context, id, userID string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{
 			"_id": id,
 			"$or": bson.A{
-				bson.M{"author": userId},
+				bson.M{"author": userID},
 				bson.M{"is_user_preference": false},
 			}},
 		},
@@ -288,29 +288,29 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
 
 		// required to get the author in action log listener.
 		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id, "$or": bson.A{
-			bson.M{"author": userId},
+			bson.M{"author": userID},
 			bson.M{"is_user_preference": false},
-		}}, bson.M{"$set": bson.M{"author": userId}})
+		}}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}
 
 		_, err = s.collection.DeleteOne(ctx, bson.M{"_id": id, "$or": bson.A{
-			bson.M{"author": userId},
+			bson.M{"author": userID},
 			bson.M{"is_user_preference": false},
 		}})
 		if err != nil {
 			return err
 		}
 
-		err = s.updateWidgets(ctx, id, userId)
+		err = s.updateWidgets(ctx, id, userID)
 		if err != nil {
 			return err
 		}
@@ -327,7 +327,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	return res, err
 }
 
-func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, userId string, isPrivate bool) (bool, error) {
+func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, userID string, isPrivate bool) (bool, error) {
 	res := false
 	notFoundIds := make(map[string]struct{}, len(ids))
 	for _, id := range ids {
@@ -345,7 +345,7 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, use
 			"is_user_preference": isPrivate,
 		}
 		if isPrivate {
-			match["author"] = userId
+			match["author"] = userID
 		}
 
 		cursor, err := s.collection.Find(ctx, match)
@@ -391,11 +391,11 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, use
 	return res, err
 }
 
-func (s *store) updateWidgets(ctx context.Context, filterId, userId string) error {
+func (s *store) updateWidgets(ctx context.Context, filterId, userID string) error {
 	_, err := s.widgetCollection.UpdateMany(ctx, bson.M{
 		"parameters.mainFilter": filterId,
 	}, bson.M{
-		"$set":   bson.M{"author": userId, "updated": datetime.NewCpsTime()},
+		"$set":   bson.M{"author": userID, "updated": datetime.NewCpsTime()},
 		"$unset": bson.M{"parameters.mainFilter": ""},
 	})
 

@@ -180,50 +180,50 @@ func (a *api) Delete(c *gin.Context) {
 // BulkCreate
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
-	userIds := make([]string, 0)
+	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		user, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
 		}
 
-		userIds = append(userIds, user.ID)
+		userIDs = append(userIDs, user.ID)
 		return user.ID, nil
 	}, a.logger)
-	a.metricMetaUpdater.UpdateById(c, userIds...)
+	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	userIds := make([]string, 0)
+	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		user, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || user == nil {
 			return "", err
 		}
 
-		userIds = append(userIds, user.ID)
+		userIDs = append(userIDs, user.ID)
 		return user.ID, nil
 	}, a.logger)
-	a.metricMetaUpdater.UpdateById(c, userIds...)
+	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
-	userIds := make([]string, 0)
+	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userId)
+		ok, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
 		}
 
-		userIds = append(userIds, request.ID)
+		userIDs = append(userIDs, request.ID)
 		return request.ID, nil
 	}, a.logger)
 
-	a.metricMetaUpdater.DeleteById(c, userIds...)
+	a.metricMetaUpdater.DeleteById(c, userIDs...)
 }

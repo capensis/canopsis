@@ -40,7 +40,7 @@ func NewApi(
 // List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
@@ -49,7 +49,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	ok, _, err := a.checkAccessByWidget(c, r.Widget, userId, model.PermissionRead)
+	ok, _, err := a.checkAccessByWidget(c, r.Widget, userID, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +59,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c, r, userId)
+	users, err := a.store.Find(c, r, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -76,9 +76,9 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
-	ok, _, err := a.checkAccess(c, id, userId, model.PermissionRead)
+	ok, _, err := a.checkAccess(c, id, userID, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +88,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	filter, err := a.store.GetOneBy(c, id, userId)
+	filter, err := a.store.GetOneBy(c, id, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -104,7 +104,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := CreateRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -128,7 +128,7 @@ func (a *api) Create(c *gin.Context) {
 		perm = model.PermissionRead
 	}
 
-	granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userId, perm)
+	granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userID, perm)
 	if err != nil {
 		panic(err)
 	}
@@ -139,7 +139,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	if !*request.IsUserPreference && !request.IsPrivate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}
@@ -162,7 +162,7 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -188,7 +188,7 @@ func (a *api) Update(c *gin.Context) {
 		perm = model.PermissionRead
 	}
 
-	granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userId, perm)
+	granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userID, perm)
 	if err != nil {
 		panic(err)
 	}
@@ -199,7 +199,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if !*request.IsUserPreference && !request.IsPrivate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}
@@ -238,10 +238,10 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	filter, err := a.store.GetOneBy(c, id, userId)
+	filter, err := a.store.GetOneBy(c, id, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -255,7 +255,7 @@ func (a *api) Delete(c *gin.Context) {
 		perm = model.PermissionRead
 	}
 
-	granted, isPrivate, err := a.checkAccess(c, id, userId, perm)
+	granted, isPrivate, err := a.checkAccess(c, id, userID, perm)
 	if err != nil {
 		panic(err)
 	}
@@ -266,7 +266,7 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !filter.IsUserPreference && !isPrivate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}
@@ -277,7 +277,7 @@ func (a *api) Delete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(c, id, userId)
+	ok, err := a.store.Delete(c, id, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -291,7 +291,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -305,7 +305,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	firstItem := request.Items[0]
-	firstFilter, err := a.store.GetOneBy(c, firstItem, userId)
+	firstFilter, err := a.store.GetOneBy(c, firstItem, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -320,7 +320,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		perm = model.PermissionRead
 	}
 
-	granted, isPrivate, err := a.checkAccess(c, firstItem, userId, perm)
+	granted, isPrivate, err := a.checkAccess(c, firstItem, userID, perm)
 	if err != nil {
 		panic(err)
 	}
@@ -331,7 +331,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	if !isUserPreference && !isPrivate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}
@@ -342,7 +342,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userId, isUserPreference)
+	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userID, isUserPreference)
 	if err != nil {
 		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
@@ -360,32 +360,32 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) checkAccess(ctx context.Context, id string, userId, perm string) (bool, bool, error) {
+func (a *api) checkAccess(ctx context.Context, id string, userID, perm string) (bool, bool, error) {
 	viewId, author, isPrivate, err := a.store.FindViewId(ctx, id)
 	if err != nil || viewId == "" {
 		return false, false, err
 	}
 
 	if isPrivate {
-		return author == userId, true, nil
+		return author == userID, true, nil
 	}
 
-	granted, err := a.enforcer.Enforce(userId, viewId, perm)
+	granted, err := a.enforcer.Enforce(userID, viewId, perm)
 
 	return granted, isPrivate, err
 }
 
-func (a *api) checkAccessByWidget(ctx context.Context, id, userId, perm string) (bool, bool, error) {
+func (a *api) checkAccessByWidget(ctx context.Context, id, userID, perm string) (bool, bool, error) {
 	viewId, author, isPrivate, err := a.store.FindViewIdByWidget(ctx, id)
 	if err != nil || viewId == "" {
 		return false, false, err
 	}
 
 	if isPrivate {
-		return author == userId, true, nil
+		return author == userID, true, nil
 	}
 
-	granted, err := a.enforcer.Enforce(userId, viewId, perm)
+	granted, err := a.enforcer.Enforce(userID, viewId, perm)
 
 	return granted, isPrivate, err
 }

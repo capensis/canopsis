@@ -13,5 +13,5 @@ type Reason struct {
 	Updated     datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	// Hidden is used in API to hide documents from the list response
-	Hidden *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
+	Hidden bool `bson:"hidden" json:"hidden"`
 }

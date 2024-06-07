@@ -61,7 +61,7 @@ func (s *store) findPriority(ctx context.Context, desc bool) (int64, error) {
 			return 0, err
 		}
 
-		return int64(t.Priority), nil
+		return t.Priority, nil
 	}
 
 	return 0, nil
