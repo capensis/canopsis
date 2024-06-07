@@ -1,7 +1,6 @@
 <template lang="pug">
   v-tabs.view-tabs(
     ref="tabs",
-    :key="vTabsKey",
     :value="$route.fullPath",
     :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }",
     :hide-slider="changed",
@@ -77,10 +76,6 @@ export default {
     },
   },
   computed: {
-    vTabsKey() {
-      return this.view.tabs.map(tab => tab._id).join('-');
-    },
-
     preparedTabs() {
       return this.tabs.map(tab => ({
         key: tab._id,
