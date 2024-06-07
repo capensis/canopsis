@@ -165,7 +165,7 @@ Ici, nous utiliserons le nom de domaine **canopsis.k8s.lan**. La résolution DNS
 
 Editer ledit fichier :
 ```sh
-sudo /etc/hosts
+sudo vim /etc/hosts
 ```
 Y ajouter la ligne:
 ```sh
@@ -199,7 +199,7 @@ openssl x509 -req -days 365 -in canopsis.k8s.lan.csr -signkey canopsis.k8s.lan.k
 
 Pour que le certificat puisse être utilisé par l'ingress, il est nécessaire de créer un secret en procédant de la manière suivante :
 ```sh
-kubectl create secret tls cano0-front-tls-secret --cert=cano0.k8s.lan.crt --key=cano0.k8s.lan.key
+kubectl create secret tls cano0-front-tls-secret --cert=canopsis.k8s.lan.crt --key=canopsis.k8s.lan.key
 ```
 
 ## Surcharge des valeurs du fichier Helm
