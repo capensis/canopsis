@@ -94,12 +94,12 @@ export default {
     $mq: {
       immediate: true,
       handler(mq) {
-        this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
+        this.setSize(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq]);
       },
     },
 
     editing() {
-      this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
+      this.setSize(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq]);
     },
 
     visible: {
@@ -118,6 +118,12 @@ export default {
     this.unregisterEditingOffHandler(this.updatePositions);
   },
   methods: {
+    setSize(newSize) {
+      if (this.size !== newSize) {
+        this.size = newSize;
+      }
+    },
+
     async updatePositions() {
       try {
         const newWidgetsGrid = layoutsToWidgetsGrid(this.layouts);
