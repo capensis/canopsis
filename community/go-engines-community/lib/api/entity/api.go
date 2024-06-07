@@ -320,10 +320,10 @@ func (a *api) GetStateSetting(c *gin.Context) {
 }
 
 func (a *api) toggle(c *gin.Context, enabled bool) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
 	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
-		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userId, enabled)
+		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userID, enabled)
 		if err != nil || simplifiedEntity.ID == "" {
 			return "", err
 		}

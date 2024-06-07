@@ -24,7 +24,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	Copy(ctx context.Context, widgetID string, r CreateRequest) (*Response, error)
 	CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
@@ -345,13 +345,13 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
 
 		// required to get the author in action log listener.
-		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}
@@ -366,7 +366,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			return err
 		}
 
-		err = s.deleteFilters(ctx, id, userId)
+		err = s.deleteFilters(ctx, id, userID)
 		if err != nil {
 			return err
 		}
@@ -581,9 +581,9 @@ func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) erro
 	return err
 }
 
-func (s *store) deleteFilters(ctx context.Context, widgetID, userId string) error {
+func (s *store) deleteFilters(ctx context.Context, widgetID, userID string) error {
 	// required to get the author in action log listener.
-	_, err := s.filterCollection.UpdateMany(ctx, bson.M{"widget": widgetID}, bson.M{"$set": bson.M{"author": userId}})
+	_, err := s.filterCollection.UpdateMany(ctx, bson.M{"widget": widgetID}, bson.M{"$set": bson.M{"author": userID}})
 	if err != nil {
 		return err
 	}

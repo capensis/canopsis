@@ -20,7 +20,7 @@ type Store interface {
 	GetOneById(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -164,7 +164,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
@@ -172,7 +172,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		res = false
 
 		// required to get the author in action log listener.
-		err := s.collection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}}).Decode(&model)
+		err := s.collection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}}).Decode(&model)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -186,7 +186,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			return err
 		}
 
-		err = s.cleanLinkedWidgets(ctx, model, userId)
+		err = s.cleanLinkedWidgets(ctx, model, userID)
 		if err != nil {
 			return err
 		}
@@ -198,7 +198,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	return res, err
 }
 
-func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userId string) error {
+func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID string) error {
 	for widgetType, parametersByType := range s.widgetParameters {
 		parameters := parametersByType[tpl.Type]
 		for _, parameter := range parameters {
@@ -224,7 +224,7 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userId st
 				bson.M{"$set": bson.M{
 					"parameters." + parameter:                   val,
 					"parameters." + parameter + "TemplateTitle": tpl.Title,
-					"author":  userId,
+					"author":  userID,
 					"updated": datetime.NewCpsTime(),
 				}},
 			)
@@ -237,7 +237,7 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userId st
 	return nil
 }
 
-func (s *store) cleanLinkedWidgets(ctx context.Context, model view.WidgetTemplate, userId string) error {
+func (s *store) cleanLinkedWidgets(ctx context.Context, model view.WidgetTemplate, userID string) error {
 	for widgetType, parametersByType := range s.widgetParameters {
 		parameters := parametersByType[model.Type]
 		for _, parameter := range parameters {
@@ -249,7 +249,7 @@ func (s *store) cleanLinkedWidgets(ctx context.Context, model view.WidgetTemplat
 				},
 				bson.M{
 					"$set": bson.M{
-						"author":  userId,
+						"author":  userID,
 						"updated": datetime.NewCpsTime(),
 					},
 					"$unset": bson.M{

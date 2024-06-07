@@ -105,7 +105,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pattern, err := a.store.GetById(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	pattern, err := a.store.GetByID(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -122,7 +122,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
@@ -131,7 +131,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	pattern, err := a.store.GetById(c, request.ID, userId)
+	pattern, err := a.store.GetByID(c, request.ID, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -152,7 +152,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if pattern.IsCorporate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -177,9 +177,9 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
-	pattern, err := a.store.GetById(c, c.Param("id"), userId)
+	pattern, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
 		panic(err)
 	}
@@ -190,7 +190,7 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if pattern.IsCorporate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -201,7 +201,7 @@ func (a *api) Delete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(c, *pattern, userId)
+	ok, err := a.store.Delete(c, *pattern, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -217,15 +217,15 @@ func (a *api) Delete(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
-	canDeleteCorporate, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+	canDeleteCorporate, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 	if err != nil {
 		panic(err)
 	}
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		pattern, err := a.store.GetById(c, request.ID, userId)
+		pattern, err := a.store.GetByID(c, request.ID, userID)
 		if err != nil || pattern == nil {
 			return "", err
 		}
@@ -234,7 +234,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			return "", bulk.ErrUnauthorized
 		}
 
-		ok, err := a.store.Delete(c, *pattern, userId)
+		ok, err := a.store.Delete(c, *pattern, userID)
 		if err != nil || !ok {
 			return "", err
 		}

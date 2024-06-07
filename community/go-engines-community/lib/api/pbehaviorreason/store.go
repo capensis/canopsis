@@ -21,9 +21,9 @@ import (
 type Store interface {
 	Insert(ctx context.Context, model CreateRequest) (*Response, error)
 	Find(ctx context.Context, query ListRequest) (*AggregationResult, error)
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Update(ctx context.Context, model UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	IsLinkedToPbehavior(ctx context.Context, id string) (bool, error)
 }
 
@@ -112,7 +112,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
-		res, err = s.GetById(ctx, doc.ID)
+		res, err = s.GetByID(ctx, doc.ID)
 		return err
 	})
 	if err != nil {
@@ -122,7 +122,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	return res, nil
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
@@ -161,7 +161,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
-		res, err = s.GetById(ctx, doc.ID)
+		res, err = s.GetByID(ctx, doc.ID)
 		return err
 	})
 	if err != nil {
@@ -171,7 +171,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return res, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	isLinkedToPbehavior, err := s.IsLinkedToPbehavior(ctx, id)
 	if err != nil {
 		return false, err
@@ -196,7 +196,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}

@@ -21,7 +21,7 @@ import (
 
 type Store interface {
 	Find(context.Context, ListRequest) (*AggregationResult, error)
-	FindEntities(ctx context.Context, id string, query EntitiesListRequest, userId string) (*EntityAggregationResult, error)
+	FindEntities(ctx context.Context, id string, query EntitiesListRequest, userID string) (*EntityAggregationResult, error)
 }
 
 func NewStore(
@@ -85,7 +85,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest, userId string) (*EntityAggregationResult, error) {
+func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest, userID string) (*EntityAggregationResult, error) {
 	err := s.dbCollection.FindOne(ctx, bson.M{
 		"_id":     id,
 		"type":    libtypes.EntityTypeService,
@@ -176,7 +176,7 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 		}
 	}
 
-	err = s.fillLinks(ctx, &res, userId)
+	err = s.fillLinks(ctx, &res, userID)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fill links")
 	}
@@ -184,8 +184,8 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 	return &res, nil
 }
 
-func (s *store) fillLinks(ctx context.Context, result *EntityAggregationResult, userId string) error {
-	user, err := s.findUser(ctx, userId)
+func (s *store) fillLinks(ctx context.Context, result *EntityAggregationResult, userID string) error {
+	user, err := s.findUser(ctx, userID)
 	if err != nil {
 		return err
 	}

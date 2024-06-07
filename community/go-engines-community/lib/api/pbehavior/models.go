@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -98,7 +99,7 @@ type Response struct {
 	Stop          *datetime.CpsTime             `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Created       *datetime.CpsTime             `bson:"created" json:"created" swaggertype:"integer"`
 	Updated       *datetime.CpsTime             `bson:"updated" json:"updated" swaggertype:"integer"`
-	Type          *pbehavior.Type               `bson:"type" json:"type"`
+	Type          *pbehaviortype.Response       `bson:"type" json:"type"`
 	Color         string                        `bson:"color" json:"color"`
 	Exdates       []pbehaviorexception.Exdate   `bson:"exdates" json:"exdates"`
 	Exceptions    []pbehaviorexception.Response `bson:"exceptions" json:"exceptions"`

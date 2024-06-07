@@ -20,7 +20,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
 	Insert(ctx context.Context, r EditRequest) (*ViewGroup, error)
 	Update(ctx context.Context, r EditRequest) (*ViewGroup, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -332,7 +332,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -346,7 +346,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		}
 
 		// required to get the author in action log listener.
-		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}

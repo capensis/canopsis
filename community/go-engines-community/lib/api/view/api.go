@@ -157,7 +157,7 @@ func (a *api) Copy(c *gin.Context) {
 // UpdatePositions
 // @Param body body []EditPositionItemRequest true "body"
 func (a *api) UpdatePositions(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -167,7 +167,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 
 	for _, item := range request.Items {
 		for _, view := range item.Views {
-			ok, err := a.enforcer.Enforce(userId, view, model.PermissionUpdate)
+			ok, err := a.enforcer.Enforce(userID, view, model.PermissionUpdate)
 			if err != nil {
 				panic(err)
 			}
@@ -194,7 +194,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 // Import
 // @Param body body []ImportItemRequest true "body"
 func (a *api) Import(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := ImportRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -210,7 +210,7 @@ func (a *api) Import(c *gin.Context) {
 			if view.ID == "" {
 				continue
 			}
-			ok, err := a.enforcer.Enforce(userId, view.ID, model.PermissionUpdate)
+			ok, err := a.enforcer.Enforce(userID, view.ID, model.PermissionUpdate)
 			if err != nil {
 				panic(err)
 			}
@@ -221,7 +221,7 @@ func (a *api) Import(c *gin.Context) {
 		}
 	}
 
-	err := a.store.Import(c, request, userId)
+	err := a.store.Import(c, request, userID)
 	if err != nil {
 		valError := ValidationError{}
 		if errors.As(err, &valError) {
@@ -242,7 +242,7 @@ func (a *api) Import(c *gin.Context) {
 // @Param body body ExportRequest true "body"
 // @Success 200 {object} ExportResponse
 func (a *api) Export(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := ExportRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -252,7 +252,7 @@ func (a *api) Export(c *gin.Context) {
 
 	for _, group := range request.Groups {
 		for _, view := range group.Views {
-			ok, err := a.enforcer.Enforce(userId, view, model.PermissionRead)
+			ok, err := a.enforcer.Enforce(userID, view, model.PermissionRead)
 			if err != nil {
 				panic(err)
 			}
@@ -263,7 +263,7 @@ func (a *api) Export(c *gin.Context) {
 		}
 	}
 	for _, view := range request.Views {
-		ok, err := a.enforcer.Enforce(userId, view, model.PermissionRead)
+		ok, err := a.enforcer.Enforce(userID, view, model.PermissionRead)
 		if err != nil {
 			panic(err)
 		}

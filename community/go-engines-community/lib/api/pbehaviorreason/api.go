@@ -84,7 +84,7 @@ func (a *api) Create(c *gin.Context) {
 // @Param id path string true "reason id"
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	reason, err := a.store.GetById(c, c.Param("id"))
+	reason, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

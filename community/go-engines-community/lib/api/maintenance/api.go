@@ -33,7 +33,7 @@ func (a *api) Maintenance(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
 	// can be sure that enabled is not nil after ShouldBindJSON, because of binding=required
 	if *r.Enabled {
@@ -42,9 +42,9 @@ func (a *api) Maintenance(c *gin.Context) {
 			return
 		}
 
-		err = a.store.Enable(c, r.Message, r.Color, userId)
+		err = a.store.Enable(c, r.Message, r.Color, userID)
 	} else {
-		err = a.store.Disable(c, userId)
+		err = a.store.Disable(c, userID)
 	}
 
 	if err != nil {

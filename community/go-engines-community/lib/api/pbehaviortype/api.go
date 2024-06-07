@@ -63,7 +63,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} pbehavior.Type
 func (a *api) Get(c *gin.Context) {
-	pt, err := a.store.GetById(c, c.Param("id"))
+	pt, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

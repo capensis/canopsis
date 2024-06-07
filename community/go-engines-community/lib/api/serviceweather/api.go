@@ -68,8 +68,8 @@ func (a *api) EntityList(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.FindEntities(c, id, query, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindEntities(c, id, query, userID)
 	if err != nil {
 		panic(err)
 	}

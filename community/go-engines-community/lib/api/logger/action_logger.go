@@ -1,10 +1,10 @@
 package logger
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -14,14 +14,23 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/sync/errgroup"
 )
 
-const workerPoolSize = 10
+const (
+	getLogQuery    = "SELECT id FROM action_log WHERE type = $1 AND value_type = $2 AND value_id = $3"
+	insertLogQuery = "INSERT INTO action_log (type, value_type, value_id, author, time, data) VALUES ($1, $2, $3, $4, $5, $6)"
+
+	workerPoolSize = 10
+)
+
+const (
+	logTypeCreate = iota
+	logTypeUpdate
+	logTypeDelete
+)
 
 type ActionLogger interface {
-	LogCreate(ctx context.Context, log ActionCreateLog) error
-	LogUpdate(ctx context.Context, log ActionUpdateLog) error
-	LogDelete(ctx context.Context, log ActionDeleteLog) error
 	Watch(ctx context.Context) error
 }
 
@@ -33,13 +42,17 @@ type logger struct {
 	collectionValueTypeMap map[string]string
 	watchedCollections     []string
 
-	getObjectQuery          string
-	insertObjectQuery       string
-	insertObjectChangeQuery string
-	updateObjectDeleteQuery string
+	maxRetries   int
+	retryTimeout time.Duration
 }
 
-func NewActionLogger(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider, zLog zerolog.Logger) ActionLogger {
+func NewActionLogger(
+	dbClient mongo.DbClient,
+	pgPoolProvider postgres.PoolProvider,
+	zLog zerolog.Logger,
+	retryCount int,
+	retryTimeout time.Duration,
+) ActionLogger {
 	collectionValueTypeMap := map[string]string{
 		mongo.AlarmTagCollection:                ValueTypeAlarmTag,
 		mongo.ColorThemeCollection:              ValueTypeColorTheme,
@@ -79,7 +92,7 @@ func NewActionLogger(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvid
 		mongo.InstructionMongoCollection:        ValueTypeInstruction,
 	}
 
-	watchedCollections := make([]string, len(collectionValueTypeMap))
+	watchedCollections := make([]string, 0, len(collectionValueTypeMap))
 	for k := range collectionValueTypeMap {
 		watchedCollections = append(watchedCollections, k)
 	}
@@ -92,166 +105,122 @@ func NewActionLogger(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvid
 		collectionValueTypeMap: collectionValueTypeMap,
 		watchedCollections:     watchedCollections,
 
-		getObjectQuery: `
-			SELECT id FROM action_log_object WHERE value_type = $1 AND value_id = $2
-		`,
-		insertObjectQuery: `
-			INSERT INTO action_log_object (value_type, value_id, initial_value, created, created_by, deleted, deleted_by)
-			VALUES ($1, $2, $3, $4, $5, $6, $7)
-			ON CONFLICT (value_type, value_id)
-			DO UPDATE SET initial_value = $3, created = $4, created_by = $5, deleted = $6, deleted_by = $7
-			RETURNING id
-		`,
-		insertObjectChangeQuery: `
-			INSERT INTO action_log_object_changes(object_id, author, time, update_description)
-			VALUES ($1, $2, $3, $4)
-		`,
-		updateObjectDeleteQuery: `
-			UPDATE action_log_object
-			SET deleted = $1, deleted_by = $2 WHERE id = $3
-		`,
+		maxRetries:   retryCount,
+		retryTimeout: retryTimeout,
 	}
 }
 
-func (l *logger) LogCreate(ctx context.Context, log ActionCreateLog) error {
+func (l *logger) log(ctx context.Context, log ActionLog) error {
 	pgPool, err := l.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get pgPool: %w", err)
 	}
 
-	_, err = pgPool.Exec(ctx, l.insertObjectQuery,
-		log.ValueType, log.ValueID, log.InitialValue, log.Timestamp, log.Author, nil, nil)
-	if err != nil {
-		return fmt.Errorf("failed to insert log: %w", err)
-	}
+	switch log.OperationType {
+	case mongo.ChangeStreamTypeInsert:
+		_, err = pgPool.Exec(ctx, insertLogQuery, logTypeCreate, log.ValueType, log.ValueID, log.GetCurAuthor(), log.Timestamp, log.CurDocument)
+	case mongo.ChangeStreamTypeUpdate:
+		err = pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			var objectID int
+			author := log.GetCurAuthor()
 
-	return nil
-}
-
-func (l *logger) LogUpdate(ctx context.Context, log ActionUpdateLog) error {
-	pgPool, err := l.pgPoolProvider.Get(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to get pgPool: %w", err)
-	}
-
-	return pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		var objectID int
-
-		err := tx.QueryRow(ctx, l.getObjectQuery, log.ValueType, log.ValueID).Scan(&objectID)
-		if errors.Is(err, pgx.ErrNoRows) {
-			var created time.Time
-			var createdBy string
-
-			rawCreated, ok := log.PrevValue["created"]
-			if ok {
-				if intCreated, ok := rawCreated.(int64); ok {
-					created = time.Unix(intCreated, 0)
-				}
-			} else {
-				created = log.Timestamp
+			err := tx.QueryRow(ctx, getLogQuery, logTypeCreate, log.ValueType, log.ValueID).Scan(&objectID)
+			if errors.Is(err, pgx.ErrNoRows) {
+				// reconstruct action create log if it doesn't exist
+				_, err = tx.Exec(ctx, insertLogQuery, logTypeCreate, log.ValueType, log.ValueID,
+					cmp.Or(log.GetPrevAuthor(), author), cmp.Or(log.GetPrevCreated(), log.Timestamp), log.PrevDocument)
 			}
 
-			rawCreatedBy, ok := log.PrevValue["author"]
-			if ok {
-				if strCreatedBy, ok := rawCreatedBy.(string); ok {
-					createdBy = strCreatedBy
-				}
-			} else {
-				createdBy = log.Author
+			if err != nil {
+				return err
 			}
 
-			// reconstruct action log object if it doesn't exist
-			err = tx.QueryRow(ctx, l.insertObjectQuery,
-				log.ValueType, log.ValueID, log.PrevValue, created, createdBy, nil, nil).Scan(&objectID)
-		}
+			_, err = tx.Exec(ctx, insertLogQuery, logTypeUpdate, log.ValueType, log.ValueID, author, log.Timestamp, log.UpdateDescription)
 
-		if err != nil {
 			return err
-		}
+		})
+	case mongo.ChangeStreamTypeDelete:
+		err = pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			var objectID int
+			author := log.GetPrevAuthor()
 
-		_, err = tx.Exec(ctx, l.insertObjectChangeQuery,
-			objectID, log.Author, log.Timestamp, log.UpdateDescription)
-
-		return err
-	})
-}
-
-func (l *logger) LogDelete(ctx context.Context, log ActionDeleteLog) error {
-	pgPool, err := l.pgPoolProvider.Get(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to get pgPool: %w", err)
-	}
-
-	err = pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		var objectID int
-
-		err := tx.QueryRow(ctx, l.getObjectQuery, log.ValueType, log.ValueID).Scan(&objectID)
-		if errors.Is(err, pgx.ErrNoRows) {
-			var created time.Time
-
-			rawCreated, ok := log.PrevValue["created"]
-			if ok {
-				if intCreated, ok := rawCreated.(int64); ok {
-					created = time.Unix(intCreated, 0)
-				}
-			} else {
-				created = log.Timestamp
+			err := tx.QueryRow(ctx, getLogQuery, logTypeCreate, log.ValueType, log.ValueID).Scan(&objectID)
+			if errors.Is(err, pgx.ErrNoRows) {
+				// reconstruct action create log if it doesn't exist
+				_, err = tx.Exec(ctx, insertLogQuery, logTypeCreate, log.ValueType, log.ValueID,
+					author, cmp.Or(log.GetPrevCreated(), log.Timestamp), log.PrevDocument)
 			}
 
-			// reconstruct action log object if it doesn't exist
-			// return because the delete data will be inserted
-			return tx.QueryRow(ctx, l.insertObjectQuery,
-				log.ValueType, log.ValueID, log.PrevValue, created, log.Author, log.Timestamp, log.Author).Scan(&objectID)
-		}
+			if err != nil {
+				return err
+			}
 
-		if err != nil {
+			_, err = tx.Exec(ctx, insertLogQuery, logTypeDelete, log.ValueType, log.ValueID, author, log.Timestamp, nil)
+
 			return err
-		}
-
-		_, err = tx.Exec(ctx, l.updateObjectDeleteQuery, log.Timestamp, log.Author, objectID)
-
-		return err
-	})
+		})
+	}
 
 	return err
 }
 
 func (l *logger) Watch(ctx context.Context) error {
-	eventChan, err := l.runWatcher(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to run action log change stream watcher: %w", err)
+	var retryTimeout time.Duration
+
+	for attempt := 0; attempt <= l.maxRetries; attempt++ {
+		g := errgroup.Group{}
+
+		eventChan, err := l.runWatcher(ctx, &g)
+		if err == nil {
+			// if err = nil, means that stream is created, so we drop counter and timeout to default values.
+			attempt = 0
+			retryTimeout = l.retryTimeout
+
+			for j := 0; j < workerPoolSize; j++ {
+				g.Go(func() error {
+					l.runWorker(ctx, eventChan)
+
+					return nil
+				})
+			}
+
+			err = g.Wait()
+		}
+
+		if err != nil && !mongo.IsConnectionError(err) {
+			return err
+		}
+
+		if attempt == l.maxRetries || retryTimeout == 0 {
+			return fmt.Errorf("action log failed to watch db after %d retries: %w", attempt, err)
+		}
+
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-time.After(retryTimeout):
+			l.zLog.Warn().Int("attempt", attempt+1).Int("max_attempts", l.maxRetries).Msg("action log watcher: connection retry")
+			retryTimeout *= 2
+		}
 	}
-
-	wg := sync.WaitGroup{}
-
-	for i := 0; i < workerPoolSize; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
-			l.runWorker(ctx, eventChan)
-		}()
-	}
-
-	wg.Wait()
 
 	return nil
 }
 
-func (l *logger) runWatcher(ctx context.Context) (<-chan ActionLogEvent, error) {
+func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan ActionLogEvent, error) {
 	stream, err := l.dbClient.Watch(ctx, []bson.M{
 		{
 			"$match": bson.M{
 				"$or": []bson.M{
 					{
-						"operationType":       "insert",
+						"operationType":       mongo.ChangeStreamTypeInsert,
 						"fullDocument.author": bson.M{"$exists": true},
 					},
 					{
-						"operationType": "delete",
+						"operationType": mongo.ChangeStreamTypeDelete,
 					},
 					{
-						"operationType": "update",
+						"operationType": mongo.ChangeStreamTypeUpdate,
 						"updateDescription.updatedFields.updated": bson.M{"$exists": true},
 					},
 				},
@@ -280,7 +249,7 @@ func (l *logger) runWatcher(ctx context.Context) (<-chan ActionLogEvent, error) 
 
 	eventChan := make(chan ActionLogEvent)
 
-	go func() {
+	g.Go(func() error {
 		defer func() {
 			err := stream.Close(ctx)
 			if err != nil {
@@ -291,25 +260,19 @@ func (l *logger) runWatcher(ctx context.Context) (<-chan ActionLogEvent, error) 
 		}()
 
 		for stream.Next(ctx) {
-			var change struct {
-				DocumentID        string         `bson:"document_id"`
-				Collection        string         `bson:"collection"`
-				OperationType     string         `bson:"operation_type"`
-				Document          map[string]any `bson:"document"`
-				DocumentBefore    map[string]any `bson:"document_before"`
-				UpdateDescription map[string]any `bson:"update_description"`
-				ClusterTime       time.Time      `bson:"cluster_time"`
-			}
+			var event ActionLogEvent
 
-			err = stream.Decode(&change)
+			err = stream.Decode(&event)
 			if err != nil {
 				l.zLog.Err(err).Msg("failed to decode change stream event")
 				continue
 			}
 
-			eventChan <- change
+			eventChan <- event
 		}
-	}()
+
+		return stream.Err()
+	})
 
 	return eventChan, nil
 }
@@ -337,68 +300,17 @@ func (l *logger) runWorker(ctx context.Context, eventChan <-chan ActionLogEvent)
 			}
 		}
 
-		switch event.OperationType {
-		case mongo.ChangeStreamTypeInsert:
-			log := ActionCreateLog{
-				ValueType:    valueType,
-				ValueID:      event.DocumentID,
-				InitialValue: event.Document,
-				Timestamp:    event.ClusterTime,
-			}
-
-			rawAuthor, ok := event.Document["author"]
-			if ok {
-				strAuthor, ok := rawAuthor.(string)
-				if ok {
-					log.Author = strAuthor
-				}
-			}
-
-			err := l.LogCreate(ctx, log)
-			if err != nil {
-				l.zLog.Err(err).Str("value_type", valueType).Str("value_id", log.ValueID).Msg("error on action log create")
-			}
-		case mongo.ChangeStreamTypeUpdate:
-			log := ActionUpdateLog{
-				ValueType:         valueType,
-				ValueID:           event.DocumentID,
-				PrevValue:         event.DocumentBefore,
-				UpdateDescription: event.UpdateDescription,
-				Timestamp:         event.ClusterTime,
-			}
-
-			rawAuthor, ok := event.Document["author"]
-			if ok {
-				strAuthor, ok := rawAuthor.(string)
-				if ok {
-					log.Author = strAuthor
-				}
-			}
-
-			err := l.LogUpdate(ctx, log)
-			if err != nil {
-				l.zLog.Err(err).Str("value_type", valueType).Str("value_id", log.ValueID).Msg("error on action log update")
-			}
-		case mongo.ChangeStreamTypeDelete:
-			log := ActionDeleteLog{
-				ValueType: valueType,
-				ValueID:   event.DocumentID,
-				PrevValue: event.DocumentBefore,
-				Timestamp: event.ClusterTime,
-			}
-
-			rawAuthor, ok := event.DocumentBefore["author"]
-			if ok {
-				strAuthor, ok := rawAuthor.(string)
-				if ok {
-					log.Author = strAuthor
-				}
-			}
-
-			err := l.LogDelete(ctx, log)
-			if err != nil {
-				l.zLog.Err(err).Str("value_type", valueType).Str("value_id", log.ValueID).Msg("error on action log delete")
-			}
+		err := l.log(ctx, ActionLog{
+			OperationType:     event.OperationType,
+			ValueType:         valueType,
+			ValueID:           event.DocumentID,
+			Timestamp:         event.ClusterTime,
+			CurDocument:       event.Document,
+			PrevDocument:      event.DocumentBefore,
+			UpdateDescription: event.UpdateDescription,
+		})
+		if err != nil {
+			l.zLog.Err(err).Str("value_type", valueType).Str("value_id", event.DocumentID).Msgf("error on action log %s", event.OperationType)
 		}
 	}
 }

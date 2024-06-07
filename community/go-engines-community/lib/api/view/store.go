@@ -32,10 +32,10 @@ type Store interface {
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
 	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	Copy(ctx context.Context, id string, r EditRequest) (*Response, error)
 	Export(ctx context.Context, r ExportRequest) (ExportResponse, error)
-	Import(ctx context.Context, r ImportRequest, userId string) error
+	Import(ctx context.Context, r ImportRequest, userID string) error
 }
 
 func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider author.Provider, enforcer security.Enforcer) Store {
@@ -250,13 +250,13 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
 
 		// required to get the author in action log listener.
-		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}
@@ -271,7 +271,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			return err
 		}
 
-		err = s.deleteTabs(ctx, id, userId)
+		err = s.deleteTabs(ctx, id, userID)
 		if err != nil {
 			return err
 		}
@@ -567,7 +567,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 	}, nil
 }
 
-func (s *store) Import(ctx context.Context, r ImportRequest, userId string) error {
+func (s *store) Import(ctx context.Context, r ImportRequest, userID string) error {
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		maxViewPosition, err := s.getNextPosition(ctx)
 		if err != nil {
@@ -653,7 +653,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 					ID:       groupId,
 					Title:    g.Title,
 					Position: maxGroupPosition,
-					Author:   userId,
+					Author:   userID,
 					Created:  now,
 					Updated:  now,
 				})
@@ -687,7 +687,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 						Group:           groupId,
 						Tags:            v.Tags,
 						PeriodicRefresh: v.PeriodicRefresh,
-						Author:          userId,
+						Author:          userID,
 						Created:         now,
 						Updated:         now,
 					})
@@ -708,7 +708,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 								ID:       tabId,
 								Title:    tab.Title,
 								View:     viewId,
-								Author:   userId,
+								Author:   userID,
 								Position: int64(ti),
 								Created:  now,
 								Updated:  now,
@@ -755,7 +755,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 											PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
 												PbehaviorPattern: filter.PbehaviorPattern,
 											},
-											Author:   userId,
+											Author:   userID,
 											Position: int64(fi),
 											Created:  now,
 											Updated:  now,
@@ -774,7 +774,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 										Type:           widget.Type,
 										GridParameters: widget.GridParameters,
 										Parameters:     widget.Parameters,
-										Author:         userId,
+										Author:         userID,
 										Created:        now,
 										Updated:        now,
 									})
@@ -821,7 +821,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 			}
 		}
 
-		err = s.createPermissions(ctx, userId, newViewTitles)
+		err = s.createPermissions(ctx, userID, newViewTitles)
 		if err != nil {
 			return err
 		}
@@ -1024,7 +1024,7 @@ func (s *store) writePositions(
 	return nil
 }
 
-func (s *store) deleteTabs(ctx context.Context, id, userId string) error {
+func (s *store) deleteTabs(ctx context.Context, id, userID string) error {
 	tabCursor, err := s.tabCollection.Find(ctx, bson.M{"view": id})
 	if err != nil {
 		return err
@@ -1041,7 +1041,7 @@ func (s *store) deleteTabs(ctx context.Context, id, userId string) error {
 	}
 
 	// required to get the author in action log listener.
-	_, err = s.tabCollection.UpdateMany(ctx, bson.M{"view": id}, bson.M{"$set": bson.M{"author": userId}})
+	_, err = s.tabCollection.UpdateMany(ctx, bson.M{"view": id}, bson.M{"$set": bson.M{"author": userID}})
 	if err != nil {
 		return err
 	}
@@ -1067,12 +1067,23 @@ func (s *store) deleteTabs(ctx context.Context, id, userId string) error {
 	}
 
 	// required to get the author in action log listener.
-	_, err = s.widgetCollection.UpdateMany(ctx, bson.M{"tab": bson.M{"$in": tabIds}}, bson.M{"$set": bson.M{"author": userId}})
+	_, err = s.widgetCollection.UpdateMany(ctx, bson.M{"tab": bson.M{"$in": tabIds}}, bson.M{"$set": bson.M{"author": userID}})
 	if err != nil {
 		return err
 	}
 
 	_, err = s.widgetCollection.DeleteMany(ctx, bson.M{"tab": bson.M{"$in": tabIds}})
+	if err != nil {
+		return err
+	}
+
+	// required to get the author in action log listener.
+	_, err = s.filterCollection.UpdateMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}}, bson.M{"$set": bson.M{"author": userID}})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.filterCollection.DeleteMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}})
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,8 @@
 package logger
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	ApprovalDecisionApprove = "approve"
@@ -57,28 +59,42 @@ type ActionLogEvent struct {
 	ClusterTime       time.Time      `bson:"cluster_time"`
 }
 
-type ActionCreateLog struct {
-	ValueType    string
-	ValueID      string
-	InitialValue map[string]any
-	Author       string
-	Timestamp    time.Time
-}
-
-type ActionUpdateLog struct {
-	ValueType string
-	ValueID   string
-	Author    string
-	Timestamp time.Time
-
-	PrevValue         map[string]any
+type ActionLog struct {
+	OperationType     string
+	ValueType         string
+	ValueID           string
+	Timestamp         time.Time
+	CurDocument       map[string]any
+	PrevDocument      map[string]any
 	UpdateDescription map[string]any
 }
 
-type ActionDeleteLog struct {
-	ValueType string
-	ValueID   string
-	PrevValue map[string]any
-	Author    string
-	Timestamp time.Time
+func (l *ActionLog) GetCurAuthor() string {
+	if rawAuthor, ok := l.CurDocument["author"]; ok {
+		if strAuthor, ok := rawAuthor.(string); ok {
+			return strAuthor
+		}
+	}
+
+	return ""
+}
+
+func (l *ActionLog) GetPrevAuthor() string {
+	if rawAuthor, ok := l.PrevDocument["author"]; ok {
+		if strAuthor, ok := rawAuthor.(string); ok {
+			return strAuthor
+		}
+	}
+
+	return ""
+}
+
+func (l *ActionLog) GetPrevCreated() time.Time {
+	if rawCreated, ok := l.PrevDocument["created"]; ok {
+		if intCreated, ok := rawCreated.(int64); ok {
+			return time.Unix(intCreated, 0).UTC()
+		}
+	}
+
+	return time.Time{}
 }

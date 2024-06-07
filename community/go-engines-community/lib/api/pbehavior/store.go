@@ -44,8 +44,8 @@ type Store interface {
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
-	DeleteByName(ctx context.Context, name, userId string) (string, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
+	DeleteByName(ctx context.Context, name, userID string) (string, error)
 	FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error)
 	EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error)
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
@@ -517,14 +517,14 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	return pbh, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
@@ -536,7 +536,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) DeleteByName(ctx context.Context, name, userId string) (string, error) {
+func (s *store) DeleteByName(ctx context.Context, name, userID string) (string, error) {
 	pbh := pbehavior.PBehavior{}
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -546,7 +546,7 @@ func (s *store) DeleteByName(ctx context.Context, name, userId string) (string, 
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"name": name},
-			bson.M{"$set": bson.M{"author": userId}},
+			bson.M{"$set": bson.M{"author": userID}},
 		).Decode(&pbh)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {

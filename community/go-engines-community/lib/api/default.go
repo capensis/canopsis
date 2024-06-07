@@ -393,13 +393,15 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
-	actionLogger := apilogger.NewActionLogger(dbClient, pgPoolProvider, logger)
-	api.AddWorker("action_log", func(ctx context.Context) {
-		err := actionLogger.Watch(ctx)
-		if err != nil {
-			logger.Err(err).Msg("action log watch error")
-		}
-	})
+	if flags.EnableActionLog {
+		actionLogger := apilogger.NewActionLogger(dbClient, pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+		api.AddWorker("action_log", func(ctx context.Context) {
+			err := actionLogger.Watch(ctx)
+			if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
+				panic(FatalWorkerError{err: err})
+			}
+		})
+	}
 
 	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)

@@ -79,8 +79,8 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.GetDependencies(c, r, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.GetDependencies(c, r, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -110,8 +110,8 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.GetImpacts(c, r, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.GetImpacts(c, r, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -315,11 +315,11 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
 	serviceIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userId)
+		ok, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
 		}

@@ -24,7 +24,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	Copy(ctx context.Context, tabID string, r CreateRequest) (*Response, error)
 	CopyForView(ctx context.Context, viewID, newViewID, author string, isPrivate bool) error
 	UpdatePositions(ctx context.Context, tabs []Response) (bool, error)
@@ -262,7 +262,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
@@ -275,7 +275,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		}
 
 		// required to get the author in action log listener.
-		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}
@@ -285,7 +285,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			return err
 		}
 
-		err = s.deleteWidgets(ctx, id, userId)
+		err = s.deleteWidgets(ctx, id, userID)
 		if err != nil {
 			return err
 		}
@@ -441,7 +441,7 @@ func (s *store) isLinked(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) deleteWidgets(ctx context.Context, id, userId string) error {
+func (s *store) deleteWidgets(ctx context.Context, id, userID string) error {
 	widgetCursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": id})
 	if err != nil {
 		return err
@@ -458,7 +458,7 @@ func (s *store) deleteWidgets(ctx context.Context, id, userId string) error {
 	}
 
 	// required to get the author in action log listener.
-	_, err = s.widgetCollection.UpdateMany(ctx, bson.M{"tab": id}, bson.M{"$set": bson.M{"author": userId}})
+	_, err = s.widgetCollection.UpdateMany(ctx, bson.M{"tab": id}, bson.M{"$set": bson.M{"author": userID}})
 	if err != nil {
 		return err
 	}
@@ -474,7 +474,7 @@ func (s *store) deleteWidgets(ctx context.Context, id, userId string) error {
 	}
 
 	// required to get the author in action log listener.
-	_, err = s.filterCollection.UpdateMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}}, bson.M{"$set": bson.M{"author": userId}})
+	_, err = s.filterCollection.UpdateMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}}, bson.M{"$set": bson.M{"author": userID}})
 	if err != nil {
 		return err
 	}

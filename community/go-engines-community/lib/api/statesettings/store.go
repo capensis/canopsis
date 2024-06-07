@@ -22,11 +22,11 @@ import (
 const StickySortField = "on_top"
 
 type Store interface {
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
@@ -53,7 +53,7 @@ func NewStore(
 	}
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}, addEditableAndDeletableFields()}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
@@ -144,7 +144,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			}
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 	if err != nil {
@@ -210,7 +210,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			}
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 	if err != nil {
@@ -231,7 +231,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if id == statesetting.JUnitID || id == statesetting.ServiceID {
 		return false, ErrDefaultRule
 	}
@@ -242,7 +242,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		oldVersion = statesetting.StateSetting{}
 
 		// required to get the author in action log listener.
-		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}}).Decode(&oldVersion)
+		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}}).Decode(&oldVersion)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil

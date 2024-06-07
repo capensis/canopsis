@@ -27,7 +27,7 @@ import (
 
 type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
-	Toggle(ctx context.Context, id, userId string, enabled bool) (bool, SimplifiedEntity, error)
+	Toggle(ctx context.Context, id, userID string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error)
@@ -92,7 +92,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	return &res, nil
 }
 
-func (s *store) Toggle(ctx context.Context, id, userId string, enabled bool) (bool, SimplifiedEntity, error) {
+func (s *store) Toggle(ctx context.Context, id, userID string, enabled bool) (bool, SimplifiedEntity, error) {
 	var isToggled bool
 	var oldSimplifiedEntity SimplifiedEntity
 
@@ -137,7 +137,7 @@ func (s *store) Toggle(ctx context.Context, id, userId string, enabled bool) (bo
 		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
 			"$set": bson.M{
 				"enabled": enabled,
-				"author":  userId,
+				"author":  userID,
 				"updated": now,
 			},
 		})
@@ -154,33 +154,15 @@ func (s *store) Toggle(ctx context.Context, id, userId string, enabled bool) (bo
 	}
 
 	if isToggled && !enabled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
-		depLen := len(oldSimplifiedEntity.Resources)
-		from := 0
+		for from := 0; from < len(oldSimplifiedEntity.Resources); from += canopsis.DefaultBulkSize {
+			to := min(from+canopsis.DefaultBulkSize, len(oldSimplifiedEntity.Resources))
 
-		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:to]}},
 				bson.M{"$set": bson.M{
 					"enabled": enabled,
-					"author":  userId,
-					"updated": now,
-				}},
-			)
-			if err != nil {
-				return isToggled, oldSimplifiedEntity, err
-			}
-
-			from = to
-		}
-
-		if from < depLen {
-			_, err = s.mainCollection.UpdateMany(
-				ctx,
-				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:depLen]}},
-				bson.M{"$set": bson.M{
-					"enabled": enabled,
-					"author":  userId,
+					"author":  userID,
 					"updated": now,
 				}},
 			)

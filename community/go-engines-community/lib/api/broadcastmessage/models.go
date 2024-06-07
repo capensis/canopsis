@@ -13,8 +13,8 @@ type EditRequest struct {
 	End     datetime.CpsTime `bson:"end" json:"end" binding:"required" swaggertype:"integer"`
 
 	Author  string            `bson:"author,omitempty" json:"author,omitempty" swaggerignore:"true"`
-	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggerignore:"true"`
-	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggerignore:"true"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"-" swaggerignore:"true"`
 }
 
 type CreateRequest struct {

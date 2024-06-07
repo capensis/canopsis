@@ -152,7 +152,7 @@ func (a *api) Copy(c *gin.Context) {
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -170,11 +170,11 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	for _, tab := range tabs {
-		if tab.Author != nil && tab.IsPrivate && tab.Author.ID == userId {
+		if tab.Author != nil && tab.IsPrivate && tab.Author.ID == userID {
 			continue
 		}
 
-		ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionUpdate)
+		ok, err := a.enforcer.Enforce(userID, tab.View, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}

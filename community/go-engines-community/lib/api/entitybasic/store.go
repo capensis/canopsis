@@ -17,7 +17,7 @@ import (
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Entity, error)
 	Update(ctx context.Context, r EditRequest) (*Entity, bool, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
@@ -155,30 +155,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	}
 
 	if isToggled && !updatedEntity.Enabled && updatedEntity.Type == types.EntityTypeComponent {
-		depLen := len(updatedEntity.Resources)
-		from := 0
+		for from := 0; from < len(updatedEntity.Resources); from += canopsis.DefaultBulkSize {
+			to := min(from+canopsis.DefaultBulkSize, len(updatedEntity.Resources))
 
-		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
 			_, err = s.dbCollection.UpdateMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": updatedEntity.Resources[from:to]}},
-				bson.M{"$set": bson.M{
-					"enabled": updatedEntity.Enabled,
-					"author":  r.Author,
-					"updated": now,
-				}},
-			)
-			if err != nil {
-				return nil, false, err
-			}
-
-			from = to
-		}
-
-		if from < depLen {
-			_, err = s.dbCollection.UpdateMany(
-				ctx,
-				bson.M{"_id": bson.M{"$in": updatedEntity.Resources[from:depLen]}},
 				bson.M{"$set": bson.M{
 					"enabled": updatedEntity.Enabled,
 					"author":  r.Author,
@@ -194,7 +176,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	return updatedEntity, isToggled, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
@@ -204,7 +186,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			"type": bson.M{"$in": s.basicTypes},
 		}, bson.M{
 			"$set": bson.M{
-				"author": userId,
+				"author": userID,
 			},
 		}).Decode(&entity)
 		if err != nil {
@@ -246,7 +228,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID},
 				bson.M{
 					"$set": bson.M{
-						"author":  userId,
+						"author":  userID,
 						"updated": datetime.NewCpsTime(),
 					},
 					"$unset": bson.M{"connector": ""},

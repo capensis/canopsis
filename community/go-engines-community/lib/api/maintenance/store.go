@@ -23,8 +23,8 @@ var ErrDisabled = errors.New("maintenance mode has already been disabled")
 const defaultColor = "#e75e40"
 
 type Store interface {
-	Enable(ctx context.Context, message, color, userId string) error
-	Disable(ctx context.Context, userId string) error
+	Enable(ctx context.Context, message, color, userID string) error
+	Disable(ctx context.Context, userID string) error
 }
 
 type store struct {
@@ -54,7 +54,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Enable(ctx context.Context, message, color, userId string) error {
+func (s *store) Enable(ctx context.Context, message, color, userID string) error {
 	broadcastID := utils.NewID()
 
 	_, err := s.configCollection.UpdateOne(
@@ -108,7 +108,7 @@ func (s *store) Enable(ctx context.Context, message, color, userId string) error
 				Message: message,
 				Start:   now,
 				End:     datetime.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
-				Author:  userId,
+				Author:  userID,
 				Created: &now,
 				Updated: &now,
 			},
@@ -118,7 +118,7 @@ func (s *store) Enable(ctx context.Context, message, color, userId string) error
 	})
 }
 
-func (s *store) Disable(ctx context.Context, userId string) error {
+func (s *store) Disable(ctx context.Context, userID string) error {
 	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		var state config.MaintenanceConf
 
@@ -136,7 +136,7 @@ func (s *store) Disable(ctx context.Context, userId string) error {
 		}
 
 		// required to get the author in action log listener.
-		res, err := s.broadcastCollection.UpdateOne(ctx, bson.M{"_id": state.BroadcastID}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.broadcastCollection.UpdateOne(ctx, bson.M{"_id": state.BroadcastID}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}

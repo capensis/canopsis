@@ -3956,7 +3956,7 @@ definitions:
       tstop:
         type: integer
       type:
-        $ref: '#/definitions/pbehavior.Type'
+        $ref: '#/definitions/pbehaviortype.Response'
       updated:
         type: integer
     type: object
@@ -3964,10 +3964,17 @@ definitions:
     properties:
       _id:
         type: string
+      author:
+        type: string
       color:
         type: string
+      created:
+        type: integer
       description:
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       icon_name:
         type: string
       name:
@@ -3976,6 +3983,8 @@ definitions:
         type: integer
       type:
         type: string
+      updated:
+        type: integer
     type: object
   pbehavior.UpdateRequest:
     properties:
@@ -4248,12 +4257,12 @@ definitions:
       priority:
         type: integer
     type: object
-  pbehaviortype.Type:
+  pbehaviortype.Response:
     properties:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       color:
         type: string
       created:
@@ -5167,7 +5176,7 @@ definitions:
       count:
         type: integer
       type:
-        $ref: '#/definitions/pbehaviortype.Type'
+        $ref: '#/definitions/pbehaviortype.Response'
     type: object
   serviceweather.Service:
     properties:

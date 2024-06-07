@@ -13,8 +13,8 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, userId, widgetId string) (*Response, error)
-	Update(ctx context.Context, userId string, request EditRequest) (*Response, error)
+	Find(ctx context.Context, userID, widgetId string) (*Response, error)
+	Update(ctx context.Context, userID string, request EditRequest) (*Response, error)
 }
 
 type store struct {
@@ -36,7 +36,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, error) {
+func (s *store) Find(ctx context.Context, userID, widgetId string) (*Response, error) {
 	res := Response{
 		Widget:  widgetId,
 		Content: map[string]interface{}{},
@@ -44,7 +44,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	}
 	pipeline := []bson.M{
 		{"$match": bson.M{
-			"user":   userId,
+			"user":   userID,
 			"widget": widgetId,
 		}},
 		{"$lookup": bson.M{
@@ -95,7 +95,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	} else {
 		pipeline := []bson.M{
 			{"$match": bson.M{
-				"author":             userId,
+				"author":             userID,
 				"widget":             widgetId,
 				"is_user_preference": true,
 			}},
@@ -115,14 +115,14 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	return &res, nil
 }
 
-func (s *store) Update(ctx context.Context, userId string, request EditRequest) (*Response, error) {
+func (s *store) Update(ctx context.Context, userID string, request EditRequest) (*Response, error) {
 	var response *Response
 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
 		_, err := s.collection.UpdateOne(ctx, bson.M{
-			"user":   userId,
+			"user":   userID,
 			"widget": request.Widget,
 		}, bson.M{
 			"$set": bson.M{
@@ -131,7 +131,7 @@ func (s *store) Update(ctx context.Context, userId string, request EditRequest) 
 			},
 			"$setOnInsert": bson.M{
 				"_id":    utils.NewID(),
-				"user":   userId,
+				"user":   userID,
 				"widget": request.Widget,
 			},
 		}, options.Update().SetUpsert(true))
@@ -140,7 +140,7 @@ func (s *store) Update(ctx context.Context, userId string, request EditRequest) 
 			return err
 		}
 
-		response, err = s.Find(ctx, userId, request.Widget)
+		response, err = s.Find(ctx, userID, request.Widget)
 		return err
 	})
 

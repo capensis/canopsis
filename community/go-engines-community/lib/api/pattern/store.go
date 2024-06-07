@@ -27,10 +27,10 @@ import (
 
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
-	GetById(ctx context.Context, id, userId string) (*Response, error)
-	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
+	GetByID(ctx context.Context, id, userID string) (*Response, error)
+	Find(ctx context.Context, r ListRequest, userID string) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, pattern Response, userId string) (bool, error)
+	Delete(ctx context.Context, pattern Response, userID string) (bool, error)
 	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
 	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
 }
@@ -107,18 +107,18 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID, model.Author)
+		response, err = s.GetByID(ctx, model.ID, model.Author)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id, userId string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id, userID string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{
 		"_id": id,
 		"$or": []bson.M{
-			{"author": userId},
+			{"author": userID},
 			{"is_corporate": true},
 		},
 	}}}
@@ -142,19 +142,19 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 	return nil, nil
 }
 
-func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, request ListRequest, userID string) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
 	match := make([]bson.M, 0)
 
 	if request.Corporate == nil {
 		match = append(match, bson.M{"$or": []bson.M{
-			{"author": userId},
+			{"author": userID},
 			{"is_corporate": true},
 		}})
 	} else if *request.Corporate {
 		match = append(match, bson.M{"is_corporate": true})
 	} else {
-		match = append(match, bson.M{"author": userId, "is_corporate": false})
+		match = append(match, bson.M{"author": userID, "is_corporate": false})
 	}
 
 	if request.Type != "" {
@@ -224,7 +224,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID, model.Author)
+		response, err = s.GetByID(ctx, model.ID, model.Author)
 		if err != nil || response == nil {
 			return err
 		}
@@ -266,14 +266,14 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, pattern Response, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, pattern Response, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": pattern.ID}, bson.M{"$set": bson.M{"author": userId}})
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": pattern.ID}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || result.MatchedCount == 0 {
 			return err
 		}
@@ -283,7 +283,7 @@ func (s *store) Delete(ctx context.Context, pattern Response, userId string) (bo
 			return err
 		}
 
-		return s.cleanLinkedModels(ctx, pattern, userId)
+		return s.cleanLinkedModels(ctx, pattern, userID)
 	})
 	if err != nil {
 		return false, err

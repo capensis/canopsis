@@ -18,7 +18,7 @@ type EditRequest struct {
 	Author      string `json:"author" swaggerignore:"true"`
 
 	// Hidden is used in API to hide documents from the list response
-	Hidden *bool `json:"hidden,omitempty"`
+	Hidden bool `json:"hidden"`
 }
 
 type CreateRequest struct {
@@ -37,7 +37,7 @@ type Response struct {
 	Description string `bson:"description" json:"description"`
 
 	Deletable *bool `bson:"deletable,omitempty" json:"deletable,omitempty"`
-	Hidden    *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
+	Hidden    bool  `bson:"hidden" json:"hidden"`
 
 	Author  *author.Author    `bson:"author,omitempty" json:"author,omitempty"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
