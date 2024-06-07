@@ -179,12 +179,12 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	ids := make([]string, len(request.Items))
 	for i, item := range request.Items {
 		ids[i] = item.ID
 	}
-	ok, err := a.checkAccess(c, ids, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, ids, userID, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -212,18 +212,18 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) checkAccess(ctx context.Context, ids []string, userId, perm string) (bool, error) {
+func (a *api) checkAccess(ctx context.Context, ids []string, userID, perm string) (bool, error) {
 	tabInfos, err := a.store.FindTabPrivacySettings(ctx, ids)
 	if err != nil || len(tabInfos) != len(ids) {
 		return false, err
 	}
 
 	for _, tabInfo := range tabInfos {
-		if tabInfo.IsPrivate && tabInfo.Author == userId {
+		if tabInfo.IsPrivate && tabInfo.Author == userID {
 			continue
 		}
 
-		ok, err := a.enforcer.Enforce(userId, tabInfo.View, perm)
+		ok, err := a.enforcer.Enforce(userID, tabInfo.View, perm)
 		if err != nil || !ok {
 			return false, err
 		}

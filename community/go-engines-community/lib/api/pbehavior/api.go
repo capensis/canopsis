@@ -402,11 +402,11 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userId)
+		ok, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
 		}
@@ -424,7 +424,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkEntityCreate
 // @Param body body []BulkEntityCreateRequestItem true "body"
 func (a *api) BulkEntityCreate(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	username := c.MustGet(auth.Username).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityCreateRequestItem) (string, error) {
@@ -442,7 +442,7 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
 			Ids:       ids,
 			Author:    username,
-			UserID:    userId,
+			UserID:    userID,
 			Initiator: types.InitiatorUser,
 		})
 	}
@@ -451,7 +451,7 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 // BulkEntityDelete
 // @Param body body []BulkEntityDeleteRequestItem true "body"
 func (a *api) BulkEntityDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	username := c.MustGet(auth.Username).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityDeleteRequestItem) (string, error) {
@@ -469,7 +469,7 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
 			Ids:       ids,
 			Author:    username,
-			UserID:    userId,
+			UserID:    userID,
 			Initiator: types.InitiatorUser,
 		})
 	}

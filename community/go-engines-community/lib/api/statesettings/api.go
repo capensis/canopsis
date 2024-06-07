@@ -52,7 +52,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	stateSetting, err := a.store.GetById(c, c.Param("id"))
+	stateSetting, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

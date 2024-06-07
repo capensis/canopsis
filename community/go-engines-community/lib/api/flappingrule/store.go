@@ -17,10 +17,10 @@ import (
 
 type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
@@ -66,7 +66,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
-		resp, err = s.GetById(ctx, rule.ID)
+		resp, err = s.GetByID(ctx, rule.ID)
 		return err
 	})
 	if err != nil {
@@ -75,7 +75,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	return resp, nil
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
@@ -144,7 +144,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
-		resp, err = s.GetById(ctx, model.ID)
+		resp, err = s.GetByID(ctx, model.ID)
 		return err
 	})
 	if err != nil {
@@ -153,14 +153,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return resp, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}

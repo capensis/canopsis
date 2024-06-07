@@ -20,7 +20,7 @@ type Store interface {
 	Find(context.Context, FilteredQuery) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Rule, error)
 	Update(context.Context, UpdateRequest) (*Rule, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
@@ -156,14 +156,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	return idleRule, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}

@@ -23,7 +23,7 @@ type Store interface {
 	Create(context.Context, EditRequest) (*Response, error)
 	Update(context.Context, EditRequest) (*Response, error)
 	Patch(context.Context, PatchRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error)
 	Get(ctx context.Context, id string) (*Response, error)
 	GetFilepath(model Response) string
@@ -173,7 +173,7 @@ func (s *store) Patch(ctx context.Context, r PatchRequest) (*Response, error) {
 	return res, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	f := Response{}
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -181,7 +181,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 
 		// required to get the author in action log listener.
 		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": id},
-			bson.M{"$set": bson.M{"author": userId, "updated": datetime.NewCpsTime()}}).Decode(&f)
+			bson.M{"$set": bson.M{"author": userID, "updated": datetime.NewCpsTime()}}).Decode(&f)
 		if err != nil {
 			return err
 		}
@@ -199,11 +199,8 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	}
 
 	err = s.storage.Delete(f.ID, f.Storage)
-	if err != nil {
-		return false, err
-	}
 
-	return true, nil
+	return err == nil, err
 }
 
 func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error) {

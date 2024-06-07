@@ -20,10 +20,10 @@ const permissionPrefix = "Rights on playlist :"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -91,7 +91,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
@@ -142,7 +142,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID)
+		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
 	if err != nil {
@@ -182,7 +182,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 	if err != nil {
@@ -192,14 +192,14 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
@@ -209,7 +209,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 			return err
 		}
 
-		err = s.deletePermission(ctx, id, userId)
+		err = s.deletePermission(ctx, id, userID)
 		if err != nil {
 			return err
 		}

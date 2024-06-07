@@ -86,8 +86,8 @@ type Counters struct {
 }
 
 type PbhTypeCounter struct {
-	Count int64              `json:"count" bson:"count"`
-	Type  pbehaviortype.Type `json:"type" bson:"type"`
+	Count int64                  `json:"count" bson:"count"`
+	Type  pbehaviortype.Response `json:"type" bson:"type"`
 }
 
 type AggregationResult struct {

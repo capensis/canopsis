@@ -24,7 +24,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, id string, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetTemplates(ctx context.Context) ([]Template, error)
 }
 
@@ -196,23 +196,19 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 	return role, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
 		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
-		if err != nil {
-			if !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return err
-			}
-		} else {
-			return ErrLinkedToUser
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return cmp.Or(err, ErrLinkedToUser)
 		}
 
 		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}

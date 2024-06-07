@@ -67,7 +67,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Playlist
 func (a *api) Get(c *gin.Context) {
-	playlist, err := a.store.GetById(c, c.Param("id"))
+	playlist, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -119,8 +119,8 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	ok, err := a.checkAccess(c, request.TabsList, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	ok, err := a.checkAccess(c, request.TabsList, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -157,14 +157,14 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) checkAccess(ctx context.Context, tabIds []string, userId string) (bool, error) {
+func (a *api) checkAccess(ctx context.Context, tabIds []string, userID string) (bool, error) {
 	tabs, err := a.tabStore.Find(ctx, tabIds)
 	if err != nil || len(tabs) != len(tabIds) {
 		return false, err
 	}
 
 	for _, tab := range tabs {
-		ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionRead)
+		ok, err := a.enforcer.Enforce(userID, tab.View, model.PermissionRead)
 		if err != nil || !ok {
 			return false, err
 		}

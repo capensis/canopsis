@@ -64,7 +64,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	response, err := a.store.GetById(c, c.Param("id"))
+	response, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -155,7 +155,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	tag, err := a.store.GetById(c, id)
+	tag, err := a.store.GetByID(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -181,10 +181,10 @@ func (a *api) Delete(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userId)
+		ok, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
 		}

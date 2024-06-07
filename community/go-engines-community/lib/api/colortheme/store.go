@@ -22,10 +22,10 @@ const (
 
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id, userId string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
@@ -78,14 +78,14 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
@@ -171,7 +171,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return nil
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 	if err != nil {
@@ -181,7 +181,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if s.isDefaultTheme(id) {
 		return false, ErrDefaultTheme
 	}
@@ -192,7 +192,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		deleted = 0
 
 		// required to get the author in action log listener.
-		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userId}})
+		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
@@ -203,7 +203,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		}
 
 		_, err = s.dbUserCollection.UpdateMany(ctx, bson.M{"ui_theme": id},
-			bson.M{"$set": bson.M{"ui_theme": Canopsis, "author": userId, "updated": datetime.NewCpsTime()}})
+			bson.M{"$set": bson.M{"ui_theme": Canopsis, "author": userID, "updated": datetime.NewCpsTime()}})
 		return err
 	})
 	if err != nil {
