@@ -34,7 +34,7 @@
             :label="$t('common.description')"
           />
           <v-layout>
-            <v-flex xs5>
+            <v-flex v-if="!isStringDictionaryValueType" xs5>
               <c-name-field
                 v-field="form.name"
                 key="name"
@@ -43,7 +43,18 @@
                 required
               />
             </v-flex>
-            <v-flex xs7>
+            <v-flex v-if="isStringDictionaryValueType">
+              <c-payload-text-field
+                v-field="form.value"
+                key="value"
+                :label="$t('common.value')"
+                :variables="variables"
+                :name="valueFieldName"
+                required
+                clearable
+              />
+            </v-flex>
+            <v-flex v-else xs7>
               <c-payload-text-field
                 v-if="isStringTemplateValueType"
                 v-field="form.value"
@@ -160,6 +171,10 @@ export default {
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
       ].includes(this.form.type);
+    },
+
+    isStringDictionaryValueType() {
+      return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === this.form.type;
     },
 
     isSelectValueType() {
