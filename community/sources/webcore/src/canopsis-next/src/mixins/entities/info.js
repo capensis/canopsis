@@ -4,6 +4,7 @@ import { isMatch } from 'lodash';
 import { DEFAULT_APP_TITLE } from '@/config';
 import { CANOPSIS_EDITION, ROUTES_NAMES, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
+import { sanitizeHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
@@ -73,7 +74,10 @@ export const entitiesInfoMixin = {
 
     async setTitle() {
       document.title = this.appTitle
-        ? await compile(this.appTitle)
+        ? await compile(sanitizeHtml(this.appTitle, {
+          allowedTags: [],
+          allowedAttributes: {},
+        }))
         : DEFAULT_APP_TITLE;
     },
   },
