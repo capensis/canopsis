@@ -169,13 +169,19 @@ $mobileBreakpoint: 450px;
   min-height: 100vh;
 }
 
-.v-menu__activator {
-  &--disabled {
-    cursor: default !important;
-
-    & * {
+.v-menu {
+  &__activator {
+    &--disabled {
       cursor: default !important;
+
+      & * {
+        cursor: default !important;
+      }
     }
+  }
+
+  &__content {
+    max-height: 95%;
   }
 }
 
