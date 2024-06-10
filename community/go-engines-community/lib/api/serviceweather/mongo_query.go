@@ -127,7 +127,7 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 	q.computedFields = getListDependenciesComputedFields()
 
 	if r.PbhOrigin != "" {
-		q.lookups = append(q.lookups, lookupWithKey{key: "pbh_origin_icon", pipeline: getPbhOriginLookup(r.PbhOrigin)})
+		q.lookups = append(q.lookups, lookupWithKey{key: "pbh_origin_icon", pipeline: getPbhOriginLookup(r.PbhOrigin, now)})
 	}
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
@@ -608,14 +608,18 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	}
 }
 
-func getPbhOriginLookup(origin string) []bson.M {
+func getPbhOriginLookup(origin string, now datetime.CpsTime) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "_id",
 			"foreignField": "entity",
 			"pipeline": []bson.M{
-				{"$match": bson.M{"origin": origin}},
+				{"$match": bson.M{
+					"origin": origin,
+					"tstart": bson.M{"$lte": now},
+					"tstop":  bson.M{"$gte": now},
+				}},
 				{"$limit": 1},
 			},
 			"as": "pbh_origin",
