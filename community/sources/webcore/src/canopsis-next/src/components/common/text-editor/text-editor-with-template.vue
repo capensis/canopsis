@@ -13,6 +13,7 @@
       :label="label"
       :error-messages="errors.collect('text')"
       :variables="variables"
+      :sanitize-options="sanitizeOptions"
       :dark="$system.dark"
       name="text"
       @input="updateText"
@@ -53,6 +54,10 @@ export default {
       required: false,
     },
     rules: {
+      type: Object,
+      required: false,
+    },
+    sanitizeOptions: {
       type: Object,
       required: false,
     },
