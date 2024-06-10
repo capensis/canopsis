@@ -612,6 +612,8 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			bson.M{
 				"origin": r.Origin,
 				"entity": r.Entity,
+				"tstart": bson.M{"$lte": now},
+				"tstop":  bson.M{"$gte": now},
 			},
 			bson.M{
 				"$setOnInsert": doc,
@@ -639,6 +641,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 }
 
 func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error) {
+	now := datetime.NewCpsTime()
 	id := ""
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		id = ""
@@ -647,6 +650,8 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 			FindOneAndDelete(ctx, bson.M{
 				"entity": r.Entity,
 				"origin": r.Origin,
+				"tstart": bson.M{"$lte": now},
+				"tstop":  bson.M{"$gte": now},
 			}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {
