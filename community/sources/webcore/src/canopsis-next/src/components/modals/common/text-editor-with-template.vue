@@ -11,6 +11,7 @@
           :variables="config.variables"
           :rules="config.rules"
           :label="config.label"
+          :sanitize-options="config.sanitizeOptions"
         />
       </template>
       <template #actions="">
