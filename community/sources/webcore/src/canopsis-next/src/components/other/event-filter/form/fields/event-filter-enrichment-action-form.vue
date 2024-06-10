@@ -33,8 +33,19 @@
             key="description"
             :label="$t('common.description')"
           />
-          <v-layout>
-            <v-flex v-if="!isStringDictionaryValueType" xs5>
+          <v-layout v-if="isStringDictionaryValueType">
+            <c-payload-text-field
+              v-field="form.value"
+              key="value"
+              :label="$t('common.value')"
+              :variables="variables"
+              :name="valueFieldName"
+              required
+              clearable
+            />
+          </v-layout>
+          <v-layout v-else>
+            <v-flex xs5>
               <c-name-field
                 v-field="form.name"
                 key="name"
@@ -43,18 +54,7 @@
                 required
               />
             </v-flex>
-            <v-flex v-if="isStringDictionaryValueType">
-              <c-payload-text-field
-                v-field="form.value"
-                key="value"
-                :label="$t('common.value')"
-                :variables="variables"
-                :name="valueFieldName"
-                required
-                clearable
-              />
-            </v-flex>
-            <v-flex v-else xs7>
+            <v-flex xs7>
               <c-payload-text-field
                 v-if="isStringTemplateValueType"
                 v-field="form.value"
