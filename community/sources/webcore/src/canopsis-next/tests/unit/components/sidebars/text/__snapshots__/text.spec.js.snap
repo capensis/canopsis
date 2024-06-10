@@ -13,6 +13,7 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
   />
   <field-text-editor-stub
     defaultvalue=""
+    sanitizeoptions="[object Object]"
     title="Template"
     value="<p>1</p><p>2</p><p>3<br></p>"
   />
@@ -37,6 +38,7 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
   />
   <field-text-editor-stub
     defaultvalue=""
+    sanitizeoptions="[object Object]"
     title="Template"
     value=""
   />
