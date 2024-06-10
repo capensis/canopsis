@@ -19,20 +19,20 @@
             :label="$t('common.description')",
             key="description"
           )
-          v-layout
-            v-flex(v-if="!isStringDictionaryValueType", xs5)
+          v-layout(v-if="isStringDictionaryValueType")
+            c-payload-text-field(
+              v-field="form.value",
+              :label="$t('common.value')",
+              :variables="variables",
+              :name="valueFieldName",
+              key="value",
+              required,
+              clearable
+            )
+          v-layout(v-else)
+            v-flex(xs5)
               c-name-field(v-field="form.name", key="name", required)
-            v-flex(v-if="isStringDictionaryValueType")
-              c-payload-text-field(
-                v-field="form.value",
-                :label="$t('common.value')",
-                :variables="variables",
-                :name="valueFieldName",
-                key="value",
-                required,
-                clearable
-              )
-            v-flex(v-else, xs7)
+            v-flex(xs7)
               c-payload-text-field.ml-2(
                 v-if="isStringTemplateValueType",
                 v-field="form.value",
