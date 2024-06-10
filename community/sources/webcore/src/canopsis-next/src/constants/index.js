@@ -36,3 +36,4 @@ export * from './icon';
 export * from './availability';
 export * from './meta-alarm-rule';
 export * from './advanced-search';
+export * from './sanitize';
