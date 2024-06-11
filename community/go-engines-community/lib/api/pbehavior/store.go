@@ -551,6 +551,8 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		err := s.dbCollection.FindOne(ctx, bson.M{
 			"origin": r.Origin,
 			"entity": r.Entity,
+			"tstart": bson.M{"$lte": now},
+			"tstop":  bson.M{"$gte": now},
 		}).Err()
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
@@ -576,6 +578,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 }
 
 func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error) {
+	now := libtypes.NewCpsTime()
 	id := ""
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		id = ""
@@ -585,6 +588,8 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 			FindOne(ctx, bson.M{
 				"entity": r.Entity,
 				"origin": r.Origin,
+				"tstart": bson.M{"$lte": now},
+				"tstop":  bson.M{"$gte": now},
 			}, options.FindOne().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {
