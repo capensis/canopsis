@@ -101,7 +101,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -125,7 +125,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -149,7 +149,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -173,7 +173,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -197,7 +197,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -221,7 +221,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -245,7 +245,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -269,7 +269,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -293,7 +293,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -317,7 +317,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -341,7 +341,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -365,7 +365,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -389,7 +389,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2275,7 +2275,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2299,7 +2299,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2323,7 +2323,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2347,7 +2347,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2371,7 +2371,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2395,7 +2395,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2419,7 +2419,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2443,7 +2443,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2467,7 +2467,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2491,7 +2491,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2515,7 +2515,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2539,7 +2539,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2563,7 +2563,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2709,7 +2709,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2733,7 +2733,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2757,7 +2757,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2781,7 +2781,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2805,7 +2805,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2829,7 +2829,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2853,7 +2853,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2877,7 +2877,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2901,7 +2901,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2925,7 +2925,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2949,7 +2949,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2973,7 +2973,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -2997,7 +2997,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4472,7 +4472,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4496,7 +4496,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4520,7 +4520,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4544,7 +4544,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4568,7 +4568,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4592,7 +4592,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4616,7 +4616,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4640,7 +4640,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4664,7 +4664,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4688,7 +4688,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4712,7 +4712,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4736,7 +4736,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -4760,7 +4760,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
