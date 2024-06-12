@@ -265,7 +265,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -293,7 +293,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -321,7 +321,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -349,7 +349,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -622,7 +622,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -650,7 +650,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -678,7 +678,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -706,7 +706,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -929,7 +929,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -957,7 +957,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -985,7 +985,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1013,7 +1013,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1202,7 +1202,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1230,7 +1230,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1258,7 +1258,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1438,7 +1438,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1466,7 +1466,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1494,7 +1494,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1522,7 +1522,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1711,7 +1711,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1739,7 +1739,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1767,7 +1767,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -1795,7 +1795,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2130,7 +2130,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2158,7 +2158,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2186,7 +2186,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2214,7 +2214,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2487,7 +2487,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2515,7 +2515,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2543,7 +2543,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2571,7 +2571,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2727,7 +2727,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2755,7 +2755,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2783,7 +2783,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward
@@ -2811,7 +2811,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                     <span>
                       <i
                         aria-hidden="true"
-                        class="v-icon material-icons theme--light"
+                        class="v-icon material-icons theme--light v-datatable-header__icon"
                         style="font-size: 16px;"
                       >
                         arrow_upward

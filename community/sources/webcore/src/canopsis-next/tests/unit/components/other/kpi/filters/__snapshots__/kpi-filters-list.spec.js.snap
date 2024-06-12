@@ -56,7 +56,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -80,7 +80,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -104,7 +104,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -697,7 +697,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -721,7 +721,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -745,7 +745,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -850,7 +850,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -874,7 +874,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -898,7 +898,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1402,7 +1402,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1426,7 +1426,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1450,7 +1450,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
