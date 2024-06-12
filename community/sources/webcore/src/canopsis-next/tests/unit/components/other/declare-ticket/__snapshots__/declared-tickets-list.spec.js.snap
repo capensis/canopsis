@@ -35,7 +35,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -59,7 +59,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -83,7 +83,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -107,7 +107,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -131,7 +131,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -155,7 +155,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -179,7 +179,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -203,7 +203,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -227,7 +227,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant ala
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -297,7 +297,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -321,7 +321,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -345,7 +345,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -369,7 +369,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -393,7 +393,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -417,7 +417,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -441,7 +441,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -465,7 +465,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -919,7 +919,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -943,7 +943,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -967,7 +967,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -991,7 +991,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1015,7 +1015,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1039,7 +1039,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1063,7 +1063,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -1087,7 +1087,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets
                 <span>
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon material-icons theme--light v-datatable-header__icon"
                     style="font-size: 16px;"
                   >
                     arrow_upward
