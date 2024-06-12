@@ -48,7 +48,9 @@ export default {
           is: 'alarm-header-tag',
           text: this.header.text,
           bind: {
+            class: 'v-data-table-header__span--ellipsis',
             selectedTag: this.selectedTag,
+            title: this.header.text,
           },
           on: {
             clear: () => this.$emit('clear:tag'),
@@ -62,7 +64,7 @@ export default {
 
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];
       const bind = this.ellipsisHeaders
-        ? { class: 'v-data-table-header-span--ellipsis', title: this.header.text }
+        ? { class: 'v-data-table-header__span--ellipsis', title: this.header.text }
         : { style: { 'white-space': 'normal' } };
 
       return {
