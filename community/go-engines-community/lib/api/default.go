@@ -215,7 +215,7 @@ func Default(
 
 	// Create csv exporter.
 	if exportExecutor == nil {
-		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
+		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, cfg.File.Export, logger)
 	}
 
 	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
@@ -233,7 +233,7 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, cfg.File.Export, logger)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)

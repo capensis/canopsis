@@ -41,6 +41,7 @@ type DataCursor interface {
 func NewTaskExecutor(
 	client mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	dir string,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
@@ -48,6 +49,7 @@ func NewTaskExecutor(
 		collection:  client.Collection(mongo.ExportTaskMongoCollection),
 		logger:      logger,
 		workerCount: 10,
+		dir:         dir,
 
 		abandonedInterval:         time.Minute,
 		abandonedLaunchedInterval: 5 * time.Minute,
@@ -63,6 +65,7 @@ type taskExecutor struct {
 	client      mongo.DbClient
 	collection  mongo.DbCollection
 	workerCount int
+	dir         string
 	logger      zerolog.Logger
 
 	fetches map[string]FetchData
@@ -273,7 +276,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 		return err
 	}
 
-	fileName, err := ToCsv(ctx, t.Fields, t.Separator, cursor)
+	fileName, err := ToCsv(ctx, t.Fields, t.Separator, cursor, e.dir)
 	if err != nil {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
