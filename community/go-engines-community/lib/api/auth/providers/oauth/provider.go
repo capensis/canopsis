@@ -8,11 +8,11 @@ import (
 	"net/url"
 	"strconv"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -20,9 +20,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/oauth2"
 )
 
@@ -35,8 +32,8 @@ type Provider interface {
 	Callback(c *gin.Context)
 }
 
-type oauth2Provider struct {
-	roleCollection     mongo.DbCollection
+type provider struct {
+	roleValidator      providers.RoleValidator
 	userProvider       security.UserProvider
 	tokenService       apisecurity.TokenService
 	oauth2Config       oauth2.Config
@@ -56,10 +53,10 @@ type oauth2Provider struct {
 	maxResponseSize int64
 }
 
-func NewOauth2Provider(
+func NewProvider(
 	ctx context.Context,
 	name string,
-	dbClient mongo.DbClient,
+	roleValidator providers.RoleValidator,
 	config security.OAuth2ProviderConfig,
 	store sessions.Store,
 	userProvider security.UserProvider,
@@ -68,9 +65,9 @@ func NewOauth2Provider(
 	tokenService apisecurity.TokenService,
 	maxResponseSize int64,
 ) (Provider, error) {
-	p := &oauth2Provider{
+	p := &provider{
 		name:               name,
-		roleCollection:     dbClient.Collection(mongo.RoleCollection),
+		roleValidator:      roleValidator,
 		userProvider:       userProvider,
 		maintenanceAdapter: maintenanceAdapter,
 		tokenService:       tokenService,
@@ -115,7 +112,7 @@ func NewOauth2Provider(
 	return p, nil
 }
 
-func (p *oauth2Provider) Login(c *gin.Context) {
+func (p *provider) Login(c *gin.Context) {
 	request := loginRequest{}
 	if err := c.ShouldBindQuery(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -163,7 +160,7 @@ func (p *oauth2Provider) Login(c *gin.Context) {
 	c.Redirect(http.StatusPermanentRedirect, p.oauth2Config.AuthCodeURL(state, options...))
 }
 
-func (p *oauth2Provider) Callback(c *gin.Context) {
+func (p *provider) Callback(c *gin.Context) {
 	session, err := p.store.Get(c.Request, oauthSessionPrefix+p.name)
 	if err != nil {
 		panic(err)
@@ -353,25 +350,17 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 	c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
 }
 
-func (p *oauth2Provider) createUser(c *gin.Context, subj string, userInfo map[string]any) (*security.User, error) {
-	role := p.getAssocAttribute(userInfo, "role", p.config.DefaultRole)
+func (p *provider) createUser(c *gin.Context, subj string, userInfo map[string]any) (*security.User, error) {
+	roles := p.getAssocArrayAttribute(userInfo, "role", []string{p.config.DefaultRole})
 
-	err := p.roleCollection.FindOne(
-		c,
-		bson.M{"name": role},
-		options.FindOne().SetProjection(bson.M{"_id": 1}),
-	).Err()
+	err := p.roleValidator.AreRolesValid(c, roles)
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, fmt.Errorf("role %s doesn't exist", role)
-		}
-
 		return nil, err
 	}
 
 	user := &security.User{
 		Name:       p.getAssocAttribute(userInfo, "name", subj),
-		Roles:      []string{role},
+		Roles:      roles,
 		IsEnabled:  true,
 		ExternalID: subj,
 		Source:     p.source,
@@ -388,7 +377,7 @@ func (p *oauth2Provider) createUser(c *gin.Context, subj string, userInfo map[st
 	return user, nil
 }
 
-func (p *oauth2Provider) getAssocAttribute(userInfo map[string]any, name, defaultValue string) string {
+func (p *provider) getAssocAttribute(userInfo map[string]any, name, defaultValue string) string {
 	if path, ok := p.config.AttributesMap[name]; ok {
 		if valueRaw, ok := userInfo[path]; ok {
 			if value, ok := valueRaw.(string); ok {
@@ -400,7 +389,30 @@ func (p *oauth2Provider) getAssocAttribute(userInfo map[string]any, name, defaul
 	return defaultValue
 }
 
-func (p *oauth2Provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (string, map[string]any, error) {
+func (p *provider) getAssocArrayAttribute(userInfo map[string]any, name string, defaultValue []string) []string {
+	if path, ok := p.config.AttributesMap[name]; ok {
+		if valueRaw, ok := userInfo[path]; ok {
+			switch value := valueRaw.(type) {
+			case []any:
+				if strSlice, ok := utils.InterfaceSliceToStringSlice(value); ok && len(strSlice) > 0 {
+					return strSlice
+				}
+			case []string:
+				if len(value) != 0 {
+					return value
+				}
+			case string:
+				if value != "" {
+					return []string{value}
+				}
+			}
+		}
+	}
+
+	return defaultValue
+}
+
+func (p *provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (string, map[string]any, error) {
 	resp, err := p.oauth2Config.Client(c, token).Get(p.config.UserURL) //nolint:noctx
 	if err != nil {
 		return "", nil, errors.New("failed to get user request")
@@ -437,7 +449,7 @@ func (p *oauth2Provider) getUserInfoOAuth2(c context.Context, token *oauth2.Toke
 	return userID, userInfo, nil
 }
 
-func (p *oauth2Provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
+func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
 	userInfo := make(map[string]any)
 	claims := make(map[string]any)
 
