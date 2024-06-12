@@ -10,9 +10,7 @@ CREATE TABLE IF NOT EXISTS action_log(
     data          JSONB
 );
 
-CREATE INDEX IF NOT EXISTS action_log_value_type_idx ON action_log (value_type);
-CREATE INDEX IF NOT EXISTS action_log_value_id_idx ON action_log (value_id);
+CREATE INDEX IF NOT EXISTS action_log_time_value_type_value_id_idx ON action_log (time, value_type, value_id);
 CREATE INDEX IF NOT EXISTS action_log_value_author_idx ON action_log (author);
-CREATE INDEX IF NOT EXISTS action_log_time_idx ON action_log (time);
 
 COMMIT;
