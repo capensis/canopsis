@@ -259,8 +259,18 @@ JunitApi = "/tmp/canopsis/junit"
 SnmpMib = ["/usr/share/snmp/mibs"]
 # Another example when MIBs installed by snmp-mibs-downloader.deb package:
 # SnmpMib = ["/usr/share/snmp/mibs", "/usr/share/snmp/mibs/ietf", "/usr/share/snmp/mibs/iana"]
+
+# Local storage for Icon artifacts. Icon artifacts are used in pbehavior types and widget templates.
+# This directory must have write permissions for canopsis-api
+# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition
+# when instances run on different servers
 Icon = "/opt/canopsis/var/lib/icons"
 IconMaxSize = 10240 # 10Kb
+# Local storage for Export artifacts. Export artifacts are used in export csv and export metrics.
+# This directory must have write permissions for canopsis-api
+# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition
+# when instances run on different servers
+Export = "/opt/canopsis/var/lib/export-files"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]

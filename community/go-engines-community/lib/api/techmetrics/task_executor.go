@@ -48,16 +48,19 @@ type Task struct {
 
 func NewTaskExecutor(
 	configProvider config.TechMetricsConfigProvider,
+	dir string,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
 		configProvider: configProvider,
+		dir:            dir,
 		logger:         logger,
 	}
 }
 
 type taskExecutor struct {
 	configProvider config.TechMetricsConfigProvider
+	dir            string
 	logger         zerolog.Logger
 
 	pgPoolMx     sync.Mutex
@@ -374,7 +377,7 @@ func (e *taskExecutor) dumpDb(
 		}
 
 		var f *os.File
-		f, err = os.CreateTemp("", filenameDumpPattern)
+		f, err = os.CreateTemp(e.dir, filenameDumpPattern)
 		if err != nil {
 			return
 		}
