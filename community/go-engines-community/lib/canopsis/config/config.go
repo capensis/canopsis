@@ -72,6 +72,7 @@ type SectionFile struct {
 	SnmpMib       []string `toml:"SnmpMib"`
 	Icon          string   `toml:"Icon"`
 	IconMaxSize   int64    `toml:"IconMaxSize"`
+	Export        string   `toml:"Export"`
 }
 
 type SectionDataStorage struct {

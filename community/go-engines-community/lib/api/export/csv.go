@@ -19,6 +19,7 @@ func ToCsv(
 	exportFields Fields,
 	separator rune,
 	dataCursor DataCursor,
+	dir string,
 ) (resFileName string, resErr error) {
 	defer func() {
 		err := dataCursor.Close(ctx)
@@ -26,7 +27,7 @@ func ToCsv(
 			resErr = err
 		}
 	}()
-	file, err := os.CreateTemp("", "export.*.csv")
+	file, err := os.CreateTemp(dir, "export.*.csv")
 	if err != nil {
 		return "", err
 	}
