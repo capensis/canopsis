@@ -69,6 +69,7 @@ type SectionFile struct {
 	Junit         string   `toml:"Junit"`
 	JunitApi      string   `toml:"JunitApi"`
 	SnmpMib       []string `toml:"SnmpMib"`
+	Export        string   `toml:"Export"`
 }
 
 type SectionDataStorage struct {
