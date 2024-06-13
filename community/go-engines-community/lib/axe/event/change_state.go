@@ -79,7 +79,12 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	entity := *event.Entity
-	match := getOpenAlarmMatchWithStepsLimit(event)
+	var match bson.M
+	if *event.Parameters.State == types.AlarmStateOK {
+		match = getOpenAlarmMatch(event)
+	} else {
+		match = getOpenAlarmMatchWithStepsLimit(event)
+	}
 	match["$and"] = []bson.M{
 		{"v.state.val": bson.M{"$ne": types.AlarmStateOK}},
 		{"$or": []bson.M{
