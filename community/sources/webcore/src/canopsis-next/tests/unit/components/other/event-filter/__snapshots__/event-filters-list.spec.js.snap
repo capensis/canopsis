@@ -144,27 +144,17 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-label="Errors: Not sorted."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="column text-xs-left"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
               <div
                 class="layout align-center"
               >
                 Errors
-                <span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light v-datatable-header__icon"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </span>
               </div>
             </th>
             <th
@@ -1248,27 +1238,17 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-label="Errors: Not sorted."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="column text-xs-left"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
               <div
                 class="layout align-center"
               >
                 Errors
-                <span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light v-datatable-header__icon"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </span>
               </div>
             </th>
             <th
@@ -1558,27 +1538,17 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-label="Errors: Not sorted."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="column text-xs-left"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
               <div
                 class="layout align-center"
               >
                 Errors
-                <span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light v-datatable-header__icon"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </span>
               </div>
             </th>
             <th
@@ -2567,27 +2537,17 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-label="Errors: Not sorted."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="column text-xs-left"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
               <div
                 class="layout align-center"
               >
                 Errors
-                <span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light v-datatable-header__icon"
-                    style="font-size: 16px;"
-                  >
-                    arrow_upward
-                  </i>
-                </span>
               </div>
             </th>
             <th
