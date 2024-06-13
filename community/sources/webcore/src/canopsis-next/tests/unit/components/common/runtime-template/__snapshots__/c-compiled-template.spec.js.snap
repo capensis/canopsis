@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-compiled-template Renders \`c-compiled-template\` after mount 1`] = `<div />`;
+exports[`c-compiled-template Renders \`c-compiled-template\` after mount 1`] = `<!---->`;
 
 exports[`c-compiled-template Renders \`c-compiled-template\` after update context 1`] = `
 <div>

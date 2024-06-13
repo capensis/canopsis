@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
 
@@ -10,14 +9,12 @@ import i18n from '@/i18n';
 import { mergeReactiveChangedProperties } from '@/helpers/vue-base';
 import { mapIds } from '@/helpers/array';
 
+import { types as activeWidgetsTypes, getters as activeWidgetGetters } from '../../active-view/active-widgets';
+
 import detailsModule from './details';
 import linksModule from './links';
 
 export const types = {
-  FETCH_LIST: 'FETCH_LIST',
-  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
-  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
-
   SET_ALARMS: 'SET_ALARMS',
 };
 
@@ -36,12 +33,21 @@ export default {
 
     getList: (state, getters) => ids => ids.map(getters.getItem),
 
-    getListByWidgetId: (state, getters) => widgetId => getters.getList(get(state.widgets[widgetId], 'allIds', [])),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => getters.getList(rootGetters[activeWidgetGetters.GET_ALL_IDS_BY_WIDGET_ID](widgetId))
+    ),
 
-    getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
-    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending', false),
-    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
+    getMetaByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => rootGetters[activeWidgetGetters.GET_META_BY_WIDGET_ID](widgetId)
+    ),
 
+    getPendingByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => rootGetters[activeWidgetGetters.GET_PENDING_BY_WIDGET_ID](widgetId)
+    ),
+
+    getFetchingParamsByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => rootGetters[activeWidgetGetters.GET_FETCHING_PARAMS_BY_WIDGET_ID](widgetId)
+    ),
   },
   mutations: {
     [types.SET_ALARMS](state, { data }) {
@@ -54,15 +60,6 @@ export default {
 
         Vue.set(state.alarmsById, alarm._id, updatedAlarm);
       });
-    },
-    [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
-    },
-    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
-    },
-    [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: false });
     },
   },
   actions: {
@@ -90,24 +87,24 @@ export default {
       try {
         await useRequestCancelling(async (source) => {
           if (!withoutPending) {
-            commit(types.FETCH_LIST, { widgetId, params });
+            commit(activeWidgetsTypes.FETCH_LIST, { widgetId, params }, { root: true });
           }
 
           const { data, meta } = await request.get(API_ROUTES.alarms.list, { params, cancelToken: source.token });
 
           commit(types.SET_ALARMS, { data });
-          commit(types.FETCH_LIST_COMPLETED, {
+          commit(activeWidgetsTypes.FETCH_LIST_COMPLETED, {
             widgetId,
             allIds: mapIds(data),
             meta,
-          });
+          }, { root: true });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
         console.error(err);
 
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
-        commit(types.FETCH_LIST_FAILED, { widgetId });
+        commit(activeWidgetsTypes.FETCH_LIST_FAILED, { widgetId }, { root: true });
       }
     },
 
