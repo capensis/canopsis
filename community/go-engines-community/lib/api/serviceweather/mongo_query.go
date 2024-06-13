@@ -92,7 +92,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior_info.last_comment", pipeline: dbquery.GetPbehaviorInfoLastCommentLookup(q.authorProvider)},
-		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
+		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup(q.authorProvider)},
 	}
 	err := q.handleWidgetFilter(ctx, r)
 	if err != nil {
@@ -442,7 +442,7 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 	return pipeline
 }
 
-func getPbehaviorAlarmCountersLookup() []bson.M {
+func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 	defaultVal := StateIconOk
 	stateVals := []bson.M{
 		{
@@ -459,7 +459,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 		},
 	}
 
-	return []bson.M{
+	pipeline := []bson.M{
 		{
 			"$lookup": bson.M{
 				"from":         mongo.EntityCountersCollection,
@@ -505,6 +505,11 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 		}},
 		{"$project": bson.M{"pbh_types": 0}},
 		{"$unwind": bson.M{"path": "$pbh_types_counters", "preserveNullAndEmptyArrays": true}},
+	}
+
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbh_types_counters.type.author")...)
+
+	return append(pipeline, []bson.M{
 		{"$sort": bson.M{"pbh_types_counters.priority": -1}},
 		{"$group": bson.M{
 			"_id":                "$_id",
@@ -605,7 +610,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				"default": "",
 			}},
 		}},
-	}
+	}...)
 }
 
 func getPbhOriginLookup(origin string) []bson.M {

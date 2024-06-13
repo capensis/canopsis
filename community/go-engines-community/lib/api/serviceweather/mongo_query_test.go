@@ -45,7 +45,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
 	}})
@@ -108,7 +108,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
 	}})
@@ -173,7 +173,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
 	}})
@@ -252,7 +252,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
+	expected = append(expected, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"icon": bson.M{"$eq": "pause"}},
@@ -297,7 +297,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"services": 0,
 	}})
@@ -399,7 +399,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}}}}},
 	}
 	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
+	expected = append(expected, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"icon": bson.M{"$eq": "pause"}},
