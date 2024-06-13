@@ -261,9 +261,8 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Errors"
+              class="text-start"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
@@ -276,13 +275,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 >
                   Errors
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -1852,9 +1844,8 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Errors"
+              class="text-start"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
@@ -1867,13 +1858,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
                 >
                   Errors
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -2268,9 +2252,8 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Errors"
+              class="text-start"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
@@ -2283,13 +2266,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
                 >
                   Errors
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
@@ -3529,9 +3505,8 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               </div>
             </th>
             <th
-              aria-label="Errors: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="text-start sortable"
+              aria-label="Errors"
+              class="text-start"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
@@ -3544,13 +3519,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                 >
                   Errors
                 </span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
-                  style="font-size: 18px;"
-                >
-                  arrow_upward
-                </i>
               </div>
             </th>
             <th
