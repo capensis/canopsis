@@ -182,9 +182,9 @@ type AlarmSteps []AlarmStep
 
 // Add handle adding a step to the list
 func (s *AlarmSteps) Add(step AlarmStep) error {
-	if len(*s) < AlarmStepsHardLimit ||
-		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
-		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
+	isDecreaseStepWithOKState := (step.Type == AlarmStepStateDecrease || step.Type == AlarmStepStatusDecrease ||
+		step.Type == AlarmStepChangeState) && step.Value == AlarmStateOK
+	if len(*s) < AlarmStepsHardLimit || isDecreaseStepWithOKState ||
 		step.Type == AlarmStepCancel ||
 		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
 
