@@ -126,7 +126,7 @@ export default {
         { text: this.$t('common.type'), value: 'type', sortable: false },
         { text: this.$t('common.priority'), value: 'priority' },
         { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
-        { text: this.$tc('common.error', 2), value: 'unread_failures_count' },
+        { text: this.$tc('common.error', 2), value: 'unread_failures_count', sortable: false },
         { text: this.$t('common.author'), value: 'author.display_name' },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.updated'), value: 'updated' },
