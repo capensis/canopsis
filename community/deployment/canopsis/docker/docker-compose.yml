@@ -133,7 +133,7 @@ services:
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
     command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     volumes:
-      - ./files/canopsis/canopsis.override.toml:/opt/canopsis/etc/conf.d/canopsis-override.toml
+      - ./files/canopsis/canopsis-override.toml:/opt/canopsis/etc/conf.d/canopsis-override.toml
 
   migrate-metrics-meta:
     <<: *inital_config_base
