@@ -1,10 +1,11 @@
 <template>
   <v-layout column>
     <v-layout>
-      <v-text-field
+      <text-editor-field
         v-field="form.app_title"
         :disabled="disabled"
         :label="$t('userInterface.appTitle')"
+        class="fill-width"
       />
     </v-layout>
     <c-duration-field
