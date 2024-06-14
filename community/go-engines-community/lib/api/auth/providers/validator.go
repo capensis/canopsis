@@ -2,6 +2,7 @@ package providers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -29,6 +30,10 @@ func NewRoleValidator(dbClient mongo.DbClient) RoleValidator {
 }
 
 func (v *roleValidator) AreRolesValid(ctx context.Context, roles []string) error {
+	if len(roles) == 0 {
+		return errors.New("empty roles")
+	}
+
 	cursor, err := v.roleCollection.Aggregate(ctx, []bson.M{
 		{
 			"$match": bson.M{
@@ -40,7 +45,7 @@ func (v *roleValidator) AreRolesValid(ctx context.Context, roles []string) error
 		{
 			"$group": bson.M{
 				"_id":         nil,
-				"found_roles": bson.M{"$push": "$name"},
+				"found_roles": bson.M{"$addToSet": "$name"},
 			},
 		},
 		{
