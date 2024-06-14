@@ -197,7 +197,7 @@ func (p *provider) SamlMetadataHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		meta, err := p.samlSP.MetadataWithSLO(0)
 		if err != nil {
-			p.logger.Err(err).Msg("SamlMetadataHandler: MetadataWithSLO error")
+			p.logger.Err(err).Msg("samlMetadataHandler: MetadataWithSLO error")
 			panic(err)
 		}
 
@@ -250,7 +250,7 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 			}
 
 			if err != nil {
-				p.logger.Err(err).Msg("SamlAuthHandler: BuildAuthRequestDocument error")
+				p.logger.Err(err).Msg("samlAuthHandler: BuildAuthRequestDocument error")
 				panic(err)
 			}
 
@@ -260,7 +260,7 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 
 			authUrl, err := p.samlSP.BuildAuthURLRedirect(request.RelayState, authRequest)
 			if err != nil {
-				p.logger.Err(err).Msg("SamlAuthHandler: parse IdentityProviderSSOURL error")
+				p.logger.Err(err).Msg("samlAuthHandler: parse IdentityProviderSSOURL error")
 				panic(err)
 			}
 
@@ -270,7 +270,7 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 		if p.config.CanopsisSSOBinding == BindingPOST {
 			b, err := p.samlSP.BuildAuthBodyPost(request.RelayState)
 			if err != nil {
-				p.logger.Err(err).Msg("SamlAuthHandler: BuildAuthBodyPost error")
+				p.logger.Err(err).Msg("samlAuthHandler: BuildAuthBodyPost error")
 				panic(err)
 			}
 
@@ -301,26 +301,26 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		assertionInfo, err := p.samlSP.RetrieveAssertionInfo(samlResponse)
 		if err != nil {
-			p.logger.Err(err).Msg("Assertion is not valid")
+			p.logger.Err(err).Msg("assertion is not valid")
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
 		if assertionInfo.WarningInfo.InvalidTime {
-			p.logger.Err(errors.New("invalid time")).Msg("Assertion is not valid")
+			p.logger.Err(errors.New("invalid time")).Msg("assertion is not valid")
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
 		if assertionInfo.WarningInfo.NotInAudience {
-			p.logger.Err(errors.New("not in audience")).Msg("Assertion is not valid")
+			p.logger.Err(errors.New("not in audience")).Msg("assertion is not valid")
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
 		user, err := p.userProvider.FindByExternalSource(c, assertionInfo.NameID, security.SourceSaml)
 		if err != nil {
-			p.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
+			p.logger.Err(err).Msg("samlAcsHandler: userProvider FindByExternalSource error")
 			panic(err)
 		}
 
@@ -412,14 +412,14 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 
 		user, err := p.userProvider.FindByExternalSource(c, request.NameID.Value, security.SourceSaml)
 		if err != nil {
-			p.logger.Err(err).Msg("SamlSloHandler: userProvider FindByExternalSource error")
+			p.logger.Err(err).Msg("samlSloHandler: userProvider FindByExternalSource error")
 			panic(err)
 		}
 
 		if user == nil {
 			responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
-				p.logger.Err(err).Msg("SamlSloHandler: buildLogoutResponseUrl error")
+				p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
 				panic(err)
 			}
 
@@ -431,7 +431,7 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 		if err != nil {
 			responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
-				p.logger.Err(err).Msg("SamlSloHandler: buildLogoutResponseUrl error")
+				p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
 				panic(err)
 			}
 
@@ -443,7 +443,7 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 		if err != nil {
 			responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
-				p.logger.Err(err).Msg("SamlSloHandler: buildLogoutResponseUrl error")
+				p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
 				panic(err)
 			}
 
@@ -453,7 +453,7 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 
 		responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeSuccess, request.ID, relayState)
 		if err != nil {
-			p.logger.Err(err).Msg("SamlSloHandler: buildLogoutResponseUrl error")
+			p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
 			panic(err)
 		}
 
@@ -519,7 +519,7 @@ func (p *provider) encodeAndCompress(doc io.WriterTo) (_ *bytes.Buffer, resErr e
 
 func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
 	if !p.config.AutoUserRegistration {
-		p.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
+		p.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("autoUserRegistration is disabled")
 		p.errorRedirect(c, relayUrl, "This user is not allowed to log into Canopsis")
 
 		return nil, false
@@ -529,7 +529,7 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 
 	err := p.roleValidator.AreRolesValid(c, roles)
 	if err != nil {
-		p.logger.Err(err).Msg("User registration failed")
+		p.logger.Err(err).Msg("user registration failed")
 		p.errorRedirect(c, relayUrl, err.Error())
 
 		return nil, false
@@ -547,7 +547,7 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 	}
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		p.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
+		p.logger.Err(err).Msg("samlAcsHandler: userProvider Save error")
 		panic(fmt.Errorf("cannot save user: %w", err))
 	}
 
