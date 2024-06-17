@@ -36,6 +36,7 @@
                         <v-list-item
                           v-for="tab in view.tabs"
                           :key="tab._id"
+                          :disabled="submitting"
                           class="secondary lighten-2"
                           ripple
                           @click="selectTab(tab._id, view._id)"
@@ -62,7 +63,6 @@ import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -72,13 +72,11 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesViewGroupMixin,
-    submittableMixinCreator({
-
-    }),
   ],
   data() {
     return {
       pending: true,
+      submitting: false,
     };
   },
   async mounted() {
@@ -90,11 +88,19 @@ export default {
   },
   methods: {
     async selectTab(tabId, viewId) {
-      if (this.config.action) {
-        await this.config.action({ tabId, viewId });
-      }
+      try {
+        this.submitting = true;
 
-      this.$modals.hide();
+        if (this.config.action) {
+          await this.config.action({ tabId, viewId });
+        }
+
+        this.$modals.hide();
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        this.submitting = false;
+      }
     },
   },
 };
