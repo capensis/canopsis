@@ -68,12 +68,6 @@ func (e *engine) AddDeferFunc(deferFunc func(ctx context.Context)) {
 }
 
 func (e *engine) Run(ctx context.Context) error {
-	e.logger.Info().
-		Int("consumers", len(e.consumers)).
-		Int("periodical_workers", len(e.periodicalWorkers)).
-		Int("routines", len(e.routines)).
-		Msg("engine started")
-	defer e.logger.Info().Msg("engine stopped")
 	defer func() { // nolint: contextcheck
 		if e.deferFunc != nil {
 			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
@@ -144,6 +138,13 @@ func (e *engine) Run(ctx context.Context) error {
 			return routine(ctx)
 		})
 	}
+
+	e.logger.Info().
+		Int("consumers", len(e.consumers)).
+		Int("periodical_workers", len(e.periodicalWorkers)).
+		Int("routines", len(e.routines)).
+		Msg("engine started")
+	defer e.logger.Info().Msg("engine stopped")
 
 	return g.Wait()
 }

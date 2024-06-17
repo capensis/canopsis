@@ -31,6 +31,14 @@ export default {
       type: Object,
       required: false,
     },
+    sanitizeOptions: {
+      type: Object,
+      required: false,
+    },
+    linkifyOptions: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
@@ -41,6 +49,8 @@ export default {
     template: 'compileTemplate',
     context: 'compileTemplate',
     parentElement: 'compileTemplate',
+    sanitizeOptions: 'compileTemplate',
+    linkifyOptions: 'compileTemplate',
     '$system.theme': 'compileTemplate',
   },
   created() {
@@ -64,7 +74,12 @@ export default {
           : await compile(this.template, context);
 
         this.compiledTemplate = `<${this.parentElement}>${
-          normalizeHtml(sanitizeHtml(linkifyHtml(compiledTemplate)))
+          normalizeHtml(
+            sanitizeHtml(
+              linkifyHtml(compiledTemplate, this.linkifyOptions),
+              this.sanitizeOptions,
+            ),
+          )
         }</${this.parentElement}>`;
       } catch (err) {
         console.error(err);

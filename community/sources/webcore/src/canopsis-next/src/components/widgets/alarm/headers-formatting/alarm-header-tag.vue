@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span v-bind="$attrs">
     <slot />
     <c-alarm-action-chip
       v-if="selectedTag"
@@ -18,6 +18,7 @@ import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 
 export default {
   mixins: [entitiesAlarmTagMixin],
+  inheritAttrs: false,
   props: {
     selectedTag: {
       type: String,
