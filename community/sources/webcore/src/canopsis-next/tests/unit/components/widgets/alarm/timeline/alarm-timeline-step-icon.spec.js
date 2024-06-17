@@ -6,9 +6,9 @@ import AlarmTimelineStepIcon from '@/components/widgets/alarm/timeline/alarm-tim
 
 const stubs = {
   'c-alarm-chip': true,
+  'c-alarm-state-chip': true,
   'c-alarm-pbehavior-chip': true,
   'c-alarm-extra-details-chip': true,
-  'c-alarm-state-chip': true,
   'v-icon': true,
 };
 

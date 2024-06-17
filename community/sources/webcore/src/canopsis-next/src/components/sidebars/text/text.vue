@@ -8,13 +8,14 @@
     <field-text-editor
       v-model="form.parameters.template"
       :title="$t('common.template')"
+      :sanitize-options="sanitizeOptions"
     />
     <v-divider />
   </widget-settings>
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, TEXT_WIDGET_SANITIZE_OPTIONS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
@@ -30,5 +31,10 @@ export default {
     FieldTextEditor,
   },
   mixins: [widgetSettingsMixin],
+  computed: {
+    sanitizeOptions() {
+      return TEXT_WIDGET_SANITIZE_OPTIONS;
+    },
+  },
 };
 </script>

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
@@ -20,6 +21,7 @@ func NewResolveDeletedProcessor(
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -31,10 +33,12 @@ func NewResolveDeletedProcessor(
 		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
+		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
 		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmStatesService:          metaAlarmStatesService,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
 		encoder:                         encoder,
@@ -48,10 +52,12 @@ type resolveDeletedProcessor struct {
 	entityCollection                mongo.DbCollection
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
+	metaAlarmRuleCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
 	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmStatesService          correlation.MetaAlarmStateService
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
 	encoder                         encoding.Encoder
@@ -71,10 +77,12 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 		event,
 		p.entityServiceCountersCalculator,
 		p.componentCountersCalculator,
+		p.metaAlarmStatesService,
 		p.dbClient,
 		p.alarmCollection,
 		p.entityCollection,
 		p.resolvedAlarmCollection,
+		p.metaAlarmRuleCollection,
 	)
 	if err != nil || result.Alarm.ID == "" {
 		return result, err
