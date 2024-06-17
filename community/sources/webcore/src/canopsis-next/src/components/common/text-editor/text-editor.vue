@@ -125,6 +125,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sanitizeOptions: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
@@ -139,7 +143,7 @@ export default {
   },
   computed: {
     sanitizedValue() {
-      return sanitizeHtml(this.value);
+      return sanitizeHtml(this.value, this.sanitizeOptions);
     },
 
     hasError() {
