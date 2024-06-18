@@ -45,6 +45,7 @@ type ChangeStream interface {
 }
 
 type DbCollection interface {
+	Name() string
 	Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (Cursor, error)
 	BulkWrite(ctx context.Context, models []mongo.WriteModel, opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error)
 	CountDocuments(ctx context.Context, filter interface{}, opts ...*options.CountOptions) (int64, error)
@@ -103,6 +104,10 @@ type dbCollection struct {
 	mongoCollection *mongo.Collection
 	retryCount      int
 	minRetryTimeout time.Duration
+}
+
+func (c *dbCollection) Name() string {
+	return c.mongoCollection.Name()
 }
 
 func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},

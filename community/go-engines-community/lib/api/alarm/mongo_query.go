@@ -18,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -38,6 +39,7 @@ type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
 	authorProvider        author.Provider
+	alarmCollectionName   string
 
 	defaultSearchByFields         []string
 	availableSearchByFields       map[string]struct{}
@@ -76,11 +78,12 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, alarmCollectionName string) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection:      client.Collection(mongo.WidgetFiltersMongoCollection),
 		instructionCollection: client.Collection(mongo.InstructionMongoCollection),
 		authorProvider:        authorProvider,
+		alarmCollectionName:   alarmCollectionName,
 
 		defaultSearchByFields: []string{
 			"v.connector",
@@ -144,12 +147,14 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
-	q.lookups = []lookupWithKey{
-		{key: "entity", pipeline: getEntityLookup()},
-		{key: "entity.category", pipeline: dbquery.GetCategoryLookup("entity")},
-		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
+	q.lookups = make([]lookupWithKey, 0, 4)
+	if types.NeedEntityLookup(q.alarmCollectionName) {
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity", pipeline: getEntityLookup()})
 	}
+
+	q.lookups = append(q.lookups, lookupWithKey{key: "entity.category", pipeline: dbquery.GetCategoryLookup("entity")})
+	q.lookups = append(q.lookups, lookupWithKey{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)})
+	q.lookups = append(q.lookups, lookupWithKey{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()})
 
 	q.sort = bson.M{}
 
@@ -292,7 +297,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmMatch})
 	}
 	if len(entityMatch) > 0 {
-		q.lookupsForAdditionalMatch["entity"] = true
+		q.addLookupForAdditionalMatch("entity")
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
 	}
 
@@ -598,7 +603,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 		return err
 	}
 	if len(entityMatch) > 0 {
-		q.lookupsForAdditionalMatch["entity"] = true
+		q.addLookupForAdditionalMatch("entity")
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
 
@@ -725,7 +730,7 @@ func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) er
 	}
 
 	if len(entityPatternQuery) > 0 {
-		q.lookupsForAdditionalMatch["entity"] = true
+		q.addLookupForAdditionalMatch("entity")
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
 	}
 
@@ -756,7 +761,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 		for _, lookup := range q.lookups {
 			if strings.Contains(resolvedSearch, lookup.key+".") {
 				extraLookups = true
-				q.lookupsForAdditionalMatch[lookup.key] = true
+				q.addLookupForAdditionalMatch(lookup.key)
 			}
 		}
 
@@ -806,27 +811,23 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 
 	if !r.OnlyParents {
 		if searchByEntity {
-			q.lookupsForAdditionalMatch["entity"] = true
+			q.addLookupForAdditionalMatch("entity")
 		}
 
 		return bson.M{"$or": searchMatch}, searchByEntity, nil
 	}
 
 	match := bson.M{"$or": searchMatch}
-	metaAlarmLookupCollection := mongo.AlarmMongoCollection
 	metaAlarmLookupMatch := bson.M{}
-	switch r.GetOpenedFilter() {
-	case OnlyOpened:
+	if r.GetOpenedFilter() == OnlyOpened {
 		match = bson.M{
 			"v.resolved": nil,
 			"$or":        searchMatch,
 		}
 		metaAlarmLookupMatch = bson.M{"v.resolved": nil}
-	case OnlyResolved:
-		metaAlarmLookupCollection = mongo.ResolvedAlarmMongoCollection
 	}
 
-	q.searchPipeline = getOnlyParentsSearchPipeline(match, metaAlarmLookupCollection, metaAlarmLookupMatch, searchByEntity)
+	q.searchPipeline = getOnlyParentsSearchPipeline(match, q.alarmCollectionName, metaAlarmLookupMatch, searchByEntity)
 
 	return nil, false, nil
 }
@@ -1257,7 +1258,7 @@ func (q *MongoQueryBuilder) handleOpened(opened int) {
 	}
 
 	if len(entityMatch) > 0 {
-		q.lookupsForAdditionalMatch["entity"] = true
+		q.addLookupForAdditionalMatch("entity")
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
 }
@@ -1266,6 +1267,16 @@ func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
 	if withDependencies {
 		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: dbquery.GetImpactsCountPipeline("entity")})
 		q.lookups = append(q.lookups, lookupWithKey{key: "entity.depends_counts", pipeline: dbquery.GetDependsCountPipeline("entity")})
+	}
+}
+
+func (q *MongoQueryBuilder) addLookupForAdditionalMatch(key string) {
+	if key == "entity" {
+		if types.NeedEntityLookup(q.alarmCollectionName) {
+			q.lookupsForAdditionalMatch["entity"] = true
+		}
+	} else {
+		q.lookupsForAdditionalMatch[key] = true
 	}
 }
 
@@ -1534,17 +1545,17 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 func getOnlyParentsSearchPipeline(
 	match bson.M,
-	metaAlarmLookupCollection string,
+	alarmCollectionName string,
 	metaAlarmLookupMatch bson.M,
 	searchByEntity bool,
 ) []bson.M {
 	var pipeline []bson.M
-	if searchByEntity {
+	if searchByEntity && types.NeedEntityLookup(alarmCollectionName) {
 		pipeline = append(pipeline, getEntityLookup()...)
 	}
 
 	pipeline = append(pipeline, bson.M{"$match": match})
-	if searchByEntity {
+	if searchByEntity && types.NeedEntityLookup(alarmCollectionName) {
 		pipeline = append(pipeline, bson.M{"$project": bson.M{"entity": 0}})
 	}
 
@@ -1559,7 +1570,7 @@ func getOnlyParentsSearchPipeline(
 			}}},
 		}},
 		{"$graphLookup": bson.M{
-			"from":                    metaAlarmLookupCollection,
+			"from":                    alarmCollectionName,
 			"startWith":               "$_id",
 			"connectFromField":        "_id",
 			"connectToField":          "d",

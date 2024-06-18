@@ -324,6 +324,20 @@ func (mr *MockDbCollectionMockRecorder) InsertOne(arg0, arg1 interface{}, arg2 .
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertOne", reflect.TypeOf((*MockDbCollection)(nil).InsertOne), varargs...)
 }
 
+// Name mocks base method.
+func (m *MockDbCollection) Name() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Name")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Name indicates an expected call of Name.
+func (mr *MockDbCollectionMockRecorder) Name() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockDbCollection)(nil).Name))
+}
+
 // ReplaceOne mocks base method.
 func (m *MockDbCollection) ReplaceOne(arg0 context.Context, arg1, arg2 interface{}, arg3 ...*options.ReplaceOptions) (*mongo0.UpdateResult, error) {
 	m.ctrl.T.Helper()
