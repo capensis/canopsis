@@ -1,12 +1,11 @@
-import { flushPromises, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
 const stubs = {
   'c-alarm-extra-details-chip': true,
+  'c-simple-tooltip': true,
 };
-
-const selectExtraDetailsIcon = wrapper => wrapper.find('c-alarm-extra-details-chip-stub');
 
 describe('extra-details-children', () => {
   const total = 3;
@@ -21,7 +20,7 @@ describe('extra-details-children', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-children` with full children and rule', async () => {
+  it('Renders `extra-details-children` with full children and rule', () => {
     jest.useFakeTimers();
 
     const wrapper = snapshotFactory({
@@ -33,14 +32,6 @@ describe('extra-details-children', () => {
       },
     });
 
-    await flushPromises();
-
-    selectExtraDetailsIcon(wrapper).trigger('mouseenter');
-
-    jest.runAllTimers();
-
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

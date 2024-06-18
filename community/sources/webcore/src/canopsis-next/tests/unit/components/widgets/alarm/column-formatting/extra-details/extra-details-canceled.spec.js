@@ -7,6 +7,7 @@ import ExtraDetailsCanceled from '@/components/widgets/alarm/columns-formatting/
 
 const stubs = {
   'c-alarm-extra-details-chip': true,
+  'c-simple-tooltip': true,
 };
 
 describe('extra-details-canceled', () => {
@@ -27,7 +28,7 @@ describe('extra-details-canceled', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-canceled` with full canceled', async () => {
+  it('Renders `extra-details-canceled` with full canceled', () => {
     const wrapper = snapshotFactory({
       propsData: {
         canceled,
@@ -35,11 +36,9 @@ describe('extra-details-canceled', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-canceled` without message', async () => {
+  it('Renders `extra-details-canceled` without message', () => {
     const wrapper = snapshotFactory({
       propsData: {
         canceled: omit(canceled, ['m']),
@@ -47,11 +46,9 @@ describe('extra-details-canceled', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-canceled` with date in previous month', async () => {
+  it('Renders `extra-details-canceled` with date in previous month', () => {
     const wrapper = snapshotFactory({
       propsData: {
         canceled: {
@@ -62,7 +59,5 @@ describe('extra-details-canceled', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

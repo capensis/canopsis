@@ -2,41 +2,20 @@
 
 exports[`extra-details-children Renders \`extra-details-children\` with full children and rule 1`] = `
 <div>
-  <c-alarm-extra-details-chip-stub
-    color="#6d4c41"
-    icon="center_focus_strong"
-  />
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\">
+        <strong>Meta alarm</strong>
+        <div>Title : rule-name</div>
+        <div>Consequences : 3</div>
+        <div>Opened consequences : 2</div>
+        <div>Closed consequences : 1</div>
+      </div>"
+    top=""
   >
-    <!---->
-  </span>
-</div>
-`;
-
-exports[`extra-details-children Renders \`extra-details-children\` with full children and rule 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Meta alarm
-    </strong>
-    <div>
-      Title : rule-name
-    </div>
-    <div>
-      Consequences : 3
-    </div>
-    <div>
-      Opened consequences : 2
-    </div>
-    <div>
-      Closed consequences : 1
-    </div>
-  </div>
+    <c-alarm-extra-details-chip-stub
+      color="#6d4c41"
+      icon="center_focus_strong"
+    />
+  </c-simple-tooltip-stub>
 </div>
 `;
