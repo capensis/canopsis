@@ -12,10 +12,11 @@ const (
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
 	AlarmDisplayNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
-	ApiTokenSigningMethod       = "HS256"
-	ApiBulkMaxSize              = 10000
-	ApiExportMongoClientTimeout = time.Minute
-	ApiMetricsCacheExpiration   = 24 * time.Hour
+	ApiTokenSigningMethod               = "HS256"
+	ApiBulkMaxSize                      = 10000
+	ApiExportMongoClientTimeout         = time.Minute
+	ApiMetricsCacheExpiration           = 24 * time.Hour
+	ApiEventsRecorderFetchStatusTimeout = 3 * time.Second
 
 	RemediationHttpTimeout                    = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second

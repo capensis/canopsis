@@ -93,15 +93,6 @@ func TestEvent_IsValid(t *testing.T) {
 	}
 }
 
-func TestEvent_IsMatched(t *testing.T) {
-	event := getEvent()
-	event.Component = "foo"
-	fields := []string{"Fear", "Resource", "Component"}
-	if !event.IsMatched(".*foo", fields) {
-		t.Errorf("expected true but got false")
-	}
-}
-
 func TestEvent_GetRequiredKeys(t *testing.T) {
 	event := getEvent()
 	expected := []string{
@@ -320,5 +311,29 @@ func getEvent() types.Event {
 		Component:     "host",
 		Resource:      "nginx",
 		SourceType:    types.SourceTypeResource,
+	}
+}
+
+func BenchmarkInjectExtraInfos1(b *testing.B) {
+	event := getEvent()
+	msg := []byte(`{
+		"event_type":"check",
+		"component":"bla",
+		"resource":"blurk",
+		"state":3,
+		"connector":"bla",
+		"output":"bla bla bla",
+		"connector_name":"bla",
+		"personnemeconnait":"ulyss31",
+		"personnemeconnait2":"ulyss62",
+		"sys_id" : "54354993879424235547658424",
+		"location" : "france",
+		"env" : "QLF"
+	}`)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if err := event.InjectExtraInfos(msg); err != nil {
+			b.Fatalf("expected no error but got %v", err)
+		}
 	}
 }

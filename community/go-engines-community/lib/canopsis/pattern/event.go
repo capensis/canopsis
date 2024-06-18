@@ -31,7 +31,7 @@ func (p Event) HasExtraInfosField() bool {
 }
 
 func GetEventExtraInfoName(f string) string {
-	if n := strings.TrimPrefix(f, "extra."); n != f {
+	if n, ok := strings.CutPrefix(f, "extra."); ok {
 		return n
 	}
 

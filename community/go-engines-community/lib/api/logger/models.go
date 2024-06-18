@@ -47,6 +47,7 @@ const (
 	ValueTypeAlarmTag           = "alarmtag"
 	ValueTypeColorTheme         = "colortheme"
 	ValueTypeIcon               = "icon"
+	ValueTypeEventRecord        = "eventrecord"
 )
 
 type ActionLogEvent struct {

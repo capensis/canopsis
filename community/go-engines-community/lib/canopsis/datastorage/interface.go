@@ -25,6 +25,7 @@ type Adapter interface {
 	UpdateHistoryHealthCheck(ctx context.Context, t datetime.CpsTime) error
 	UpdateHistoryWebhook(ctx context.Context, t datetime.CpsTime) error
 	UpdateHistoryEventFilterFailure(ctx context.Context, t datetime.CpsTime) error
+	UpdateHistoryEventRecords(ctx context.Context, t datetime.CpsTime) error
 }
 
 type DataStorage struct {
@@ -67,6 +68,9 @@ type Config struct {
 	EventFilterFailure struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"event_filter_failure" json:"event_filter_failure"`
+	EventRecords struct {
+		DeleteAfter *datetime.DurationWithUnit `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"event_records" json:"event_records"`
 }
 
 type History struct {
@@ -81,6 +85,7 @@ type History struct {
 	HealthCheck        *datetime.CpsTime `bson:"health_check" json:"health_check" swaggertype:"integer"`
 	Webhook            *datetime.CpsTime `bson:"webhook" json:"webhook" swaggertype:"integer"`
 	EventFilterFailure *datetime.CpsTime `bson:"event_filter_failure" json:"event_filter_failure" swaggertype:"integer"`
+	EventRecords       *datetime.CpsTime `bson:"event_records" json:"event_records" swaggertype:"integer"`
 }
 
 type HistoryWithCount struct {

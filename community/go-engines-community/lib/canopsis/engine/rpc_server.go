@@ -45,7 +45,7 @@ type rpcServer struct {
 
 func (c *rpcServer) Consume(ctx context.Context) error {
 	consumeCh, msgs, err := getConsumeChannel(c.connection, c.name, c.queue,
-		c.consumePrefetchCount, c.consumePrefetchSize, false)
+		c.consumePrefetchCount, c.consumePrefetchSize, false, false)
 	if err != nil {
 		return err
 	}

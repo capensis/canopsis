@@ -40,6 +40,8 @@ const (
 	// Collection for ok/ko event statistics
 	EventStatistics = "event_statistics"
 
+	EventRecordsMongoCollection = "event_records"
+
 	// Remediation collections
 	InstructionMongoCollection          = "instruction"
 	InstructionExecutionMongoCollection = "instruction_execution"

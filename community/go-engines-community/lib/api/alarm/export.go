@@ -217,9 +217,8 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 			}
 		}
 
-		if strings.HasPrefix(f.Name, "links.") {
-			category := strings.TrimPrefix(f.Name, "links.")
-			values := make([]string, 0)
+		if category, ok := strings.CutPrefix(f.Name, "links."); ok {
+			values := make([]string, 0, len(linksByCategory[category]))
 			for _, link := range linksByCategory[category] {
 				values = append(values, link.Label+": "+link.Url)
 			}
