@@ -8,13 +8,17 @@
 </template>
 
 <script>
-import { ref, inject, onBeforeUnmount } from 'vue';
+import { ref, inject, onBeforeMount, onBeforeUnmount } from 'vue';
 
 export default {
   props: {
     asyncBootingProvider: {
       type: String,
       default: '$asyncBooting',
+    },
+    eager: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {
@@ -27,6 +31,17 @@ export default {
     const setAllBooted = () => allBooted.value = true;
 
     asyncBooting.register(asyncBootingKey, setBooted, setAllBooted);
+
+    onBeforeMount(() => {
+      if (props.eager || asyncBooting.wasCalled) {
+        setBooted();
+        setAllBooted();
+
+        return;
+      }
+
+      asyncBooting.register(asyncBootingKey, setBooted, setAllBooted);
+    });
 
     onBeforeUnmount(() => asyncBooting.unregister(asyncBootingKey));
 

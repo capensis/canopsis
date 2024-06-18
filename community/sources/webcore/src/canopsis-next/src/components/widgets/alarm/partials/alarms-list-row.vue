@@ -63,6 +63,7 @@
       >
         <c-booted-placeholder-loader
           v-if="header.value === 'actions'"
+          :eager="eager"
           async-booting-provider="$asyncBootingActionsPanel"
         >
           <actions-panel
@@ -217,11 +218,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    eager: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       active: false,
-      localBooted: false,
+      localBooted: this.eager,
     };
   },
   computed: {

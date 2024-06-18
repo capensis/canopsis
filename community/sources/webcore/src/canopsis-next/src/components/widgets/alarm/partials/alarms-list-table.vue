@@ -152,6 +152,7 @@
             :virtual-scroll="widget.parameters.isVirtualScrollEnabled"
             :booted="bootedRows[item._id]"
             :visible="visibleRows[item._id]"
+            :eager="eager"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -342,6 +343,10 @@ export default {
     search: {
       type: String,
       default: '',
+    },
+    eager: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -549,7 +554,9 @@ export default {
     alarms(alarms) {
       this.selected = intersectionBy(alarms, this.selected, '_id');
 
-      this.setBootedRows(alarms);
+      if (!this.eager) {
+        this.setBootedRows(alarms);
+      }
     },
 
     columns() {
@@ -646,6 +653,11 @@ export default {
       this.visibleRows = { ...this.bootedRows };
 
       const chunks = splitIdsToChunk(farthest, itemsPerRender);
+
+      if (!chunks.length) {
+        window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
+        return;
+      }
 
       chunks.forEach((chunk, index) => {
         recursiveRaf(() => {
