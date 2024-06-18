@@ -110,7 +110,7 @@ import {
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
 import { useI18n } from '@/hooks/i18n';
-import { useInjectValidator } from '@/hooks/validator/inject-validator';
+import { useValidator } from '@/hooks/validator/validator';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 import { useModelField } from '@/hooks/form/model-field';
 import { useAsyncBootingChild } from '@/hooks/render/async-booting';
@@ -183,7 +183,7 @@ export default {
     const isCustom = ref(false);
 
     const { tc } = useI18n();
-    const validator = useInjectValidator();
+    const validator = useValidator();
     const { updateModel } = useModelField(props, emit);
     const { booted: bootedExpandPanel } = useAsyncBootingChild(expanded.value);
     const { hasChildrenError } = useValidationChildren();
