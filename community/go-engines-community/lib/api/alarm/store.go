@@ -132,7 +132,7 @@ func NewStore(
 func (s *store) GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error) {
 	now := datetime.NewCpsTime()
 
-	pipeline, err := s.getQueryBuilder().CreateGetDisplayNamesPipeline(r, now)
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetDisplayNamesPipeline(r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userId)
+	pipeline, err := s.getQueryBuilder(collection.Name()).CreateListAggregationPipeline(ctx, r, now, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 
 func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
 		OpenedAndRecentResolved, onlyParents)
 	if err != nil {
 		return nil, err
@@ -212,7 +212,13 @@ func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool
 	}
 
 	if len(result.Data) == 0 {
-		resolvedCursor, err := s.resolvedDbCollection.Aggregate(ctx, pipeline)
+		resolvedPipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
+			OpenedAndRecentResolved, onlyParents)
+		if err != nil {
+			return nil, err
+		}
+
+		resolvedCursor, err := s.resolvedDbCollection.Aggregate(ctx, resolvedPipeline)
 		if err != nil {
 			return nil, err
 		}
@@ -246,7 +252,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userId,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userId,
 		OnlyOpened, false)
 	if err != nil {
 		return nil, false, err
@@ -297,7 +303,7 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 	}
 
 	opened := true
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		nil,
 		entityMatch,
 		r.Query,
@@ -347,7 +353,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 	}
 
 	opened := true
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		nil,
 		bson.M{"entity.component": component.ID},
 		r.Query,
@@ -394,7 +400,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId 
 	}
 
 	opened := false
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+	pipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		bson.M{"d": r.ID},
 		nil,
 		r.Query,
@@ -503,7 +509,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children,
+			childrenPipeline, err := s.getQueryBuilder(collection.Name()).CreateChildrenAggregationPipeline(*r.Children,
 				r.GetOpenedFilter(), details.Entity.ID, r.Search, userId, r.SearchBy, now)
 			if err != nil {
 				return nil, err
@@ -551,7 +557,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 		collection = s.resolvedDbCollection
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, userID, datetime.NewCpsTime())
+	pipeline, err := s.getQueryBuilder(collection.Name()).CreateCountAggregationPipeline(ctx, r, userID, datetime.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -659,7 +665,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+	pipeline, err := s.getQueryBuilder(collectionName).CreateOnlyListAggregationPipeline(ctx, ListRequest{
 		FilterRequest: FilterRequest{
 			BaseFilterRequest: r.BaseFilterRequest,
 			SearchBy:          t.Fields.Fields(),
@@ -1398,8 +1404,8 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId
 	return nil
 }
 
-func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient, s.authorProvider)
+func (s *store) getQueryBuilder(collectionName string) *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider, collectionName)
 }
 
 func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {

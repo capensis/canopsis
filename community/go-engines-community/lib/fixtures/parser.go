@@ -13,14 +13,15 @@ import (
 )
 
 const (
-	keyRangeRegexp   = `^(?P<key>[\w-]+)\{(?P<from>\d+)\.\.(?P<to>\d+)\}$`
-	referenceRegexp  = `^@(?P<ref>[\w\-\d\*]+)$`
-	methodRegexp     = `^` + methodTplRegexp + `$`
-	methodTplRegexp  = `<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>`
-	tplRegexp        = `^<\{(?P<content>.+)\}>$`
-	methodCurrent    = "Current"
-	methodIndex      = "Index"
-	methodRangeIndex = "RangeIndex"
+	keyRangeRegexp         = `^(?P<key>[\w-]+)\{(?P<from>\d+)\.\.(?P<to>\d+)\}$`
+	referenceRegexp        = `^@(?P<ref>[\w\-\d\*]+)$`
+	referenceFullObjRegexp = `^!(?P<ref>[\w\-\d\*]+)$`
+	methodRegexp           = `^` + methodTplRegexp + `$`
+	methodTplRegexp        = `<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>`
+	tplRegexp              = `^<\{(?P<content>.+)\}>$`
+	methodCurrent          = "Current"
+	methodIndex            = "Index"
+	methodRangeIndex       = "RangeIndex"
 )
 
 type Parser interface {
@@ -29,13 +30,14 @@ type Parser interface {
 
 func NewParser(faker *Faker) Parser {
 	return &parser{
-		faker:        faker,
-		reflectFaker: reflect.ValueOf(faker),
-		keyRangeRe:   regexp.MustCompile(keyRangeRegexp),
-		referenceRe:  regexp.MustCompile(referenceRegexp),
-		methodRe:     regexp.MustCompile(methodRegexp),
-		methodTplRe:  regexp.MustCompile(methodTplRegexp),
-		tplRe:        regexp.MustCompile(tplRegexp),
+		faker:              faker,
+		reflectFaker:       reflect.ValueOf(faker),
+		keyRangeRe:         regexp.MustCompile(keyRangeRegexp),
+		referenceRe:        regexp.MustCompile(referenceRegexp),
+		referenceFullObjRe: regexp.MustCompile(referenceFullObjRegexp),
+		methodRe:           regexp.MustCompile(methodRegexp),
+		methodTplRe:        regexp.MustCompile(methodTplRegexp),
+		tplRe:              regexp.MustCompile(tplRegexp),
 	}
 }
 
@@ -43,7 +45,7 @@ type parser struct {
 	faker        *Faker
 	reflectFaker reflect.Value
 
-	keyRangeRe, referenceRe, methodRe, methodTplRe, tplRe *regexp.Regexp
+	keyRangeRe, referenceRe, referenceFullObjRe, methodRe, methodTplRe, tplRe *regexp.Regexp
 }
 
 func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
@@ -55,6 +57,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 	}
 
 	docsByCollection := make(map[string][]interface{}, len(dataByCollection))
+	referenceIDs := make(map[string]interface{})
 	references := make(map[string]interface{})
 
 	for _, collV := range dataByCollection {
@@ -105,29 +108,31 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 
 				ids := make([]interface{}, 0, to-from+1)
 				for i := from; i <= to; i++ {
-					doc, err := p.processItem(index, &i, val, references)
+					doc, err := p.processItem(index, &i, val, referenceIDs, references)
 					index++
 					if err != nil {
 						return nil, fmt.Errorf("cannot process %s: %w", key, err)
 					}
 
-					references[fmt.Sprintf("%s%d", refKey, i)] = doc["_id"]
+					referenceIDs[refKey+strconv.Itoa(i)] = doc["_id"]
+					references[refKey+strconv.Itoa(i)] = doc
 					ids = append(ids, doc["_id"])
 					docs = append(docs, doc)
 				}
 
-				references[refKey+"*"] = ids
+				referenceIDs[refKey+"*"] = ids
 
 				continue
 			}
 
-			doc, err := p.processItem(index, nil, val, references)
+			doc, err := p.processItem(index, nil, val, referenceIDs, references)
 			index++
 			if err != nil {
 				return nil, fmt.Errorf("cannot process %s: %w", key, err)
 			}
 
-			references[key] = doc["_id"]
+			referenceIDs[key] = doc["_id"]
+			references[key] = doc
 			docs = append(docs, doc)
 		}
 
@@ -138,7 +143,12 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 	return docsByCollection, nil
 }
 
-func (p *parser) processItem(index int, rangeIndex *int, data yaml.MapSlice, references map[string]interface{}) (map[string]interface{}, error) {
+func (p *parser) processItem(
+	index int,
+	rangeIndex *int,
+	data yaml.MapSlice,
+	referenceIDs, references map[string]interface{},
+) (map[string]interface{}, error) {
 	doc := make(map[string]interface{}, len(data))
 	var err error
 
@@ -151,7 +161,7 @@ func (p *parser) processItem(index int, rangeIndex *int, data yaml.MapSlice, ref
 		matches := p.referenceRe.FindStringSubmatch(key)
 		if len(matches) > 0 {
 			ref := matches[p.referenceRe.SubexpIndex("ref")]
-			if refV, ok := references[ref]; ok {
+			if refV, ok := referenceIDs[ref]; ok {
 				if s, ok := refV.(string); ok {
 					key = s
 				} else {
@@ -162,7 +172,7 @@ func (p *parser) processItem(index int, rangeIndex *int, data yaml.MapSlice, ref
 			}
 		}
 
-		doc[key], err = p.processValue(v.Value, index, rangeIndex, doc, references)
+		doc[key], err = p.processValue(v.Value, index, rangeIndex, doc, referenceIDs, references)
 		if err != nil {
 			return nil, fmt.Errorf("cannot process %q: %w", key, err)
 		}
@@ -171,15 +181,21 @@ func (p *parser) processItem(index int, rangeIndex *int, data yaml.MapSlice, ref
 	return doc, nil
 }
 
-func (p *parser) processValue(fieldVal interface{}, index int, rangeIndex *int, doc map[string]interface{}, references map[string]interface{}) (interface{}, error) {
+func (p *parser) processValue(
+	fieldVal interface{},
+	index int,
+	rangeIndex *int,
+	doc map[string]interface{},
+	referenceIDs, references map[string]interface{},
+) (interface{}, error) {
 	switch val := fieldVal.(type) {
 	case yaml.MapSlice:
-		return p.processItem(index, rangeIndex, val, references)
+		return p.processItem(index, rangeIndex, val, referenceIDs, references)
 	case []interface{}:
 		var err error
 		newVal := make([]interface{}, len(val))
 		for i := range val {
-			newVal[i], err = p.processValue(val[i], index, rangeIndex, doc, references)
+			newVal[i], err = p.processValue(val[i], index, rangeIndex, doc, referenceIDs, references)
 			if err != nil {
 				return nil, err
 			}
@@ -189,6 +205,17 @@ func (p *parser) processValue(fieldVal interface{}, index int, rangeIndex *int, 
 		matches := p.referenceRe.FindStringSubmatch(val)
 		if len(matches) > 0 {
 			ref := matches[p.referenceRe.SubexpIndex("ref")]
+			newVal, ok := referenceIDs[ref]
+			if !ok {
+				return nil, fmt.Errorf("unknown reference %q", ref)
+			}
+
+			return newVal, nil
+		}
+
+		matches = p.referenceFullObjRe.FindStringSubmatch(val)
+		if len(matches) > 0 {
+			ref := matches[p.referenceFullObjRe.SubexpIndex("ref")]
 			newVal, ok := references[ref]
 			if !ok {
 				return nil, fmt.Errorf("unknown reference %q", ref)
