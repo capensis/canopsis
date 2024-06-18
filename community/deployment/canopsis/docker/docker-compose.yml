@@ -94,6 +94,7 @@ services:
       start_period: 40s
 
   redis:
+    <<: *service_base
     image: redis:${REDIS_TAG}
     ports:
       - "6379:6379"
