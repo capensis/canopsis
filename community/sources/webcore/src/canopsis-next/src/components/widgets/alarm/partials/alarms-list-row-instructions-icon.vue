@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top disable-resize>
+  <c-simple-tooltip :content="iconTooltip" top>
     <template #activator="{ on }">
       <v-icon
         :class="iconClass"
@@ -10,11 +10,7 @@
         {{ iconName }}
       </v-icon>
     </template>
-    <span
-      v-html="iconTooltip"
-      class="pre-wrap"
-    />
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
@@ -115,7 +111,7 @@ export default {
         tooltips.push(this.$tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
       }
 
-      return tooltips.join('\n');
+      return `<span class="pre-wrap">${tooltips.join('\n')}</span>`;
     },
   },
 };
