@@ -6,6 +6,7 @@ export class AsyncBooting {
    * Create an AsyncBooting instance.
    */
   constructor() {
+    this.wasCalled = false;
     this.registeredRAFs = new Map();
     this.registered = [];
   }
@@ -77,6 +78,7 @@ export class AsyncBooting {
       this.registered.forEach(({ onFinishCallback }) => onFinishCallback?.());
       onFinishCallbackRoot?.();
       this.clear();
+      this.wasCalled = true;
     }, afterRAFs);
   }
 
