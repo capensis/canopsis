@@ -151,7 +151,8 @@ services:
     <<: *inital_config_base
     image: ${DOCKER_REPOSITORY}community/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
     command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
-
+    volumes:
+      - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
   #
   # Canopsis Community components
   #
