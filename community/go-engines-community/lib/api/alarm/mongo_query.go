@@ -30,7 +30,9 @@ import (
 const (
 	defaultTimeFieldOpened   = "t"
 	defaultTimeFieldResolved = "v.resolved"
-	entityInfosPrefix        = "entity.infos"
+	entityRequestPrefix      = "entity"
+	entityInfosRequestPrefix = entityRequestPrefix + ".infos"
+	entityDbPrefix           = "e"
 )
 
 var ErrUnknownQuery = errors.New("unknown query type")
@@ -101,11 +103,11 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider,
 			"v.ticket.ticket":  {},
 		},
 		availableSearchByEntityFields: map[string]struct{}{
-			"entity.name":        {},
-			"entity.connector":   {},
-			"entity.component":   {},
-			"entity.description": {},
-			"entity.type":        {},
+			entityRequestPrefix + ".name":        {},
+			entityRequestPrefix + ".connector":   {},
+			entityRequestPrefix + ".component":   {},
+			entityRequestPrefix + ".description": {},
+			entityRequestPrefix + ".type":        {},
 		},
 		defaultSortBy: "t",
 		defaultSort:   common.SortDesc,
@@ -128,7 +130,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider,
 			"resolved":       "v.resolved",
 		},
 		fieldsAliasesByRegex: map[string]string{
-			"^infos\\.(.+)":           "entity.infos.$1",
+			"^infos\\.(.+)":           entityDbPrefix + ".infos.$1",
 			"^v\\.infos\\.\\*\\.(.+)": "v.infos_array.v.$1",
 		},
 	}
@@ -149,10 +151,10 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = make([]lookupWithKey, 0, 4)
 	if types.NeedEntityLookup(q.alarmCollectionName) {
-		q.lookups = append(q.lookups, lookupWithKey{key: "entity", pipeline: getEntityLookup()})
+		q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix, pipeline: getEntityLookup()})
 	}
 
-	q.lookups = append(q.lookups, lookupWithKey{key: "entity.category", pipeline: dbquery.GetCategoryLookup("entity")})
+	q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".category", pipeline: dbquery.GetCategoryLookup(entityDbPrefix)})
 	q.lookups = append(q.lookups, lookupWithKey{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)})
 	q.lookups = append(q.lookups, lookupWithKey{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()})
 
@@ -161,7 +163,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
-	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "entity.services"}
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services"}
 }
 
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
@@ -297,7 +299,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmMatch})
 	}
 	if len(entityMatch) > 0 {
-		q.addLookupForAdditionalMatch("entity")
+		q.addLookupForAdditionalMatch(entityDbPrefix)
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
 	}
 
@@ -403,14 +405,13 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 					continue
 				}
 
-				if _, ok := q.availableSearchByEntityFields[f]; ok {
-					filteredSearchBy = append(filteredSearchBy, f)
-					continue
-				}
+				if _, ok := q.availableSearchByEntityFields[f]; ok || strings.HasPrefix(f, entityInfosRequestPrefix) {
+					if v, ok := q.entityFieldToDbField(f); ok {
+						filteredSearchBy = append(filteredSearchBy, v)
+						continue
+					}
 
-				if strings.HasPrefix(f, entityInfosPrefix) {
-					filteredSearchBy = append(filteredSearchBy, f)
-					continue
+					return nil, fmt.Errorf("unknown entity field %q", f)
 				}
 			}
 
@@ -531,13 +532,20 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	}
 
 	afterLimit = append(afterLimit, bson.M{"$addFields": bson.M{
-		"entity.pbehavior_info": "$v.pbehavior_info",
+		entityDbPrefix + ".pbehavior_info": "$v.pbehavior_info",
 	}})
 	project := bson.M{}
 	for _, v := range q.excludedFields {
 		project[v] = 0
 	}
-	afterLimit = append(afterLimit, bson.M{"$project": project})
+
+	afterLimit = append(afterLimit,
+		bson.M{"$project": project},
+		bson.M{"$addFields": bson.M{
+			"entity": "$" + entityDbPrefix,
+		}},
+		bson.M{"$project": bson.M{entityDbPrefix: 0}},
+	)
 
 	return beforeLimit, afterLimit
 }
@@ -603,7 +611,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 		return err
 	}
 	if len(entityMatch) > 0 {
-		q.addLookupForAdditionalMatch("entity")
+		q.addLookupForAdditionalMatch(entityDbPrefix)
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
 
@@ -724,13 +732,13 @@ func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.Pbeh
 }
 
 func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
-	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "entity")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, entityDbPrefix)
 	if err != nil {
 		return err
 	}
 
 	if len(entityPatternQuery) > 0 {
-		q.addLookupForAdditionalMatch("entity")
+		q.addLookupForAdditionalMatch(entityDbPrefix)
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
 	}
 
@@ -787,16 +795,14 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 			continue
 		}
 
-		if _, ok := q.availableSearchByEntityFields[f]; ok {
-			searchBy = append(searchBy, f)
-			searchByEntity = true
-			continue
-		}
+		if _, ok := q.availableSearchByEntityFields[f]; ok || strings.HasPrefix(f, entityInfosRequestPrefix) {
+			if v, ok := q.entityFieldToDbField(f); ok {
+				searchBy = append(searchBy, v)
+				searchByEntity = true
+				continue
+			}
 
-		if strings.HasPrefix(f, entityInfosPrefix) {
-			searchBy = append(searchBy, f)
-			searchByEntity = true
-			continue
+			return nil, false, fmt.Errorf("unknown entity field %q", f)
 		}
 	}
 
@@ -811,7 +817,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 
 	if !r.OnlyParents {
 		if searchByEntity {
-			q.addLookupForAdditionalMatch("entity")
+			q.addLookupForAdditionalMatch(entityDbPrefix)
 		}
 
 		return bson.M{"$or": searchMatch}, searchByEntity, nil
@@ -871,7 +877,7 @@ func (q *MongoQueryBuilder) addOpenedFilter(opened int, match *[]bson.M, entityM
 	}
 
 	// disabled entity cannot have open alarm but can have resolved
-	*entityMatch = append(*entityMatch, bson.M{"entity.enabled": true})
+	*entityMatch = append(*entityMatch, bson.M{entityDbPrefix + ".enabled": true})
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) {
@@ -879,7 +885,7 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 		return
 	}
 
-	*match = append(*match, bson.M{"entity.category": bson.M{"$eq": r.Category}})
+	*match = append(*match, bson.M{entityDbPrefix + ".category": bson.M{"$eq": r.Category}})
 }
 
 func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
@@ -1095,7 +1101,6 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) error {
 		idExist := false
 		sortQuery := bson.D{}
 		sortFields := make([]string, 0)
-
 		for _, v := range r.MultiSort {
 			split := strings.Split(v, ",")
 			if len(split) != 2 {
@@ -1110,6 +1115,10 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) error {
 
 			if sortBy == "_id" {
 				idExist = true
+			}
+
+			if ef, ok := q.entityFieldToDbField(sortBy); ok {
+				sortBy = ef
 			}
 
 			sortFields = append(sortFields, sortBy)
@@ -1130,6 +1139,11 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) error {
 	if sortBy == "" {
 		sortBy = q.defaultSortBy
 	}
+
+	if ef, ok := q.entityFieldToDbField(sortBy); ok {
+		sortBy = ef
+	}
+
 	sort := r.Sort
 	if sort == "" {
 		sort = q.defaultSort
@@ -1246,6 +1260,10 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 		}
 	}
 
+	if ev, ok := q.entityFieldToDbField(v); ok {
+		return prefix + ev
+	}
+
 	return prefix + v
 }
 
@@ -1258,26 +1276,34 @@ func (q *MongoQueryBuilder) handleOpened(opened int) {
 	}
 
 	if len(entityMatch) > 0 {
-		q.addLookupForAdditionalMatch("entity")
+		q.addLookupForAdditionalMatch(entityDbPrefix)
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
 }
 
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
 	if withDependencies {
-		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: dbquery.GetImpactsCountPipeline("entity")})
-		q.lookups = append(q.lookups, lookupWithKey{key: "entity.depends_counts", pipeline: dbquery.GetDependsCountPipeline("entity")})
+		q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".impacts_counts", pipeline: dbquery.GetImpactsCountPipeline(entityDbPrefix)})
+		q.lookups = append(q.lookups, lookupWithKey{key: entityDbPrefix + ".depends_counts", pipeline: dbquery.GetDependsCountPipeline(entityDbPrefix)})
 	}
 }
 
 func (q *MongoQueryBuilder) addLookupForAdditionalMatch(key string) {
-	if key == "entity" {
+	if key == entityDbPrefix {
 		if types.NeedEntityLookup(q.alarmCollectionName) {
-			q.lookupsForAdditionalMatch["entity"] = true
+			q.lookupsForAdditionalMatch[entityDbPrefix] = true
 		}
 	} else {
 		q.lookupsForAdditionalMatch[key] = true
 	}
+}
+
+func (q *MongoQueryBuilder) entityFieldToDbField(f string) (string, bool) {
+	if v, ok := strings.CutPrefix(f, entityRequestPrefix+"."); ok {
+		return entityDbPrefix + "." + v, true
+	}
+
+	return "", false
 }
 
 func getEntityLookup() []bson.M {
@@ -1286,9 +1312,9 @@ func getEntityLookup() []bson.M {
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
-			"as":           "entity",
+			"as":           entityDbPrefix,
 		}},
-		{"$unwind": "$entity"},
+		{"$unwind": "$" + entityDbPrefix},
 	}
 }
 
@@ -1426,7 +1452,7 @@ func getInstructionExecutionLookup(withType bool) []bson.M {
 func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 	computedFields := bson.M{
 		"infos":        "$v.infos",
-		"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
+		"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$" + entityDbPrefix + ".impact_level"}},
 		"v.duration": bson.M{"$ifNull": bson.A{
 			"$v.duration",
 			bson.M{"$subtract": bson.A{
@@ -1514,7 +1540,7 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 		return nil, fmt.Errorf("invalid alarm pattern in instruction id=%q: %w", instruction.ID, err)
 	}
 
-	entityPatternQuery, err := db.EntityPatternToMongoQuery(instruction.EntityPattern, "entity")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(instruction.EntityPattern, entityDbPrefix)
 	if err != nil {
 		return nil, fmt.Errorf("invalid entity pattern in instruction id=%q: %w", instruction.ID, err)
 	}
@@ -1556,7 +1582,7 @@ func getOnlyParentsSearchPipeline(
 
 	pipeline = append(pipeline, bson.M{"$match": match})
 	if searchByEntity && types.NeedEntityLookup(alarmCollectionName) {
-		pipeline = append(pipeline, bson.M{"$project": bson.M{"entity": 0}})
+		pipeline = append(pipeline, bson.M{"$project": bson.M{entityDbPrefix: 0}})
 	}
 
 	pipeline = append(pipeline, []bson.M{
