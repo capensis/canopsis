@@ -112,7 +112,10 @@
         :title="$t('settings.isSecondaryIconEnabled')"
       />
       <field-modal-type v-model="form.parameters.modalType" />
-      <field-action-required-settings v-model="form.parameters.actionRequiredSettings" />
+      <widget-settings-group :title="$t('settings.stateSettings')">
+        <field-action-required-settings v-model="form.parameters.actionRequiredSettings" />
+        <field-no-action-required-settings v-model="form.parameters.noActionRequiredSettings" />
+      </widget-settings-group>
       <v-divider />
       <field-switcher
         v-model="form.parameters.entitiesActionsInQueue"
@@ -153,6 +156,7 @@ import FieldCountersSelector from './form/fields/counters-selector.vue';
 import FieldSortColumn from './form/fields/sort-column.vue';
 import FieldModalType from './form/fields/modal-type.vue';
 import FieldActionRequiredSettings from './form/fields/field-action-required-settings.vue';
+import FieldNoActionRequiredSettings from './form/fields/field-no-action-required-settings.vue';
 
 export default {
   name: SIDE_BARS.serviceWeatherSettings,
@@ -175,6 +179,7 @@ export default {
     AlarmsListModalForm,
     MarginsForm,
     FieldActionRequiredSettings,
+    FieldNoActionRequiredSettings,
     WidgetSettings,
     WidgetSettingsGroup,
     FieldRootCauseSettings,

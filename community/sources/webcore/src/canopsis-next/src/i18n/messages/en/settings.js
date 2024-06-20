@@ -274,6 +274,12 @@ export default {
     customColor: 'Custom color',
     customIcon: 'Custom icon',
   },
+  noActionRequiredSettings: {
+    title: 'No action required state settings',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
+  stateSettings: 'State settings',
   kioskMode: 'Kiosk mode',
   kiosk: {
     hideActions: 'Hide actions',
