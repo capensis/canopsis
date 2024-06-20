@@ -274,6 +274,12 @@ export default {
     customColor: 'Couleur personnalisée',
     customIcon: 'Icône personnalisée',
   },
+  noActionRequiredSettings: {
+    title: 'Paramètres lorsqu\'aucune action n\'est requise',
+    customColor: 'Couleur personnalisée',
+    customIcon: 'Icône personnalisée',
+  },
+  stateSettings: 'Paramètres d\'état',
   kioskMode: 'Mode kiosque',
   kiosk: {
     hideActions: 'Masquer les actions',
