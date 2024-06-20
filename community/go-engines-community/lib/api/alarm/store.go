@@ -294,10 +294,10 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		return nil, err
 	}
 
-	entityMatch := bson.M{"entity.services": service.ID}
+	entityMatch := bson.M{entityDbPrefix + ".services": service.ID}
 	if r.WithService {
 		entityMatch = bson.M{"$or": []bson.M{
-			{"entity._id": service.ID},
+			{entityDbPrefix + "._id": service.ID},
 			entityMatch,
 		}}
 	}
@@ -355,7 +355,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 	opened := true
 	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		nil,
-		bson.M{"entity.component": component.ID},
+		bson.M{entityDbPrefix + ".component": component.ID},
 		r.Query,
 		r.SortRequest,
 		FilterRequest{BaseFilterRequest: BaseFilterRequest{

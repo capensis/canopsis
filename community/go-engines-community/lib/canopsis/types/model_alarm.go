@@ -173,7 +173,7 @@ type Alarm struct {
 type AlarmWithEntityField struct {
 	Alarm `bson:",inline"`
 
-	Entity Entity `bson:"entity"`
+	Entity Entity `bson:"e" json:"e"`
 }
 
 type MetaAlarmInactiveDelay struct {
