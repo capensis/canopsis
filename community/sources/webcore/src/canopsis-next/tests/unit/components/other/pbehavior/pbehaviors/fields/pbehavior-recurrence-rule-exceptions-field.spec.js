@@ -3,6 +3,8 @@ import Faker from 'faker';
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 
+import { convertDateToStartOfDayDateObject, convertDateToEndOfDayDateObject } from '@/helpers/date/date';
+
 import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 const stubs = {
@@ -48,8 +50,8 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
       ...exdates,
       {
         key: expect.any(String),
-        begin: new Date(1386370800000),
-        end: new Date(1386370800000),
+        begin: convertDateToStartOfDayDateObject(new Date(nowTimestamp)),
+        end: convertDateToEndOfDayDateObject(new Date(nowTimestamp)),
         type: '',
       },
     ]);
