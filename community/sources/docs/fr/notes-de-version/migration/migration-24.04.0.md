@@ -47,6 +47,13 @@ La restructuration apportée dans les bases de données pour cette version de Ca
         > exit
         ```
 
+    === "Helm"
+        ```sh
+        export MONGODB_ROOT_PASSWORD=$(kubectl get secret canopsis-mongodb -o jsonpath='{.data.mongodb-root-password}' | base64 --decode)
+        
+        kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
+        ```
+
     Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "5.0" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
 
@@ -69,6 +76,11 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     systemctl stop postgresql-13
     systemctl stop rabbitmq-server
     systemctl stop redis
+    ```
+
+=== "Helm"
+    ```sh
+    kubectl delete --all deployments
     ```
 
 ## Mise à jour Canopsis
@@ -106,7 +118,9 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Non concerné car ces configurations sont livrées directemement dans les paquets RPM.
 
+=== "Helm"
 
+    Non concerné car ces configurations sont livrées directement dans les charts helm
 
 ### Mise à jour de MongoDB
 
@@ -248,6 +262,50 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     > disableTelemetry()
     ```
 
+=== "Helm"
+
+    !!! warning Attention
+        Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_4_2)
+
+    Dump de la base de données Canopsis :
+    ```sh
+    kubectl exec -n canopsis canopsis-mongodb-0 -- mongodump --uri="mongodb://cpsmongo:canopsis@localhost:27017/canopsis" --gzip --out /tmp/dump_canopsis.gz
+    ```
+
+    Récupération en local du dump :
+    ```sh
+    kubectl cp canopsis/canopsis-mongodb-0:/tmp/dump_canopsis.gz .
+    ```
+
+    Arrêt des pods MongoDB :
+    ```sh
+    kubectl scale statefulset canopsis-mongodb --replicas=0
+    ```
+
+    Suppresion des PVCs MongoDB :
+    ```sh
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
+    ```
+
+    Mise à jour de MongoDB :
+    ```sh
+    helm repo update
+
+    helm upgrade canopsis bitnami/mongodb --set auth.enabled=true --set architecture=replicaset --set replicaCount=3 --set auth.enabled=true --set auth.usernames={'cpsmongo'} --set auth.passwords={'canopsis'} --set auth.databases={'canopsis'} --set externalAccess.enable=true --set replicaSetName=rs0 --set persistence.resourcePolicy=keep --set externalAccess.service.type=ClusterIP --set arbiter.enabled=false --version 15.6.2
+    ```
+
+    Lorsque les trois replicas sont UP, copie du dump de la DB sur l'instance 0 de MongoDB : 
+    ```sh
+    kubectl cp ./canopsis canopsis-mongodb-0:/tmp/
+    ```
+
+    Restauration du dump :
+    ```sh
+    kubectl exec -n canopsis canopsis-mongodb-0 -- mongorestore -u cpsmongo --password canopsis --gzip --db canopsis /tmp/canopsis
+    ``` 
+
 ### Mise à jour de TimescaleDB
 
 Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.9.3 à 2.14.2.
@@ -319,6 +377,16 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     exit
     ```
 
+=== "Helm"
+
+    !!! warning Attention
+        Ce bloc est réservé uniquement aux environnements impliquant TimescaleDB exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_5_2)
+
+    Non concerné, la mise à jour est faite automatiquement lors de l'upgrade.
+    
+
 ### Mise à jour de RabbitMQ
 
 Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.13.  
@@ -340,6 +408,16 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.13.
     systemctl restart rabbitmq-server
     ```
 
+=== "Helm"
+
+    !!! warning Attention
+        Ce bloc est réservé uniquement aux environnements impliquant RabbitMQ exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_6_2)
+
+
+    Non concerné, automatiquement géré par l'upgrade. 
+
 ### Remise à 0 du cache Redis
 
 Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
@@ -358,6 +436,10 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
     systemctl start redis
     /bin/redis-cli -a canopsis flushall
     ```
+
+=== "Helm"
+
+    Non concerné, le flush est fait automatiquement lors de l'upgrade.
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
@@ -402,6 +484,10 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 === "Paquets RHEL 8"
 
     La commande `canopsis-reconfigure` doit être exécutée après mise à jour de Canopsis dans le cadre d'installation par paquets RPM.
+
+=== "Helm"
+
+    Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade
 
 ### Mise à jour et démarrage final de Canopsis
 
@@ -477,6 +563,13 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
     ```sh
     systemctl status canopsis
+    ```
+
+=== "Helm"
+
+    Mise à jour de Canopsis
+    ```sh
+    helm upgrade --install canopsis canopsis/canopsis-pro -f customer-values.yaml
     ```
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
