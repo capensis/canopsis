@@ -50,7 +50,7 @@ Mettre à jour les repos :
 helm repo update
 ```
 
-Vérifier si les repos ont bien été mis à jour :
+Vérifier les charts disponibles grâce au repo:
 ```sh
 helm search repo canopsis
 ```
@@ -65,7 +65,7 @@ helm search repo canopsis
     ```sh
     helm repo update
     ```
-    Vérifier si les repos ont bien été mis à jour :
+    Vérifier les charts disponibles grâce au repo:
     ```sh
     helm search repo canopsis-devel
     ```
