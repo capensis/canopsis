@@ -264,6 +264,11 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 
 === "Helm"
 
+    !!! warning Attention
+        Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_4_2)
+
     Dump de la base de données Canopsis :
     ```sh
     kubectl exec -n canopsis canopsis-mongodb-0 -- mongodump --uri="mongodb://cpsmongo:canopsis@localhost:27017/canopsis" --gzip --out /tmp/dump_canopsis.gz
@@ -374,8 +379,13 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
 
 === "Helm"
 
-    Non concerné, la mise à jour est faite automatiquement lors de l'upgrade.
+    !!! warning Attention
+        Ce bloc est réservé uniquement aux environnements impliquant TimescaleDB exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_5_2)
 
+    Non concerné, la mise à jour est faite automatiquement lors de l'upgrade.
+    
 
 ### Mise à jour de RabbitMQ
 
@@ -399,6 +409,12 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.13.
     ```
 
 === "Helm"
+
+    !!! warning Attention
+        Ce bloc est réservé uniquement aux environnements impliquant RabbitMQ exécuté dans un environnement Kubernetes.
+        
+        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_6_2)
+
 
     Non concerné, automatiquement géré par l'upgrade. 
 
