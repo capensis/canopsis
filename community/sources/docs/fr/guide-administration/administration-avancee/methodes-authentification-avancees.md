@@ -200,6 +200,7 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
        name: uid
        firstname: uid
        lastname: uid
+       role: role
     canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
     default_role: "admin"
     insecure_skip_verify: false
