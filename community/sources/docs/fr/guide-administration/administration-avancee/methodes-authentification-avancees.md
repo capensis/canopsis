@@ -245,8 +245,6 @@ Définition des paramètres :
 | `default_role`              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
 | `insecure_skip_verify`      | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `false`   |
 
-Dans la partie `idp_attributes_map` pour l'option `role`, il faut que le serveur SAML retourne un format de type `string` ou `liste`.
-
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 * Installation via Docker Compose
