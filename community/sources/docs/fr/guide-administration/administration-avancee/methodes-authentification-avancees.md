@@ -196,16 +196,10 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
     idp_metadata_url: <http(s)://IDP_METADATA_URL>
   # idp_metadata_xml: </path/to/xml>
     idp_attributes_map:
-       # Type: string
        email: email
-       # Type: string
        name: uid
-       # Type: string
        firstname: uid
-       # Type: string
        lastname: uid
-       # Type: string or array
-       role: role
     canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
     default_role: "admin"
     insecure_skip_verify: false
@@ -244,8 +238,6 @@ Définition des paramètres :
 | `auto_user_registration`    | Permet de créer automatiquement les utilisateurs dans Canopsis ( s'ils n'existent pas déjà ) si cette valeur est mise à `true`|
 | `default_role`              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
 | `insecure_skip_verify`      | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `false`   |
-
-Dans la partie `idp_attributes_map` pour l'option `role`, il faut que le serveur SAML retourne un format de type `string` ou `liste`.
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
