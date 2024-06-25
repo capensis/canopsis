@@ -196,10 +196,15 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
     idp_metadata_url: <http(s)://IDP_METADATA_URL>
   # idp_metadata_xml: </path/to/xml>
     idp_attributes_map:
+       # Type: string
        email: email
+       # Type: string
        name: uid
+       # Type: string
        firstname: uid
+       # Type: string
        lastname: uid
+       # Type: string or array
        role: role
     canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
     default_role: "admin"
