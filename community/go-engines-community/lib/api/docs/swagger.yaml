@@ -5905,9 +5905,15 @@ paths:
         -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilters-find-all
       parameters:
+        - name: with_counts
+          in: query
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
       responses:
         200:
           description: OK
