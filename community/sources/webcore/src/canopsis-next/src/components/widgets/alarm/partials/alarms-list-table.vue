@@ -82,6 +82,7 @@
             )
         template(#items="props")
           alarms-list-row(
+            v-if="props.item",
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
