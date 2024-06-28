@@ -236,6 +236,8 @@ MaxExternalResponseSize = 10485760 # 10Mb
 # The dictionary is used in UI autocomplete hints for infos key and values.
 BuildEntityInfosDictionary = true
 BuildDynamicInfosDictionary = true
+# Maximum unique infos key-value pairs to store in dictionary
+InfosDictionaryLimit = 1100
 # The default value for a check events count trigger threshold.
 # EventsCountTriggerDefaultThreshold parameter doesn't require api or engines to restart.
 EventsCountTriggerDefaultThreshold = 10
