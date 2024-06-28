@@ -113,6 +113,7 @@ services:
         condition: service_healthy
 
   redis:
+    <<: *service_base
     image: redis:${REDIS_TAG}
     ports:
       - "6379:6379"
