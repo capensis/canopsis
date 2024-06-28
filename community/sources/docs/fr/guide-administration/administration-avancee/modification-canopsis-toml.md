@@ -87,6 +87,12 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | PrefetchSize                         | 0                          |
 | ReconnectTimeoutMilliseconds         | 8                          | Délai de reconnexion auprès des services tiers (redis, mongodb, rabbitmq, ...)  |
 | ReconnectRetries                     | 3                          | Nombre de tentative de reconnexion aux services tiers |
+| MaxExternalResponseSize              | 10485760 # 10Mb            | Taille maximale d'une réponse d'API tierce |
+| BuildEntityInfosDictionary           | true, false                | Activation de la génération des infos d'entités dans un dictionnaire servant à l'auto complétation coté WebUI | 
+| BuildDynamicInfosDictionary          | true, false                | Activation de la génération des infos d'alarmes dans un dictionnaire servant à l'auto complétation coté WebUI | 
+| InfosDictionaryLimit                 | 1100                       | Nombre maximum de paires clé/valeur à stocker dans les dictionnaires mentionnés ci-dessus |
+| EventsCountTriggerDefaultThreshold   | 10                         | Valeur par défaut du nombre d'événements utilisé par le trigger |
+
 
 ### Section [Canopsis.file]
 
@@ -116,6 +122,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | AllowDoubleAck                    | true,false            | Permet d'acquitter plusieurs fois une alarme |
 | ActivateAlarmAfterAutoRemediation | true,false            | Permet de décaler l'activation d'une alarme après l'exécution de la remédiation automatique |
 | EnableArraySortingInEntityInfos   | true,false            | Active ou désactive le tri dans les listes utilisées dans les attributs d'événements. Par exemple, si un événement contient `info1=["item2", "item1"]` et que l'option est activée alors info1 vaudra en sortie `info1=["item1", "item2"]` |
+| CropStepsNumber                   | 0                     | Nombre de steps `stateinc` ou `statedec` continus avant de les "compresser" en un step "statecounter".<br>Cerla permet de diminuer drastiquement le nombre de steps d'un alarme |
 
 ### Section [Canopsis.timezone]
 
