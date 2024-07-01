@@ -2,6 +2,7 @@
 
 exports[`pie-show-mode Renders \`pie-show-mode\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Shares type"
 >
   <div
@@ -102,6 +103,7 @@ exports[`pie-show-mode Renders \`pie-show-mode\` with custom props 1`] = `
 
 exports[`pie-show-mode Renders \`pie-show-mode\` with required props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Shares type"
 >
   <div

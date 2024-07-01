@@ -17,7 +17,6 @@ export { default as CRequestTextInformation } from '@/components/common/request/
 export { default as CJsonTreeview } from '@/components/common/request/c-json-treeview.vue';
 export { default as CMiniBarChart } from '@/components/common/chart/c-mini-bar-chart.vue';
 export { default as CImagesViewer } from '@/components/common/images-viewer/c-images-viewer.vue';
-export { default as CClickableTooltip } from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
 export { default as CCollapsePanel } from '@/components/common/block/c-collapse-panel.vue';
 export { default as CContextmenu } from '@/components/common/contextmenu/c-contextmenu.vue';
 export { default as CCircleBadge } from '@/components/common/badge/c-circle-badge.vue';
@@ -26,3 +25,6 @@ export { default as CSearch } from '@/components/common/search/c-search.vue';
 export { default as CSearchField } from '@/components/common/search/c-search-field.vue';
 export { default as CAdvancedSearch } from '@/components/common/search/c-advanced-search.vue';
 export { default as CAdvancedSearchField } from '@/components/common/search/c-advanced-search-field.vue';
+export { default as CPlaceholderLoader } from '@/components/common/placeholder/c-placeholder-loader.vue';
+export { default as CBootedPlaceholderLoader } from '@/components/common/placeholder/c-booted-placeholder-loader.vue';
+export { default as CSimpleTooltip } from '@/components/common/tooltip/c-simple-tooltip.vue';

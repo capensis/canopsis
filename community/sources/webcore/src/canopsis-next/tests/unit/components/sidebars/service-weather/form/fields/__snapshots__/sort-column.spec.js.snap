@@ -2,6 +2,7 @@
 
 exports[`field-sort-column Renders \`field-sort-column\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default sort column"
 >
   <div
@@ -154,6 +155,7 @@ exports[`field-sort-column Renders \`field-sort-column\` with custom props 2`] =
 
 exports[`field-sort-column Renders \`field-sort-column\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default sort column"
 >
   <div

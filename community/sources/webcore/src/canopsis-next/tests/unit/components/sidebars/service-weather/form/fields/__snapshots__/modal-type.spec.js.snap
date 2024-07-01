@@ -3,6 +3,7 @@
 exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
 <widget-settings-item-stub
   columns="[object Object]"
+  eager="true"
   title="Type of the weather modal window"
 >
   <div
@@ -127,6 +128,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
 
 exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Type of the weather modal window"
 >
   <div

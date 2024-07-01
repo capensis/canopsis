@@ -54,7 +54,7 @@ export default {
   },
   render(h) {
     if (!this.template) {
-      return;
+      return null;
     }
 
     const parent = this.parent || this.$parent;

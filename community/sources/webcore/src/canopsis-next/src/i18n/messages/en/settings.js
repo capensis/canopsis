@@ -58,6 +58,7 @@ export default {
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   isActionsAllowWithOkState: 'Actions allowed when state OK?',
+  isVirtualScrollEnabled: 'Virtual scroll enabled',
   fastAckOutput: 'Fast-ack output',
   fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',

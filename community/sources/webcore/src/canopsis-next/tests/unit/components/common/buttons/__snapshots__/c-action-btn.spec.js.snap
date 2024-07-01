@@ -1,140 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
-<div
+<c-simple-tooltip-stub
+  badgetooltip="BADGE TOOLTIP"
+  badgevalue="true"
   bottom="true"
-  class="v-tooltip"
->
-  <span
-    class="v-badge c-action-btn__badge v-badge--overlap theme--light"
-  >
-    <button
-      class="v-btn ma-0 c-action-btn__button"
-      icon=""
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light"
-      >
-        edit
-      </i>
-    </button>
-    <span
-      class="v-badge__wrapper"
-    >
-      <transition-stub
-        name="scale-rotate-transition"
-      >
-        <span
-          aria-atomic="true"
-          aria-label="Badge"
-          aria-live="polite"
-          class="v-badge__badge error"
-          role="status"
-          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
-        >
-          <div
-            bottom="true"
-            class="v-tooltip"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light white--text"
-            >
-              priority_high
-            </i>
-            <span>
-              BADGE TOOLTIP
-            </span>
-          </div>
-        </span>
-      </transition-stub>
-    </span>
-  </span>
-  <span>
-    TOOLTIP
-  </span>
-</div>
-`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with badge. 2`] = `undefined`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] = `
-<div
-  bottom="true"
-  class="v-tooltip"
->
-  <button
-    class="v-btn mx-1 my-0 c-action-btn__button"
-    icon=""
-  >
-    <i
-      aria-hidden="true"
-      class="v-icon notranslate material-icons theme--light color--text"
-    >
-      test_icon
-    </i>
-  </button>
-  <span>
-    tooltip
-  </span>
-</div>
-`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 2`] = `undefined`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctly. 1`] = `
-<div
-  bottom="true"
-  class="v-tooltip"
->
-  <button
-    class="v-btn mx-1 my-0 c-action-btn__button"
-    icon=""
-  >
-    <i
-      aria-hidden="true"
-      class="v-icon notranslate material-icons theme--light error--text"
-    >
-      delete
-    </i>
-  </button>
-  <span>
-    Delete
-  </span>
-</div>
-`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctly. 2`] = `undefined`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type correctly. 1`] = `
-<div
-  bottom="true"
-  class="v-tooltip"
->
-  <button
-    class="v-btn mx-1 my-0 c-action-btn__button"
-    icon=""
-  >
-    <i
-      aria-hidden="true"
-      class="v-icon notranslate material-icons theme--light"
-    >
-      file_copy
-    </i>
-  </button>
-  <span>
-    Duplicate
-  </span>
-</div>
-`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type correctly. 2`] = `undefined`;
-
-exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 1`] = `
-<div
-  bottom="true"
-  class="v-tooltip"
+  content="TOOLTIP"
 >
   <button
     class="v-btn mx-1 my-0 c-action-btn__button"
@@ -147,10 +18,81 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
       edit
     </i>
   </button>
-  <span>
-    Edit
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
-exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 2`] = `undefined`;
+exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] = `
+<c-simple-tooltip-stub
+  bottom="true"
+  content="tooltip"
+>
+  <button
+    class="v-btn mx-1 my-0 c-action-btn__button"
+    icon=""
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light color--text"
+    >
+      test_icon
+    </i>
+  </button>
+</c-simple-tooltip-stub>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctly. 1`] = `
+<c-simple-tooltip-stub
+  bottom="true"
+  content="Delete"
+>
+  <button
+    class="v-btn mx-1 my-0 c-action-btn__button"
+    icon=""
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light error--text"
+    >
+      delete
+    </i>
+  </button>
+</c-simple-tooltip-stub>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type correctly. 1`] = `
+<c-simple-tooltip-stub
+  bottom="true"
+  content="Duplicate"
+>
+  <button
+    class="v-btn mx-1 my-0 c-action-btn__button"
+    icon=""
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light"
+    >
+      file_copy
+    </i>
+  </button>
+</c-simple-tooltip-stub>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 1`] = `
+<c-simple-tooltip-stub
+  bottom="true"
+  content="Edit"
+>
+  <button
+    class="v-btn mx-1 my-0 c-action-btn__button"
+    icon=""
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light"
+    >
+      edit
+    </i>
+  </button>
+</c-simple-tooltip-stub>
+`;
