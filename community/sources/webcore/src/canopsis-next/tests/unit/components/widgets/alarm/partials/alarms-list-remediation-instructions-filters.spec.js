@@ -1,7 +1,6 @@
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
-import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import { MODALS } from '@/constants';
 
@@ -9,12 +8,13 @@ import AlarmsListRemediationInstructionsFilters from '@/components/widgets/alarm
 
 const stubs = {
   'remediation-instructions-filters-list': true,
+  'c-simple-tooltip': true,
   'v-btn': createButtonStub('v-btn'),
-  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const snapshotStubs = {
   'remediation-instructions-filters-list': true,
+  'c-simple-tooltip': true,
 };
 
 const updateFilters = jest.fn();

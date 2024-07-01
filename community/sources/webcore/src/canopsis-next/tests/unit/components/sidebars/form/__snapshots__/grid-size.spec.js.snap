@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`field-grid-size Renders \`field-grid-size\` with custom props 1`] = `
-<widget-settings-item-stub>
+<widget-settings-item-stub
+  eager="true"
+>
   <c-column-size-field-stub
     mobile="true"
     tablet="true"
@@ -11,7 +13,9 @@ exports[`field-grid-size Renders \`field-grid-size\` with custom props 1`] = `
 `;
 
 exports[`field-grid-size Renders \`field-grid-size\` with default props 1`] = `
-<widget-settings-item-stub>
+<widget-settings-item-stub
+  eager="true"
+>
   <c-column-size-field-stub />
 </widget-settings-item-stub>
 `;

@@ -31,24 +31,20 @@ exports[`alarm-column-cell-popup-body Renders \`alarm-column-cell-popup-body\` w
       </button>
     </div>
   </div>
-  <transition-stub
-    name="fade-transition"
+  <div
+    class="v-card__text pa-2"
   >
-    <div
-      class="v-card__text pa-2"
-    >
-      <div>
-        <p>
-          Test
-        </p>
-        <p>
-          alarm-name
-        </p>
-        <p>
-          entity-name
-        </p>
-      </div>
+    <div>
+      <p>
+        Test
+      </p>
+      <p>
+        alarm-name
+      </p>
+      <p>
+        entity-name
+      </p>
     </div>
-  </transition-stub>
+  </div>
 </div>
 `;

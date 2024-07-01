@@ -22,17 +22,16 @@
         </v-btn>
       </v-layout>
     </v-card-title>
-    <v-fade-transition>
-      <v-card-text class="pa-2">
-        <c-compiled-template
-          :template="template"
-          :context="templateContext"
-          :template-props="{ alarm, selectedTag }"
-          @select:tag="$emit('select:tag', $event)"
-          @clear:tag="$emit('clear:tag')"
-        />
-      </v-card-text>
-    </v-fade-transition>
+    <v-card-text class="pa-2">
+      <c-compiled-template
+        :template-id="templateId"
+        :template="template"
+        :context="templateContext"
+        :template-props="{ alarm, selectedTag }"
+        @select:tag="$emit('select:tag', $event)"
+        @clear:tag="$emit('clear:tag')"
+      />
+    </v-card-text>
   </v-card>
 </template>
 
@@ -44,6 +43,10 @@ export default {
       required: true,
     },
     template: {
+      type: String,
+      default: '',
+    },
+    templateId: {
       type: String,
       default: '',
     },
