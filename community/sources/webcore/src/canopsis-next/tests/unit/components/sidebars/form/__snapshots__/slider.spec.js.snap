@@ -2,6 +2,7 @@
 
 exports[`field-slider Renders \`field-slider\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Custom title"
 >
   <div
@@ -115,6 +116,7 @@ exports[`field-slider Renders \`field-slider\` with custom props 1`] = `
 
 exports[`field-slider Renders \`field-slider\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Custom required title"
 >
   <div

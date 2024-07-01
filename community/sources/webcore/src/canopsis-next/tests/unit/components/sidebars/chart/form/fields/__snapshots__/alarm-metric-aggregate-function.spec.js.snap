@@ -2,6 +2,7 @@
 
 exports[`alarm-metric-aggregate-function Renders \`alarm-metric-aggregate-function\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Calculation method"
 >
   <c-alarm-metric-aggregate-function-field-stub
@@ -12,6 +13,7 @@ exports[`alarm-metric-aggregate-function Renders \`alarm-metric-aggregate-functi
 
 exports[`alarm-metric-aggregate-function Renders \`alarm-metric-aggregate-function\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Calculation method"
 >
   <c-alarm-metric-aggregate-function-field-stub

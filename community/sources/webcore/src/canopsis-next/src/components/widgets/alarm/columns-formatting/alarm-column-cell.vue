@@ -6,6 +6,7 @@
     :open-on-click="false"
     class="alarms-column-cell"
     offset-x
+    disable-resize
   >
     <template #activator="{ on }">
       <v-layout
@@ -41,6 +42,7 @@
       :alarm="alarm"
       :selected-tag="selectedTag"
       :template="column.popupTemplate"
+      :template-id="popupTemplateId"
       @close="hideInfoPopup"
       @select:tag="$emit('select:tag', $event)"
       @clear:tag="$emit('clear:tag')"
@@ -62,6 +64,7 @@
 import { get } from 'lodash';
 
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
+import { getAlarmWidgetColumnPopupTemplateId } from '@/helpers/entities/alarm/list';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -125,6 +128,10 @@ export default {
 
     component() {
       return this.column.getComponent(this);
+    },
+
+    popupTemplateId() {
+      return getAlarmWidgetColumnPopupTemplateId(this.widget._id, this.column.value);
     },
   },
   methods: {

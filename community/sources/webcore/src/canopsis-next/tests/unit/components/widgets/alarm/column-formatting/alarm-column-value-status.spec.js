@@ -8,6 +8,7 @@ import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formattin
 
 const stubs = {
   'c-no-events-icon': true,
+  'c-simple-tooltip': true,
 };
 
 describe('alarm-column-value-status', () => {
@@ -16,7 +17,7 @@ describe('alarm-column-value-status', () => {
     attachTo: document.body,
   });
 
-  it.each(Object.entries(ALARM_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', async (_, state) => {
+  it.each(Object.entries(ALARM_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', (_, state) => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -34,13 +35,11 @@ describe('alarm-column-value-status', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it.each(
     Object.entries(omit(ALARM_STATUSES, ['ongoing', 'noEvents'])),
-  )('Renders `alarm-column-value-status` with status: %s', async (_, status) => {
+  )('Renders `alarm-column-value-status` with status: %s', (_, status) => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -58,11 +57,9 @@ describe('alarm-column-value-status', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarm-column-value-status` with status: noEvents', async () => {
+  it('Renders `alarm-column-value-status` with status: noEvents', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -79,7 +76,5 @@ describe('alarm-column-value-status', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

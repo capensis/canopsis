@@ -58,6 +58,7 @@ export default {
   isMultiAckEnabled: 'Acquittements multiples',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK ?',
+  isVirtualScrollEnabled: 'Défilement virtuel activé',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
   fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',

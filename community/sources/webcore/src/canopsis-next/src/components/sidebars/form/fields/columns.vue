@@ -1,5 +1,5 @@
 <template>
-  <widget-settings-item :title="label">
+  <widget-settings-item :title="label" :eager="false">
     <c-columns-with-template-field
       v-field="columns"
       :type="type"
