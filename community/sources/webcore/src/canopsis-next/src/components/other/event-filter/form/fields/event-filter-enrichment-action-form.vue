@@ -38,7 +38,6 @@
               v-field="form.value"
               key="value"
               :label="$t('common.value')"
-              :variables="variables"
               :name="valueFieldName"
               required
               clearable
