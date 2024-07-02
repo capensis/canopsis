@@ -200,7 +200,7 @@ func (p *provider) Callback(c *gin.Context) {
 
 	if c.Query("state") != state {
 		p.logger.Err(errors.New("state did not match")).Str("provider", p.name).Str("session_state", state).Str("query_state", c.Query("state")).Msg("oauth2 callback error")
-		errorRedirect(c, redirectUrl, "state did not match")
+		p.errorRedirect(c, redirectUrl, "state did not match")
 
 		return
 	}
@@ -226,14 +226,14 @@ func (p *provider) Callback(c *gin.Context) {
 			errorMsg = errorDesc
 		}
 
-		errorRedirect(c, redirectUrl, errorMsg)
+		p.errorRedirect(c, redirectUrl, errorMsg)
 		return
 	}
 
 	code, ok := c.GetQuery("code")
 	if !ok {
 		p.logger.Err(errors.New("code is empty")).Str("provider", p.name).Msg("oauth2 callback error")
-		errorRedirect(c, redirectUrl, "code is empty")
+		p.errorRedirect(c, redirectUrl, "code is empty")
 
 		return
 	}
@@ -265,7 +265,7 @@ func (p *provider) Callback(c *gin.Context) {
 		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 		if !ok {
 			p.logger.Err(errors.New("id_token is not a string")).Str("provider", p.name).Interface("id_token", oauth2Token.Extra("id_token")).Msg("oauth2 callback error")
-			errorRedirect(c, redirectUrl, "id_token is not a string")
+			p.errorRedirect(c, redirectUrl, "id_token is not a string")
 
 			return
 		}
@@ -273,14 +273,14 @@ func (p *provider) Callback(c *gin.Context) {
 		idToken, err := p.oidcVerifier.Verify(c, rawIDToken)
 		if err != nil {
 			p.logger.Err(fmt.Errorf("id_token is not valid: %w", err)).Str("provider", p.name).Str("id_token", rawIDToken).Msg("oauth2 callback error")
-			errorRedirect(c, redirectUrl, "id_token is not valid")
+			p.errorRedirect(c, redirectUrl, "id_token is not valid")
 
 			return
 		}
 
 		if idToken.Nonce != nonce {
 			p.logger.Err(errors.New("nonce did not match")).Str("provider", p.name).Str("session_nonce", nonce).Str("token_nonce", idToken.Nonce).Msg("oauth2 callback error")
-			errorRedirect(c, redirectUrl, "nonce did not match")
+			p.errorRedirect(c, redirectUrl, "nonce did not match")
 
 			return
 		}
@@ -293,7 +293,7 @@ func (p *provider) Callback(c *gin.Context) {
 
 	if userID == "" {
 		p.logger.Err(errors.New("userID cannot be empty")).Str("provider", p.name).Msg("oauth2 callback error")
-		errorRedirect(c, redirectUrl, "userID cannot be empty")
+		p.errorRedirect(c, redirectUrl, "userID cannot be empty")
 
 		return
 	}
@@ -304,9 +304,9 @@ func (p *provider) Callback(c *gin.Context) {
 	}
 
 	if user == nil {
-		user, err = p.createUser(c, userID, userInfo)
-		if err != nil {
-			panic(fmt.Errorf("failed to create user: %w", err))
+		user, ok = p.createUser(c, redirectUrl, userID, userInfo)
+		if !ok {
+			return
 		}
 	}
 
@@ -350,12 +350,15 @@ func (p *provider) Callback(c *gin.Context) {
 	c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
 }
 
-func (p *provider) createUser(c *gin.Context, subj string, userInfo map[string]any) (*security.User, error) {
+func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string, userInfo map[string]any) (*security.User, bool) {
 	roles := p.getAssocArrayAttribute(userInfo, "role", []string{p.config.DefaultRole})
 
 	err := p.roleValidator.AreRolesValid(c, roles)
 	if err != nil {
-		return nil, err
+		p.logger.Err(err).Msg("user registration failed")
+		p.errorRedirect(c, redirectUrl, err.Error())
+
+		return nil, false
 	}
 
 	user := &security.User{
@@ -371,10 +374,11 @@ func (p *provider) createUser(c *gin.Context, subj string, userInfo map[string]a
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		return nil, fmt.Errorf("cannot save user: %w", err)
+		p.logger.Err(err).Msg("user registration failed")
+		panic(fmt.Errorf("cannot save user: %w", err))
 	}
 
-	return user, nil
+	return user, true
 }
 
 func (p *provider) getAssocAttribute(userInfo map[string]any, name, defaultValue string) string {
@@ -479,7 +483,7 @@ func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idT
 	return idToken.Subject, userInfo, nil
 }
 
-func errorRedirect(c *gin.Context, relayUrl *url.URL, errorMessage string) {
+func (p *provider) errorRedirect(c *gin.Context, relayUrl *url.URL, errorMessage string) {
 	query := relayUrl.Query()
 	query.Set("errorMessage", errorMessage)
 	relayUrl.RawQuery = query.Encode()
