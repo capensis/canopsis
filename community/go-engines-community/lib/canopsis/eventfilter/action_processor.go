@@ -253,6 +253,47 @@ func (p *actionProcessor) Process(
 		}
 
 		return false, nil
+	case ActionSetEntityInfoFromDictionary:
+		strValue, ok := action.Value.(string)
+		if !ok {
+			failReason := fmt.Sprintf("action %d cannot set entity info in %q: value %v must be path to field", action.Index,
+				action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
+
+			return false, ErrShouldBeAString
+		}
+		t := Template{
+			Event:        event,
+			RegexMatch:   regexMatch,
+			ExternalData: externalData,
+		}
+
+		value, err := utils.GetField(t, strValue)
+		if err != nil {
+			if errors.Is(err, utils.ErrFieldNotExist) {
+				return false, nil
+			}
+			failReason := fmt.Sprintf("action %d cannot read source field to set entity info in %q: %s",
+				action.Index, action.Name, err)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+			return false, err
+		}
+		dict, ok := value.(map[string]any)
+		if !ok {
+			failReason := fmt.Sprintf("action %d cannot assert field's type as map to set entity info in %q",
+				action.Index, action.Name)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+
+			return false, errors.New("value should be a map")
+		}
+		entityUpdated, err := p.setInfosFromDict(event.Entity, dict, action.Description)
+		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot set entity info in %q: %s", action.Index, action.Name, err)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
+
+			return false, err
+		}
+		return entityUpdated, nil
 	}
 
 	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
@@ -316,6 +357,19 @@ func (p *actionProcessor) setEntityInfo(entity *types.Entity, value any, name, d
 	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
 
 	return true
+}
+
+func (p *actionProcessor) setInfosFromDict(entity *types.Entity, dict map[string]any, description string) (bool, error) {
+	updated := false
+	for name, value := range dict {
+		if !types.IsInfoValueValid(value) {
+			return false, fmt.Errorf("value %v for %q is invalid", value, name)
+		}
+		if valueUpdated := p.setEntityInfo(entity, value, name, description); valueUpdated {
+			updated = true
+		}
+	}
+	return updated, nil
 }
 
 var ErrShouldBeAString = errors.New("value should be a string")
