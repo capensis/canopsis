@@ -2,6 +2,7 @@ package eventfilter
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"reflect"
 	"sort"
@@ -187,6 +188,47 @@ func (p *actionProcessor) Process(
 		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		return event, nil
+	case ActionSetEntityInfoFromDictionary:
+		strValue, ok := action.Value.(string)
+		if !ok {
+			failReason := fmt.Sprintf("action %d cannot set entity info in %q: value %v must be path to field", action.Index,
+				action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
+
+			return event, ErrShouldBeAString
+		}
+		t := Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
+			ExternalData:      externalData,
+		}
+
+		value, err := utils.GetField(t, strValue)
+		if err != nil {
+			if errors.Is(err, utils.ErrFieldNotExist) {
+				return event, nil
+			}
+			failReason := fmt.Sprintf("action %d cannot read source field to set entity info in %q: %s",
+				action.Index, action.Name, err)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+			return event, err
+		}
+		dict, ok := value.(map[string]any)
+		if !ok {
+			failReason := fmt.Sprintf("action %d cannot assert field's type as map to set entity info in %q",
+				action.Index, action.Name)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+
+			return event, errors.New("value should be a map")
+		}
+		*event.Entity, err = p.setInfosFromDict(*event.Entity, dict, action.Description)
+		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot set entity info in %q: %s", action.Index, action.Name, err)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+
+			return event, err
+		}
+		return event, nil
 	}
 
 	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
@@ -231,6 +273,16 @@ func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, de
 	entity.IsUpdated = true
 
 	return entity
+}
+
+func (p *actionProcessor) setInfosFromDict(entity types.Entity, dict map[string]any, description string) (types.Entity, error) {
+	for name, value := range dict {
+		if !types.IsInfoValueValid(value) {
+			return entity, fmt.Errorf("value %v for %q is invalid", value, name)
+		}
+		entity = p.setEntityInfo(entity, value, name, description)
+	}
+	return entity, nil
 }
 
 var ErrShouldBeAString = fmt.Errorf("value should be a string")
