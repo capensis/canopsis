@@ -23,7 +23,6 @@
             c-payload-text-field(
               v-field="form.value",
               :label="$t('common.value')",
-              :variables="variables",
               :name="valueFieldName",
               key="value",
               required,
