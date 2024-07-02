@@ -1237,6 +1237,296 @@ func TestActionProcessor(t *testing.T) {
 			},
 			expectedError: false,
 		},
+		{
+			testName: "given set_entity_info_from_dictionary action should return success",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+					IsUpdated: true,
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action should update ExtraInfos and return success",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:  "key1",
+							Value: float32(1),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+					IsUpdated: true,
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and without a dictionary should return success without EntityUpdated",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:  "key1",
+							Value: float32(1),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "",
+							Value:       float32(1),
+						},
+					},
+					IsUpdated: false,
+				},
+				ExtraInfos: map[string]any{},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and dictionary is not a map should return error",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": "not a map",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": "not a map",
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and dictionary has invalid field should return error",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": map[string]any{
+							"subkey": "value",
+						},
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": map[string]any{
+							"subkey": "value",
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and dictionary is nil should return error",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": nil,
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": nil,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action without infos change should return entity not updated",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			expectedError: false,
+		},
 	}
 
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
