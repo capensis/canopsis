@@ -5,6 +5,10 @@ import (
 )
 
 const migrationsPath = "/opt/canopsis/share/database/migrations"
+const (
+	MigrationExecGoja    = "goja"
+	MigrationExecMongosh = "mongosh"
+)
 
 type createFlags struct {
 	name string
@@ -19,26 +23,32 @@ func (f *createFlags) Parse(arguments []string) error {
 }
 
 type upFlags struct {
-	to   string
-	path string
+	to            string
+	path          string
+	migrationExec string
 }
 
 func (f *upFlags) Parse(arguments []string) error {
 	flags := flag.NewFlagSet("up: Execute migrations to a specified version or the latest available version", flag.ContinueOnError)
 	flags.StringVar(&f.path, "path", migrationsPath, "Migration directory")
 	flags.StringVar(&f.to, "to", "", "Migrate to version")
+	flag.StringVar(&f.migrationExec, "migration-exec", MigrationExecGoja, "The execution of Mongo migration scripts: "+MigrationExecGoja+" or "+MigrationExecMongosh)
+
 	return flags.Parse(arguments)
 }
 
 type downFlags struct {
-	to   string
-	path string
+	to            string
+	path          string
+	migrationExec string
 }
 
 func (f *downFlags) Parse(arguments []string) error {
 	flags := flag.NewFlagSet("down: Roll migrations up to a specified version or all tracked versions", flag.ContinueOnError)
 	flags.StringVar(&f.path, "path", migrationsPath, "Migration directory")
 	flags.StringVar(&f.to, "to", "", "Revert migrations to version")
+	flag.StringVar(&f.migrationExec, "migration-exec", MigrationExecGoja, "The execution of Mongo migration scripts: "+MigrationExecGoja+" or "+MigrationExecMongosh)
+
 	return flags.Parse(arguments)
 }
 

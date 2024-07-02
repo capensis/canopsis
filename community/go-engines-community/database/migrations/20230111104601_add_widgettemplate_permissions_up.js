@@ -1,15 +1,4 @@
-function genID() {
-    var hex;
-    try {
-        hex = UUID().hex(); // mongo
-    } catch (e) {
-        hex = UUID().toString('hex'); // mongosh
-    }
-
-    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
-}
-
-if (db.widget_templates.count() === 0) {
+if (db.widget_templates.countDocuments() === 0) {
     var now = Math.ceil((new Date()).getTime() / 1000);
     db.widget_templates.insertMany([
         {
