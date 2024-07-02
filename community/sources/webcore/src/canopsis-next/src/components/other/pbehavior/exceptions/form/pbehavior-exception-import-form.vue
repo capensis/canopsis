@@ -37,12 +37,19 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
+
 import { formMixin } from '@/mixins/form';
 import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 export default {
+  inject: {
+    $validator: {
+      default: new Validator(),
+    },
+  },
   components: { FileSelector },
   mixins: [
     formMixin,
