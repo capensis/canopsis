@@ -1,4 +1,4 @@
-if (db.entity_service_counters.count() === 0) {
+if (db.entity_service_counters.countDocuments() === 0) {
     db.default_entities.find({
         "type": "service"
     }).forEach(function (doc) {
