@@ -3,7 +3,9 @@
 exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] = `
 <tr
   class="alarm-list-row"
+  data-id="alarm-id"
 >
+  <!---->
   <td
     class="alarm-list-row__icons pr-0"
   >
@@ -27,11 +29,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
@@ -41,6 +47,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
 <tr
   class="alarm-list-row"
 >
+  <!---->
   <td
     class="alarm-list-row__icons pr-0"
   >
@@ -103,20 +110,34 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
 `;
 
-exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props 1`] = `
+exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props (without booted and visible) 1`] = `
 <tr
   class="alarm-list-row"
 >
+  <!---->
+  <!---->
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props (without visible) 1`] = `
+<tr
+  class="alarm-list-row"
+>
+  <!---->
   <!---->
   <td
     class="alarm-list-row__cell"
@@ -143,11 +164,60 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      refreshalarmslist="[Function]"
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
+    <!---->
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props 1`] = `
+<tr
+  class="alarm-list-row"
+>
+  <!---->
+  <!---->
+  <td
+    class="alarm-list-row__cell"
+  >
+    <alarm-column-value-stub
+      alarm="[object Object]"
+      column="[object Object]"
+      selectedtag=""
       widget="[object Object]"
     />
+    <!---->
+  </td>
+  <td
+    class="alarm-list-row__cell"
+  >
+    <alarm-column-value-stub
+      alarm="[object Object]"
+      column="[object Object]"
+      selectedtag=""
+      widget="[object Object]"
+    />
+    <!---->
+  </td>
+  <td
+    class="alarm-list-row__cell"
+  >
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
@@ -157,6 +227,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 <tr
   class="alarm-list-row"
 >
+  <!---->
   <td
     class="alarm-list-row__icons pr-0"
   >
@@ -180,11 +251,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
@@ -193,7 +268,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = `
 <tr
   class="alarm-list-row class-2"
+  data-id="alarm-id"
 >
+  <!---->
   <td
     class="alarm-list-row__icons pr-0"
   >
@@ -213,11 +290,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
@@ -226,7 +307,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
 exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in parent alarm 1`] = `
 <tr
   class="alarm-list-row"
+  data-id="alarm-id"
 >
+  <!---->
   <td
     class="alarm-list-row__icons pr-0"
   >
@@ -252,12 +335,16 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      parentalarm="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        parentalarm="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
@@ -268,15 +355,20 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
   class="alarm-list-row"
 >
   <!---->
+  <!---->
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      parentalarm="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        parentalarm="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>
@@ -286,6 +378,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
 <tr
   class="alarm-list-row"
 >
+  <!---->
   <td
     class="alarm-list-row__icons pr-0"
   >
@@ -319,11 +412,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
   <td
     class="alarm-list-row__cell"
   >
-    <actions-panel-stub
-      item="[object Object]"
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
+    <c-booted-placeholder-loader-stub
+      async-booting-provider="$asyncBootingActionsPanel"
+    >
+      <actions-panel-stub
+        item="[object Object]"
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </c-booted-placeholder-loader-stub>
     <!---->
   </td>
 </tr>

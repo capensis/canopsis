@@ -592,6 +592,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Actions allowed when state OK?"
     />
+    <field-switcher-stub
+      title="Virtual scroll enabled"
+    />
   </widget-settings-group-stub>
   <charts-form-stub
     charts=""
@@ -1183,6 +1186,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-switcher-stub
       title="Actions allowed when state OK?"
     />
+    <field-switcher-stub
+      title="Virtual scroll enabled"
+    />
   </widget-settings-group-stub>
   <charts-form-stub
     charts=""
@@ -1769,6 +1775,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     </widget-settings-group-stub>
     <field-switcher-stub
       title="Actions allowed when state OK?"
+    />
+    <field-switcher-stub
+      title="Virtual scroll enabled"
     />
   </widget-settings-group-stub>
   <charts-form-stub

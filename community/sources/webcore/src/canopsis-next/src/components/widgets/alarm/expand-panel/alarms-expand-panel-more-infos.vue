@@ -2,6 +2,7 @@
   <div class="more-infos">
     <c-compiled-template
       v-if="template"
+      :template-id="templateId"
       :template="template"
       :context="templateContext"
       @select:tag="$emit('select:tag', $event)"
@@ -39,6 +40,10 @@ export default {
       required: false,
     },
     template: {
+      type: String,
+      required: false,
+    },
+    templateId: {
       type: String,
       required: false,
     },

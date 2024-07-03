@@ -1,8 +1,8 @@
 <template>
   <v-list-group
     v-bind="$attrs"
+    :eager="eager"
     color=""
-    eager
   >
     <template #activator="">
       <v-list-item-content class="widget-settings-item-title">
@@ -45,6 +45,10 @@ export default {
     optional: {
       type: Boolean,
       default: false,
+    },
+    eager: {
+      type: Boolean,
+      default: true,
     },
   },
 };

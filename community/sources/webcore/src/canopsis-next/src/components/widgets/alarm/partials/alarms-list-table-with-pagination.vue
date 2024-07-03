@@ -14,6 +14,7 @@
     :expandable="expandable"
     :hide-actions="hideActions"
     :hide-pagination="hidePagination"
+    eager
     @update:page="updatePage"
     @update:items-per-page="updateItemsPerPage"
   />

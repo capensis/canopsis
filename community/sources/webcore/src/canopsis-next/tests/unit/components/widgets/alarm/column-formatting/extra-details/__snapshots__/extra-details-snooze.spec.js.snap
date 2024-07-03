@@ -2,178 +2,68 @@
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 1`] = `
 <div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\"><strong>Snooze</strong>
+        <div>By : snooze-author</div>
+        <div>Date : 07/08/2013 19:00:00</div>
+        <div>End : 07/08/2013 19:00:00</div><div>Initiator : snooze-initiator</div><div class=\\"c-extra-details__message\\">Comment : snooze-message</div></div>"
+    top=""
   >
-    <!---->
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
     />
-  </span>
-</div>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 07/08/2013 19:00:00
-    </div>
-    <div>
-      End : 07/08/2013 19:00:00
-    </div>
-    <div>
-        Initiator : snooze-initiator
-    </div>
-    <div
-      class="c-extra-details__message"
-    >
-        Comment : snooze-message
-    </div>
-  </div>
+  </c-simple-tooltip-stub>
 </div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 1`] = `
 <div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\"><strong>Snooze</strong>
+        <div>By : snooze-author</div>
+        <div>Date : 6:00:00</div>
+        <div>End : 6:00:00</div><div>Initiator : snooze-initiator</div><div class=\\"c-extra-details__message\\">Comment : snooze-message</div></div>"
+    top=""
   >
-    <!---->
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
     />
-  </span>
-</div>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      End : 6:00:00
-    </div>
-    <div>
-        Initiator : snooze-initiator
-    </div>
-    <div
-      class="c-extra-details__message"
-    >
-        Comment : snooze-message
-    </div>
-  </div>
+  </c-simple-tooltip-stub>
 </div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 1`] = `
 <div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\"><strong>Snooze</strong>
+        <div>By : snooze-author</div>
+        <div>Date : 6:00:00</div>
+        <div>End : 6:00:00</div><div class=\\"c-extra-details__message\\">Comment : snooze-message</div></div>"
+    top=""
   >
-    <!---->
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
     />
-  </span>
-</div>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      End : 6:00:00
-    </div>
-    <!---->
-    <div
-      class="c-extra-details__message"
-    >
-        Comment : snooze-message
-    </div>
-  </div>
+  </c-simple-tooltip-stub>
 </div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1`] = `
 <div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\"><strong>Snooze</strong>
+        <div>By : snooze-author</div>
+        <div>Date : 6:00:00</div>
+        <div>End : 6:00:00</div><div>Initiator : snooze-initiator</div></div>"
+    top=""
   >
-    <!---->
     <c-alarm-extra-details-chip-stub
       color="#e91e63"
       icon="alarm"
     />
-  </span>
-</div>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      End : 6:00:00
-    </div>
-    <div>
-        Initiator : snooze-initiator
-    </div>
-    <!---->
-  </div>
+  </c-simple-tooltip-stub>
 </div>
 `;
