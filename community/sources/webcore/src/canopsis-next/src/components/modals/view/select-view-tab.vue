@@ -63,6 +63,7 @@ import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -72,11 +73,13 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesViewGroupMixin,
+    submittableMixinCreator({
+      method: 'selectTab',
+    }),
   ],
   data() {
     return {
       pending: true,
-      submitting: false,
     };
   },
   async mounted() {
@@ -88,17 +91,11 @@ export default {
   },
   methods: {
     async selectTab(tabId, viewId) {
-      try {
-        this.submitting = true;
-
-        if (this.config.action) {
-          await this.config.action({ tabId, viewId });
-        }
-
-        this.$modals.hide();
-      } finally {
-        this.submitting = false;
+      if (this.config.action) {
+        await this.config.action({ tabId, viewId });
       }
+
+      this.$modals.hide();
     },
   },
 };
