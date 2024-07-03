@@ -283,6 +283,7 @@ export const API_ROUTES = {
     eventFilterRules: '/api/v4/template-validator/event-filter-rules',
   },
   linkRule: '/api/v4/link-rules',
+  bulkLinkRule: '/api/v4/bulk/link-rules',
   linkCategories: '/api/v4/link-categories',
   icons: '/api/v4/icons',
   themes: {
