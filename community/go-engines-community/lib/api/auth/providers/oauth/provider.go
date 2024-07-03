@@ -33,7 +33,7 @@ type Provider interface {
 }
 
 type provider struct {
-	roleValidator      providers.RoleValidator
+	roleProvider       providers.RoleProvider
 	userProvider       security.UserProvider
 	tokenService       apisecurity.TokenService
 	oauth2Config       oauth2.Config
@@ -56,7 +56,7 @@ type provider struct {
 func NewProvider(
 	ctx context.Context,
 	name string,
-	roleValidator providers.RoleValidator,
+	roleValidator providers.RoleProvider,
 	config security.OAuth2ProviderConfig,
 	store sessions.Store,
 	userProvider security.UserProvider,
@@ -67,7 +67,7 @@ func NewProvider(
 ) (Provider, error) {
 	p := &provider{
 		name:               name,
-		roleValidator:      roleValidator,
+		roleProvider:       roleValidator,
 		userProvider:       userProvider,
 		maintenanceAdapter: maintenanceAdapter,
 		tokenService:       tokenService,
@@ -351,14 +351,16 @@ func (p *provider) Callback(c *gin.Context) {
 }
 
 func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string, userInfo map[string]any) (*security.User, bool) {
-	roles := p.getAssocArrayAttribute(userInfo, "role", []string{p.config.DefaultRole})
-
-	err := p.roleValidator.AreRolesValid(c, roles)
+	roles, err := p.roleProvider.GetValidRoles(c, p.getAssocArrayAttribute(userInfo, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
-		p.logger.Err(err).Msg("user registration failed")
-		p.errorRedirect(c, redirectUrl, err.Error())
+		if errors.Is(err, providers.ErrDefaultRoleNotFound) {
+			p.logger.Err(err).Msg("user registration failed")
+			p.errorRedirect(c, redirectUrl, err.Error())
 
-		return nil, false
+			return nil, false
+		}
+
+		panic(err)
 	}
 
 	user := &security.User{
