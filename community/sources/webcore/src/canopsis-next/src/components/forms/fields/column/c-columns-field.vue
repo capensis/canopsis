@@ -46,21 +46,20 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { ENTITIES_TYPES } from '@/constants';
 
 import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 
-import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useAsyncBootingParent } from '@/hooks/render/async-booting';
 
 import ColumnField from './partials/column-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { ColumnField },
-  mixins: [
-    formArrayMixin,
-    formValidationHeaderMixin,
-  ],
   model: {
     prop: 'columns',
     event: 'input',
@@ -111,23 +110,25 @@ export default {
       required: false,
     },
   },
-  computed: {
-    dragItemHandleClass() {
-      return 'column-drag-handle';
-    },
+  setup(props, { emit }) {
+    const dragItemHandleClass = 'column-drag-handle';
 
-    isColumnsEmpty() {
-      return !this.columns.length;
-    },
-  },
-  methods: {
-    add() {
-      this.addItemIntoArray(widgetColumnToForm());
-    },
+    const isColumnsEmpty = computed(() => !props.columns.length);
 
-    remove(index) {
-      this.removeItemFromArray(index);
-    },
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
+    useAsyncBootingParent(2);
+
+    const add = () => addItemIntoArray(widgetColumnToForm());
+    const remove = index => removeItemFromArray(index);
+
+    return {
+      dragItemHandleClass,
+      isColumnsEmpty,
+
+      add,
+      remove,
+    };
   },
 };
 </script>

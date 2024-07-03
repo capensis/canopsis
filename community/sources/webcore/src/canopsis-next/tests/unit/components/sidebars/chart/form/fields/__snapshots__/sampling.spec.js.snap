@@ -2,6 +2,7 @@
 
 exports[`sampling Renders \`sampling\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default sampling"
 >
   <c-sampling-field-stub
@@ -13,6 +14,7 @@ exports[`sampling Renders \`sampling\` with custom props 1`] = `
 
 exports[`sampling Renders \`sampling\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default sampling"
 >
   <c-sampling-field-stub />

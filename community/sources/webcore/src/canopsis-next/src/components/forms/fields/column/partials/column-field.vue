@@ -73,6 +73,7 @@
       </v-layout>
       <v-expand-transition mode="out-in">
         <column-field-expand-panel
+          v-if="bootedExpandPanel"
           v-show="expanded"
           v-field="column"
           :name="name"
@@ -95,6 +96,7 @@
 
 <script>
 import { omit } from 'lodash';
+import { computed, ref } from 'vue';
 
 import {
   ENTITIES_TYPES,
@@ -107,17 +109,17 @@ import {
 
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
-import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
+import { useValidationChildren } from '@/hooks/validator/validation-children';
+import { useModelField } from '@/hooks/form/model-field';
+import { useAsyncBootingChild } from '@/hooks/render/async-booting';
 
 import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
 
 export default {
-  inject: ['$validator'],
+  inject: ['$validator', '$asyncBooting'],
   components: { ColumnFieldExpandPanel },
-  mixins: [
-    formBaseMixin,
-    validationChildrenMixin,
-  ],
   model: {
     prop: 'column',
     event: 'input',
@@ -176,98 +178,78 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      expanded: !this.column?.column,
-      isCustom: false,
-    };
-  },
-  computed: {
-    isAlarmType() {
-      return this.type === ENTITIES_TYPES.alarm;
-    },
+  setup(props, { emit }) {
+    const expanded = ref(!props.column?.column);
+    const isCustom = ref(false);
 
-    alarmListAvailableColumns() {
-      const columns = this.withInstructions
+    const { tc } = useI18n();
+    const validator = useValidator();
+    const { updateModel } = useModelField(props, emit);
+    const { booted: bootedExpandPanel } = useAsyncBootingChild(expanded.value);
+    const { hasChildrenError } = useValidationChildren();
+
+    /**
+     * COMPUTED
+     */
+    const isAlarmType = computed(() => props.type === ENTITIES_TYPES.alarm);
+
+    const alarmListAvailableColumns = computed(() => {
+      const columns = props.withInstructions
         ? ALARM_LIST_WIDGET_COLUMNS
         : omit(ALARM_LIST_WIDGET_COLUMNS, ['assignedInstructions']);
 
       return Object.values(columns).map(value => ({
         value,
-        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
+        text: tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
       }));
-    },
+    });
 
-    contextAvailableColumns() {
-      return Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
-        value,
-        text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
-      }));
-    },
+    const contextAvailableColumns = computed(() => Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
+      value,
+      text: tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
+    })));
 
-    availableColumns() {
-      const columns = this.isAlarmType
-        ? this.alarmListAvailableColumns
-        : this.contextAvailableColumns;
+    const availableColumns = computed(() => {
+      const columns = isAlarmType.value
+        ? alarmListAvailableColumns.value
+        : contextAvailableColumns.value;
 
-      return columns.filter(({ value }) => !this.excludedColumns.includes(value));
-    },
+      return columns.filter(({ value }) => !props.excludedColumns.includes(value));
+    });
 
-    columnLabelFieldName() {
-      return `${this.name}.label`;
-    },
+    const columnLabelFieldName = computed(() => `${props.name}.label`);
+    const columnLabelErrorMessages = computed(() => validator.errors.collect(columnLabelFieldName.value));
 
-    columnLabelErrorMessages() {
-      return this.errors.collect(this.columnLabelFieldName);
-    },
-  },
-  watch: {
-    type() {
-      const columns = this.columns.map(({ key }) => ({
-        key,
-        column: '',
-      }));
-
-      this.updateModel(columns);
-    },
-
-    availableColumns: {
-      immediate: true,
-      handler(columns) {
-        this.isCustom = this.column.column
-          ? columns.every(column => column.value !== this.column.column)
-          : false;
-      },
-    },
-  },
-  methods: {
-    changeColumn(column) {
+    /**
+     * METHODS
+     */
+    const changeColumn = (column) => {
       const newValue = {
-        ...this.column,
+        ...props.column,
 
         column,
       };
 
-      if (this.withHtml) {
+      if (props.withHtml) {
         newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(column);
       }
 
       this.updateModel(newValue);
-    },
+    };
 
-    convertToCustom() {
-      this.isCustom = !this.isCustom;
+    const convertToCustom = () => {
+      isCustom.value = !isCustom.value;
 
       const newColumn = {
-        ...this.column,
+        ...props.column,
       };
 
-      if (this.isCustom) {
-        const { value } = formToWidgetColumn(this.column);
+      if (isCustom.value) {
+        const { value } = formToWidgetColumn(props.column);
 
-        const selectedColumn = this.availableColumns.find(column => column.value === this.column.column);
+        const selectedColumn = availableColumns.value.find(column => column.value === props.column.column);
 
-        const label = this.column.label || selectedColumn?.text || '';
+        const label = props.column.label || selectedColumn?.text || '';
 
         newColumn.column = value;
         newColumn.label = label;
@@ -275,9 +257,9 @@ export default {
         newColumn.rule = '';
         newColumn.dictionary = '';
       } else {
-        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(this.column.column);
+        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(props.column.column);
 
-        const selectedColumn = this.availableColumns.find(column => column.value === value);
+        const selectedColumn = availableColumns.value.find(column => column.value === value);
 
         newColumn.column = value === selectedColumn?.value ? value : '';
         newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;
@@ -286,8 +268,21 @@ export default {
         newColumn.dictionary = dictionary;
       }
 
-      this.updateModel(newColumn);
-    },
+      updateModel(newColumn);
+    };
+
+    return {
+      expanded,
+      isCustom,
+      bootedExpandPanel,
+      availableColumns,
+      columnLabelFieldName,
+      columnLabelErrorMessages,
+      hasChildrenError,
+
+      changeColumn,
+      convertToCustom,
+    };
   },
 };
 </script>

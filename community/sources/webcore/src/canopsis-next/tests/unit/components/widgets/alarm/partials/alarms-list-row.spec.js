@@ -11,6 +11,7 @@ const stubs = {
   'alarms-expand-panel-btn': true,
   'alarm-column-value': true,
   'actions-panel': true,
+  'c-booted-placeholder-loader': true,
 };
 
 const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
@@ -48,6 +49,10 @@ describe('alarms-list-row', () => {
     parentComponent: {
       provide: {
         $system: {},
+        $intersectionObserver: {
+          observe: jest.fn(),
+          unobserve: jest.fn(),
+        },
       },
     },
   });
@@ -56,6 +61,10 @@ describe('alarms-list-row', () => {
     parentComponent: {
       provide: {
         $system: {},
+        $intersectionObserver: {
+          observe: jest.fn(),
+          unobserve: jest.fn(),
+        },
       },
     },
   });
@@ -76,6 +85,8 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [],
@@ -103,6 +114,8 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [],
@@ -140,6 +153,8 @@ describe('alarms-list-row', () => {
       ]),
       propsData: {
         alarm,
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [{}, {}],
@@ -169,6 +184,8 @@ describe('alarms-list-row', () => {
     const wrapper = factory({
       propsData: {
         alarm,
+        booted: true,
+        visible: true,
         expand: true,
         widget: {},
         headers: [{}, {}],
@@ -200,6 +217,8 @@ describe('alarms-list-row', () => {
     const wrapper = factory({
       propsData: {
         alarm,
+        booted: true,
+        visible: true,
         expand: true,
         widget: {},
         headers: [{ value: 'first' }, { value: 'second' }],
@@ -223,6 +242,46 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
+        expanded: false,
+        headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-row` with default and required props (without booted and visible)', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget: {},
+        alarm: {
+          v: {
+            status: {},
+          },
+        },
+        booted: false,
+        visible: false,
+        expanded: false,
+        headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-row` with default and required props (without visible)', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget: {},
+        alarm: {
+          v: {
+            status: {},
+          },
+        },
+        booted: true,
+        visible: false,
         expanded: false,
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
@@ -242,6 +301,8 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
@@ -265,6 +326,8 @@ describe('alarms-list-row', () => {
             },
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -284,6 +347,8 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -302,6 +367,8 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -325,6 +392,8 @@ describe('alarms-list-row', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm,
+        booted: true,
+        visible: true,
         expanded: false,
         showInstructionIcon: true,
         widget: {},
@@ -350,6 +419,8 @@ describe('alarms-list-row', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm,
+        booted: true,
+        visible: true,
         widget: {},
         headers: [{ value: 'actions' }],
       },
@@ -373,6 +444,8 @@ describe('alarms-list-row', () => {
             status: {},
           },
         },
+        booted: true,
+        visible: true,
         expanded: false,
         widget: {},
         showInstructionIcon: true,

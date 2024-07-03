@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app">
+  <v-app id="app" :class="{ 'v-app--disabled-transitions': disabledTransitions }">
     <c-progress-overlay
       :pending="wholePending"
       :transition="false"

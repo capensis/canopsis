@@ -6,8 +6,9 @@
     color="error"
     top
   />
-  <v-tooltip
+  <c-simple-tooltip
     v-else
+    :content="$t(`common.statusTypes.${statusValue}`)"
     top
   >
     <template #activator="{ on }">
@@ -19,8 +20,7 @@
         {{ status.icon }}
       </v-icon>
     </template>
-    <span>{{ $t(`common.statusTypes.${statusValue}`) }}</span>
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
