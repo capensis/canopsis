@@ -65,25 +65,6 @@ export default createCRUDModule({
 
     [types.MERGE_VIEW_ENTITIES](state, { entities }) {
       Object.entries(entities).forEach(([type, typeEntities]) => {
-        if (!state.data[type]) {
-          Vue.set(state.data, type, typeEntities);
-
-          return;
-        }
-
-        Object.entries(typeEntities).forEach(([id, entity]) => {
-          const originalEntity = state.data?.[type]?.[id];
-
-          if (!originalEntity) {
-            Vue.set(state.data[type], id, entity);
-
-            return;
-          }
-
-          Vue.setOnlyDiff(state.data[type], id, entity);
-        });
-      });
-      Object.entries(entities).forEach(([type, typeEntities]) => {
         Vue.set(state.data, type, { ...state.data[type], ...typeEntities });
       });
     },
