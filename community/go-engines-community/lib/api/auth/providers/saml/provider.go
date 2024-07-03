@@ -49,7 +49,7 @@ type Provider interface {
 type provider struct {
 	samlSP             *saml2.SAMLServiceProvider
 	userProvider       security.UserProvider
-	roleValidator      providers.RoleValidator
+	roleProvider       providers.RoleProvider
 	sessionStore       libsession.Store
 	enforcer           security.Enforcer
 	config             security.SamlConfig
@@ -61,7 +61,7 @@ type provider struct {
 func NewProvider(
 	ctx context.Context,
 	userProvider security.UserProvider,
-	roleValidator providers.RoleValidator,
+	roleValidator providers.RoleProvider,
 	sessionStore libsession.Store,
 	enforcer security.Enforcer,
 	config security.Config,
@@ -183,7 +183,7 @@ func NewProvider(
 			SignAuthnRequestsCanonicalizer: dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(""),
 		},
 		userProvider:       userProvider,
-		roleValidator:      roleValidator,
+		roleProvider:       roleValidator,
 		sessionStore:       sessionStore,
 		enforcer:           enforcer,
 		config:             config.Security.Saml,
@@ -525,14 +525,16 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 		return nil, false
 	}
 
-	roles := p.getAssocArrayAttribute(assertionInfo.Values, "role", []string{p.config.DefaultRole})
-
-	err := p.roleValidator.AreRolesValid(c, roles)
+	roles, err := p.roleProvider.GetValidRoles(c, p.getAssocArrayAttribute(assertionInfo.Values, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
-		p.logger.Err(err).Msg("user registration failed")
-		p.errorRedirect(c, relayUrl, err.Error())
+		if errors.Is(err, providers.ErrDefaultRoleNotFound) {
+			p.logger.Err(err).Msg("user registration failed")
+			p.errorRedirect(c, relayUrl, err.Error())
 
-		return nil, false
+			return nil, false
+		}
+
+		panic(err)
 	}
 
 	user := &security.User{
