@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var ErrFieldNotExist = errors.New("field does not exist")
+
 // GetField returns the value of a field of an object or a map, given the
 // field's name as a string.
 // Multiple field names may be chained, separated by dots:
@@ -37,7 +39,7 @@ func GetField(object interface{}, fieldPath string) (interface{}, error) {
 
 		if !value.IsValid() {
 			// There is no such field in the struct or the map
-			return nil, errors.New("field does not exist")
+			return nil, ErrFieldNotExist
 		}
 
 		// Dereference the value if it is a non-nil pointer
