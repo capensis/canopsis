@@ -30,7 +30,7 @@ const deepDelete = (Vue, source, deleted) => {
 const deepUpdate = (Vue, source, updated) => {
   Object.entries(updated).forEach(([key, value]) => {
     if (source[key] && (isObject(value) || isArray(value))) {
-      deepDelete(Vue, source[key], value);
+      deepUpdate(Vue, source[key], value);
 
       return;
     }
@@ -39,6 +39,9 @@ const deepUpdate = (Vue, source, updated) => {
   });
 };
 
+/**
+ * TODO: use it in the future
+ */
 export default {
   install(Vue) {
     Vue.setOnlyDiff = (source, key, payload) => {
@@ -50,9 +53,9 @@ export default {
 
       const { added, updated, deleted } = detailedDiff(source[key], payload);
 
-      deepDelete(Vue, source[key], added);
-      deepDelete(Vue, source[key], updated);
-      deepUpdate(Vue, source[key], deleted);
+      deepUpdate(Vue, source[key], added);
+      deepUpdate(Vue, source[key], updated);
+      deepDelete(Vue, source[key], deleted);
     };
   },
 };
