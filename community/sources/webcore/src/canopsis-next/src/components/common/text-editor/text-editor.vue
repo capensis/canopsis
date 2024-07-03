@@ -265,11 +265,16 @@ export default {
   },
   methods: {
     prepareVariable(variable, parentVariable) {
-      return {
+      const preparedVariable = {
         ...variable,
         value: parentVariable ? `${parentVariable.value}.${variable.value}` : variable.value,
-        variables: variable.variables ? this.prepareVariables(variable.variables, variable) : variable.variables,
       };
+
+      if (preparedVariable.variables) {
+        preparedVariable.variables = this.prepareVariables(preparedVariable.variables, preparedVariable);
+      }
+
+      return preparedVariable;
     },
 
     prepareVariables(variables, parentVariable) {
