@@ -1,12 +1,12 @@
-package providers_test
+package roleprovider_test
 
 import (
 	"context"
 	"slices"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,10 +20,10 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 
 	ctx := context.Background()
 
-	validRoles := map[string]bool{
-		"default-role": true,
-		"role-1":       true,
-		"role-2":       true,
+	validRoleNameIDMap := map[string]string{
+		"default-role": "default-role-id",
+		"role-1":       "role-1-id",
+		"role-2":       "role-2-id",
 	}
 
 	dbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -54,8 +54,8 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 			FoundRoles []string `bson:"found_roles"`
 		}) error {
 			for _, role := range roles {
-				if validRoles[role] {
-					doc.FoundRoles = append(doc.FoundRoles, role)
+				if id, ok := validRoleNameIDMap[role]; ok {
+					doc.FoundRoles = append(doc.FoundRoles, id)
 				}
 			}
 
@@ -77,11 +77,19 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 		}
 
 		helper := mock_mongo.NewMockSingleResultHelper(ctrl)
-		if validRoles[name] {
-			helper.EXPECT().Err().Return(nil)
-		} else {
-			helper.EXPECT().Err().Return(mongodriver.ErrNoDocuments)
-		}
+		helper.EXPECT().Decode(gomock.Any()).DoAndReturn(func(doc *struct {
+			ID string `bson:"_id"`
+		}) error {
+			var err error
+
+			if id, ok := validRoleNameIDMap[name]; ok {
+				doc.ID = id
+			} else {
+				err = mongodriver.ErrNoDocuments
+			}
+
+			return err
+		})
 
 		return helper
 	}).AnyTimes()
@@ -89,7 +97,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 	dbClient := mock_mongo.NewMockDbClient(ctrl)
 	dbClient.EXPECT().Collection(gomock.Any()).Return(dbCollection)
 
-	p := providers.NewRoleProvider(dbClient)
+	p := roleprovider.NewRoleProvider(dbClient)
 
 	dataSets := []struct {
 		testName       string
@@ -102,42 +110,42 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 			testName:       "given no potential roles, should return default role",
 			potentialRoles: []string{},
 			defaultRole:    "default-role",
-			expectedRoles:  []string{"default-role"},
+			expectedRoles:  []string{"default-role-id"},
 			expectedError:  false,
 		},
 		{
 			testName:       "given invalid potential role, should return default role",
 			potentialRoles: []string{"invalid"},
 			defaultRole:    "default-role",
-			expectedRoles:  []string{"default-role"},
+			expectedRoles:  []string{"default-role-id"},
 			expectedError:  false,
 		},
 		{
 			testName:       "given invalid potential roles, should return default role",
 			potentialRoles: []string{"invalid-1", "invalid-2"},
 			defaultRole:    "default-role",
-			expectedRoles:  []string{"default-role"},
+			expectedRoles:  []string{"default-role-id"},
 			expectedError:  false,
 		},
 		{
 			testName:       "given valid potential role, should return potential role",
 			potentialRoles: []string{"role-1"},
 			defaultRole:    "default-role",
-			expectedRoles:  []string{"role-1"},
+			expectedRoles:  []string{"role-1-id"},
 			expectedError:  false,
 		},
 		{
 			testName:       "given valid potential roles, should return potential roles",
 			potentialRoles: []string{"role-1", "role-2"},
 			defaultRole:    "default-role",
-			expectedRoles:  []string{"role-1", "role-2"},
+			expectedRoles:  []string{"role-1-id", "role-2-id"},
 			expectedError:  false,
 		},
 		{
 			testName:       "given valid and invalid potential roles, should return only valid roles",
 			potentialRoles: []string{"role-0", "role-1", "role-2", "role-3"},
 			defaultRole:    "default-role",
-			expectedRoles:  []string{"role-1", "role-2"},
+			expectedRoles:  []string{"role-1-id", "role-2-id"},
 			expectedError:  false,
 		},
 		{
@@ -158,7 +166,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			roles, err := p.GetValidRoles(ctx, dataset.potentialRoles, dataset.defaultRole)
+			roles, err := p.GetValidRoleIDs(ctx, dataset.potentialRoles, dataset.defaultRole)
 			if !slices.Equal(roles, dataset.expectedRoles) {
 				t.Errorf("expected roles %v, got %v", dataset.expectedRoles, roles)
 			}
