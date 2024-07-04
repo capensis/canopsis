@@ -196,7 +196,6 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidationCtx(entityCategoryUniqueNameValidator.Validate, entitycategory.EditRequest{})
 
 	roleValidator := role.NewValidator(client)
-	v.RegisterStructValidationCtx(roleValidator.ValidateCreateRequest, role.CreateRequest{})
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
 
 	userValidator := user.NewValidator(client)

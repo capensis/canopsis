@@ -8,13 +8,13 @@ import (
 	"net/url"
 	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ type Provider interface {
 }
 
 type provider struct {
-	roleProvider       providers.RoleProvider
+	roleProvider       security.RoleProvider
 	userProvider       security.UserProvider
 	tokenService       apisecurity.TokenService
 	oauth2Config       oauth2.Config
@@ -56,7 +56,7 @@ type provider struct {
 func NewProvider(
 	ctx context.Context,
 	name string,
-	roleValidator providers.RoleProvider,
+	roleValidator security.RoleProvider,
 	config security.OAuth2ProviderConfig,
 	store sessions.Store,
 	userProvider security.UserProvider,
@@ -351,11 +351,12 @@ func (p *provider) Callback(c *gin.Context) {
 }
 
 func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string, userInfo map[string]any) (*security.User, bool) {
-	roles, err := p.roleProvider.GetValidRoles(c, p.getAssocArrayAttribute(userInfo, "role", []string{}), p.config.DefaultRole)
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
-		if errors.Is(err, providers.ErrDefaultRoleNotFound) {
-			p.logger.Err(err).Msg("user registration failed")
-			p.errorRedirect(c, redirectUrl, err.Error())
+		roleNotFoundError := roleprovider.ErrRoleNotFound{}
+		if errors.As(err, &roleNotFoundError) {
+			p.logger.Err(roleNotFoundError).Msg("user registration failed")
+			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
 
 			return nil, false
 		}

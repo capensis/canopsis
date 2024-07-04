@@ -1,4 +1,4 @@
-package providers
+package roleprovider
 
 import (
 	"context"
@@ -6,43 +6,48 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var ErrDefaultRoleNotFound = errors.New("default role not found")
+type ErrRoleNotFound struct {
+	role string
+}
 
-type RoleProvider interface {
-	// GetValidRoles checks if potentialRoles slice contains valid roles and returns at least one valid role.
-	// If no roles found, then it check if default role is valid and returns it. Return ErrDefaultRoleNotFound error if default role not found.
-	GetValidRoles(ctx context.Context, potentialRoles []string, defaultRole string) ([]string, error)
+func (e ErrRoleNotFound) Error() string {
+	return "role " + e.role + " doesn't exist"
 }
 
 type roleProvider struct {
 	roleCollection mongo.DbCollection
 }
 
-func NewRoleProvider(dbClient mongo.DbClient) RoleProvider {
+func NewRoleProvider(dbClient mongo.DbClient) security.RoleProvider {
 	return &roleProvider{
 		roleCollection: dbClient.Collection(mongo.RoleCollection),
 	}
 }
 
-func (v *roleProvider) getDefaultRole(ctx context.Context, defaultRole string) ([]string, error) {
-	err := v.roleCollection.FindOne(ctx, bson.M{"name": defaultRole}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, ErrDefaultRoleNotFound
-		}
-
-		return nil, err
+func (v *roleProvider) GetRoleID(ctx context.Context, name string) (string, error) {
+	var role struct {
+		ID string `bson:"_id"`
 	}
 
-	return []string{defaultRole}, nil
+	err := v.roleCollection.FindOne(ctx, bson.M{"name": name}, options.FindOne().SetProjection(bson.M{"_id": 1})).Decode(&role)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return "", ErrRoleNotFound{role: name}
+		}
+
+		return "", err
+	}
+
+	return role.ID, nil
 }
 
-func (v *roleProvider) GetValidRoles(ctx context.Context, potentialRoles []string, defaultRole string) ([]string, error) {
+func (v *roleProvider) GetValidRoleIDs(ctx context.Context, potentialRoles []string, defaultRole string) ([]string, error) {
 	if len(potentialRoles) == 0 {
 		return v.getDefaultRole(ctx, defaultRole)
 	}
@@ -58,7 +63,7 @@ func (v *roleProvider) GetValidRoles(ctx context.Context, potentialRoles []strin
 		{
 			"$group": bson.M{
 				"_id":         nil,
-				"found_roles": bson.M{"$addToSet": "$name"},
+				"found_roles": bson.M{"$addToSet": "$_id"},
 			},
 		},
 	})
@@ -84,4 +89,13 @@ func (v *roleProvider) GetValidRoles(ctx context.Context, potentialRoles []strin
 	}
 
 	return res.FoundRoles, nil
+}
+
+func (v *roleProvider) getDefaultRole(ctx context.Context, defaultRole string) ([]string, error) {
+	id, err := v.GetRoleID(ctx, defaultRole)
+	if err != nil {
+		return nil, err
+	}
+
+	return []string{id}, nil
 }
