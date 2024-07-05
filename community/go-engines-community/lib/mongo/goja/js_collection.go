@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -25,8 +26,7 @@ func (c *jsCollection) CreateIndex(ctx context.Context, orderedKeys, opts, commi
 		return "", errors.New("no keys provided")
 	}
 
-	vt := orderedKeys.ExportType()
-	if vt == nil || vt.Kind() != reflect.Map {
+	if t := orderedKeys.ExportType(); t == nil || t.Kind() != reflect.Map {
 		return "", errors.New("invalid type for keys")
 	}
 
@@ -236,24 +236,10 @@ func (c *jsCollection) Find(ctx context.Context, filter, projection, opts goja.V
 	dbOpts.SetProjection(dbProjection)
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"maxAwaitTimeMS": func(v any) error {
-			i, ok := v.(int64)
-			if !ok {
-				return errors.New("invalid type for maxAwaitTimeMS")
-			}
-
-			dbOpts.SetMaxAwaitTime(time.Duration(i) * time.Millisecond)
-
-			return nil
+			return setMaxAwaitTimeMS[*options.FindOptions](v, dbOpts)
 		},
 		"maxTimeMS": func(v any) error {
-			i, ok := v.(int64)
-			if !ok {
-				return errors.New("invalid type for maxTimeMS")
-			}
-
-			dbOpts.SetMaxTime(time.Duration(i) * time.Millisecond)
-
-			return nil
+			return setMaxTimeMS[*options.FindOptions](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -275,24 +261,10 @@ func (c *jsCollection) Aggregate(ctx context.Context, pipeline, opts goja.Value)
 	dbOpts := options.Aggregate()
 	err := transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"maxAwaitTimeMS": func(v any) error {
-			i, ok := v.(int64)
-			if !ok {
-				return errors.New("invalid type for maxAwaitTimeMS")
-			}
-
-			dbOpts.SetMaxAwaitTime(time.Duration(i) * time.Millisecond)
-
-			return nil
+			return setMaxAwaitTimeMS[*options.AggregateOptions](v, dbOpts)
 		},
 		"maxTimeMS": func(v any) error {
-			i, ok := v.(int64)
-			if !ok {
-				return errors.New("invalid type for maxTimeMS")
-			}
-
-			dbOpts.SetMaxTime(time.Duration(i) * time.Millisecond)
-
-			return nil
+			return setMaxTimeMS[*options.AggregateOptions](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -328,14 +300,7 @@ func (c *jsCollection) FindOne(ctx context.Context, filter, opts goja.Value) (an
 	dbOpts := options.FindOne()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"maxTimeMS": func(v any) error {
-			i, ok := v.(int64)
-			if !ok {
-				return errors.New("invalid type for maxTimeMS")
-			}
-
-			dbOpts.SetMaxTime(time.Duration(i) * time.Millisecond)
-
-			return nil
+			return setMaxTimeMS[*options.FindOneOptions](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -418,16 +383,7 @@ func (c *jsCollection) UpdateOne(ctx context.Context, filter, update, opts goja.
 	dbOpts := options.Update()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"arrayFilters": func(v any) error {
-			filters, ok := v.(bson.A)
-			if !ok {
-				return errors.New("invalid type for arrayFilters")
-			}
-
-			dbOpts.SetArrayFilters(options.ArrayFilters{
-				Filters: filters,
-			})
-
-			return nil
+			return setArrayFilters[*options.UpdateOptions](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -465,16 +421,7 @@ func (c *jsCollection) UpdateMany(ctx context.Context, filter, update, opts goja
 	dbOpts := options.Update()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"arrayFilters": func(v any) error {
-			filters, ok := v.(bson.A)
-			if !ok {
-				return errors.New("invalid type for arrayFilters")
-			}
-
-			dbOpts.SetArrayFilters(options.ArrayFilters{
-				Filters: filters,
-			})
-
-			return nil
+			return setArrayFilters[*options.UpdateOptions](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -507,14 +454,7 @@ func (c *jsCollection) CountDocuments(ctx context.Context, filter, opts goja.Val
 	dbOpts := options.Count()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"maxTimeMS": func(v any) error {
-			i, ok := v.(int64)
-			if !ok {
-				return errors.New("invalid type for maxTimeMS")
-			}
-
-			dbOpts.SetMaxTime(time.Duration(i) * time.Millisecond)
-
-			return nil
+			return setMaxTimeMS[*options.CountOptions](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -554,8 +494,7 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 		return nil, errors.New("no operations provided")
 	}
 
-	ot := operations.ExportType()
-	if ot == nil || ot.Kind() != reflect.Array && ot.Kind() != reflect.Slice {
+	if t := operations.ExportType(); t == nil || t.Kind() != reflect.Array && t.Kind() != reflect.Slice {
 		return nil, errors.New("invalid type for operations")
 	}
 
@@ -564,15 +503,14 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 	writeModels := make([]mongodriver.WriteModel, len(keys))
 	for i, k := range keys {
 		v := obj.Get(k)
-		vt := v.ExportType()
-		if vt == nil || vt.Kind() != reflect.Map {
-			return nil, errors.New("invalid type for operation")
+		if t := v.ExportType(); t == nil || t.Kind() != reflect.Map {
+			return nil, errors.New("invalid type for operation at " + strconv.Itoa(i))
 		}
 
 		vObj := v.ToObject(c.vm)
 		vKeys := vObj.Keys()
 		if len(vKeys) != 1 {
-			return nil, errors.New("invalid keys length")
+			return nil, errors.New("invalid keys length at " + strconv.Itoa(i))
 		}
 
 		params := vObj.Get(vKeys[0])
@@ -585,14 +523,10 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 			writeModels[i] = updateModel
 			mapping = map[string]mappingFunc{
 				"arrayFilters": func(v any) error {
-					filters, ok := v.(bson.A)
-					if !ok {
-						return errors.New("invalid type for arrayFilters")
+					err := setArrayFilters[*mongodriver.UpdateOneModel](v, updateModel)
+					if err != nil {
+						return fmt.Errorf("invalid update model at %d: %w", i, err)
 					}
-
-					updateModel.SetArrayFilters(options.ArrayFilters{
-						Filters: filters,
-					})
 
 					return nil
 				},
@@ -602,14 +536,10 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 			writeModels[i] = updateModel
 			mapping = map[string]mappingFunc{
 				"arrayFilters": func(v any) error {
-					filters, ok := v.(bson.A)
-					if !ok {
-						return errors.New("invalid type for arrayFilters")
+					err := setArrayFilters[*mongodriver.UpdateManyModel](v, updateModel)
+					if err != nil {
+						return fmt.Errorf("invalid update model at %d: %w", i, err)
 					}
-
-					updateModel.SetArrayFilters(options.ArrayFilters{
-						Filters: filters,
-					})
 
 					return nil
 				},
@@ -621,12 +551,12 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 		case "replaceOne":
 			writeModels[i] = mongodriver.NewReplaceOneModel()
 		default:
-			return nil, errors.New("unknown operation: " + vKeys[0])
+			return nil, errors.New("unknown operation " + vKeys[0] + " at " + strconv.Itoa(i))
 		}
 
 		err = transformOptions(c.vm, params, writeModels[i], mapping)
 		if err != nil {
-			return nil, fmt.Errorf("invalid %s options: %w", vKeys[0], err)
+			return nil, fmt.Errorf("invalid %s options at %d: %w", vKeys[0], i, err)
 		}
 	}
 
@@ -696,4 +626,51 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 			return c.BulkWrite(ctx, operations, opts)
 		},
 	}
+}
+
+type arrayFiltersSetter[T any] interface {
+	SetArrayFilters(filters options.ArrayFilters) T
+}
+
+func setArrayFilters[T any](v any, setter arrayFiltersSetter[T]) error {
+	filters, ok := v.(bson.A)
+	if !ok {
+		return errors.New("invalid type for arrayFilters")
+	}
+
+	setter.SetArrayFilters(options.ArrayFilters{
+		Filters: filters,
+	})
+
+	return nil
+}
+
+type maxAwaitTimeMSSetter[T any] interface {
+	SetMaxAwaitTime(d time.Duration) T
+}
+
+func setMaxAwaitTimeMS[T any](v any, setter maxAwaitTimeMSSetter[T]) error {
+	i, ok := v.(int64)
+	if !ok {
+		return errors.New("invalid type for maxAwaitTimeMS")
+	}
+
+	setter.SetMaxAwaitTime(time.Duration(i) * time.Millisecond)
+
+	return nil
+}
+
+type maxTimeMSSetter[T any] interface {
+	SetMaxTime(d time.Duration) T
+}
+
+func setMaxTimeMS[T any](v any, setter maxTimeMSSetter[T]) error {
+	i, ok := v.(int64)
+	if !ok {
+		return errors.New("invalid type for maxTimeMS")
+	}
+
+	setter.SetMaxTime(time.Duration(i) * time.Millisecond)
+
+	return nil
 }

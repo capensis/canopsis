@@ -163,6 +163,13 @@ func getTestTransformValueDataSet() []struct {
 		panic(err)
 	}
 
+	anotherTZ, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		panic(err)
+	}
+
+	timeInAnotherTZ := timeInLocalTZ.In(anotherTZ)
+
 	return []struct {
 		JSCode      string
 		Expected    any
@@ -225,11 +232,11 @@ func getTestTransformValueDataSet() []struct {
 			Expected: bson.A{int64(1), int64(2), int64(3)},
 		},
 		{
-			JSCode:   `test(new Date('2023-01-01T10:00:00'))`,
+			JSCode:   `test(new Date('` + timeInLocalTZ.Format("2006-01-02T15:04:05") + `'))`,
 			Expected: timeInLocalTZ,
 		},
 		{
-			JSCode:   `test(new Date('2023-01-01T16:00:00+07:00'))`,
+			JSCode:   `test(new Date('` + timeInAnotherTZ.Format("2006-01-02T15:04:05-07:00") + `'))`,
 			Expected: timeInLocalTZ,
 		},
 		{
