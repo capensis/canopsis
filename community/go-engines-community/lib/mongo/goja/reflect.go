@@ -93,7 +93,9 @@ func transformValue(vm *goja.Runtime, v goja.Value) (any, error) {
 	case reflect.Array, reflect.Slice:
 		res := bson.A{}
 		var err error
+		i := -1
 		vm.ForOf(v, func(curValue goja.Value) (continueIteration bool) {
+			i++
 			var tv any
 			tv, err = transformValue(vm, curValue)
 			if err != nil {
@@ -105,22 +107,10 @@ func transformValue(vm *goja.Runtime, v goja.Value) (any, error) {
 			return true
 		})
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("invalid item at %d: %w", i, err)
 		}
 
 		return res, nil
-		//obj := v.ToObject(vm)
-		//keys := obj.Keys()
-		//res := make(bson.A, len(keys))
-		//var err error
-		//for i := range keys {
-		//	res[i], err = transformValue(vm, obj.Get(strconv.Itoa(i)))
-		//	if err != nil {
-		//		return nil, fmt.Errorf("invalid item %d: %w", i, err)
-		//	}
-		//}
-		//
-		//return res, nil
 	case reflect.Map:
 		obj := v.ToObject(vm)
 		switch obj.ClassName() {
