@@ -5,6 +5,7 @@ import {
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
   ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  WIDGET_COLUMNS_GROUPS,
 } from '@/constants';
 
 export default {
@@ -280,6 +281,16 @@ export default {
     hideActions: 'Masquer les actions',
     hideMassSelection: 'Masquer la sélection en masse',
     hideToolbar: 'Masquer la barre de tâches',
+  },
+  columnsGroups: {
+    [WIDGET_COLUMNS_GROUPS.basic]: 'Basique',
+    [WIDGET_COLUMNS_GROUPS.messages]: 'Messages',
+    [WIDGET_COLUMNS_GROUPS.dates]: 'Dates',
+    [WIDGET_COLUMNS_GROUPS.counters]: 'Compteurs',
+    [WIDGET_COLUMNS_GROUPS.other]: 'Autre',
+
+    [WIDGET_COLUMNS_GROUPS.entityParameters]: 'Paramètres d\'entité',
+    [WIDGET_COLUMNS_GROUPS.ticketParameters]: 'Paramètres du ticket',
   },
   columnsSettings: {
     title: 'Paramètres des colonnes',
