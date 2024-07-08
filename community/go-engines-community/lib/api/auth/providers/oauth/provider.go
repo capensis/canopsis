@@ -353,7 +353,7 @@ func (p *provider) Callback(c *gin.Context) {
 func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string, userInfo map[string]any) (*security.User, bool) {
 	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
-		roleNotFoundError := roleprovider.ErrRoleNotFound{}
+		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
 			p.logger.Err(roleNotFoundError).Msg("user registration failed")
 			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
