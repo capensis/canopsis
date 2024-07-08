@@ -319,8 +319,16 @@ export default {
     top: 0;
   }
 
-  &-menu .v-list-item {
-    padding-left: 24px;
+  &-menu {
+    .v-subheader {
+      font-size: 16px;
+      font-weight: 700;
+      color: inherit;
+    }
+
+    .v-list-item {
+      padding-left: 24px;
+    }
   }
 }
 </style>
