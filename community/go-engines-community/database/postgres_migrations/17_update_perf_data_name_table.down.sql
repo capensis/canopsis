@@ -1,7 +1,7 @@
 BEGIN;
 
 DROP INDEX IF EXISTS perf_data_name_name_idx;
-DROP TABLE IF EXISTS perf_data_name;
+DROP TABLE IF EXISTS perf_data_name CASCADE;
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS perf_data_name AS
 SELECT name, unit
