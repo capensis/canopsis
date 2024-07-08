@@ -63,6 +63,7 @@ import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -72,6 +73,9 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesViewGroupMixin,
+    submittableMixinCreator({
+      method: 'selectTab',
+    }),
   ],
   data() {
     return {
