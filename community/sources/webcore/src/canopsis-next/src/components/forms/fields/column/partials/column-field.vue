@@ -51,6 +51,7 @@
           :label="$tc('common.column', 1)"
           :error-messages="errors.collect(`${name}.column`)"
           :name="`${name}.column`"
+          :menu-props="selectMenuProps"
           @change="changeColumn"
         />
         <v-tooltip left>
@@ -95,16 +96,16 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
 import { computed, ref } from 'vue';
 
 import {
   ENTITIES_TYPES,
-  ALARM_LIST_WIDGET_COLUMNS,
-  CONTEXT_WIDGET_COLUMNS,
+  ALARM_FIELDS,
+  ALARM_OUTPUT_FIELDS,
+  ALARM_LIST_WIDGET_GROUPED_COLUMNS,
+  CONTEXT_WIDGET_GROUPED_COLUMNS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
-  ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
@@ -182,11 +183,35 @@ export default {
     const expanded = ref(!props.column?.column);
     const isCustom = ref(false);
 
-    const { tc } = useI18n();
+    const { t, tc } = useI18n();
     const validator = useValidator();
     const { updateModel } = useModelField(props, emit);
     const { booted: bootedExpandPanel } = useAsyncBootingChild(expanded.value);
     const { hasChildrenError } = useValidationChildren();
+
+    const selectMenuProps = {
+      contentClass: 'column-field-menu',
+    };
+
+    const groupedColumnsToColumns = (groupedColumns = {}, keys = {}) => (
+      Object.entries(groupedColumns).reduce((acc, [group, items]) => {
+        const preparedItems = items.map(value => ({
+          value,
+          text: tc(keys[value], 2),
+        }));
+
+        if (!preparedItems.length) {
+          return acc;
+        }
+
+        acc.push(
+          { header: t(`settings.columnsGroups.${group}`) },
+          ...preparedItems,
+        );
+
+        return acc;
+      }, [])
+    );
 
     /**
      * COMPUTED
@@ -194,20 +219,16 @@ export default {
     const isAlarmType = computed(() => props.type === ENTITIES_TYPES.alarm);
 
     const alarmListAvailableColumns = computed(() => {
-      const columns = props.withInstructions
-        ? ALARM_LIST_WIDGET_COLUMNS
-        : omit(ALARM_LIST_WIDGET_COLUMNS, ['assignedInstructions']);
+      const columns = groupedColumnsToColumns(ALARM_LIST_WIDGET_GROUPED_COLUMNS, ALARM_FIELDS_TO_LABELS_KEYS);
 
-      return Object.values(columns).map(value => ({
-        value,
-        text: tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
-      }));
+      return props.withInstructions
+        ? columns.filter(({ value }) => value !== ALARM_FIELDS.assignedInstructions)
+        : columns;
     });
 
-    const contextAvailableColumns = computed(() => Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
-      value,
-      text: tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
-    })));
+    const contextAvailableColumns = computed(() => (
+      groupedColumnsToColumns(CONTEXT_WIDGET_GROUPED_COLUMNS, ENTITY_FIELDS_TO_LABELS_KEYS)
+    ));
 
     const availableColumns = computed(() => {
       const columns = isAlarmType.value
@@ -234,7 +255,7 @@ export default {
         newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(column);
       }
 
-      this.updateModel(newValue);
+      updateModel(newValue);
     };
 
     const convertToCustom = () => {
@@ -279,6 +300,7 @@ export default {
       columnLabelFieldName,
       columnLabelErrorMessages,
       hasChildrenError,
+      selectMenuProps,
 
       changeColumn,
       convertToCustom,
@@ -295,6 +317,18 @@ export default {
     position: absolute;
     right: 0;
     top: 0;
+  }
+
+  &-menu {
+    .v-subheader {
+      font-size: 16px;
+      font-weight: 700;
+      color: inherit;
+    }
+
+    .v-list-item {
+      padding-left: 24px;
+    }
   }
 }
 </style>
