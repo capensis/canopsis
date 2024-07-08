@@ -527,7 +527,7 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 
 	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
-		roleNotFoundError := roleprovider.ErrRoleNotFound{}
+		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
 			p.logger.Err(roleNotFoundError).Msg("user registration failed")
 			p.errorRedirect(c, relayUrl, roleNotFoundError.Error())

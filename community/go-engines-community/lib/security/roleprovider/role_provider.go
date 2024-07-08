@@ -12,12 +12,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type ErrRoleNotFound struct {
-	role string
+type ProviderError struct {
+	msg string
 }
 
-func (e ErrRoleNotFound) Error() string {
-	return "role " + e.role + " doesn't exist"
+func (e ProviderError) Error() string {
+	return e.msg
+}
+
+func newProviderError(msg string) ProviderError {
+	return ProviderError{msg: msg}
 }
 
 type roleProvider struct {
@@ -38,7 +42,7 @@ func (v *roleProvider) GetRoleID(ctx context.Context, name string) (string, erro
 	err := v.roleCollection.FindOne(ctx, bson.M{"name": name}, options.FindOne().SetProjection(bson.M{"_id": 1})).Decode(&role)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return "", ErrRoleNotFound{role: name}
+			return "", newProviderError("role " + name + " doesn't exist")
 		}
 
 		return "", err
@@ -92,6 +96,10 @@ func (v *roleProvider) GetValidRoleIDs(ctx context.Context, potentialRoles []str
 }
 
 func (v *roleProvider) getDefaultRole(ctx context.Context, defaultRole string) ([]string, error) {
+	if defaultRole == "" {
+		return nil, newProviderError("no roles found")
+	}
+
 	id, err := v.GetRoleID(ctx, defaultRole)
 	if err != nil {
 		return nil, err
