@@ -29,7 +29,7 @@
       :label="$t('modals.createPbehaviorType.fields.iconName')",
       :hint="$t('modals.createPbehaviorType.iconNameHint')",
       :disabled="onlyColor",
-      required
+      :required="!onlyColor"
     )
       template(#no-data="")
         v-list-tile
