@@ -17,6 +17,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { QUICK_RANGES } from '@/constants';
 
+import Observer from '@/services/observer';
+
 import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { localQueryMixin } from '@/mixins/query/query';
@@ -27,6 +29,13 @@ import AvailabilityBar from '@/components/other/availability/partials/availabili
 const { mapActions: mapAvailabilityActions } = createNamespacedHelpers('availability');
 
 export default {
+  inject: {
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   components: { AvailabilityBar },
   mixins: [localQueryMixin, queryIntervalFilterMixin],
   props: {
@@ -59,6 +68,11 @@ export default {
   },
   mounted() {
     this.fetchList();
+
+    this.$periodicRefresh.register(this.fetchList);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.fetchList);
   },
   methods: {
     ...mapAvailabilityActions({
