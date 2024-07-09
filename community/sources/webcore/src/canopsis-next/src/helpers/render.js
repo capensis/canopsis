@@ -44,14 +44,26 @@ export const getNearestViewportIndexesBound = ({
 
   end = Math.min(batchSize, end);
 
+  const originalMiddleOfVisible = window.scrollY + (window.innerHeight / 2);
+  let middleOfVisible = originalMiddleOfVisible;
+
   const { top: wrapperTop } = wrapperEl.getBoundingClientRect();
-  const middleOfVisible = window.scrollY + (window.innerHeight / 2);
+
+  wrapperEl.querySelectorAll('.v-data-table__expanded__content').forEach((element) => {
+    const { height: expandPanelHeight, top: expandPanelTop } = element.getBoundingClientRect();
+
+    if (expandPanelTop < originalMiddleOfVisible) {
+      middleOfVisible -= expandPanelHeight;
+    }
+  });
 
   if (wrapperTop < window.scrollY) {
     const middleItemIndex = Math.abs(Math.round((middleOfVisible - (wrapperTop + window.scrollY)) / height));
 
-    start = Math.max(halfBatchSize - middleItemIndex, 0);
-    end = Math.min(halfBatchSize + middleItemIndex, length - 1);
+    const startDiff = middleItemIndex - halfBatchSize;
+
+    start = Math.max(startDiff, 0);
+    end = Math.min(middleItemIndex + halfBatchSize + (startDiff < 0 ? -startDiff : 0), length - 1);
   }
 
   return { start, end };
