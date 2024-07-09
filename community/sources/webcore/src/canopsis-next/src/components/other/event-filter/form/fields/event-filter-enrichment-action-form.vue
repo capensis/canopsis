@@ -20,12 +20,14 @@
             key="description"
           )
           v-layout(v-if="isStringDictionaryValueType")
-            c-payload-text-field(
+            v-text-field(
               v-field="form.value",
+              v-validate="'required'",
               :label="$t('common.value')",
               :name="valueFieldName",
               key="value",
-              required,
+              :error-messages="errors.collect(valueFieldName)",
+              prefix="Event.Extra.",
               clearable
             )
           v-layout(v-else)
