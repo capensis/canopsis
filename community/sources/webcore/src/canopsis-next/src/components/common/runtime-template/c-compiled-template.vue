@@ -47,7 +47,10 @@ export default {
   },
   watch: {
     template: 'compileTemplate',
-    context: 'compileTemplate',
+    context: {
+      deep: true,
+      handler: 'compileTemplate',
+    },
     parentElement: 'compileTemplate',
     sanitizeOptions: 'compileTemplate',
     linkifyOptions: 'compileTemplate',
