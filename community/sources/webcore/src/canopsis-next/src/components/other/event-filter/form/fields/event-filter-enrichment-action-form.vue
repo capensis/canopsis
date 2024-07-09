@@ -34,12 +34,14 @@
             :label="$t('common.description')"
           />
           <v-layout v-if="isStringDictionaryValueType">
-            <c-payload-text-field
+            <v-text-field
               v-field="form.value"
+              v-validate="'required'"
               key="value"
               :label="$t('common.value')"
               :name="valueFieldName"
-              required
+              :error-messages="errors.collect(valueFieldName)"
+              prefix="Event.Extra."
               clearable
             />
           </v-layout>
