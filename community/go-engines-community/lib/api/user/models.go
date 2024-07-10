@@ -197,6 +197,8 @@ type User struct {
 	Updated                *datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
+
+	Deletable *bool `bson:"-" json:"deletable,omitempty"`
 }
 
 type Role struct {
