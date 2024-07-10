@@ -10080,6 +10080,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/withFlags'
         - name: permission
           in: query
           description: role permission
