@@ -13,6 +13,7 @@ const (
 	spaceRune        = ' '
 	percentRune      = '%'
 	undefinedValRune = 'U'
+	tempUnit         = "°C"
 	invalidIndex     = -1
 )
 
@@ -160,7 +161,7 @@ func parsePerfDataValue(s string) (float64, string, bool, int) {
 		unit = valWithUnit[i:]
 	}
 
-	if unit != "" && unit != string(percentRune) {
+	if unit != "" && unit != string(percentRune) && unit != tempUnit {
 		for _, r := range unit {
 			if !unicode.IsLetter(r) {
 				return 0, "", false, invalidIndex
