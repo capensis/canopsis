@@ -86,7 +86,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
 			if r.WithFlags {
-				isNotAdmin := res.Data[i].ID != security.RoleAdmin
+				isNotAdmin := res.Data[i].Name != security.RoleAdmin
 				res.Data[i].Editable = &isNotAdmin
 				res.Data[i].Deletable = &isNotAdmin
 			}
@@ -162,6 +162,15 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
+		err = s.dbCollection.FindOne(ctx, bson.M{"_id": id, "name": security.RoleAdmin}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return ErrUpdateAdminRole
+		}
+
 		res, err := s.dbCollection.UpdateOne(ctx,
 			bson.M{"_id": id},
 			bson.M{"$set": bson.M{
@@ -174,7 +183,9 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 		if err != nil || res.MatchedCount == 0 {
 			return nil
 		}
+
 		role, err = s.GetOneBy(ctx, id)
+
 		return err
 	})
 	if err != nil {
@@ -185,6 +196,15 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id, "name": security.RoleAdmin}).Err()
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return false, err
+	}
+
+	if err == nil {
+		return false, ErrDeleteAdminRole
+	}
+
 	res := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id})
 	if err := res.Err(); err != nil {
 		if !errors.Is(err, mongodriver.ErrNoDocuments) {

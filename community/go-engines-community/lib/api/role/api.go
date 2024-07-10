@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
 
@@ -108,14 +107,7 @@ func (a *api) Create(c *gin.Context) {
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	id := c.Param("id")
-
-	if id == security.RoleAdmin {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "admin cannot be updated"})
-		return
-	}
-
 	request := EditRequest{}
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -123,6 +115,12 @@ func (a *api) Update(c *gin.Context) {
 
 	role, err := a.store.Update(c, id, request)
 	if err != nil {
+		if errors.Is(err, ErrUpdateAdminRole) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -145,16 +143,11 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-
-	if id == security.RoleAdmin {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "admin cannot be deleted"})
-		return
-	}
-
 	ok, err := a.store.Delete(c, id)
 	if err != nil {
-		if errors.Is(err, ErrLinkedToUser) {
+		if errors.Is(err, ErrLinkedToUser) || errors.Is(err, ErrDeleteAdminRole) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
 			return
 		}
 
@@ -163,6 +156,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
 		return
 	}
 
