@@ -154,6 +154,16 @@ func TestEvent_GetPerfData(t *testing.T) {
 		{
 			Input: "cpu=20&",
 		},
+		{
+			Input: "temp=20°C",
+			Expected: []types.PerfData{
+				{
+					Name:  "temp_°C",
+					Value: 20,
+					Unit:  "°C",
+				},
+			},
+		},
 	}
 
 	event := types.Event{}
