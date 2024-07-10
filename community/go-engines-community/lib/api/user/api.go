@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -53,7 +54,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c, query)
+	users, err := a.store.Find(c, query, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -130,8 +131,15 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c, request)
+	user, err := a.store.Update(c, request, c.MustGet(auth.UserKey).(string))
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -167,8 +175,15 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Patch(c, request)
+	user, err := a.store.Patch(c, request, c.MustGet(auth.UserKey).(string))
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -193,9 +208,15 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -250,7 +271,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	contextUserId := c.MustGet(auth.UserKey).(string)
 	userIds := make([]string, 0)
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		user, err := a.store.Update(c, UpdateRequest(request))
+		user, err := a.store.Update(c, UpdateRequest(request), contextUserId)
 		if err != nil || user == nil {
 			return "", err
 		}
@@ -276,7 +297,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 	contextUserId := c.MustGet(auth.UserKey).(string)
 	userIds := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID, contextUserId)
 		if err != nil || !ok {
 			return "", err
 		}

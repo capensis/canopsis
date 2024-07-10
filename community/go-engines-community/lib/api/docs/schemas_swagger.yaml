@@ -26,6 +26,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      deletable:
+        type: boolean
       display_name:
         type: string
       email:
@@ -5605,6 +5607,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      deletable:
+        type: boolean
       display_name:
         type: string
       email:
