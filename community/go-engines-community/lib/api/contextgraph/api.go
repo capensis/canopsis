@@ -56,7 +56,7 @@ func (a *api) ImportAll(c *gin.Context) {
 		return
 	}
 
-	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
+	jobID, err := a.createImportJob(c, job, raw)
 	if err != nil {
 		panic(err)
 	}
@@ -87,7 +87,7 @@ func (a *api) ImportPartial(c *gin.Context) {
 		return
 	}
 
-	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
+	jobID, err := a.createImportJob(c, job, raw)
 	if err != nil {
 		panic(err)
 	}
@@ -112,7 +112,7 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 // Status
 // @Success 200 {object} contextgraph.ImportJob
 func (a *api) Status(c *gin.Context) {
-	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
+	status, err := a.reporter.GetStatus(c, c.Param("id"))
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)

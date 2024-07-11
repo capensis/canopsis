@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"runtime/debug"
@@ -25,6 +26,16 @@ type Router func(*gin.Engine)
 type Worker func(context.Context)
 
 type DeferFunc func(ctx context.Context)
+
+// FatalWorkerError should be used in the Worker function with panic() call, when there is a need to stop the api, when worker fails.
+// the worker will be recovered from the panic, but it won't be restarted and the api will be stopped normally.
+type FatalWorkerError struct {
+	err error
+}
+
+func (e FatalWorkerError) Error() string {
+	return e.err.Error()
+}
 
 // API is used to implement API http server.
 type API interface {
@@ -92,14 +103,13 @@ func (a *api) AddNoMethod(handlers ...gin.HandlerFunc) {
 	a.noMethodHandlers = handlers
 }
 
-func (a *api) Run(ctx context.Context) (resErr error) {
-	handler := a.registerRoutes()
-	workersGroup := a.runWorkers(ctx)
+func (a *api) Run(ctx context.Context) error {
+	apiErrGroup, ctx := errgroup.WithContext(ctx)
 
 	// Start server.
 	server := &http.Server{
 		Addr:              a.addr,
-		Handler:           handler,
+		Handler:           a.registerRoutes(),
 		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
@@ -121,13 +131,20 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 		}
 	}()
 
-	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		a.logger.Err(err).Msg("server fail to start")
+	apiErrGroup.Go(func() error {
+		return a.runWorkers(ctx).Wait()
+	})
+	apiErrGroup.Go(func() error {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			a.logger.Err(err).Msg("server fail to start")
 
-		return err
-	}
+			return err
+		}
 
-	return workersGroup.Wait()
+		return nil
+	})
+
+	return apiErrGroup.Wait()
 }
 
 func (a *api) SetWebsocketHub(v websocket.Hub) {
@@ -181,7 +198,7 @@ func restartGoroutine(
 	f func() error,
 	logger zerolog.Logger,
 ) {
-	g.Go(func() error {
+	g.Go(func() (gErr error) {
 		defer func() {
 			if r := recover(); r != nil {
 				var err error
@@ -191,6 +208,12 @@ func restartGoroutine(
 				}
 
 				logger.Err(err).Str("worker", key).Msgf("panic recovered\n%s\n", debug.Stack())
+
+				var fatalErr FatalWorkerError
+				if errors.As(err, &fatalErr) {
+					gErr = fatalErr
+					return
+				}
 
 				restartGoroutine(g, key, f, logger)
 			}

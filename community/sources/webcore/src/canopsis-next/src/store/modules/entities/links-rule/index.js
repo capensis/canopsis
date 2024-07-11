@@ -9,7 +9,7 @@ export default createCRUDModule({
 }, {
   actions: {
     bulkRemove(context, { data }) {
-      return request.delete(API_ROUTES.linkRule, { data });
+      return request.delete(API_ROUTES.bulkLinkRule, { data });
     },
 
     fetchLinkCategoriesWithoutStore(context, { params } = {}) {

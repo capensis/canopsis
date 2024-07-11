@@ -3,6 +3,7 @@ import { COLORS } from '@/config';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
 
+import { WIDGET_COLUMNS_GROUPS } from './common';
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const ENTITY_FIELDS = {
@@ -38,6 +39,7 @@ export const ENTITY_FIELDS = {
   alarmLastComment: 'alarm_last_comment',
   tags: 'tags',
   lastComment: 'last_comment',
+  sourceType: 'source_type',
 
   /**
    * OBJECTS
@@ -338,6 +340,39 @@ const {
 
 export const CONTEXT_WIDGET_COLUMNS = contextWidgetColumns;
 
+export const CONTEXT_WIDGET_GROUPED_COLUMNS = {
+  [WIDGET_COLUMNS_GROUPS.basic]: [
+    ENTITY_FIELDS.id,
+    ENTITY_FIELDS.name,
+    ENTITY_FIELDS.categoryName,
+    ENTITY_FIELDS.type,
+    ENTITY_FIELDS.component,
+    ENTITY_FIELDS.connector,
+    ENTITY_FIELDS.impactLevel,
+    ENTITY_FIELDS.impactState,
+    ENTITY_FIELDS.state,
+    ENTITY_FIELDS.status,
+    ENTITY_FIELDS.infos,
+    ENTITY_FIELDS.links,
+  ],
+  [WIDGET_COLUMNS_GROUPS.dates]: [
+    ENTITY_FIELDS.lastEventDate,
+    ENTITY_FIELDS.lastPbehaviorDate,
+    ENTITY_FIELDS.lastUpdateDate,
+    ENTITY_FIELDS.idleSince,
+    ENTITY_FIELDS.imported,
+  ],
+  [WIDGET_COLUMNS_GROUPS.counters]: [
+    ENTITY_FIELDS.koEvents,
+    ENTITY_FIELDS.okEvents,
+  ],
+  [WIDGET_COLUMNS_GROUPS.other]: [
+    ENTITY_FIELDS.pbehaviorInfo,
+    ENTITY_FIELDS.enabled,
+    ENTITY_FIELDS.importSource,
+  ],
+};
+
 export const ENTITY_PATTERN_FIELDS = {
   id: ENTITY_FIELDS.id,
   name: ENTITY_FIELDS.name,
@@ -377,6 +412,7 @@ export const ENTITY_TEMPLATE_FIELDS = {
   alarmLastComment: `entity.${ENTITY_FIELDS.alarmLastComment}`,
   tags: `entity.${ENTITY_FIELDS.tags}`,
   lastComment: `entity.${ENTITY_FIELDS.lastComment}`,
+  sourceType: `entity.${ENTITY_FIELDS.sourceType}`,
 };
 
 export const ENTITY_FIELDS_TO_LABELS_KEYS = {
@@ -412,6 +448,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.alarmLastComment]: 'entity.fields.alarmLastComment',
   [ENTITY_FIELDS.tags]: 'common.tag',
   [ENTITY_FIELDS.lastComment]: 'common.lastComment',
+  [ENTITY_FIELDS.sourceType]: 'common.sourceType',
 
   /**
    * OBJECTS

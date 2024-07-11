@@ -2,6 +2,7 @@
 
 exports[`alarm-metric-presets Renders \`alarm-metric-presets\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Select metrics"
 >
   <c-alarm-metric-presets-field-stub
@@ -14,6 +15,7 @@ exports[`alarm-metric-presets Renders \`alarm-metric-presets\` with custom props
 
 exports[`alarm-metric-presets Renders \`alarm-metric-presets\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Select metrics"
 >
   <c-alarm-metric-presets-field-stub

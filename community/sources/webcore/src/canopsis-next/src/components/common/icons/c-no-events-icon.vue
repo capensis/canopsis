@@ -1,6 +1,7 @@
 <template>
-  <v-tooltip
+  <c-simple-tooltip
     v-if="value"
+    :content="message"
     :max-width="maxWidth"
     :top="top"
     :right="right"
@@ -17,8 +18,7 @@
         sync_problem
       </v-icon>
     </template>
-    <span>{{ message }}</span>
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>

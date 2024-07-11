@@ -25,9 +25,16 @@ type Type struct {
 	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description" json:"description"`
 	Type        string `bson:"type" json:"type"`
-	Priority    int    `bson:"priority" json:"priority"`
+	Priority    int64  `bson:"priority" json:"priority"`
 	IconName    string `bson:"icon_name" json:"icon_name"`
 	Color       string `bson:"color" json:"color"`
+
+	Author  string            `bson:"author" json:"author"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden bool `bson:"hidden" json:"hidden"`
 }
 
 type Comments []*Comment

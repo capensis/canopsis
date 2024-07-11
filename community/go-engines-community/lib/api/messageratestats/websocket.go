@@ -15,7 +15,7 @@ import (
 )
 
 type Watcher interface {
-	StartWatch(ctx context.Context, connId, userId, roomId string, data any) error
+	StartWatch(ctx context.Context, connId, userID, roomId string, data any) error
 	StopWatch(connId, roomId string) error
 }
 

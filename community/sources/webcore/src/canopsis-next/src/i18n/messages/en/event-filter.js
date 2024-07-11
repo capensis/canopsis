@@ -99,5 +99,10 @@ export default {
       message: 'This action can be used for setting tags from other event fields using a template.',
       description: 'Tags of the format ”Name: Value” can be defined using this action.\nThe parameters of the action are:\n- description (optional): the description.\n- name: the name of the tag group\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
     },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
+      text: 'Set entity info from a dictionary',
+      message: 'This action can be used for setting entity infos from event fields with a dictionary type node.',
+      description: 'The parameters of the action are:\n- Value: the event field from which the infos are retrieved. The value must contain an array of name: value pairs.\n- Description (optional): the description which is used for the entity infos description. If not defined, the entity infos description is left empty.',
+    },
   },
 };

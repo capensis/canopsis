@@ -1,6 +1,7 @@
 package pbehaviorexception
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -9,6 +10,7 @@ import (
 	"mime/multipart"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -26,21 +28,22 @@ import (
 const maxImportDateInYears = 20
 
 type Store interface {
-	Insert(ctx context.Context, model *Exception) error
+	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetOneById(ctx context.Context, id string) (*Exception, error)
-	Update(ctx context.Context, model *Exception) (bool, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
+	Update(ctx context.Context, r UpdateRequest) (*Response, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	IsLinked(ctx context.Context, id string) (bool, error)
-	Import(ctx context.Context, name, pbhType string, f multipart.File, fh *multipart.FileHeader) (*Exception, error)
+	Import(ctx context.Context, name, pbhType, userID string, f multipart.File, fh *multipart.FileHeader) (*Response, error)
 }
 
-func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
+func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
 		pbehaviorDbCollection: dbClient.Collection(mongo.PbehaviorMongoCollection),
 		typeDbCollection:      dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "created",
 
@@ -57,36 +60,37 @@ type store struct {
 	defaultSortBy         string
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+	authorProvider         author.Provider
 }
 
-func (s *store) Insert(ctx context.Context, model *Exception) error {
-	if model.ID == "" {
-		model.ID = utils.NewID()
-	}
-
-	created := datetime.NewCpsTime()
-	exdates := make([]pbehavior.Exdate, len(model.Exdates))
-	for i := range model.Exdates {
-		exdates[i].Type = model.Exdates[i].Type.ID
-		exdates[i].Begin = model.Exdates[i].Begin
-		exdates[i].End = model.Exdates[i].End
-	}
-
-	_, err := s.dbCollection.InsertOne(ctx, pbehavior.Exception{
-		ID:          model.ID,
-		Name:        model.Name,
-		Description: model.Description,
-		Exdates:     exdates,
-		Created:     &created,
-	})
-
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
+	doc, err := s.transformRequestToDoc(ctx, r.EditRequest)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	model.Created = created
+	doc.ID = cmp.Or(r.ID, utils.NewID())
+	doc.Created = datetime.NewCpsTime()
+	doc.Updated = datetime.NewCpsTime()
 
-	return nil
+	var res *Response
+
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
+
+		_, err := s.dbCollection.InsertOne(ctx, doc)
+		if err != nil {
+			return err
+		}
+
+		res, err = s.GetByID(ctx, doc.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -96,13 +100,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := r.SortBy
-	if sortBy == "" {
-		sortBy = s.defaultSortBy
-	}
-
-	sort := common.GetSortQuery(sortBy, r.Sort)
+	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	project := getNestedObjectsPipeline()
+	project = append(project, s.authorProvider.Pipeline()...)
 	project = append(project, sort)
 	if r.WithFlags {
 		project = append(project, getDeletablePipeline()...)
@@ -131,65 +131,61 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &result, nil
 }
 
-func (s *store) GetOneById(ctx context.Context, id string) (*Exception, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{"_id": id}},
-	}
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
-	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		var exception Exception
-		err = cursor.Decode(&exception)
+		var res Response
+
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &exception, err
+		return &res, nil
 	}
 
 	return nil, nil
 }
 
-func (s *store) Update(ctx context.Context, model *Exception) (bool, error) {
-	exdates := make([]pbehavior.Exdate, len(model.Exdates))
-	for i := range model.Exdates {
-		exdates[i].Type = model.Exdates[i].Type.ID
-		exdates[i].Begin = model.Exdates[i].Begin
-		exdates[i].End = model.Exdates[i].End
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
+	doc, err := s.transformRequestToDoc(ctx, r.EditRequest)
+	if err != nil {
+		return nil, err
 	}
 
-	res := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": model.ID}, bson.M{"$set": pbehavior.Exception{
-		Name:        model.Name,
-		Description: model.Description,
-		Exdates:     exdates,
-	}})
+	doc.ID = r.ID
+	doc.Updated = datetime.NewCpsTime()
 
-	if err := res.Err(); err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
+	var res *Response
+
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
+
+		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
+		if err != nil || result.MatchedCount == 0 {
+			return err
 		}
 
-		return false, err
-	}
-
-	var v struct{ Created *datetime.CpsTime }
-	err := res.Decode(&v)
+		res, err = s.GetByID(ctx, doc.ID)
+		return err
+	})
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	model.Created = *v.Created
-
-	return true, nil
+	return res, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	isLinked, err := s.IsLinked(ctx, id)
 	if err != nil {
 		return false, err
@@ -199,7 +195,20 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrLinkedException
 	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+	var deleted int64
+
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
 
 	return deleted > 0, err
 }
@@ -218,7 +227,7 @@ func (s *store) IsLinked(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Import(ctx context.Context, name, pbhType string, f multipart.File, fh *multipart.FileHeader) (*Exception, error) {
+func (s *store) Import(ctx context.Context, name, pbhType, userID string, f multipart.File, fh *multipart.FileHeader) (*Response, error) {
 	err := s.typeDbCollection.FindOne(ctx, bson.M{"_id": pbhType}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -242,9 +251,9 @@ func (s *store) Import(ctx context.Context, name, pbhType string, f multipart.Fi
 
 	switch mediaType {
 	case "application/json":
-		return s.importJson(ctx, name, pbhType, f)
+		return s.importJson(ctx, name, pbhType, userID, f)
 	case "text/calendar":
-		return s.importICS(ctx, name, pbhType, f)
+		return s.importICS(ctx, name, pbhType, userID, f)
 	default:
 		return nil, common.NewValidationError("file", "File is not supported.")
 	}
@@ -252,9 +261,9 @@ func (s *store) Import(ctx context.Context, name, pbhType string, f multipart.Fi
 
 func (s *store) importJson(
 	ctx context.Context,
-	name, pbhType string,
+	name, pbhType, userID string,
 	r io.Reader,
-) (*Exception, error) {
+) (*Response, error) {
 	dates := make(map[string]string)
 	d := json.NewDecoder(r)
 	err := d.Decode(&dates)
@@ -264,14 +273,14 @@ func (s *store) importJson(
 
 	location := s.timezoneConfigProvider.Get().Location
 	exdates := make([]pbehavior.Exdate, 0, len(dates))
-	now := time.Now()
+	now := datetime.NewCpsTime()
 	for dateStr := range dates {
 		start, err := time.ParseInLocation(time.DateOnly, dateStr, location)
 		if err != nil {
 			return nil, common.NewValidationError("file", "File is not supported.")
 		}
 		end := start.AddDate(0, 0, 1)
-		if end.Before(now) {
+		if end.Before(now.Time) {
 			continue
 		}
 
@@ -291,11 +300,12 @@ func (s *store) importJson(
 	doc := pbehavior.Exception{
 		ID:      utils.NewID(),
 		Name:    name,
+		Author:  userID,
 		Exdates: exdates,
-		Created: &datetime.CpsTime{Time: now},
+		Created: datetime.NewCpsTime(),
 	}
 
-	var response *Exception
+	var response *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
@@ -304,7 +314,7 @@ func (s *store) importJson(
 			return err
 		}
 
-		response, err = s.GetOneById(ctx, doc.ID)
+		response, err = s.GetByID(ctx, doc.ID)
 		return err
 	})
 
@@ -313,12 +323,12 @@ func (s *store) importJson(
 
 func (s *store) importICS(
 	ctx context.Context,
-	name, pbhType string,
+	name, pbhType, userID string,
 	r io.Reader,
-) (*Exception, error) {
+) (*Response, error) {
 	cal := ics.NewParser(r)
-	now := time.Now()
-	intervalStart := now
+	now := datetime.NewCpsTime()
+	intervalStart := now.Time
 	intervalEnd := intervalStart.AddDate(maxImportDateInYears, 0, 0)
 	cal.Start = &intervalStart
 	cal.End = &intervalEnd
@@ -336,7 +346,7 @@ func (s *store) importICS(
 
 		start := adjustCalendarTime(*event.Start, location)
 		end := adjustCalendarTime(*event.End, location)
-		if end.Before(now) {
+		if end.Before(now.Time) {
 			continue
 		}
 
@@ -356,11 +366,12 @@ func (s *store) importICS(
 	doc := pbehavior.Exception{
 		ID:      utils.NewID(),
 		Name:    name,
+		Author:  userID,
 		Exdates: exdates,
-		Created: &datetime.CpsTime{Time: now},
+		Created: now,
 	}
 
-	var response *Exception
+	var response *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
@@ -369,7 +380,7 @@ func (s *store) importICS(
 			return err
 		}
 
-		response, err = s.GetOneById(ctx, doc.ID)
+		response, err = s.GetByID(ctx, doc.ID)
 		return err
 	})
 
@@ -392,7 +403,9 @@ func getNestedObjectsPipeline() []bson.M {
 			"_id":         "$_id",
 			"name":        bson.M{"$first": "$name"},
 			"description": bson.M{"$first": "$description"},
+			"author":      bson.M{"$first": "$author"},
 			"created":     bson.M{"$first": "$created"},
+			"updated":     bson.M{"$first": "$updated"},
 			"deletable":   bson.M{"$first": "$deletable"},
 			"exdates":     bson.M{"$push": "$exdates"},
 		}},
@@ -447,4 +460,66 @@ func adjustCalendarTime(t time.Time, location *time.Location) time.Time {
 
 	y, m, d := t.Date()
 	return time.Date(y, m, d, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), location)
+}
+
+func (s *store) transformRequestToDoc(ctx context.Context, r EditRequest) (*pbehavior.Exception, error) {
+	var err error
+	var exception pbehavior.Exception
+
+	exception.Name = r.Name
+	exception.Description = r.Description
+	exception.Author = r.Author
+	exception.Exdates, err = s.transformExdatesRequestToModel(ctx, r.Exdates)
+	if err != nil {
+		return nil, err
+	}
+
+	return &exception, nil
+}
+
+func (s *store) transformExdatesRequestToModel(ctx context.Context, r []ExdateRequest) ([]pbehavior.Exdate, error) {
+	if len(r) == 0 {
+		return []pbehavior.Exdate{}, nil
+	}
+
+	pbhTypes := make([]string, len(r))
+	for i := range r {
+		pbhTypes[i] = r[i].Type
+	}
+
+	res, err := s.typeDbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhTypes}})
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Close(ctx)
+	typesByID := make(map[string]*pbehavior.Type)
+	for res.Next(ctx) {
+		var t pbehavior.Type
+		err = res.Decode(&t)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := typesByID[t.ID]; !ok {
+			typesByID[t.ID] = &t
+		}
+	}
+
+	exdates := make([]pbehavior.Exdate, len(r))
+	for i := range r {
+		t, ok := typesByID[r[i].Type]
+		if !ok {
+			return nil, ErrTypeNotExists
+		}
+
+		exdates[i] = pbehavior.Exdate{
+			Exdate: types.Exdate{
+				Begin: r[i].Begin,
+				End:   r[i].End,
+			},
+			Type: t.ID,
+		}
+	}
+
+	return exdates, nil
 }

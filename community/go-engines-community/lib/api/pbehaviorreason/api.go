@@ -1,46 +1,37 @@
 package pbehaviorreason
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func NewApi(
-	transformer ModelTransformer,
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) common.CrudAPI {
 	return &api{
-		transformer:  transformer,
-		store:        store,
-		computeChan:  computeChan,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		computeChan: computeChan,
+		logger:      logger,
 	}
 }
 
 type api struct {
-	transformer  ModelTransformer
-	store        Store
-	computeChan  chan<- rpc.PbehaviorRecomputeEvent
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	computeChan chan<- rpc.PbehaviorRecomputeEvent
+	logger      zerolog.Logger
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Reason}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -50,7 +41,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), r)
+	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -65,8 +56,8 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Create
-// @Param body body Request true "body"
-// @Success 201 {object} Reason
+// @Param body body CreateRequest true "body"
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
 
@@ -76,29 +67,24 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	reason := a.transformer.TransformCreateRequestToModel(request)
-	err := a.store.Insert(c.Request.Context(), reason)
+	res, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypePbehaviorReason,
-		ValueID:   reason.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
-	c.JSON(http.StatusCreated, reason)
+	c.JSON(http.StatusCreated, res)
 }
 
 // Get
 // @Param id path string true "reason id"
-// @Success 200 {object} Reason
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	reason, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+	reason, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -112,8 +98,8 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Update
-// @Param body body Request true "body"
-// @Success 200 {object} Reason
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -125,40 +111,29 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	reason := a.transformer.TransformUpdateRequestToModel(request)
-	ok, err := a.store.Update(c.Request.Context(), reason)
-
+	res, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
 
-	if !ok {
+	if res == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	isLinked, err := a.store.IsLinkedToPbehavior(c.Request.Context(), reason.ID)
+	isLinked, err := a.store.IsLinkedToPbehavior(c, res.ID)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePbehaviorReason,
-		ValueID:   reason.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	if isLinked {
 		a.sendComputeTask()
 	}
-	c.JSON(http.StatusOK, reason)
+	c.JSON(http.StatusOK, res)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
@@ -171,15 +146,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePbehaviorReason,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusNoContent, nil)

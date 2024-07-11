@@ -1,6 +1,6 @@
 <template>
   <div>
-    <top-bar @toggleSideBar="toggleSideBar" />
+    <top-bar @toggle:sideBar="toggleSideBar" />
     <groups-side-bar
       v-if="isShownGroupsSideBar"
       v-model="isOpen"

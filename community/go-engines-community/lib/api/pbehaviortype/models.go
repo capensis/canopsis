@@ -1,7 +1,9 @@
 package pbehaviortype
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 )
 
 type ListRequest struct {
@@ -18,8 +20,8 @@ type EditRequest struct {
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
 	Priority    int64  `json:"priority" binding:"required,min=1"`
 	Color       string `json:"color" binding:"required,iscolor"`
-
-	Hidden *bool `json:"hidden,omitempty"`
+	Author      string `json:"author" swaggerignore:"true"`
+	Hidden      bool   `json:"hidden"`
 }
 
 type CreateRequest struct {
@@ -34,24 +36,16 @@ type UpdateRequest struct {
 	IconName string `json:"icon_name" binding:"max=255"`
 }
 
-type Type struct {
-	ID          string `bson:"_id,omitempty" json:"_id"`
-	Name        string `bson:"name" json:"name"`
-	Description string `bson:"description" json:"description"`
-	Type        string `bson:"type" json:"type"`
-	Priority    int64  `bson:"priority" json:"priority"`
-	IconName    string `bson:"icon_name" json:"icon_name"`
-	Color       string `bson:"color" json:"color"`
-	Default     *bool  `bson:"default,omitempty" json:"default,omitempty"`
-	Deletable   *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
-
-	// Hidden is used in API to hide documents from the list response
-	Hidden *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
+type Response struct {
+	pbehavior.Type `bson:",inline"`
+	Author         *author.Author `bson:"author" json:"author"`
+	Default        *bool          `bson:"default,omitempty" json:"default,omitempty"`
+	Deletable      *bool          `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }
 
 type AggregationResult struct {
-	Data       []Type `bson:"data" json:"data"`
-	TotalCount int64  `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r AggregationResult) GetTotal() int64 {
