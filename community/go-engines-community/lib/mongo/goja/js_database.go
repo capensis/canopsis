@@ -84,6 +84,21 @@ func (c *jsDatabase) GetCollection(ctx context.Context, collectionName string) m
 	}).getMethods(ctx)
 }
 
+func (c *jsDatabase) RunCommand(ctx context.Context, command goja.Value) (map[string]any, error) {
+	dbCommand, err := transformValue(c.vm, command)
+	if err != nil {
+		return nil, fmt.Errorf("invalid command: %w", err)
+	}
+
+	res := make(map[string]any)
+	err = c.dbClient.RunCommand(ctx, dbCommand).Decode(&res)
+	if err != nil {
+		return nil, fmt.Errorf("error running command: %w", err)
+	}
+
+	return res, nil
+}
+
 func (c *jsDatabase) getMethods(ctx context.Context, collectionNames []string) map[string]any {
 	methods := map[string]any{
 		"createCollection": func(name string, opts goja.Value) (map[string]int, error) {
@@ -94,6 +109,9 @@ func (c *jsDatabase) getMethods(ctx context.Context, collectionNames []string) m
 		},
 		"getCollection": func(collectionName string) map[string]any {
 			return c.GetCollection(ctx, collectionName)
+		},
+		"runCommand": func(command goja.Value) (map[string]any, error) {
+			return c.RunCommand(ctx, command)
 		},
 	}
 	for _, name := range collectionNames {

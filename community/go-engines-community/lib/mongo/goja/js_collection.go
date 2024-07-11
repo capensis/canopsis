@@ -320,6 +320,114 @@ func (c *jsCollection) FindOne(ctx context.Context, filter, opts goja.Value) (an
 	return doc, nil
 }
 
+func (c *jsCollection) FindOneAndDelete(ctx context.Context, filter, opts goja.Value) (any, error) {
+	dbFilter, err := transformValue(c.vm, filter)
+	if err != nil {
+		return nil, fmt.Errorf("invalid filter: %w", err)
+	}
+
+	if dbFilter == nil {
+		dbFilter = bson.M{}
+	}
+
+	dbOpts := options.FindOneAndDelete()
+	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
+		"maxTimeMS": func(v any) error {
+			return setMaxTimeMS[*options.FindOneAndDeleteOptions](v, dbOpts)
+		},
+	})
+	if err != nil {
+		return 0, fmt.Errorf("invalid find one and delete options: %w", err)
+	}
+
+	doc := make(map[string]any)
+	err = c.dbCollection.FindOneAndDelete(ctx, dbFilter, dbOpts).Decode(&doc)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		return nil, fmt.Errorf("error finding and deleting document: %w", err)
+	}
+
+	return doc, nil
+}
+
+func (c *jsCollection) FindOneAndReplace(ctx context.Context, filter, opts goja.Value) (any, error) {
+	dbFilter, err := transformValue(c.vm, filter)
+	if err != nil {
+		return nil, fmt.Errorf("invalid filter: %w", err)
+	}
+
+	if dbFilter == nil {
+		dbFilter = bson.M{}
+	}
+
+	dbOpts := options.FindOneAndReplace()
+	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
+		"maxTimeMS": func(v any) error {
+			return setMaxTimeMS[*options.FindOneAndReplaceOptions](v, dbOpts)
+		},
+		"returnDocument": func(v any) error {
+			return setReturnDocument[*options.FindOneAndReplaceOptions](v, dbOpts)
+		},
+	})
+	if err != nil {
+		return 0, fmt.Errorf("invalid find one and replace options: %w", err)
+	}
+
+	doc := make(map[string]any)
+	err = c.dbCollection.FindOneAndReplace(ctx, dbFilter, dbOpts).Decode(&doc)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		return nil, fmt.Errorf("error finding and replacing document: %w", err)
+	}
+
+	return doc, nil
+}
+
+func (c *jsCollection) FindOneAndUpdate(ctx context.Context, filter, opts goja.Value) (any, error) {
+	dbFilter, err := transformValue(c.vm, filter)
+	if err != nil {
+		return nil, fmt.Errorf("invalid filter: %w", err)
+	}
+
+	if dbFilter == nil {
+		dbFilter = bson.M{}
+	}
+
+	dbOpts := options.FindOneAndUpdate()
+	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
+		"arrayFilters": func(v any) error {
+			return setArrayFilters[*options.FindOneAndUpdateOptions](v, dbOpts)
+		},
+		"maxTimeMS": func(v any) error {
+			return setMaxTimeMS[*options.FindOneAndUpdateOptions](v, dbOpts)
+		},
+		"returnDocument": func(v any) error {
+			return setReturnDocument[*options.FindOneAndUpdateOptions](v, dbOpts)
+		},
+	})
+	if err != nil {
+		return 0, fmt.Errorf("invalid find one and update options: %w", err)
+	}
+
+	doc := make(map[string]any)
+	err = c.dbCollection.FindOneAndUpdate(ctx, dbFilter, dbOpts).Decode(&doc)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		return nil, fmt.Errorf("error finding and updating document: %w", err)
+	}
+
+	return doc, nil
+}
+
 func (c *jsCollection) InsertOne(ctx context.Context, doc, opts goja.Value) (map[string]any, error) {
 	dbDoc, err := transformValue(c.vm, doc)
 	if err != nil {
@@ -431,6 +539,40 @@ func (c *jsCollection) UpdateMany(ctx context.Context, filter, update, opts goja
 	res, err := c.dbCollection.UpdateMany(ctx, dbFilter, dbUpdate, dbOpts)
 	if err != nil {
 		return nil, fmt.Errorf("error updating documents: %w", err)
+	}
+
+	return map[string]any{
+		"insertedId":    res.UpsertedID,
+		"matchedCount":  res.MatchedCount,
+		"modifiedCount": res.ModifiedCount,
+		"upsertedCount": res.UpsertedCount,
+	}, nil
+}
+
+func (c *jsCollection) ReplaceOne(ctx context.Context, filter, replacement, opts goja.Value) (map[string]any, error) {
+	dbFilter, err := transformValue(c.vm, filter)
+	if err != nil {
+		return nil, fmt.Errorf("invalid filter: %w", err)
+	}
+
+	if dbFilter == nil {
+		dbFilter = bson.M{}
+	}
+
+	dbReplacement, err := transformValue(c.vm, replacement)
+	if err != nil {
+		return nil, fmt.Errorf("invalid replacement: %w", err)
+	}
+
+	dbOpts := options.Replace()
+	err = transformOptions(c.vm, opts, dbOpts)
+	if err != nil {
+		return nil, fmt.Errorf("invalid replace options: %w", err)
+	}
+
+	res, err := c.dbCollection.ReplaceOne(ctx, dbFilter, dbReplacement, dbOpts)
+	if err != nil {
+		return nil, fmt.Errorf("error replacing document: %w", err)
 	}
 
 	return map[string]any{
@@ -575,6 +717,24 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 	}, nil
 }
 
+func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) ([]any, error) {
+	dbFilter, err := transformValue(c.vm, filter)
+	if err != nil {
+		return nil, fmt.Errorf("invalid filter: %w", err)
+	}
+
+	if dbFilter == nil {
+		dbFilter = bson.M{}
+	}
+
+	res, err := c.dbCollection.Distinct(ctx, fieldName, dbFilter)
+	if err != nil {
+		return nil, fmt.Errorf("error distinct: %w", err)
+	}
+
+	return res, nil
+}
+
 func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 	return map[string]any{
 		"createIndex": func(orderedKeys, opts, commitQuorum goja.Value) (string, error) {
@@ -604,6 +764,15 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		"findOne": func(filter, opts goja.Value) (any, error) {
 			return c.FindOne(ctx, filter, opts)
 		},
+		"findOneAndDelete": func(filter, opts goja.Value) (any, error) {
+			return c.FindOneAndDelete(ctx, filter, opts)
+		},
+		"findOneAndReplace": func(filter, opts goja.Value) (any, error) {
+			return c.FindOneAndReplace(ctx, filter, opts)
+		},
+		"findOneAndUpdate": func(filter, opts goja.Value) (any, error) {
+			return c.FindOneAndUpdate(ctx, filter, opts)
+		},
 		"insertOne": func(doc, opts goja.Value) (map[string]any, error) {
 			return c.InsertOne(ctx, doc, opts)
 		},
@@ -616,6 +785,9 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		"updateMany": func(filter, update, opts goja.Value) (map[string]any, error) {
 			return c.UpdateMany(ctx, filter, update, opts)
 		},
+		"replaceOne": func(filter, replacement, opts goja.Value) (map[string]any, error) {
+			return c.ReplaceOne(ctx, filter, replacement, opts)
+		},
 		"countDocuments": func(filter, opts goja.Value) (int64, error) {
 			return c.CountDocuments(ctx, filter, opts)
 		},
@@ -624,6 +796,9 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		},
 		"bulkWrite": func(operations, opts goja.Value) (map[string]any, error) {
 			return c.BulkWrite(ctx, operations, opts)
+		},
+		"distinct": func(fieldName string, filter goja.Value) ([]any, error) {
+			return c.Distinct(ctx, fieldName, filter)
 		},
 	}
 }
@@ -671,6 +846,28 @@ func setMaxTimeMS[T any](v any, setter maxTimeMSSetter[T]) error {
 	}
 
 	setter.SetMaxTime(time.Duration(i) * time.Millisecond)
+
+	return nil
+}
+
+type returnDocumentSetter[T any] interface {
+	SetReturnDocument(document options.ReturnDocument) T
+}
+
+func setReturnDocument[T any](v any, setter returnDocumentSetter[T]) error {
+	s, ok := v.(string)
+	if !ok {
+		return errors.New("invalid type for returnDocument")
+	}
+
+	switch s {
+	case "before":
+		setter.SetReturnDocument(options.Before)
+	case "after":
+		setter.SetReturnDocument(options.After)
+	default:
+		return errors.New("invalid returnDocument value: " + s)
+	}
 
 	return nil
 }
