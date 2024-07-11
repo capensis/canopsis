@@ -265,6 +265,7 @@ func benchmarkMessageProcessorWithConfig(
 	p := messageProcessor{
 		FeaturePrintEventOnError: true,
 		AlarmConfigProvider:      alarmConfigProvider,
+		MetricsConfigProvider:    metricsConfigProvider,
 		MetricsSender:            metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop()),
 		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
