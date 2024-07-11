@@ -34,9 +34,9 @@ func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, sto
 		}
 
 		if val, ok := session.Values["user"]; ok {
-			if userId, ok := val.(string); ok {
+			if userID, ok := val.(string); ok {
 				provider := userprovider.NewMongoProvider(db, configProvider)
-				user, err := provider.FindByID(c.Request.Context(), userId)
+				user, err := provider.FindByID(c, userID)
 
 				if err != nil {
 					panic(err)

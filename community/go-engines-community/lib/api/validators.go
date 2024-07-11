@@ -240,7 +240,7 @@ func RegisterValidators(client mongo.DbClient) {
 	}, eventfilter.CreateRequest{})
 
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
-	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.BroadcastMessage{})
+	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.CreateRequest{})
 
 	v.RegisterStructValidation(messageratestats.ValidateListRequest, messageratestats.ListRequest{})
 

@@ -57,7 +57,7 @@ func (a *api) GetEnginesOrder(c *gin.Context) {
 // GetParameters
 // @Success 200 {object} config.HealthCheckParameters
 func (a *api) GetParameters(c *gin.Context) {
-	data, err := a.store.GetParameters(c.Request.Context())
+	data, err := a.store.GetParameters(c)
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +75,7 @@ func (a *api) UpdateParameters(c *gin.Context) {
 		return
 	}
 
-	data, err := a.store.UpdateParameters(c.Request.Context(), conf)
+	data, err := a.store.UpdateParameters(c, conf)
 	if err != nil {
 		panic(err)
 	}
