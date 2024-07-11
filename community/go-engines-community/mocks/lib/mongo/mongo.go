@@ -515,6 +515,26 @@ func (mr *MockDbClientMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockDbClient)(nil).SetRetry), arg0, arg1)
 }
 
+// Watch mocks base method.
+func (m *MockDbClient) Watch(arg0 context.Context, arg1 interface{}, arg2 ...*options.ChangeStreamOptions) (*mongo0.ChangeStream, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Watch", varargs...)
+	ret0, _ := ret[0].(*mongo0.ChangeStream)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Watch indicates an expected call of Watch.
+func (mr *MockDbClientMockRecorder) Watch(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Watch", reflect.TypeOf((*MockDbClient)(nil).Watch), varargs...)
+}
+
 // WithTransaction mocks base method.
 func (m *MockDbClient) WithTransaction(arg0 context.Context, arg1 func(context.Context) error) error {
 	m.ctrl.T.Helper()

@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -22,20 +21,17 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	enforcer     security.Enforcer
-	actionLogger logger.ActionLogger
+	store    Store
+	enforcer security.Enforcer
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		enforcer:     enforcer,
-		actionLogger: actionLogger,
+		store:    store,
+		enforcer: enforcer,
 	}
 }
 
@@ -59,7 +55,6 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := CreateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -77,15 +72,6 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeViewTab,
-		ValueID:   tab.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, tab)
 }
 
@@ -93,7 +79,6 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -113,23 +98,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeViewTab,
-		ValueID:   tab.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, tab)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
@@ -144,15 +117,6 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeViewTab,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.Status(http.StatusNoContent)
 }
 
@@ -160,7 +124,6 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 	request := CreateRequest{}
 
@@ -185,20 +148,11 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeViewTab,
-		ValueID:   tab.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, tab)
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -216,11 +170,11 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	for _, tab := range tabs {
-		if tab.Author != nil && tab.IsPrivate && tab.Author.ID == userId {
+		if tab.Author != nil && tab.IsPrivate && tab.Author.ID == userID {
 			continue
 		}
 
-		ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionUpdate)
+		ok, err := a.enforcer.Enforce(userID, tab.View, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}

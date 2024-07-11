@@ -1,11 +1,16 @@
 template:
   - &pbehavior_type {
     _id: <UUID()>,
-    priority: <Index()>
+    priority: <Index()>,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
   }
   - &pbehavior_reason {
     _id: <UUID()>,
-    created: <NowUnix()>
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
   }
 
 pbehavior_type:
