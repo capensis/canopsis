@@ -44,10 +44,7 @@ export default {
   data() {
     return {
       hasServerError: false,
-      data: {
-        services: [],
-        engines: [],
-      },
+      wrongNodes: [],
     };
   },
   computed: {
@@ -62,8 +59,6 @@ export default {
     },
 
     preparedEngines() {
-      const wrongNodes = [...this.data.services, ...this.data.engines];
-
       if (this.hasServerError) {
         return [{
           name: 'error',
@@ -75,7 +70,7 @@ export default {
         }];
       }
 
-      if (!wrongNodes.length) {
+      if (!this.wrongNodes.length) {
         return [{
           name: 'ok',
           tooltip: this.$t('healthcheck.systemsOperational'),
@@ -83,7 +78,7 @@ export default {
         }];
       }
 
-      return sortBy(wrongNodes, ['name']).map(engine => ({
+      return this.wrongNodes.map(engine => ({
         ...engine,
 
         color: getHealthcheckNodeColor(engine),
@@ -115,9 +110,11 @@ export default {
       });
     },
 
-    setHealthcheckStatus(data) {
-      if (!isEqual(data, this.data)) {
-        this.data = data;
+    setHealthcheckStatus({ services, engines }) {
+      const newWrongNodes = sortBy([...services, ...engines], ['name']);
+
+      if (!isEqual(newWrongNodes, this.wrongNodes)) {
+        this.wrongNodes = newWrongNodes;
       }
     },
 

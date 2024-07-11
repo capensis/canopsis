@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -26,21 +25,17 @@ type api struct {
 	store       Store
 	enforcer    security.Enforcer
 	transformer *RequestTransformer
-
-	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
 	transformer *RequestTransformer,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		enforcer:     enforcer,
-		transformer:  transformer,
-		actionLogger: actionLogger,
+		store:       store,
+		enforcer:    enforcer,
+		transformer: transformer,
 	}
 }
 
@@ -64,8 +59,6 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-
 	request := CreateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -93,15 +86,6 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   widget.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, widget)
 }
 
@@ -109,7 +93,6 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -139,23 +122,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   widget.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, widget)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-
-	ok, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -165,15 +136,6 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.Status(http.StatusNoContent)
 }
 
@@ -181,7 +143,6 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := CreateRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -205,15 +166,6 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeWidget,
-		ValueID:   widget.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusCreated, widget)
 }
 
@@ -227,12 +179,12 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	ids := make([]string, len(request.Items))
 	for i, item := range request.Items {
 		ids[i] = item.ID
 	}
-	ok, err := a.checkAccess(c, ids, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, ids, userID, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -260,18 +212,18 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) checkAccess(ctx context.Context, ids []string, userId, perm string) (bool, error) {
+func (a *api) checkAccess(ctx context.Context, ids []string, userID, perm string) (bool, error) {
 	tabInfos, err := a.store.FindTabPrivacySettings(ctx, ids)
 	if err != nil || len(tabInfos) != len(ids) {
 		return false, err
 	}
 
 	for _, tabInfo := range tabInfos {
-		if tabInfo.IsPrivate && tabInfo.Author == userId {
+		if tabInfo.IsPrivate && tabInfo.Author == userID {
 			continue
 		}
 
-		ok, err := a.enforcer.Enforce(userId, tabInfo.View, perm)
+		ok, err := a.enforcer.Enforce(userID, tabInfo.View, perm)
 		if err != nil || !ok {
 			return false, err
 		}

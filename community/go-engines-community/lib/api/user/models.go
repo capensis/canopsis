@@ -1,8 +1,10 @@
 package user
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,6 +39,7 @@ type EditRequest struct {
 	UITheme                string   `json:"ui_theme" binding:"max=255"`
 	IsEnabled              *bool    `json:"enable" binding:"required"`
 	DefaultView            string   `json:"defaultview"`
+	Author                 string   `json:"author" swaggerignore:"true"`
 }
 
 type PatchRequest struct {
@@ -52,9 +55,12 @@ type PatchRequest struct {
 	UITheme                *string  `json:"ui_theme" binding:"omitempty,max=255"`
 	IsEnabled              *bool    `json:"enable"`
 	DefaultView            *string  `json:"defaultview"`
+	Author                 string   `json:"author" swaggerignore:"true"`
 }
 
 func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
+	now := datetime.NewCpsTime()
+
 	bsonModel := bson.M{
 		"_id":                       r.Name,
 		"name":                      r.Name,
@@ -70,6 +76,9 @@ func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error)
 		"authkey":                   utils.NewID(),
 		"source":                    r.Source,
 		"external_id":               r.ExternalID,
+		"author":                    r.Author,
+		"created":                   now,
+		"updated":                   now,
 	}
 
 	h, err := passwordEncoder.EncodePassword([]byte(r.Password))
@@ -94,6 +103,8 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 		"ui_groups_navigation_type": r.UIGroupsNavigationType,
 		"enable":                    r.IsEnabled,
 		"defaultview":               r.DefaultView,
+		"author":                    r.Author,
+		"updated":                   datetime.NewCpsTime(),
 	}
 	if r.Password != "" {
 		h, err := passwordEncoder.EncodePassword([]byte(r.Password))
@@ -108,7 +119,10 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 }
 
 func (r PatchRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
-	bsonModel := bson.M{}
+	bsonModel := bson.M{
+		"author":  r.Author,
+		"updated": datetime.NewCpsTime(),
+	}
 
 	if r.Name != nil {
 		bsonModel["name"] = r.Name
@@ -163,21 +177,24 @@ func (r PatchRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) 
 }
 
 type User struct {
-	ID                     string           `bson:"_id" json:"_id"`
-	Name                   string           `bson:"name" json:"name"`
-	DisplayName            string           `bson:"display_name" json:"display_name"`
-	Lastname               string           `bson:"lastname" json:"lastname"`
-	Firstname              string           `bson:"firstname" json:"firstname"`
-	Email                  string           `bson:"email" json:"email"`
-	Roles                  []Role           `bson:"roles" json:"roles"`
-	UILanguage             string           `bson:"ui_language" json:"ui_language"`
-	UITheme                colortheme.Theme `bson:"ui_theme" json:"ui_theme"`
-	UIGroupsNavigationType string           `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
-	Enabled                bool             `bson:"enable" json:"enable"`
-	DefaultView            *View            `bson:"defaultview" json:"defaultview"`
-	ExternalID             string           `bson:"external_id" json:"external_id"`
-	Source                 string           `bson:"source" json:"source"`
-	AuthApiKey             string           `bson:"authkey" json:"authkey"`
+	ID                     string              `bson:"_id" json:"_id"`
+	Name                   string              `bson:"name" json:"name"`
+	DisplayName            string              `bson:"display_name" json:"display_name"`
+	Lastname               string              `bson:"lastname" json:"lastname"`
+	Firstname              string              `bson:"firstname" json:"firstname"`
+	Email                  string              `bson:"email" json:"email"`
+	Roles                  []Role              `bson:"roles" json:"roles"`
+	UILanguage             string              `bson:"ui_language" json:"ui_language"`
+	UITheme                colortheme.Response `bson:"ui_theme" json:"ui_theme"`
+	UIGroupsNavigationType string              `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
+	Enabled                bool                `bson:"enable" json:"enable"`
+	DefaultView            *View               `bson:"defaultview" json:"defaultview"`
+	ExternalID             string              `bson:"external_id" json:"external_id"`
+	Source                 string              `bson:"source" json:"source"`
+	AuthApiKey             string              `bson:"authkey" json:"authkey"`
+	Author                 *author.Author      `bson:"author,omitempty" json:"author,omitempty"`
+	Created                *datetime.CpsTime   `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated                *datetime.CpsTime   `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
 }

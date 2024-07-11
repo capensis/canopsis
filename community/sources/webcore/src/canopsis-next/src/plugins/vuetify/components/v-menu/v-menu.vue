@@ -28,6 +28,15 @@ export default {
       type: Function,
       required: false,
     },
+    disableResize: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  mounted() {
+    if (this.disableResize) {
+      window?.removeEventListener('resize', this.updateDimensions, false);
+    }
   },
   methods: {
     /**

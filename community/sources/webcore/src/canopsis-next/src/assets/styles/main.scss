@@ -5,6 +5,18 @@ html {
   background-color: var(--v-application-background-base);
 }
 
+.v-app--disabled-transitions {
+  .v-navigation-drawer {
+    &, .v-item-group, .v-expansion-panel {
+      transition: none !important;
+    }
+  }
+
+  .v-main, .v-toolbar {
+    transition: none !important;
+  }
+}
+
 .v-toolbar--fixed {
   z-index: 3;
 }
@@ -154,11 +166,9 @@ html {
   flex-shrink: 0;
 }
 
-.c-extra-details {
-  &__message {
-    max-width: 600px;
-    white-space: pre-line;
-  }
+.c-extra-details__message {
+  max-width: 600px;
+  white-space: pre-line;
 }
 
 .c-table-header {

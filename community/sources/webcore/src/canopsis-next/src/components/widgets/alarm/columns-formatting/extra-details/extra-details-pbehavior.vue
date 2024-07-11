@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-tooltip
-      class="c-extra-details"
+    <c-simple-tooltip
+      :content="tooltipContent"
       top
     >
       <template #activator="{ on }">
@@ -11,44 +11,24 @@
           v-on="on"
         />
       </template>
-      <div>
-        <strong>{{ $t('alarm.actions.iconsTitles.pbehaviors') }}</strong>
-        <div>
-          <div class="mt-2 font-weight-bold">
-            {{ pbehaviorInfo.name }}
-          </div>
-          <div v-if="pbehaviorInfo.author">
-            {{ $t('common.author') }}: {{ pbehaviorInfo.author }}
-          </div>
-          <div v-if="pbehaviorInfo.type_name">
-            {{ $t('common.type') }}: {{ pbehaviorInfo.type_name }}
-          </div>
-          <div v-if="pbehaviorInfo.reason_name">
-            {{ $t('common.reason') }}: {{ pbehaviorInfo.reason_name }}
-          </div>
-          <div v-if="pbehaviorInfo.last_comment">
-            {{ $t('common.lastComment') }}:
-            <div class="ml-2">
-              -&nbsp;
-              <template v-if="pbehaviorInfo.last_comment.author">
-                {{ pbehaviorInfo.last_comment.author }}:&nbsp;
-              </template>{{ pbehaviorInfo.last_comment.message }}
-            </div>
-          </div>
-          <v-divider />
-        </div>
-      </div>
-    </v-tooltip>
+    </c-simple-tooltip>
   </div>
 </template>
 
 <script>
+import { useExtraDetailsPbehaviorTooltip } from '../../hooks/extra-details-tooltips';
+
 export default {
   props: {
     pbehaviorInfo: {
       type: Object,
       default: () => ({}),
     },
+  },
+  setup(props) {
+    const { tooltipContent } = useExtraDetailsPbehaviorTooltip(props);
+
+    return { tooltipContent };
   },
 };
 </script>

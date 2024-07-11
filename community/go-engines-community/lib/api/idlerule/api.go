@@ -8,30 +8,26 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
 
 type api struct {
-	store        Store
-	transformer  common.PatternFieldsTransformer
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store       Store
+	transformer common.PatternFieldsTransformer
+	logger      zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	transformer common.PatternFieldsTransformer,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) common.BulkCrudAPI {
 	return &api{
-		store:        store,
-		transformer:  transformer,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:       store,
+		transformer: transformer,
+		logger:      logger,
 	}
 }
 
@@ -46,7 +42,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	rules, err := a.store.Find(c.Request.Context(), query)
+	rules, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -63,7 +59,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} idlerule.Rule
 func (a *api) Get(c *gin.Context) {
-	rule, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	rule, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -85,9 +81,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.transformEditRequest(ctx, &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -97,21 +91,13 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	rule, err := a.store.Insert(ctx, request)
+	rule, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
 	if rule == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeIdleRule,
-		ValueID:   rule.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, rule)
@@ -130,9 +116,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.transformEditRequest(ctx, &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -142,7 +126,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	rule, err := a.store.Update(ctx, request)
+	rule, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -152,22 +136,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeIdleRule,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, rule)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
-
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -177,22 +150,12 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeIdleRule,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.Status(http.StatusNoContent)
 }
 
 // BulkCreate
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
@@ -204,15 +167,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 			return "", err
 		}
 
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionCreate,
-			ValueType: logger.ValueTypeIdleRule,
-			ValueID:   rule.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
-
 		return rule.ID, nil
 	}, a.logger)
 }
@@ -220,7 +174,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
@@ -232,15 +185,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			return "", err
 		}
 
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionUpdate,
-			ValueType: logger.ValueTypeIdleRule,
-			ValueID:   rule.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
-
 		return rule.ID, nil
 	}, a.logger)
 }
@@ -248,20 +192,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
+
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypeIdleRule,
-			ValueID:   request.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		return request.ID, nil

@@ -1,6 +1,7 @@
 package entityservice
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"reflect"
@@ -27,11 +28,11 @@ import (
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
-	GetDependencies(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error)
-	GetImpacts(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error)
+	GetDependencies(ctx context.Context, r ContextGraphRequest, userID string) (*ContextGraphAggregationResult, error)
+	GetImpacts(ctx context.Context, r ContextGraphRequest, userID string) (*ContextGraphAggregationResult, error)
 	Create(ctx context.Context, request CreateRequest) (*Response, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type ServiceChanges struct {
@@ -76,7 +77,7 @@ func NewStore(
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
-	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"_id":          id,
 			"type":         types.EntityTypeService,
@@ -90,7 +91,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "category",
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-	})
+	}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +112,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
+func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, userID string) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
 		FindOne(ctx, bson.M{
@@ -181,7 +185,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		}
 	}
 
-	err = s.fillLinks(ctx, result, userId)
+	err = s.fillLinks(ctx, result, userID)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fetch links")
 	}
@@ -209,7 +213,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 	return result, nil
 }
 
-func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
+func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userID string) (*ContextGraphAggregationResult, error) {
 	e := types.Entity{}
 	err := s.dbCollection.FindOne(ctx,
 		bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}},
@@ -262,7 +266,7 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 		}
 	}
 
-	err = s.fillLinks(ctx, result, userId)
+	err = s.fillLinks(ctx, result, userID)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fetch links")
 	}
@@ -271,18 +275,23 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 }
 
 func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
+
 	var enabled bool
 	if request.Enabled != nil {
 		enabled = *request.Enabled
 	}
+
 	var sliAvailState int64
 	if request.SliAvailState != nil {
 		sliAvailState = *request.SliAvailState
 	}
+
 	service := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
 			Name:          request.Name,
+			Author:        request.Author,
 			EnableHistory: []datetime.CpsTime{},
 			Enabled:       enabled,
 			Infos:         transformInfos(request.EditRequest),
@@ -291,7 +300,8 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			Category:      request.Category,
 			ImpactLevel:   request.ImpactLevel,
 			SliAvailState: sliAvailState,
-			Created:       datetime.NewCpsTime(),
+			Created:       now,
+			Updated:       &now,
 		},
 		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
 		OutputTemplate:      request.OutputTemplate,
@@ -300,11 +310,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		service.Coordinates = *request.Coordinates
 	}
 
-	if request.ID == "" {
-		request.ID = utils.NewID()
-	}
-
-	service.ID = request.ID
+	service.ID = cmp.Or(request.ID, utils.NewID())
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
@@ -357,6 +363,9 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		"entity_pattern":                 pattern.EntityPattern,
 		"corporate_entity_pattern":       pattern.CorporateEntityPattern,
 		"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
+
+		"author":  request.Author,
+		"updated": datetime.NewCpsTime(),
 	}
 	unset := bson.M{}
 
@@ -431,13 +440,14 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 	return service, serviceChanges, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{
 		"_id":          id,
 		"type":         types.EntityTypeService,
 		"soft_deleted": nil,
 	}, bson.M{"$set": bson.M{
 		"enabled":      false,
+		"author":       userID,
 		"soft_deleted": datetime.NewCpsTime(),
 	}})
 	if err != nil || updateRes.MatchedCount == 0 {
@@ -447,12 +457,12 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregationResult, userId string) error {
+func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregationResult, userID string) error {
 	if response == nil || len(response.Data) == 0 {
 		return nil
 	}
 
-	user, err := s.findUser(ctx, userId)
+	user, err := s.findUser(ctx, userID)
 	if err != nil {
 		return err
 	}
