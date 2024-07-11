@@ -2,8 +2,8 @@ package colortheme
 
 import (
 	"context"
-	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -21,16 +21,18 @@ const (
 )
 
 type Store interface {
-	Insert(ctx context.Context, r EditRequest) (*Theme, error)
-	GetById(ctx context.Context, id string) (*Theme, error)
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, r EditRequest) (*Theme, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Update(ctx context.Context, r EditRequest) (*Response, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
+	dbClient          libmongo.DbClient
 	dbColorCollection libmongo.DbCollection
 	dbUserCollection  libmongo.DbCollection
+	authorProvider    author.Provider
 
 	defaultSearchByFields []string
 	defaultThemeIDs       map[string]struct{}
@@ -38,10 +40,13 @@ type store struct {
 
 func NewStore(
 	dbClient libmongo.DbClient,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbColorCollection:     dbClient.Collection(libmongo.ColorThemeCollection),
 		dbUserCollection:      dbClient.Collection(libmongo.UserCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultThemeIDs: map[string]struct{}{
 			Canopsis:       {},
@@ -52,34 +57,56 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Theme, error) {
-	theme := s.transformRequestToDocument(r)
-	theme.ID = utils.NewID()
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
 
-	_, err := s.dbColorCollection.InsertOne(ctx, theme)
-	if err != nil {
-		if mongo.IsDuplicateKeyError(err) {
-			return nil, common.NewValidationError("name", "Name already exists.")
+	r.ID = utils.NewID()
+	r.Created = now
+	r.Updated = now
+	r.Deletable = true
+
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+
+		_, err := s.dbColorCollection.InsertOne(ctx, r)
+		if err != nil {
+			if mongo.IsDuplicateKeyError(err) {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
+			return err
 		}
 
-		return nil, err
-	}
+		response, err = s.GetByID(ctx, r.ID)
+		return err
+	})
 
-	return &theme, nil
+	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Theme, error) {
-	var res Theme
-	err := s.dbColorCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, nil
-		}
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
+	cursor, err := s.dbColorCollection.Aggregate(ctx, pipeline)
+	if err != nil {
 		return nil, err
 	}
 
-	return &res, nil
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		var res Response
+		err = cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+
+		return &res, nil
+	}
+
+	return nil, nil
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -89,6 +116,8 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
+
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	sortBy := "name"
 	if query.SortBy != "" {
@@ -117,56 +146,71 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*Theme, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	if s.isDefaultTheme(r.ID) {
 		return nil, ErrDefaultTheme
 	}
 
-	theme := s.transformRequestToDocument(r)
-	theme.ID = r.ID
+	r.Updated = datetime.NewCpsTime()
+	r.Deletable = true
 
-	res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": theme.ID}, bson.M{"$set": theme})
-	if err != nil {
-		if mongo.IsDuplicateKeyError(err) {
-			return nil, common.NewValidationError("name", "Name already exists.")
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+
+		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": r})
+		if err != nil {
+			if mongo.IsDuplicateKeyError(err) {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
+			return err
 		}
 
+		if res.MatchedCount == 0 {
+			return nil
+		}
+
+		response, err = s.GetByID(ctx, r.ID)
+		return err
+	})
+	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return &theme, nil
+	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if s.isDefaultTheme(id) {
 		return false, ErrDefaultTheme
 	}
 
-	deleted, err := s.dbColorCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil || deleted == 0 {
-		return false, err
-	}
+	var deleted int64
 
-	_, err = s.dbUserCollection.UpdateMany(ctx, bson.M{"ui_theme": id}, bson.M{"$set": bson.M{"ui_theme": Canopsis}})
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbColorCollection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || deleted == 0 {
+			return err
+		}
+
+		_, err = s.dbUserCollection.UpdateMany(ctx, bson.M{"ui_theme": id},
+			bson.M{"$set": bson.M{"ui_theme": Canopsis, "author": userID, "updated": datetime.NewCpsTime()}})
+		return err
+	})
 	if err != nil {
 		return false, err
 	}
 
-	return true, nil
-}
-
-func (s *store) transformRequestToDocument(r EditRequest) Theme {
-	return Theme{
-		Name:      r.Name,
-		Colors:    r.Colors,
-		FontSize:  r.FontSize,
-		Updated:   datetime.NewCpsTime(),
-		Deletable: true,
-	}
+	return deleted > 0, nil
 }
 
 func (s *store) isDefaultTheme(id string) bool {

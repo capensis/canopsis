@@ -14,7 +14,7 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, userId string, r EditRequest) (*Response, error)
+	Insert(ctx context.Context, userID string, r EditRequest) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
@@ -46,13 +46,13 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, userId string, r EditRequest) (*Response, error) {
+func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	var expired datetime.CpsTime
 	if r.Duration != nil && r.Duration.Value > 0 {
 		expired = r.Duration.AddTo(now)
 	}
-	accessToken, err := s.tokenGenerator.Generate(userId, expired.Time)
+	accessToken, err := s.tokenGenerator.Generate(userID, expired.Time)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (s *store) Insert(ctx context.Context, userId string, r EditRequest) (*Resp
 	model := Model{
 		ID:          utils.NewID(),
 		Value:       accessToken,
-		User:        userId,
+		User:        userID,
 		Description: r.Description,
 		Created:     now,
 		Accessed:    now,

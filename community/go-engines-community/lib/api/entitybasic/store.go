@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,7 +17,7 @@ import (
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Entity, error)
 	Update(ctx context.Context, r EditRequest) (*Entity, bool, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
@@ -73,6 +74,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error) {
+	now := datetime.NewCpsTime()
+
 	set := bson.M{
 		"description":     r.Description,
 		"enabled":         *r.Enabled,
@@ -80,6 +83,8 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		"impact_level":    r.ImpactLevel,
 		"infos":           entity.TransformInfosRequest(r.Infos),
 		"sli_avail_state": r.SliAvailState,
+		"author":          r.Author,
+		"updated":         now,
 	}
 	update := bson.M{}
 	if r.Coordinates == nil {
@@ -150,27 +155,17 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	}
 
 	if isToggled && !updatedEntity.Enabled && updatedEntity.Type == types.EntityTypeComponent {
-		depLen := len(updatedEntity.Resources)
-		from := 0
+		for from := 0; from < len(updatedEntity.Resources); from += canopsis.DefaultBulkSize {
+			to := min(from+canopsis.DefaultBulkSize, len(updatedEntity.Resources))
 
-		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
 			_, err = s.dbCollection.UpdateMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": updatedEntity.Resources[from:to]}},
-				bson.M{"$set": bson.M{"enabled": updatedEntity.Enabled}},
-			)
-			if err != nil {
-				return nil, false, err
-			}
-
-			from = to
-		}
-
-		if from < depLen {
-			_, err = s.dbCollection.UpdateMany(
-				ctx,
-				bson.M{"_id": bson.M{"$in": updatedEntity.Resources[from:depLen]}},
-				bson.M{"$set": bson.M{"enabled": updatedEntity.Enabled}},
+				bson.M{"$set": bson.M{
+					"enabled": updatedEntity.Enabled,
+					"author":  r.Author,
+					"updated": now,
+				}},
 			)
 			if err != nil {
 				return nil, false, err
@@ -181,14 +176,18 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	return updatedEntity, isToggled, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
 		entity := &types.Entity{}
-		err := s.dbCollection.FindOne(ctx, bson.M{
+		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{
 			"_id":  id,
 			"type": bson.M{"$in": s.basicTypes},
+		}, bson.M{
+			"$set": bson.M{
+				"author": userID,
+			},
 		}).Decode(&entity)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -226,7 +225,15 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		}
 
 		if entity.Type == types.EntityTypeConnector {
-			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID}, bson.M{"$unset": bson.M{"connector": ""}})
+			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID},
+				bson.M{
+					"$set": bson.M{
+						"author":  userID,
+						"updated": datetime.NewCpsTime(),
+					},
+					"$unset": bson.M{"connector": ""},
+				},
+			)
 			if err != nil {
 				return err
 			}

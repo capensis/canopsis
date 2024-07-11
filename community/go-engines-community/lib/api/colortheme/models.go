@@ -1,6 +1,7 @@
 package colortheme
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
@@ -10,19 +11,26 @@ type EditRequest struct {
 	Name     string `bson:"name" json:"name" binding:"required"`
 	Colors   Colors `bson:"colors" json:"colors"`
 	FontSize int    `bson:"font_size" json:"font_size" binding:"required,oneof=1 2 3"`
+
+	Author    string           `bson:"author" json:"author" swaggerignore:"true"`
+	Created   datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
+	Updated   datetime.CpsTime `bson:"updated,omitempty" json:"-" swaggerignore:"true"`
+	Deletable bool             `bson:"deletable" json:"-" swaggerignore:"true"`
 }
 
 type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type Theme struct {
-	ID        string           `bson:"_id" json:"_id"`
-	Name      string           `bson:"name" json:"name"`
-	Colors    Colors           `bson:"colors" json:"colors"`
-	FontSize  int              `bson:"font_size" json:"font_size"`
-	Updated   datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
-	Deletable bool             `bson:"deletable" json:"deletable"`
+type Response struct {
+	ID        string            `bson:"_id" json:"_id"`
+	Name      string            `bson:"name" json:"name"`
+	Colors    Colors            `bson:"colors" json:"colors"`
+	FontSize  int               `bson:"font_size" json:"font_size"`
+	Author    *author.Author    `bson:"author" json:"author"`
+	Created   *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated   *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Deletable bool              `bson:"deletable" json:"deletable"`
 }
 
 type Colors struct {
@@ -52,8 +60,8 @@ type Colors struct {
 }
 
 type AggregationResult struct {
-	Data       []Theme `bson:"data" json:"data"`
-	TotalCount int64   `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {

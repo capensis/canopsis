@@ -209,7 +209,7 @@ func (c *eventComputer) computeByActiveType(
 
 func (c *eventComputer) sortExdates(exdates []Exdate) error {
 	var err error
-	getPriorityByID := func(id string) int {
+	getPriorityByID := func(id string) int64 {
 		t, ok := c.typesByID[id]
 		if !ok {
 			err = fmt.Errorf("unknown type %v", id)

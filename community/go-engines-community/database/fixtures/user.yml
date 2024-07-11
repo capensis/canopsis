@@ -73,7 +73,10 @@ template:
     type: RW
   }
   - &role {
-    _id: <UUID()>
+    _id: <UUID()>,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
   }
   - &role_tpl {
     _id: <UUID()>
@@ -81,7 +84,10 @@ template:
   - &user {
     _id: <UUID()>,
     authkey: <UUID()>,
-    enable: true
+    enable: true,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
   }
 
 viewgroups:

@@ -4,6 +4,7 @@ package pbehavior
 
 import (
 	json "encoding/json"
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
@@ -128,11 +129,39 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		case "type":
 			out.Type = string(in.String())
 		case "priority":
-			out.Priority = int(in.Int())
+			out.Priority = int64(in.Int64())
 		case "icon_name":
 			out.IconName = string(in.String())
 		case "color":
 			out.Color = string(in.String())
+		case "author":
+			out.Author = string(in.String())
+		case "created":
+			if in.IsNull() {
+				in.Skip()
+				out.Created = nil
+			} else {
+				if out.Created == nil {
+					out.Created = new(datetime.CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.Created).UnmarshalJSON(data))
+				}
+			}
+		case "updated":
+			if in.IsNull() {
+				in.Skip()
+				out.Updated = nil
+			} else {
+				if out.Updated == nil {
+					out.Updated = new(datetime.CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.Updated).UnmarshalJSON(data))
+				}
+			}
+		case "hidden":
+			out.Hidden = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -176,7 +205,7 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	{
 		const prefix string = ",\"priority\":"
 		out.RawString(prefix)
-		out.Int(int(in.Priority))
+		out.Int64(int64(in.Priority))
 	}
 	{
 		const prefix string = ",\"icon_name\":"
@@ -187,6 +216,26 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"color\":"
 		out.RawString(prefix)
 		out.String(string(in.Color))
+	}
+	{
+		const prefix string = ",\"author\":"
+		out.RawString(prefix)
+		out.String(string(in.Author))
+	}
+	if in.Created != nil {
+		const prefix string = ",\"created\":"
+		out.RawString(prefix)
+		out.Raw((*in.Created).MarshalJSON())
+	}
+	if in.Updated != nil {
+		const prefix string = ",\"updated\":"
+		out.RawString(prefix)
+		out.Raw((*in.Updated).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"hidden\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Hidden))
 	}
 	out.RawByte('}')
 }

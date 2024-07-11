@@ -15,7 +15,7 @@ type baseValidator struct {
 }
 
 func (v *baseValidator) Validate(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(BroadcastMessage)
+	r := sl.Current().Interface().(CreateRequest)
 
 	if r.ID != "" {
 		err := v.dbClient.Collection(mongo.BroadcastMessageMongoCollection).FindOne(ctx, bson.M{"_id": r.ID}).Err()

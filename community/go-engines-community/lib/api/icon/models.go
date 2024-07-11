@@ -11,6 +11,7 @@ type EditRequest struct {
 	Title    string                `form:"title" binding:"required,max=255"`
 	File     *multipart.FileHeader `form:"file" binding:"required"`
 	MimeType string                `form:"-"`
+	Author   string                `form:"-" swaggerignore:"true"`
 }
 
 type PatchRequest struct {
@@ -18,11 +19,14 @@ type PatchRequest struct {
 	Title    string                `form:"title" binding:"max=255"`
 	File     *multipart.FileHeader `form:"file"`
 	MimeType string                `form:"-"`
+	Author   string                `form:"-" swaggerignore:"true"`
 }
 
 type Response struct {
-	ID      string           `bson:"_id" json:"_id"`
-	Title   string           `bson:"title" json:"title"`
+	ID     string `bson:"_id" json:"_id"`
+	Title  string `bson:"title" json:"title"`
+	Author string `bson:"author,omitempty" json:"author,omitempty"`
+
 	Created datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 

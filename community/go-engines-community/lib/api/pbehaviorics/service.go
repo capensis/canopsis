@@ -46,7 +46,8 @@ func (s *service) GenICSFrom(
 	}
 	e.SetDTStamp(time.Now().In(location))
 	e.SetRRule(pbh.RRule)
-	description := fmt.Sprintf("%s\\n%s (%s)", pbh.Reason.Name, pbh.Type.Name, pbh.Type.Type)
+	// omg triple .Type
+	description := fmt.Sprintf("%s\\n%s (%s)", pbh.Reason.Name, pbh.Type.Name, pbh.Type.Type.Type)
 	e.SetDescription(description)
 	e.SetSummary(pbh.Name)
 	var rOption *rrule.ROption
