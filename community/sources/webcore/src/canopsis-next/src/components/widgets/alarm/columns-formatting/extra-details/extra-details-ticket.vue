@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-tooltip
-      class="c-extra-details extra-details-ticket"
+    <c-simple-tooltip
+      :content="tooltipContent"
       top
     >
       <template #activator="{ on }">
@@ -24,30 +24,7 @@
           <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on" />
         </v-badge>
       </template>
-      <v-layout
-        class="extra-details-ticket__list"
-        column
-      >
-        <div
-          v-for="(ticket, index) in shownTickets"
-          :key="index"
-          class="text-md-center"
-        >
-          <strong>{{ ticket.ticket_rule_name }} {{ getTicketStatusText(ticket) }}</strong>
-          <div>{{ $t('common.by') }} : {{ ticket.a }}</div>
-          <div>{{ $t('common.date') }} : {{ convertDateWithToday(ticket.t) }}</div>
-          <div v-if="ticket.ticket">
-            {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.ticket }}
-          </div>
-          <div v-if="ticket.ticket_comment">
-            {{ $tc('common.comment') }} : {{ ticket.ticket_comment }}
-          </div>
-        </div>
-      </v-layout>
-      <div class="mt-2">
-        <i v-if="tickets.length > limit">{{ $t('alarm.otherTickets') }}</i>
-      </div>
-    </v-tooltip>
+    </c-simple-tooltip>
   </div>
 </template>
 
@@ -56,12 +33,12 @@ import { last } from 'lodash';
 import { computed } from 'vue';
 
 import { COLORS } from '@/config';
-import { ALARM_LIST_ACTIONS_TYPES, ALARM_LIST_STEPS } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
-import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { isSuccessTicketDeclaration } from '@/helpers/entities/declare-ticket/event/entity';
 
-import { useI18n } from '@/hooks/i18n';
+import { useExtraDetailsTicketTooltip } from '../../hooks/extra-details-tooltips';
 
 export default {
   props: {
@@ -75,24 +52,15 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
+    const { tooltipContent } = useExtraDetailsTicketTooltip(props);
 
-    const isSuccessTicketDeclaration = ticket => [
-      ALARM_LIST_STEPS.declareTicket,
-      ALARM_LIST_STEPS.assocTicket,
-    ].includes(ticket?._t);
-    const getTicketStatusText = ticket => t(`common.${isSuccessTicketDeclaration(ticket) ? 'ok' : 'failed'}`);
-    const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
-
-    const shownTickets = computed(() => props.tickets.slice(0, props.limit));
-    const isLastFailed = computed(() => !isSuccessTicketDeclaration(last(props.tickets)));
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
     const color = COLORS.alarmExtraDetails.ticket;
 
+    const isLastFailed = computed(() => !isSuccessTicketDeclaration(last(props.tickets)));
+
     return {
-      getTicketStatusText,
-      convertDateWithToday,
-      shownTickets,
+      tooltipContent,
       isLastFailed,
       icon,
       color,

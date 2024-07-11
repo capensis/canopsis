@@ -23,6 +23,6 @@ type EditRequest struct {
 	ImpactLevel   int64                `json:"impact_level" binding:"required,min=1,max=10"`
 	Infos         []entity.InfoRequest `json:"infos" binding:"dive"`
 	SliAvailState *int64               `json:"sli_avail_state" binding:"required,min=0,max=3"`
-
-	Coordinates *types.Coordinates `json:"coordinates"`
+	Coordinates   *types.Coordinates   `json:"coordinates"`
+	Author        string               `json:"author" swaggerignore:"true"`
 }

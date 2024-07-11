@@ -51,6 +51,7 @@
           :label="$tc('common.column', 1)"
           :error-messages="errors.collect(`${name}.column`)"
           :name="`${name}.column`"
+          :menu-props="selectMenuProps"
           @change="changeColumn"
         />
         <v-tooltip left>
@@ -73,6 +74,7 @@
       </v-layout>
       <v-expand-transition mode="out-in">
         <column-field-expand-panel
+          v-if="bootedExpandPanel"
           v-show="expanded"
           v-field="column"
           :name="name"
@@ -94,30 +96,31 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { computed, ref } from 'vue';
 
 import {
   ENTITIES_TYPES,
-  ALARM_LIST_WIDGET_COLUMNS,
-  CONTEXT_WIDGET_COLUMNS,
+  ALARM_FIELDS,
+  ALARM_OUTPUT_FIELDS,
+  ALARM_LIST_WIDGET_GROUPED_COLUMNS,
+  CONTEXT_WIDGET_GROUPED_COLUMNS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
-  ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
-import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
+import { useValidationChildren } from '@/hooks/validator/validation-children';
+import { useModelField } from '@/hooks/form/model-field';
+import { useAsyncBootingChild } from '@/hooks/render/async-booting';
 
 import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
 
 export default {
-  inject: ['$validator'],
+  inject: ['$validator', '$asyncBooting'],
   components: { ColumnFieldExpandPanel },
-  mixins: [
-    formBaseMixin,
-    validationChildrenMixin,
-  ],
   model: {
     prop: 'column',
     event: 'input',
@@ -176,98 +179,98 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      expanded: !this.column?.column,
-      isCustom: false,
+  setup(props, { emit }) {
+    const expanded = ref(!props.column?.column);
+    const isCustom = ref(false);
+
+    const { t, tc } = useI18n();
+    const validator = useValidator();
+    const { updateModel } = useModelField(props, emit);
+    const { booted: bootedExpandPanel } = useAsyncBootingChild(expanded.value);
+    const { hasChildrenError } = useValidationChildren();
+
+    const selectMenuProps = {
+      contentClass: 'column-field-menu',
     };
-  },
-  computed: {
-    isAlarmType() {
-      return this.type === ENTITIES_TYPES.alarm;
-    },
 
-    alarmListAvailableColumns() {
-      const columns = this.withInstructions
-        ? ALARM_LIST_WIDGET_COLUMNS
-        : omit(ALARM_LIST_WIDGET_COLUMNS, ['assignedInstructions']);
+    const groupedColumnsToColumns = (groupedColumns = {}, keys = {}) => (
+      Object.entries(groupedColumns).reduce((acc, [group, items]) => {
+        const preparedItems = items.map(value => ({
+          value,
+          text: tc(keys[value], 2),
+        }));
 
-      return Object.values(columns).map(value => ({
-        value,
-        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
-      }));
-    },
+        if (!preparedItems.length) {
+          return acc;
+        }
 
-    contextAvailableColumns() {
-      return Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
-        value,
-        text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
-      }));
-    },
+        acc.push(
+          { header: t(`settings.columnsGroups.${group}`) },
+          ...preparedItems,
+        );
 
-    availableColumns() {
-      const columns = this.isAlarmType
-        ? this.alarmListAvailableColumns
-        : this.contextAvailableColumns;
+        return acc;
+      }, [])
+    );
 
-      return columns.filter(({ value }) => !this.excludedColumns.includes(value));
-    },
+    /**
+     * COMPUTED
+     */
+    const isAlarmType = computed(() => props.type === ENTITIES_TYPES.alarm);
 
-    columnLabelFieldName() {
-      return `${this.name}.label`;
-    },
+    const alarmListAvailableColumns = computed(() => {
+      const columns = groupedColumnsToColumns(ALARM_LIST_WIDGET_GROUPED_COLUMNS, ALARM_FIELDS_TO_LABELS_KEYS);
 
-    columnLabelErrorMessages() {
-      return this.errors.collect(this.columnLabelFieldName);
-    },
-  },
-  watch: {
-    type() {
-      const columns = this.columns.map(({ key }) => ({
-        key,
-        column: '',
-      }));
+      return props.withInstructions
+        ? columns.filter(({ value }) => value !== ALARM_FIELDS.assignedInstructions)
+        : columns;
+    });
 
-      this.updateModel(columns);
-    },
+    const contextAvailableColumns = computed(() => (
+      groupedColumnsToColumns(CONTEXT_WIDGET_GROUPED_COLUMNS, ENTITY_FIELDS_TO_LABELS_KEYS)
+    ));
 
-    availableColumns: {
-      immediate: true,
-      handler(columns) {
-        this.isCustom = this.column.column
-          ? columns.every(column => column.value !== this.column.column)
-          : false;
-      },
-    },
-  },
-  methods: {
-    changeColumn(column) {
+    const availableColumns = computed(() => {
+      const columns = isAlarmType.value
+        ? alarmListAvailableColumns.value
+        : contextAvailableColumns.value;
+
+      return columns.filter(({ value }) => !props.excludedColumns.includes(value));
+    });
+
+    const columnLabelFieldName = computed(() => `${props.name}.label`);
+    const columnLabelErrorMessages = computed(() => validator.errors.collect(columnLabelFieldName.value));
+
+    /**
+     * METHODS
+     */
+    const changeColumn = (column) => {
       const newValue = {
-        ...this.column,
+        ...props.column,
 
         column,
       };
 
-      if (this.withHtml) {
+      if (props.withHtml) {
         newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(column);
       }
 
-      this.updateModel(newValue);
-    },
+      updateModel(newValue);
+    };
 
-    convertToCustom() {
-      this.isCustom = !this.isCustom;
+    const convertToCustom = () => {
+      isCustom.value = !isCustom.value;
 
       const newColumn = {
-        ...this.column,
+        ...props.column,
       };
 
-      if (this.isCustom) {
-        const { value } = formToWidgetColumn(this.column);
+      if (isCustom.value) {
+        const { value } = formToWidgetColumn(props.column);
 
-        const selectedColumn = this.availableColumns.find(column => column.value === this.column.column);
+        const selectedColumn = availableColumns.value.find(column => column.value === props.column.column);
 
-        const label = this.column.label || selectedColumn?.text || '';
+        const label = props.column.label || selectedColumn?.text || '';
 
         newColumn.column = value;
         newColumn.label = label;
@@ -275,9 +278,9 @@ export default {
         newColumn.rule = '';
         newColumn.dictionary = '';
       } else {
-        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(this.column.column);
+        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(props.column.column);
 
-        const selectedColumn = this.availableColumns.find(column => column.value === value);
+        const selectedColumn = availableColumns.value.find(column => column.value === value);
 
         newColumn.column = value === selectedColumn?.value ? value : '';
         newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;
@@ -286,8 +289,22 @@ export default {
         newColumn.dictionary = dictionary;
       }
 
-      this.updateModel(newColumn);
-    },
+      updateModel(newColumn);
+    };
+
+    return {
+      expanded,
+      isCustom,
+      bootedExpandPanel,
+      availableColumns,
+      columnLabelFieldName,
+      columnLabelErrorMessages,
+      hasChildrenError,
+      selectMenuProps,
+
+      changeColumn,
+      convertToCustom,
+    };
   },
 };
 </script>
@@ -300,6 +317,18 @@ export default {
     position: absolute;
     right: 0;
     top: 0;
+  }
+
+  &-menu {
+    .v-subheader {
+      font-size: 16px;
+      font-weight: 700;
+      color: inherit;
+    }
+
+    .v-list-item {
+      padding-left: 24px;
+    }
   }
 }
 </style>

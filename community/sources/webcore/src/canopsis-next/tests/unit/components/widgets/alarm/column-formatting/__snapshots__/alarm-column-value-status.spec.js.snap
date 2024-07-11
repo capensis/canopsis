@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -12,25 +12,14 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   >
     warning
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Ongoing
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -38,25 +27,14 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   >
     warning
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Ongoing
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -64,25 +42,14 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   >
     warning
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Ongoing
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -90,25 +57,14 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   >
     warning
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Ongoing
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Canceled"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -116,25 +72,14 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   >
     highlight_off
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Canceled
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Closed"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -142,25 +87,14 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   >
     check_circle_outline
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Closed
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Flapping"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -168,18 +102,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   >
     swap_vert
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Flapping
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;
 
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `
@@ -190,13 +113,11 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 />
 `;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 2`] = `undefined`;
-
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
+<c-simple-tooltip-stub
+  content="Stealth"
+  top=""
 >
-  <!---->
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -204,16 +125,5 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   >
     swap_vert
   </i>
-</span>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 2`] = `
-<div
-  class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
->
-  <span>
-    Stealth
-  </span>
-</div>
+</c-simple-tooltip-stub>
 `;

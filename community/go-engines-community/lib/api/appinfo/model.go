@@ -57,8 +57,8 @@ type AppInfoResponse struct {
 	Login       LoginConf        `json:"login"`
 	Remediation *RemediationConf `json:"remediation,omitempty"`
 
-	DefaultColorTheme colortheme.Theme `json:"default_color_theme"`
-	Maintenance       bool             `json:"maintenance"`
+	DefaultColorTheme colortheme.Response `json:"default_color_theme"`
+	Maintenance       bool                `json:"maintenance"`
 }
 
 type LoginConf struct {

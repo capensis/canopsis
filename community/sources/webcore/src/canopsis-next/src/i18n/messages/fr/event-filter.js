@@ -99,5 +99,10 @@ export default {
       message: 'Cette action peut être utilisée pour définir des balises provenant d\'autres champs d\'événement à l\'aide d\'un modèle.',
       description: 'Des balises au format « Nom : Valeur » peuvent être définies à l\'aide de cette action.\nLes paramètres de l\'action sont :\n- description (facultatif) : la description.\n- name : le nom du groupe de tags\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
     },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
+      text: 'Définir plusieurs chaînes d\'informations sur une entité à partir d\'un dictionnaire',
+      message: 'Cette action peut être utilisée pour définir plusieurs informations d\'entité à partir d\'un dictionnaire.',
+      description: 'Les paramètres de l\'action sont :\n- Valeur : le nom du champ dont la valeur doit être découpée. Ce champ doit avoir la forme suivante.\n- Description (facultatif) : Description des informations de l\'entité. Si elle n\'est pas définie, la description des informations de l\'entité est laissée vide.',
+    },
   },
 };
