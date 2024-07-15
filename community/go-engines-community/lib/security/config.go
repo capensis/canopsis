@@ -178,10 +178,6 @@ func validateOAuth2Config(config OAuth2ProviderConfig) error {
 		return errors.New("client_secret shouldn't be empty")
 	}
 
-	if config.DefaultRole == "" {
-		return errors.New("default_role is required")
-	}
-
 	return nil
 }
 
@@ -251,10 +247,6 @@ func validateConfig(config Config) error {
 				if err != nil {
 					return fmt.Errorf("invalid saml.inactivity_interval: %w", err)
 				}
-			}
-
-			if config.Security.Saml.DefaultRole == "" {
-				return errors.New("saml.default_role is required")
 			}
 		case AuthMethodOAuth2:
 			for provider, cfg := range config.Security.OAuth2.Providers {
