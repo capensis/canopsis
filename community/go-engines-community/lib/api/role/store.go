@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -134,11 +135,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		return nil, err
 	}
 
+	id := utils.NewID()
+
 	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
-		_, err = s.dbCollection.InsertOne(ctx, bson.M{
-			"_id":         r.Name,
+
+		_, err := s.dbCollection.InsertOne(ctx, bson.M{
+			"_id":         id,
 			"name":        r.Name,
 			"description": r.Description,
 			"defaultview": r.DefaultView,
@@ -149,9 +153,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			"updated":     now,
 		})
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
 			return err
 		}
-		role, err = s.GetOneBy(ctx, r.Name)
+
+		role, err = s.GetOneBy(ctx, id)
 		return err
 	})
 	if err != nil {
