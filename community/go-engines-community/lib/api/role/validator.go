@@ -13,7 +13,6 @@ import (
 )
 
 type Validator interface {
-	ValidateCreateRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateEditRequest(ctx context.Context, sl validator.StructLevel)
 }
 
@@ -28,19 +27,6 @@ func NewValidator(dbClient mongo.DbClient) Validator {
 		dbCollection:           dbClient.Collection(mongo.RoleCollection),
 		dbPermissionCollection: dbClient.Collection(mongo.PermissionCollection),
 		dbViewCollection:       dbClient.Collection(mongo.ViewMongoCollection),
-	}
-}
-
-func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(CreateRequest)
-	// Validate name
-	if r.Name != "" {
-		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.Name}).Err()
-		if err == nil {
-			sl.ReportError(r.Name, "Name", "Name", "unique", "")
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			panic(err)
-		}
 	}
 }
 
