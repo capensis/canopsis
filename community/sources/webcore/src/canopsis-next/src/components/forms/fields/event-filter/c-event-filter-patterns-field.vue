@@ -155,7 +155,7 @@ export default {
         EVENT_ENTITY_TYPES.snooze,
       ].map(value => ({
         value,
-        text: this.$t(`common.entityEventTypes.${value}`),
+        text: value,
       }));
     },
 
