@@ -691,18 +691,6 @@ Le schéma ci-après vous présente le fonctionnement dans le détail :
 flowchart TD
     Role{Attribut 'role' <br>défini dans<br>idp_attributes_map ou attributes_map<br>du fichier api/security/config.yml} -->|Non| Default_role
     Default_role{default_role<br>défini dans api/security/config.yml} -->|Non<br>Aucun rôle ne peut être attribué| Refusée
-    Default_role -->|Oui| Roles_existence
-    Refusée[Connexion refusée]
-    Role -->|Oui| IdP[Liste de rôles transmise par<br>le fournisseur d'identités]
-    IdP --> Roles_existence{Au moins 1 des rôles transmis<br> existe dans Canopsis ?}
-    Roles_existence -->|Non <br>Aucun rôle ne peut être attribué| Refusée
-    Roles_existence -->|Oui| AuthentificationOK[Authentification et<br>Attribution du ou des rôles]
-```
-
-```mermaid
-flowchart TD
-    Role{Attribut 'role' <br>défini dans<br>idp_attributes_map ou attributes_map<br>du fichier api/security/config.yml} -->|Non| Default_role
-    Default_role{default_role<br>défini dans api/security/config.yml} -->|Non<br>Aucun rôle ne peut être attribué| Refusée
     Default_role -->|Oui| Default_role_existence{Le rôle par defaut existe<br>t-il dans Canopsis ?}
     Refusée[Connexion refusée]
     Role -->|Oui| IdP[Liste de rôles transmise par<br>le fournisseur d'identités]
