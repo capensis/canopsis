@@ -6,6 +6,7 @@
     />
     <c-name-field
       v-field="form.name"
+      :disabled="!!form._id"
       required
     />
     <v-text-field
