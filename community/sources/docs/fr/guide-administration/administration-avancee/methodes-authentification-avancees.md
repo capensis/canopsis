@@ -685,6 +685,8 @@ Pour qu'une authentification réussisse :
 * au moins un des rôles renvoyés par le fournisseur doit exister dans Canopsis ou
 * le rôle par défaut (défini dans la configuration) doit exister
 
+Attention cependant, Canopsis ne créera pas les rôles manquant, il est nécessaire de les créer au préalable.  
+
 Le schéma ci-après vous présente le fonctionnement dans le détail :
 
 ```mermaid
