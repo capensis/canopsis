@@ -20,8 +20,6 @@ import { computed } from 'vue';
 
 import { EVENT_TYPES } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
-
 export default {
   inject: ['$validator'],
   inheritAttrs: false,
@@ -44,11 +42,9 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
-
     const eventTypes = computed(() => Object.values(EVENT_TYPES).map(value => ({
       value,
-      text: t(`common.eventTypes.${value}`),
+      text: value,
     })));
 
     const rules = computed(() => ({

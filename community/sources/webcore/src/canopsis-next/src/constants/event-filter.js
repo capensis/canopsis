@@ -20,6 +20,7 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   copyToEntityInfo: 'copy_to_entity_info',
   setTags: 'set_tags',
   setTagsFromTemplate: 'set_tags_from_template',
+  setEntityInfoFromDictionary: 'set_entity_info_from_dictionary',
 };
 
 export const EVENT_FILTER_PATTERN_FIELDS = {

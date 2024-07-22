@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -16,24 +15,21 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store Store
 }
 
 func NewApi(
 	store Store,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store: store,
 	}
 }
 
 // Get
 // @Success 200 {object} common.PaginatedListResponse{data=[]Notification}
 func (a *api) Get(c *gin.Context) {
-	notification, err := a.store.Get(c.Request.Context())
+	notification, err := a.store.Get(c)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -54,7 +50,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	notification, err := a.store.Update(c.Request.Context(), request)
+	notification, err := a.store.Update(c, request)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return

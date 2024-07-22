@@ -26,16 +26,23 @@
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
+import Observer from '@/services/observer';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useLocalQuery } from '@/hooks/query/local-query';
-import { usePendingHandler } from '@/hooks/query/pending';
 import { useEntityComments } from '@/hooks/store/modules/entity-comment';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 
 import EntityCommentsList from './partials/entity-comments-list.vue';
 
@@ -67,30 +74,29 @@ export default {
       fetchEntityCommentsListWithoutStore,
     } = useEntityComments();
 
+    const periodicRefresh = inject('$periodicRefresh', new Observer());
+
     const {
       pending,
-      handler: fetchList,
-    } = usePendingHandler(async (fetchQuery) => {
-      const response = await fetchEntityCommentsListWithoutStore({
-        params: {
-          limit: fetchQuery.itemsPerPage,
-          page: fetchQuery.page,
-          entity: props.entity._id,
-        },
-      });
-
-      comments.value = response.data;
-      meta.value = response.meta;
-    });
-
-    const {
       query,
       updateQuery,
       updateQueryPage,
       updateQueryItemsPerPage,
-    } = useLocalQuery({
+      fetchHandlerWithQuery: fetchList,
+    } = usePendingWithLocalQuery({
       initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
-      onUpdate: fetchList,
+      fetchHandler: async (fetchQuery) => {
+        const response = await fetchEntityCommentsListWithoutStore({
+          params: {
+            limit: fetchQuery.itemsPerPage,
+            page: fetchQuery.page,
+            entity: props.entity._id,
+          },
+        });
+
+        comments.value = response.data;
+        meta.value = response.meta;
+      },
     });
 
     const isFirstPage = computed(() => query.value.page === 1);
@@ -104,7 +110,7 @@ export default {
           label: t('common.message'),
           action: async (message) => {
             await createEntityComment({ data: { entity: props.entity._id, message } });
-            return fetchList(query.value);
+            return fetchList();
           },
         },
       });
@@ -120,13 +126,18 @@ export default {
           text: comment.message,
           action: async (message) => {
             await updateEntityComment({ id: comment._id, data: { entity: props.entity._id, message } });
-            return fetchList(query.value);
+            return fetchList();
           },
         },
       });
     };
 
-    onMounted(() => fetchList(query.value));
+    onMounted(() => {
+      fetchList();
+
+      periodicRefresh.register(fetchList);
+    });
+    onBeforeUnmount(() => periodicRefresh.unregister(fetchList));
 
     return {
       pending,

@@ -38,3 +38,11 @@ type UserProvider interface {
 	Save(ctx context.Context, user *User) error
 	UpdateHashedPassword(ctx context.Context, id, hash string) error
 }
+
+type RoleProvider interface {
+	// GetValidRoleIDs checks if potentialRoles slice contains valid role names and returns at least one valid role ID.
+	// If no roles found, then it check if default role is valid and returns its ID. Return ErrDefaultRoleNotFound error if default role not found.
+	GetValidRoleIDs(ctx context.Context, potentialRoles []string, defaultRole string) ([]string, error)
+	// GetRoleID returns role ID by role name.
+	GetRoleID(ctx context.Context, name string) (string, error)
+}

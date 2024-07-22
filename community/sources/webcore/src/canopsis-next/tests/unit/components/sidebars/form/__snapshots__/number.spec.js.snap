@@ -2,6 +2,7 @@
 
 exports[`field-number Renders \`field-number\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Custom title"
 >
@@ -13,6 +14,7 @@ exports[`field-number Renders \`field-number\` with custom props 1`] = `
 
 exports[`field-number Renders \`field-number\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title=""
 >

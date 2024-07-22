@@ -19,7 +19,7 @@ func GetTimeSpans(s Service) gin.HandlerFunc {
 			return
 		}
 
-		res, err := s.GetTimespans(c.Request.Context(), request)
+		res, err := s.GetTimespans(c, request)
 		if err != nil {
 			panic(err)
 		}

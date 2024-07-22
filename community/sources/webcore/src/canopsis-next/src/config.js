@@ -1,3 +1,5 @@
+import sanitizeHtml from 'sanitize-html';
+
 import { removeTrailingSlashes } from '@/helpers/url';
 
 export const {
@@ -32,6 +34,51 @@ export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
+
+export const DEFAULT_SANITIZE_OPTIONS = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+    'h1', 'h2', 'u', 'nl', 'font', 'img', 'video', 'audio', 'area', 'map', 'strike', 'button', 'span', 'address',
+    'bdo', 'cite', 'q', 'dfn', 'var', 'dl', 'dt', 'dd', 'section', 'article', 'colgroup', 'col',
+
+    /**
+     * VUE COMPONENTS
+     */
+    'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
+    'service-entities-list', 'v-icon',
+  ]),
+  allowedAttributes: {
+    '*': [
+      'style', 'title', 'class', 'id', 'v-if', 'name', 'autoplay', 'colspan', 'controls', 'dir', 'align', 'width',
+      'height', 'role',
+    ],
+    a: ['href', 'name', 'target'],
+    img: ['src', 'alt'],
+    font: ['color', 'size', 'face'],
+    marquee: ['direction'],
+    'router-link': ['href', 'name', 'target', 'to'],
+    'c-alarm-chip': ['value'],
+    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
+    'c-entity-tags-chips': [':entity', 'inline-count'],
+    'c-copy-wrapper': ['value'],
+    'c-links-list': [':links', ':category'],
+    'v-icon': [
+      'color', 'dark', 'dense', 'disabled', 'large', 'light', 'right', 'size', 'small', 'tag', 'x-large', 'x-small',
+    ],
+    'service-entities-list': [
+      ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',
+      'entity-name-field', '@refresh', '@update:options', '@add:action',
+    ],
+  },
+  allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
+  disallowedTagsMode: 'escape',
+  disallowedTagsAutoClose: false,
+};
+
+export const DEFAULT_LINKIFY_OPTIONS = {
+  target: '_blank',
+  ignoreTags: ['script', 'style'],
+  validate: (str, type, token) => token?.hasProtocol?.(),
+};
 
 export const LINKIFY_PROTOCOLS = [
   ...VUE_APP_LINKIFY_PROTOCOLS.split(',').map(protocol => protocol.trim()).filter(Boolean),
@@ -236,6 +283,7 @@ export const API_ROUTES = {
     eventFilterRules: '/api/v4/template-validator/event-filter-rules',
   },
   linkRule: '/api/v4/link-rules',
+  bulkLinkRule: '/api/v4/bulk/link-rules',
   linkCategories: '/api/v4/link-categories',
   icons: '/api/v4/icons',
   themes: {

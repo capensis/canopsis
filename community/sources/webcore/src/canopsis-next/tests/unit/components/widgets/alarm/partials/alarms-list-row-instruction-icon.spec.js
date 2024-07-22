@@ -4,12 +4,19 @@ import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import AlarmsListRowInstructionsIcon from '@/components/widgets/alarm/partials/alarms-list-row-instructions-icon.vue';
 
+const snapshotStubs = {
+  'c-simple-tooltip': true,
+};
+
 describe('alarms-list-row-instructions-icon', () => {
+  const instructions = ['Instruction 1', 'Instruction 2'];
+
   const snapshotFactory = generateRenderer(AlarmsListRowInstructionsIcon, {
     attachTo: document.body,
+    stubs: snapshotStubs,
   });
 
-  test('Renders `alarms-list-row-instructions-icon` with instruction', () => {
+  test('Renders `alarms-list-row-instructions-icon` without instruction', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {},
@@ -17,20 +24,19 @@ describe('alarms-list-row-instructions-icon', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  test('Renders `alarms-list-row-instructions-icon` with all auto instructions', () => {
+  test('Renders `alarms-list-row-instructions-icon` with all auto instructions successful', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoSuccessful,
+          successful_auto_instructions: instructions,
         },
       },
     });
 
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   test('Renders `alarms-list-row-instructions-icon` with auto instruction failed', async () => {
@@ -38,13 +44,12 @@ describe('alarms-list-row-instructions-icon', () => {
       propsData: {
         alarm: {
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoFailed,
+          failed_auto_instructions: instructions,
         },
       },
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   test('Renders `alarms-list-row-instructions-icon` with auto instruction running', async () => {
@@ -52,27 +57,25 @@ describe('alarms-list-row-instructions-icon', () => {
       propsData: {
         alarm: {
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoFailed,
+          running_auto_instructions: instructions,
         },
       },
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  test('Renders `alarms-list-row-instructions-icon` with manual instruction waiting result', async () => {
+  test('Renders `alarms-list-row-instructions-icon` with manual instruction failed', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualFailed,
+          failed_manual_instructions: instructions,
         },
       },
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   test('Renders `alarms-list-row-instructions-icon` with manual instruction running', async () => {
@@ -80,12 +83,11 @@ describe('alarms-list-row-instructions-icon', () => {
       propsData: {
         alarm: {
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
+          running_manual_instructions: instructions,
         },
       },
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

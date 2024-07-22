@@ -2,6 +2,7 @@
 
 exports[`periodic-refresh Renders \`periodic-refresh\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Periodic refresh"
 >
@@ -16,6 +17,7 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with custom props 1`] = `
 
 exports[`periodic-refresh Renders \`periodic-refresh\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Periodic refresh"
 >
@@ -30,6 +32,7 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with default props 1`] = 
 
 exports[`periodic-refresh Renders \`periodic-refresh\` with errors 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Periodic refresh"
 >
@@ -44,6 +47,7 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with errors 1`] = `
 
 exports[`periodic-refresh Renders \`periodic-refresh\` with with life watching 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Periodic refresh"
   withlifewatching="true"

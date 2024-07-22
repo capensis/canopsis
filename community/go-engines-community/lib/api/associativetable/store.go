@@ -19,9 +19,9 @@ func NewStore(
 }
 
 type Store interface {
-	Update(ctx context.Context, model *AssociativeTable) (bool, error)
+	Update(ctx context.Context, model *AssociativeTable) error
 	GetByName(ctx context.Context, name string) (*AssociativeTable, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type store struct {
@@ -44,26 +44,18 @@ func (s store) GetByName(ctx context.Context, name string) (*AssociativeTable, e
 	return at, nil
 }
 
-func (s store) Update(ctx context.Context, model *AssociativeTable) (bool, error) {
-	res, err := s.dbCollection.UpdateOne(
+func (s store) Update(ctx context.Context, model *AssociativeTable) error {
+	_, err := s.dbCollection.UpdateOne(
 		ctx,
 		bson.M{"name": model.Name},
 		bson.M{"$set": model},
 		options.Update().SetUpsert(true),
 	)
 
-	if err != nil {
-		return false, err
-	}
-
-	return res.UpsertedCount > 0, nil
+	return err
 }
 
-func (s store) Delete(ctx context.Context, name string) (bool, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"name": name})
-	if err != nil {
-		return false, err
-	}
-
-	return deleted > 0, nil
+func (s store) Delete(ctx context.Context, name string) error {
+	_, err := s.dbCollection.DeleteOne(ctx, bson.M{"name": name})
+	return err
 }

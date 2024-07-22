@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-service Renders \`create-service\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close=""
+  >
+    <div
+      class="title"
+    >
+    </div>
+    <div
+      class="text"
+    >
+      <service-form-stub
+        form="[object Object]"
+        preparestatesettingform="[Function]"
+      />
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--text theme--light v-size--default"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Cancel
+        </span>
+      </button>
+      <button
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
+        type="submit"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Submit
+        </span>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-service Renders \`create-service\` with pbehavior 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close=""
+  >
+    <div
+      class="title"
+    >
+      Custom create service title
+    </div>
+    <div
+      class="text"
+    >
+      <service-form-stub
+        form="[object Object]"
+        preparestatesettingform="[Function]"
+      />
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--text theme--light v-size--default"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Cancel
+        </span>
+      </button>
+      <button
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
+        type="submit"
+      >
+        <span
+          class="v-btn__content"
+        >
+        Submit
+        </span>
+      </button>
+    </div>
+  </div>
+</form>
+`;

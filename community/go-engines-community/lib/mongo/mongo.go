@@ -24,6 +24,10 @@ const (
 	disableRetries       contextKey = "disable_retries"
 
 	topologyCheckTimeout = 1 * time.Second
+
+	ChangeStreamTypeInsert = "insert"
+	ChangeStreamTypeUpdate = "update"
+	ChangeStreamTypeDelete = "delete"
 )
 
 type contextKey string
@@ -79,6 +83,7 @@ type DbCollection interface {
 
 // DbClient connected MongoDB client settings
 type DbClient interface {
+	Watch(ctx context.Context, pipeline interface{}, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
 	Collection(string) DbCollection
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
@@ -433,6 +438,11 @@ func NewClientWithOptions(
 	}
 
 	return dbClient, nil
+}
+
+func (c *dbClient) Watch(ctx context.Context, pipeline interface{},
+	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+	return c.Database.Watch(ctx, pipeline, opts...)
 }
 
 func (c *dbClient) Collection(name string) DbCollection {

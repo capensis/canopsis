@@ -7,30 +7,26 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 )
 
 type api struct {
-	store        Store
-	transformer  common.PatternFieldsTransformer
-	actionLogger logger.ActionLogger
+	store       Store
+	transformer common.PatternFieldsTransformer
 }
 
 // Create
 // @Param body body CreateRequest true "body"
 // @Success 201 {object} Response
-func (a api) Create(c *gin.Context) {
+func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.transformEditRequest(ctx, &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -40,18 +36,9 @@ func (a api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	rule, err := a.store.Insert(ctx, request)
+	rule, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeResolveRule,
-		ValueID:   rule.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, rule)
@@ -59,7 +46,7 @@ func (a api) Create(c *gin.Context) {
 
 // List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
-func (a api) List(c *gin.Context) {
+func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
 
@@ -68,7 +55,7 @@ func (a api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), query)
+	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -84,8 +71,8 @@ func (a api) List(c *gin.Context) {
 
 // Get
 // @Success 200 {object} Response
-func (a api) Get(c *gin.Context) {
-	rule, err := a.store.GetById(c.Request.Context(), c.Param("id"))
+func (a *api) Get(c *gin.Context) {
+	rule, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -101,7 +88,7 @@ func (a api) Get(c *gin.Context) {
 // Update
 // @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
-func (a api) Update(c *gin.Context) {
+func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -110,9 +97,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.transformEditRequest(ctx, &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -122,7 +107,7 @@ func (a api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	rule, err := a.store.Update(ctx, request)
+	rule, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -132,20 +117,11 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeResolveRule,
-		ValueID:   rule.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, rule)
 }
 
-func (a api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+func (a *api) Delete(c *gin.Context) {
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrDefaultRule) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -158,15 +134,6 @@ func (a api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeResolveRule,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusNoContent, nil)
@@ -189,11 +156,9 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 func NewApi(
 	store Store,
 	transformer common.PatternFieldsTransformer,
-	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
-		store:        store,
-		transformer:  transformer,
-		actionLogger: actionLogger,
+		store:       store,
+		transformer: transformer,
 	}
 }

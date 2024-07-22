@@ -125,6 +125,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sanitizeOptions: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
@@ -139,7 +143,7 @@ export default {
   },
   computed: {
     sanitizedValue() {
-      return sanitizeHtml(this.value);
+      return sanitizeHtml(this.value, this.sanitizeOptions);
     },
 
     hasError() {
@@ -261,11 +265,16 @@ export default {
   },
   methods: {
     prepareVariable(variable, parentVariable) {
-      return {
+      const preparedVariable = {
         ...variable,
         value: parentVariable ? `${parentVariable.value}.${variable.value}` : variable.value,
-        variables: variable.variables ? this.prepareVariables(variable.variables, variable) : variable.variables,
       };
+
+      if (preparedVariable.variables) {
+        preparedVariable.variables = this.prepareVariables(preparedVariable.variables, preparedVariable);
+      }
+
+      return preparedVariable;
     },
 
     prepareVariables(variables, parentVariable) {

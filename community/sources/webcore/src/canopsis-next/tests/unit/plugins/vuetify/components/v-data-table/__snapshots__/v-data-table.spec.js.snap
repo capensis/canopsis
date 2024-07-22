@@ -528,7 +528,7 @@ exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis 
               class="layout align-center"
             >
               <span
-                class="v-data-table-header-span--ellipsis"
+                class="v-data-table-header__span--ellipsis"
                 title="Header 1"
               >
                 Header 1
@@ -554,7 +554,7 @@ exports[`v-data-table Renders \`v-data-table\` with items, headers and ellipsis 
               class="layout align-center"
             >
               <span
-                class="v-data-table-header-span--ellipsis"
+                class="v-data-table-header__span--ellipsis"
                 title="Header 2"
               >
                 Header 2

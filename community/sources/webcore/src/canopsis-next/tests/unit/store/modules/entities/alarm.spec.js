@@ -1,4 +1,4 @@
-import { cloneDeep, keyBy } from 'lodash';
+import { keyBy } from 'lodash';
 import Vue from 'vue';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
@@ -12,11 +12,12 @@ import SetSeveralPlugin from '@/plugins/set-several';
 
 import request from '@/services/request';
 
+import { getters as activeWidgetsGetters } from '@/store/modules/active-view/active-widgets';
 import alarmModule, { types } from '@/store/modules/entities/alarm';
 
 import { mapIds } from '@/helpers/array';
 
-const { actions, state: initialState, mutations, getters } = alarmModule;
+const { actions, state: initialState, getters } = alarmModule;
 
 Vue.use(SetSeveralPlugin);
 
@@ -54,75 +55,25 @@ describe('Entities alarm module', () => {
     jest.unmock('@/i18n');
   });
 
-  it('Mutate state after commit FETCH_LIST', () => {
-    const { params, widgetId } = mockData;
-    const state = cloneDeep(initialState);
-
-    const fetchList = mutations[types.FETCH_LIST];
-
-    fetchList(state, { widgetId, params });
-
-    expect(state).toEqual({
-      alarmsById: {},
-      widgets: {
-        [widgetId]: { pending: true, fetchingParams: params },
-      },
-    });
-  });
-
-  it('Mutate state after commit FETCH_LIST_COMPLETED', () => {
-    const { meta, params, widgetId } = mockData;
-    const state = {
-      widgets: {
-        [widgetId]: { pending: true, fetchingParams: params },
-      },
-    };
-
-    const fetchListCompleted = mutations[types.FETCH_LIST_COMPLETED];
-
-    fetchListCompleted(state, { widgetId, meta });
-
-    expect(state).toEqual({
-      widgets: {
-        [widgetId]: { fetchingParams: params, meta, pending: false },
-      },
-    });
-  });
-
-  it('Mutate state after commit FETCH_LIST_FAILED', () => {
-    const { meta, params, widgetId } = mockData;
-    const state = {
-      widgets: {
-        [widgetId]: { pending: true, meta, fetchingParams: params },
-      },
-    };
-
-    const fetchListFailed = mutations[types.FETCH_LIST_FAILED];
-
-    fetchListFailed(state, { widgetId });
-
-    expect(state).toEqual({
-      widgets: {
-        [widgetId]: { pending: false, fetchingParams: params, meta },
-      },
-    });
-  });
-
   it('Get alarms data by widget id. Getter: getListByWidgetId', () => {
     const { alarms, widgetId } = mockData;
     const state = {
       alarmsById: keyBy(alarms, '_id'),
-      widgets: {
-        [widgetId]: { allIds: mapIds(alarms) },
-      },
     };
 
-    const data = getters.getListByWidgetId(state, {
-      ...getters,
-      getList: getters.getList(state, {
-        getItem: getters.getItem(state),
-      }),
-    })(widgetId);
+    const data = getters.getListByWidgetId(
+      state,
+      {
+        ...getters,
+        getList: getters.getList(state, {
+          getItem: getters.getItem(state),
+        }),
+      },
+      null,
+      {
+        [activeWidgetsGetters.GET_ALL_IDS_BY_WIDGET_ID]: () => mapIds(alarms),
+      },
+    )(widgetId);
 
     expect(data).toEqual(alarms);
   });
@@ -155,49 +106,34 @@ describe('Entities alarm module', () => {
     expect(data).toEqual(alarm);
   });
 
-  it('Get meta data by widget id. Getter: getPendingByWidgetId', () => {
+  it('Get meta data by widget id. Getter: getMetaByWidgetId', () => {
     const { meta, widgetId } = mockData;
-    const state = {
-      widgets: {
-        [widgetId]: { meta },
-      },
-    };
 
-    const data = getters.getMetaByWidgetId(state)(widgetId);
+    const data = getters.getMetaByWidgetId(
+      null,
+      null,
+      null,
+      {
+        [activeWidgetsGetters.GET_META_BY_WIDGET_ID]: () => meta,
+      },
+    )(widgetId);
 
     expect(data).toEqual(meta);
-  });
-
-  it('Get meta data by widget id without data in state. Getter: getMetaByWidgetId', () => {
-    const { widgetId } = mockData;
-
-    const data = getters.getMetaByWidgetId(initialState)(widgetId);
-
-    expect(data).toEqual({});
   });
 
   it('Get pending data by widget id. Getter: getPendingByWidgetId', () => {
     const { widgetId } = mockData;
     const pending = true;
-    const state = {
-      widgets: {
-        [widgetId]: { pending },
+    const data = getters.getPendingByWidgetId(
+      null,
+      null,
+      null,
+      {
+        [activeWidgetsGetters.GET_PENDING_BY_WIDGET_ID]: () => pending,
       },
-    };
-
-    const data = getters.getPendingByWidgetId(state)(widgetId);
+    )(widgetId);
 
     expect(data).toEqual(pending);
-  });
-
-  it('Fetch alarms without saving in store and without params. Action: fetchListWithoutStore', async () => {
-    axiosMockAdapter
-      .onGet(API_ROUTES.alarms.list)
-      .reply(200, mockData.alarmsResponse);
-
-    const result = await actions.fetchListWithoutStore({}, {});
-
-    expect(result).toEqual(mockData.alarmsResponse);
   });
 
   it('Fetch alarms without saving in store. Action: fetchListWithoutStore', async () => {

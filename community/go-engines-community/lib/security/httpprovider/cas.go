@@ -3,40 +3,35 @@ package httpprovider
 import (
 	"context"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // casProvider implements CAS authentication.
 type casProvider struct {
-	roleCollection mongo.DbCollection
-	client         libhttp.Doer
-	config         security.CasConfig
-	userProvider   security.UserProvider
+	client       libhttp.Doer
+	config       security.CasConfig
+	userProvider security.UserProvider
+	roleProvider security.RoleProvider
 }
 
 // NewCasProvider creates new provider.
 func NewCasProvider(
-	dbClient mongo.DbClient,
 	client libhttp.Doer,
 	config security.CasConfig,
 	userProvider security.UserProvider,
+	roleProvider security.RoleProvider,
 ) security.HttpProvider {
 	return &casProvider{
-		roleCollection: dbClient.Collection(mongo.RoleCollection),
-		client:         client,
-		config:         config,
-		userProvider:   userProvider,
+		client:       client,
+		config:       config,
+		userProvider: userProvider,
+		roleProvider: roleProvider,
 	}
 }
 
@@ -140,22 +135,14 @@ func (p *casProvider) saveUser(ctx context.Context, username string) (*security.
 	}
 
 	if user == nil {
-		err = p.roleCollection.FindOne(
-			ctx,
-			bson.M{"name": p.config.DefaultRole},
-			options.FindOne().SetProjection(bson.M{"_id": 1}),
-		).Err()
+		roleID, err := p.roleProvider.GetRoleID(ctx, p.config.DefaultRole)
 		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, fmt.Errorf("role %s doesn't exist", p.config.DefaultRole)
-			}
-
 			return nil, err
 		}
 
 		user = &security.User{
 			Name:       username,
-			Roles:      []string{p.config.DefaultRole},
+			Roles:      []string{roleID},
 			IsEnabled:  true,
 			ExternalID: username,
 			Source:     security.SourceCas,

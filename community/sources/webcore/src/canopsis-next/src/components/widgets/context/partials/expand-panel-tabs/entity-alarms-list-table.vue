@@ -17,6 +17,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 
+import Observer from '@/services/observer';
+
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
@@ -25,6 +27,13 @@ import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/a
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export default {
+  inject: {
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   components: {
     AlarmsListTableWithPagination,
   },
@@ -68,6 +77,11 @@ export default {
   },
   mounted() {
     this.fetchList();
+
+    this.$periodicRefresh.register(this.fetchList);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.fetchList);
   },
   methods: {
     ...mapAlarmActions({

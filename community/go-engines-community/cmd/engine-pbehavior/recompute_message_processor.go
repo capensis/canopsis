@@ -103,7 +103,7 @@ func (p *recomputeMessageProcessor) updateAlarms(
 	excludeIds []string,
 	resolver libpbehavior.ComputedEntityTypeResolver,
 	updatedPbhIds []string,
-	author, userId, initiator string,
+	author, userID, initiator string,
 ) ([]string, error) {
 	matchByPbehaviorId := bson.M{"pbehavior_info.id": pbhId}
 	if len(excludeIds) > 0 {
@@ -115,7 +115,7 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		return excludeIds, err
 	}
 
-	idsByPbhInfo, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userId, initiator)
+	idsByPbhInfo, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userID, initiator)
 	if err != nil {
 		return excludeIds, err
 	}
@@ -151,7 +151,7 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		return excludeIds, err
 	}
 
-	idsByPattern, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userId, initiator)
+	idsByPattern, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userID, initiator)
 	if err != nil {
 		return excludeIds, err
 	}
@@ -167,7 +167,7 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 	pbhId string,
 	resolver libpbehavior.ComputedEntityTypeResolver,
 	updatedPbhIds []string,
-	author, userId, initiator string,
+	author, userID, initiator string,
 ) ([]string, error) {
 	if cursor == nil {
 		return nil, nil
@@ -211,8 +211,8 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 					event.PbehaviorInfo.Author = author
 				}
 
-				if userId != "" {
-					event.UserID = userId
+				if userID != "" {
+					event.UserID = userID
 				}
 
 				if initiator != "" {
