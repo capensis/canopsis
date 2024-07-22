@@ -41,7 +41,7 @@
               :label="$t('common.value')"
               :name="valueFieldName"
               :error-messages="errors.collect(valueFieldName)"
-              prefix="Event.Extra."
+              :prefix="EVENT_FILTER_EVENT_EXTRA_PREFIX"
               clearable
             />
           </v-layout>
@@ -102,7 +102,11 @@
 </template>
 
 <script>
-import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import {
+  ACTION_COPY_PAYLOAD_VARIABLES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
+} from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -137,6 +141,11 @@ export default {
       type: Array,
       default: () => [],
     },
+  },
+  data() {
+    return {
+      EVENT_FILTER_EVENT_EXTRA_PREFIX,
+    };
   },
   computed: {
     nameFieldName() {
