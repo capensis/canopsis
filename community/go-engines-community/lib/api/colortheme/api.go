@@ -1,14 +1,12 @@
 package colortheme
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -21,25 +19,22 @@ type API interface {
 
 func NewApi(
 	store Store,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:  store,
+		logger: logger,
 	}
 }
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store  Store
+	logger zerolog.Logger
 }
 
 // Create
 // @Param body body EditRequest true "body"
-// @Success 201 {object} Theme
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -58,20 +53,16 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeColorTheme,
-		ValueID:   theme.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+	if theme == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	c.JSON(http.StatusCreated, theme)
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Theme}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -96,9 +87,9 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} Theme
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	theme, err := a.store.GetById(c, c.Param("id"))
+	theme, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -113,7 +104,7 @@ func (a *api) Get(c *gin.Context) {
 
 // Update
 // @Param body body EditRequest true "body"
-// @Success 200 {object} Theme
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	request := EditRequest{
 		ID: c.Param("id"),
@@ -144,20 +135,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeColorTheme,
-		ValueID:   theme.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, theme)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrDefaultTheme) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -172,35 +154,18 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeColorTheme,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusNoContent, nil)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
+
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypeColorTheme,
-			ValueID:   request.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		return request.ID, nil

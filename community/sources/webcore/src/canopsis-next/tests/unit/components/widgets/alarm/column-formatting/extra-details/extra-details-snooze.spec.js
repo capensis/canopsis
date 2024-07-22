@@ -7,6 +7,7 @@ import ExtraDetailsSnooze from '@/components/widgets/alarm/columns-formatting/ex
 
 const stubs = {
   'c-alarm-extra-details-chip': true,
+  'c-simple-tooltip': true,
 };
 
 describe('extra-details-snooze', () => {
@@ -29,7 +30,7 @@ describe('extra-details-snooze', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-snooze` with full snooze', async () => {
+  it('Renders `extra-details-snooze` with full snooze', () => {
     const wrapper = snapshotFactory({
       propsData: {
         snooze,
@@ -37,11 +38,9 @@ describe('extra-details-snooze', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-snooze` without initiator', async () => {
+  it('Renders `extra-details-snooze` without initiator', () => {
     const wrapper = snapshotFactory({
       propsData: {
         snooze: omit(snooze, ['initiator']),
@@ -49,11 +48,9 @@ describe('extra-details-snooze', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-snooze` without message', async () => {
+  it('Renders `extra-details-snooze` without message', () => {
     const wrapper = snapshotFactory({
       propsData: {
         snooze: omit(snooze, ['m']),
@@ -61,11 +58,9 @@ describe('extra-details-snooze', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-snooze` with date in previous month', async () => {
+  it('Renders `extra-details-snooze` with date in previous month', () => {
     const wrapper = snapshotFactory({
       propsData: {
         snooze: {
@@ -77,7 +72,5 @@ describe('extra-details-snooze', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

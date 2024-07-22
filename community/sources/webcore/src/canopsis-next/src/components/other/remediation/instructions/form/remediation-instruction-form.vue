@@ -1,98 +1,44 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs3>
-        <c-instruction-type-field
-          v-field="form.type"
-          :disabled="disabled || !isNew"
-          class="mb-2"
-        />
-      </v-flex>
-      <v-flex>
-        <c-enabled-field
-          v-field="form.enabled"
-          :disabled="disabledCommon"
-          class="mt-0"
-          hide-details
-        />
-      </v-flex>
-    </v-layout>
-    <c-name-field
-      v-field="form.name"
-      :disabled="disabledCommon"
-    />
-    <v-text-field
-      v-field="form.description"
-      v-validate="'required'"
-      :label="$t('common.description')"
-      :error-messages="errors.collect('description')"
-      :disabled="disabledCommon"
-      name="description"
-    />
-    <v-layout
-      justify-space-between
-      align-center
-    >
-      <v-flex xs7>
-        <c-duration-field
-          v-field="form.timeout_after_execution"
-          :label="$t('remediation.instruction.timeoutAfterExecution')"
-          :units-label="$t('common.unit')"
-          :disabled="disabled"
-          name="timeout_after_execution"
-          required
-        />
-      </v-flex>
-      <v-flex
-        v-if="isAutoType"
-        class="ml-2"
-        xs3
-      >
-        <c-priority-field
-          v-field="form.priority"
-          :disabled="disabled"
-        />
-      </v-flex>
-    </v-layout>
-    <c-triggers-field
-      v-if="isAutoType"
-      v-field="form.triggers"
-      :triggers="availableTriggers"
-    />
-    <remediation-instruction-jobs-form
-      v-if="isAutoType || isManualSimplified"
-      v-field="form.jobs"
-      :disabled="disabled"
-    />
-    <remediation-instruction-steps-form
-      v-else
-      v-field="form.steps"
-      :disabled="disabled"
-    />
-    <remediation-instruction-approval-form
-      v-if="!disabledCommon"
-      v-field="form.approval"
-      :disabled="disabled"
-      :required="requiredApprove"
-    />
-  </div>
+  <v-tabs
+    slider-color="primary"
+    centered
+  >
+    <v-tab :class="{ 'error--text': hasGeneralError }">
+      {{ $t('common.general') }}
+    </v-tab>
+    <v-tab :class="{ 'error--text': hasPatternsError }">
+      {{ $tc('common.pattern', 2) }}
+    </v-tab>
+
+    <v-tab-item eager>
+      <remediation-instruction-general-form
+        v-field="form"
+        ref="general"
+        :disabled="disabled"
+        :is-new="isNew"
+        :required-approve="requiredApprove"
+        class="mt-3"
+      />
+    </v-tab-item>
+    <v-tab-item eager>
+      <remediation-instruction-patterns-form
+        v-field="form.patterns"
+        ref="patterns"
+        class="mt-3"
+      />
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>
-import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
-
-import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/entities/remediation/instruction/form';
-
-import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
-import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
-import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';
+import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
+import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    RemediationInstructionStepsForm,
-    RemediationInstructionJobsForm,
-    RemediationInstructionApprovalForm,
+    RemediationInstructionGeneralForm,
+    RemediationInstructionPatternsForm,
   },
   model: {
     prop: 'form',
@@ -120,17 +66,29 @@ export default {
       default: false,
     },
   },
-  computed: {
-    isAutoType() {
-      return isInstructionAuto(this.form);
+  data() {
+    return {
+      hasGeneralError: false,
+      hasPatternsError: false,
+    };
+  },
+  mounted() {
+    this.watchTabsErrors();
+  },
+  methods: {
+    watchTabsErrors() {
+      this.unwatchGeneralTabErrors = this.$watch(() => this.$refs.general?.hasAnyError, (value) => {
+        this.hasGeneralError = value;
+      });
+
+      this.unwatchPatternsTabErrors = this.$watch(() => this.$refs.patterns?.hasAnyError, (value) => {
+        this.hasPatternsError = value;
+      });
     },
 
-    isManualSimplified() {
-      return isInstructionSimpleManual(this.form);
-    },
-
-    availableTriggers() {
-      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
+    unwatchTabsErrors() {
+      this.unwatchGeneralTabErrors?.();
+      this.unwatchPatternsTabErrors?.();
     },
   },
 };

@@ -43,3 +43,35 @@ export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) => (
   + (ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1))
   + (ALARM_LINK_TD_PADDINGS[dense] * 2)}px`
 );
+
+/**
+ * Get the ID for the more info template of an alarm widget.
+ *
+ * @param {string} widgetId - The ID of the widget.
+ * @returns {string} The more info template ID.
+ */
+export const getAlarmWidgetMoreInfoTemplateId = (widgetId = '') => (
+  `${widgetId}-moreInfoTemplate`
+);
+
+/**
+ * Get the ID for the column template of an alarm widget.
+ *
+ * @param {string} widgetId - The ID of the widget.
+ * @param {string} value - The value for the column.
+ * @returns {string} The column template ID.
+ */
+export const getAlarmWidgetColumnTemplateId = (widgetId = '', value = '') => (
+  `${widgetId}-widgetColumns-${value}-template`
+);
+
+/**
+ * Get the ID for the popup template of a column in an alarm widget.
+ *
+ * @param {string} widgetId - The ID of the widget.
+ * @param {string} value - The value for the column.
+ * @returns {string} The column popup template ID.
+ */
+export const getAlarmWidgetColumnPopupTemplateId = (widgetId = '', value = '') => (
+  `${widgetId}-widgetColumns-${value}-popupTemplate`
+);

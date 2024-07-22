@@ -24,7 +24,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	Copy(ctx context.Context, widgetID string, r CreateRequest) (*Response, error)
 	CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
@@ -313,6 +313,22 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 		}
 
+		// required to get the author in action log listener.
+		_, err = s.filterCollection.UpdateMany(
+			ctx,
+			bson.M{
+				"widget":             widget.ID,
+				"is_user_preference": false,
+				"_id":                bson.M{"$nin": updateFilterIds},
+			},
+			bson.M{
+				"$set": bson.M{"author": r.Author},
+			},
+		)
+		if err != nil {
+			return err
+		}
+
 		_, err = s.filterCollection.DeleteMany(ctx, bson.M{
 			"widget":             widget.ID,
 			"is_user_preference": false,
@@ -329,10 +345,17 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
+
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
 		if err != nil || delCount == 0 {
 			return err
@@ -343,7 +366,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 
-		err = s.deleteFilters(ctx, id)
+		err = s.deleteFilters(ctx, id, userID)
 		if err != nil {
 			return err
 		}
@@ -558,8 +581,14 @@ func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) erro
 	return err
 }
 
-func (s *store) deleteFilters(ctx context.Context, widgetID string) error {
-	_, err := s.filterCollection.DeleteMany(ctx, bson.M{
+func (s *store) deleteFilters(ctx context.Context, widgetID, userID string) error {
+	// required to get the author in action log listener.
+	_, err := s.filterCollection.UpdateMany(ctx, bson.M{"widget": widgetID}, bson.M{"$set": bson.M{"author": userID}})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.filterCollection.DeleteMany(ctx, bson.M{
 		"widget": widgetID,
 	})
 

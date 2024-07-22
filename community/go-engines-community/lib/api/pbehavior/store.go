@@ -1,6 +1,7 @@
 package pbehavior
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -23,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/kylelemons/godebug/pretty"
 	librrule "github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -42,8 +44,8 @@ type Store interface {
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
-	DeleteByName(ctx context.Context, name string) (string, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
+	DeleteByName(ctx context.Context, name, userID string) (string, error)
 	FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error)
 	EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error)
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
@@ -94,10 +96,7 @@ func NewStore(
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
-	doc.ID = r.ID
-	if doc.ID == "" {
-		doc.ID = utils.NewID()
-	}
+	doc.ID = cmp.Or(r.ID, utils.NewID())
 
 	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
@@ -279,11 +278,6 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := request.SortBy
-	if sortBy == "" {
-		sortBy = s.entitiesDefaultSortBy
-	}
-
 	project := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,
@@ -296,7 +290,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	cursor, err := s.entityDbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, request.Sort),
+		common.GetSortQuery(cmp.Or(request.SortBy, s.entitiesDefaultSortBy), request.Sort),
 		project,
 	))
 
@@ -348,12 +342,25 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		prevPbh := pbehavior.PBehavior{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
-		if err == nil {
-			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+
+		if prevPbh.Origin != "" {
+			if len(prevPbh.Entities) > 0 {
+				return common.NewValidationError("_id", "Cannot update an external pbehavior.")
+			}
+
+			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+			if !*r.Enabled || r.RRule != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
+				return valErr
+			}
+
+			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+				return valErr
+			}
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -366,6 +373,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 
 		pbh, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 
@@ -445,12 +453,32 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		prevPbh := pbehavior.PBehavior{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
-		if err == nil {
-			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+
+		if prevPbh.Origin != "" {
+			if len(prevPbh.Entities) > 0 {
+				return common.NewValidationError("_id", "Cannot update an external pbehavior.")
+			}
+
+			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
+			if r.Enabled != nil && !*r.Enabled ||
+				r.RRule != nil && *r.RRule != "" ||
+				len(r.Exdates) > 0 ||
+				len(r.Exceptions) > 0 ||
+				r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
+
+				return valErr
+			}
+
+			if r.EntityPattern != nil {
+				if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+					return valErr
+				}
+			}
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -489,27 +517,50 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	return pbh, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	var deleted int64
 
-	return deleted > 0, nil
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
-func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
+func (s *store) DeleteByName(ctx context.Context, name, userID string) (string, error) {
 	pbh := pbehavior.PBehavior{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"name": name}).Decode(&pbh)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return "", nil
-		}
-		return "", err
-	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
-	if err != nil || deleted == 0 {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		pbh = pbehavior.PBehavior{}
+
+		// required to get the author in action log listener.
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"name": name},
+			bson.M{"$set": bson.M{"author": userID}},
+		).Decode(&pbh)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		_, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
+
+		return err
+	})
+	if err != nil {
 		return "", err
 	}
 
@@ -577,6 +628,8 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			bson.M{
 				"origin": r.Origin,
 				"entity": r.Entity,
+				"tstart": bson.M{"$lte": now},
+				"tstop":  bson.M{"$gte": now},
 			},
 			bson.M{
 				"$setOnInsert": doc,
@@ -604,6 +657,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 }
 
 func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error) {
+	now := datetime.NewCpsTime()
 	id := ""
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		id = ""
@@ -612,6 +666,8 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 			FindOneAndDelete(ctx, bson.M{
 				"entity": r.Entity,
 				"origin": r.Origin,
+				"tstart": bson.M{"$lte": now},
+				"tstop":  bson.M{"$gte": now},
 			}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {

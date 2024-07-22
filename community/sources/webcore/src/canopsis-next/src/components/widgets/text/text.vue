@@ -1,10 +1,12 @@
 <template>
   <div class="position-relative">
-    <c-compiled-template :template="template" />
+    <c-compiled-template :template="template" :sanitize-options="sanitizeOptions" />
   </div>
 </template>
 
 <script>
+import { TEXT_WIDGET_SANITIZE_OPTIONS } from '@/constants/sanitize';
+
 export default {
   props: {
     widget: {
@@ -13,6 +15,10 @@ export default {
     },
   },
   computed: {
+    sanitizeOptions() {
+      return TEXT_WIDGET_SANITIZE_OPTIONS;
+    },
+
     template() {
       return this.widget.parameters?.template;
     },

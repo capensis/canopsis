@@ -168,7 +168,7 @@ Toute modification dans cette section nécessite un redémarrage de Canopsis
 | :--------------------- | :------------------| :------------------------------------ |
 | Enabled                | false|true         | Activation / Désactivation des métriques |
 | FlushInterval          | "10s"              | Délai d'écriture des métriques dans la base de données |
-| SliInterval            | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+| SliInterval            | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure (Ne peut pas être > "1h" |
 | UserSessionGapInterval | "1h"               | Intervalle minimum d'un session utilisateur |
 
 

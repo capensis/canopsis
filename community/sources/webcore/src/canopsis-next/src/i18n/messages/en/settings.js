@@ -5,6 +5,7 @@ import {
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
   ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  WIDGET_COLUMNS_GROUPS,
 } from '@/constants';
 
 export default {
@@ -58,6 +59,7 @@ export default {
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   isActionsAllowWithOkState: 'Actions allowed when state OK?',
+  isVirtualScrollEnabled: 'Virtual scroll enabled',
   fastAckOutput: 'Fast-ack output',
   fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
@@ -279,6 +281,16 @@ export default {
     hideActions: 'Hide actions',
     hideMassSelection: 'Hide mass selection',
     hideToolbar: 'Hide toolbar',
+  },
+  columnsGroups: {
+    [WIDGET_COLUMNS_GROUPS.basic]: 'Basic',
+    [WIDGET_COLUMNS_GROUPS.messages]: 'Messages',
+    [WIDGET_COLUMNS_GROUPS.dates]: 'Dates',
+    [WIDGET_COLUMNS_GROUPS.counters]: 'Counters',
+    [WIDGET_COLUMNS_GROUPS.other]: 'Other',
+
+    [WIDGET_COLUMNS_GROUPS.entityParameters]: 'Entity parameters',
+    [WIDGET_COLUMNS_GROUPS.ticketParameters]: 'Ticket parameters',
   },
   columnsSettings: {
     title: 'Columns settings',

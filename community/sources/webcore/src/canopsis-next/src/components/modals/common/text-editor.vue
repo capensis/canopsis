@@ -18,6 +18,7 @@
           v-model="form.text"
           v-validate="config.rules"
           :label="config.label"
+          :sanitize-options="config.sanitizeOptions"
           :error-messages="errors.collect('text')"
           :variables="variables"
           :dark="$system.dark"

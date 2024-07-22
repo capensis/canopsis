@@ -40,7 +40,7 @@
 
 <script>
 import { uid } from '@/helpers/uid';
-import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
+import { convertDateToStartOfDayDateObject, convertDateToEndOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -92,7 +92,7 @@ export default {
       this.addItemIntoArray({
         key: uid(),
         begin: convertDateToStartOfDayDateObject(),
-        end: convertDateToStartOfDayDateObject(),
+        end: convertDateToEndOfDayDateObject(),
         type: '',
       });
     },

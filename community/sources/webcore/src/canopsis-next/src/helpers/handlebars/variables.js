@@ -41,6 +41,10 @@ const getVariablesFromNode = (node) => {
         variables.push(...getVariablesFromNode(node.path));
       }
 
+      if (node.inverse) {
+        variables.push(...getVariablesFromNode(node.inverse));
+      }
+
       return variables;
     }
     case 'Program':
