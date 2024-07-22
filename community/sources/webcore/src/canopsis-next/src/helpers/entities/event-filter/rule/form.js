@@ -110,13 +110,7 @@ import {
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const eventFilterActionValueToForm = (eventFilterActionValue = '') => {
-  if (eventFilterActionValue.startsWith(EVENT_FILTER_EVENT_EXTRA_PREFIX)) {
-    return eventFilterActionValue.slice(EVENT_FILTER_EVENT_EXTRA_PREFIX.length);
-  }
-
-  return eventFilterActionValue;
-};
+export const eventFilterActionValueToForm = (eventFilterActionValue = '') => eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
 
 /**
  * Convert event filter action to form

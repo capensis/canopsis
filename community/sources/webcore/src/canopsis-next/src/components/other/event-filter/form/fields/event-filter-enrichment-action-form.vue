@@ -41,7 +41,7 @@
               :label="$t('common.value')"
               :name="valueFieldName"
               :error-messages="errors.collect(valueFieldName)"
-              :prefix="EVENT_FILTER_EVENT_EXTRA_PREFIX"
+              :prefix="eventExtraPrefix"
               clearable
             />
           </v-layout>
@@ -142,12 +142,10 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      EVENT_FILTER_EVENT_EXTRA_PREFIX,
-    };
-  },
   computed: {
+    eventExtraPrefix() {
+      return EVENT_FILTER_EVENT_EXTRA_PREFIX;
+    },
     nameFieldName() {
       return `${this.name}.name`;
     },
