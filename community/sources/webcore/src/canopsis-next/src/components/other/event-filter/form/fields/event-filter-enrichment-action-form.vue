@@ -27,7 +27,7 @@
               :name="valueFieldName",
               key="value",
               :error-messages="errors.collect(valueFieldName)",
-              prefix="Event.Extra.",
+              :prefix="eventExtraPrefix",
               clearable
             )
           v-layout(v-else)
@@ -64,7 +64,11 @@
 </template>
 
 <script>
-import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import {
+  ACTION_COPY_PAYLOAD_VARIABLES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
+} from '@/constants';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
@@ -90,6 +94,10 @@ export default {
     },
   },
   computed: {
+    eventExtraPrefix() {
+      return EVENT_FILTER_EVENT_EXTRA_PREFIX;
+    },
+
     valueFieldName() {
       return `${this.name}.value`;
     },

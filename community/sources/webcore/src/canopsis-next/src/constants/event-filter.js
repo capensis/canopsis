@@ -50,3 +50,5 @@ export const EVENT_FILTER_FAILURE_TYPES = {
   externalDataApi: 3,
   other: 4,
 };
+
+export const EVENT_FILTER_EVENT_EXTRA_PREFIX = 'Event.Extra.';
