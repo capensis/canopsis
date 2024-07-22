@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,9 +38,9 @@ func CreateMongoQuery(client mongo.DbClient, authorProvider author.Provider) Mon
 		lookupBeforeMatch:     map[string][]bson.M{},
 		lookupBeforeLimit:     map[string][]bson.M{},
 		lookupAfterLimit: map[string][]bson.M{
-			"type":            GetNestedTypePipeline(),
-			"reason":          GetNestedReasonPipeline(),
-			"exdate":          GetNestedExdatesPipeline(),
+			"type":            GetNestedTypePipeline(authorProvider),
+			"reason":          GetNestedReasonPipeline(authorProvider),
+			"exdate":          GetNestedExdatesPipeline(authorProvider),
 			"author":          authorProvider.Pipeline(),
 			"comments.author": getCommentAuthorPipeline(authorProvider),
 		},
@@ -223,28 +222,30 @@ func (q *MongoQuery) adjustLookupsForSort(sortBy string) {
 }
 
 func GetNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
-	pipeline := append(GetNestedReasonPipeline(), GetNestedTypePipeline()...)
-	pipeline = append(pipeline, GetNestedExdatesPipeline()...)
+	pipeline := append(GetNestedReasonPipeline(authorProvider), GetNestedTypePipeline(authorProvider)...)
+	pipeline = append(pipeline, GetNestedExdatesPipeline(authorProvider)...)
 	pipeline = append(pipeline, authorProvider.Pipeline()...)
 	pipeline = append(pipeline, getCommentAuthorPipeline(authorProvider)...)
 
 	return pipeline
 }
 
-func GetNestedReasonPipeline() []bson.M {
-	return []bson.M{
+func GetNestedReasonPipeline(authorProvider author.Provider) []bson.M {
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.ReasonCollectionName,
+			"from":         mongo.PbehaviorReasonMongoCollection,
 			"localField":   "reason",
 			"foreignField": "_id",
 			"as":           "reason",
 		}},
 		{"$unwind": "$reason"},
 	}
+
+	return append(pipeline, authorProvider.PipelineForField("reason.author")...)
 }
 
-func GetNestedTypePipeline() []bson.M {
-	return []bson.M{
+func GetNestedTypePipeline(authorProvider author.Provider) []bson.M {
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "type_",
@@ -253,10 +254,12 @@ func GetNestedTypePipeline() []bson.M {
 		}},
 		{"$unwind": "$type"},
 	}
+
+	return append(pipeline, authorProvider.PipelineForField("type.author")...)
 }
 
-func GetNestedExdatesPipeline() []bson.M {
-	return []bson.M{
+func GetNestedExdatesPipeline(authorProvider author.Provider) []bson.M {
+	pipeline := []bson.M{
 		// Lookup exdate type
 		{"$unwind": bson.M{
 			"path":                       "$exdates",
@@ -297,6 +300,11 @@ func GetNestedExdatesPipeline() []bson.M {
 			"preserveNullAndEmptyArrays": true,
 			"includeArrayIndex":          "exception_index",
 		}},
+	}
+
+	pipeline = append(pipeline, authorProvider.PipelineForField("exceptions.author")...)
+
+	return append(pipeline, []bson.M{
 		{"$unwind": bson.M{
 			"path":                       "$exceptions.exdates",
 			"preserveNullAndEmptyArrays": true,
@@ -348,7 +356,7 @@ func GetNestedExdatesPipeline() []bson.M {
 				}}},
 			}},
 		}},
-	}
+	}...)
 }
 
 func getCommentAuthorPipeline(authorProvider author.Provider) []bson.M {

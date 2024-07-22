@@ -1033,6 +1033,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.ID = string(in.String())
 		case "name":
 			out.Name = string(in.String())
+		case "author":
+			out.Author = string(in.String())
 		case "description":
 			out.Description = string(in.String())
 		case "enable_history":
@@ -1115,6 +1117,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		case "created":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Created).UnmarshalJSON(data))
+			}
+		case "updated":
+			if in.IsNull() {
+				in.Skip()
+				out.Updated = nil
+			} else {
+				if out.Updated == nil {
+					out.Updated = new(datetime.CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.Updated).UnmarshalJSON(data))
+				}
 			}
 		case "last_event_date":
 			if in.IsNull() {
@@ -1330,6 +1344,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.Name))
 	}
+	if in.Author != "" {
+		const prefix string = ",\"author\":"
+		out.RawString(prefix)
+		out.String(string(in.Author))
+	}
 	{
 		const prefix string = ",\"description\":"
 		out.RawString(prefix)
@@ -1426,6 +1445,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"created\":"
 		out.RawString(prefix)
 		out.Raw((in.Created).MarshalJSON())
+	}
+	if in.Updated != nil {
+		const prefix string = ",\"updated\":"
+		out.RawString(prefix)
+		out.Raw((*in.Updated).MarshalJSON())
 	}
 	if in.LastEventDate != nil {
 		const prefix string = ",\"last_event_date\":"

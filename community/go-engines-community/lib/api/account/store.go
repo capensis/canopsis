@@ -32,7 +32,7 @@ func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvide
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 		// Find permissions
 		{"$lookup": bson.M{
@@ -146,8 +146,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		{
 			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
 		},
-	})
+	}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("ui_theme.author")...)
 
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}

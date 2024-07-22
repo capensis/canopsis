@@ -11,11 +11,11 @@ Lisez l'ensemble de ce document avant de procéder à toute manipulation.
 
 Vous devez tout d'abord lire **chacune** des [notes de version](../../index.md#notes-de-version) publiée entre votre version actuelle et celle que vous ciblez. [En savoir plus sur les numéros de version de Canopsis](numeros-version-canopsis.md).
 
-Par exemple, si vous effectuez une mise à jour de Canopsis 3.38.0 à 3.40.0, vous devez :
+Par exemple, si vous effectuez une mise à jour de Canopsis 22.10 à 24.04, vous devez :
 
-*  consulter et appliquer toute procédure donnée dans les notes de version de Canopsis 3.39.0,
-*  puis celles de Canopsis 3.39.1,
-*  puis celles de Canopsis 3.40.0,
+*  consulter et appliquer toute procédure donnée dans les notes de version de Canopsis 23.04,
+*  puis celles de Canopsis 23.10,
+*  puis celles de Canopsis 24.04,
 *  puis suivre le reste de cette procédure, selon votre méthode d'installation (paquets ou Docker Compose).
 
 Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
@@ -24,46 +24,6 @@ Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant �
     La mise à jour causera une **interruption de service** de Canopsis et des composants qui lui sont associés, durant son déroulement.
 
     Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/menu-administration/diffusion-de-messages.md) afin de prévenir vos utilisateurs en amont.
-
-### Mise à jour en installation par paquets CentOS 7
-
-Les commandes suivantes doivent être réalisées avec l'utilisateur `root`.
-
-Appliquez la mise à jour des paquets Canopsis :
-
-```sh
-yum --disablerepo="*" --enablerepo="canopsis*" update
-```
-
-Vous devez ensuite finaliser la mise à jour avec les commandes suivantes, fonction de votre édition de Canopsis (Community ou Pro) :
-
-=== "Canopsis Community"
-
-    ```sh
-    su - canopsis -c "canopsinit --canopsis-edition core"
-    ```
-
-=== "Canopsis Pro"
-
-    ```sh
-    su - canopsis -c "canopsinit --canopsis-edition cat"
-    ```
-
-Puis, après avoir pris en compte toute éventuelle remarque des notes de version au sujet du fichier `canopsis.toml`, appliquez les changements de configuration :
-
-```bash
-set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-/opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -postgres-migration-mode=up -postgres-migration-directory=/opt/canopsis/share/migrations/postgres
-``` 
-
-Puis, redémarrez l'ensemble des moteurs Canopsis :
-
-```sh
-systemctl daemon-reload
-canoctl restart
-```
-
-Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 
 ### Mise à jour en installation par paquets RHEL 8
 

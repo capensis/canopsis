@@ -27,7 +27,8 @@ import { MODALS, USERS_PERMISSIONS } from '@/constants';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useBroadcastMessages } from '@/hooks/store/modules/broadcast-message';
-import { usePendingWithLocalQuery, useCallActionWithPopup } from '@/hooks/query/shared';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useQueryOptions } from '@/hooks/query/options';
 import { useCRUDPermissions } from '@/hooks/auth';
 

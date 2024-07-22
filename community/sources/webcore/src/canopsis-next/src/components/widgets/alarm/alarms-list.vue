@@ -163,6 +163,9 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
+import {
+  widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
+} from '@/mixins/widget/handlebars/alarms-list-precompile-templates';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
@@ -206,6 +209,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
+    widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
     entitiesWidgetMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,

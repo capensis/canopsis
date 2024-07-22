@@ -12,6 +12,8 @@ export default {
   maxMatchedItems: 'Seuil d\'éléments avant avertissement',
   checkCountRequestTimeout: 'Délai d\'expiration de la requête',
   requiredInstructionApprove: 'Approbation des consignes requise',
+  disabledTransitions: 'Désactivez certaines animations',
+  disabledTransitionsTooltip: 'Cela aidera à améliorer les performances de l\'application',
   tooltips: {
     maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
     checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',

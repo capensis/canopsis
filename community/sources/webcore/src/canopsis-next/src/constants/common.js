@@ -459,3 +459,14 @@ export const VARIABLES_STEP_FIELDS = {
   message: 'm',
   author: 'a',
 };
+
+export const WIDGET_COLUMNS_GROUPS = {
+  basic: 'basic',
+  messages: 'messages',
+  dates: 'dates',
+  counters: 'counters',
+  other: 'other',
+
+  entityParameters: 'entityParameters',
+  ticketParameters: 'ticketParameters',
+};

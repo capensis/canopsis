@@ -27,7 +27,7 @@ type api struct {
 // Get
 // @Success 200 {object} DataStorage
 func (a *api) Get(c *gin.Context) {
-	data, err := a.store.Get(c.Request.Context())
+	data, err := a.store.Get(c)
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +45,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	data, err := a.store.Update(c.Request.Context(), conf)
+	data, err := a.store.Update(c, conf)
 	if err != nil {
 		panic(err)
 	}

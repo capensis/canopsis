@@ -149,6 +149,10 @@
             :show-instruction-icon="hasInstructionsAlarms"
             :actions-inline-count="actionsInlineCount"
             :actions-ignore-media-query="resizableColumn"
+            :virtual-scroll="widget.parameters.isVirtualScrollEnabled"
+            :booted="bootedRows[item._id]"
+            :visible="visibleRows[item._id]"
+            :eager="eager"
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
@@ -174,6 +178,7 @@
     </div>
     <c-table-pagination
       v-if="!hidePagination"
+      :items="paginationItems"
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
@@ -203,7 +208,15 @@ import {
 } from '@/constants';
 
 import featuresService from '@/services/features';
+import { AsyncBooting } from '@/services/async-booting';
 
+import { mapIds } from '@/helpers/array';
+import {
+  getNearestAndFarthestIndexes,
+  getNearestViewportIndexesBound,
+  recursiveRaf,
+  splitIdsToChunk,
+} from '@/helpers/render';
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
@@ -227,6 +240,12 @@ import AlarmsListRow from './alarms-list-row.vue';
  * @module alarm
  */
 export default {
+  provide() {
+    return {
+      $asyncBootingActionsPanel: this.$asyncBootingActionsPanel,
+      $intersectionObserver: this.$intersectionObserver,
+    };
+  },
   components: {
     MassActionsPanel,
     AlarmHeaderCell,
@@ -325,6 +344,16 @@ export default {
       type: String,
       default: '',
     },
+    eager: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      bootedRows: {},
+      visibleRows: {},
+    };
   },
   computed: {
     shownTopPagination() {
@@ -422,7 +451,7 @@ export default {
             ...header,
             width: header.width
               ? header.width
-              : width && `${width}%`,
+              : width && `${width}px`,
           };
         });
       }
@@ -440,10 +469,10 @@ export default {
         [this.isMediumDense]: ALARM_DENSE_TYPES.medium,
       }.true ?? ALARM_DENSE_TYPES.large;
       const width = this.getColumnWidthByField('actions') ?? 0;
-      const widthInPixelWithoutPaddings = (width / this.percentsInPixel) - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
+      const widthWithoutPaddings = width - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
       const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[denseType] + ALARM_ACTION_BUTTON_MARGINS[denseType];
 
-      return Math.floor(widthInPixelWithoutPaddings / actionWidth) || 1;
+      return Math.floor(widthWithoutPaddings / actionWidth) || 1;
     },
 
     vDataTableClass() {
@@ -481,7 +510,7 @@ export default {
         const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
 
         return {
-          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}%)`,
+          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}px)`,
         };
       }
 
@@ -515,11 +544,19 @@ export default {
     parentAlarmId() {
       return this.parentAlarm?._id;
     },
+
+    paginationItems() {
+      return [5, 10, 20, 50, 100, 200];
+    },
   },
 
   watch: {
     alarms(alarms) {
       this.selected = intersectionBy(alarms, this.selected, '_id');
+
+      if (!this.eager) {
+        this.setBootedRows(alarms);
+      }
     },
 
     columns() {
@@ -544,8 +581,98 @@ export default {
         }
       },
     },
+
+    'widget.parameters.isVirtualScrollEnabled': {
+      handler(isVirtualScrollEnabled) {
+        if (isVirtualScrollEnabled) {
+          this.$intersectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              const { id } = entry.target.dataset;
+
+              if (this.visibleRows[id] !== entry.isIntersecting) {
+                this.$set(this.visibleRows, id, entry.isIntersecting);
+              }
+            });
+          }, {
+            root: null,
+            rootMargin: '400px 0px',
+            threshold: 0,
+          });
+
+          return;
+        }
+
+        this.$intersectionObserver?.disconnect();
+      },
+      immediate: true,
+    },
   },
+
+  beforeCreate() {
+    this.$asyncBootingActionsPanel = new AsyncBooting();
+  },
+
+  mounted() {
+    this.$tbodyEl = this.$el.querySelector('tbody');
+  },
+
+  beforeDestroy() {
+    this.$intersectionObserver?.disconnect();
+    this.$asyncBootingActionsPanel.clear();
+  },
+
   methods: {
+    setBootedRows(items, itemsPerRender = 10) {
+      if (!this.$tbodyEl || !items.length) {
+        return;
+      }
+
+      const {
+        start,
+        end,
+      } = getNearestViewportIndexesBound({
+        wrapperEl: this.$tbodyEl,
+        length: items.length,
+      });
+
+      const {
+        nearest,
+        farthest,
+      } = getNearestAndFarthestIndexes({
+        start,
+        end,
+        ids: mapIds(items),
+      });
+
+      this.bootedRows = nearest.reduce((acc, id) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      this.visibleRows = { ...this.bootedRows };
+
+      const chunks = splitIdsToChunk(farthest, itemsPerRender);
+
+      if (!chunks.length) {
+        window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
+        return;
+      }
+
+      chunks.forEach((chunk, index) => {
+        recursiveRaf(() => {
+          chunk.forEach(id => this.$set(this.bootedRows, id, true));
+
+          if (index === chunks.length - 1) {
+            /**
+             * Render actions panels
+             */
+            window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
+          }
+        }, index + 1);
+      });
+    },
+
     updateColumnsSettings() {
       const settings = {};
 
@@ -615,10 +742,6 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-
-      if (!this.resizingMode) {
-        this.throttledCalculateColumnsWidths();
-      }
     },
   },
 };
@@ -639,7 +762,7 @@ export default {
     min-height: 48px;
     background: var(--v-background-base);
     z-index: 2;
-    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
     transition-property: opacity, background-color;
 
     &:after {
@@ -701,7 +824,7 @@ export default {
     &:after {
       content: ' ';
       position: absolute;
-      transition: .3s cubic-bezier(.25, .8, .5,1);
+      transition: .3s cubic-bezier(.25, .8, .5, 1);
       top: 0;
       right: 0;
       bottom: 0;
@@ -815,7 +938,7 @@ export default {
 
   thead {
     position: relative;
-    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
     transition-property: opacity, background-color;
     z-index: 1;
 
@@ -831,7 +954,7 @@ export default {
 
     tr {
       background: var(--v-table-background-base);
-      transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+      transition: background-color .3s cubic-bezier(.25, .8, .5, 1);
 
       .theme--dark & {
         background: var(--v-table-background-base);

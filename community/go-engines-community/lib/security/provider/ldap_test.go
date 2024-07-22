@@ -2,19 +2,15 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"testing"
 
-	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_ldap "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-ldap/ldap"
-	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	mock_provider "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/provider"
 	"github.com/go-ldap/ldap/v3"
 	"github.com/golang/mock/gomock"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const validRole = "valid"
@@ -71,7 +67,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -118,7 +114,7 @@ func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *tes
 
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err == nil {
@@ -165,7 +161,7 @@ func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -219,7 +215,7 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -298,7 +294,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
 	_, _ = p.Auth(ctx, username, password)
 }
 
@@ -378,7 +374,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
 	_, _ = p.Auth(ctx, username, password)
 }
 
@@ -432,7 +428,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNotFoundRole_ShouldReturnE
 		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Any()).
 		Return(nil, nil)
 
-	p := NewLdapProvider(getDbClientMock(ctrl), config, mockUserProvider, mockLdapDialer, mock_security.NewMockEnforcer(ctrl))
+	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mock_security.NewMockEnforcer(ctrl))
 	user, err := p.Auth(ctx, username, password)
 
 	if err == nil {
@@ -444,34 +440,17 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNotFoundRole_ShouldReturnE
 	}
 }
 
-func getDbClientMock(ctrl *gomock.Controller) *mock_mongo.MockDbClient {
-	singleResultHelperSuccess := mock_mongo.NewMockSingleResultHelper(ctrl)
-	singleResultHelperSuccess.EXPECT().Err().Return(nil).AnyTimes()
-
-	singleResultHelperNotFound := mock_mongo.NewMockSingleResultHelper(ctrl)
-	singleResultHelperNotFound.EXPECT().Err().Return(mongo.ErrNoDocuments).AnyTimes()
-
-	unexpectedResultHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
-	unexpectedResultHelper.EXPECT().Err().Return(mongo.ErrNoDocuments).AnyTimes()
-
-	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(_ context.Context, query bson.M, _ ...*options.FindOneOptions) libmongo.SingleResultHelper {
-			role, ok := query["name"]
-			if !ok {
-				return unexpectedResultHelper
+func getRoleProviderMock(ctrl *gomock.Controller) *mock_security.MockRoleProvider {
+	mockRoleProvider := mock_security.NewMockRoleProvider(ctrl)
+	mockRoleProvider.EXPECT().GetRoleID(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(ctx context.Context, name string) (string, error) {
+			if name == validRole {
+				return validRole, nil
 			}
 
-			if role == validRole {
-				return singleResultHelperSuccess
-			}
-
-			return singleResultHelperNotFound
+			return "", errors.New("role not found")
 		},
 	).AnyTimes()
 
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
-	mockDbClient.EXPECT().Collection(libmongo.RoleCollection).Return(mockDbCollection)
-
-	return mockDbClient
+	return mockRoleProvider
 }

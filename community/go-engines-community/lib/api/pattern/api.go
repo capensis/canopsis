@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -26,10 +25,9 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	enforcer     security.Enforcer
-	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
+	store    Store
+	enforcer security.Enforcer
+	logger   zerolog.Logger
 
 	configProvider config.UserInterfaceConfigProvider
 }
@@ -38,14 +36,12 @@ func NewApi(
 	store Store,
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
-	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:        store,
-		enforcer:     enforcer,
-		actionLogger: actionLogger,
-		logger:       logger,
+		store:    store,
+		enforcer: enforcer,
+		logger:   logger,
 
 		configProvider: configProvider,
 	}
@@ -55,7 +51,6 @@ func NewApi(
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -63,7 +58,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	if *request.IsCorporate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+		ok, err := a.enforcer.Enforce(c.MustGet(auth.UserKey).(string), apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -77,15 +72,6 @@ func (a *api) Create(c *gin.Context) {
 	pattern, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypePattern,
-		ValueID:   pattern.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, pattern)
@@ -119,7 +105,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pattern, err := a.store.GetById(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	pattern, err := a.store.GetByID(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -136,7 +122,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
@@ -145,7 +131,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	pattern, err := a.store.GetById(c, request.ID, userId)
+	pattern, err := a.store.GetByID(c, request.ID, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -166,7 +152,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if pattern.IsCorporate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -187,22 +173,13 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypePattern,
-		ValueID:   pattern.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, pattern)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-	pattern, err := a.store.GetById(c, id, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+
+	pattern, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
 		panic(err)
 	}
@@ -213,7 +190,7 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if pattern.IsCorporate {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -224,7 +201,7 @@ func (a *api) Delete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(c, *pattern)
+	ok, err := a.store.Delete(c, *pattern, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -234,29 +211,21 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypePattern,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusNoContent, nil)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	canDeleteCorporate, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+	userID := c.MustGet(auth.UserKey).(string)
+
+	canDeleteCorporate, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 	if err != nil {
 		panic(err)
 	}
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		pattern, err := a.store.GetById(c, request.ID, userId)
+		pattern, err := a.store.GetByID(c, request.ID, userID)
 		if err != nil || pattern == nil {
 			return "", err
 		}
@@ -265,18 +234,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 			return "", bulk.ErrUnauthorized
 		}
 
-		ok, err := a.store.Delete(c, *pattern)
+		ok, err := a.store.Delete(c, *pattern, userID)
 		if err != nil || !ok {
 			return "", err
-		}
-
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypePattern,
-			ValueID:   request.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
 		}
 
 		return pattern.ID, nil

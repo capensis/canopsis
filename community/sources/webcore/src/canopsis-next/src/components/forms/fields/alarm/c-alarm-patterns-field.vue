@@ -216,7 +216,7 @@ export default {
         ],
         defaultValue: ALARM_STATUSES.ongoing,
         valueField: {
-          is: 'c-alarm-state-field',
+          is: 'c-alarm-status-field',
         },
       };
     },
@@ -309,6 +309,7 @@ export default {
               multiple: isMultiple,
               deletableChips: isMultiple,
               smallChips: isMultiple,
+              itemValue: 'display_name',
             };
           },
         },

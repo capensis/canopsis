@@ -224,8 +224,9 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot register websocket rooms: %w", err)
 	}
 
+	authorProvider := author.NewProvider(p.ApiConfigProvider)
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
-		author.NewProvider(dbClient, p.ApiConfigProvider), tplExecutor, json.NewDecoder(), logger)
+		authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(dbClient, pgPoolProvider),
@@ -308,6 +309,7 @@ func Default(
 	}
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))
@@ -346,7 +348,6 @@ func Default(
 			entityCleanerTaskChan,
 			exportExecutor,
 			techMetricsTaskExecutor,
-			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			p.UserInterfaceConfigProvider,
 			websocketHub,
@@ -354,7 +355,7 @@ func Default(
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
-			author.NewProvider(dbClient, p.ApiConfigProvider),
+			authorProvider,
 			healthcheckStore,
 			tplExecutor,
 			stateSettingsUpdatesChan,
@@ -391,6 +392,16 @@ func Default(
 		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
 	})
 	api.SetWebsocketHub(websocketHub)
+
+	if flags.EnableActionLog {
+		actionLogger := apilogger.NewActionLogger(dbClient, pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+		api.AddWorker("action_log", func(ctx context.Context) {
+			err := actionLogger.Watch(ctx)
+			if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
+				panic(FatalWorkerError{err: err})
+			}
+		})
+	}
 
 	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)
@@ -441,7 +452,7 @@ func Default(
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter, authorProvider), websocketHub, canopsis.PeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})

@@ -1,15 +1,19 @@
 package role
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"sort"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -21,11 +25,11 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, id string, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetTemplates(ctx context.Context) ([]Template, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:               dbClient,
 		dbCollection:           dbClient.Collection(mongo.RoleCollection),
@@ -34,6 +38,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 		dbTemplateCollection:   dbClient.Collection(mongo.RoleTemplateCollection),
 		defaultSearchByFields:  []string{"_id", "name", "description"},
 		defaultSortBy:          "name",
+		authorProvider:         authorProvider,
 	}
 }
 
@@ -45,6 +50,8 @@ type store struct {
 	dbTemplateCollection   mongo.DbCollection
 	defaultSearchByFields  []string
 	defaultSortBy          string
+
+	authorProvider author.Provider
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -54,19 +61,15 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := "name"
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
-
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	if r.Permission != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
 	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		common.GetSortQuery(cmp.Or(r.SortBy, "name"), r.Sort),
 	))
 
 	if err != nil {
@@ -101,6 +104,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 		{"$match": bson.M{"_id": id}},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -124,26 +128,39 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
+
 	types, err := getTypes(ctx, s.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		return nil, err
 	}
 
+	id := utils.NewID()
+
 	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
-		_, err = s.dbCollection.InsertOne(ctx, bson.M{
-			"_id":         r.Name,
+
+		_, err := s.dbCollection.InsertOne(ctx, bson.M{
+			"_id":         id,
 			"name":        r.Name,
 			"description": r.Description,
 			"defaultview": r.DefaultView,
 			"permissions": transformPermissionsToDoc(r.Permissions, types),
 			"auth_config": r.AuthConfig,
+			"author":      r.Author,
+			"created":     now,
+			"updated":     now,
 		})
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
 			return err
 		}
-		role, err = s.GetOneBy(ctx, r.Name)
+
+		role, err = s.GetOneBy(ctx, id)
 		return err
 	})
 	if err != nil {
@@ -154,6 +171,8 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 }
 
 func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
+
 	types, err := getTypes(ctx, s.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		return nil, err
@@ -169,6 +188,8 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 				"defaultview": r.DefaultView,
 				"permissions": transformPermissionsToDoc(r.Permissions, types),
 				"auth_config": r.AuthConfig,
+				"author":      r.Author,
+				"updated":     now,
 			}},
 		)
 		if err != nil || res.MatchedCount == 0 {
@@ -184,22 +205,28 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 	return role, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id})
-	if err := res.Err(); err != nil {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	var deleted int64
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
 		if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, err
+			return cmp.Or(err, ErrLinkedToUser)
 		}
-	} else {
-		return false, ErrLinkedToUser
-	}
 
-	delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
 
-	return delCount > 0, nil
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
@@ -273,6 +300,9 @@ func getNestedObjectsPipeline() []bson.M {
 			"description": bson.M{"$first": "$description"},
 			"defaultview": bson.M{"$first": "$defaultview"},
 			"auth_config": bson.M{"$first": "$auth_config"},
+			"author":      bson.M{"$first": "$author"},
+			"created":     bson.M{"$first": "$created"},
+			"updated":     bson.M{"$first": "$updated"},
 			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
 				"if": "$permissions.model",
 				"then": bson.M{"$mergeObjects": bson.A{

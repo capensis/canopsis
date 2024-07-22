@@ -53,26 +53,6 @@ dnf update
 
 ### Configuration système
 
-Vous pouvez vérifier les limites de ressources systèmes avec la commande suivante :
-
-```sh
-ulimit -a
-```
-
-Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v7.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
-
-```sh
-cat << EOF > /etc/security/limits.d/mongo.conf
-#<domain>      <type>  <item>         <value>
-mongo           soft    fsize           unlimited
-mongo           soft    cpu             unlimited
-mongo           soft    as              unlimited
-mongo           soft    memlock         unlimited
-mongo           hard    nofile          64000
-mongo           hald    nproc           64000
-EOF
-```
-
 Désactivez la gestion des `Transparent Huge Pages (THP)` selon la [préconisation MongoDB](https://www.mongodb.com/docs/manual/tutorial/transparent-huge-pages/)
 
 ```sh
@@ -119,40 +99,55 @@ EOF
 Ajout du dépôt pour RabbitMQ :
 
 ```sh
+## primary RabbitMQ signing key
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
+## modern Erlang repository
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
+## RabbitMQ server repository
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
+
 cat << EOF > /etc/yum.repos.d/rabbitmq.repo
 ##
 ## Zero dependency Erlang
 ##
 
-[rabbitmq_erlang]
-name=rabbitmq_erlang
-baseurl=https://packagecloud.io/rabbitmq/erlang/el/8/\$basearch
+[modern-erlang-noarch]
+name=modern-erlang-el8-noarch
+baseurl=https://yum1.novemberain.com/erlang/el/8/noarch
+        https://yum2.novemberain.com/erlang/el/8/noarch
+        https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/rpm/el/8/noarch
 repo_gpgcheck=1
-gpgcheck=0
 enabled=1
-# PackageCloud’s repository key and RabbitMQ package signing key
-gpgkey=https://packagecloud.io/rabbitmq/erlang/gpgkey
-       https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
+       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
+pkg_gpgcheck=1
+autorefresh=1
+type=rpm-md
 
 ##
-## RabbitMQ server
+## RabbitMQ Server
 ##
 
-[rabbitmq_server]
-name=rabbitmq_server
-baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/8/\$basearch
+[rabbitmq-el8-noarch]
+name=rabbitmq-el8-noarch
+baseurl=https://yum2.novemberain.com/rabbitmq/el/8/noarch
+        https://yum1.novemberain.com/rabbitmq/el/8/noarch
+        https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/rpm/el/8/noarch
 repo_gpgcheck=1
-gpgcheck=0
 enabled=1
-# PackageCloud’s repository key and RabbitMQ package signing key
-gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
-       https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
+       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
+pkg_gpgcheck=1
+autorefresh=1
+type=rpm-md
 EOF
 ```
 
@@ -344,7 +339,7 @@ sudo -u postgres psql
 
 Créer la base de données `canopsis` et l'utilisateur associé dans l'instance PostgreSQL :
 
-```
+```sql
 postgres=# CREATE database canopsis;
 postgres=# \c canopsis
 canopsis=# CREATE EXTENSION IF NOT EXISTS timescaledb;

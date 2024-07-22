@@ -3,6 +3,7 @@ package account
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -21,6 +22,7 @@ type EditRequest struct {
 	UITheme                string          `json:"ui_theme"`
 	DefaultView            string          `json:"defaultview"`
 	UITours                map[string]bool `json:"ui_tours"`
+	Author                 string          `json:"author" swaggerignore:"true"`
 }
 
 func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) (bson.M, error) {
@@ -30,6 +32,8 @@ func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) (bson.M, er
 		"ui_theme":                  r.UITheme,
 		"defaultview":               r.DefaultView,
 		"ui_tours":                  r.UITours,
+		"author":                    r.Author,
+		"updated":                   datetime.NewCpsTime(),
 	}
 	if r.Password != "" {
 		h, err := passwordEncoder.EncodePassword([]byte(r.Password))

@@ -9,8 +9,8 @@
     :name="name"
     :error-messages="errors.collect(name)"
     :return-object="returnObject"
-    item-text="name"
-    item-value="_id"
+    :item-text="itemText"
+    :item-value="itemValue"
   />
 </template>
 
@@ -48,6 +48,14 @@ export default {
     permission: {
       type: String,
       default: '',
+    },
+    itemText: {
+      type: String,
+      default: 'display_name',
+    },
+    itemValue: {
+      type: String,
+      default: '_id',
     },
   },
   data() {

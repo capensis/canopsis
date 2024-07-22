@@ -29,7 +29,7 @@
         <c-draggable-list-field
           v-else
           v-model="mutatedGroups"
-          :component-data="{ props: expansionPanelsProps }"
+          :component-data="draggableComponentData"
           :disabled="!isNavigationEditingMode"
           class="groups-panel"
           draggable=".groups-panel__item--public"
@@ -155,16 +155,6 @@ export default {
       },
     },
 
-    expansionPanelsProps() {
-      return {
-        multiple: true,
-        dark: true,
-        accordion: true,
-        flat: true,
-        tile: true,
-      };
-    },
-
     privateGroups() {
       return this.availableGroups.filter(group => group.is_private);
     },
@@ -180,6 +170,18 @@ export default {
         '_id',
         (entity = {}, anotherEntity = {}) => isDeepOrderChanged(entity.views, anotherEntity.views),
       );
+    },
+
+    draggableComponentData() {
+      return {
+        props: {
+          multiple: true,
+          dark: true,
+          accordion: true,
+          flat: true,
+          tile: true,
+        },
+      };
     },
   },
   watch: {
