@@ -62,7 +62,7 @@ func (c *downCmd) Exec(ctx context.Context) error {
 			return fmt.Errorf("cannot check file exist: %w", err)
 		}
 
-		err = c.scriptExecutor.Exec(file)
+		err = c.scriptExecutor.Exec(ctx, file)
 		if err != nil {
 			return err
 		}

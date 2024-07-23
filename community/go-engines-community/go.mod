@@ -23,7 +23,7 @@ require (
 	github.com/casbin/casbin/v2 v2.87.1
 	github.com/chenyahui/gin-cache v1.9.0
 	github.com/dlclark/regexp2 v1.11.0
-	github.com/dop251/goja v0.0.0-20240220182346-e401ed450204
+	github.com/dop251/goja v0.0.0-20240707163329-b1681fb2a2f5
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-ldap/ldap/v3 v3.4.7
 	github.com/go-playground/locales v0.14.1

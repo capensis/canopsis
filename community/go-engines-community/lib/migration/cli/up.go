@@ -74,7 +74,7 @@ func (c *upCmd) Exec(ctx context.Context) error {
 		}
 
 		file := filepath.Join(c.path, id+fileNameSuffixUp)
-		err = c.scriptExecutor.Exec(file)
+		err = c.scriptExecutor.Exec(ctx, file)
 		if err != nil {
 			return err
 		}

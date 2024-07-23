@@ -1,7 +1,3 @@
-function isInt(value) {
-    return typeof value === "number" || value instanceof NumberLong;
-}
-
 function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
     if (!oldEntityPatterns) {
         return null;

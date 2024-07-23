@@ -49,6 +49,7 @@ type ChangeStream interface {
 }
 
 type DbCollection interface {
+	Name() string
 	Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (Cursor, error)
 	BulkWrite(ctx context.Context, models []mongo.WriteModel, opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error)
 	CountDocuments(ctx context.Context, filter interface{}, opts ...*options.CountOptions) (int64, error)
@@ -83,14 +84,18 @@ type DbCollection interface {
 
 // DbClient connected MongoDB client settings
 type DbClient interface {
+	Name() string
 	Watch(ctx context.Context, pipeline interface{}, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
 	Collection(string) DbCollection
+	CreateCollection(ctx context.Context, name string, opts ...*options.CreateCollectionOptions) error
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
 	IsDistributed() bool
+	RunCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper
+	RunAdminCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper
 }
 
 type dbClient struct {
@@ -108,6 +113,10 @@ type dbCollection struct {
 	mongoCollection *mongo.Collection
 	retryCount      int
 	minRetryTimeout time.Duration
+}
+
+func (c *dbCollection) Name() string {
+	return c.mongoCollection.Name()
 }
 
 func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
@@ -440,6 +449,10 @@ func NewClientWithOptions(
 	return dbClient, nil
 }
 
+func (c *dbClient) Name() string {
+	return c.Database.Name()
+}
+
 func (c *dbClient) Watch(ctx context.Context, pipeline interface{},
 	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
 	return c.Database.Watch(ctx, pipeline, opts...)
@@ -451,6 +464,10 @@ func (c *dbClient) Collection(name string) DbCollection {
 		retryCount:      c.RetryCount,
 		minRetryTimeout: c.MinRetryTimeout,
 	}
+}
+
+func (c *dbClient) CreateCollection(ctx context.Context, name string, opts ...*options.CreateCollectionOptions) error {
+	return c.Database.CreateCollection(ctx, name, opts...)
 }
 
 func (c *dbClient) Disconnect(ctx context.Context) error {
@@ -519,6 +536,14 @@ func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.L
 // Use to check feature availability : Transactions, Change Streams, etc.
 func (c *dbClient) IsDistributed() bool {
 	return c.isDistributed
+}
+
+func (c *dbClient) RunCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper {
+	return c.Database.RunCommand(ctx, runCommand, opts...)
+}
+
+func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper {
+	return c.Database.Client().Database("admin").RunCommand(ctx, runCommand, opts...)
 }
 
 func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {

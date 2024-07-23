@@ -1,14 +1,3 @@
-function genID() {
-    var hex;
-    try {
-        hex = UUID().hex(); // mongo
-    } catch (e) {
-        hex = UUID().toString('hex'); // mongosh
-    }
-
-    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
-}
-
 db.default_rights.find({crecord_type: "action"}).forEach(function (doc) {
     doc.name = doc.crecord_name;
     delete doc.crecord_name;
