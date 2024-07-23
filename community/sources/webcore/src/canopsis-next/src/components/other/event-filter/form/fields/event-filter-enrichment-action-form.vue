@@ -34,12 +34,14 @@
             :label="$t('common.description')"
           />
           <v-layout v-if="isStringDictionaryValueType">
-            <c-payload-text-field
+            <v-text-field
               v-field="form.value"
+              v-validate="'required'"
               key="value"
               :label="$t('common.value')"
               :name="valueFieldName"
-              required
+              :error-messages="errors.collect(valueFieldName)"
+              :prefix="eventExtraPrefix"
               clearable
             />
           </v-layout>
@@ -100,7 +102,11 @@
 </template>
 
 <script>
-import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import {
+  ACTION_COPY_PAYLOAD_VARIABLES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
+} from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -137,6 +143,9 @@ export default {
     },
   },
   computed: {
+    eventExtraPrefix() {
+      return EVENT_FILTER_EVENT_EXTRA_PREFIX;
+    },
     nameFieldName() {
       return `${this.name}.name`;
     },
