@@ -7,10 +7,10 @@
       <template #text="">
         <v-layout class="gap-3 my-4" justify-center align-center>
           <span class="text-subtitle-2">
-            {{ $t('modals.eventsRecording.subtitle', { count: config.eventsRecording.count }) }}
+            {{ $t('modals.eventsRecord.subtitle', { count: config.eventsRecord.count }) }}
           </span>
           <c-action-btn
-            :tooltip="$t('modals.eventsRecording.buttonTooltip')"
+            :tooltip="$t('modals.eventsRecord.buttonTooltip')"
             type="delete"
             @click="remove"
           />
@@ -20,7 +20,7 @@
             color="primary"
             @click="applyEventFilter"
           >
-            {{ $t('eventsRecording.applyEventFilter') }}
+            {{ $t('eventsRecord.applyEventFilter') }}
           </v-btn>
           <v-btn
             color="primary"
@@ -32,7 +32,7 @@
             <span>{{ $t('common.exportToJson') }}</span>
           </v-btn>
         </v-layout>
-        <events-recording-events-list
+        <events-record-events-list
           :events="events"
           :pending="pending"
           :options="query"
@@ -66,17 +66,17 @@ import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useEventsRecording } from '@/hooks/store/modules/events-recording';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useLocalQuery } from '@/hooks/query/local-query';
 
-import EventsRecordingEventsList from '@/components/other/events-recording/events-recording-events-list.vue';
+import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.eventsRecording,
-  components: { EventsRecordingEventsList, ModalWrapper },
+  name: MODALS.eventsRecord,
+  components: { EventsRecordEventsList, ModalWrapper },
   props: {
     modal: {
       type: Object,
@@ -91,9 +91,9 @@ export default {
     const { config, close, modals } = useInnerModal(props);
 
     /**
-     * EVENTS RECORDING STORE MODULE
+     * EVENTS RECORD STORE MODULE
      */
-    const { fetchEventsRecordingEventsListWithoutStore } = useEventsRecording();
+    const { fetchEventsRecordEventsListWithoutStore } = useEventsRecord();
 
     /**
      * PENDING
@@ -102,7 +102,8 @@ export default {
       pending,
       handler: fetchList,
     } = usePendingHandler(async (fetchQuery) => {
-      const response = await fetchEventsRecordingEventsListWithoutStore({
+      const response = await fetchEventsRecordEventsListWithoutStore({
+        id: config.value.eventsRecord.id, // TODO: change to _id
         params: {
           limit: fetchQuery.itemsPerPage,
           page: fetchQuery.page,
@@ -127,8 +128,8 @@ export default {
     const resendEvent = () => modals.show({
       name: MODALS.duration,
       config: {
-        title: tc('eventsRecording.resendEvents', 1),
-        label: t('eventsRecording.delayBetweenEvents'),
+        title: tc('eventsRecord.resendEvents', 1),
+        label: t('eventsRecord.delayBetweenEvents'),
         units: [
           { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
           { value: TIME_UNITS.second, text: 'common.times.second' },
@@ -143,7 +144,7 @@ export default {
     const exportJson = () => {};
 
     const title = computed(() => (
-      t('modals.eventsRecording.title', { date: convertDateToString(config.created) })
+      t('modals.eventsRecord.title', { date: convertDateToString(config.created) })
     ));
 
     onMounted(() => fetchList(query.value));

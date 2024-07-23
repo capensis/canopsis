@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ $t('modals.launchEventsRecording.title') }}</span>
+        <span>{{ $t('modals.launchEventsRecord.title') }}</span>
       </template>
       <template #text="">
         <c-alarm-patterns-field
@@ -48,7 +48,7 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.launchEventsRecording,
+  name: MODALS.startEventsRecord,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,

@@ -1,35 +1,30 @@
 <template>
   <v-layout wrap>
     <v-flex xs5>
-      <v-checkbox
-        v-validate
-        v-field="duration.enabled"
-        :error-messages="errors.collect(enabledFieldName)"
-        :name="enabledFieldName"
-        color="primary"
-      >
-        <template #label="">
-          {{ label }}
-          <c-help-icon
-            v-if="helpText"
-            :text="helpText"
-            icon-class="ml-2"
-            color="info"
-            max-width="300"
-            top
-          />
-        </template>
-      </v-checkbox>
+      <div class="v-input v-input--selection-controls">
+        <div class="v-input__slot">
+          <v-label>
+            {{ label }}
+            <c-help-icon
+              v-if="helpText"
+              :text="helpText"
+              icon-class="ml-2"
+              color="info"
+              max-width="300"
+              top
+            />
+          </v-label>
+        </div>
+      </div>
     </v-flex>
     <v-flex xs4>
       <c-duration-field
         v-field="duration"
         :units-label="$t('common.unit')"
-        :disabled="!duration.enabled"
-        :required="duration.enabled"
         :units="timeUnits"
         :name="name"
         :min="min"
+        required
         @input="validate"
       />
     </v-flex>
@@ -43,7 +38,7 @@
 </template>
 
 <script>
-import { computed, toRef } from 'vue';
+import { toRef } from 'vue';
 
 import { useEnabledDurationField } from '@/components/forms/fields/duration/hooks/enabled-duration-field';
 
@@ -80,8 +75,6 @@ export default {
     },
   },
   setup(props) {
-    const enabledFieldName = computed(() => `${props.name}.enabled`);
-
     const {
       timeUnits,
       min,
@@ -94,7 +87,6 @@ export default {
     });
 
     return {
-      enabledFieldName,
       timeUnits,
       min,
       validate,

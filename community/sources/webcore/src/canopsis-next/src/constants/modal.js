@@ -120,8 +120,8 @@ export const MODALS = {
 
   createIcon: 'create-icon',
 
-  eventsRecording: 'events-recording',
-  launchEventsRecording: 'launch-events-recording',
+  eventsRecord: 'events-record',
+  startEventsRecord: 'start-events-record',
 
   duration: 'duration',
 };
