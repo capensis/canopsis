@@ -10,6 +10,7 @@ import flatten from 'flat';
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
   EVENT_FILTER_TYPES,
   OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
@@ -105,13 +106,35 @@ import {
  */
 
 /**
+ * Remove 'Event.Extra.' prefix from value, if it exists
+ *
+ * @param {string} [eventFilterActionValue = '']
+ * @returns {string}
+ */
+export const eventFilterActionValueToForm = (eventFilterActionValue = '') => eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
+
+/**
+ * Convert event filter action to form
+ *
+ * @param {EventFilterAction} eventFilterAction
+ * @return {EventFilterActionForm}
+ */
+export const eventFilterActionToForm = (eventFilterAction = {}) => ({
+  key: uid(),
+  type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+  name: eventFilterAction.name ?? '',
+  value: eventFilterActionValueToForm(eventFilterAction.value),
+  description: eventFilterAction.description ?? '',
+});
+
+/**
  * Convert event filter to form
  *
  * @param {EventFilterConfig | {}} [eventFilterConfig = {}]
  * @returns {EventFilterConfigForm}
  */
 export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
-  actions: eventFilterConfig.actions ? cloneDeep(eventFilterConfig.actions) : [],
+  actions: (eventFilterConfig.actions ? cloneDeep(eventFilterConfig.actions) : []).map(eventFilterActionToForm),
   on_success: eventFilterConfig.on_success ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   on_failure: eventFilterConfig.on_failure ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   resource: eventFilterConfig.resource ?? '',
@@ -165,18 +188,17 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
 });
 
 /**
- * Convert event filter action to form
+ * Convert from to event filter action fields
  *
- * @param {EventFilterAction} eventFilterAction
- * @return {EventFilterActionForm}
+ * @param {EventFilterActionForm} eventFilterActionForm
+ * @return {EventFilterAction}
  */
-export const eventFilterActionToForm = (eventFilterAction = {}) => ({
-  key: uid(),
-  type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
-  name: eventFilterAction.name ?? '',
-  value: eventFilterAction.value ?? '',
-  description: eventFilterAction.description ?? '',
-});
+export const formToEventFilterAction = eventFilterActionForm => (omit({
+  ...eventFilterActionForm,
+  value: eventFilterActionForm.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
+    ? `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionForm.value}`
+    : eventFilterActionForm.value,
+}, ['key']));
 
 /**
  * Convert form to event filter fields
@@ -200,7 +222,8 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
       eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name']);
       break;
     case EVENT_FILTER_TYPES.enrichment:
-      eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
+      eventFilter.config = pick(config, ['on_success', 'on_failure']);
+      eventFilter.config.actions = config.actions.map(formToEventFilterAction);
       break;
   }
 

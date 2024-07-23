@@ -19,7 +19,18 @@
             :label="$t('common.description')",
             key="description"
           )
-          v-layout
+          v-layout(v-if="isStringDictionaryValueType")
+            v-text-field(
+              v-field="form.value",
+              v-validate="'required'",
+              :label="$t('common.value')",
+              :name="valueFieldName",
+              key="value",
+              :error-messages="errors.collect(valueFieldName)",
+              :prefix="eventExtraPrefix",
+              clearable
+            )
+          v-layout(v-else)
             v-flex(xs5)
               c-name-field(v-field="form.name", key="name", required)
             v-flex(xs7)
@@ -53,7 +64,11 @@
 </template>
 
 <script>
-import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import {
+  ACTION_COPY_PAYLOAD_VARIABLES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
+} from '@/constants';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
@@ -79,6 +94,10 @@ export default {
     },
   },
   computed: {
+    eventExtraPrefix() {
+      return EVENT_FILTER_EVENT_EXTRA_PREFIX;
+    },
+
     valueFieldName() {
       return `${this.name}.value`;
     },
@@ -107,6 +126,10 @@ export default {
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
       ].includes(this.form.type);
+    },
+
+    isStringDictionaryValueType() {
+      return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === this.form.type;
     },
   },
   watch: {

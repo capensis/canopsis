@@ -18,6 +18,7 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   copy: 'copy',
   setEntityInfo: 'set_entity_info',
   copyToEntityInfo: 'copy_to_entity_info',
+  setEntityInfoFromDictionary: 'set_entity_info_from_dictionary',
 };
 
 export const EVENT_FILTER_PATTERN_FIELDS = {
@@ -49,3 +50,5 @@ export const EVENT_FILTER_FAILURE_TYPES = {
   externalDataApi: 3,
   other: 4,
 };
+
+export const EVENT_FILTER_EVENT_EXTRA_PREFIX = 'Event.Extra.';
