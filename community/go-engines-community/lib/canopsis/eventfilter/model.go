@@ -26,6 +26,10 @@ const (
 	// of an entity using a template.
 	ActionSetEntityInfoFromTemplate = "set_entity_info_from_template"
 
+	// ActionSetEntityInfoFromDictionary is a type of action that sets an information
+	// of an entity using a dictionary.
+	ActionSetEntityInfoFromDictionary = "set_entity_info_from_dictionary"
+
 	// ActionSetEntityInfo is a type of action that sets an information
 	// of an entity using a constant.
 	ActionSetEntityInfo = "set_entity_info"
