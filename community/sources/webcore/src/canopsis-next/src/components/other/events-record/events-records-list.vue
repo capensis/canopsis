@@ -1,7 +1,7 @@
 <template>
   <c-advanced-data-table
     :headers="headers"
-    :items="eventsRecording"
+    :items="eventsRecords"
     :loading="pending"
     :total-items="totalItems"
     :options="options"
@@ -14,13 +14,13 @@
     <template #actions="{ item }">
       <v-layout v-if="!item.inProgress">
         <c-action-btn
-          :tooltip="$t('eventsRecording.viewEvents')"
+          :tooltip="$t('eventsRecord.viewEvents')"
           icon="pageview"
           color="#6A6A6A"
           @click="show(item)"
         />
         <c-action-btn
-          :tooltip="$t('eventsRecording.export')"
+          :tooltip="$t('eventsRecord.export')"
           icon="file_download"
           @click="exportJson(item)"
         />
@@ -40,7 +40,7 @@ import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
-    eventsRecording: {
+    eventsRecords: {
       type: Array,
       required: true,
     },
@@ -59,16 +59,16 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const inProgress = computed(() => props.eventsRecording.status === 0);
+    const inProgress = computed(() => props.eventsRecords.status === 0);
     const headers = computed(() => [
       {
-        text: t('eventsRecording.recorded'),
-        value: 'created',
+        text: t('eventsRecord.recorded'),
+        value: 't',
         sortable: false,
       },
       {
-        text: t('eventsRecording.eventsCount'),
-        value: 'count',
+        text: t('eventsRecord.eventsCount'),
+        value: 'c',
         sortable: false,
       },
       {
@@ -78,9 +78,9 @@ export default {
       },
     ]);
 
-    const show = eventsRecording => emit('show', eventsRecording);
-    const exportJson = eventsRecording => emit('export', eventsRecording);
-    const remove = eventsRecording => emit('remove', eventsRecording._id);
+    const show = eventsRecord => emit('show', eventsRecord);
+    const exportJson = eventsRecord => emit('export', eventsRecord);
+    const remove = eventsRecord => emit('remove', eventsRecord._id);
     const updateOptions = options => emit('update:options', options);
 
     return {

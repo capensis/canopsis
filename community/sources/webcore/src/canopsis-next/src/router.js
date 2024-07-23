@@ -29,7 +29,7 @@ const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/map
 const AdminTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/tags.vue');
 const AdminStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/storage-settings.vue');
 const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/state-settings.vue');
-const AdminEventsRecordings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/events-recordings.vue');
+const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -257,13 +257,13 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminEventsRecordings,
-    name: ROUTES_NAMES.adminEventsRecordings,
-    component: AdminEventsRecordings,
+    path: ROUTES.adminEventsRecords,
+    name: ROUTES_NAMES.adminEventsRecords,
+    component: AdminEventsRecords,
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.eventsRecording,
+        id: USERS_PERMISSIONS.technical.eventsRecord,
       },
     },
   },

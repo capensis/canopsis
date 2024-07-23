@@ -90,7 +90,7 @@ export default {
   /**
    * Admin general
    */
-  [USERS_PERMISSIONS.technical.eventsRecording]: {
+  [USERS_PERMISSIONS.technical.eventsRecord]: {
     title: 'Events recordings',
   },
   [USERS_PERMISSIONS.technical.parameters]: {

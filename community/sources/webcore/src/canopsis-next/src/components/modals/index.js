@@ -428,12 +428,12 @@ export const CreateIcon = () => ({
   loading: LoaderOverlay,
 });
 
-export const EventsRecording = () => ({
-  component: import(/* webpackChunkName: "EventsRecording" */ './events-recording/events-recording.vue'),
+export const EventsRecord = () => ({
+  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/events-record.vue'),
   loading: LoaderOverlay,
 });
 
-export const LaunchEventsRecording = () => ({
-  component: import(/* webpackChunkName: "EventsRecording" */ './events-recording/launch-events-recording.vue'),
+export const StartEventsRecord = () => ({
+  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/start-events-record.vue'),
   loading: LoaderOverlay,
 });

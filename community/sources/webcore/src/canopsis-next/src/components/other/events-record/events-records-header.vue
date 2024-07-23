@@ -1,8 +1,8 @@
 <template>
   <v-layout class="pa-3 gap-3" column align-center>
-    <h3>{{ $t('eventsRecording.subheader') }}</h3>
+    <h3>{{ $t('eventsRecord.subheader') }}</h3>
     <v-layout v-if="progress" class="gap-4" align-center>
-      <span class="font-italic">{{ $t('eventsRecording.inProgress') }}</span>
+      <span class="font-italic">{{ $t('eventsRecord.inProgress') }}</span>
       <v-progress-circular
         color="primary"
         width="3"
@@ -16,15 +16,15 @@
         color="accent"
         @click="stop"
       >
-        {{ $t('eventsRecording.stop') }}
+        {{ $t('eventsRecord.stop') }}
       </v-btn>
       <v-btn
         v-else
-        key="launch"
+        key="start"
         color="warning"
-        @click="launch"
+        @click="start"
       >
-        {{ $t('eventsRecording.launch') }}
+        {{ $t('eventsRecord.launch') }}
       </v-btn>
     </v-flex>
   </v-layout>
@@ -39,11 +39,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const launch = () => emit('launch');
+    const start = () => emit('start');
     const stop = () => emit('stop');
 
     return {
-      launch,
+      start,
       stop,
     };
   },
