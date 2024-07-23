@@ -45,6 +45,7 @@
         />
         <c-action-btn
           v-if="removable"
+          :disabled="!item.deletable"
           type="delete"
           @click.stop="$emit('remove', item)"
         />
@@ -54,6 +55,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     users: {
@@ -81,57 +86,61 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.username'),
-          value: 'name',
-        },
-        {
-          text: this.$t('user.displayName'),
-          value: 'display_name',
-        },
-        {
-          text: this.$t('user.firstName'),
-          value: 'firstname',
-          sortable: false,
-        },
-        {
-          text: this.$t('user.lastName'),
-          value: 'lastname',
-          sortable: false,
-        },
-        {
-          text: this.$tc('common.role', 2),
-          value: 'roles',
-          sortable: false,
-        },
-        {
-          text: this.$t('user.active'),
-          value: 'active',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.enabled'),
-          value: 'enable',
-        },
-        {
-          text: this.$t('user.auth'),
-          value: 'source',
-        },
-        {
-          text: this.$t('user.activeConnects'),
-          value: 'active_connects',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
+  setup() {
+    const { t, tc } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.username'),
+        value: 'name',
+      },
+      {
+        text: t('user.displayName'),
+        value: 'display_name',
+      },
+      {
+        text: t('user.firstName'),
+        value: 'firstname',
+        sortable: false,
+      },
+      {
+        text: t('user.lastName'),
+        value: 'lastname',
+        sortable: false,
+      },
+      {
+        text: tc('common.role', 2),
+        value: 'roles',
+        sortable: false,
+      },
+      {
+        text: t('user.active'),
+        value: 'active',
+        sortable: false,
+      },
+      {
+        text: t('common.enabled'),
+        value: 'enable',
+      },
+      {
+        text: t('user.auth'),
+        value: 'source',
+      },
+      {
+        text: t('user.activeConnects'),
+        value: 'active_connects',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    return {
+      headers,
+    };
   },
 };
 </script>
