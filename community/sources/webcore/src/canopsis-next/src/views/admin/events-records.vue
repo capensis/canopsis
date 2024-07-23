@@ -1,17 +1,17 @@
 <template>
   <c-page @refresh="fetchList">
-    <events-recordings-header
+    <events-records-header
       :progress="meta.inProgress"
-      @launch="launch"
+      @start="start"
       @stop="stop"
     />
-    <events-recordings-list
-      :events-recording="eventsRecordings"
+    <events-records-list
+      :events-records="eventsRecords"
       :pending="pending"
       :options.sync="options"
       :total-items="meta.total_count"
-      @show="showEventsRecordingModal"
-      @remove="showRemoveEventsRecordingModal"
+      @show="showEventsRecordModal"
+      @remove="showRemoveEventsRecordModal"
     />
   </c-page>
 </template>
@@ -23,17 +23,17 @@ import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
 import { useModals } from '@/hooks/modals';
-import { useEventsRecording } from '@/hooks/store/modules/events-recording';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useQueryOptions } from '@/hooks/query/options';
 
-import EventsRecordingsHeader from '@/components/other/events-recording/events-recordings-header.vue';
-import EventsRecordingsList from '@/components/other/events-recording/events-recordings-list.vue';
+import EventsRecordsHeader from '@/components/other/events-record/events-records-header.vue';
+import EventsRecordsList from '@/components/other/events-record/events-records-list.vue';
 
 export default {
-  components: { EventsRecordingsHeader, EventsRecordingsList },
+  components: { EventsRecordsHeader, EventsRecordsList },
   setup() {
-    const eventsRecordings = ref([]);
+    const eventsRecords = ref([]);
     const meta = ref({});
     const modals = useModals();
 
@@ -41,11 +41,11 @@ export default {
      * STORE
      */
     const {
-      launchEventsRecording,
-      stopEventsRecording,
-      removeEventsRecording,
-      fetchEventsRecordingsListWithoutStore,
-    } = useEventsRecording();
+      startEventsRecord,
+      stopEventsRecord,
+      removeEventsRecord,
+      fetchEventsRecordsListWithoutStore,
+    } = useEventsRecord();
 
     /**
      * QUERY
@@ -58,15 +58,15 @@ export default {
     } = usePendingWithLocalQuery({
       initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
       fetchHandler: async (fetchQuery) => {
-        const response = await fetchEventsRecordingsListWithoutStore({
+        const response = await fetchEventsRecordsListWithoutStore({
           params: {
             limit: fetchQuery.itemsPerPage,
             page: fetchQuery.page,
           },
         });
 
-        eventsRecordings.value = response.data;
-        meta.value = response.meta;
+        eventsRecords.value = response.records;
+        meta.value = {};
       },
     });
 
@@ -75,50 +75,50 @@ export default {
     /**
      * METHODS
      */
-    const launch = () => modals.show({
-      name: MODALS.launchEventsRecording,
+    const start = () => modals.show({
+      name: MODALS.startEventsRecord,
       config: {
         action: async (pattern) => {
-          await launchEventsRecording(pattern);
+          await startEventsRecord(pattern);
 
           return fetchList();
         },
       },
     });
-    const stop = async () => stopEventsRecording();
-    const showEventsRecordingModal = eventsRecording => modals.show({
-      name: MODALS.eventsRecording,
+    const stop = async () => stopEventsRecord();
+    const showEventsRecordModal = eventsRecord => modals.show({
+      name: MODALS.eventsRecord,
       config: {
-        eventsRecording,
+        eventsRecord,
       },
     });
 
-    const showRemoveEventsRecordingModal = id => modals.show({
+    const showRemoveEventsRecordModal = id => modals.show({
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          await removeEventsRecording({ id });
+          await removeEventsRecord({ id });
 
           return fetchList();
         },
       },
     });
 
-    const downloadEventsRecording = () => {};
+    const downloadEventsRecord = () => {};
 
     onMounted(() => fetchList(query.value));
 
     return {
-      eventsRecordings,
+      eventsRecords,
       meta,
       pending,
       options,
 
-      launch,
+      start,
       stop,
-      showEventsRecordingModal,
-      showRemoveEventsRecordingModal,
-      downloadEventsRecording,
+      showEventsRecordModal,
+      showRemoveEventsRecordModal,
+      downloadEventsRecord,
       updateQuery,
       fetchList,
     };

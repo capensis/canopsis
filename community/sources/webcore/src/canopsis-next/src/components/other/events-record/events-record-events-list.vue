@@ -5,6 +5,7 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    class="events-record-events-list"
     expand
     select-all
     advanced-pagination
@@ -12,13 +13,13 @@
   >
     <template #mass-actions="{ selected }">
       <c-action-btn
-        :tooltip="$tc('eventsRecording.resendEvents', selected.length)"
+        :tooltip="$tc('eventsRecord.resendEvents', selected.length)"
         icon="play_arrow"
         color="#134A9F"
         @click="resendSelected(selected)"
       />
       <c-action-btn
-        :tooltip="$t('eventsRecording.export')"
+        :tooltip="$t('eventsRecord.export')"
         icon="file_download"
         @click="exportJsonSelected(selected)"
       />
@@ -32,13 +33,13 @@
     </template>
     <template #actions="{ item }">
       <c-action-btn
-        :tooltip="$tc('eventsRecording.resendEvents', 1)"
+        :tooltip="$tc('eventsRecord.resendEvents', 1)"
         icon="play_arrow"
         color="blue darken-3"
         @click="resend(item)"
       />
       <c-action-btn
-        :tooltip="$t('eventsRecording.export')"
+        :tooltip="$t('eventsRecord.export')"
         icon="file_download"
         @click="exportJson(item)"
       />
@@ -150,3 +151,25 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.events-record-events-list {
+  table {
+    table-layout: fixed;
+
+    .v-data-table-header th {
+      &:nth-child(1) {
+        width: 56px !important;
+      }
+
+      &:nth-child(2) {
+        width: 32px !important;
+      }
+
+      &:last-child {
+        width: 170px !important;
+      }
+    }
+  }
+}
+</style>

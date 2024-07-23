@@ -296,7 +296,6 @@ export const API_ROUTES = {
     enginesOrder: '/api/v4/healthcheck/engines-order',
     parameters: '/api/v4/healthcheck/parameters',
   },
-  eventsRecording: '/api/v4/events-recording',
 
   /**
    * Cat routes
@@ -368,6 +367,8 @@ export const API_ROUTES = {
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
   },
+  eventsRecord: '/api/v4/cat/event-records',
+  eventsRecordCurrent: '/api/v4/cat/event-records-current',
 };
 
 export const COLORS = {
