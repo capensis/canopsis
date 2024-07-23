@@ -33,6 +33,7 @@
         )
         c-action-btn(
           v-if="removable",
+          :disabled="!item.deletable",
           type="delete",
           @click.stop="$emit('remove', item)"
         )
