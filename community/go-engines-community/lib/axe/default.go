@@ -437,6 +437,12 @@ func NewEngine(
 		userInterfaceConfigProvider,
 	))
 
+	updateEntityInAlarmWorker := &updateEntityInAlarmWorker{
+		AlarmCollection:  dbClient.Collection(mongo.AlarmMongoCollection),
+		EntityCollection: dbClient.Collection(mongo.EntityMongoCollection),
+	}
+	engineAxe.AddRoutine(updateEntityInAlarmWorker.Work)
+
 	healthcheck.Start(ctx, healthcheck.NewChecker(
 		"axe",
 		mainMessageProcessor,
