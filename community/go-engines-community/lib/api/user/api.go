@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -50,7 +51,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c.Request.Context(), query)
+	users, err := a.store.Find(c, query, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -125,8 +126,15 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c.Request.Context(), request)
+	user, err := a.store.Update(c, request, c.MustGet(auth.UserKey).(string))
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -144,16 +152,22 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
+	a.metricMetaUpdater.UpdateById(c, user.ID)
 
 	c.JSON(http.StatusOK, user)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
-
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -226,6 +240,12 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		user, err := a.store.Insert(ctx, request)
 		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
 			a.logger.Err(err).Msg("cannot create user")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
@@ -298,8 +318,14 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		user, err := a.store.Update(ctx, UpdateRequest(request))
+		user, err := a.store.Update(ctx, UpdateRequest(request), contextUserId)
 		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
 			a.logger.Err(err).Msg("cannot update user")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
@@ -377,8 +403,14 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, err := a.store.Delete(ctx, request.ID)
+		ok, err := a.store.Delete(ctx, request.ID, contextUserId)
 		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
 			a.logger.Err(err).Msg("cannot delete user")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
