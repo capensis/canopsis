@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
@@ -128,6 +129,10 @@ func GetAlarmStepTypes() []string {
 	}
 }
 
+func NeedEntityLookup(collectionName string) bool {
+	return mongo.AlarmMongoCollection != collectionName
+}
+
 // Alarm represents an alarm document.
 type Alarm struct {
 	ID       string           `bson:"_id" json:"_id"`
@@ -161,6 +166,14 @@ type Alarm struct {
 	MetaAlarmInactiveDelay []MetaAlarmInactiveDelay `bson:"meta_alarm_inactive_delay,omitempty" json:"meta_alarm_inactive_delay,omitempty"`
 
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
+}
+
+// AlarmWithEntityField is used to store an alarm with it's entity in the database.
+// Use Alarm in all other cases.
+type AlarmWithEntityField struct {
+	Alarm `bson:",inline"`
+
+	Entity Entity `bson:"e" json:"e"`
 }
 
 type MetaAlarmInactiveDelay struct {
