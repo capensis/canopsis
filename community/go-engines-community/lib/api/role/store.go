@@ -154,6 +154,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 }
 
 func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, error) {
+	if id == security.RoleAdmin {
+		return nil, ErrUpdateAdminRole
+	}
+
 	types, err := getTypes(ctx, s.dbCollection, r.Permissions)
 	if err != nil {
 		return nil, err
@@ -175,7 +179,9 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 		if err != nil || res.MatchedCount == 0 {
 			return nil
 		}
+
 		role, err = s.GetOneBy(ctx, id)
+
 		return err
 	})
 	if err != nil {
@@ -186,6 +192,10 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	if id == security.RoleAdmin {
+		return false, ErrDeleteAdminRole
+	}
+
 	res := s.dbCollection.FindOne(ctx, bson.M{
 		"crecord_type": securitymodel.LineTypeSubject,
 		"role":         id,
