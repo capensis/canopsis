@@ -11,6 +11,7 @@ import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
 import SidebarPlugin from '@/plugins/sidebar';
 import SetSeveralPlugin from '@/plugins/set-several';
+import SetOnlyDiffPlugin from '@/plugins/set-only-diff';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import SocketPlugin from '@/plugins/socket';
 
@@ -115,6 +116,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
     },
   });
   Vue.use(SetSeveralPlugin);
+  Vue.use(SetOnlyDiffPlugin);
   Vue.use(UpdateFieldPlugin);
   Vue.use(SocketPlugin);
 };

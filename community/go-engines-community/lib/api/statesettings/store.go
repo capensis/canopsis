@@ -1,10 +1,12 @@
 package statesettings
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
@@ -20,17 +22,18 @@ import (
 const StickySortField = "on_top"
 
 type Store interface {
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 type store struct {
 	dbClient                 mongo.DbClient
 	dbCollection             mongo.DbCollection
 	notifyDbCollection       mongo.DbCollection
+	authorProvider           author.Provider
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 	defaultSearchByFields    []string
 }
@@ -38,18 +41,21 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
 		dbClient:                 dbClient,
 		dbCollection:             dbClient.Collection(mongo.StateSettingsMongoCollection),
 		notifyDbCollection:       dbClient.Collection(mongo.EngineNotificationCollection),
+		authorProvider:           authorProvider,
 		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
 		defaultSearchByFields:    []string{"_id", "title"},
 	}
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}, addEditableAndDeletableFields()}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -81,16 +87,12 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	}
 
 	pipeline = append(pipeline, addEditableAndDeletableFields())
-
-	sortBy := "title"
-	if query.SortBy != "" {
-		sortBy = query.SortBy
-	}
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		s.getSortQuery(sortBy, query.Sort),
+		s.getSortQuery(cmp.Or(query.SortBy, "title"), query.Sort),
 	))
 	if err != nil {
 		return nil, err
@@ -110,7 +112,11 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
+
 	r.ID = utils.NewID()
+	r.Created = &now
+	r.Updated = &now
 
 	var response *Response
 
@@ -138,7 +144,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			}
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 	if err != nil {
@@ -158,8 +164,11 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
 	var response *Response
 	var oldVersion statesetting.StateSetting
+
+	r.Updated = &now
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
@@ -201,7 +210,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			}
 		}
 
-		response, err = s.GetById(ctx, r.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 	if err != nil {
@@ -222,7 +231,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if id == statesetting.JUnitID || id == statesetting.ServiceID {
 		return false, ErrDefaultRule
 	}
@@ -230,15 +239,20 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	var oldVersion statesetting.StateSetting
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		err := s.dbCollection.FindOneAndDelete(
-			ctx,
-			bson.M{"_id": id},
-		).Decode(&oldVersion)
+		oldVersion = statesetting.StateSetting{}
+
+		// required to get the author in action log listener.
+		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}}).Decode(&oldVersion)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
 
+			return err
+		}
+
+		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || deleted == 0 {
 			return err
 		}
 

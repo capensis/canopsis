@@ -17,17 +17,17 @@ import (
 func GetICS(store Store, service Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		pbh, err := store.GetOneBy(c.Request.Context(), id)
+		pbh, err := store.GetOneBy(c, id)
 		if err != nil {
 			panic(err)
 		}
 
-		maxPriority, err := store.FindMaxPriority(c.Request.Context())
+		maxPriority, err := store.FindMaxPriority(c)
 		if err != nil {
 			panic(err)
 		}
 
-		minPriority, err := store.FindMinPriority(c.Request.Context())
+		minPriority, err := store.FindMinPriority(c)
 		if err != nil {
 			panic(err)
 		}

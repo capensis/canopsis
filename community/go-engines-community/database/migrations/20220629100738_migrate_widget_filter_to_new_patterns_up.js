@@ -1,18 +1,3 @@
-function genID() {
-    var hex;
-    try {
-        hex = UUID().hex(); // mongo
-    } catch (e) {
-        hex = UUID().toString('hex'); // mongosh
-    }
-
-    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
-}
-
-function isInt(value) {
-    return typeof value === "number" || value instanceof NumberLong;
-}
-
 function migrateOldMongoQueryForAlarmList(oldMongoQuery) {
     if (!oldMongoQuery || oldMongoQuery === "") {
         return null;

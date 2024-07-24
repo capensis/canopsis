@@ -1,5 +1,7 @@
 import { COLORS } from '@/config';
 
+import { WIDGET_COLUMNS_GROUPS } from './common';
+
 export const ALARM_FIELDS = {
   id: '_id',
   assignedInstructions: 'assigned_instructions',
@@ -580,6 +582,83 @@ const {
 } = ALARM_FIELDS;
 
 export const ALARM_LIST_WIDGET_COLUMNS = alarmListWidgetColumns;
+
+export const ALARM_LIST_WIDGET_GROUPED_COLUMNS = {
+  [WIDGET_COLUMNS_GROUPS.basic]: [
+    ALARM_FIELDS.id,
+    ALARM_FIELDS.displayName,
+    ALARM_FIELDS.connector,
+    ALARM_FIELDS.connectorName,
+    ALARM_FIELDS.component,
+    ALARM_FIELDS.resource,
+    ALARM_FIELDS.state,
+    ALARM_FIELDS.status,
+    ALARM_FIELDS.tags,
+    ALARM_FIELDS.extraDetails,
+    ALARM_FIELDS.impactState,
+    ALARM_FIELDS.infos,
+    ALARM_FIELDS.links,
+  ],
+  [WIDGET_COLUMNS_GROUPS.messages]: [
+    ALARM_FIELDS.output,
+    ALARM_FIELDS.longOutput,
+    ALARM_FIELDS.initialOutput,
+    ALARM_FIELDS.initialLongOutput,
+    ALARM_FIELDS.lastComment,
+    ALARM_FIELDS.lastCommentInitiator,
+  ],
+  [WIDGET_COLUMNS_GROUPS.dates]: [
+    ALARM_FIELDS.timestamp,
+    ALARM_FIELDS.creationDate,
+    ALARM_FIELDS.lastUpdateDate,
+    ALARM_FIELDS.lastEventDate,
+    ALARM_FIELDS.stateAt,
+    ALARM_FIELDS.statusAt,
+    ALARM_FIELDS.ackAt,
+    ALARM_FIELDS.resolved,
+    ALARM_FIELDS.activationDate,
+    ALARM_FIELDS.duration,
+    ALARM_FIELDS.currentStateDuration,
+    ALARM_FIELDS.snoozeDuration,
+    ALARM_FIELDS.pbhInactiveDuration,
+    ALARM_FIELDS.activeDuration,
+  ],
+  [WIDGET_COLUMNS_GROUPS.counters]: [
+    ALARM_FIELDS.totalStateChanges,
+    ALARM_FIELDS.eventsCount,
+  ],
+  [WIDGET_COLUMNS_GROUPS.entityParameters]: [
+    ALARM_FIELDS.entityId,
+    ALARM_FIELDS.entityName,
+    ALARM_FIELDS.entityCategoryName,
+    ALARM_FIELDS.entityComponent,
+    ALARM_FIELDS.entityConnector,
+    ALARM_FIELDS.entityImpactLevel,
+    ALARM_FIELDS.entityKoEvents,
+    ALARM_FIELDS.entityOkEvents,
+    ALARM_FIELDS.entityInfos,
+    ALARM_FIELDS.entityComponentInfos,
+    ALARM_FIELDS.entityLastPbehaviorDate,
+  ],
+  [WIDGET_COLUMNS_GROUPS.ticketParameters]: [
+    ALARM_FIELDS.ticketValue,
+    ALARM_FIELDS.ticketAuthor,
+    ALARM_FIELDS.ticketMessage,
+    ALARM_FIELDS.ticketInitiator,
+    ALARM_FIELDS.ticketCreatedAt,
+    ALARM_FIELDS.ticketData,
+  ],
+  [WIDGET_COLUMNS_GROUPS.other]: [
+    ALARM_FIELDS.ackBy,
+    ALARM_FIELDS.ackMessage,
+    ALARM_FIELDS.ackInitiator,
+    ALARM_FIELDS.stateMessage,
+    ALARM_FIELDS.statusMessage,
+    ALARM_FIELDS.changeState,
+    ALARM_FIELDS.canceledInitiator,
+    ALARM_FIELDS.assignedInstructions,
+  ],
+};
 
 export const ALARM_PATTERN_FIELDS = {
   displayName: ALARM_FIELDS.displayName,

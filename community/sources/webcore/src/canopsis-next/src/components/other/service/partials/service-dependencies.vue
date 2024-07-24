@@ -73,6 +73,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
+import Observer from '@/services/observer';
+
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
   dependencyToTreeviewDependency,
@@ -93,6 +95,13 @@ import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vu
 const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
+  inject: {
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   components: {
     ServiceDependenciesShowTypeField,
     StateSettingsSummary,
@@ -189,12 +198,10 @@ export default {
   },
   watch: {
     type() {
-      this.setRootDependencies();
-      this.fetchRootDependencies();
+      this.refresh();
     },
     showType() {
-      this.setRootDependencies();
-      this.fetchRootDependencies();
+      this.refresh();
     },
     showStateSetting: {
       immediate: true,
@@ -206,13 +213,22 @@ export default {
     },
   },
   mounted() {
-    this.setRootDependencies();
-    this.fetchRootDependencies();
+    this.refresh();
+
+    this.$periodicRefresh.register(this.refresh);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.refresh);
   },
   methods: {
     ...mapEntityActions({
       fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
     }),
+
+    refresh() {
+      this.setRootDependencies();
+      this.fetchRootDependencies();
+    },
 
     async fetchEntityStateSetting() {
       this.pendingStateSetting = true;

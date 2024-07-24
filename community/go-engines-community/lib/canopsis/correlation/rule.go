@@ -19,7 +19,7 @@ const (
 )
 
 type Rule struct {
-	ID             string     `bson:"_id" json:"_id"`
+	ID             string     `bson:"_id,omitempty" json:"_id,omitempty"`
 	Type           string     `bson:"type" json:"type"`
 	Name           string     `bson:"name" json:"name"`
 	Author         string     `bson:"author" json:"author"`

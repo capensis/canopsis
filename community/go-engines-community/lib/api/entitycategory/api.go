@@ -1,29 +1,24 @@
 package entitycategory
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 )
 
 type api struct {
-	store        Store
-	actionLogger logger.ActionLogger
+	store Store
 }
 
 func NewApi(
 	store Store,
-	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
-		store:        store,
-		actionLogger: actionLogger,
+		store: store,
 	}
 }
 
@@ -38,7 +33,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	categories, err := a.store.Find(c.Request.Context(), r)
+	categories, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -55,7 +50,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Category
 func (a *api) Get(c *gin.Context) {
-	category, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	category, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -78,18 +73,9 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	category, err := a.store.Insert(c.Request.Context(), request)
+	category, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeEntityCategory,
-		ValueID:   category.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.JSON(http.StatusCreated, category)
@@ -108,7 +94,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	category, err := a.store.Update(c.Request.Context(), request)
+	category, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -118,22 +104,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeEntityCategory,
-		ValueID:   category.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	c.JSON(http.StatusOK, category)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
-
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrLinkedCategoryToEntity) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -146,15 +121,6 @@ func (a *api) Delete(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
-	}
-
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeEntityCategory,
-		ValueID:   id,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	c.Status(http.StatusNoContent)

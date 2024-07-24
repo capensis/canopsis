@@ -82,8 +82,8 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.Find(c, r, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.Find(c, r, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -105,8 +105,8 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	alarm, err := a.store.GetByID(c, c.Param("id"), userId, false)
+	userID := c.MustGet(auth.UserKey).(string)
+	alarm, err := a.store.GetByID(c, c.Param("id"), userID, false)
 	if err != nil {
 		panic(err)
 	}
@@ -128,8 +128,8 @@ func (a *api) GetOpen(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +169,7 @@ func (a *api) GetDetails(c *gin.Context) {
 	}
 
 	response := make([]DetailsResponse, len(rawObjects))
-	userId := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(auth.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -201,7 +201,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			continue
 		}
 
-		details, err := a.store.GetDetails(c, request, userId)
+		details, err := a.store.GetDetails(c, request, userID)
 		if err != nil {
 			response[idx].ID = request.ID
 			response[idx].Status = http.StatusInternalServerError
@@ -236,8 +236,8 @@ func (a *api) ListByService(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -267,8 +267,8 @@ func (a *api) ListByComponent(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.FindByComponent(c, r, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindByComponent(c, r, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -298,8 +298,8 @@ func (a *api) ResolvedList(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	aggregationResult, err := a.store.FindResolved(c, r, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindResolved(c, r, userID)
 	if err != nil {
 		panic(err)
 	}
@@ -422,8 +422,8 @@ func (a *api) GetLinks(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids, userId)
+	userID := c.MustGet(auth.UserKey).(string)
+	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {

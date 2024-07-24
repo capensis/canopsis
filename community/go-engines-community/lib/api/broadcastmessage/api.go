@@ -1,12 +1,10 @@
 package broadcastmessage
 
 import (
-	"context"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 )
@@ -19,41 +17,36 @@ type API interface {
 type api struct {
 	store            Store
 	onChangeListener chan<- bool
-	actionLogger     logger.ActionLogger
 }
 
 // Create
-// @Param body body BroadcastMessage true "body"
-// @Success 201 {object} BroadcastMessage
-func (a api) Create(c *gin.Context) {
-	request := BroadcastMessage{}
+// @Param body body CreateRequest true "body"
+// @Success 201 {object} Response
+func (a *api) Create(c *gin.Context) {
+	request := CreateRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	err := a.store.Insert(c.Request.Context(), &request)
+	res, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionCreate,
-		ValueType: logger.ValueTypeBroadcastMessage,
-		ValueID:   request.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	a.sendOnChange()
 
-	c.JSON(http.StatusCreated, request)
+	c.JSON(http.StatusCreated, res)
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]BroadcastMessage}
-func (a api) List(c *gin.Context) {
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
 
@@ -62,7 +55,7 @@ func (a api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), query)
+	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -77,9 +70,9 @@ func (a api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} BroadcastMessage
-func (a api) Get(c *gin.Context) {
-	bm, err := a.store.GetById(c.Request.Context(), c.Param("id"))
+// @Success 200 {object} Response
+func (a *api) Get(c *gin.Context) {
+	bm, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -93,42 +86,36 @@ func (a api) Get(c *gin.Context) {
 }
 
 // Update
-// @Param body body Payload true "body"
-// @Success 200 {object} BroadcastMessage
-func (a api) Update(c *gin.Context) {
-	var request Payload
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} Response
+func (a *api) Update(c *gin.Context) {
+	request := UpdateRequest{
+		ID: c.Param("id"),
+	}
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 
 		return
 	}
 
-	var data BroadcastMessage
-	data.Payload = request
-	data.ID = c.Param("id")
-	ok, _ := a.store.Update(c.Request.Context(), &data)
+	res, err := a.store.Update(c, request)
+	if err != nil {
+		panic(err)
+	}
 
-	if !ok {
+	if res == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	err := a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionUpdate,
-		ValueType: logger.ValueTypeBroadcastMessage,
-		ValueID:   data.ID,
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.sendOnChange()
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, res)
 }
 
-func (a api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+func (a *api) Delete(c *gin.Context) {
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -138,24 +125,15 @@ func (a api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
-		Action:    logger.ActionDelete,
-		ValueType: logger.ValueTypeBroadcastMessage,
-		ValueID:   c.Param("id"),
-	})
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
-
 	a.sendOnChange()
 
 	c.JSON(http.StatusNoContent, nil)
 }
 
 // GetActive
-// @Success 200 {array} BroadcastMessage
-func (a api) GetActive(c *gin.Context) {
-	actives, err := a.store.GetActive(c.Request.Context())
+// @Success 200 {array} Response
+func (a *api) GetActive(c *gin.Context) {
+	actives, err := a.store.GetActive(c)
 	if err != nil {
 		panic(err)
 	}
@@ -165,12 +143,10 @@ func (a api) GetActive(c *gin.Context) {
 func NewApi(
 	store Store,
 	onChangeListener chan<- bool,
-	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
 		store:            store,
 		onChangeListener: onChangeListener,
-		actionLogger:     actionLogger,
 	}
 }
 

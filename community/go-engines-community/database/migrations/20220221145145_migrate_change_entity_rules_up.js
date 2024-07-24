@@ -1,14 +1,3 @@
-function genID() {
-    var hex;
-    try {
-        hex = UUID().hex(); // mongo
-    } catch (e) {
-        hex = UUID().toString('hex'); // mongosh
-    }
-
-    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
-}
-
 db.eventfilter.find({
     "actions.type": {$in:["set_field_from_template", "set_field"]},
     "actions.name": {$in:["Resource", "Component", "Connector", "ConnectorName"]}

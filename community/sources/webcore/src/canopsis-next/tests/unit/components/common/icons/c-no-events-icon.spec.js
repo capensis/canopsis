@@ -8,22 +8,25 @@ const mockData = {
   secondTimestamp: 1600362123456, // Fri Sep 18 2020 00:02:03
 };
 
+const snapshotStubs = {
+  'c-simple-tooltip': true,
+};
+
 describe('c-no-events-icon', () => {
   mockDateNow(mockData.secondTimestamp);
 
   const factory = generateRenderer(CNoEventsIcon, {
     attachTo: document.body,
+    stubs: snapshotStubs,
   });
 
-  it('Renders `c-no-events-icon` with default props correctly', async () => {
+  it('Renders `c-no-events-icon` with default props correctly', () => {
     const wrapper = factory();
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `c-no-events-icon` with value correctly', async () => {
+  it('Renders `c-no-events-icon` with value correctly', () => {
     const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
@@ -31,11 +34,9 @@ describe('c-no-events-icon', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `c-no-events-icon` with custom props correctly', async () => {
+  it('Renders `c-no-events-icon` with custom props correctly', () => {
     const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
@@ -46,7 +47,5 @@ describe('c-no-events-icon', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

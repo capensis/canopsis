@@ -26,6 +26,7 @@ func (f *Flags) ParseArgs() {
 	flag.BoolVar(&f.EnableSameServiceNames, "enableSameServiceNames", false, "Enable same service names, services have unique names by default")
 	flag.BoolVar(&f.LogBody, "logBody", false, "Set to enable logging response and request bodies")
 	flag.BoolVar(&f.LogBodyOnError, "logBodyOnError", false, "Set to enable logging response and request bodies in case of error")
+	flag.BoolVar(&f.EnableActionLog, "enableActionLog", false, "Set to enable action log")
 	flag.Parse()
 }
 
@@ -48,4 +49,6 @@ type Flags struct {
 
 	LogBody        bool
 	LogBodyOnError bool
+
+	EnableActionLog bool
 }

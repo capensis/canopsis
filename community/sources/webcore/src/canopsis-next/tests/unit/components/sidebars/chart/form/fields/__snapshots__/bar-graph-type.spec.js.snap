@@ -2,6 +2,7 @@
 
 exports[`bar-graph-type Renders \`bar-graph-type\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Graph type"
 >
   <div
@@ -87,6 +88,7 @@ exports[`bar-graph-type Renders \`bar-graph-type\` with custom props 1`] = `
 
 exports[`bar-graph-type Renders \`bar-graph-type\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Graph type"
 >
   <div

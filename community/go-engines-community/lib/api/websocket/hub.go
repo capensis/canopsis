@@ -69,7 +69,7 @@ func (p GroupParameters) IsZero() bool {
 
 type GroupCheckExists func(ctx context.Context, id string) (bool, error)
 type GroupOnNotExist func(ctx context.Context, id string) (any, error)
-type GroupOnJoin func(ctx context.Context, connId, userId, roomId string, data any) error
+type GroupOnJoin func(ctx context.Context, connId, userID, roomId string, data any) error
 type GroupOnLeave func(connId, roomId string) error
 
 func NewHub(
@@ -132,7 +132,7 @@ type hub struct {
 }
 
 type userConn struct {
-	userId, token string
+	userID, token string
 
 	conn Connection
 }
@@ -327,10 +327,10 @@ func (h *hub) GetConnections() []UserConnection {
 
 	conns := make([]UserConnection, 0, len(h.conns))
 	for connId, conn := range h.conns {
-		if conn.userId != "" {
+		if conn.userID != "" {
 			conns = append(conns, UserConnection{
 				ID:     connId,
-				UserID: conn.userId,
+				UserID: conn.userID,
 				Token:  conn.token,
 			})
 		}
@@ -344,10 +344,10 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) bool {
 	defer h.connsMx.RUnlock()
 
 	c := h.conns[connId]
-	userId := c.userId
+	userID := c.userID
 	conn := c.conn
 	closed := false
-	granted, msg, err := h.authorizeOnJoin(ctx, userId, room)
+	granted, msg, err := h.authorizeOnJoin(ctx, userID, room)
 	if err != nil {
 		if errors.Is(err, ErrNotFoundRoom) || errors.Is(err, ErrNotFoundRoomInGroup) {
 			err := conn.WriteJSON(WMessage{
@@ -399,7 +399,7 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) bool {
 
 	if !granted {
 		code := http.StatusForbidden
-		if userId == "" {
+		if userID == "" {
 			code = http.StatusUnauthorized
 		}
 
@@ -428,7 +428,7 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) bool {
 	}
 
 	if onJoin != nil {
-		err := onJoin(h.hubCtx, connId, userId, id, data) //nolint:contextcheck
+		err := onJoin(h.hubCtx, connId, userID, id, data) //nolint:contextcheck
 		if err != nil {
 			err = conn.WriteJSON(WMessage{
 				Type:  WMessageFail,
@@ -450,8 +450,8 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) bool {
 	return false
 }
 
-func (h *hub) authorizeOnJoin(ctx context.Context, userId, room string) (bool, any, error) {
-	ok, err := h.authorizer.Authorize(ctx, userId, room)
+func (h *hub) authorizeOnJoin(ctx context.Context, userID, room string) (bool, any, error) {
+	ok, err := h.authorizer.Authorize(ctx, userID, room)
 	if err == nil {
 		return ok, nil, nil
 	}
@@ -633,13 +633,13 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 	checked := make(map[string]bool, len(h.conns))
 
 	for connId, c := range h.conns {
-		if c.userId == "" {
+		if c.userID == "" {
 			checked[connId] = true
 			continue
 		}
 
 		conn := c.conn
-		userId, err := h.authorizer.Authenticate(ctx, c.token)
+		userID, err := h.authorizer.Authenticate(ctx, c.token)
 		if err != nil {
 			h.logger.Err(err).Msg("cannot authorize user")
 			err = conn.WriteJSON(WMessage{
@@ -656,11 +656,11 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 			continue
 		}
 
-		if userId == "" {
+		if userID == "" {
 			connsToDisconnect = append(connsToDisconnect, connId)
 			h.logger.Error().
 				Str("addr", conn.RemoteAddr().String()).
-				Str("user", c.userId).
+				Str("user", c.userID).
 				Msg("cannot found user, connection will be closed")
 
 			err = conn.WriteJSON(WMessage{
@@ -705,8 +705,8 @@ func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string
 
 		c := h.conns[connId]
 		conn := c.conn
-		userId := c.userId
-		ok, err := h.authorizer.Authorize(ctx, userId, room)
+		userID := c.userID
+		ok, err := h.authorizer.Authorize(ctx, userID, room)
 		if err != nil {
 			h.logger.Err(err).Msg("cannot authorize user")
 
@@ -828,17 +828,17 @@ func (h *hub) listen(connId string, conn Connection) {
 				continue
 			}
 
-			userId, err := h.authorizer.Authenticate(ctx, msg.Token)
+			userID, err := h.authorizer.Authenticate(ctx, msg.Token)
 			if err != nil {
 				h.logger.Err(err).Msg("authentication failed")
 			}
-			if userId == "" {
+			if userID == "" {
 				closed = h.sendToConn(connId, WMessage{
 					Type:  WMessageFail,
 					Error: http.StatusUnauthorized,
 				})
 			} else {
-				h.setConnAuth(connId, userId, msg.Token)
+				h.setConnAuth(connId, userID, msg.Token)
 				closed = h.sendToConn(connId, WMessage{Type: WMessageAuthSuccess})
 			}
 		case RMessageJoin:
@@ -873,12 +873,12 @@ func (h *hub) listen(connId string, conn Connection) {
 	}
 }
 
-func (h *hub) setConnAuth(connId, userId, token string) {
+func (h *hub) setConnAuth(connId, userID, token string) {
 	h.connsMx.Lock()
 	defer h.connsMx.Unlock()
 
 	h.conns[connId] = userConn{
-		userId: userId,
+		userID: userID,
 		token:  token,
 		conn:   h.conns[connId].conn,
 	}

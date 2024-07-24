@@ -2,6 +2,7 @@
 
 exports[`title Renders \`title\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Custom title"
 >
@@ -44,6 +45,7 @@ exports[`title Renders \`title\` with custom props 1`] = `
 
 exports[`title Renders \`title\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   optional="true"
   title="Title"
 >

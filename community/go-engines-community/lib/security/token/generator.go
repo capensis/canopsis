@@ -38,7 +38,7 @@ type tokenClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (s *jwtGenerator) Generate(userId string, expiresAt time.Time) (string, error) {
+func (s *jwtGenerator) Generate(userID string, expiresAt time.Time) (string, error) {
 	cfg := s.apiConfigProvider.Get()
 	registeredClaims := jwt.RegisteredClaims{
 		ID:       utils.NewID(),
@@ -49,7 +49,7 @@ func (s *jwtGenerator) Generate(userId string, expiresAt time.Time) (string, err
 		registeredClaims.ExpiresAt = jwt.NewNumericDate(expiresAt)
 	}
 	claims := tokenClaims{
-		ID:               userId,
+		ID:               userID,
 		RegisteredClaims: registeredClaims,
 	}
 	token := jwt.NewWithClaims(cfg.TokenSigningMethod, claims)

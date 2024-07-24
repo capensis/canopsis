@@ -13,6 +13,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disableResize: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     computedTransition() {
@@ -35,6 +39,11 @@ export default {
       }
       return '';
     },
+  },
+  mounted() {
+    if (this.disableResize) {
+      window?.removeEventListener('resize', this.updateDimensions, false);
+    }
   },
   methods: {
     mouseEnterHandlers(e) {

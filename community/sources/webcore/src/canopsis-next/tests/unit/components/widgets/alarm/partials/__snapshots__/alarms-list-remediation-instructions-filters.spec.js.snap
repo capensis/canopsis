@@ -13,26 +13,26 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     editable="true"
     filters=""
   />
-  <span
-    class="v-tooltip v-tooltip--bottom"
+  <c-simple-tooltip-stub
+    bottom=""
+    content="Create instructions filter"
   >
-    <!---->
-  </span>
-  <button
-    class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
+    <button
+      class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light"
+      <span
+        class="v-btn__content"
       >
-        assignment
-      </i>
-    </span>
-  </button>
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
+        >
+          assignment
+        </i>
+      </span>
+    </button>
+  </c-simple-tooltip-stub>
 </div>
 `;
 
@@ -49,26 +49,26 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     editable="true"
     filters="[object Object],[object Object]"
   />
-  <span
-    class="v-tooltip v-tooltip--bottom"
+  <c-simple-tooltip-stub
+    bottom=""
+    content="Create instructions filter"
   >
-    <!---->
-  </span>
-  <button
-    class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
+    <button
+      class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light primary--text"
+      <span
+        class="v-btn__content"
       >
-        assignment
-      </i>
-    </span>
-  </button>
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light primary--text"
+        >
+          assignment
+        </i>
+      </span>
+    </button>
+  </c-simple-tooltip-stub>
 </div>
 `;
 
@@ -96,25 +96,25 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
   <remediation-instructions-filters-list-stub
     filters=""
   />
-  <span
-    class="v-tooltip v-tooltip--bottom"
+  <c-simple-tooltip-stub
+    bottom=""
+    content="Create instructions filter"
   >
-    <!---->
-  </span>
-  <button
-    class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
+    <button
+      class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light primary--text"
+      <span
+        class="v-btn__content"
       >
-        assignment
-      </i>
-    </span>
-  </button>
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light primary--text"
+        >
+          assignment
+        </i>
+      </span>
+    </button>
+  </c-simple-tooltip-stub>
 </div>
 `;

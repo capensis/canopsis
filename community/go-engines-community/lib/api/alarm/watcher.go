@@ -18,8 +18,8 @@ import (
 )
 
 type Watcher interface {
-	StartWatch(ctx context.Context, connId, userId, roomId string, data any) error
-	StartWatchDetails(ctx context.Context, connId, userId, roomId string, data any) error
+	StartWatch(ctx context.Context, connId, userID, roomId string, data any) error
+	StartWatchDetails(ctx context.Context, connId, userID, roomId string, data any) error
 	StopWatch(connId, roomId string) error
 }
 
@@ -61,7 +61,7 @@ type streamData struct {
 }
 
 // StartWatch creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string, data any) error {
+func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string, data any) error {
 	b, err := w.encoder.Encode(data)
 	if err != nil {
 		return fmt.Errorf("unexpected data type: %w", err)
@@ -69,7 +69,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 
 	k := w.genKey(b)
 	streamCtx, streamCancel := context.WithCancel(ctx)
-	if !w.newStream(roomId, k, connId, userId, streamCancel) {
+	if !w.newStream(roomId, k, connId, userID, streamCancel) {
 		return nil
 	}
 
@@ -108,8 +108,8 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 			}
 
 			connIdsByUserId := w.getConnIds(roomId, k)
-			for userId, connIds := range connIdsByUserId {
-				res, err := w.store.GetByID(streamCtx, changeEvent.DocumentKey.ID, userId, true)
+			for userID, connIds := range connIdsByUserId {
+				res, err := w.store.GetByID(streamCtx, changeEvent.DocumentKey.ID, userID, true)
 				if err != nil {
 					w.logger.Err(err).Msgf("cannot get alarm")
 					continue
@@ -128,7 +128,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 }
 
 // StartWatchDetails creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId string, data any) error {
+func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId string, data any) error {
 	b, err := w.encoder.Encode(data)
 	if err != nil {
 		return fmt.Errorf("unexpected data type: %w", err)
@@ -136,7 +136,7 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 
 	k := w.genKey(b)
 	streamCtx, streamCancel := context.WithCancel(ctx)
-	if !w.newStream(roomId, k, connId, userId, streamCancel) {
+	if !w.newStream(roomId, k, connId, userID, streamCancel) {
 		return nil
 	}
 
@@ -256,8 +256,8 @@ func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId 
 	if !ok {
 		return
 	}
-	for userId, connIds := range connIdsByUserId {
-		res, err := w.store.GetDetails(ctx, request, userId)
+	for userID, connIds := range connIdsByUserId {
+		res, err := w.store.GetDetails(ctx, request, userID)
 		if err != nil {
 			w.logger.Err(err).Msgf("cannot get alarm")
 			continue
@@ -274,7 +274,7 @@ func (w *watcher) StopWatch(connId, roomId string) error {
 	defer w.streamsMx.Unlock()
 
 	for k, v := range w.streams[roomId] {
-		for userId, connIds := range v.connIdsByUserId {
+		for userID, connIds := range v.connIdsByUserId {
 			index := -1
 
 			for i, streamConnId := range connIds {
@@ -288,9 +288,9 @@ func (w *watcher) StopWatch(connId, roomId string) error {
 				continue
 			}
 
-			w.streams[roomId][k].connIdsByUserId[userId] = append(connIds[:index], connIds[index+1:]...)
-			if len(w.streams[roomId][k].connIdsByUserId[userId]) == 0 {
-				delete(w.streams[roomId][k].connIdsByUserId, userId)
+			w.streams[roomId][k].connIdsByUserId[userID] = append(connIds[:index], connIds[index+1:]...)
+			if len(w.streams[roomId][k].connIdsByUserId[userID]) == 0 {
+				delete(w.streams[roomId][k].connIdsByUserId, userID)
 
 				if len(w.streams[roomId][k].connIdsByUserId) == 0 {
 					delete(w.streams[roomId], k)
@@ -305,13 +305,13 @@ func (w *watcher) StopWatch(connId, roomId string) error {
 	return nil
 }
 
-func (w *watcher) newStream(roomId, k, connId, userId string, streamCancel context.CancelFunc) bool {
+func (w *watcher) newStream(roomId, k, connId, userID string, streamCancel context.CancelFunc) bool {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
 	if _, ok := w.streams[roomId]; !ok {
 		w.streams[roomId] = map[string]streamData{k: {
-			connIdsByUserId: map[string][]string{userId: {connId}},
+			connIdsByUserId: map[string][]string{userID: {connId}},
 			cancel:          streamCancel,
 		}}
 
@@ -319,12 +319,12 @@ func (w *watcher) newStream(roomId, k, connId, userId string, streamCancel conte
 	}
 
 	if _, ok := w.streams[roomId][k]; ok {
-		w.streams[roomId][k].connIdsByUserId[userId] = append(w.streams[roomId][k].connIdsByUserId[userId], connId)
+		w.streams[roomId][k].connIdsByUserId[userID] = append(w.streams[roomId][k].connIdsByUserId[userID], connId)
 		return false
 	}
 
 	w.streams[roomId][k] = streamData{
-		connIdsByUserId: map[string][]string{userId: {connId}},
+		connIdsByUserId: map[string][]string{userID: {connId}},
 		cancel:          streamCancel,
 	}
 

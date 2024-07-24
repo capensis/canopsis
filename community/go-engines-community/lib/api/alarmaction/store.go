@@ -21,14 +21,14 @@ import (
 )
 
 type Store interface {
-	Ack(ctx context.Context, id string, r AckRequest, userId, username string) (bool, error)
-	AckRemove(ctx context.Context, id string, r Request, userId, username string) (bool, error)
-	Snooze(ctx context.Context, id string, r SnoozeRequest, userId, username string) (bool, error)
-	Cancel(ctx context.Context, id string, r Request, userId, username string) (bool, error)
-	Uncancel(ctx context.Context, id string, r Request, userId, username string) (bool, error)
-	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId, username string) (bool, error)
-	Comment(ctx context.Context, id string, r CommentRequest, userId, username string) (bool, error)
-	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId, username string) (bool, error)
+	Ack(ctx context.Context, id string, r AckRequest, userID, username string) (bool, error)
+	AckRemove(ctx context.Context, id string, r Request, userID, username string) (bool, error)
+	Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) (bool, error)
+	Cancel(ctx context.Context, id string, r Request, userID, username string) (bool, error)
+	Uncancel(ctx context.Context, id string, r Request, userID, username string) (bool, error)
+	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) (bool, error)
+	Comment(ctx context.Context, id string, r CommentRequest, userID, username string) (bool, error)
+	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) (bool, error)
 	AddBookmark(ctx context.Context, alarmID, userID string) (bool, error)
 	RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error)
 }
@@ -68,14 +68,14 @@ type store struct {
 	logger               zerolog.Logger
 }
 
-func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, username string) (bool, error) {
+func (s *store) Ack(ctx context.Context, id string, r AckRequest, userID, username string) (bool, error) {
 	// Double ack can be enabled. Check in engine-axe.
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeAck, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeAck, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -87,7 +87,7 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, userna
 
 	if r.AckResources && alarm.Entity.Type == types.EntityTypeComponent {
 		go func() {
-			err = s.ackResources(context.Background(), alarm.Entity.ID, r.Comment, userId, username)
+			err = s.ackResources(context.Background(), alarm.Entity.ID, r.Comment, userID, username)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot ack resources")
 			}
@@ -97,13 +97,13 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, userna
 	return true, nil
 }
 
-func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, username string) (bool, error) {
+func (s *store) AckRemove(ctx context.Context, id string, r Request, userID, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.ack": bson.M{"$ne": nil}})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeAckremove, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeAckremove, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -116,7 +116,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, use
 	return true, nil
 }
 
-func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, username string) (bool, error) {
+func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) (bool, error) {
 	d, err := r.Duration.To("s")
 	if err != nil {
 		return false, common.NewValidationError("duration", "Duration is invalid.")
@@ -127,7 +127,7 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, 
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeSnooze, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeSnooze, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -141,13 +141,13 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, 
 	return true, nil
 }
 
-func (s *store) Cancel(ctx context.Context, id string, r Request, userId, username string) (bool, error) {
+func (s *store) Cancel(ctx context.Context, id string, r Request, userID, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.canceled": nil})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeCancel, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeCancel, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -160,13 +160,13 @@ func (s *store) Cancel(ctx context.Context, id string, r Request, userId, userna
 	return true, nil
 }
 
-func (s *store) Uncancel(ctx context.Context, id string, r Request, userId, username string) (bool, error) {
+func (s *store) Uncancel(ctx context.Context, id string, r Request, userID, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.canceled": bson.M{"$ne": nil}})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeUncancel, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeUncancel, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -179,7 +179,7 @@ func (s *store) Uncancel(ctx context.Context, id string, r Request, userId, user
 	return true, nil
 }
 
-func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId, username string) (bool, error) {
+func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userID, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
@@ -192,7 +192,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		TicketSystemName: r.SystemName,
 		TicketData:       r.Data,
 	}
-	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, ticketInfo.GetStepMessage(), username, userId)
+	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, ticketInfo.GetStepMessage(), username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -205,7 +205,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 
 	if r.TicketResources && alarm.Entity.Type == types.EntityTypeComponent {
 		go func() {
-			err = s.ticketResources(context.Background(), alarm.Entity.ID, ticketInfo, userId, username)
+			err = s.ticketResources(context.Background(), alarm.Entity.ID, ticketInfo, userID, username)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot ticket resources")
 			}
@@ -215,13 +215,13 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 	return true, nil
 }
 
-func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId, username string) (bool, error) {
+func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userID, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeComment, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeComment, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -234,13 +234,13 @@ func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId
 	return true, nil
 }
 
-func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId, username string) (bool, error) {
+func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest, userID, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeChangestate, alarm.Entity, r.Comment, username, userId)
+	event, err := s.genEvent(types.EventTypeChangestate, alarm.Entity, r.Comment, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -293,7 +293,7 @@ func (s *store) genEvent(
 	eventType string,
 	entity types.Entity,
 	output string,
-	username, userId string,
+	username, userID string,
 ) (types.Event, error) {
 	event, err := s.eventGenerator.Generate(entity)
 	if err != nil {
@@ -304,7 +304,7 @@ func (s *store) genEvent(
 	event.Timestamp = datetime.NewCpsTime()
 	event.Output = output
 	event.Author = username
-	event.UserID = userId
+	event.UserID = userID
 	event.Initiator = types.InitiatorUser
 
 	return event, nil
@@ -334,7 +334,7 @@ func (s *store) ackResources(
 	ctx context.Context,
 	component string,
 	comment string,
-	userId, username string,
+	userID, username string,
 ) error {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -380,7 +380,7 @@ func (s *store) ackResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event, err := s.genEvent(types.EventTypeAck, alarm.Entity, output, username, userId)
+		event, err := s.genEvent(types.EventTypeAck, alarm.Entity, output, username, userID)
 		if err != nil {
 			return err
 		}
@@ -398,7 +398,7 @@ func (s *store) ticketResources(
 	ctx context.Context,
 	component string,
 	ticketInfo types.TicketInfo,
-	userId, username string,
+	userID, username string,
 ) error {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -441,7 +441,7 @@ func (s *store) ticketResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, output, username, userId)
+		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, output, username, userID)
 		if err != nil {
 			return err
 		}

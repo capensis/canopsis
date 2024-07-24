@@ -2,6 +2,7 @@
 
 exports[`default-elements-per-page Renders \`default-sort-column\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default number of elements/page"
 >
   <div
@@ -68,6 +69,7 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with custom p
 
 exports[`default-elements-per-page Renders \`default-sort-column\` with default props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Default number of elements/page"
 >
   <div

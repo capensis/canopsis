@@ -1,4 +1,4 @@
-import { isEqual, noop, upperFirst, camelCase } from 'lodash';
+import { isEqual, upperFirst, camelCase } from 'lodash';
 import { ref, set } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
@@ -38,9 +38,9 @@ import { PAGINATION_LIMIT } from '@/config';
  */
 export const useLocalQuery = ({
   initialQuery = { page: 1, itemsPerPage: PAGINATION_LIMIT },
-  onUpdate = noop,
+  onUpdate,
   comparator = isEqual,
-}) => {
+} = {}) => {
   const query = ref({ ...initialQuery });
 
   const updateQuery = (newQuery) => {
@@ -48,7 +48,7 @@ export const useLocalQuery = ({
 
     query.value = newQuery;
 
-    if (!comparator(oldQuery, newQuery)) {
+    if (onUpdate && !comparator(oldQuery, newQuery)) {
       onUpdate(query.value);
     }
   };
@@ -58,7 +58,7 @@ export const useLocalQuery = ({
 
     set(query.value, field, value);
 
-    if (!isEqual(oldValue, value)) {
+    if (onUpdate && !isEqual(oldValue, value)) {
       onUpdate(query.value);
     }
   };

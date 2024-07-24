@@ -1,28 +1,14 @@
 package mongo
 
-import (
-	"fmt"
-	"os"
-	"os/exec"
-)
+import "context"
 
+const MigrationHelperComment = `// Available global functions:
+// genID returns a new string UUID
+// isInt checks if a value is integer
+// toInt transforms value to integer`
+
+// ScriptExecutor is used to execute JavaScript migration scripts.
+// Each implementation has to support global functions described above.
 type ScriptExecutor interface {
-	Exec(file string) error
-}
-
-func NewScriptExecutor() ScriptExecutor {
-	return &scriptExecutor{}
-}
-
-type scriptExecutor struct{}
-
-func (scriptExecutor) Exec(file string) error {
-	cmd := fmt.Sprintf("mongosh %s %s", os.Getenv(EnvURL), file)
-	result := exec.Command("bash", "-c", cmd)
-	output, err := result.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("cannot execute command %q: %w: %s", cmd, err, string(output))
-	}
-
-	return nil
+	Exec(ctx context.Context, file string) error
 }

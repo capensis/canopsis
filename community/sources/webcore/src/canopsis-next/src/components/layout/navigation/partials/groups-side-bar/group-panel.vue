@@ -29,7 +29,7 @@
         </v-btn>
       </div>
     </v-expansion-panel-header>
-    <v-expansion-panel-content class="group-item__content">
+    <v-expansion-panel-content class="group-item__content" eager>
       <slot />
     </v-expansion-panel-content>
   </v-expansion-panel>
