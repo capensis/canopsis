@@ -1,6 +1,5 @@
 <template>
   <draggable
-    v-bind="$attrs"
     :value="value"
     :group="group"
     :tag="component"
@@ -12,6 +11,7 @@
     :chosen-class="dragClass"
     :component-data="componentData"
     :move="itemMove"
+    :draggable="draggable"
     @change="updateOrdering"
     @start="$emit('start', $event)"
     @end="$emit('end', $event)"
@@ -35,7 +35,6 @@ import { formMixin } from '@/mixins/form';
 export default {
   components: { Draggable },
   mixins: [formMixin],
-  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
@@ -83,6 +82,10 @@ export default {
     },
     itemMove: {
       type: Function,
+      required: false,
+    },
+    draggable: {
+      type: String,
       required: false,
     },
   },

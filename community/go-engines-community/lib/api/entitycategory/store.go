@@ -19,13 +19,14 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EntityCategoryMongoCollection),
+		entityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
 		authorProvider:        authorProvider,
@@ -35,6 +36,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
+	entityCollection      mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
 	authorProvider        author.Provider
@@ -151,10 +153,9 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	return result, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	entityCollection := s.dbClient.Collection(mongo.EntityMongoCollection)
-	res := entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}})
-	if err := res.Err(); err != nil {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	err := s.entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}}).Err()
+	if err != nil {
 		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, err
 		}
@@ -162,10 +163,20 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrLinkedCategoryToEntity
 	}
 
-	delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	var deleted int64
 
-	return delCount > 0, nil
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }

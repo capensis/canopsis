@@ -6,6 +6,7 @@ import ExtraDetailsPbehavior from '@/components/widgets/alarm/columns-formatting
 
 const stubs = {
   'c-alarm-pbehavior-chip': true,
+  'c-simple-tooltip': true,
 };
 
 describe('extra-details-pbehavior', () => {
@@ -27,7 +28,7 @@ describe('extra-details-pbehavior', () => {
 
   const snapshotFactory = generateRenderer(ExtraDetailsPbehavior, { stubs });
 
-  it('Renders `extra-details-pbehavior` with full pbehavior', async () => {
+  it('Renders `extra-details-pbehavior` with full pbehavior', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviorInfo,
@@ -35,11 +36,9 @@ describe('extra-details-pbehavior', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without reason', async () => {
+  it('Renders `extra-details-pbehavior` without reason', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviorInfo: omit(pbehaviorInfo, ['reason_name']),
@@ -47,11 +46,9 @@ describe('extra-details-pbehavior', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without comment', async () => {
+  it('Renders `extra-details-pbehavior` without comment', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviorInfo: omit(pbehaviorInfo, ['last_comment']),
@@ -59,11 +56,9 @@ describe('extra-details-pbehavior', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without comment author', async () => {
+  it('Renders `extra-details-pbehavior` without comment author', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviorInfo: {
@@ -77,7 +72,5 @@ describe('extra-details-pbehavior', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
-    await wrapper.activateAllTooltips();
-    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

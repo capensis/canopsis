@@ -1,6 +1,7 @@
 package alarmtag
 
 import (
+	"cmp"
 	"context"
 	"errors"
 
@@ -20,7 +21,7 @@ type Store interface {
 	GetByID(ctx context.Context, id string) (*Response, error)
 	Create(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
@@ -59,11 +60,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
-	sortBy := s.defaultSortBy
-	if r.SortBy != "" {
-		sortBy = r.SortBy
-	}
-
 	project := s.authorProvider.Pipeline()
 	if r.WithFlags {
 		project = append(project, bson.M{
@@ -75,7 +71,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 		project,
 	))
 
@@ -214,9 +210,23 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	return response, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res, err := s.collection.DeleteOne(ctx, bson.M{"_id": id, "type": alarmtag.TypeInternal})
-	return res > 0, err
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	var deleted int64
+
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id, "type": alarmtag.TypeInternal}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || result.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id, "type": alarmtag.TypeInternal})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func transformCreateRequestToModel(r CreateRequest) alarmtag.AlarmTag {

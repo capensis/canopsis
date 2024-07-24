@@ -2,21 +2,17 @@ package httpprovider
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"testing"
 
-	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_http "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/http"
-	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/golang/mock/gomock"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const validRole = "valid"
@@ -61,7 +57,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
 		Return(expectedUser, nil)
 
-	p := NewCasProvider(getDbClientMock(ctrl), mockDoer, config, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider, getRoleProviderMock(ctrl))
 	r := newRequest()
 	r.URL.Host = "test-service"
 	r.Host = "test-service"
@@ -98,7 +94,7 @@ func TestCasProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 		FindByExternalSource(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewCasProvider(getDbClientMock(ctrl), mockDoer, security.CasConfig{}, mockUserProvider)
+	p := NewCasProvider(mockDoer, security.CasConfig{}, mockUserProvider, getRoleProviderMock(ctrl))
 	r := newRequest()
 	user, err, ok := p.Auth(r)
 
@@ -147,7 +143,7 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 		FindByExternalSource(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewCasProvider(getDbClientMock(ctrl), mockDoer, config, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider, getRoleProviderMock(ctrl))
 	r := newRequest()
 	r.URL.Host = "test-service"
 	r.Host = "test-service"
@@ -214,7 +210,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 		Save(gomock.Any(), gomock.Eq(expectedUser)).
 		Return(nil)
 
-	p := NewCasProvider(getDbClientMock(ctrl), mockDoer, config, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider, getRoleProviderMock(ctrl))
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		security.QueryParamCasTicket:  []string{ticket},
@@ -267,7 +263,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 		Save(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewCasProvider(getDbClientMock(ctrl), mockDoer, config, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider, getRoleProviderMock(ctrl))
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		security.QueryParamCasTicket:  []string{ticket},
@@ -309,7 +305,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamWithNotFoundRole_ShouldReturnEr
 		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
 		Return(nil, nil)
 
-	p := NewCasProvider(getDbClientMock(ctrl), mockDoer, config, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider, getRoleProviderMock(ctrl))
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		security.QueryParamCasTicket:  []string{ticket},
@@ -326,34 +322,17 @@ func TestCasProvider_Auth_GivenTicketByQueryParamWithNotFoundRole_ShouldReturnEr
 	}
 }
 
-func getDbClientMock(ctrl *gomock.Controller) *mock_mongo.MockDbClient {
-	singleResultHelperSuccess := mock_mongo.NewMockSingleResultHelper(ctrl)
-	singleResultHelperSuccess.EXPECT().Err().Return(nil).AnyTimes()
-
-	singleResultHelperNotFound := mock_mongo.NewMockSingleResultHelper(ctrl)
-	singleResultHelperNotFound.EXPECT().Err().Return(mongo.ErrNoDocuments).AnyTimes()
-
-	unexpectedResultHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
-	unexpectedResultHelper.EXPECT().Err().Return(mongo.ErrNoDocuments).AnyTimes()
-
-	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(_ context.Context, query bson.M, _ ...*options.FindOneOptions) libmongo.SingleResultHelper {
-			role, ok := query["name"]
-			if !ok {
-				return unexpectedResultHelper
+func getRoleProviderMock(ctrl *gomock.Controller) *mock_security.MockRoleProvider {
+	mockRoleProvider := mock_security.NewMockRoleProvider(ctrl)
+	mockRoleProvider.EXPECT().GetRoleID(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(ctx context.Context, name string) (string, error) {
+			if name == validRole {
+				return validRole, nil
 			}
 
-			if role == validRole {
-				return singleResultHelperSuccess
-			}
-
-			return singleResultHelperNotFound
+			return "", errors.New("role not found")
 		},
 	).AnyTimes()
 
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
-	mockDbClient.EXPECT().Collection(libmongo.RoleCollection).Return(mockDbCollection)
-
-	return mockDbClient
+	return mockRoleProvider
 }

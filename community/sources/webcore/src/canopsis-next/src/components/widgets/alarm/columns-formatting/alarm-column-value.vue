@@ -1,6 +1,7 @@
 <template>
   <c-compiled-template
     v-if="column.template"
+    :template-id="templateId"
     :template="column.template"
     :context="templateContext"
     class="alarm-column-value"
@@ -40,6 +41,8 @@
 <script>
 import { get } from 'lodash';
 
+import { getAlarmWidgetColumnTemplateId } from '@/helpers/entities/alarm/list';
+
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 import AlarmColumnCell from './alarm-column-cell.vue';
@@ -72,6 +75,10 @@ export default {
     },
   },
   computed: {
+    templateId() {
+      return getAlarmWidgetColumnTemplateId(this.widget._id, this.column.value);
+    },
+
     templateContext() {
       return {
         value: get(this.alarm, this.column.value, ''),

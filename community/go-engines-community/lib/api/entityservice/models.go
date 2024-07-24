@@ -1,6 +1,7 @@
 package entityservice
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -10,8 +11,9 @@ import (
 
 type Response struct {
 	entity.Entity  `bson:",inline"`
-	OutputTemplate string `bson:"output_template" json:"output_template"`
-	SliAvailState  int64  `bson:"sli_avail_state" json:"sli_avail_state"`
+	OutputTemplate string         `bson:"output_template" json:"output_template"`
+	SliAvailState  int64          `bson:"sli_avail_state" json:"sli_avail_state"`
+	Author         *author.Author `bson:"author" json:"author"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 }
@@ -49,6 +51,7 @@ type ContextGraphRequest struct {
 type EditRequest struct {
 	ID             string               `json:"-"`
 	Name           string               `json:"name" binding:"required,max=255"`
+	Author         string               `json:"author" swaggerignore:"true"`
 	Enabled        *bool                `json:"enabled" binding:"required"`
 	OutputTemplate string               `json:"output_template" binding:"required,max=500"`
 	Category       string               `json:"category"`

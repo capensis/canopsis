@@ -248,6 +248,12 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
+
+	err = q.handlePatterns(r)
+	if err != nil {
+		return nil, err
+	}
+
 	err = q.handleFilter(ctx, r, userID)
 	if err != nil {
 		return nil, err
@@ -303,7 +309,17 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
 	}
 
-	err := q.handleFilter(ctx, filterRequest, userID)
+	err := q.handleWidgetFilter(ctx, filterRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	err = q.handlePatterns(filterRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	err = q.handleFilter(ctx, filterRequest, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -455,6 +471,12 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	if err != nil {
 		return nil, err
 	}
+
+	err = q.handlePatterns(r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	err = q.handleFilter(ctx, r.FilterRequest, userID)
 	if err != nil {
 		return nil, err

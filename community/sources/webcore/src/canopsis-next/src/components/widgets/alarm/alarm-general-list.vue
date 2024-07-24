@@ -4,7 +4,6 @@
     <v-data-table
       :headers="headers"
       :items="items"
-      hide-default-footer
     >
       <template #item="{ item }">
         <tr>
@@ -27,13 +26,10 @@
 </template>
 
 <script>
-/**
- * General table component for alarm entity
- *
- * @module alarm
- *
- * @prop {Object} item - alarm item
- */
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     items: {
@@ -41,26 +37,30 @@ export default {
       default: () => [],
     },
   },
-  data() {
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.author'),
+        sortable: false,
+      },
+      {
+        text: t('common.connector'),
+        sortable: false,
+      },
+      {
+        text: t('common.component'),
+        sortable: false,
+      },
+      {
+        text: t('common.resource'),
+        sortable: false,
+      },
+    ]);
+
     return {
-      headers: [
-        {
-          text: this.$t('common.author'),
-          sortable: false,
-        },
-        {
-          text: this.$t('common.connector'),
-          sortable: false,
-        },
-        {
-          text: this.$t('common.component'),
-          sortable: false,
-        },
-        {
-          text: this.$t('common.resource'),
-          sortable: false,
-        },
-      ],
+      headers,
     };
   },
 };

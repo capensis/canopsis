@@ -7,6 +7,7 @@ import ExtraDetailsAck from '@/components/widgets/alarm/columns-formatting/extra
 
 const stubs = {
   'c-alarm-extra-details-chip': true,
+  'c-simple-tooltip': true,
 };
 
 describe('extra-details-ack', () => {

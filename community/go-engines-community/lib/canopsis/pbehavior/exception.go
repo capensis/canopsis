@@ -11,9 +11,11 @@ type Exdate struct {
 }
 
 type Exception struct {
-	ID          string            `bson:"_id,omitempty" json:"_id"`
-	Name        string            `bson:"name" json:"name"`
-	Description string            `bson:"description" json:"description"`
-	Exdates     []Exdate          `bson:"exdates" json:"exdates"`
-	Created     *datetime.CpsTime `bson:"created,omitempty" json:"created"`
+	ID          string           `bson:"_id,omitempty" json:"_id"`
+	Name        string           `bson:"name" json:"name"`
+	Author      string           `bson:"author" json:"author"`
+	Description string           `bson:"description" json:"description"`
+	Exdates     []Exdate         `bson:"exdates" json:"exdates"`
+	Created     datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty"`
+	Updated     datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty"`
 }

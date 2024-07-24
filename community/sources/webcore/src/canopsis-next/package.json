@@ -28,6 +28,7 @@
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-node-html-label": "^1.2.2",
     "deep-freeze": "^0.0.1",
+    "deep-object-diff": "^1.1.9",
     "file-saver": "^2.0.2",
     "flat": "^4.1.0",
     "handlebars": "4.7.8",

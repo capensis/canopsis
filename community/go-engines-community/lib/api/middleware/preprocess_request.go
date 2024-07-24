@@ -31,8 +31,8 @@ func SetAuthor() func(c *gin.Context) {
 			panic(err)
 		}
 
-		userId := c.MustGet(auth.UserKey)
-		body["author"] = userId
+		userID := c.MustGet(auth.UserKey)
+		body["author"] = userID
 
 		encodedStr, err := json.Marshal(body)
 		if err != nil {
@@ -74,13 +74,13 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) fun
 		}
 
 		if addAuthor {
-			userId, ok := c.MustGet(auth.UserKey).(string)
+			userID, ok := c.MustGet(auth.UserKey).(string)
 			if !ok {
 				panic(fmt.Errorf("unknown type of %s", auth.UserKey))
 			}
 
 			for _, object := range rawObjects {
-				object.Set("author", ar.NewString(userId))
+				object.Set("author", ar.NewString(userID))
 			}
 		}
 
