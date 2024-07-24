@@ -3,29 +3,23 @@ package user
 import (
 	"context"
 	"fmt"
-	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
-	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequest, userID string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
 	Insert(ctx context.Context, r CreateRequest) (*User, error)
-	Update(ctx context.Context, r UpdateRequest) (*User, error)
-	Delete(ctx context.Context, id string) (bool, error)
-
-	BulkInsert(ctx context.Context, requests []CreateRequest) error
-	BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error
-	BulkDelete(ctx context.Context, ids []string) error
+	Update(ctx context.Context, r UpdateRequest, userID string) (*User, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websocketStore websocket.Store) Store {
@@ -60,7 +54,7 @@ type store struct {
 	defaultSortBy         string
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*AggregationResult, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"crecord_type": securitymodel.LineTypeSubject}},
 	}
@@ -115,14 +109,28 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	for i, v := range res.Data {
 		ids[i] = v.ID
 	}
+
 	conns, err := s.websocketStore.GetConnections(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
 
+	var onlyOneAdmin bool
+	var lastAdminID string
+	if r.WithFlags {
+		onlyOneAdmin, lastAdminID, err = s.checkLastAdmin(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	for i := range res.Data {
 		activeConnects := conns[res.Data[i].ID]
 		res.Data[i].ActiveConnects = &activeConnects
+		if r.WithFlags {
+			deletable := res.Data[i].ID != curUserID && (!onlyOneAdmin || res.Data[i].ID != lastAdminID)
+			res.Data[i].Deletable = &deletable
+		}
 	}
 
 	return &res, nil
@@ -175,10 +183,29 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 	return user, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (*User, error) {
+	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
+		return nil, common.NewValidationError("enable", "user cannot disable itself")
+	}
+
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
+		if err != nil {
+			return err
+		}
+
+		if onlyOneAdmin && lastAdminID == r.ID {
+			if r.Role != security.RoleAdmin {
+				return common.NewValidationError("role", "last admin cannot be edited")
+			}
+
+			if r.IsEnabled != nil && !*r.IsEnabled {
+				return common.NewValidationError("enable", "last admin cannot be disabled")
+			}
+		}
+
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
 			bson.M{"$set": r.getBson(s.passwordEncoder)},
@@ -188,6 +215,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 		}
 
 		user, err = s.GetOneBy(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
@@ -197,7 +225,20 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 	return user, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	if id == userID {
+		return false, common.NewValidationError("_id", "user cannot delete itself")
+	}
+
+	onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	if onlyOneAdmin && id == lastAdminID {
+		return false, common.NewValidationError("_id", "last admin cannot be deleted")
+	}
+
 	delCount, err := s.collection.DeleteOne(ctx, bson.M{
 		"_id":          id,
 		"crecord_type": securitymodel.LineTypeSubject,
@@ -267,67 +308,36 @@ func (s *store) deleteShareTokens(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *store) BulkInsert(ctx context.Context, requests []CreateRequest) error {
-	var err error
-	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
+func (s *store) checkLastAdmin(ctx context.Context) (bool, string, error) {
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"crecord_type": securitymodel.LineTypeSubject,
+			"enable":       true,
+			"role":         security.RoleAdmin,
+		}},
+		{"$group": bson.M{
+			"_id":     nil,
+			"count":   bson.M{"$sum": 1},
+			"last_id": bson.M{"$first": "$_id"},
+		}},
+	})
+	if err != nil {
+		return false, "", err
+	}
 
-	for _, r := range requests {
-		writeModels = append(
-			writeModels,
-			mongodriver.NewInsertOneModel().SetDocument(r.getBson(s.passwordEncoder)),
-		)
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.collection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
+	defer cursor.Close(ctx)
+	res := struct {
+		Count  int64  `bson:"count"`
+		LastID string `bson:"last_id"`
+	}{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+		if err != nil {
+			return false, "", err
 		}
 	}
 
-	if len(writeModels) > 0 {
-		_, err = s.collection.BulkWrite(ctx, writeModels)
-	}
-
-	return err
-}
-
-func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error {
-	var err error
-	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
-
-	for _, r := range requests {
-		writeModels = append(
-			writeModels,
-			mongodriver.
-				NewUpdateOneModel().
-				SetFilter(bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject}).
-				SetUpdate(bson.M{"$set": r.getBson(s.passwordEncoder)}),
-		)
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.collection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
-	}
-
-	if len(writeModels) > 0 {
-		_, err = s.collection.BulkWrite(ctx, writeModels)
-	}
-
-	return err
-}
-
-func (s *store) BulkDelete(ctx context.Context, ids []string) error {
-	_, err := s.collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
-
-	return err
+	return res.Count <= 1, res.LastID, nil
 }
 
 func getNestedObjectsPipeline() []bson.M {
