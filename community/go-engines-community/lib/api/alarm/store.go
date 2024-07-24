@@ -212,8 +212,8 @@ func (s *store) GetByID(ctx context.Context, id, userID string, onlyParents bool
 	}
 
 	if len(result.Data) == 0 {
-		resolvedPipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
-			OpenedAndRecentResolved, onlyParents)
+		resolvedPipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateGetAggregationPipeline(
+			bson.M{"_id": id}, now, userID, OpenedAndRecentResolved, onlyParents)
 		if err != nil {
 			return nil, err
 		}
