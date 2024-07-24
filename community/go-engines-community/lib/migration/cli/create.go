@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 )
 
@@ -32,14 +33,14 @@ func (c *createCmd) Exec(_ context.Context) error {
 	filename := strings.Join([]string{now.Format(timeFormat), c.name}, fileNameDelimiter)
 	fileUp := filename + fileNameSuffixUp
 	fileDown := filename + fileNameSuffixDown
-	err := os.WriteFile(filepath.Join(c.path, fileUp), nil, filePerm)
+	err := os.WriteFile(filepath.Join(c.path, fileUp), []byte(mongo.MigrationHelperComment), filePerm)
 	if err != nil {
 		return fmt.Errorf("cannot create up migration file %q: %w", fileUp, err)
 	}
 
 	c.logger.Info().Str("filename", fileUp).Msg("up migration script created")
 
-	err = os.WriteFile(filepath.Join(c.path, fileDown), nil, filePerm)
+	err = os.WriteFile(filepath.Join(c.path, fileDown), []byte(mongo.MigrationHelperComment), filePerm)
 	if err != nil {
 		return fmt.Errorf("cannot create down migration file %q: %w", fileDown, err)
 	}

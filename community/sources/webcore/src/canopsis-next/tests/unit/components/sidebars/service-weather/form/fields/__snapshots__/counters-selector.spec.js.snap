@@ -2,6 +2,7 @@
 
 exports[`field-counters-selector Renders \`field-counters-selector\` with custom props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Counters"
 >
   <div
@@ -34,6 +35,7 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with custom
 
 exports[`field-counters-selector Renders \`field-counters-selector\` with disabled props 1`] = `
 <widget-settings-item-stub
+  eager="true"
   title="Counters"
 >
   <div

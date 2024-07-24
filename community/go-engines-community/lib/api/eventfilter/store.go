@@ -1,6 +1,7 @@
 package eventfilter
 
 import (
+	"cmp"
 	"context"
 	"errors"
 
@@ -20,10 +21,10 @@ import (
 
 type Store interface {
 	Insert(ctx context.Context, request CreateRequest) (*Response, error)
-	GetById(ctx context.Context, id string) (*Response, error)
+	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 	FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error)
 	ReadFailures(ctx context.Context, id string) (bool, error)
 }
@@ -75,14 +76,14 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID)
+		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
 
 	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{
 			"$match": bson.M{"_id": id},
@@ -125,11 +126,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sortBy := s.defaultSortBy
-	if query.SortBy != "" {
-		sortBy = query.SortBy
-	}
-
 	project := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorExceptionMongoCollection,
@@ -145,7 +141,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, query.Sort),
+		common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
 		project,
 	))
 
@@ -204,7 +200,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
-		response, err = s.GetById(ctx, model.ID)
+		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
 	if err != nil || response == nil {
@@ -223,18 +219,28 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	return response, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	_, err := s.dbFailureCollection.DeleteMany(ctx, bson.M{"rule": id})
 	if err != nil {
 		return false, err
 	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	var deleted int64
 
-	return deleted > 0, nil
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		deleted = 0
+
+		// required to get the author in action log listener.
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return deleted > 0, err
 }
 
 func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error) {

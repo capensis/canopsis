@@ -70,7 +70,7 @@
         :value="form.parameters.entityTemplate"
         :template="form.parameters.entityTemplateTemplate"
         :templates="weatherEntityWidgetTemplates"
-        :variables="entityVariables"
+        :variables="entityTemplateVariables"
         :title="$t('settings.entityTemplate')"
         @input="updateEntityTemplate"
       />
@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { ENTITY_FIELDS, ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
+import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
@@ -204,6 +204,17 @@ export default {
       ];
 
       return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
+    },
+
+    entityTemplateVariables() {
+      return [
+        ...this.entityVariables,
+
+        {
+          value: ENTITY_TEMPLATE_FIELDS.sourceType,
+          text: this.$t(ENTITY_FIELDS_TO_LABELS_KEYS[ENTITY_FIELDS.sourceType]),
+        },
+      ];
     },
   },
   mounted() {

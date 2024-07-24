@@ -282,6 +282,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 >
   <c-empty-data-table-columns-stub />
   <c-table-pagination-stub
+    items="5,10,20,50,100,200"
     total-items="0"
   />
   <!---->
@@ -376,7 +377,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-  <c-table-pagination-stub />
+  <c-table-pagination-stub
+    items="5,10,20,50,100,200"
+  />
   <!---->
 </div>
 `;
@@ -467,7 +470,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-  <c-table-pagination-stub />
+  <c-table-pagination-stub
+    items="5,10,20,50,100,200"
+  />
   <!---->
 </div>
 `;
@@ -558,7 +563,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-  <c-table-pagination-stub />
+  <c-table-pagination-stub
+    items="5,10,20,50,100,200"
+  />
   <!---->
 </div>
 `;
@@ -650,7 +657,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-  <c-table-pagination-stub />
+  <c-table-pagination-stub
+    items="5,10,20,50,100,200"
+  />
   <!---->
 </div>
 `;
@@ -768,6 +777,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
     </div>
   </div>
   <c-table-pagination-stub
+    items="5,10,20,50,100,200"
     total-items="0"
   />
   <!---->
@@ -887,6 +897,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
     </div>
   </div>
   <c-table-pagination-stub
+    items="5,10,20,50,100,200"
     total-items="0"
   />
   <!---->
@@ -1100,6 +1111,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
     </div>
   </div>
   <c-table-pagination-stub
+    items="5,10,20,50,100,200"
     total-items="5"
   />
   <!---->
