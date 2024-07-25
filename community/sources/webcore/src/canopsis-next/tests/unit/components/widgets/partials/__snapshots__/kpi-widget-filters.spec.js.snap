@@ -3,6 +3,7 @@
 exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] = `
 <div
   class="layout kpi-widget-filters wrap"
+  lockedfilter="locked-filter-id"
 >
   <c-quick-date-interval-field-stub
     class="kpi-widget-filters__interval"
@@ -28,7 +29,6 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] =
       itemvalue="_id"
       label="Select a filter"
       lockedfilters="[object Object],[object Object],[object Object],[object Object]"
-      lockedvalue="locked-filter-id"
       value="[object Object],[object Object]"
     />
     <filters-list-btn-stub
