@@ -49,7 +49,6 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
       addable="true"
       editable="true"
       filters="[object Object]"
-      hideselector="true"
       withentity="true"
     />
     <field-switcher-stub
