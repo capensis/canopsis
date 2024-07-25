@@ -64,12 +64,17 @@ export const convertChartUserPreferenceToQuery = ({ content: { sampling, interva
  * This function converts chart widgets default parameters to query Object
  *
  * @param {Widget} widget
- * @returns {{ sampling: string, interval: Object }}
+ * @returns {{ lockedFilter: string | null, sampling: string, interval: Object }}
  */
 export function convertChartWidgetDefaultParametersToQuery(widget) {
-  const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
+  const {
+    mainFilter,
+    default_sampling: defaultSampling,
+    default_time_range: defaultTimeRange,
+  } = widget.parameters;
 
   return {
+    lockedFilter: mainFilter,
     sampling: defaultSampling,
     interval: {
       from: QUICK_RANGES[defaultTimeRange].start,
@@ -102,7 +107,10 @@ export function convertChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertPieChartWidgetToQuery(widget) {
-  const { parameters: { metrics = [], aggregate_func: widgetAggregateFunc } } = widget;
+  const {
+    metrics = [],
+    aggregate_func: widgetAggregateFunc,
+  } = widget.parameters;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
