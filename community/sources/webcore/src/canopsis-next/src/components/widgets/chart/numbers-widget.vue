@@ -4,7 +4,7 @@
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
-      :locked-filter="query.lockedFilter",
+      :locked-filters="query.lockedFilter",
       :filters="query.filter",
       :interval="query.interval",
       :sampling="query.sampling",
@@ -42,7 +42,7 @@ import {
   NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
 } from '@/constants';
 
-import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -165,7 +165,7 @@ export default {
       return {
         ...this.getIntervalQuery(),
         ...pick(this.query, ['parameters', 'sampling', 'with_history']),
-        widget_filters: convertFilterToQuery(this.query.filter),
+        widget_filters: convertFiltersToQuery(this.query.filter, this.query.lockedFilter),
       };
     },
 
