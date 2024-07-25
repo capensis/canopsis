@@ -26,7 +26,7 @@
         :label="$t('settings.selectAFilter')"
         :filters="userFilters"
         :locked-filters="widgetFilters"
-        :locked-value="lockedFilter"
+        :locked-value="lockedFilters"
         :value="filters"
         :disabled="filterDisabled"
         class="kpi-widget-filters__filter-selector mr-4"
@@ -79,7 +79,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    lockedFilter: {
+    lockedFilters: {
       type: [String, Array],
       required: false,
     },
