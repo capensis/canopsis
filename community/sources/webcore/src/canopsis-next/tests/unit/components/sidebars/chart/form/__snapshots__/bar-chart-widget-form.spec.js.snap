@@ -49,7 +49,6 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       addable="true"
       editable="true"
       filters="[object Object]"
-      hideselector="true"
       withentity="true"
     />
     <field-switcher-stub

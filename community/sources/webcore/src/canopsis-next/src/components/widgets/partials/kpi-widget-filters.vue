@@ -18,7 +18,7 @@
         :label="$t('settings.selectAFilter')",
         :filters="userFilters",
         :locked-filters="widgetFilters",
-        :locked-value="lockedFilter",
+        :locked-value="lockedFilters",
         :value="filters",
         :disabled="filterDisabled",
         clearable,
@@ -68,7 +68,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    lockedFilter: {
+    lockedFilters: {
       type: [String, Array],
       required: false,
     },
