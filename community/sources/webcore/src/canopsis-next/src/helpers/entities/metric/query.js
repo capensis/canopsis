@@ -90,7 +90,7 @@ export function convertChartWidgetDefaultParametersToQuery(widget) {
  * @returns {Object}
  */
 export function convertChartWidgetToQuery(widget) {
-  const { parameters: { comparison = false, metrics = [] } } = widget;
+  const { comparison = false, metrics = [] } = widget.parameters;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
@@ -129,7 +129,7 @@ export function convertPieChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertNumbersWidgetToQuery(widget) {
-  const { parameters: { metrics = [], show_trend: showTrend = false } } = widget;
+  const { metrics = [], show_trend: showTrend = false } = widget.parameters;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
@@ -150,13 +150,11 @@ export function convertNumbersWidgetToQuery(widget) {
  */
 export function convertStatisticsWidgetParametersToQuery(widget) {
   const {
-    parameters: {
-      mainFilter,
-      mainParameter = {},
-      widgetColumns = [],
-      default_time_range: defaultTimeRange,
-    },
-  } = widget;
+    mainFilter,
+    mainParameter = {},
+    widgetColumns = [],
+    default_time_range: defaultTimeRange,
+  } = widget.parameters;
 
   const query = {
     interval: {
