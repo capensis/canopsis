@@ -357,6 +357,7 @@ export default {
         operators: [
           PATTERN_OPERATORS.isMetaAlarm,
           PATTERN_OPERATORS.isNotMetaAlarm,
+          PATTERN_OPERATORS.equal,
         ],
       };
     },
