@@ -26,7 +26,8 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **24.04.0**  | [:material-file-document:](notes-de-version/24.04.0.md)  | 03/05/2024 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.04.0.md) |
+    | **24.04.1**  | [:material-file-document:](notes-de-version/24.04.1.md)  | 25/07/2024 | D'importantes optimisations de performances de l'interface graphique ont été apportées |
+    | 24.04.0      | [:material-file-document:](notes-de-version/24.04.0.md)  | 03/05/2024 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.04.0.md) |
 
 === "23.10"
 
@@ -64,7 +65,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **22.10.13** | [:material-file-document:](notes-de-version/22.10.13.md) | 25/03/2023 ||
+    | **22.10.13** | [:material-file-document:](notes-de-version/22.10.13.md) | 25/03/2024 ||
     | 22.10.10     | [:material-file-document:](notes-de-version/22.10.10.md) | 11/09/2023 ||
     | 22.10.9      | [:material-file-document:](notes-de-version/22.10.9.md)  | 02/05/2023 ||
     | 22.10.8      | [:material-file-document:](notes-de-version/22.10.8.md)  | 31/03/2023 ||
