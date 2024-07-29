@@ -18,7 +18,6 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
-          selectable="true"
         />
         <transition-stub
           name="fade-transition"
@@ -100,7 +99,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
                 class="v-card__text"
               >
                 <service-entity-info-tab-stub
-                  actions="[object Object],[object Object]"
+                  actions="[object Object]"
                   entity="[object Object]"
                   template=""
                 />
@@ -115,6 +114,149 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
 `;
 
 exports[`service-entity Renders \`service-entity\` with default props 1`] = `
+<div
+  class="weather-service-entity-expansion-panel"
+>
+  <div
+    class="v-item-group theme--light v-expansion-panels"
+  >
+    <div
+      aria-expanded="true"
+      class="v-expansion-panel v-expansion-panel--active v-item--active"
+    >
+      <button
+        aria-expanded="true"
+        class="v-expansion-panel-header v-expansion-panel-header--active"
+        type="button"
+      >
+        <service-entity-header-stub
+          entity="[object Object]"
+          entitynamefield="name"
+        />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="v-expansion-panel-header__icon"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light white--text"
+            >
+              keyboard_arrow_down
+            </i>
+          </div>
+        </transition-stub>
+      </button>
+      <transition-stub
+        name="expand-transition"
+      >
+        <div
+          class="v-expansion-panel-content"
+          style=""
+        >
+          <div
+            class="v-expansion-panel-content__wrap"
+          >
+            <div
+              class="v-card v-sheet theme--light"
+            >
+              <div
+                class="v-card__text"
+              >
+                <div
+                  class="v-tabs v-tabs--centered theme--light"
+                >
+                  <div
+                    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+                    role="tablist"
+                  >
+                    <div
+                      class="v-slide-group__prev v-slide-group__prev--disabled"
+                    >
+                      <transition-stub
+                        name="fade-transition"
+                      />
+                    </div>
+                    <div
+                      class="v-slide-group__wrapper"
+                    >
+                      <div
+                        class="v-slide-group__content v-tabs-bar__content"
+                      >
+                        <div
+                          class="v-tabs-slider-wrapper"
+                          style="transition: none;"
+                        >
+                          <div
+                            class="v-tabs-slider primary"
+                          />
+                        </div>
+                        <div
+                          aria-selected="true"
+                          class="v-tab v-tab--active"
+                          role="tab"
+                          tabindex="0"
+                        >
+                          Info
+                        </div>
+                        <div
+                          aria-selected="false"
+                          class="v-tab"
+                          role="tab"
+                          tabindex="0"
+                        >
+                          Tree of dependencies
+                        </div>
+                        <!---->
+                      </div>
+                    </div>
+                    <div
+                      class="v-slide-group__next v-slide-group__next--disabled"
+                    >
+                      <transition-stub
+                        name="fade-transition"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="v-window v-item-group theme--light v-tabs-items"
+                  >
+                    <div
+                      class="v-window__container"
+                    >
+                      <transition-stub
+                        name=""
+                      >
+                        <div
+                          class="v-window-item v-window-item--active"
+                        >
+                          <service-entity-info-tab-stub
+                            actions=""
+                            entity="[object Object]"
+                            template=""
+                          />
+                        </div>
+                      </transition-stub>
+                      <transition-stub
+                        name=""
+                      >
+                        <!---->
+                      </transition-stub>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-entity Renders \`service-entity\` with default props and declare ticket permission 1`] = `
 <div
   class="weather-service-entity-expansion-panel"
 >
@@ -277,7 +419,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
-          selectable="true"
         />
         <transition-stub
           name="fade-transition"
@@ -385,7 +526,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                           class="v-window-item v-window-item--active"
                         >
                           <service-entity-info-tab-stub
-                            actions="[object Object]"
+                            actions=""
                             entity="[object Object]"
                             template=""
                           />
@@ -433,7 +574,6 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
-          selectable="true"
         />
         <transition-stub
           name="fade-transition"
@@ -534,7 +674,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
                           class="v-window-item v-window-item--active"
                         >
                           <service-entity-info-tab-stub
-                            actions="[object Object]"
+                            actions=""
                             entity="[object Object]"
                             template=""
                           />
