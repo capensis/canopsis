@@ -42,7 +42,7 @@ func (scriptExecutor) Exec(ctx context.Context, file string) (resErr error) {
 		}
 	}()
 
-	cmd := fmt.Sprintf("mongosh %s %s %s", os.Getenv(mongo.EnvURL), h.Name(), file)
+	cmd := fmt.Sprintf("mongosh %q %s %s", os.Getenv(mongo.EnvURL), h.Name(), file)
 	result := exec.CommandContext(ctx, "bash", "-c", cmd)
 	output, err := result.CombinedOutput()
 	if err != nil {
