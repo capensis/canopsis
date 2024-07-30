@@ -190,7 +190,7 @@ describe('service-entity', () => {
 
     await wrapper.openAllExpansionPanels();
 
-    await selectTabItemByIndex(wrapper, 2).trigger('click');
+    await selectTabItemByIndex(wrapper, 1).trigger('click');
 
     expect(wrapper).toMatchSnapshot();
   });
