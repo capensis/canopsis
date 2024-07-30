@@ -58,6 +58,7 @@ export const PATTERN_OPERATORS = {
 
   isMetaAlarm: 'is_meta_alarm',
   isNotMetaAlarm: 'is_not_meta_alarm',
+  ruleIs: 'rule_is',
 
   regexp: 'regexp',
 };
