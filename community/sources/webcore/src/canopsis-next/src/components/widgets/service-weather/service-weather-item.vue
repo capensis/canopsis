@@ -199,27 +199,17 @@ export default {
     },
 
     backgroundIcon() {
-      if (this.isActionRequired && this.actionRequiredIcon) {
-        return this.actionRequiredIcon;
-      }
-
-      if (!this.isActionRequired && this.noActionRequiredIcon) {
-        return this.noActionRequiredIcon;
-      }
-
-      return this.service.icon;
+      return {
+        [this.isActionRequired]: this.actionRequiredIcon,
+        [!this.isActionRequired]: this.noActionRequiredIcon,
+      }.true || this.service.icon;
     },
 
     backgroundColor() {
-      if (this.isActionRequired && this.actionRequiredColor) {
-        return this.actionRequiredColor;
-      }
-
-      if (!this.isActionRequired && this.noActionRequiredColor) {
-        return this.noActionRequiredColor;
-      }
-
-      return getEntityColor(this.service, this.colorIndicator);
+      return {
+        [this.isActionRequired]: this.actionRequiredColor,
+        [!this.isActionRequired]: this.noActionRequiredColor,
+      }.true || getEntityColor(this.service, this.colorIndicator);
     },
 
     color() {
