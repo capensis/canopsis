@@ -84,4 +84,8 @@ export default {
   errors: {
     noValuePaths: 'You have to add at least 1 value path',
   },
+  field: {
+    title: 'Meta alarm rule',
+    noData: 'No meta alarm rules is found according to the patterns defined',
+  },
 };
