@@ -105,7 +105,7 @@ import {
  */
 
 /**
- * Remove 'Event.Extra.' prefix from value, if it exists
+ * Remove 'Event.ExtraInfos.' prefix from value, if it exists
  *
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
