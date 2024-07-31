@@ -13,7 +13,7 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with empty modal 1`
       class="title"
     >
       <span>
-        Live reporting
+        Set a custom date range
       </span>
     </div>
     <div
@@ -68,7 +68,7 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with interval 1`] =
       class="title"
     >
       <span>
-        Live reporting
+        Set a custom date range
       </span>
     </div>
     <div
