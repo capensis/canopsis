@@ -173,7 +173,7 @@ export default {
     title: 'Create uncancel event',
   },
   liveReporting: {
-    editLiveReporting: 'Live reporting',
+    editLiveReporting: 'Set a custom date range',
     dateInterval: 'Date interval',
     today: 'Today',
     yesterday: 'Yesterday',
