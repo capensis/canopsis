@@ -64,12 +64,17 @@ export const convertChartUserPreferenceToQuery = ({ content: { sampling, interva
  * This function converts chart widgets default parameters to query Object
  *
  * @param {Widget} widget
- * @returns {{ sampling: string, interval: Object }}
+ * @returns {{ lockedFilter: string | null, sampling: string, interval: Object }}
  */
 export function convertChartWidgetDefaultParametersToQuery(widget) {
-  const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
+  const {
+    mainFilter,
+    default_sampling: defaultSampling,
+    default_time_range: defaultTimeRange,
+  } = widget.parameters;
 
   return {
+    lockedFilter: mainFilter,
     sampling: defaultSampling,
     interval: {
       from: QUICK_RANGES[defaultTimeRange].start,
@@ -85,7 +90,7 @@ export function convertChartWidgetDefaultParametersToQuery(widget) {
  * @returns {Object}
  */
 export function convertChartWidgetToQuery(widget) {
-  const { parameters: { comparison = false, metrics = [] } } = widget;
+  const { comparison = false, metrics = [] } = widget.parameters;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
@@ -102,7 +107,10 @@ export function convertChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertPieChartWidgetToQuery(widget) {
-  const { parameters: { metrics = [], aggregate_func: widgetAggregateFunc } } = widget;
+  const {
+    metrics = [],
+    aggregate_func: widgetAggregateFunc,
+  } = widget.parameters;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
@@ -121,7 +129,7 @@ export function convertPieChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertNumbersWidgetToQuery(widget) {
-  const { parameters: { metrics = [], show_trend: showTrend = false } } = widget;
+  const { metrics = [], show_trend: showTrend = false } = widget.parameters;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
@@ -142,13 +150,11 @@ export function convertNumbersWidgetToQuery(widget) {
  */
 export function convertStatisticsWidgetParametersToQuery(widget) {
   const {
-    parameters: {
-      mainFilter,
-      mainParameter = {},
-      widgetColumns = [],
-      default_time_range: defaultTimeRange,
-    },
-  } = widget;
+    mainFilter,
+    mainParameter = {},
+    widgetColumns = [],
+    default_time_range: defaultTimeRange,
+  } = widget.parameters;
 
   const query = {
     interval: {
