@@ -17,12 +17,20 @@ export default {
       return request.get(`${API_ROUTES.eventsRecord}/${id}`, { params });
     },
 
-    start(context, { id } = {}) {
-      return request.post(`${API_ROUTES.eventsRecord}/${id}/playback`);
+    createExport(context, { id } = {}) {
+      return request.post(`${API_ROUTES.eventsRecord}/${id}/exports`, { event_ids: [] }); // TODO: remove event_ids
     },
 
-    stop(context, { id } = {}) {
-      return request.delete(`${API_ROUTES.eventsRecord}/${id}/playback`);
+    fetchExport(context, { id } = {}) {
+      return request.get(`${API_ROUTES.eventsRecordExport}/${id}`);
+    },
+
+    start(context, { data } = {}) {
+      return request.post(API_ROUTES.eventsRecordCurrent, data);
+    },
+
+    stop() {
+      return request.delete(API_ROUTES.eventsRecordCurrent);
     },
 
     remove() {

@@ -5,9 +5,9 @@
         <span>{{ $t('modals.launchEventsRecord.title') }}</span>
       </template>
       <template #text="">
-        <c-alarm-patterns-field
-          v-model="form"
-          :attributes="attributes"
+        <c-event-filter-patterns-field
+          v-model="form.event_pattern"
+          :excluded-attributes="excludedAttributes"
           name="patterns"
           required
           @input="errors.remove('patterns')"
@@ -37,7 +37,7 @@
 <script>
 import { ref, computed } from 'vue';
 
-import { ENTITY_PATTERN_FIELDS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { EVENT_FILTER_PATTERN_FIELDS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { patternToForm } from '@/helpers/entities/pattern/form';
 
@@ -61,13 +61,17 @@ export default {
     },
   },
   setup(props) {
-    const form = ref(patternToForm());
-    const attributes = computed(() => [
-      {
-        value: ENTITY_PATTERN_FIELDS.lastEventDate,
-        options: { disabled: true },
-      },
-    ]); // TODO: finish it
+    const form = ref({ event_pattern: patternToForm() });
+    const excludedAttributes = computed(() => [
+      { value: EVENT_FILTER_PATTERN_FIELDS.eventType },
+      { value: EVENT_FILTER_PATTERN_FIELDS.state },
+      { value: EVENT_FILTER_PATTERN_FIELDS.sourceType },
+      { value: EVENT_FILTER_PATTERN_FIELDS.output },
+      { value: EVENT_FILTER_PATTERN_FIELDS.extraInfos },
+      { value: EVENT_FILTER_PATTERN_FIELDS.longOutput },
+      { value: EVENT_FILTER_PATTERN_FIELDS.author },
+      { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
+    ]);
 
     const { config, close } = useInnerModal(props);
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -82,7 +86,7 @@ export default {
 
     return {
       form,
-      attributes,
+      excludedAttributes,
       isDisabled,
       submitting,
 

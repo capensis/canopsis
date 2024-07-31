@@ -6,6 +6,8 @@ export const useEventsRecord = () => {
   const { useActions } = useEventsRecordStoreModule();
 
   const actions = useActions({
+    createEventsRecordExport: 'createExport',
+    fetchEventsRecordExport: 'fetchExport',
     startEventsRecord: 'start',
     stopEventsRecord: 'stop',
     removeEventsRecord: 'remove',
