@@ -51,4 +51,4 @@ export const EVENT_FILTER_FAILURE_TYPES = {
   other: 4,
 };
 
-export const EVENT_FILTER_EVENT_EXTRA_PREFIX = 'Event.Extra.';
+export const EVENT_FILTER_EVENT_EXTRA_PREFIX = 'Event.ExtraInfos.';
