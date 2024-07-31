@@ -39,7 +39,6 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       addable="true"
       editable="true"
       filters="[object Object]"
-      hideselector="true"
       withentity="true"
     />
     <field-switcher-stub

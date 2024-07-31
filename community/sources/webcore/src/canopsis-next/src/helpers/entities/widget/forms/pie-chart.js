@@ -18,6 +18,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
  * @property {Sampling} default_sampling
  * @property {string} aggregate_func
  * @property {string} show_mode
+ * @property {string | null} mainFilter
  */
 
 /**
@@ -38,6 +39,7 @@ export const pieChartWidgetParametersToForm = (parameters = {}) => ({
   aggregate_func: parameters.aggregate_func ?? AGGREGATE_FUNCTIONS.avg,
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
   default_sampling: parameters.default_sampling ?? SAMPLINGS.day,
+  mainFilter: parameters.mainFilter ?? null,
 });
 
 /**
