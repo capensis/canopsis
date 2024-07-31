@@ -103,7 +103,7 @@ export default {
       handler: fetchList,
     } = usePendingHandler(async (fetchQuery) => {
       const response = await fetchEventsRecordEventsListWithoutStore({
-        id: config.value.eventsRecord.id, // TODO: change to _id
+        id: config.value.eventsRecord._id,
         params: {
           limit: fetchQuery.itemsPerPage,
           page: fetchQuery.page,

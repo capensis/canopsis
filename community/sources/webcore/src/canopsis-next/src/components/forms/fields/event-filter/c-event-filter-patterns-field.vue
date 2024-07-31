@@ -5,13 +5,13 @@
     :readonly="readonly"
     :name="name"
     :required="required"
-    :attributes="eventFilterAttributes"
+    :attributes="availableEventFilterAttributes"
     :counter="counter"
   />
 </template>
 
 <script>
-import { isArray } from 'lodash';
+import { isArray, keyBy, map, omit } from 'lodash';
 
 import {
   ALARM_STATES,
@@ -37,6 +37,10 @@ export default {
     patterns: {
       type: Object,
       required: true,
+    },
+    excludedAttributes: {
+      type: Array,
+      default: () => [],
     },
     disabled: {
       type: Boolean,
@@ -315,6 +319,16 @@ export default {
           options: this.initiatorOptions,
         },
       ];
+    },
+
+    availableAttributesByValue() {
+      return keyBy(this.eventFilterAttributes, 'value');
+    },
+
+    availableEventFilterAttributes() {
+      const mergedAttributes = omit(this.availableAttributesByValue, map(this.excludedAttributes, 'value'));
+
+      return Object.values(mergedAttributes);
     },
   },
 };

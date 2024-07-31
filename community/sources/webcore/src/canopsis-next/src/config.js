@@ -368,6 +368,7 @@ export const API_ROUTES = {
     groups: '/api/v4/cat/private-view-groups',
   },
   eventsRecord: '/api/v4/cat/event-records',
+  eventsRecordExport: '/api/v4/cat/event-records/exports',
   eventsRecordCurrent: '/api/v4/cat/event-records-current',
 };
 
