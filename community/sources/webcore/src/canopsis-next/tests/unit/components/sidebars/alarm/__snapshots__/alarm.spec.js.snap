@@ -54,6 +54,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -730,6 +731,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -1392,6 +1394,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <hr
       class="v-divider theme--light"
