@@ -34,11 +34,11 @@
       <field-alarm-metric-aggregate-function v-field="form.parameters.aggregate_func" />
       <field-filters
         v-if="withFilters"
+        v-field="form.parameters.mainFilter"
         :filters="form.filters"
         addable
         editable
         with-entity
-        hide-selector
         @update:filters="updateFilters"
       />
     </widget-settings-group>
