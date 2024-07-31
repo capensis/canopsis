@@ -35,6 +35,7 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.groupColumnNames')"
         :type="$constants.ENTITIES_TYPES.alarm"
+        with-template
         with-html
         with-color-indicator
         @update:template="updateWidgetGroupColumnsTemplate"
