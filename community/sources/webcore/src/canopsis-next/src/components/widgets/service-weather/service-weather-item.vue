@@ -148,6 +148,14 @@ export default {
       type: String,
       required: false,
     },
+    noActionRequiredIcon: {
+      type: String,
+      required: false,
+    },
+    noActionRequiredColor: {
+      type: String,
+      required: false,
+    },
     showAlarmsButton: {
       type: Boolean,
       default: false,
@@ -191,19 +199,17 @@ export default {
     },
 
     backgroundIcon() {
-      if (this.isActionRequired && this.actionRequiredIcon) {
-        return this.actionRequiredIcon;
-      }
-
-      return this.service.icon;
+      return {
+        [this.isActionRequired]: this.actionRequiredIcon,
+        [!this.isActionRequired]: this.noActionRequiredIcon,
+      }.true || this.service.icon;
     },
 
     backgroundColor() {
-      if (this.isActionRequired && this.actionRequiredColor) {
-        return this.actionRequiredColor;
-      }
-
-      return getEntityColor(this.service, this.colorIndicator);
+      return {
+        [this.isActionRequired]: this.actionRequiredColor,
+        [!this.isActionRequired]: this.noActionRequiredColor,
+      }.true || getEntityColor(this.service, this.colorIndicator);
     },
 
     color() {
