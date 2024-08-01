@@ -167,7 +167,7 @@ export default {
     title: 'Annuler l\'annulation',
   },
   liveReporting: {
-    editLiveReporting: 'Suivi personnalisé',
+    editLiveReporting: 'Définir un intervalle de dates',
     dateInterval: 'Intervalle de dates',
     today: 'Aujourd\'hui',
     yesterday: 'Hier',
