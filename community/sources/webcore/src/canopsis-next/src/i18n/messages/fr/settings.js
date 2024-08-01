@@ -169,7 +169,7 @@ export default {
     linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
   },
   liveReporting: {
-    title: 'Suivi personnalisé',
+    title: 'Définir un intervalle de dates',
   },
   counterLevels: {
     title: 'Niveaux',

@@ -169,7 +169,7 @@ export default {
     linksInRowCountTooltip: 'This count of links always will be displayed in the one row includes more links (`...`) button',
   },
   liveReporting: {
-    title: 'Live reporting',
+    title: 'Set a custom date range',
   },
   counterLevels: {
     title: 'Levels',
