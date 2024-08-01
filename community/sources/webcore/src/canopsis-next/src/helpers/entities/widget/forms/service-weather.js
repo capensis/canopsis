@@ -97,6 +97,17 @@ export const actionRequiredSettingsToForm = (actionRequiredSettings = {}) => ({
 });
 
 /**
+ * Convert service weather widget acked settings to form
+ *
+ * @param {ServiceWeathernoActionRequiredSettings} noActionRequiredSettings
+ * @returns {ServiceWeathernoActionRequiredSettings}
+ */
+export const noActionRequiredSettingsToForm = (noActionRequiredSettings = {}) => ({
+  color: noActionRequiredSettings.color ?? '',
+  icon_name: noActionRequiredSettings.icon_name ?? '',
+});
+
+/**
  * Convert service weather widget parameters to form
  *
  * @param {ServiceWeatherWidgetParameters} [parameters = {}]
@@ -139,6 +150,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
   isSecondaryIconEnabled: parameters.isSecondaryIconEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
+  noActionRequiredSettings: noActionRequiredSettingsToForm(parameters.noActionRequiredSettings),
   entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
   treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
