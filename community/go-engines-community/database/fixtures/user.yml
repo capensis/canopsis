@@ -754,6 +754,11 @@ permission:
     _id: serviceweather_entityLinks
     name: <Current()._id>
     description: "Service weather: Access to Links"
+  permission_serviceweather_entityDeclareTicket:
+    <<: *permission
+    _id: serviceweather_entityDeclareTicket
+    name: <Current()._id>
+    description: "Service weather: Access to 'Declare Ticket' action"
   permission_serviceweather_moreInfos:
     <<: *permission
     _id: serviceweather_moreInfos
@@ -1579,6 +1584,7 @@ role:
       "@permission_serviceweather_entityManagePbehaviors": 1
       "@permission_serviceweather_entityLinks": 1
       "@permission_serviceweather_entityComment": 1
+      "@permission_serviceweather_entityDeclareTicket": 1
       "@permission_serviceweather_moreInfos": 1
       "@permission_serviceweather_alarmsList": 1
       "@permission_serviceweather_pbehaviorList": 1
@@ -1767,6 +1773,7 @@ role_template:
       "@permission_serviceweather_entityManagePbehaviors": 1
       "@permission_serviceweather_entityLinks": 1
       "@permission_serviceweather_entityComment": 1
+      "@permission_serviceweather_entityDeclareTicket": 1
       "@permission_serviceweather_moreInfos": 1
       "@permission_serviceweather_alarmsList": 1
       "@permission_serviceweather_pbehaviorList": 1
