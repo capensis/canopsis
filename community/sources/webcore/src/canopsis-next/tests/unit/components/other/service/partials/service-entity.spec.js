@@ -131,6 +131,19 @@ describe('service-entity', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `service-entity` with default props and declare ticket permission', async () => {
+    currentUserPermissionsById.mockReturnValueOnce(({
+      [USERS_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: {
+        actions: [],
+      },
+    }));
+    const wrapper = snapshotFactory();
+
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `service-entity` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -177,7 +190,7 @@ describe('service-entity', () => {
 
     await wrapper.openAllExpansionPanels();
 
-    await selectTabItemByIndex(wrapper, 2).trigger('click');
+    await selectTabItemByIndex(wrapper, 1).trigger('click');
 
     expect(wrapper).toMatchSnapshot();
   });

@@ -67,7 +67,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
       name="fade-transition"
     >
       <service-entity-actions-stub
-        actions="[object Object],[object Object]"
+        actions="[object Object]"
         assignedinstructions=""
         entity="[object Object]"
       />
