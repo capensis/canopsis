@@ -18,7 +18,7 @@ export default {
     [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
     [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
     [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter la consigne',
-    [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
+    [WEATHER_ACTIONS_TYPES.entityDeclareTicket]: 'Déclarer un incident',
   },
   iconTypes: {
     ok: 'Ok',

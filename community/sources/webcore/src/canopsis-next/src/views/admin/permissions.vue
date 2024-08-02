@@ -37,7 +37,7 @@
     </v-card>
     <v-layout
       v-show="hasChanges"
-      class="submit-button mt-3"
+      class="submit-button mt-3 gap-2"
     >
       <v-btn
         class="ml-3"

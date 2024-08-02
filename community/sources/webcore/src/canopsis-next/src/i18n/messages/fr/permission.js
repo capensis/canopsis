@@ -237,6 +237,10 @@ export default {
       name: 'Droits sur la météo des services : Associer un ticket',
       description: 'Les utilisateurs disposant de cette autorisation peuvent associer des tickets aux alarmes',
     },
+    [USERS_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: {
+      name: 'Droits sur la météo des services : Déclarer un ticket',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent déclarer des tickets aux alarmes',
+    },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityComment]: {
       name: 'Droits sur la météo des services : Commenter',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des commentaires',
