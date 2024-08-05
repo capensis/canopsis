@@ -457,6 +457,7 @@ export default {
           'tstart',
           'tstop',
           'only_bookmarks',
+          'instructions',
         ]),
 
         fields: this.getExportQueryColumns(),
