@@ -52,6 +52,7 @@ const stubs = {
   'field-switcher': true,
   'field-modal-type': true,
   'field-action-required-settings': true,
+  'field-no-action-required-settings': true,
   'field-tree-of-dependencies-settings': true,
   'field-root-cause-settings': true,
 };

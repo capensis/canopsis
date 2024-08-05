@@ -123,21 +123,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       <field-action-required-settings-stub
         value="[object Object]"
       />
-      <widget-settings-item-stub
-        title="settings.noActionRequiredSettings.title"
-      >
-        <div
-          class="layout column"
-        >
-          <c-enabled-color-picker-field
-            column=""
-            label="settings.noActionRequiredSettings.customColor"
-          />
-          <c-enabled-icon-field
-            label="settings.noActionRequiredSettings.customIcon"
-          />
-        </div>
-      </widget-settings-item-stub>
+      <field-no-action-required-settings-stub
+        value="[object Object]"
+      />
     </widget-settings-group-stub>
     <hr
       aria-orientation="horizontal"
@@ -279,21 +267,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       <field-action-required-settings-stub
         value="[object Object]"
       />
-      <widget-settings-item-stub
-        title="settings.noActionRequiredSettings.title"
-      >
-        <div
-          class="layout column"
-        >
-          <c-enabled-color-picker-field
-            column=""
-            label="settings.noActionRequiredSettings.customColor"
-          />
-          <c-enabled-icon-field
-            label="settings.noActionRequiredSettings.customIcon"
-          />
-        </div>
-      </widget-settings-item-stub>
+      <field-no-action-required-settings-stub
+        value="[object Object]"
+      />
     </widget-settings-group-stub>
     <hr
       aria-orientation="horizontal"
