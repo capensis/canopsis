@@ -5,36 +5,12 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <v-layout class="gap-3 my-4" justify-center align-center>
-          <span class="text-subtitle-2">
-            {{ $t('modals.eventsRecord.subtitle', { count: config.eventsRecord.count }) }}
-          </span>
-          <c-action-btn
-            :tooltip="$t('modals.eventsRecord.buttonTooltip')"
-            type="delete"
-            @click="remove"
-          />
-        </v-layout>
-        <v-layout class="gap-3 my-4">
-          <v-btn
-            color="primary"
-            @click="applyEventFilter"
-          >
-            {{ $t('eventsRecord.applyEventFilter') }}
-          </v-btn>
-          <v-btn
-            color="primary"
-            @click="exportJson"
-          >
-            <v-icon class="mr-2" color="white">
-              file_download
-            </v-icon>
-            <span>{{ $t('common.exportToJson') }}</span>
-          </v-btn>
-        </v-layout>
+        <events-record-events-header :events-record="config.eventsRecord" />
         <events-record-events-list
+          :events-record-id="config.eventsRecord._id"
           :events="events"
           :pending="pending"
+          :downloading="downloading"
           :options="query"
           :total-items="meta.total_count"
           @resend="resendEvent"
@@ -70,13 +46,15 @@ import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useLocalQuery } from '@/hooks/query/local-query';
 
+import { useExportJson } from '@/components/other/events-record/hooks/export-json';
+import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue';
 import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.eventsRecord,
-  components: { EventsRecordEventsList, ModalWrapper },
+  components: { EventsRecordEventsHeader, EventsRecordEventsList, ModalWrapper },
   props: {
     modal: {
       type: Object,
@@ -87,13 +65,23 @@ export default {
     const events = ref([]);
     const meta = ref({});
 
+    const resending = ref(false);
+
     const { t, tc } = useI18n();
     const { config, close, modals } = useInnerModal(props);
+
+    const eventsRecord = computed(() => config.value.eventsRecord);
+    const eventsRecordId = computed(() => eventsRecord.value._id);
 
     /**
      * EVENTS RECORD STORE MODULE
      */
-    const { fetchEventsRecordEventsListWithoutStore } = useEventsRecord();
+    const {
+      playbackEventsRecordEvents,
+      /* stopPlaybackEventsRecordEvents,
+      removeEventsRecordEvent, */
+      fetchEventsRecordEventsListWithoutStore,
+    } = useEventsRecord();
 
     /**
      * PENDING
@@ -115,6 +103,15 @@ export default {
     });
 
     /**
+     * EXPORT JSON
+     */
+    const { downloadingsById, exportJson: exportJsonMethod } = useExportJson();
+
+    const downloading = computed(() => downloadingsById.value[eventsRecordId.value]);
+
+    const exportJson = () => exportJsonMethod(eventsRecordId.value, []);
+
+    /**
      * QUERY
      */
     const {
@@ -125,7 +122,7 @@ export default {
       onUpdate: fetchList,
     });
 
-    const resendEvent = () => modals.show({
+    const resendEvent = (eventIds = []) => modals.show({
       name: MODALS.duration,
       config: {
         title: tc('eventsRecord.resendEvents', 1),
@@ -134,17 +131,34 @@ export default {
           { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
           { value: TIME_UNITS.second, text: 'common.times.second' },
         ],
-        action: () => {},
+        action: async (delay) => {
+          resending.value = true;
+
+          await playbackEventsRecordEvents({ id: eventsRecordId.value, data: { delay, event_ids: eventIds } });
+
+          resending.value = false;
+        },
       },
     });
+
+    /* const stopResendEvent = async () => {
+      await stopPlaybackEventsRecordEvents({ id: eventsRecordId });
+
+      resending.value = false;
+    }; */
+
+    const remove = () => config.value.removeAction?.();
+
     const exportJsonEvent = () => {};
-    const removeEvent = () => {};
-    const remove = () => {};
+    const removeEvent = async () => {
+      // await removeEventsRecordEvent();
+
+      // return config.value.afterSubmit?.();
+    };
     const applyEventFilter = () => {};
-    const exportJson = () => {};
 
     const title = computed(() => (
-      t('modals.eventsRecord.title', { date: convertDateToString(config.created) })
+      t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) })
     ));
 
     onMounted(() => fetchList(query.value));
@@ -156,6 +170,7 @@ export default {
       config,
       query,
       title,
+      downloading,
 
       close,
       updateQuery,

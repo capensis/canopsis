@@ -8,11 +8,28 @@
     advanced-pagination
     @update:options="updateOptions"
   >
-    <template #created="{ item }">
-      {{ item.created | date }}
+    <template #resending="{ item }">
+      <v-icon
+        v-show="item.isResending"
+        class="blinking"
+        color="blue darken-3"
+      >
+        play_arrow
+      </v-icon>
+    </template>
+    <template #t="{ item }">
+      {{ item.t | date }}
     </template>
     <template #actions="{ item }">
-      <v-layout v-if="!item.inProgress">
+      <v-layout v-if="item.isRecording">
+        <c-action-btn
+          :tooltip="$t('eventsRecord.stop')"
+          color="blue darken-3"
+          icon="stop"
+          @click="stop"
+        />
+      </v-layout>
+      <v-layout v-else>
         <c-action-btn
           :tooltip="$t('eventsRecord.viewEvents')"
           icon="pageview"
@@ -21,6 +38,7 @@
         />
         <c-action-btn
           :tooltip="$t('eventsRecord.export')"
+          :loading="downloadingsById[item._id]"
           icon="file_download"
           @click="exportJson(item)"
         />
@@ -37,6 +55,8 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
+
+import { useExportJson } from './hooks/export-json';
 
 export default {
   props: {
@@ -59,8 +79,14 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
+
     const inProgress = computed(() => props.eventsRecords.status === 0);
     const headers = computed(() => [
+      {
+        text: '',
+        value: 'resending',
+        sortable: false,
+      },
       {
         text: t('eventsRecord.recorded'),
         value: 't',
@@ -78,15 +104,23 @@ export default {
       },
     ]);
 
+    /**
+     * STORE
+     */
+    const { downloadingsById, exportJson: exportJsonMethod } = useExportJson();
+
+    const stop = () => emit('stop');
     const show = eventsRecord => emit('show', eventsRecord);
-    const exportJson = eventsRecord => emit('export', eventsRecord);
     const remove = eventsRecord => emit('remove', eventsRecord._id);
+    const exportJson = eventsRecord => exportJsonMethod(eventsRecord._id);
     const updateOptions = options => emit('update:options', options);
 
     return {
       inProgress,
       headers,
+      downloadingsById,
 
+      stop,
       show,
       exportJson,
       remove,

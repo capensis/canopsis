@@ -8,11 +8,18 @@ export const useEventsRecord = () => {
   const actions = useActions({
     createEventsRecordExport: 'createExport',
     fetchEventsRecordExport: 'fetchExport',
-    startEventsRecord: 'start',
-    stopEventsRecord: 'stop',
+
+    removeEventsRecordEvent: 'removeEvent',
+
+    startEventsRecordCurrent: 'start',
+    stopEventsRecordCurrent: 'stop',
+    fetchEventsRecordCurrent: 'fetchCurrent',
+
+    playbackEventsRecordEvents: 'playback',
+    stopPlaybackEventsRecordEvents: 'stopPlayback',
+
     removeEventsRecord: 'remove',
     fetchEventsRecordsListWithoutStore: 'fetchListWithoutStore',
-    fetchEventsRecordCurrentWithoutStore: 'fetchCurrentWithoutStore',
     fetchEventsRecordEventsListWithoutStore: 'fetchEventsListWithoutStore',
   });
 

@@ -5,4 +5,4 @@ import { API_HOST, API_ROUTES } from '@/config';
  *
  * @return {string}
  */
-export const getEventsRecordFileUrl = () => `${API_HOST}${API_ROUTES.eventsRecord}/download`;
+export const getEventsRecordFileUrl = (id = '') => `${API_HOST}${API_ROUTES.eventsRecordExport}/${id}/download`;

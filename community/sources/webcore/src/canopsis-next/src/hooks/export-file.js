@@ -5,74 +5,69 @@ import { EXPORT_STATUSES } from '@/constants';
 
 import { openUrlInNewTab } from '@/helpers/url';
 
+import { usePolling } from './polling';
+
 /**
- * Function to handle exporting files
+ * Function to handle exporting a file
  *
- * @param {Object} options - Options for exporting files
- * @param {Function} options.createHandler - Function to create a file
- * @param {Function} options.fetchHandler - Function to fetch file status
- * @param {number} [options.completedStatus = EXPORT_STATUSES.completed] - Status code for completed export
- * @param {number} [options.failedStatus = EXPORT_STATUSES.failed] - Status code for failed export
- * @param {number} [options.interval = EXPORT_FETCHING_INTERVAL] - Interval for fetching export status
- * @returns {Object} Object with methods to generate and download files
+ * @param {Object} options - Options for exporting a file
+ * @param {Function} options.createHandler - Function to create the file
+ * @param {Function} options.fetchHandler - Function to fetch the file
+ * @param {Function} [options.urlPreparer = () => ''] - Function to prepare the URL for the file (default: empty string)
+ * @param {number} [options.completedStatus = EXPORT_STATUSES.completed] - Status code for completed export (default: 1)
+ * @param {number} [options.failedStatus = EXPORT_STATUSES.failed] - Status code for failed export (default: 2)
+ * @param {number} [options.interval = EXPORT_FETCHING_INTERVAL] - Interval in milliseconds for polling (default: 2000)
+ * @returns {Object} Object containing the function to generate the file
  */
 export const useExportFile = ({
   createHandler,
   fetchHandler,
+  urlPreparer = () => '',
   completedStatus = EXPORT_STATUSES.completed,
   failedStatus = EXPORT_STATUSES.failed,
   interval = EXPORT_FETCHING_INTERVAL,
 }) => {
   /**
-   * Function to wait for file generation
+   * Function to process the export file
    *
-   * @param {Object} options - Options for generating file
-   * @returns {Promise} Promise that resolves when file generation is complete
+   * @param {Object} options - Options for the export file
+   * @param {string} options._id - ID of the file
+   * @param {Object} rest - Additional data for the export
+   * @param {Function} resolve - Function to resolve the export process
+   * @param {Function} reject - Function to reject the export process
+   * @returns {Promise} Promise that resolves when the export process is completed
    */
-  const waitGeneratingFile = options => new Promise((resolve, reject) => {
-    setTimeout(async () => {
-      try {
-        const exportData = await fetchHandler(options);
+  const processHandler = async ({ _id: id, ...rest }, resolve, reject) => {
+    const exportData = await fetchHandler({ id, ...rest });
 
-        if (exportData.status === unref(completedStatus)) {
-          return resolve(exportData);
-        }
+    if (exportData.status === unref(completedStatus)) {
+      return resolve(exportData);
+    }
 
-        if (exportData.status === failedStatus) {
-          return reject();
-        }
+    if (exportData.status === failedStatus) {
+      return reject();
+    }
 
-        return resolve(waitGeneratingFile(options));
-      } catch (err) {
-        return reject(err);
-      }
-    }, unref(interval));
-  });
-
-  /**
-   * Generate a file by creating it using the provided data and parameters
-   *
-   * @param {Object} options - Options for generating the file
-   * @param {Object} options.data - Data to create the file
-   * @param {...any} options.params - Additional parameters for file creation
-   * @returns {Promise} Promise that resolves when the file is generated
-   */
-  const generateFile = async ({ data, ...params } = {}) => {
-    const { _id: id } = await createHandler({ data, ...params });
-
-    return waitGeneratingFile({ id, ...params });
+    return exportData;
   };
 
   /**
-   * Download a file by opening the URL in a new tab
+   * Function to handle the end of the export process
    *
-   * @param {string} url - The URL of the file to download
-   * @return {WindowProxy} The window object representing the new tab
+   * @param {Object} fileData - Data of the exported file
    */
-  const downloadFile = url => openUrlInNewTab(url);
+  const endHandler = fileData => openUrlInNewTab(urlPreparer(fileData));
+
+  const {
+    poll,
+  } = usePolling({
+    interval,
+    endHandler,
+    processHandler,
+    startHandler: createHandler,
+  });
 
   return {
-    generateFile,
-    downloadFile,
+    generateFile: poll,
   };
 };
