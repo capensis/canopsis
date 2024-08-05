@@ -254,9 +254,22 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       name="modalType"
       value="both"
     />
+<<<<<<< HEAD
     <field-action-required-settings-stub
       value="[object Object]"
     />
+=======
+    <widget-settings-group-stub
+      title="State settings"
+    >
+      <field-action-required-settings-stub
+        value="[object Object]"
+      />
+      <field-no-action-required-settings-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+>>>>>>> d129b94f44... fix(#5530): Added instructions parameter to export csv request
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
