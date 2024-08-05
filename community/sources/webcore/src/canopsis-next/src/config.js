@@ -369,6 +369,7 @@ export const API_ROUTES = {
   },
   eventsRecord: '/api/v4/cat/event-records',
   eventsRecordExport: '/api/v4/cat/event-records/exports',
+  eventsRecordEvent: '/api/v4/cat/event-records/events',
   eventsRecordCurrent: '/api/v4/cat/event-records-current',
 };
 

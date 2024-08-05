@@ -1,35 +1,34 @@
 <template>
   <c-page @refresh="fetchList">
-    <events-records-header
-      :progress="status.isRecording"
-      @start="start"
-      @stop="stop"
-    />
+    <v-expand-transition>
+      <events-records-header
+        v-if="status"
+        :progress="status.isRecording"
+        @start="start"
+        @stop="stop"
+      />
+    </v-expand-transition>
     <events-records-list
-      :events-records="eventsRecords"
+      :events-records="preparedEventsRecords"
       :pending="pending"
       :options.sync="options"
       :total-items="meta.total_count"
       @show="showEventsRecordModal"
-      @export="downloadEventsRecord"
       @remove="showRemoveEventsRecordModal"
     />
   </c-page>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
-
-import { getEventsRecordFileUrl } from '@/helpers/entities/events-record/url';
 
 import { useModals } from '@/hooks/modals';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useQueryOptions } from '@/hooks/query/options';
-import { useExportFile } from '@/hooks/export-file';
 
 import EventsRecordsHeader from '@/components/other/events-record/events-records-header.vue';
 import EventsRecordsList from '@/components/other/events-record/events-records-list.vue';
@@ -39,17 +38,24 @@ export default {
   setup() {
     const eventsRecords = ref([]);
     const meta = ref({});
-    const status = ref({});
+    const status = ref();
+
     const modals = useModals();
+
+    const preparedEventsRecords = computed(() => (
+      status.value?.isRecording
+        ? eventsRecords.value.map(
+          (eventsRecord, index) => (index ? eventsRecord : { ...eventsRecord, isRecording: true }),
+        )
+        : eventsRecords.value
+    ));
 
     /**
      * STORE
      */
     const {
-      createEventsRecordExport,
-      fetchEventsRecordExport,
-      startEventsRecord,
-      stopEventsRecord,
+      startEventsRecordCurrent,
+      stopEventsRecordCurrent,
       removeEventsRecord,
       fetchEventsRecordsListWithoutStore,
     } = useEventsRecord();
@@ -87,19 +93,17 @@ export default {
       name: MODALS.startEventsRecord,
       config: {
         action: async (data) => {
-          await startEventsRecord({ data });
+          await startEventsRecordCurrent({ data });
 
           return fetchList();
         },
       },
     });
-    const stop = async () => stopEventsRecord();
-    const showEventsRecordModal = eventsRecord => modals.show({
-      name: MODALS.eventsRecord,
-      config: {
-        eventsRecord,
-      },
-    });
+    const stop = async () => {
+      await stopEventsRecordCurrent();
+
+      return fetchList();
+    };
 
     const showRemoveEventsRecordModal = id => modals.show({
       name: MODALS.confirmation,
@@ -112,24 +116,19 @@ export default {
       },
     });
 
-    const {
-      generateFile,
-      downloadFile,
-    } = useExportFile({
-      createHandler: createEventsRecordExport,
-      fetchHandler: fetchEventsRecordExport,
+    const showEventsRecordModal = eventsRecord => modals.show({
+      name: MODALS.eventsRecord,
+      config: {
+        eventsRecord,
+
+        removeAction: showRemoveEventsRecordModal,
+      },
     });
-
-    const downloadEventsRecord = async (eventsRecord) => {
-      const fileData = await generateFile({ id: eventsRecord._id });
-
-      downloadFile(getEventsRecordFileUrl(fileData._id));
-    };
 
     onMounted(() => fetchList(query.value));
 
     return {
-      eventsRecords,
+      preparedEventsRecords,
       meta,
       status,
       pending,
@@ -139,7 +138,6 @@ export default {
       stop,
       showEventsRecordModal,
       showRemoveEventsRecordModal,
-      downloadEventsRecord,
       updateQuery,
       fetchList,
     };
