@@ -29,7 +29,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
+    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/postgres
     postgres=# CREATE database canopsis_tech_metrics;
     postgres=# \c canopsis_tech_metrics
     canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -47,7 +47,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
 === "Paquets RHEL 8"
 
     ```sh
-    psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
+    psql postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/postgres
     postgres=# CREATE database canopsis_tech_metrics;
     postgres=# \c canopsis_tech_metrics
     canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
