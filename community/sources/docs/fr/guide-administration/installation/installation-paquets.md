@@ -352,7 +352,7 @@ sudo -u postgres psql
 
 Créer la base de données `canopsis` et l'utilisateur associé dans l'instance PostgreSQL :
 
-```
+```sql
 postgres=# CREATE database canopsis;
 postgres=# \c canopsis
 canopsis=# CREATE EXTENSION IF NOT EXISTS timescaledb;
