@@ -1,35 +1,32 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { randomDurationEnabledValue } from '@unit/utils/duration';
+import { randomDurationValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
 import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
-import StorageSettingsJunitForm from '@/components/other/storage-setting/form/storage-settings-junit-form.vue';
+import StorageSettingsEventsRecordsForm from '@/components/other/storage-setting/form/storage-settings-events-records-form.vue';
 
 const stubs = {
   'c-information-block': CInformationBlock,
   'c-help-icon': true,
-  'c-enabled-duration-field': true,
+  'storage-settings-duration-field': true,
   'storage-settings-history-message': true,
 };
 
-const selectJunitDeleteAfterField = wrapper => wrapper.find('c-enabled-duration-field-stub');
+const selectDeleteAfterField = wrapper => wrapper.find('storage-settings-duration-field-stub');
 
 describe('storage-settings-junit-form', () => {
   const form = {
-    junit: {
-      delete_after: {
-        value: 1,
-        unit: TIME_UNITS.month,
-        enabled: false,
-      },
+    delete_after: {
+      value: 2,
+      unit: TIME_UNITS.month,
     },
   };
 
-  const factory = generateRenderer(StorageSettingsJunitForm, { stubs });
-  const snapshotFactory = generateRenderer(StorageSettingsJunitForm, { stubs });
+  const factory = generateRenderer(StorageSettingsEventsRecordsForm, { stubs });
+  const snapshotFactory = generateRenderer(StorageSettingsEventsRecordsForm, { stubs });
 
   test('Junit delete after changed after trigger enabled duration field', () => {
     const wrapper = factory({
@@ -38,24 +35,24 @@ describe('storage-settings-junit-form', () => {
       },
     });
 
-    const newValue = randomDurationEnabledValue();
+    const newValue = randomDurationValue();
 
-    selectJunitDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
+    selectDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
-  test('Renders `storage-settings-junit-form` with default form', () => {
+  test('Renders `storage-settings-events-records-form` with default form', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        form: dataStorageSettingsToForm().junit,
+        form: dataStorageSettingsToForm().event_records,
       },
     });
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `storage-settings-junit-form` with custom form and history', () => {
+  test('Renders `storage-settings-events-records-form` with custom form and history', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form,

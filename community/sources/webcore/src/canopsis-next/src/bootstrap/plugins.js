@@ -101,8 +101,8 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createStateSetting]: { maxWidth: 960 },
       [MODALS.createIcon]: { maxWidth: 400 },
       [MODALS.stateSettingInheritedEntityPattern]: { maxWidth: 960 },
-      [MODALS.startEventsRecord]: { maxWidth: 960 },
-      [MODALS.eventsRecord]: { maxWidth: 1600 },
+      [MODALS.applyEventFilter]: { maxWidth: 960 },
+      [MODALS.eventsRecord]: { maxWidth: 1600, persistent: true },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

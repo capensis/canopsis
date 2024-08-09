@@ -1041,9 +1041,6 @@ export default {
       success: 'Icon was removed',
     },
   },
-  startEventsRecord: {
-    title: 'Launch events recording',
-  },
   eventsRecord: {
     title: 'Events recording {date}',
     subtitle: '{count} events from RabbitMQ received',

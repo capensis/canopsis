@@ -145,6 +145,11 @@
           "position": "before"
         },
         {
+          "pattern": "@/components/**/hooks/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
           "pattern": "@/components/**",
           "group": "internal",
           "position": "before"

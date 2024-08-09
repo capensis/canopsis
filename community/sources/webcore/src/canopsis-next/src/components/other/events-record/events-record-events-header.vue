@@ -1,7 +1,7 @@
 <template>
   <v-layout class="gap-2" column>
     <v-layout class="gap-3 my-4" justify-center align-center>
-      <span class="text-subtitle-2">{{ $t('modals.eventsRecord.subtitle', { count: eventsRecord.c }) }}</span>
+      <span class="text-subtitle-2">{{ $t('modals.eventsRecord.subtitle', { count }) }}</span>
       <c-action-btn
         :tooltip="$t('modals.eventsRecord.buttonTooltip')"
         type="delete"
@@ -15,40 +15,32 @@
       >
         {{ $t('eventsRecord.applyEventFilter') }}
       </v-btn>
-      <v-btn
-        :loading="downloading"
-        color="primary"
-        @click="exportJson"
-      >
-        <v-icon class="mr-2" color="white">
-          file_download
-        </v-icon>
-        <span>{{ $t('common.exportToJson') }}</span>
-      </v-btn>
+      <events-record-download-btn :events-record-id="eventsRecordId" />
     </v-layout>
   </v-layout>
 </template>
 <script>
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
+
 export default {
+  components: { EventsRecordDownloadBtn },
   props: {
-    eventsRecord: {
-      type: Object,
+    eventsRecordId: {
+      type: String,
       required: true,
     },
-    downloading: {
-      type: Boolean,
-      default: false,
+    count: {
+      type: Number,
+      default: 0,
     },
   },
-  setup() {
-    const applyEventFilter = () => {};
-    const remove = () => {};
-    const exportJson = () => {};
+  setup(props, { emit }) {
+    const remove = () => emit('remove');
+    const applyEventFilter = () => emit('apply:filter');
 
     return {
-      applyEventFilter,
       remove,
-      exportJson,
+      applyEventFilter,
     };
   },
 };
