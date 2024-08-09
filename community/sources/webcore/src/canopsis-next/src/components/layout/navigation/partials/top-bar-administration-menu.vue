@@ -178,6 +178,7 @@ export default {
         USERS_PERMISSIONS.technical.healthcheck,
         USERS_PERMISSIONS.technical.kpi,
         USERS_PERMISSIONS.technical.maintenance,
+        USERS_PERMISSIONS.technical.eventsRecord,
       ];
     },
   },

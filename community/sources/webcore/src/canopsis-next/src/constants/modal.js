@@ -121,7 +121,7 @@ export const MODALS = {
   createIcon: 'create-icon',
 
   eventsRecord: 'events-record',
-  startEventsRecord: 'start-events-record',
+  applyEventFilter: 'apply-event-filter',
 
   duration: 'duration',
 };

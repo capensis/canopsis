@@ -1,21 +1,28 @@
 <template>
-  <v-form @submit.prevent="submit">
+  <v-form>
     <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <events-record-events-header :events-record="config.eventsRecord" />
+        <events-record-events-header
+          :events-record-id="eventsRecordId"
+          :count="config.eventsRecord.count"
+          @remove="remove"
+          @apply:filter="applyEventFilter"
+        />
         <events-record-events-list
-          :events-record-id="config.eventsRecord._id"
+          :events-record-id="eventsRecordId"
           :events="events"
           :pending="pending"
-          :downloading="downloading"
+          :resending="resending"
+          :resending-disabled="resendingDisabled"
           :options="query"
           :total-items="meta.total_count"
-          @resend="resendEvent"
-          @export="exportJsonEvent"
           @remove="removeEvent"
+          @remove:selected="removeEvents"
+          @start:resending="startResending(eventsRecordId, $event)"
+          @stop:resending="stopResending"
           @update:options="updateQuery"
         />
       </template>
@@ -35,18 +42,19 @@
 <script>
 import { computed, ref, onMounted } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, TIME_UNITS } from '@/constants';
+import { MODALS, EVENT_FILTER_PATTERN_FIELDS } from '@/constants';
 
+import { pickIds } from '@/helpers/array';
 import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useLocalQuery } from '@/hooks/query/local-query';
+import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
 
-import { useExportJson } from '@/components/other/events-record/hooks/export-json';
+import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
+
 import EventsRecordEventsHeader from '@/components/other/events-record/events-record-events-header.vue';
 import EventsRecordEventsList from '@/components/other/events-record/events-record-events-list.vue';
 
@@ -65,121 +73,157 @@ export default {
     const events = ref([]);
     const meta = ref({});
 
-    const resending = ref(false);
-
-    const { t, tc } = useI18n();
+    const { t } = useI18n();
     const { config, close, modals } = useInnerModal(props);
 
     const eventsRecord = computed(() => config.value.eventsRecord);
     const eventsRecordId = computed(() => eventsRecord.value._id);
 
+    const title = computed(() => (
+      t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) })
+    ));
+
     /**
-     * EVENTS RECORD STORE MODULE
+     * EVENTS RECORD STORE MODULES
      */
     const {
-      playbackEventsRecordEvents,
-      /* stopPlaybackEventsRecordEvents,
-      removeEventsRecordEvent, */
+      removeEventsRecord,
+      removeEventsRecordEvent,
+      bulkRemoveEventsRecordEvent,
       fetchEventsRecordEventsListWithoutStore,
     } = useEventsRecord();
 
-    /**
-     * PENDING
-     */
-    const {
-      pending,
-      handler: fetchList,
-    } = usePendingHandler(async (fetchQuery) => {
-      const response = await fetchEventsRecordEventsListWithoutStore({
-        id: config.value.eventsRecord._id,
-        params: {
-          limit: fetchQuery.itemsPerPage,
-          page: fetchQuery.page,
-        },
-      });
+    const { current } = useEventsRecordCurrent();
 
-      events.value = response.data;
-      meta.value = response.meta;
-    });
-
-    /**
-     * EXPORT JSON
-     */
-    const { downloadingsById, exportJson: exportJsonMethod } = useExportJson();
-
-    const downloading = computed(() => downloadingsById.value[eventsRecordId.value]);
-
-    const exportJson = () => exportJsonMethod(eventsRecordId.value, []);
+    const resending = computed(() => current.value.isResending && current.value._id === eventsRecordId.value);
+    const resendingDisabled = computed(() => current.value.isRecording || current.value.isResending);
 
     /**
      * QUERY
      */
     const {
+      pending,
       query,
+      fetchHandlerWithQuery: fetchList,
       updateQuery,
-    } = useLocalQuery({
-      initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
-      onUpdate: fetchList,
+      updateQueryField,
+    } = usePendingWithLocalQuery({
+      fetchHandler: async (fetchQuery) => {
+        const response = await fetchEventsRecordEventsListWithoutStore({
+          id: config.value.eventsRecord._id,
+          params: {
+            page: fetchQuery.page,
+            limit: fetchQuery.itemsPerPage,
+            event_pattern: JSON.stringify(fetchQuery.event_pattern),
+          },
+        });
+
+        events.value = response.data;
+        meta.value = response.meta;
+      },
     });
 
-    const resendEvent = (eventIds = []) => modals.show({
-      name: MODALS.duration,
+    /**
+     * RESEND
+     */
+    const { startResending, stopResending } = useEventsRecordResending();
+
+    /**
+     * Remove events record
+     *
+     * @return {*}
+     */
+    const remove = () => modals.show({
+      name: MODALS.confirmation,
       config: {
-        title: tc('eventsRecord.resendEvents', 1),
-        label: t('eventsRecord.delayBetweenEvents'),
-        units: [
-          { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
-          { value: TIME_UNITS.second, text: 'common.times.second' },
-        ],
-        action: async (delay) => {
-          resending.value = true;
+        action: async () => {
+          await removeEventsRecord({ id: eventsRecordId.value });
+          await config.value.fetchList?.();
 
-          await playbackEventsRecordEvents({ id: eventsRecordId.value, data: { delay, event_ids: eventIds } });
-
-          resending.value = false;
+          return close();
         },
       },
     });
 
-    /* const stopResendEvent = async () => {
-      await stopPlaybackEventsRecordEvents({ id: eventsRecordId });
+    /**
+     * Remove event from events record
+     *
+     * @param {Object} event
+     * @return {*}
+     */
+    const removeEvent = event => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await removeEventsRecordEvent({ id: event._id });
 
-      resending.value = false;
-    }; */
+          return fetchList();
+        },
+      },
+    });
 
-    const remove = () => config.value.removeAction?.();
+    /**
+     * Remove several events from events record
+     *
+     * @param {Object[]} eventsForRemove
+     * @return {*}
+     */
+    const removeEvents = eventsForRemove => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await bulkRemoveEventsRecordEvent({ data: pickIds(eventsForRemove) });
 
-    const exportJsonEvent = () => {};
-    const removeEvent = async () => {
-      // await removeEventsRecordEvent();
+          return fetchList();
+        },
+      },
+    });
 
-      // return config.value.afterSubmit?.();
-    };
-    const applyEventFilter = () => {};
-
-    const title = computed(() => (
-      t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) })
-    ));
+    /**
+     * Apply event filter for events record events
+     *
+     * @return {*}
+     */
+    const applyEventFilter = () => modals.show({
+      name: MODALS.applyEventFilter,
+      config: {
+        title: t('eventsRecord.applyEventFilter'),
+        eventPattern: query.value.event_pattern,
+        excludedAttributes: [
+          { value: EVENT_FILTER_PATTERN_FIELDS.eventType },
+          { value: EVENT_FILTER_PATTERN_FIELDS.state },
+          { value: EVENT_FILTER_PATTERN_FIELDS.sourceType },
+          { value: EVENT_FILTER_PATTERN_FIELDS.extraInfos },
+          { value: EVENT_FILTER_PATTERN_FIELDS.longOutput },
+          { value: EVENT_FILTER_PATTERN_FIELDS.author },
+          { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
+        ],
+        action: eventPattern => updateQueryField('event_pattern', eventPattern),
+      },
+    });
 
     onMounted(() => fetchList(query.value));
 
     return {
+      eventsRecordId,
       events,
       pending,
       meta,
       config,
       query,
       title,
-      downloading,
+      resending,
+      resendingDisabled,
 
       close,
       updateQuery,
-      resendEvent,
-      exportJsonEvent,
-      removeEvent,
       remove,
+      removeEvent,
+      removeEvents,
       applyEventFilter,
-      exportJson,
+
+      startResending,
+      stopResending,
     };
   },
 };

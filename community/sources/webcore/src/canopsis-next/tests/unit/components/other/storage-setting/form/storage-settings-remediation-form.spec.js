@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { randomDurationValue } from '@unit/utils/duration';
+import { randomDurationEnabledValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -49,7 +49,7 @@ describe('storage-settings-remediation-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectRemediationDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
@@ -63,7 +63,7 @@ describe('storage-settings-remediation-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectRemediationDeleteStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
@@ -77,7 +77,7 @@ describe('storage-settings-remediation-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectRemediationDeleteModStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
