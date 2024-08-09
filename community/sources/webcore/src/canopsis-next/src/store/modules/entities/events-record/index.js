@@ -2,68 +2,64 @@ import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
 
-const types = {
-  FETCH_CURRENT_COMPLETED: 'FETCH_CURRENT_COMPLETED',
-};
+import currentModule from './current';
 
 export default {
   namespaced: true,
-  state: {
-    current: {},
-  },
-  getters: {
-    current: state => state.current,
-  },
-  mutations: {
-    [types.FETCH_CURRENT_COMPLETED]: (state, current) => {
-      state.current = current;
-    },
+  modules: {
+    current: currentModule,
   },
   actions: {
-    fetchListWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.eventsRecord, { params });
-    },
+    async fetchListWithoutStore({ dispatch }, { params } = {}) {
+      const response = await request.get(API_ROUTES.eventsRecord.list, { params });
 
-    fetchCurrent({ commit }) {
-      const current = request.get(API_ROUTES.eventsRecordCurrent);
+      dispatch('current/setCurrent', response.status);
 
-      commit(types.FETCH_CURRENT_COMPLETED, current);
+      return response;
     },
 
     fetchEventsListWithoutStore(context, { id, params } = {}) {
-      return request.get(`${API_ROUTES.eventsRecord}/${id}`, { params });
+      return request.get(`${API_ROUTES.eventsRecord.list}/${id}`, { params });
     },
 
     createExport(context, { id, eventIds = [] } = {}) {
-      return request.post(`${API_ROUTES.eventsRecord}/${id}/exports`, { event_ids: eventIds });
+      return request.post(`${API_ROUTES.eventsRecord.list}/${id}/exports`, { event_ids: eventIds });
     },
 
     fetchExport(context, { id } = {}) {
-      return request.get(`${API_ROUTES.eventsRecordExport}/${id}`);
+      return request.get(`${API_ROUTES.eventsRecord.export}/${id}`);
     },
 
-    start(context, { data } = {}) {
-      return request.post(API_ROUTES.eventsRecordCurrent, data);
+    playback({ dispatch }, { id, data } = {}) {
+      try {
+        dispatch('current/setCurrentResending', true);
+
+        return request.post(`${API_ROUTES.eventsRecord.list}/${id}/playback`, data);
+      } catch (err) {
+        dispatch('current/setCurrentResending', false);
+
+        throw err;
+      }
     },
 
-    stop() {
-      return request.delete(API_ROUTES.eventsRecordCurrent);
-    },
+    async stopPlayback({ dispatch }, { id } = {}) {
+      const response = await request.delete(`${API_ROUTES.eventsRecord.list}/${id}/playback`);
 
-    playback(context, { id, data } = {}) {
-      return request.post(`${API_ROUTES.eventsRecord}/${id}/playback`, data);
-    },
+      dispatch('current/reset');
 
-    stopPlayback(context, { id } = {}) {
-      return request.delete(`${API_ROUTES.eventsRecord}/${id}/playback`);
+      return response;
     },
 
     remove(context, { id } = {}) {
-      return request.delete(`${API_ROUTES.eventsRecord}/${id}`);
+      return request.delete(`${API_ROUTES.eventsRecord.list}/${id}`);
     },
 
     removeEvent(context, { id } = {}) {
-      return request.delete(`${API_ROUTES.eventsRecordEvent}/${id}`);
+      return request.delete(`${API_ROUTES.eventsRecord.event}/${id}`);
+    },
+
+    bulkRemoveEvent(context, { data }) {
+      return request.delete(API_ROUTES.eventsRecord.bulkEvent, { data });
     },
   },
 };

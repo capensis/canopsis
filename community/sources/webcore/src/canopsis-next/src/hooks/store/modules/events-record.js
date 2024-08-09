@@ -10,10 +10,7 @@ export const useEventsRecord = () => {
     fetchEventsRecordExport: 'fetchExport',
 
     removeEventsRecordEvent: 'removeEvent',
-
-    startEventsRecordCurrent: 'start',
-    stopEventsRecordCurrent: 'stop',
-    fetchEventsRecordCurrent: 'fetchCurrent',
+    bulkRemoveEventsRecordEvent: 'bulkRemoveEvent',
 
     playbackEventsRecordEvents: 'playback',
     stopPlaybackEventsRecordEvents: 'stopPlayback',

@@ -73,6 +73,7 @@ export const getGroupedPermissions = (permissions) => {
   const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
   const remediationApiPermissions = Object.values(USERS_PERMISSIONS.api.remediation);
   const pbehaviorApiPermissions = Object.values(USERS_PERMISSIONS.api.pbehavior);
+  const eventsRecordApiPermissions = Object.values(USERS_PERMISSIONS.api.eventsRecord);
 
   const {
     exploitation: exploitationTechnicalPermissions,
@@ -117,6 +118,8 @@ export const getGroupedPermissions = (permissions) => {
       acc.api.remediation.push(permission);
     } else if (pbehaviorApiPermissions.includes(permissionId)) {
       acc.api.pbehavior.push(permission);
+    } else if (eventsRecordApiPermissions.includes(permissionId)) {
+      acc.api.eventsRecord.push(permission);
     }
 
     return acc;
@@ -141,6 +144,7 @@ export const getGroupedPermissions = (permissions) => {
       rules: [],
       remediation: [],
       pbehavior: [],
+      eventsRecord: [],
     },
   });
 };

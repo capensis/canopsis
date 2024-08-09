@@ -14,14 +14,14 @@
     <template #toolbar>
       <v-expand-transition>
         <v-layout v-if="resending" class="gap-4" align-center>
-          <span class="font-italic">Resending in progress</span>
+          <span class="font-italic">{{ $t('eventsRecord.resendingInProgress') }}</span>
           <v-progress-circular
             color="primary"
             width="3"
             indeterminate
           />
           <c-action-btn
-            tooltip="Stop event resending"
+            :tooltip="$t('eventsRecord.stopResending')"
             icon="stop"
             color="blue darken-3"
             top
@@ -30,20 +30,15 @@
         </v-layout>
       </v-expand-transition>
     </template>
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys, count }">
       <c-action-btn
-        :tooltip="$tc('eventsRecord.resendEvents', selected.length)"
-        :disabled="resending"
-        :loading="massResending"
+        :tooltip="$tc('eventsRecord.resendEvents', count)"
+        :disabled="resendingDisabled || resending"
         icon="play_arrow"
         color="#134A9F"
-        @click="resendEvents(selected)"
+        @click="startResending(selectedKeys)"
       />
-      <c-action-btn
-        :tooltip="$t('eventsRecord.export')"
-        icon="file_download"
-        @click="exportJsonSelected(selected)"
-      />
+      <events-record-download-btn :events-record-id="eventsRecordId" :event-ids="selectedKeys" icon />
       <c-action-btn
         type="delete"
         @click="removeSelected(selected)"
@@ -55,18 +50,12 @@
     <template #actions="{ item }">
       <c-action-btn
         :tooltip="$tc('eventsRecord.resendEvents', 1)"
-        :disabled="resending"
-        :loading="resendingByIds[item._id]"
+        :disabled="resendingDisabled || resending"
         icon="play_arrow"
         color="blue darken-3"
-        @click="resendEvent(item)"
+        @click="startResending([item._id])"
       />
-      <c-action-btn
-        :tooltip="$t('eventsRecord.export')"
-        :disabled="downloading"
-        icon="file_download"
-        @click="exportJson(item)"
-      />
+      <events-record-download-btn :events-record-id="eventsRecordId" :event-id="item._id" icon />
       <c-action-btn
         type="delete"
         @click="remove(item)"
@@ -85,91 +74,14 @@
 </template>
 
 <script>
-import { computed, ref, set, unref } from 'vue';
-
-import { MODALS, TIME_UNITS } from '@/constants';
-
-import { mapIds } from '@/helpers/array';
+import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePolling } from '@/hooks/polling';
-import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
-const useMassActionPending = (action) => {
-  const pendingByIds = ref({});
-  const massPending = ref(false);
-
-  const setPending = (itemsIds, value) => {
-    itemsIds.forEach(id => set(pendingByIds.value, id, value));
-
-    if (itemsIds.length > 1) {
-      massPending.value = value;
-    }
-  };
-
-  const preparedAction = async (itemsIds = [], ...rest) => {
-    try {
-      setPending(itemsIds, true);
-
-      await action(itemsIds, ...rest);
-    } finally {
-      setPending(itemsIds, false);
-    }
-  };
-
-  const pending = computed(() => massPending.value || Object.values(pendingByIds.value).some(value => value));
-
-  return {
-    pending,
-    pendingByIds,
-    massPending,
-
-    action: preparedAction,
-  };
-};
-
-export const usePlayback = ({ eventsRecordId }) => {
-  const {
-    playbackEventsRecordEvents,
-  } = useEventsRecord();
-
-  const startHandler = (eventIds, delay) => (
-    playbackEventsRecordEvents({ id: unref(eventsRecordId), data: { delay, event_ids: eventIds } })
-  );
-  const processHandler = () => {};
-  const endHandler = () => {};
-
-  const {
-    poll,
-    cancel,
-  } = usePolling({
-    startHandler,
-    processHandler,
-    endHandler,
-  });
-
-  const {
-    pending: resending,
-    pendingByIds: resendingByIds,
-    massPending: massResending,
-
-    action: startResending,
-  } = useMassActionPending((eventIds, delay) => poll(eventIds, delay));
-
-  const stopResending = () => cancel();
-
-  return {
-    resending,
-    resendingByIds,
-    massResending,
-
-    startResending,
-    stopResending,
-  };
-};
+import EventsRecordDownloadBtn from '@/components/other/events-record/partials/events-record-download-btn.vue';
 
 export default {
+  components: { EventsRecordDownloadBtn },
   props: {
     eventsRecordId: {
       type: String,
@@ -187,6 +99,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    resending: {
+      type: Boolean,
+      default: false,
+    },
+    resendingDisabled: {
+      type: Boolean,
+      default: false,
+    },
     totalItems: {
       type: Number,
       required: false,
@@ -197,40 +117,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t, tc } = useI18n();
-    const modals = useModals();
-
-    const {
-      playbackEventsRecordEvents,
-    } = useEventsRecord();
-
-    const {
-      pending: resending,
-      pendingByIds: resendingByIds,
-      massPending: massResending,
-
-      action: resend,
-    } = useMassActionPending((eventIds, delay) => (
-      playbackEventsRecordEvents({ id: props.eventsRecordId, data: { delay, event_ids: eventIds } })
-    ));
-
-    const showResendEventsModalWindow = (eventIds = []) => modals.show({
-      name: MODALS.duration,
-      config: {
-        title: tc('eventsRecord.resendEvents', 1),
-        label: t('eventsRecord.delayBetweenEvents'),
-        units: [
-          { value: TIME_UNITS.millisecond, text: 'common.times.millisecond' },
-          { value: TIME_UNITS.second, text: 'common.times.second' },
-        ],
-        action: delay => resend(eventIds, delay),
-      },
-    });
-
-    const resendEvent = event => showResendEventsModalWindow([event._id]);
-    const resendEvents = events => showResendEventsModalWindow(mapIds(events));
-
-    const stopResending = () => {};
+    const { t } = useI18n();
 
     const headers = computed(() => [
       {
@@ -275,29 +162,31 @@ export default {
       },
     ]);
 
-    const remove = event => emit('remove', event._id);
-    const removeSelected = selected => emit('remove:selected', selected);
+    /**
+     * RESEND
+     */
+    const startResending = eventsIds => emit('start:resending', eventsIds);
+    const stopResending = () => emit('stop:resending');
 
-    const exportJsonSelected = selected => emit('export', selected);
-    const exportJson = event => exportJsonSelected([event._id]);
+    /**
+     * REMOVE
+     */
+    const remove = event => emit('remove', event);
+    const removeSelected = eventsIds => emit('remove:selected', eventsIds);
 
+    /**
+     * OPTIONS
+     */
     const updateOptions = options => emit('update:options', options);
 
     return {
       headers,
 
-      resending,
-      resendingByIds,
-      massResending,
-      resendEvent,
-      resendEvents,
+      startResending,
       stopResending,
 
       remove,
       removeSelected,
-
-      exportJson,
-      exportJsonSelected,
 
       updateOptions,
     };

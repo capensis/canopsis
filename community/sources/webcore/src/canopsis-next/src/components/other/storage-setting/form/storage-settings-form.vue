@@ -44,7 +44,10 @@
       v-field="form.alarm_external_tag"
       :history="history.alarm_external_tag"
     />
-    <storage-settings-events-records-form v-field="form.event_records" />
+    <storage-settings-events-records-form
+      v-field="form.event_records"
+      :history="history.event_records"
+    />
   </v-layout>
 </template>
 

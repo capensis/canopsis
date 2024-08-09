@@ -9,13 +9,19 @@
     @update:options="updateOptions"
   >
     <template #resending="{ item }">
-      <v-icon
-        v-show="item.isResending"
-        class="blinking"
-        color="blue darken-3"
-      >
-        play_arrow
-      </v-icon>
+      <v-tooltip right>
+        <template #activator="{ on }">
+          <v-icon
+            v-show="item.isResending"
+            class="blinking"
+            color="blue darken-3"
+            v-on="on"
+          >
+            play_arrow
+          </v-icon>
+        </template>
+        <span>{{ $t('eventsRecord.resendingInProgress') }}</span>
+      </v-tooltip>
     </template>
     <template #t="{ item }">
       {{ item.t | date }}
@@ -36,12 +42,7 @@
           color="#6A6A6A"
           @click="show(item)"
         />
-        <c-action-btn
-          :tooltip="$t('eventsRecord.export')"
-          :loading="downloadingsById[item._id]"
-          icon="file_download"
-          @click="exportJson(item)"
-        />
+        <events-record-download-btn :events-record-id="item._id" icon />
         <c-action-btn
           type="delete"
           @click="remove(item)"
@@ -56,9 +57,10 @@ import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
-import { useExportJson } from './hooks/export-json';
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
+  components: { EventsRecordDownloadBtn },
   props: {
     eventsRecords: {
       type: Array,
@@ -80,7 +82,6 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const inProgress = computed(() => props.eventsRecords.status === 0);
     const headers = computed(() => [
       {
         text: '',
@@ -94,7 +95,7 @@ export default {
       },
       {
         text: t('eventsRecord.eventsCount'),
-        value: 'c',
+        value: 'count',
         sortable: false,
       },
       {
@@ -104,25 +105,16 @@ export default {
       },
     ]);
 
-    /**
-     * STORE
-     */
-    const { downloadingsById, exportJson: exportJsonMethod } = useExportJson();
-
     const stop = () => emit('stop');
     const show = eventsRecord => emit('show', eventsRecord);
     const remove = eventsRecord => emit('remove', eventsRecord._id);
-    const exportJson = eventsRecord => exportJsonMethod(eventsRecord._id);
     const updateOptions = options => emit('update:options', options);
 
     return {
-      inProgress,
       headers,
-      downloadingsById,
 
       stop,
       show,
-      exportJson,
       remove,
       updateOptions,
     };

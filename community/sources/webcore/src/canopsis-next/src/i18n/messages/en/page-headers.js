@@ -136,6 +136,10 @@ export default {
     title: 'State settings',
     // message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Events records',
+    // message: '', // TODO: add correct message
+  },
 
   /**
    * Notifications

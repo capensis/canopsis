@@ -433,7 +433,7 @@ export const EventsRecord = () => ({
   loading: LoaderOverlay,
 });
 
-export const StartEventsRecord = () => ({
-  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/start-events-record.vue'),
+export const ApplyEventFilter = () => ({
+  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/apply-event-filter.vue'),
   loading: LoaderOverlay,
 });

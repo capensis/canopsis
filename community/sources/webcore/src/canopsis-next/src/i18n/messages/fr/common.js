@@ -328,6 +328,7 @@ export default {
     fifth: 'Cinquième',
   },
   times: {
+    millisecond: 'milliseconde | millisecondes',
     second: 'seconde | secondes',
     minute: 'minute | minutes',
     hour: 'heure | heures',
