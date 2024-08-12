@@ -602,7 +602,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 data-value="links"
                 role="columnheader"
                 scope="col"
-                style="width: 40px; min-width: 40px;"
+                style="width: 42px; min-width: 42px;"
               >
                 <div
                   class="layout align-center"
