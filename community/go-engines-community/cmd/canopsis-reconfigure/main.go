@@ -17,9 +17,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	petname "github.com/dustinkirkland/golang-petname"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	pgxdriver "github.com/jackc/pgx/v5"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -94,6 +96,11 @@ func main() {
 	err = updateVersionConfig(ctx, f, client)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to update config in mongo")
+	}
+
+	err = generateSerialName(ctx, f.forceGenerateSerialName)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to generate serial name")
 	}
 }
 
@@ -326,6 +333,36 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 
 	logger.Info().Msg("finish tech postgres migrations")
 	return nil
+}
+
+func generateSerialName(ctx context.Context, force bool) error {
+	if os.Getenv(postgres.EnvURL) == "" {
+		return nil
+	}
+
+	pool, err := postgres.NewPool(ctx, 0, 0)
+	if err != nil {
+		return err
+	}
+
+	res := pool.QueryRow(ctx, "SELECT id FROM serial_name LIMIT 1")
+
+	serialName := ""
+	err = res.Scan(&serialName)
+	if errors.Is(err, pgxdriver.ErrNoRows) {
+		_, err = pool.Exec(ctx, "INSERT INTO serial_name (id) VALUES ($1)", petname.Generate(2, "-"))
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if force {
+		_, err = pool.Exec(ctx, "UPDATE serial_name SET id = $1 WHERE id = $2", petname.Generate(2, "-"), serialName)
+	}
+
+	return err
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
