@@ -35,7 +35,7 @@ export const useEventsRecordResending = () => {
       data: { delay, event_ids: eventIds },
     });
 
-    // return fetchEventsRecordCurrent();
+    return fetchEventsRecordCurrent();
   };
 
   /**
