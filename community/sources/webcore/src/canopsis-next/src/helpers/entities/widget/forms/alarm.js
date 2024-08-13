@@ -5,6 +5,7 @@ import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
+  ALARMS_OPENED_VALUES,
   ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -240,7 +241,7 @@ export const openedToForm = (opened) => {
     return opened;
   }
 
-  return true;
+  return ALARMS_OPENED_VALUES.opened;
 };
 
 /**
