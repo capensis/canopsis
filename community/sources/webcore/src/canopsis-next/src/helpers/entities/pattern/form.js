@@ -386,7 +386,7 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  */
 export const isExtraInfosPatternRuleField = (value) => {
   /**
-   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaining function call
    */
   const start = `${EVENT_FILTER_PATTERN_FIELDS.extraInfos}.`;
 
@@ -403,7 +403,7 @@ export const isExtraInfosPatternRuleField = (value) => {
 export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
   .find((field) => {
     /**
-     * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+     * @TODO: update babel-eslint for resolving problem with templates inside optional chaining function call
      */
     const start = `${field}.`;
 
@@ -734,7 +734,9 @@ export const patternRuleToForm = (rule = {}) => {
       }
 
       if (!form.operator) {
-        form.operator = PATTERN_OPERATORS.equal;
+        form.operator = {
+          [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.ruleIs,
+        }[rule.field] ?? PATTERN_OPERATORS.equal;
         form.value = rule.cond.value;
       }
       break;
