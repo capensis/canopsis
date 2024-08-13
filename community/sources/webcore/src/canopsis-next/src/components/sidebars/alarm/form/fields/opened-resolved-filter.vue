@@ -2,7 +2,7 @@
   <widget-settings-item :title="$t('settings.filterOnOpenResolved')">
     <v-layout>
       <v-radio-group
-        v-field="value"
+        v-model="localValue"
         class="mt-0"
         name="opened"
         hide-details
@@ -21,7 +21,12 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { ALARMS_OPENED_VALUES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
@@ -30,16 +35,31 @@ export default {
   props: {
     value: {
       type: Boolean,
-      default: ALARMS_OPENED_VALUES.opened,
+      required: false,
     },
   },
-  computed: {
-    types() {
-      return Object.values(ALARMS_OPENED_VALUES).map(value => ({
-        value,
-        label: this.$t(`settings.openedTypes.${value}`),
-      }));
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateModel } = useModelField(props, emit);
+
+    const localValue = computed({
+      get: () => String(props.value),
+      set: newValue => updateModel({
+        true: true,
+        false: false,
+        null: null,
+      }[newValue]),
+    });
+
+    const types = computed(() => Object.values(ALARMS_OPENED_VALUES).map(value => ({
+      value: String(value),
+      label: t(`settings.openedTypes.${value}`),
+    })));
+
+    return {
+      localValue,
+      types,
+    };
   },
 };
 </script>
