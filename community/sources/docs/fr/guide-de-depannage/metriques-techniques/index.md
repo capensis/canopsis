@@ -20,11 +20,11 @@ sur l'hôte.
 
 ### Préparation de la base de données
 
-Les données collectées sont stockées dans une base `timescaledb` et donc `postgresql`.  
+Les données collectées sont stockées dans une base TimescaleDB (donc PostgreSQL).
 
 !!! warning
 
-    Cette base de donnée **DOIT** être différente de celle utilisée pour les KPI Canopsis.
+    Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
 === "Docker Compose"
 
@@ -47,7 +47,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
 === "Paquets RHEL 8"
 
     ```sh
-    psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
+    sudo -u postgres psql
     postgres=# CREATE database canopsis_tech_metrics;
     postgres=# \c canopsis_tech_metrics
     canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -56,7 +56,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
     canopsis_tech_metrics=# exit
     ```
 
-    Définir la chaine de connexion à cette base de données dans le fichier `/opt/canopsis/etc/go-engines-vars.conf
+    Définir la chaine de connexion à cette base de données dans le fichier `/opt/canopsis/etc/go-engines-vars.conf`
 
     ```
     CPS_POSTGRES_TECH_URL=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
