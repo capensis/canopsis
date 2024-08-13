@@ -13,6 +13,7 @@
     :no-data-text="$t('metaAlarmRule.field.noData')"
     clearable
     autocomplete
+    @input="clearQuerySearch"
     @fetch="fetchRules"
     @fetch:more="fetchMoreRules"
     @update:search="updateQuerySearch"
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 import { prepareDataForItemsById } from '@/helpers/search/lazy-search';
 
@@ -78,7 +79,7 @@ export default {
       initialQuery: {
         page: 1,
         limit: props.limit,
-        search: null,
+        search: props.value,
       },
       fetchHandler: async (params) => {
         const response = await fetchMetaAlarmRulesListWithoutStore({ params });
@@ -96,6 +97,10 @@ export default {
 
     const fetchMoreRules = () => updateQueryPage(query.value.page + 1);
 
+    const clearQuerySearch = value => !value && updateQuerySearch('');
+
+    onMounted(fetchRules);
+
     return {
       rules,
       meta,
@@ -104,6 +109,7 @@ export default {
 
       fetchRules,
       fetchMoreRules,
+      clearQuerySearch,
       updateQuerySearch,
     };
   },
