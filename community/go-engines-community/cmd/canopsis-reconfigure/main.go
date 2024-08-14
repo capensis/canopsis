@@ -15,6 +15,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/goja"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/mongosh"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	petname "github.com/dustinkirkland/golang-petname"
@@ -277,8 +279,18 @@ func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger 
 		return errors.New("-mongo-migration-directory is not set")
 	}
 
+	var executor mongo.ScriptExecutor
+	switch f.mongoMigrationExec {
+	case MongoMigrationExecGoja:
+		executor = goja.NewScriptExecutor(dbClient)
+	case MongoMigrationExecMongosh:
+		executor = mongosh.NewScriptExecutor()
+	default:
+		return errors.New("-mongo-migration-exec is invalid")
+	}
+
 	logger.Info().Msg("start mongo migrations")
-	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, mongo.NewScriptExecutor(), logger)
+	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, executor, logger)
 	err := cmd.Exec(ctx)
 	if err != nil {
 		return err

@@ -12,6 +12,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
  * @property {string} default_time_range
  * @property {Sampling} default_sampling
  * @property {boolean} comparison
+ * @property {string | null} mainFilter
  */
 
 /**
@@ -32,6 +33,7 @@ export const barChartWidgetParametersToForm = (parameters = {}) => ({
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
   default_sampling: parameters.default_sampling ?? SAMPLINGS.day,
   comparison: parameters.comparison ?? false,
+  mainFilter: parameters.mainFilter ?? null,
 });
 
 /**

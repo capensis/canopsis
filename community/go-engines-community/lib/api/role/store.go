@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -88,7 +89,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
 			if r.WithFlags {
-				isNotAdmin := res.Data[i].ID != security.RoleAdmin
+				isNotAdmin := res.Data[i].Name != security.RoleAdmin
 				res.Data[i].Editable = &isNotAdmin
 				res.Data[i].Deletable = &isNotAdmin
 			}
@@ -134,11 +135,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		return nil, err
 	}
 
+	id := utils.NewID()
+
 	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
-		_, err = s.dbCollection.InsertOne(ctx, bson.M{
-			"_id":         r.Name,
+
+		_, err := s.dbCollection.InsertOne(ctx, bson.M{
+			"_id":         id,
 			"name":        r.Name,
 			"description": r.Description,
 			"defaultview": r.DefaultView,
@@ -149,9 +153,14 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			"updated":     now,
 		})
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
 			return err
 		}
-		role, err = s.GetOneBy(ctx, r.Name)
+
+		role, err = s.GetOneBy(ctx, id)
 		return err
 	})
 	if err != nil {
@@ -172,6 +181,15 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
+		err = s.dbCollection.FindOne(ctx, bson.M{"_id": id, "name": security.RoleAdmin}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return ErrUpdateAdminRole
+		}
+
 		res, err := s.dbCollection.UpdateOne(ctx,
 			bson.M{"_id": id},
 			bson.M{"$set": bson.M{
@@ -186,7 +204,9 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 		if err != nil || res.MatchedCount == 0 {
 			return nil
 		}
+
 		role, err = s.GetOneBy(ctx, id)
+
 		return err
 	})
 	if err != nil {
@@ -198,11 +218,18 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
-
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": id, "name": security.RoleAdmin}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
 
-		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
+		if err == nil {
+			return ErrDeleteAdminRole
+		}
+
+		err = s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
 		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return cmp.Or(err, ErrLinkedToUser)
 		}

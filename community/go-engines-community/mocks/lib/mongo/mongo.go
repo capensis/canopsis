@@ -324,6 +324,20 @@ func (mr *MockDbCollectionMockRecorder) InsertOne(arg0, arg1 interface{}, arg2 .
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertOne", reflect.TypeOf((*MockDbCollection)(nil).InsertOne), varargs...)
 }
 
+// Name mocks base method.
+func (m *MockDbCollection) Name() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Name")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Name indicates an expected call of Name.
+func (mr *MockDbCollectionMockRecorder) Name() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockDbCollection)(nil).Name))
+}
+
 // ReplaceOne mocks base method.
 func (m *MockDbCollection) ReplaceOne(arg0 context.Context, arg1, arg2 interface{}, arg3 ...*options.ReplaceOptions) (*mongo0.UpdateResult, error) {
 	m.ctrl.T.Helper()
@@ -441,6 +455,25 @@ func (mr *MockDbClientMockRecorder) Collection(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collection", reflect.TypeOf((*MockDbClient)(nil).Collection), arg0)
 }
 
+// CreateCollection mocks base method.
+func (m *MockDbClient) CreateCollection(arg0 context.Context, arg1 string, arg2 ...*options.CreateCollectionOptions) error {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateCollection", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateCollection indicates an expected call of CreateCollection.
+func (mr *MockDbClientMockRecorder) CreateCollection(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCollection", reflect.TypeOf((*MockDbClient)(nil).CreateCollection), varargs...)
+}
+
 // Disconnect mocks base method.
 func (m *MockDbClient) Disconnect(arg0 context.Context) error {
 	m.ctrl.T.Helper()
@@ -489,6 +522,20 @@ func (mr *MockDbClientMockRecorder) ListCollectionNames(arg0, arg1 interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCollectionNames", reflect.TypeOf((*MockDbClient)(nil).ListCollectionNames), varargs...)
 }
 
+// Name mocks base method.
+func (m *MockDbClient) Name() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Name")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Name indicates an expected call of Name.
+func (mr *MockDbClientMockRecorder) Name() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockDbClient)(nil).Name))
+}
+
 // Ping mocks base method.
 func (m *MockDbClient) Ping(arg0 context.Context, arg1 *readpref.ReadPref) error {
 	m.ctrl.T.Helper()
@@ -501,6 +548,44 @@ func (m *MockDbClient) Ping(arg0 context.Context, arg1 *readpref.ReadPref) error
 func (mr *MockDbClientMockRecorder) Ping(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockDbClient)(nil).Ping), arg0, arg1)
+}
+
+// RunAdminCommand mocks base method.
+func (m *MockDbClient) RunAdminCommand(arg0 context.Context, arg1 interface{}, arg2 ...*options.RunCmdOptions) mongo.SingleResultHelper {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RunAdminCommand", varargs...)
+	ret0, _ := ret[0].(mongo.SingleResultHelper)
+	return ret0
+}
+
+// RunAdminCommand indicates an expected call of RunAdminCommand.
+func (mr *MockDbClientMockRecorder) RunAdminCommand(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunAdminCommand", reflect.TypeOf((*MockDbClient)(nil).RunAdminCommand), varargs...)
+}
+
+// RunCommand mocks base method.
+func (m *MockDbClient) RunCommand(arg0 context.Context, arg1 interface{}, arg2 ...*options.RunCmdOptions) mongo.SingleResultHelper {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RunCommand", varargs...)
+	ret0, _ := ret[0].(mongo.SingleResultHelper)
+	return ret0
+}
+
+// RunCommand indicates an expected call of RunCommand.
+func (mr *MockDbClientMockRecorder) RunCommand(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunCommand", reflect.TypeOf((*MockDbClient)(nil).RunCommand), varargs...)
 }
 
 // SetRetry mocks base method.

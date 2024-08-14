@@ -12,6 +12,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
  * @property {Sampling} default_sampling
  * @property {string} show_trend
  * @property {number} [font_size]
+ * @property {string | null} mainFilter
  */
 
 /**
@@ -32,6 +33,7 @@ export const numbersWidgetParametersToForm = (parameters = {}) => ({
   default_sampling: parameters.default_sampling ?? SAMPLINGS.day,
   show_trend: parameters.show_trend ?? false,
   font_size: parameters.font_size,
+  mainFilter: parameters.mainFilter ?? null,
 });
 
 /**
