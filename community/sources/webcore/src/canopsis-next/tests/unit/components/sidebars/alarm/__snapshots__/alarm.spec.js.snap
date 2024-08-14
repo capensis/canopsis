@@ -41,6 +41,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <field-columns-stub
       columns="[object Object],[object Object]"
@@ -643,6 +644,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <field-columns-stub
       columns="[object Object]"
@@ -1237,6 +1239,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <field-columns-stub
       columns="[object Object],[object Object]"

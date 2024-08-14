@@ -169,7 +169,7 @@ export default {
     linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
   },
   liveReporting: {
-    title: 'Suivi personnalisé',
+    title: 'Définir un intervalle de dates',
   },
   counterLevels: {
     title: 'Niveaux',
@@ -276,6 +276,12 @@ export default {
     customColor: 'Couleur personnalisée',
     customIcon: 'Icône personnalisée',
   },
+  noActionRequiredSettings: {
+    title: 'Paramètres lorsqu\'aucune action n\'est requise',
+    customColor: 'Couleur personnalisée',
+    customIcon: 'Icône personnalisée',
+  },
+  stateSettings: 'Paramètres d\'état',
   kioskMode: 'Mode kiosque',
   kiosk: {
     hideActions: 'Masquer les actions',

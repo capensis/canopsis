@@ -86,7 +86,7 @@ export default {
     },
     draggable: {
       type: String,
-      required: false,
+      default: '>*',
     },
   },
   methods: {

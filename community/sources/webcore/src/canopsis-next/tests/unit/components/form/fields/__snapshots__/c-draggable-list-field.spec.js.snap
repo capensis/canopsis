@@ -5,6 +5,7 @@ exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with custom p
   animation="2"
   clone="[Function]"
   disabled="true"
+  draggable=">*"
   element="div"
   ghost-class="grey"
   tag="span"
@@ -22,6 +23,7 @@ exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with default 
 <draggable-stub
   animation="300"
   clone="[Function]"
+  draggable=">*"
   element="div"
   ghost-class="grey"
   value=""

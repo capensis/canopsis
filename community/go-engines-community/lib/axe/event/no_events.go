@@ -113,6 +113,13 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		}
 
 		if alarm.ID == "" {
+			var v types.Entity
+			err = p.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&v)
+			if err != nil {
+				return err
+			}
+
+			entity = v
 			result, err = p.createAlarm(ctx, entity, event.Parameters)
 		} else {
 			result, err = p.updateAlarm(ctx, alarm, entity, event.Parameters)
@@ -231,7 +238,10 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	alarm.InternalTagsUpdated = datetime.NewMicroTime()
 	alarm.Tags = slices.Clone(alarm.InternalTags)
 
-	_, err = p.alarmCollection.InsertOne(ctx, alarm)
+	_, err = p.alarmCollection.InsertOne(ctx, types.AlarmWithEntityField{
+		Alarm:  alarm,
+		Entity: entity,
+	})
 	if err != nil {
 		return result, fmt.Errorf("cannot create alarm: %w", err)
 	}

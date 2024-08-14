@@ -9,12 +9,8 @@ import (
 	"errors"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/go-ldap/ldap/v3"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // LdapDialer interface is used to implement creation of LDAP connection.
@@ -42,27 +38,27 @@ func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 
 // ldapProvider implements LDAP authentication.
 type ldapProvider struct {
-	roleCollection mongo.DbCollection
-	config         security.LdapConfig
-	userProvider   security.UserProvider
-	ldapDialer     LdapDialer
-	enforcer       security.Enforcer
+	config       security.LdapConfig
+	userProvider security.UserProvider
+	roleProvider security.RoleProvider
+	ldapDialer   LdapDialer
+	enforcer     security.Enforcer
 }
 
 // NewLdapProvider creates new provider.
 func NewLdapProvider(
-	dbClient mongo.DbClient,
 	config security.LdapConfig,
 	userProvider security.UserProvider,
+	roleProvider security.RoleProvider,
 	ldapDialer LdapDialer,
 	enforcer security.Enforcer,
 ) security.Provider {
 	return &ldapProvider{
-		roleCollection: dbClient.Collection(mongo.RoleCollection),
-		ldapDialer:     ldapDialer,
-		config:         config,
-		userProvider:   userProvider,
-		enforcer:       enforcer,
+		config:       config,
+		userProvider: userProvider,
+		roleProvider: roleProvider,
+		ldapDialer:   ldapDialer,
+		enforcer:     enforcer,
 	}
 }
 
@@ -203,22 +199,14 @@ func (p *ldapProvider) saveUser(
 	}
 
 	if user == nil {
-		err = p.roleCollection.FindOne(
-			ctx,
-			bson.M{"name": p.config.DefaultRole},
-			options.FindOne().SetProjection(bson.M{"_id": 1}),
-		).Err()
+		roleID, err := p.roleProvider.GetRoleID(ctx, p.config.DefaultRole)
 		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, fmt.Errorf("role %s doesn't exist", p.config.DefaultRole)
-			}
-
 			return nil, err
 		}
 
 		user = &security.User{
 			Name:       username,
-			Roles:      []string{p.config.DefaultRole},
+			Roles:      []string{roleID},
 			IsEnabled:  true,
 			ExternalID: ldapID,
 			Source:     security.SourceLdap,

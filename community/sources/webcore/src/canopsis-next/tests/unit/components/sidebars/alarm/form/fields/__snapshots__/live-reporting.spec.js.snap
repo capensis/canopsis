@@ -4,7 +4,7 @@ exports[`live-reporting Renders \`live-reporting\` with custom props 1`] = `
 <settings-button-field-stub
   addable="true"
   removable="true"
-  title="Live reporting"
+  title="Set a custom date range"
 />
 `;
 
@@ -13,6 +13,6 @@ exports[`live-reporting Renders \`live-reporting\` with default props 1`] = `
   addable="true"
   isempty="true"
   removable="true"
-  title="Live reporting"
+  title="Set a custom date range"
 />
 `;

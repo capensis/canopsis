@@ -41,7 +41,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
     Définir la chaine de connexion à cette base de données dans le fichier `compose.env`
 
     ```
-    CPS_POSTGRES_TECH_URL=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis_tech_metrics
+    CPS_POSTGRES_TECH_URL=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
     ```
 
 === "Paquets RHEL 8"
@@ -59,7 +59,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
     Définir la chaine de connexion à cette base de données dans le fichier `/opt/canopsis/etc/go-engines-vars.conf
 
     ```
-    CPS_POSTGRES_TECH_URL=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis_tech_metrics
+    CPS_POSTGRES_TECH_URL=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
     ```
 
 ### Activation des collectes

@@ -55,6 +55,7 @@ func NewMetaAlarmEventProcessor(
 	return &metaAlarmEventProcessor{
 		dbClient:               dbClient,
 		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       dbClient.Collection(mongo.EntityMongoCollection),
 		metaAlarmStatesService: metaAlarmStatesService,
 		adapter:                adapter,
 		ruleAdapter:            ruleAdapter,
@@ -72,6 +73,7 @@ func NewMetaAlarmEventProcessor(
 type metaAlarmEventProcessor struct {
 	dbClient               mongo.DbClient
 	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
 	metaAlarmStatesService correlation.MetaAlarmStateService
 	adapter                libalarm.Adapter
 	ruleAdapter            correlation.RulesAdapter
@@ -113,7 +115,15 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 			return fmt.Errorf("meta alarm rule id=%q not found", event.Parameters.MetaAlarmRuleID)
 		}
 
-		metaAlarm = p.newMetaAlarm(event.Parameters, *event.Entity, p.alarmConfigProvider.Get())
+		entity := *event.Entity
+		var v types.Entity
+		err = p.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&v)
+		if err != nil {
+			return err
+		}
+
+		entity = v
+		metaAlarm = p.newMetaAlarm(event.Parameters, entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 		metaAlarm.Value.LastEventDate = datetime.CpsTime{} // should be empty
@@ -134,16 +144,16 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 				return err
 			}
 
-			if metaAlarmState.MetaAlarmName != event.Entity.Name {
+			if metaAlarmState.MetaAlarmName != entity.Name {
 				// try to get archived state
-				metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+event.Entity.Name)
+				metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+entity.Name)
 				if err != nil {
 					return err
 				}
 
 				if metaAlarmState.ID == "" {
 					return fmt.Errorf("meta alarm state for rule id=%q and meta alarm name=%q not found",
-						event.Parameters.MetaAlarmRuleID, event.Entity.Name)
+						event.Parameters.MetaAlarmRuleID, entity.Name)
 				}
 
 				archived = true
@@ -231,14 +241,17 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(
 		}
 
 		metaAlarm.Value.Output = output
-		_, _, err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState,
+		_, _, err = updateMetaAlarmState(&metaAlarm, entity, event.Parameters.Timestamp, worstState,
 			output, p.alarmStatusService)
 		if err != nil {
 			return err
 		}
 
 		metaAlarm.Value.EventsCount = eventsCount
-		writeModels = append(writeModels, mongodriver.NewInsertOneModel().SetDocument(metaAlarm))
+		writeModels = append(writeModels, mongodriver.NewInsertOneModel().SetDocument(types.AlarmWithEntityField{
+			Alarm:  metaAlarm,
+			Entity: entity,
+		}))
 		_, err = p.alarmCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
 			return err

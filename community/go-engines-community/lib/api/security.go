@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/cas"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers/cas"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers/oauth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers/saml"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/oauth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/saml"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -18,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
@@ -146,19 +147,19 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 		case libsecurity.AuthMethodCas:
 			casConfig := s.config.Security.Cas
 			p := httpprovider.NewCasProvider(
-				s.dbClient,
 				http.DefaultClient,
 				casConfig,
 				s.newUserProvider(),
+				roleprovider.NewRoleProvider(client),
 			)
 
 			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
 			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter)) //nolint: contextcheck
 		case libsecurity.AuthMethodSaml:
-			p, err := saml.NewServiceProvider(ctx, s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
+			p, err := saml.NewProvider(ctx, s.newUserProvider(), roleprovider.NewRoleProvider(client), s.sessionStore,
 				s.enforcer, s.config, s.GetTokenService(), s.maintenanceAdapter, s.logger)
 			if err != nil {
-				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
+				s.logger.Err(err).Msg("RegisterCallbackRoutes: failed to create saml provider")
 				panic(err)
 			}
 
@@ -168,10 +169,10 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			router.GET("/api/v4/saml/slo", p.SamlSloHandler())
 		case libsecurity.AuthMethodOAuth2:
 			for name, conf := range s.config.Security.OAuth2.Providers {
-				p, err := oauth.NewOauth2Provider(
+				p, err := oauth.NewProvider(
 					ctx,
 					name,
-					s.dbClient,
+					roleprovider.NewRoleProvider(client),
 					conf,
 					sessionStore,
 					s.newUserProvider(),
@@ -252,9 +253,9 @@ func (s *security) newBaseAuthProvider() libsecurity.Provider {
 
 func (s *security) newLdapAuthProvider() libsecurity.Provider {
 	return provider.NewLdapProvider(
-		s.dbClient,
 		s.config.Security.Ldap,
 		s.newUserProvider(),
+		roleprovider.NewRoleProvider(s.dbClient),
 		provider.NewLdapDialer(),
 		s.enforcer,
 	)

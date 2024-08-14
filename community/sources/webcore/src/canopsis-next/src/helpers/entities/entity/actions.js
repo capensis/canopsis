@@ -61,7 +61,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     case WEATHER_ACTIONS_TYPES.executeInstruction:
       return !stateIsOk && !!assignedInstructions?.length && hasAlarm;
 
-    case WEATHER_ACTIONS_TYPES.declareTicket:
+    case WEATHER_ACTIONS_TYPES.entityDeclareTicket:
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
     case WEATHER_ACTIONS_TYPES.entityComment:
       return hasAlarm;
@@ -86,7 +86,7 @@ export const getAvailableEntityActionsTypes = (
     WEATHER_ACTIONS_TYPES.entityAck,
     WEATHER_ACTIONS_TYPES.entityAckRemove,
     WEATHER_ACTIONS_TYPES.entityAssocTicket,
-    WEATHER_ACTIONS_TYPES.declareTicket,
+    WEATHER_ACTIONS_TYPES.entityDeclareTicket,
     WEATHER_ACTIONS_TYPES.entityValidate,
     WEATHER_ACTIONS_TYPES.entityInvalidate,
     WEATHER_ACTIONS_TYPES.entityPlay,
@@ -134,7 +134,7 @@ export const getAvailableActionsByEntities = (
     WEATHER_ACTIONS_TYPES.entityAck,
     WEATHER_ACTIONS_TYPES.entityAckRemove,
     WEATHER_ACTIONS_TYPES.entityAssocTicket,
-    WEATHER_ACTIONS_TYPES.declareTicket,
+    WEATHER_ACTIONS_TYPES.entityDeclareTicket,
     WEATHER_ACTIONS_TYPES.entityValidate,
     WEATHER_ACTIONS_TYPES.entityInvalidate,
     WEATHER_ACTIONS_TYPES.entityPlay,
@@ -160,7 +160,7 @@ export const getAvailableActionsByEntities = (
  */
 export const isDisabledActionForEntityByActionsRequests = (entityId, actionType, actionsRequests) => {
   switch (actionType) {
-    case WEATHER_ACTIONS_TYPES.declareTicket:
+    case WEATHER_ACTIONS_TYPES.entityDeclareTicket:
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
     case WEATHER_ACTIONS_TYPES.entityComment:
     case WEATHER_ACTIONS_TYPES.executeInstruction:
