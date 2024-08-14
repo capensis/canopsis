@@ -25,7 +25,7 @@ for (var collectionName of collectionNames) {
         var cursor = collection.find({
             _id: {$ne: doc._id},
             priority: {$gte: priority},
-        }).sort({priority: 1});
+        }, {}, {sort: {priority: 1}});
         var writeModels = [];
         var seq = priority;
         while (cursor.hasNext()) {

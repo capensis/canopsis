@@ -577,7 +577,7 @@ describe('service-entities-list', () => {
 
     await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
-    await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.declareTicket);
+    await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityDeclareTicket);
 
     await flushPromises();
 

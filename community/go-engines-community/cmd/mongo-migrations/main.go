@@ -11,6 +11,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/goja"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/mongosh"
 	"github.com/rs/zerolog"
 )
 
@@ -64,7 +66,13 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		if err != nil {
 			return err
 		}
-		cmd = cli.NewUpCmd(flags.path, flags.to, client, mongo.NewScriptExecutor(), logger)
+
+		scriptExecutor, err := newScriptExecutor(flags.migrationExec, client)
+		if err != nil {
+			return err
+		}
+
+		cmd = cli.NewUpCmd(flags.path, flags.to, client, scriptExecutor, logger)
 	case "down":
 		flags := downFlags{}
 		err := flags.Parse(args)
@@ -73,7 +81,13 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		if err != nil {
 			return err
 		}
-		cmd = cli.NewDownCmd(flags.path, flags.to, client, mongo.NewScriptExecutor(), logger)
+
+		scriptExecutor, err := newScriptExecutor(flags.migrationExec, client)
+		if err != nil {
+			return err
+		}
+
+		cmd = cli.NewDownCmd(flags.path, flags.to, client, scriptExecutor, logger)
 	case "status":
 		flags := statusFlags{}
 		err := flags.Parse(args)
@@ -117,4 +131,15 @@ func handleFlagErr(err error) {
 	}
 
 	os.Exit(2)
+}
+
+func newScriptExecutor(execName string, dbClient mongo.DbClient) (mongo.ScriptExecutor, error) {
+	switch execName {
+	case MigrationExecGoja:
+		return goja.NewScriptExecutor(dbClient), nil
+	case MigrationExecMongosh:
+		return mongosh.NewScriptExecutor(), nil
+	default:
+		return nil, errors.New("-migration-exec is invalid")
+	}
 }
