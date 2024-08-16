@@ -100,7 +100,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to update config in mongo")
 	}
 
-	err = generateSerialName(ctx, f.forceGenerateSerialName)
+	err = generateSerialName(ctx, logger, f.forceGenerateSerialName)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to generate serial name")
 	}
@@ -347,7 +347,7 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 	return nil
 }
 
-func generateSerialName(ctx context.Context, force bool) error {
+func generateSerialName(ctx context.Context, logger zerolog.Logger, force bool) error {
 	if os.Getenv(postgres.EnvURL) == "" {
 		return nil
 	}
@@ -374,7 +374,13 @@ func generateSerialName(ctx context.Context, force bool) error {
 		_, err = pool.Exec(ctx, "UPDATE serial_name SET id = $1 WHERE id = $2", petname.Generate(2, "-"), serialName)
 	}
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	logger.Info().Msgf("serial name: %q", serialName)
+
+	return nil
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
