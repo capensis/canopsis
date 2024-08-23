@@ -10,7 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
-	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
@@ -49,7 +49,7 @@ type logger struct {
 	pgPoolProvider postgres.PoolProvider
 	zLog           zerolog.Logger
 
-	redisLockClient redislib.LockClient
+	redisLockClient libredis.LockClient
 
 	collectionValueTypeMap map[string]string
 	watchedCollections     []string
@@ -60,7 +60,7 @@ type logger struct {
 
 func NewActionLogger(
 	dbClient mongo.DbClient,
-	redisLockClient redislib.LockClient,
+	redisLockClient libredis.LockClient,
 	pgPoolProvider postgres.PoolProvider,
 	zLog zerolog.Logger,
 	retryCount int,
@@ -179,32 +179,33 @@ func (l *logger) log(ctx context.Context, log ActionLog) error {
 	return err
 }
 
-func (l *logger) obtainLock(ctx context.Context) (redislib.Lock, error) {
+func (l *logger) obtainLock(ctx context.Context) (libredis.Lock, error) {
 	for {
 		select {
 		case <-ctx.Done():
 			return nil, nil
 		default:
-			lock, err := l.redisLockClient.Obtain(ctx, redislib.ApiActionLogWatchLockKey, redisLockTTLDuration, &redislock.Options{
-				RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(redisLockAcquireInterval), redisLockAcquireRetries),
-			})
-			if err != nil {
-				if errors.Is(err, redislock.ErrNotObtained) {
-					l.zLog.Debug().Msg("action logger redis lock is not obtained, retry")
-					continue
-				}
+		}
 
-				return nil, fmt.Errorf("cannot obtain lock: %w", err)
+		lock, err := l.redisLockClient.Obtain(ctx, libredis.ApiActionLogWatchLockKey, redisLockTTLDuration, &redislock.Options{
+			RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(redisLockAcquireInterval), redisLockAcquireRetries),
+		})
+		if err != nil {
+			if errors.Is(err, redislock.ErrNotObtained) {
+				l.zLog.Debug().Msg("action logger redis lock is not obtained, retry")
+				continue
 			}
 
-			l.zLog.Debug().Msg("action logger redis lock is obtained")
-
-			return lock, nil
+			return nil, fmt.Errorf("cannot obtain lock: %w", err)
 		}
+
+		l.zLog.Debug().Msg("action logger redis lock is obtained")
+
+		return lock, nil
 	}
 }
 
-func (l *logger) startLockRefresher(ctx context.Context, lock redislib.Lock) chan struct{} {
+func (l *logger) startLockRefresher(ctx context.Context, lock libredis.Lock) chan struct{} {
 	exitChan := make(chan struct{})
 
 	go func() {
@@ -233,7 +234,7 @@ func (l *logger) startLockRefresher(ctx context.Context, lock redislib.Lock) cha
 }
 
 func (l *logger) Watch(ctx context.Context) error {
-	var lock redislib.Lock
+	var lock libredis.Lock
 
 	defer func() {
 		if lock == nil {
