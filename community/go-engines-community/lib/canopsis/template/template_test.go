@@ -540,6 +540,43 @@ func TestFunctions(t *testing.T) {
 				ExpectedErr: ErrFailedConvertToInt64,
 			},
 		},
+		"strjoin": {
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []string{"a", "b", "c"},
+				},
+				ExpectedRes: "a,b,c",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{"a", "b", "c"},
+				},
+				ExpectedRes: "a,b,c",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{"a"},
+				},
+				ExpectedRes: "a",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{},
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{1, 2, 3},
+				},
+				ExpectedErr: ErrFailedConvertToStringSlice,
+			},
+		},
 	}
 
 	for name, v := range dataSets {
