@@ -23,7 +23,7 @@
           @remove:selected="removeEvents"
           @start:resending="startResending(eventsRecordId, $event)"
           @stop:resending="stopResending"
-          @update:options="updateQuery"
+          @update:options="updateOptions"
         />
       </template>
       <template #actions="">
@@ -52,6 +52,7 @@ import { useInnerModal } from '@/hooks/modals';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
+import { useQueryOptions } from '@/hooks/query/options';
 
 import { useEventsRecordResending } from '@/components/other/events-record/hooks/resending';
 
@@ -122,6 +123,8 @@ export default {
         meta.value = response.meta;
       },
     });
+
+    const { updateOptions } = useQueryOptions(query, updateQuery);
 
     /**
      * RESEND
@@ -216,7 +219,7 @@ export default {
       resendingDisabled,
 
       close,
-      updateQuery,
+      updateOptions,
       remove,
       removeEvent,
       removeEvents,
