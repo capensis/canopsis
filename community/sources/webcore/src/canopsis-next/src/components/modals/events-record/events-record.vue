@@ -95,8 +95,8 @@ export default {
 
     const { current } = useEventsRecordCurrent();
 
-    const resending = computed(() => current.value.isResending && current.value._id === eventsRecordId.value);
-    const resendingDisabled = computed(() => current.value.isRecording || current.value.isResending);
+    const resending = computed(() => current.value.is_resending && current.value._id === eventsRecordId.value);
+    const resendingDisabled = computed(() => current.value.is_recording || current.value.is_resending);
 
     /**
      * QUERY
