@@ -44,8 +44,8 @@
         @click="removeSelected(selected)"
       />
     </template>
-    <template #created="{ item }">
-      {{ item.created | date }}
+    <template #timestamp="{ item }">
+      {{ item.timestamp | date }}
     </template>
     <template #actions="{ item }">
       <c-action-btn
@@ -122,17 +122,12 @@ export default {
     const headers = computed(() => [
       {
         text: t('common.timestamp'),
-        value: 'created',
+        value: 'timestamp',
         sortable: false,
       },
       {
         text: t('common.eventType'),
         value: 'event_type',
-        sortable: false,
-      },
-      {
-        text: t('common.sourceType'),
-        value: 'source_type',
         sortable: false,
       },
       {
