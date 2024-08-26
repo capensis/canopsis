@@ -12,7 +12,7 @@
       <v-tooltip right>
         <template #activator="{ on }">
           <v-icon
-            v-show="item.isResending"
+            v-show="item.is_resending"
             class="blinking"
             color="blue darken-3"
             v-on="on"
@@ -27,7 +27,7 @@
       {{ item.t | date }}
     </template>
     <template #actions="{ item }">
-      <v-layout v-if="item.isRecording">
+      <v-layout v-if="item.is_recording">
         <c-action-btn
           :tooltip="$t('eventsRecord.stop')"
           color="blue darken-3"

@@ -63,7 +63,7 @@ export default {
         ? eventsRecords.value.map(
           eventsRecord => (
             eventsRecord._id === current.value._id
-              ? { ...eventsRecord, ...pick(current.value, ['isResending', 'isRecording', 'count']) }
+              ? { ...eventsRecord, ...pick(current.value, ['is_resending', 'is_recording', 'count']) }
               : eventsRecord
           ),
         )
