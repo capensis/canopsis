@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
 	"regexp"
@@ -17,12 +18,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 const EnvVar = "Env"
 
 var ErrFailedConvertToInt64 = errors.New("failed convert to int64")
 var ErrDivisionByZero = errors.New("division by zero")
+var ErrFailedConvertToStringSlice = errors.New("failed convert to []string")
 
 type ParsedTemplate struct {
 	Text string
@@ -370,6 +373,21 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 				return x / y, nil
 			})
+		},
+		"strjoin": func(raw any, sep string) (string, error) {
+			switch val := raw.(type) {
+			case []string:
+				return strings.Join(val, sep), nil
+			case []any:
+				strSlice, ok := utils.InterfaceSliceToStringSlice(val)
+				if !ok {
+					return "", ErrFailedConvertToStringSlice
+				}
+
+				return strings.Join(strSlice, sep), nil
+			default:
+				return "", fmt.Errorf("unsupported type: %T", val)
+			}
 		},
 	}
 }
