@@ -11,7 +11,7 @@
     </v-layout>
     <v-flex>
       <v-btn
-        v-if="current.isResending"
+        v-if="current.is_resending"
         key="stop"
         color="accent"
         @click="stopResending"
@@ -19,7 +19,7 @@
         {{ $t('eventsRecord.stopResending') }}
       </v-btn>
       <v-btn
-        v-else-if="current.isRecording"
+        v-else-if="current.is_recording"
         key="stop"
         color="accent"
         @click="stopRecording"
@@ -54,8 +54,8 @@ export default {
     const { t } = useI18n();
 
     const message = computed(() => ({
-      [props.current.isRecording]: t('eventsRecord.inProgress'),
-      [props.current.isResending]: t('eventsRecord.resendingInProgress'),
+      [props.current.is_recording]: t('eventsRecord.inProgress'),
+      [props.current.is_resending]: t('eventsRecord.resendingInProgress'),
     }.true));
 
     const startRecording = () => emit('start:recording');

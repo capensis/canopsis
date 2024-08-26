@@ -36,14 +36,14 @@ export default {
       state.pending = false;
     },
     [types.SET_RESENDING]: (state, isResending = false) => {
-      Vue.set(state.current, 'isResending', isResending);
+      Vue.set(state.current, 'is_resending', isResending);
     },
     [types.RESET]: (state) => {
       state.current = {
         count: state.current.count ?? 0,
         t: null,
-        isResending: false,
-        isRecording: false,
+        is_resending: false,
+        is_recording: false,
         _id: '',
       };
     },
