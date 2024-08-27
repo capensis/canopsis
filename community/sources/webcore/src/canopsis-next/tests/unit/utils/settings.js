@@ -1,5 +1,5 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises } from '@unit/utils/vue';
 
 import {
   createActiveViewModule,
@@ -43,7 +43,7 @@ export const submitWithExpects = async (wrapper, { fetchActiveView, hideSidebar,
 
   widgetSettings.$emit('submit');
 
-  await flushPromises();
+  await flushPromises(true);
 
   expect(widgetMethod).toHaveBeenCalledTimes(1);
   expect(widgetMethod).toHaveBeenLastCalledWith(

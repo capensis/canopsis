@@ -1,8 +1,6 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
-
-import { generateRenderer } from '@unit/utils/vue';
 
 import TextWidget from '@/components/widgets/text/text.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
