@@ -105,12 +105,14 @@ import {
  */
 
 /**
- * Remove 'Event.ExtraInfos.' prefix from value, if it exists
+ * Remove 'Event.ExtraInfos.' prefix from value, if it exists for dictionary type
  *
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const eventFilterActionValueToForm = (eventFilterActionValue = '') => eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
+export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') => (
+  eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '')
+);
 
 /**
  * Convert event filter action to form
@@ -122,7 +124,9 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => ({
   key: uid(),
   type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
   name: eventFilterAction.name ?? '',
-  value: eventFilterActionValueToForm(eventFilterAction.value),
+  value: eventFilterAction.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
+    ? eventFilterDictionaryActionValueToForm(eventFilterAction.value)
+    : eventFilterAction.value,
   description: eventFilterAction.description ?? '',
 });
 

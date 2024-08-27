@@ -8,9 +8,10 @@
         <v-layout column>
           <v-layout>
             <v-select
-              v-field="form.type"
+              :value="form.type"
               :items="eventFilterActionTypes"
               :label="$t('common.type')"
+              @change="changeActionType"
             />
             <v-btn
               class="mr-0"
@@ -189,12 +190,24 @@ export default {
       return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === this.form.type;
     },
   },
-  watch: {
-    'form.type': function typeWatcher() {
+  methods: {
+    changeActionType(type) {
+      const newForm = {
+        ...this.form,
+
+        type,
+      };
+
+      if (this.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${this.form.value}`;
+      } else if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = this.form.value.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
+      }
+
+      this.updateModel(newForm);
       this.errors.clear();
     },
-  },
-  methods: {
+
     remove() {
       this.$emit('remove', this.form);
     },
