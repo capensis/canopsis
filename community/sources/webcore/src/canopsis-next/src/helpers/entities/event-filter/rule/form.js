@@ -181,6 +181,16 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
 });
 
 /**
+ * Add 'Event.ExtraInfos.' prefix for value for dictionary type
+ *
+ * @param {string} [eventFilterActionValue = '']
+ * @returns {string}
+ */
+export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = '') => (
+  `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionValue}`
+);
+
+/**
  * Convert from to event filter action fields
  *
  * @param {EventFilterActionForm} eventFilterActionForm
@@ -189,7 +199,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
 export const formToEventFilterAction = eventFilterActionForm => (omit({
   ...eventFilterActionForm,
   value: eventFilterActionForm.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
-    ? `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionForm.value}`
+    ? formToEventFilterDictionaryActionValue(eventFilterActionForm.value)
     : eventFilterActionForm.value,
 }, ['key']));
 
