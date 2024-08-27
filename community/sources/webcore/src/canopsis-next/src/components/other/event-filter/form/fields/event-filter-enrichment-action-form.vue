@@ -79,7 +79,7 @@
                 :name="valueFieldName"
                 class="ml-2"
               />
-              <event-filter-enrichment-action-form-select-rags-value
+              <event-filter-enrichment-action-form-select-tags-value
                 v-else-if="isSelectValueType"
                 v-field="form.value"
                 key="value"
@@ -117,13 +117,13 @@ import {
 import { formMixin } from '@/mixins/form';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
-import EventFilterEnrichmentActionFormSelectRagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
+import EventFilterEnrichmentActionFormSelectTagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     EventFilterEnrichmentActionFormTypeInfo,
-    EventFilterEnrichmentActionFormSelectRagsValue,
+    EventFilterEnrichmentActionFormSelectTagsValue,
   },
   mixins: [formMixin],
   model: {
