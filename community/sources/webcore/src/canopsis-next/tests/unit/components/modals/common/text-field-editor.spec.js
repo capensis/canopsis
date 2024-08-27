@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -60,6 +59,8 @@ describe('text-field-editor', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Form submitted with empty string after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
@@ -79,7 +80,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
@@ -109,7 +110,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(value);
     expect($modals.hide).toBeCalledWith();
@@ -149,7 +150,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -173,7 +174,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -201,7 +202,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper.getValidator().errors.any()).toBeTruthy();
 
@@ -237,7 +238,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -271,7 +272,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -305,7 +306,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -344,7 +345,7 @@ describe('text-field-editor', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
@@ -366,7 +367,7 @@ describe('text-field-editor', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -32,9 +31,6 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectManualMetaAlarmForm = wrapper => wrapper.find('manual-meta-alarm-form-stub');
 
 describe('create-manual-meta-alarm', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
 
   const alarm = {
@@ -87,6 +83,10 @@ describe('create-manual-meta-alarm', () => {
     },
   });
 
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   test('Default parameters applied to form', () => {
     const wrapper = factory({
       mocks: {
@@ -133,7 +133,7 @@ describe('create-manual-meta-alarm', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       name: newData.metaAlarm,
@@ -175,7 +175,7 @@ describe('create-manual-meta-alarm', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -199,7 +199,7 @@ describe('create-manual-meta-alarm', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

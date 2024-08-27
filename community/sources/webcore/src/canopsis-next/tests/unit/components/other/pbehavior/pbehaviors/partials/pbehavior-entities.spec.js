@@ -1,8 +1,7 @@
 import { range } from 'lodash';
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorEntitiesModule } from '@unit/utils/store';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';

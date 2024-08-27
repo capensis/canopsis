@@ -1,8 +1,7 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { omit } from 'lodash';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';

@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { fakeAlarm } from '@unit/data/alarm';

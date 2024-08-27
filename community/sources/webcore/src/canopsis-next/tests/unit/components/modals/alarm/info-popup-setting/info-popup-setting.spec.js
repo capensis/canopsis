@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -55,6 +54,8 @@ describe('info-popup-setting', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
     const infoPopups = [
@@ -80,7 +81,7 @@ describe('info-popup-setting', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(infoPopups);
     expect($modals.hide).toBeCalledWith();
@@ -102,7 +103,7 @@ describe('info-popup-setting', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -163,7 +164,7 @@ describe('info-popup-setting', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith([
       ...infoPopups,
@@ -233,7 +234,7 @@ describe('info-popup-setting', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith([
       infoPopups[0],
@@ -276,7 +277,7 @@ describe('info-popup-setting', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith([infoPopups[0]]);
     expect($modals.hide).toBeCalled();
@@ -298,7 +299,7 @@ describe('info-popup-setting', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';

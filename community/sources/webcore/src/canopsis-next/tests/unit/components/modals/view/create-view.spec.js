@@ -1,9 +1,8 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 import { omit } from 'lodash';
 
 import { createAuthModule, createMockedStoreModules, createViewModule } from '@unit/utils/store';
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockRouter } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -110,6 +109,8 @@ describe('create-view', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('View created after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
@@ -123,7 +124,7 @@ describe('create-view', () => {
       store,
     });
 
-    await flushPromises();
+    await flushPromises(true);
 
     const newView = {
       ...fakedViewWithoutId,
@@ -139,7 +140,7 @@ describe('create-view', () => {
     selectViewForm(wrapper).vm.$emit('input', newView);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       ...newView,
@@ -161,12 +162,12 @@ describe('create-view', () => {
       store,
     });
 
-    await flushPromises();
+    await flushPromises(true);
 
     selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -188,7 +189,7 @@ describe('create-view', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       ...fakedViewWithoutId,
@@ -215,7 +216,7 @@ describe('create-view', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -236,12 +237,12 @@ describe('create-view', () => {
       store,
     });
 
-    await flushPromises();
+    await flushPromises(true);
 
     selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       ...fakedViewWithoutId,
@@ -267,12 +268,12 @@ describe('create-view', () => {
       store,
     });
 
-    await flushPromises();
+    await flushPromises(true);
 
     selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -294,7 +295,7 @@ describe('create-view', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       ...fakedViewWithoutId,
@@ -323,7 +324,7 @@ describe('create-view', () => {
 
     selectRemoveButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.confirmation,
@@ -359,7 +360,7 @@ describe('create-view', () => {
 
     selectRemoveButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.confirmation,

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ALARM_FIELDS, DATETIME_FORMATS } from '@/constants';
 
