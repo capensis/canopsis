@@ -109,6 +109,11 @@ import {
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
 } from '@/constants';
 
+import {
+  eventFilterDictionaryActionValueToForm,
+  formToEventFilterDictionaryActionValue,
+} from '@/helpers/entities/event-filter/rule/form';
+
 import { formMixin } from '@/mixins/form';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
@@ -199,9 +204,9 @@ export default {
       };
 
       if (this.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
-        newForm.value = `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${this.form.value}`;
+        newForm.value = formToEventFilterDictionaryActionValue(this.form.value);
       } else if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
-        newForm.value = this.form.value.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
+        newForm.value = eventFilterDictionaryActionValueToForm(this.form.value);
       }
 
       this.updateModel(newForm);
