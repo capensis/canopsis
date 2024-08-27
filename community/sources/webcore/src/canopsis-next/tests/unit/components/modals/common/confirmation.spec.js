@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import Confirmation from '@/components/modals/common/confirmation.vue';
@@ -32,6 +30,8 @@ describe('confirmation', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Submit action called after trigger submit button', async () => {
     const cancel = jest.fn();
     const action = jest.fn();
@@ -53,7 +53,7 @@ describe('confirmation', () => {
 
     submitButton.vm.$emit('click', new Event('click'));
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith();
     expect($modals.hide).toBeCalledWith();
@@ -82,7 +82,7 @@ describe('confirmation', () => {
 
     submitButton.vm.$emit('click', new Event('click'));
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
 

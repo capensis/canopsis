@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
 
 import AlarmStateCounters from '@/components/widgets/service-weather/alarm-state-counters.vue';

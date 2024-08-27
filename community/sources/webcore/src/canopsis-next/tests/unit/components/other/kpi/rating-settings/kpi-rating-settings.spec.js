@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
 

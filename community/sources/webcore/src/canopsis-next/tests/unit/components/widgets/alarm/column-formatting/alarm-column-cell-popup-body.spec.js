@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import AlarmColumnCellPopupBody from '@/components/widgets/alarm/columns-formatting/alarm-column-cell-popup-body.vue';

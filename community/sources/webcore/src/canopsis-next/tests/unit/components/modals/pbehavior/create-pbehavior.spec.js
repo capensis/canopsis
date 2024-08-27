@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -68,6 +67,8 @@ describe('create-pbehavior', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
@@ -82,7 +83,7 @@ describe('create-pbehavior', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(defaultPbehavior);
     expect($modals.hide).toBeCalledWith();
@@ -114,7 +115,7 @@ describe('create-pbehavior', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -131,7 +132,7 @@ describe('create-pbehavior', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -155,7 +156,7 @@ describe('create-pbehavior', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -190,7 +191,7 @@ describe('create-pbehavior', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -230,7 +231,7 @@ describe('create-pbehavior', () => {
     selectPbehaviorForm(wrapper).vm.$emit('input', newForm);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       ...defaultPbehavior,
@@ -250,7 +251,7 @@ describe('create-pbehavior', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
