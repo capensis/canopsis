@@ -114,9 +114,6 @@ describe('context', () => {
     parentComponent,
   });
 
-  const nowTimestamp = 1386435600000;
-  jest.useFakeTimers({ now: nowTimestamp });
-
   const {
     createWidget,
     updateWidget,
@@ -157,6 +154,10 @@ describe('context', () => {
     serviceModule,
     infosModule,
   ]);
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   afterEach(() => {
     createWidget.mockReset();

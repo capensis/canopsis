@@ -102,6 +102,8 @@ describe('text', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
