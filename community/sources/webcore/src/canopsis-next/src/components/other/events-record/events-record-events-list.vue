@@ -131,6 +131,11 @@ export default {
         sortable: false,
       },
       {
+        text: t('common.sourceType'),
+        value: 'source_type',
+        sortable: false,
+      },
+      {
         text: t('common.connector'),
         value: 'connector',
         sortable: false,
