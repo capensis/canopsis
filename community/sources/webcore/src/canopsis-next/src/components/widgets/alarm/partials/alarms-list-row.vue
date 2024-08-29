@@ -64,6 +64,7 @@
         <c-booted-placeholder-loader
           v-if="header.value === 'actions'"
           :eager="eager"
+          class="layout align-center"
           async-booting-provider="$asyncBootingActionsPanel"
         >
           <actions-panel
