@@ -172,6 +172,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} isVirtualScrollEnabled
+ * @property {boolean} isCorrelationEnabled
  * @property {boolean} sticky_header
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
@@ -354,6 +355,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
+  isCorrelationEnabled: !!parameters.isCorrelationEnabled,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput

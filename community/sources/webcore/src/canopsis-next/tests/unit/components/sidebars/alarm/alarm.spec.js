@@ -135,6 +135,10 @@ const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle
   wrapper,
   'Actions allowed when state OK?',
 );
+const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Is correlation enabled by default?',
+);
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
@@ -1363,6 +1367,32 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isActionsAllowWithOkState', isActionsAllowWithOkState),
+      },
+    });
+  });
+
+  test('Actions allowed with state ok changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const isCorrelationEnabled = Faker.datatype.boolean();
+
+    selectFieldCorrelationEnabled(wrapper).triggerCustomEvent('input', isCorrelationEnabled);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isCorrelationEnabled', isCorrelationEnabled),
       },
     });
   });
