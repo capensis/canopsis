@@ -94,7 +94,7 @@ fi
 %package webui
 Summary: Canopsis WebUI
 
-Requires: nginx >= 1:1.20, nginx < 1:1.21
+Requires: nginx >= 1:1.20, nginx < 1:1.24
 
 %description webui
 Canopsis WebUI RPM Package
