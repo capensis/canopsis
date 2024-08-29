@@ -15,6 +15,7 @@
       key="content"
       class="fill-height"
       wrap
+      justify-center
     >
       <v-alert
         v-if="hasNoData"

@@ -234,6 +234,7 @@ export const AVAILABLE_COUNTERS = {
   total_active: 'total_active',
   snooze: 'snooze',
   ack: 'ack',
+  unack: 'unack',
   ticket: 'ticket',
   pbehavior_active: 'pbehavior_active',
 };
