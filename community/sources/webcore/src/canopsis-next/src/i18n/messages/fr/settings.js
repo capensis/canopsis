@@ -64,6 +64,7 @@ export default {
   fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
   isCorrelationEnabled: 'Corrélation activée ?',
+  isCorrelationEnabledDefault: 'La corrélation est-elle activée par défaut ?',
   duration: 'Durée',
   tstop: 'Date de fin',
   periodsNumber: 'Nombre d\'étapes',
