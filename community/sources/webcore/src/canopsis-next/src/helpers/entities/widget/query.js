@@ -105,7 +105,7 @@ export function prepareWidgetQuery(widget, userPreference) {
   };
 
   if (query.filter) {
-    const allFiltersIds = mapIds([...widget.filters, ...userPreference.filters]);
+    const allFiltersIds = mapIds([...(widget.filters || []), ...(userPreference.filters || [])]);
 
     if (!allFiltersIds.includes(query.filter)) {
       query = omit(query, ['filter']);
