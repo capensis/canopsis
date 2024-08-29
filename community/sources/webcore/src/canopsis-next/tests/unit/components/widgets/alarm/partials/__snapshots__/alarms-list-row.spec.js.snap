@@ -31,6 +31,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -112,6 +113,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -166,6 +168,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -211,6 +214,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -253,6 +257,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -292,6 +297,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -337,6 +343,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -361,6 +368,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
@@ -414,6 +422,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
   >
     <c-booted-placeholder-loader-stub
       async-booting-provider="$asyncBootingActionsPanel"
+      class="layout align-center"
     >
       <actions-panel-stub
         item="[object Object]"
