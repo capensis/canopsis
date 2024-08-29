@@ -96,6 +96,8 @@ export function convertWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function prepareWidgetQuery(widget, userPreference) {
+  const { filters: widgetFilters = [] } = widget;
+  const { filters: userPreferenceFilters } = userPreference;
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
 
@@ -105,7 +107,7 @@ export function prepareWidgetQuery(widget, userPreference) {
   };
 
   if (query.filter) {
-    const allFiltersIds = mapIds([...(widget.filters || []), ...(userPreference.filters || [])]);
+    const allFiltersIds = mapIds([...widgetFilters, ...userPreferenceFilters]);
 
     if (!allFiltersIds.includes(query.filter)) {
       query = omit(query, ['filter']);
