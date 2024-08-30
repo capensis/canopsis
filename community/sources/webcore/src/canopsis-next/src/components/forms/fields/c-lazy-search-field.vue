@@ -317,14 +317,11 @@ export default {
     max-height: 32px;
   }
 
-  .v-chip--select {
+  &__chip {
     max-width: 100%;
 
     .v-chip__content {
       max-width: 100%;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
     }
   }
 }
