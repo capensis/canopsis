@@ -97,7 +97,7 @@ import {
   onBeforeUnmount,
 } from 'vue';
 
-import { useValidator } from '@/hooks/validator/validator';
+import { useInjectValidator } from '@/hooks/validator/inject-validator';
 
 export default {
   inheritAttrs: false,
@@ -180,7 +180,7 @@ export default {
     const isFocused = ref(false);
     const appendElement = ref(null);
 
-    const validator = useValidator();
+    const validator = useInjectValidator();
 
     const isMultiple = computed(() => isArray(props.value));
     const menuProps = computed(() => ({ contentClass: 'c-lazy-search-field__list', eager: true }));
