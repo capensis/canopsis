@@ -10,7 +10,8 @@ import VTextarea from './components/v-textarea/v-textarea.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
 import VTooltip from './components/v-tooltip/v-tooltip.vue';
 import VMenu from './components/v-menu/v-menu.vue';
-import VListGroup from './components/v-list-group/v-list-group.vue';
+import VListGroup from './components/v-list/v-list-group.vue';
+import VListTileMask from './components/v-list/v-list-tile-mask.vue';
 import VNavigationDrawer from './components/v-navigation-drawer/v-navigation-drawer.vue';
 import VExpansionPanelContent from './components/v-expansion-panel-content/v-expansion-panel-content.vue';
 import VDialog from './components/v-dialog/v-dialog.vue';
@@ -40,6 +41,7 @@ export default {
     Vue.component('v-expansion-panel-content', VExpansionPanelContent);
     Vue.component('v-navigation-drawer', VNavigationDrawer);
     Vue.component('v-list-group', VListGroup);
+    Vue.component('v-list-tile-mask', VListTileMask);
     Vue.component('v-menu', VMenu);
     Vue.component('v-tooltip', VTooltip);
     Vue.component('v-data-table', VDataTable);
