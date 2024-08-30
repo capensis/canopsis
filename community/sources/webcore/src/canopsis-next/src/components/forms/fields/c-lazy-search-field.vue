@@ -1,7 +1,6 @@
 <template>
   <c-select-field
     v-field="value"
-    v-validate="rules"
     v-bind="$attrs"
     :search-input="search"
     :label="label"
@@ -14,9 +13,10 @@
     :multiple="isMultiple"
     :deletable-chips="isMultiple"
     :small-chips="isMultiple"
-    :error-messages="errors.collect(name)"
+    :chips="isMultiple"
     :disabled="disabled"
-    :menu-props="{ contentClass: 'c-lazy-search-field__list', eager: true }"
+    :required="required"
+    :menu-props="menuProps"
     :clearable="clearable"
     :autocomplete="autocomplete"
     :combobox="!autocomplete"
@@ -27,7 +27,7 @@
     dense
     @focus="onFocus"
     @blur="onBlur"
-    @update:search-input="debouncedUpdateSearch"
+    @update:search-input="updateSearch"
   >
     <template #item="{ item, attrs, on, parent }">
       <slot
@@ -47,7 +47,7 @@
             name="icon"
           />
           <v-list-item-content>
-            {{ getItemText(item) }}
+            <v-list-item-mask :text="getItemText(item)" :mask="internalSearch" />
           </v-list-item-content>
           <span class="ml-4 grey--text">{{ item.type }}</span>
         </v-list-item>
@@ -55,34 +55,28 @@
     </template>
     <template #append-item="">
       <div
-        ref="append"
+        ref="appendElement"
         class="c-lazy-search-field__append"
       />
     </template>
-    <template #selection="{ item, index, parent }">
+    <template v-if="$scopedSlots.selection" #selection="{ item, index, parent }">
       <slot
         :item="item"
         :index="index"
         :parent="parent"
         name="selection"
+      />
+    </template>
+    <template v-else-if="isMultiple" #selection="{ item, parent }">
+      <v-chip
+        v-if="isMultiple"
+        class="c-lazy-search-field__chip"
+        small
+        close
+        @click:close="parent.onChipInput(item)"
       >
-        <v-chip
-          v-if="isMultiple"
-          class="c-lazy-search-field__chip"
-          small
-          close
-          @click:close="removeItemFromArray(index)"
-        >
-          <span class="text-truncate">{{ getItemText(item) }}</span>
-        </v-chip>
-        <slot
-          v-else
-          :item="item"
-          name="selection"
-        >
-          {{ getItemText(item) }}
-        </slot>
-      </slot>
+        <span class="text-truncate">{{ getItemText(item) }}</span>
+      </v-chip>
     </template>
   </c-select-field>
 </template>
@@ -95,12 +89,17 @@ import {
   isFunction,
   get,
 } from 'lodash';
+import {
+  computed,
+  ref,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useValidator } from '@/hooks/validator/validator';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formArrayMixin],
   inheritAttrs: false,
   model: {
     prop: 'value',
@@ -171,76 +170,126 @@ export default {
       type: String,
       default: null,
     },
-  },
-  data() {
-    return {
-      isFocused: false,
-    };
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-
-    isMultiple() {
-      return isArray(this.value);
+    debounce: {
+      type: Number,
+      default: 300,
     },
   },
-  created() {
-    this.debouncedUpdateSearch = debounce(this.updateSearch, 300);
-  },
-  mounted() {
-    this.observer = new IntersectionObserver(this.intersectionHandler);
+  setup(props, { emit }) {
+    const internalSearch = ref(props.search);
+    const isFocused = ref(false);
+    const appendElement = ref(null);
 
-    this.observer.observe(this.$refs.append);
-  },
-  beforeDestroy() {
-    this.observer.unobserve(this.$refs.append);
-  },
-  methods: {
-    getItemText(item) {
+    const validator = useValidator();
+
+    const isMultiple = computed(() => isArray(props.value));
+    const menuProps = computed(() => ({ contentClass: 'c-lazy-search-field__list', eager: true }));
+
+    /**
+     * Set the internal search value.
+     * @param {any} value - The value to set as the internal search.
+     */
+    const setInternalSearch = value => internalSearch.value = value;
+
+    /**
+     * Emit an update search event.
+     *
+     * @param {any} value - The value to emit for the update search event.
+     */
+    const emitUpdateSearch = value => emit('update:search', value);
+
+    /**
+     * Debounced version of `emitUpdateSearch` based on the specified throttle time.
+     *
+     * @param {any} value - The value to emit for the update search event.
+     */
+    const debouncedEmitUpdateSearch = debounce(emitUpdateSearch, props.throttle);
+
+    /**
+     * Get the text of an item based on the provided item.
+     *
+     * @param {any} item - The item to get the text from.
+     * @returns {string} The text of the item.
+     */
+    const getItemText = (item) => {
       if (isString(item)) {
         return item;
       }
 
-      return isFunction(this.itemText) ? this.itemText(item) : get(item, this.itemText);
-    },
+      return isFunction(props.itemText) ? props.itemText(item) : get(item, props.itemText);
+    };
 
-    intersectionHandler(entries) {
+    /**
+     * Update the search value and emit the update event if conditions are met.
+     *
+     * @param {any} value - The new value for the search.
+     * @param {boolean} [force = false] - Whether to force emit the update event.
+     */
+    const updateSearch = (value, force = false) => {
+      if (validator.errors.has(props.name)) {
+        validator.errors.remove(props.name);
+      }
+
+      setInternalSearch(value);
+
+      if (force) {
+        emitUpdateSearch(value);
+      } else if (isFocused.value) {
+        debouncedEmitUpdateSearch(value);
+      }
+    };
+
+    /**
+     * Handle the focus event.
+     */
+    const onFocus = () => {
+      isFocused.value = true;
+
+      if (!props.items.length) {
+        emit('fetch');
+      }
+    };
+
+    /**
+     * Handle the blur event.
+     */
+    const onBlur = () => isFocused.value = false;
+
+    /**
+     * Handle the intersection observer callback for lazy loading more items.
+     *
+     * @param {IntersectionObserverEntry[]} entries - The entries observed by the intersection observer.
+     */
+    const intersectionHandler = (entries) => {
       const [entry] = entries;
 
-      if (entry.isIntersecting && this.hasMore) {
-        this.fetchItems();
+      if (entry.isIntersecting && props.hasMore) {
+        emit('fetch:more');
       }
-    },
+    };
 
-    updateSearch(value) {
-      if (this.isFocused) {
-        this.$emit('update:search', value);
-      }
-    },
+    const observer = new IntersectionObserver(intersectionHandler);
 
-    onFocus() {
-      this.isFocused = true;
+    watch(() => props.search, setInternalSearch);
+    watch(isMultiple, () => updateSearch(null, true));
 
-      if (!this.items.length) {
-        this.$emit('fetch');
-      }
-    },
+    onMounted(() => observer.observe(appendElement.value));
+    onBeforeUnmount(() => observer.unobserve(appendElement.value));
 
-    onBlur() {
-      this.isFocused = false;
-    },
+    return {
+      appendElement,
 
-    fetchItems() {
-      this.$emit('fetch:more');
-    },
+      internalSearch,
+      isFocused,
+      menuProps,
 
-    updateValue(value) {
-      this.updateModel(this.returnObject ? value : get(value, this.itemValue));
-    },
+      isMultiple,
+
+      getItemText,
+      updateSearch,
+      onFocus,
+      onBlur,
+    };
   },
 };
 </script>
@@ -268,11 +317,14 @@ export default {
     max-height: 32px;
   }
 
-  &__chip {
+  .v-chip--select {
     max-width: 100%;
 
     .v-chip__content {
       max-width: 100%;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
     }
   }
 }
