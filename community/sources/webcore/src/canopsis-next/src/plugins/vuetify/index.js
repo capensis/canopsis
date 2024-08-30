@@ -16,7 +16,8 @@ import VSpeedDial from './components/v-speed-dial/v-speed-dial.vue';
 import VCalendar from './components/v-calendar/v-calendar.vue';
 import VTooltip from './components/v-tooltip/v-tooltip.vue';
 import VSelect from './components/v-select/v-select.vue';
-import VListGroup from './components/v-list-group/v-list-group.vue';
+import VListGroup from './components/v-list/v-list-group.vue';
+import VListItemMask from './components/v-list/v-list-item-mask.vue';
 import VTabs from './components/v-tabs/v-tabs.vue';
 
 import './styles/vuetify.scss';
@@ -37,6 +38,7 @@ export const createVuetify = (Vue, options) => {
       VTooltip,
       VSelect,
       VListGroup,
+      VListItemMask,
       VCombobox,
       VTabs,
     },
