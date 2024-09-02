@@ -6,9 +6,10 @@
         v-layout(column)
           v-layout(row)
             v-select(
-              v-field="form.type",
+              :value="form.type",
               :items="eventFilterActionTypes",
-              :label="$t('common.type')"
+              :label="$t('common.type')",
+              @change="changeActionType"
             )
             v-btn.mr-0(icon, @click="remove")
               v-icon(color="error") delete
@@ -70,11 +71,19 @@ import {
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
 } from '@/constants';
 
+import {
+  eventFilterDictionaryActionValueToForm,
+  formToEventFilterDictionaryActionValue,
+} from '@/helpers/entities/event-filter/rule/form';
+
+import { formBaseMixin } from '@/mixins/form';
+
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
 export default {
   inject: ['$validator'],
   components: { EventFilterEnrichmentActionFormTypeInfo },
+  mixins: [formBaseMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -132,12 +141,24 @@ export default {
       return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === this.form.type;
     },
   },
-  watch: {
-    'form.type': function typeWatcher() {
+  methods: {
+    changeActionType(type) {
+      const newForm = {
+        ...this.form,
+
+        type,
+      };
+
+      if (this.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = formToEventFilterDictionaryActionValue(this.form.value);
+      } else if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = eventFilterDictionaryActionValueToForm(this.form.value);
+      }
+
+      this.updateModel(newForm);
       this.errors.clear();
     },
-  },
-  methods: {
+
     remove() {
       this.$emit('remove', this.form);
     },
