@@ -1,12 +1,12 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createDeclareTicketModule, createMockedStoreModules } from '@unit/utils/store';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateDeclareTicketEvent from '@/components/modals/declare-ticket/create-declare-ticket-event.vue';
@@ -30,9 +30,6 @@ const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 
 describe('create-declare-ticket-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -101,6 +98,10 @@ describe('create-declare-ticket-event', () => {
     },
   });
 
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
 
@@ -120,7 +121,7 @@ describe('create-declare-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledTimes(1);
     expect(action).toBeCalledWith([], false);
@@ -149,7 +150,7 @@ describe('create-declare-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -173,7 +174,7 @@ describe('create-declare-ticket-event', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

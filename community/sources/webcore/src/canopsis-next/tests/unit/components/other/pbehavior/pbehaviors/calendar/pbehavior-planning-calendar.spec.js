@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { Day } from 'dayspan';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 

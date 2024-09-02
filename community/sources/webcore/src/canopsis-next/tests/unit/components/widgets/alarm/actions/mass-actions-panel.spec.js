@@ -1,8 +1,7 @@
 import Faker from 'faker';
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAuthModule,

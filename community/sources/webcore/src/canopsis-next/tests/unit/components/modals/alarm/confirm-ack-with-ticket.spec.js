@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -43,6 +41,8 @@ describe('confirm-ack-with-ticket', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Ack confirmed after trigger continue button', async () => {
     const continueAction = jest.fn();
     const wrapper = factory({
@@ -60,7 +60,7 @@ describe('confirm-ack-with-ticket', () => {
 
     continueButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(continueAction).toBeCalledWith();
     expect($modals.hide).toBeCalledWith();
@@ -83,7 +83,7 @@ describe('confirm-ack-with-ticket', () => {
 
     continueWithTicketButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(continueWithTicketAction).toBeCalledWith();
     expect($modals.hide).toBeCalledWith();
@@ -105,7 +105,7 @@ describe('confirm-ack-with-ticket', () => {
 
     continueButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -126,7 +126,7 @@ describe('confirm-ack-with-ticket', () => {
 
     continueWithTicketButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -147,7 +147,7 @@ describe('confirm-ack-with-ticket', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

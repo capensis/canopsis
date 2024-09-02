@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -35,9 +34,6 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectAssociateTicketEventForm = wrapper => wrapper.find('associate-ticket-event-form-stub');
 
 describe('create-associate-ticket-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -121,6 +117,10 @@ describe('create-associate-ticket-event', () => {
     },
   });
 
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   afterEach(() => {
     createEvent.mockClear();
   });
@@ -147,7 +147,7 @@ describe('create-associate-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       comment: '',
@@ -186,7 +186,7 @@ describe('create-associate-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(createEvent).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -219,7 +219,7 @@ describe('create-associate-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -256,7 +256,7 @@ describe('create-associate-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -284,7 +284,7 @@ describe('create-associate-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toHaveBeenCalledWith(assocTicketEventData);
     expect($modals.hide).toBeCalled();
@@ -306,7 +306,7 @@ describe('create-associate-ticket-event', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

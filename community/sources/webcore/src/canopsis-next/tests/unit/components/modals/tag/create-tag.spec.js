@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { COLORS } from '@/config';
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -51,6 +50,8 @@ describe('create-tag', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
@@ -70,7 +71,7 @@ describe('create-tag', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       value: '',
@@ -112,7 +113,7 @@ describe('create-tag', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -134,7 +135,7 @@ describe('create-tag', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -163,7 +164,7 @@ describe('create-tag', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -210,7 +211,7 @@ describe('create-tag', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -250,7 +251,7 @@ describe('create-tag', () => {
     selectTagForm(wrapper).vm.$emit('input', newForm);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(newForm);
     expect($modals.hide).toBeCalled();
@@ -270,7 +271,7 @@ describe('create-tag', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });
