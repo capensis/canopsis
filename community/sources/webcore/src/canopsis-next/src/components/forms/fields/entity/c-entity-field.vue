@@ -28,13 +28,10 @@ import { createNamespacedHelpers } from 'vuex';
 import { BASIC_ENTITY_TYPES } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
-import { formArrayMixin } from '@/mixins/form';
-
 const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 
 export default {
   inject: ['$validator'],
-  mixins: [formArrayMixin],
   model: {
     prop: 'value',
     event: 'input',
