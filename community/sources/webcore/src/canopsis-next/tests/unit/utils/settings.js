@@ -43,7 +43,7 @@ export const submitWithExpects = async (wrapper, { fetchActiveView, hideSidebar,
 
   widgetSettings.$emit('submit');
 
-  await flushPromises();
+  await flushPromises(true);
 
   expect(widgetMethod).toHaveBeenCalledTimes(1);
   expect(widgetMethod).toHaveBeenLastCalledWith(
