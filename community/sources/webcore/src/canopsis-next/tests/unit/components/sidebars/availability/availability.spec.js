@@ -44,9 +44,6 @@ const generateDefaultAvailabilityWidget = () => ({
 const selectWidgetForm = wrapper => wrapper.find('availability-form-stub');
 
 describe('availability-settings', () => {
-  const nowTimestamp = 1386435600000;
-  jest.useFakeTimers({ now: nowTimestamp });
-
   const $sidebar = mockSidebar();
 
   const {
@@ -108,6 +105,10 @@ describe('availability-settings', () => {
       $sidebar,
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   test('Create widget with default parameters', async () => {
     const localWidget = getEmptyWidgetByType(WIDGET_TYPES.availability);
