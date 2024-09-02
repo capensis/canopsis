@@ -11,24 +11,28 @@
       v-field="form"
       :name="$constants.PATTERNS_FIELDS.alarm"
       :check-count-name="$constants.PATTERNS_FIELDS.alarm"
+      required
     />
     <c-entity-patterns-field
       v-else-if="isEntityPattern"
       v-field="form"
       :name="$constants.PATTERNS_FIELDS.entity"
       :check-count-name="$constants.PATTERNS_FIELDS.entity"
+      required
     />
     <c-pbehavior-patterns-field
       v-else-if="isPbehaviorPattern"
       v-field="form"
       :name="$constants.PATTERNS_FIELDS.pbehavior"
       :check-count-name="$constants.PATTERNS_FIELDS.pbehavior"
+      required
     />
     <c-service-weather-patterns-field
       v-else-if="isServiceWeatherPattern"
       v-field="form"
       :name="$constants.PATTERNS_FIELDS.serviceWeather"
       :check-count-name="$constants.PATTERNS_FIELDS.serviceWeather"
+      required
     />
   </v-layout>
 </template>
