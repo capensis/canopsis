@@ -5,7 +5,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import {
   createSettingsMocks,
   getWidgetRequestWithNewProperty,
@@ -156,10 +156,6 @@ describe('alarm', () => {
     parentComponent,
   });
 
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
-
   const $sidebar = mockSidebar();
 
   const {
@@ -212,6 +208,10 @@ describe('alarm', () => {
     serviceModule,
     infosModule,
   ]);
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   afterEach(() => {
     createWidget.mockReset();
