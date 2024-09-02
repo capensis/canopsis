@@ -52,6 +52,8 @@ describe('text-editor', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Form submitted with empty string after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
@@ -69,7 +71,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
@@ -94,7 +96,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(text);
     expect($modals.hide).toBeCalledWith();
@@ -120,7 +122,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -140,7 +142,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -166,7 +168,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper.getValidator().errors.any()).toBeTruthy();
 
@@ -197,7 +199,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -232,7 +234,7 @@ describe('text-editor', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -268,9 +270,9 @@ describe('text-editor', () => {
     await selectTextEditorField(wrapper).triggerCustomEvent('input', newValue);
     await selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
-
     jest.runAllTimers();
+
+    await flushPromises();
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
