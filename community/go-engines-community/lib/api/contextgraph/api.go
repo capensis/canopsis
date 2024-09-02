@@ -14,6 +14,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const filePerm = 0644
+
 type api struct {
 	reporter    StatusReporter
 	filePattern string
@@ -101,7 +103,7 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 		return "", err
 	}
 
-	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
+	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, filePerm)
 	if err != nil {
 		return "", err
 	}
