@@ -153,7 +153,12 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
       <div
         class="v-list-item__content"
       >
+        <span>
           Text
+          <span
+            class="v-list-item__mask"
+          />
+        </span>
       </div>
       <span
         class="ml-4 grey--text"
@@ -170,7 +175,12 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
       <div
         class="v-list-item__content"
       >
+        <span>
           Text 2
+          <span
+            class="v-list-item__mask"
+          />
+        </span>
       </div>
       <span
         class="ml-4 grey--text"
@@ -187,7 +197,12 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
       <div
         class="v-list-item__content"
       >
+        <span>
           Text 3
+          <span
+            class="v-list-item__mask"
+          />
+        </span>
       </div>
       <span
         class="ml-4 grey--text"
@@ -224,16 +239,11 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
         >
           Custom label
         </label>
-        <div
-          class="v-select__selections"
-        >
-        Text 3
-          <input
-            autocomplete="off"
-            disabled="disabled"
-            type="text"
-          />
-        </div>
+        <input
+          autocomplete="off"
+          disabled="disabled"
+          type="text"
+        />
         <div
           class="v-input__append-inner"
         >
@@ -308,7 +318,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
-  class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-focused v-input--dense theme--light v-text-field v-select v-autocomplete primary--text"
+  class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-focused v-input--is-loading v-input--dense theme--light v-text-field v-select v-autocomplete primary--text"
 >
   <div
     class="v-input__control"
@@ -328,14 +338,10 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
         >
           Entity
         </label>
-        <div
-          class="v-select__selections"
-        >
-          <input
-            autocomplete="off"
-            type="text"
-          />
-        </div>
+        <input
+          autocomplete="off"
+          type="text"
+        />
         <div
           class="v-input__append-inner"
         >
@@ -358,6 +364,35 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
       <div
         class="v-menu"
       />
+      <div
+        aria-valuemax="100"
+        aria-valuemin="0"
+        class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
+        role="progressbar"
+        style="height: 2px;"
+      >
+        <div
+          class="v-progress-linear__background primary"
+          style="opacity: 0.3; left: 0%; width: 100%;"
+        />
+        <div
+          class="v-progress-linear__buffer"
+        />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
+          >
+            <div
+              class="v-progress-linear__indeterminate long primary"
+            />
+            <div
+              class="v-progress-linear__indeterminate short primary"
+            />
+          </div>
+        </transition-stub>
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -395,7 +430,12 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
       <div
         class="v-list-item__content"
       >
+        <span>
           id
+          <span
+            class="v-list-item__mask"
+          />
+        </span>
       </div>
       <span
         class="ml-4 grey--text"
@@ -412,7 +452,12 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
       <div
         class="v-list-item__content"
       >
+        <span>
           id 2
+          <span
+            class="v-list-item__mask"
+          />
+        </span>
       </div>
       <span
         class="ml-4 grey--text"
@@ -429,7 +474,12 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
       <div
         class="v-list-item__content"
       >
+        <span>
           id 3
+          <span
+            class="v-list-item__mask"
+          />
+        </span>
       </div>
       <span
         class="ml-4 grey--text"
