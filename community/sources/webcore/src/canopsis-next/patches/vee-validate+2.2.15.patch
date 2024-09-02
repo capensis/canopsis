@@ -1,0 +1,13 @@
+diff --git a/node_modules/vee-validate/dist/vee-validate.esm.js b/node_modules/vee-validate/dist/vee-validate.esm.js
+index a267f56..5811d51 100755
+--- a/node_modules/vee-validate/dist/vee-validate.esm.js
++++ b/node_modules/vee-validate/dist/vee-validate.esm.js
+@@ -1464,7 +1464,7 @@ Resolver.generate = function generate (el, binding, vnode) {
+     immediate: !!binding.modifiers.initial || !!binding.modifiers.immediate,
+     persist: !!binding.modifiers.persist,
+     validity: options.validity && !vnode.componentInstance,
+-    aria: options.aria && !vnode.componentInstance,
++    aria: !!options.aria,
+     initialValue: Resolver.resolveInitialValue(vnode)
+   };
+ };

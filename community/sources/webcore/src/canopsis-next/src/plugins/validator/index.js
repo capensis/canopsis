@@ -32,6 +32,7 @@ export default {
     Vue.use(VeeValidate, {
       i18n,
       inject: false,
+      aria: true,
       silentTranslationWarn: false,
     });
 
@@ -63,7 +64,8 @@ export default {
 
       /* eslint-disable */
       bind(el, binding, vnode) {
-        const validatorOptions = getParentValidatorOptions(vnode.context)
+        const validatorOptions = getParentValidatorOptions(vnode.context);
+
         sourceDirective.bind.call(this, el, binding, vnode);
 
         const field = findField(el, vnode.context);
