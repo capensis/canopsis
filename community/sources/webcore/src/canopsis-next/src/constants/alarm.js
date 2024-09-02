@@ -921,7 +921,7 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   availability: 'availability',
 };
 
-export const ALARM_LINK_ICON_CHIP_WIDTH = 24;
+export const ALARM_LINK_ICON_CHIP_WIDTH = 26;
 
 export const ALARM_LINK_ICON_CHIP_COLUMN_GAP = {
   [ALARM_DENSE_TYPES.large]: 8,
