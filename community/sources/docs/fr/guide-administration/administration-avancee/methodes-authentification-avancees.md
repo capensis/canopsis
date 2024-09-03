@@ -373,7 +373,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
 - lastname
 - role (Supporte le [multi-roles](#multi-role))
 
-=== Mapper avec "OAuth2"
+=== "Mapper avec OAuth2"
 
     Pour OAuth2, il faut explicitement définir le chemin vers l'identifiant utilisateur en utilisant le champ `user_id`. Les autres champs sont optionnels.
     L'API fait une requête à l'adresse définie dans le `user_url` pour récupérer les informations utilisateurs. Les informations sont utilisables dans le mapping en utilisant comme prefix `user.`.
@@ -416,7 +416,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
               role: user.role
     ```
 
-=== Mapper avec "OpenID"
+=== "Mapper avec OpenID"
 
     Pour OpenID, il n'est pas possible de définir le `user_id` car l'ID est contenu directement dans le token JWT OpenID `id_token`. 
     **Note**: le champ `user_id` est ignoré si le champ `open_id` est défini à `true`.
