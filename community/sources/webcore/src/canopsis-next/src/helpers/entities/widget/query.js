@@ -91,7 +91,7 @@ export function convertWidgetToQuery(widget) {
  */
 export function prepareWidgetQuery(widget, userPreference) {
   const { filters: widgetFilters = [] } = widget;
-  const { filters: userPreferenceFilters } = userPreference;
+  const { filters: userPreferenceFilters = [] } = userPreference;
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
 
