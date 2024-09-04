@@ -6,7 +6,7 @@ Convertit des évènements de supervision Nagios/Icinga en évènements Canopsis
 
 Il est écrit en C.
 
-**Note :** certains modules Nagios-like étaient parfois compatibles avec Centreon, mais ce n'est plus le cas dans ses dernières versions. Centreon nécessite dorénavant un module dédié, [connector-centreon-engine](Centreon.md).
+**Note :** certains modules Nagios-like étaient parfois compatibles avec Centreon, mais ce n'est plus le cas dans ses dernières versions. Centreon nécessite dorénavant un module dédié, [Centreon Stream Connector](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/).
 
 ## Installation
 

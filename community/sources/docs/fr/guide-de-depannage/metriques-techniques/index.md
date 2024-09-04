@@ -64,7 +64,7 @@ Les données collectées sont stockées dans une base TimescaleDB (donc PostgreS
 
 ### Activation des collectes
 
-La collecte ne sera active que lorsque l'option sera activée dans le fichier [canopsis.toml](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsistech_metrics) 
+La collecte ne sera active que lorsque l'option sera activée dans le fichier [canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsistech_metrics)
 
 ```
 [Canopsis.tech_metrics]

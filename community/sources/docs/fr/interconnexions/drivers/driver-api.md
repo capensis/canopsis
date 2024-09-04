@@ -260,7 +260,7 @@ Résultat:
 
 ![Template](./img/driver-api-template.png)
 
-Il est également possible d'utiliser des fonctions dans les templates ([Liste des fonctions disponibles](../../../guide-administration/architecture-interne/templates-golang/))
+Il est également possible d'utiliser des fonctions dans les templates ([Liste des fonctions disponibles](../../guide-utilisation/templates-go/index.md))
 
 ```yaml
 infos:
@@ -374,4 +374,4 @@ Retour :
 
 ## Cas d'usage complet
 
-[Ici](../cas-d-usage-complet/)
+[Ici](cas-d-usage-complet.md)
