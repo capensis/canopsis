@@ -40,7 +40,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.CleanPerfDataWaitTime, "cleanPerfDataWaitTime", 24*time.Hour, "Duration to keep deleted perf data in entities")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
-	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process main event flow")
+	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process each event flow")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 
 	flag.Parse()

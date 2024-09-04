@@ -148,11 +148,12 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		canopsis.PBehaviorRPCQueueServerName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
 		amqpConnection,
 		rpcMessageProcessor,
 		logger,
 	))
-	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
+	enginePbehavior.AddConsumer(engine.NewDivergingConsumer(
 		canopsis.PBehaviorConsumerName,
 		canopsis.PBehaviorQueueRecomputeName,
 		cfg.Global.PrefetchCount,
@@ -177,6 +178,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Queue:                    canopsis.FIFOQueueName,
 			Logger:                   logger,
 		},
+		"event_type",
+		[]string{types.EventTypeCheck},
 		logger,
 	))
 	enginePbehavior.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)

@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -32,6 +33,7 @@ type Options struct {
 	PeriodicalWaitTime       time.Duration
 	WorkerPoolSize           int
 	LastRetryInterval        time.Duration
+	Workers                  int
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -49,6 +51,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.IntVar(&opts.WorkerPoolSize, "workerPoolSize", 10, "Number of workers for scenario executions")
 	flag.DurationVar(&opts.LastRetryInterval, "lastRetryInterval", time.Minute, "Retry last step of running scenario execution after interval")
+	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process each event flow")
 
 	flag.Bool("withWebhook", false, "Deprecated: handle webhook actions")
 
@@ -102,13 +105,15 @@ func NewEngineAction(
 		canopsis.ActionAxeRPCClientQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
+		amqpConnection,
+		amqpChannel,
 		&axeRpcClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
 			ResultChannel:            rpcResultChannel,
 		},
-		amqpChannel,
 		logger,
 	)
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
@@ -195,7 +200,7 @@ func NewEngineAction(
 		Decoder:                  json.NewDecoder(),
 		Logger:                   logger,
 	}
-	engineAction.AddConsumer(engine.NewDefaultConsumer(
+	engineAction.AddConsumer(engine.NewDivergingConsumer(
 		canopsis.ActionConsumerName,
 		canopsis.ActionQueueName,
 		cfg.Global.PrefetchCount,
@@ -205,8 +210,11 @@ func NewEngineAction(
 		"",
 		"",
 		"",
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
+		"event_type",
+		[]string{types.EventTypeCheck},
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
