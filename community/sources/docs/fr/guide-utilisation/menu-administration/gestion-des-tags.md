@@ -86,7 +86,7 @@ Un clic sur les "3 points" permet de montrer l'ensemble des tags de l'alarme
 
 ![gestion-des-tags-4](./img/gestion-des-tags-4.png)
 
-Enfin, un [Helper Handlebars](../../interface/helpers/#helper-tags) `tags` est mis à disposition de Canopsis.  
+Enfin, un [Helper Handlebars](../interface/helpers/index.md#helper-tags) `tags` est mis à disposition de Canopsis.  
 Exemple dans une fenêtre "Plus d'infos" d'un bac à alarmes :
 
 ![gestion-des-tags-5](./img/gestion-des-tags-5.png)

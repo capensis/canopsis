@@ -18,7 +18,7 @@ Sinon, c'est qu'il y a un problème au niveau de ce dernier que vous pourrez dia
 
 ## amqp2tty
 
-Dans un second temps, la vérification va passer par `amqp2tty`, une documentation complète à son sujet est [disponible ici](../amqp2tty/).  
+Dans un second temps, la vérification va passer par `amqp2tty`, une documentation complète à son sujet est [disponible ici](../amqp2tty/index.md).  
 
 ## Vérification du JSON et de son contenu
 
