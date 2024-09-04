@@ -27,7 +27,7 @@ souscription Canopsis.
 Ce guide de développement apporte des éléments utiles à la conception d'un
 *linkbuilder* personnalisé.
 
-[0]: ../../guide-administration/linkbuilder
+[0]: ../../guide-administration/linkbuilder/index.md
 
 ## Considérations générales
 

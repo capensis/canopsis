@@ -15,7 +15,7 @@ Toutefois, le débit d'événements par seconde reste configurable.
 
 !!! warning "Dépendance avec les métriques techniques"
     Smart-feeder a besoin que la collecte des métriques techniques soit activée.  
-    Pour cela, vous pouvez suivre la [procédure associée](../../guide-de-depannage/metriques-techniques/)
+    Pour cela, vous pouvez suivre la [procédure associée](../../guide-de-depannage/metriques-techniques/index.md)
 
 ## Configuration
 
@@ -132,7 +132,7 @@ Si le poids vaut **0** alors aucun événement n'est généré.
 
 La section `entities` respecte la structure suivante :
 
-* `connectors` - définit la structure du référentiel interne de Canopsis ([context-graph](../../guide-utilisation/vocabulaire/#context-graph)).
+* `connectors` - définit la structure du référentiel interne de Canopsis ([context-graph](../../guide-utilisation/vocabulaire/index.md#context-graph)).
 * `default_connector` - nom du connecteur par défaut associé à une nouvelle entité.
 * `default_component` - nom du composant par défaut associé à une nouvelle entité.
 * `default_resource` - nom de la ressource par défaut associée à une nouvelle entité.

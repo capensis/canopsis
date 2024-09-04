@@ -18,15 +18,15 @@ Actions  | Description
 
 Types  | Description  
 --|---
-`view`                  | [Les vues](../../../guide-utilisation/interface/vues/)
-`viewgroup`             | [Les groupes de vues](../../../guide-utilisation/interface/vues/)
-`eventfilter`           | [Les règles de filtrage/enrichissement](../../moteurs/moteur-che-event_filter/)
-`metaalarmrule`         | [Les règles de méta alarmes/corrélation](../../moteurs/moteur-correlation/)
-`dynamicinfo`           | [Les règles d'enrichissement d'alarmes](../../moteurs/moteur-dynamic-infos/)
-`service`               | [Les entités de type `service`](../../moteurs/moteur-service/)
-`pbehavior`<br/>`pbehaviortype`<br/>`pbehaviorreason`<br/>`pbehaviorexception`  | [Les comportements périodiques](../../moteurs/moteur-pbehavior/)
-`heartbeat`             | [Les règles de lignes de vie](../../moteurs/moteur-heartbeat/)
-`instruction`<br/>`jobconfig`             | [Les objets de remédiation](../../../guide-utilisation/remediation/mise-en-oeuvre/)
+`view`                  | [Les vues](../../guide-utilisation/interface/vues/index.md)
+`viewgroup`             | [Les groupes de vues](../../guide-utilisation/interface/vues/index.md)
+`eventfilter`           | [Les règles de filtrage/enrichissement](../../guide-utilisation/menu-exploitation/filtres-evenements.md)
+`metaalarmrule`         | [Les règles de méta alarmes/corrélation](../../guide-utilisation/menu-exploitation/regles-metaalarme.md)
+`dynamicinfo`           | [Les règles d'enrichissement d'alarmes](../../guide-utilisation/cas-d-usage/enrichissement.md)
+`service`               | [Les entités de type `service`](../../guide-utilisation/services/index.md)
+`pbehavior`<br/>`pbehaviortype`<br/>`pbehaviorreason`<br/>`pbehaviorexception`  | [Les comportements périodiques](../../guide-utilisation/cas-d-usage/comportements_periodiques.md)
+`heartbeat`             | [Les règles de lignes de vie](../../guide-utilisation/menu-exploitation/regles-inactivite.md)
+`instruction`<br/>`jobconfig`             | [Les objets de remédiation](../../guide-utilisation/remediation/index.md)
 
 
 ## Exploitation des journaux

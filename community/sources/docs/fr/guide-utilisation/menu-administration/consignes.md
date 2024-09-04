@@ -110,7 +110,7 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 ![Liste consignes](./img/consignes_creer_06.png)
 
-[templates-payload]: ../../templates-go/
+[templates-payload]: ../../guide-utilisation/templates-go/index.md
 
 
 | Type de consigne | Description |
@@ -121,7 +121,7 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 ### Déclenchement d'une consigne et activation d'une alarme
 
-L'option [ActivateAlarmAfterAutoRemediation](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
+L'option [ActivateAlarmAfterAutoRemediation](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
 
 ??? note "Schémas de fonctionnement"
 
@@ -163,7 +163,7 @@ L'option [ActivateAlarmAfterAutoRemediation](../../../guide-administration/admin
         J --> F
     ```
 
-Par ailleurs, les remédiations automatiques peuvent à présent [être déclenchées](../../../guide-administration/architecture-interne/triggers/#triggers-go) sur
+Par ailleurs, les remédiations automatiques peuvent à présent [être déclenchées](../../guide-administration/architecture-interne/triggers.md#triggers-go) sur
 
 * Création d'une alarme
 * Activation d'une alarme
