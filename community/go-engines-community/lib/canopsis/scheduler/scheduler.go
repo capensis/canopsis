@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -40,8 +41,8 @@ type scheduler struct {
 
 	logger zerolog.Logger
 
-	ch     <-chan *redismod.Message
-	pubsub *redismod.PubSub
+	pubsubMx sync.Mutex
+	pubsub   *redismod.PubSub
 }
 
 // NewSchedulerService ...
@@ -55,7 +56,7 @@ func NewSchedulerService(
 	decoder encoding.Decoder,
 	encoder encoding.Encoder,
 ) Scheduler {
-	s := scheduler{
+	return &scheduler{
 		redisConn:      redisLockStorage,
 		channelPub:     channelPub,
 		publishToQueue: publishToQueue,
@@ -71,39 +72,44 @@ func NewSchedulerService(
 			logger,
 		),
 	}
-
-	return &s
 }
 
-func (s *scheduler) subscribe(ctx context.Context) {
+func (s *scheduler) Start(ctx context.Context) {
+	s.pubsubMx.Lock()
+	defer s.pubsubMx.Unlock()
+	if s.pubsub != nil {
+		panic("scheduler already started")
+	}
+
 	s.redisConn.ConfigSet(ctx, "notify-keyspace-events", "KEx")
 	s.pubsub = s.redisConn.PSubscribe(ctx, redisSubscriptionPattern)
-
 	_, err := s.pubsub.Receive(ctx)
 	if err != nil {
 		panic(err)
 	}
-	s.ch = s.pubsub.Channel()
-	go s.listen(ctx)
+
+	go s.listen(ctx, s.pubsub.Channel())
 	s.logger.Debug().Msg("subscribed")
 }
 
-func (s *scheduler) Start(ctx context.Context) {
-	s.subscribe(ctx)
-}
-
 func (s *scheduler) Stop(ctx context.Context) {
+	s.pubsubMx.Lock()
+	defer s.pubsubMx.Unlock()
 	if s.pubsub == nil {
 		return
 	}
+
 	err := s.pubsub.PUnsubscribe(ctx, redisSubscriptionPattern)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("unsubscribe pubsub")
 	}
+
 	err = s.pubsub.Close()
 	if err != nil {
 		s.logger.Error().Err(err).Msg("close pubsub")
 	}
+
+	s.pubsub = nil
 }
 
 func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
@@ -162,12 +168,12 @@ func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte) error {
 	)
 }
 
-func (s *scheduler) listen(ctx context.Context) {
+func (s *scheduler) listen(ctx context.Context, ch <-chan *redismod.Message) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case msg, ok := <-s.ch:
+		case msg, ok := <-ch:
 			if !ok {
 				return
 			}

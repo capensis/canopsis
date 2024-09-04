@@ -67,7 +67,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
-	flag.IntVar(&opts.Workers, "workers", 2, "Amount of workers to process main event flow")
+	flag.IntVar(&opts.Workers, "workers", 4, "Amount of workers to process each event flow")
 
 	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
 
@@ -110,15 +110,9 @@ func NewEngine(
 
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
-	actionRpcClient := libengine.NewRPCClient(
-		canopsis.AxeRPCConsumerName,
+	actionRpcClient := libengine.NewRPCClientWithoutReply(
 		canopsis.ActionAxeRPCClientQueueName,
-		"",
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
-		nil,
 		amqpChannel,
-		logger,
 	)
 	idleSinceService := entityservice.NewService(
 		entityservice.NewAdapter(dbClient),
@@ -169,6 +163,9 @@ func NewEngine(
 		canopsis.AxePbehaviorRPCClientQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
+		amqpConnection,
+		amqpChannel,
 		&rpcPBehaviorClientMessageProcessor{
 			DbClient:                 dbClient,
 			MetricsSender:            metricsSender,
@@ -183,7 +180,6 @@ func NewEngine(
 			Logger:                   logger,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		},
-		amqpChannel,
 		logger,
 	)
 	pbhRpcClientForIdleRules := libengine.NewRPCClient(
@@ -192,6 +188,9 @@ func NewEngine(
 		"",
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
+		amqpConnection,
+		amqpChannel,
 		&rpcPBehaviorClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
@@ -203,7 +202,6 @@ func NewEngine(
 			Encoder:                  json.NewEncoder(),
 			Logger:                   logger,
 		},
-		amqpChannel,
 		logger,
 	)
 
@@ -300,7 +298,7 @@ func NewEngine(
 		AlarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		Logger:                   logger,
 	}
-	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
+	engineAxe.AddConsumer(libengine.NewDivergingConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,
 		cfg.Global.PrefetchCount,
@@ -313,6 +311,8 @@ func NewEngine(
 		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
+		"event_type",
+		[]string{types.EventTypeCheck},
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewRPCServer(
@@ -320,6 +320,7 @@ func NewEngine(
 		canopsis.AxeRPCQueueServerName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
 		amqpConnection,
 		&rpcMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,

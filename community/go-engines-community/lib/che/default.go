@@ -203,7 +203,7 @@ func NewEngine(
 		Decoder:                  json.NewDecoder(),
 		Logger:                   logger,
 	}
-	engine.AddConsumer(libengine.NewConcurrentConsumer(
+	engine.AddConsumer(libengine.NewDivergingConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
 		cfg.Global.PrefetchCount,
@@ -216,6 +216,8 @@ func NewEngine(
 		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
+		"event_type",
+		[]string{types.EventTypeCheck},
 		logger,
 	))
 	engine.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
