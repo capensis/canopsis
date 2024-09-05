@@ -76,7 +76,7 @@ Ensuite, vous devez voir apparaître votre policy sur les files dans l’onglet 
 **Depuis un seul nœud**, invoquer la commande suivante:
 
 ```sh
-rabbitmqctl set_policy --vhost canopsis --apply-to queues MaxMessages "" '{"max-length": 20000}'
+rabbitmqctl set_policy --vhost canopsis --apply-to queues MaxMessages "" '{"max-length": 200000}'
 ```
 
 ## Aller plus loin
