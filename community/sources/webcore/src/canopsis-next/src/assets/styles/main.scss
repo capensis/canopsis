@@ -276,6 +276,12 @@ html {
   fill: currentColor;
 }
 
+*[aria-required="true"] label:before {
+  content: '*';
+  padding-right: 4px;
+  color: var(--v-error-base);
+}
+
 @for $i from 0 through 16 {
   .row-gap-#{$i}, .gap-#{$i} {
     row-gap: $i * 4px;
