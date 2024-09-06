@@ -4,7 +4,7 @@
 
 ### Nettoyage
 
-Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et le nettoyage peuvent se faire via la ligne de commande (`mongo canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
+Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et le nettoyage peuvent se faire via la ligne de commande (`mongosh canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
 
 !!! attention
     Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base MongoDB](#sauvegarde)**.
@@ -70,9 +70,34 @@ mongodump --username cpsmongo --password canopsis --db canopsis --out /chemin/ve
     Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.
-```shell
-canoctl stop
-```
+=== "Canopsis Community (édition open-source)"
+
+    ```sh
+    systemctl stop --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis.service
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    ```sh
+    systemctl stop --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-correlation.service \
+                           canopsis-engine-go@engine-dynamic-infos.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-engine-go@engine-remediation.service \
+                           canopsis-engine-go@engine-webhook.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis-engine-python-snmp.service \
+                           canopsis.service
+    ```
 
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
 
@@ -84,6 +109,31 @@ mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/
     Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
-```shell
-canoctl start
-```
+=== "Canopsis Community (édition open-source)"
+
+    ```sh
+    systemctl start --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis.service
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    ```sh
+    systemctl start --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-correlation.service \
+                           canopsis-engine-go@engine-dynamic-infos.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-engine-go@engine-remediation.service \
+                           canopsis-engine-go@engine-webhook.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis-engine-python-snmp.service \
+                           canopsis.service
+    ```
