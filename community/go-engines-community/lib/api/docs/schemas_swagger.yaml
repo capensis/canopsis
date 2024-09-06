@@ -5479,6 +5479,11 @@ definitions:
             * `4` - Disabled
         type: integer
     type: object
+  techmetrics.Settings:
+    properties:
+      enabled:
+        type: boolean
+    type: object
   template.Request:
     properties:
       text:
