@@ -1466,6 +1466,11 @@ permission:
     _id: api_icon
     name: <Current()._id>
     description: Create icons
+  permission_api_techmetrics_settings:
+    <<: *permission_crud
+    _id: api_techmetrics_settings
+    name: <Current()._id>
+    description: Tech metrics settings
 
   # Views permissions
   permission_view_open_alarms:
@@ -1718,6 +1723,7 @@ role:
       "@permission_api_maintenance": 1
       "@permission_api_private_view_groups": 1
       "@permission_api_icon": 1
+      "@permission_api_techmetrics_settings": 15
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
