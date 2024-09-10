@@ -14,7 +14,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const filePerm = 0644
+const filePerm = 0o644
 
 type api struct {
 	reporter    StatusReporter
