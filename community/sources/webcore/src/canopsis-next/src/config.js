@@ -276,6 +276,7 @@ export const API_ROUTES = {
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
+  techMetricsSettings: '/api/v4/tech-metrics-settings',
   templateVars: '/api/v4/template-vars',
   templateValidator: {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',

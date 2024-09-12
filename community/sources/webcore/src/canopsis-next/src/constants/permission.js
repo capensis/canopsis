@@ -408,6 +408,7 @@ export const USERS_PERMISSIONS = {
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
       theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
       icon: `${USER_PERMISSIONS_PREFIXES.api}_icon`,
+      techmetricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_techmetrics_settings`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
