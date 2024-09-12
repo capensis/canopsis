@@ -162,16 +162,18 @@ export default {
      * @param {boolean} enabled - The new enabled status.
      */
     const changeTechMetricsEnabled = async (enabled) => {
-      settingsPending.value = true;
+      try {
+        settingsPending.value = true;
 
-      settings.value = await updateTechMetricsSettings({
-        data: {
-          ...settings.value,
-          enabled,
-        },
-      });
-
-      settingsPending.value = false;
+        settings.value = await updateTechMetricsSettings({
+          data: {
+            ...settings.value,
+            enabled,
+          },
+        });
+      } finally {
+        settingsPending.value = false;
+      }
 
       return fetchTechMetrics();
     };
