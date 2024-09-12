@@ -97,7 +97,7 @@ func (mr *MockEnforcerMockRecorder) GetRolesForUser(arg0 interface{}, arg1 ...in
 }
 
 // HasPermissionForUser mocks base method.
-func (m *MockEnforcer) HasPermissionForUser(arg0 string, arg1 ...string) bool {
+func (m *MockEnforcer) HasPermissionForUser(arg0 string, arg1 ...string) (bool, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -105,7 +105,8 @@ func (m *MockEnforcer) HasPermissionForUser(arg0 string, arg1 ...string) bool {
 	}
 	ret := m.ctrl.Call(m, "HasPermissionForUser", varargs...)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // HasPermissionForUser indicates an expected call of HasPermissionForUser.
