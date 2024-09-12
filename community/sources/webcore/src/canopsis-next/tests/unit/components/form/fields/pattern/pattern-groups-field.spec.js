@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { QUICK_RANGES, TIME_UNITS } from '@/constants';
+import { PATTERN_FIELD_TYPES, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import PatternGroupsField from '@/components/forms/fields/pattern/pattern-groups-field.vue';
 
@@ -98,6 +98,7 @@ describe('pattern-groups-field', () => {
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
+
     expect(eventData).toEqual([
       ...groups,
       {
@@ -107,6 +108,7 @@ describe('pattern-groups-field', () => {
             attribute: attributeItem.value,
             dictionary: '',
             field: '',
+            fieldType: PATTERN_FIELD_TYPES.string,
             operator: '',
             value: '',
             range: {

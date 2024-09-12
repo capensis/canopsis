@@ -27,6 +27,7 @@ import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
+import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
@@ -185,6 +186,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetKioskParameters} kiosk
  * @property {AlarmChart[]} charts
  * @property {WidgetColumnsParameters} [columns]
+ * @property {string[]} [usedAlarmProperties]
  */
 
 /**
@@ -399,6 +401,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   kiosk: kioskParametersToForm(parameters.kiosk),
   columns: columnsParametersToForm(parameters.columns),
   charts: addKeyInEntities(parameters.charts),
+  usedAlarmProperties: [],
 });
 
 /**
@@ -444,21 +447,27 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
  * @param {AlarmListWidgetParametersForm} form
  * @return {AlarmListWidgetParameters}
  */
-export const formToAlarmListWidgetParameters = form => ({
-  ...form,
+export const formToAlarmListWidgetParameters = (form) => {
+  const parameters = {
+    ...form,
 
-  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
-  exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
-  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
-  widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
-  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
-  widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
-  widgetColumns: formToWidgetColumns(form.widgetColumns),
-  widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
-  widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
-  serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
-  charts: removeKeyFromEntities(form.charts),
-});
+    moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+    exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
+    widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+    widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
+    serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
+    widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
+    widgetColumns: formToWidgetColumns(form.widgetColumns),
+    widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
+    widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+    serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
+    charts: removeKeyFromEntities(form.charts),
+  };
+
+  parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
+
+  return parameters;
+};
 
 /**
  * Prepared alarms list widget for displaying
@@ -491,7 +500,6 @@ export const prepareAlarmListWidget = (widget = {}) => setSeveralFields(widget, 
 
       sortable: false,
       text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      value: column.value.startsWith('entity.') ? column.value : `entity.${column.value}`,
     }))
   ),
 
@@ -580,6 +588,7 @@ export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon, inli
           onlyIcon,
 
           is: 'c-alarm-links-chips',
+          class: { 'my-1': !context.small },
           alarm: context.alarm,
           small: context.small,
           inlineCount: inlineLinksCount,
@@ -621,6 +630,7 @@ export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon, inli
         onlyIcon,
 
         is: 'c-alarm-links-chips',
+        class: { 'my-1': !context.small },
         alarm: context.alarm,
         small: context.small,
         inlineCount: inlineLinksCount,

@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"os"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -118,6 +119,7 @@ type AlarmConfig struct {
 	TimeToKeepResolvedAlarms          time.Duration
 	AllowDoubleAck                    bool
 	ActivateAlarmAfterAutoRemediation bool
+	EnableArraySortingInEntityInfos   bool
 }
 
 type TimezoneConfig struct {
@@ -141,8 +143,10 @@ type RemediationConfig struct {
 }
 
 type TechMetricsConfig struct {
-	Enabled          bool
-	DumpKeepInterval time.Duration
+	Enabled           bool
+	DumpKeepInterval  time.Duration
+	GoMetricsInterval time.Duration
+	GoMetrics         []string
 }
 
 type DataStorageConfig struct {
@@ -177,9 +181,15 @@ type BaseTechMetricsConfigProvider struct {
 func NewTechMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTechMetricsConfigProvider {
 	sectionName := "tech_metrics"
 	conf := TechMetricsConfig{
-		Enabled:          parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
-		DumpKeepInterval: parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
+		Enabled:           parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
+		DumpKeepInterval:  parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
+		GoMetricsInterval: parseTimeDurationByStr(cfg.TechMetrics.GoMetricsInterval, TechMetricsGoMetricsInterval, "GoMetricsInterval", sectionName, logger),
+		GoMetrics:         cfg.TechMetrics.GoMetrics,
 	}
+
+	logger.Info().
+		Strs("value", conf.GoMetrics).
+		Msgf("GoMetrics of %s config section is used", sectionName)
 
 	return &BaseTechMetricsConfigProvider{
 		conf:   conf,
@@ -203,6 +213,18 @@ func (p *BaseTechMetricsConfigProvider) Update(cfg CanopsisConf) {
 	if ok {
 		p.conf.DumpKeepInterval = d
 	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.TechMetrics.GoMetricsInterval, p.conf.GoMetricsInterval, "GoMetricsInterval", sectionName, p.logger)
+	if ok {
+		p.conf.GoMetricsInterval = d
+	}
+
+	if !slices.Equal(p.conf.GoMetrics, cfg.TechMetrics.GoMetrics) {
+		p.conf.GoMetrics = cfg.TechMetrics.GoMetrics
+		p.logger.Info().
+			Strs("new", p.conf.GoMetrics).
+			Msgf("GoMetrics of %s config section is loaded", sectionName)
+	}
 }
 
 func (p *BaseTechMetricsConfigProvider) Get() TechMetricsConfig {
@@ -220,7 +242,8 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		DisableActionSnoozeDelayOnPbh:     parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
 		TimeToKeepResolvedAlarms:          parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
 		AllowDoubleAck:                    parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
-		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "activate_after_auto_remediation_on_create", sectionName, logger),
+		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "ActivateAlarmAfterAutoRemediation", sectionName, logger),
+		EnableArraySortingInEntityInfos:   parseBool(cfg.Alarm.EnableArraySortingInEntityInfos, "EnableArraySortingInEntityInfos", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDisplayNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -309,6 +332,11 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	b, ok = parseUpdatedBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, p.conf.ActivateAlarmAfterAutoRemediation, "ActivateAlarmAfterAutoRemediation", sectionName, p.logger)
 	if ok {
 		p.conf.ActivateAlarmAfterAutoRemediation = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Alarm.EnableArraySortingInEntityInfos, p.conf.EnableArraySortingInEntityInfos, "EnableArraySortingInEntityInfos", sectionName, p.logger)
+	if ok {
+		p.conf.EnableArraySortingInEntityInfos = b
 	}
 }
 

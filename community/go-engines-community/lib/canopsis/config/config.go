@@ -31,6 +31,7 @@ type SectionAlarm struct {
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
 	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
 }
 
 // SectionGlobal ...
@@ -43,6 +44,7 @@ type SectionGlobal struct {
 
 	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
 	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
+	InfosDictionaryLimit        int  `toml:"InfosDictionaryLimit"`
 
 	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
 }
@@ -104,8 +106,10 @@ type SectionMetrics struct {
 }
 
 type SectionTechMetrics struct {
-	Enabled          bool   `toml:"Enabled"`
-	DumpKeepInterval string `toml:"DumpKeepInterval"`
+	Enabled           bool     `toml:"Enabled"`
+	DumpKeepInterval  string   `toml:"DumpKeepInterval"`
+	GoMetricsInterval string   `toml:"GoMetricsInterval"`
+	GoMetrics         []string `toml:"GoMetrics"`
 }
 
 type SectionTemplate struct {

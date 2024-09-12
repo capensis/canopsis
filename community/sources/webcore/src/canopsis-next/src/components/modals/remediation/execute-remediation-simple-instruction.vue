@@ -180,6 +180,8 @@ export default {
           this.executed = true;
         }
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
         this.closeModal();
@@ -206,6 +208,8 @@ export default {
           await this.config.onExecute();
         }
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
         this.closeModal();

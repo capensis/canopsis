@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
@@ -201,6 +202,11 @@ func benchmarkMessageProcessorWithConfig(
 	cfg config.CanopsisConf,
 	genEvent func(i int) types.Event,
 ) {
+	defer func() {
+		if r := recover(); r != nil {
+			b.Fatal("benchmark failed due to panic:", r)
+		}
+	}()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
@@ -237,15 +243,16 @@ func benchmarkMessageProcessorWithConfig(
 		}
 	})
 
+	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, zerolog.Nop())
 	failureService := eventfilter.NewFailureService(dbClient, time.Hour, zerolog.Nop())
 	eventCounter := eventfilter.NewEventCounter(dbClient, time.Hour, zerolog.Nop())
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.CheEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), zerolog.Nop())
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), failureService, tplExecutor))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(failureService, tplExecutor, techMetricsSender), failureService))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(alarmConfigProvider, failureService, tplExecutor, techMetricsSender), failureService))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, eventCounter, failureService, tplExecutor, zerolog.Nop())
@@ -256,25 +263,30 @@ func benchmarkMessageProcessorWithConfig(
 
 	p := messageProcessor{
 		FeaturePrintEventOnError: true,
-		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
+		DbClient:                 dbClient,
+		AlarmConfigProvider:      alarmConfigProvider,
 		ContextGraphManager:      contextgraph.NewManager(entity.NewAdapter(dbClient), dbClient, contextgraph.NewEntityServiceStorage(dbClient), metrics.NewNullMetaUpdater(), zerolog.Nop()),
 		EventFilterService:       ruleService,
+		MetricsSender:            metrics.NewNullSender(),
+		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
+		EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
 		Encoder:                  json.NewEncoder(),
 		Decoder:                  json.NewDecoder(),
 		Logger:                   zerolog.Nop(),
+		// AmqpPublisher field has not accessed by test paths, otherwise it has to be initialized with mock value
 	}
-
-	encoder := json.NewEncoder()
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		event := genEvent(i)
-		body, err := encoder.Encode(event)
+		body, err := p.Encoder.Encode(event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
+		b.StartTimer()
 		_, err = p.Process(ctx, amqp.Delivery{
 			Body: body,
 		})

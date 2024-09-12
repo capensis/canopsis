@@ -173,7 +173,7 @@ export default {
     title: 'Create uncancel event',
   },
   liveReporting: {
-    editLiveReporting: 'Live reporting',
+    editLiveReporting: 'Set a custom date range',
     dateInterval: 'Date interval',
     today: 'Today',
     yesterday: 'Yesterday',
@@ -199,6 +199,8 @@ export default {
   service: {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
+    massActionsDescription: 'You can choose entities to perform actions',
+    actionInQueue: 'action in queue|actions in queue',
     entity: {
       tabs: {
         info: 'Info',
@@ -918,6 +920,9 @@ export default {
     edit: {
       title: 'Edit link generator',
     },
+    duplicate: {
+      title: 'Duplicate a link generator',
+    },
   },
   createAlarmChart: {
     [WIDGET_TYPES.barChart]: {
@@ -982,5 +987,8 @@ export default {
     duplicate: {
       title: 'Duplicate theme',
     },
+  },
+  archiveDisabledEntities: {
+    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
   },
 };

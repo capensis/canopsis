@@ -6,7 +6,7 @@ Summary: Canopsis
 License: ASL 2.0
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
 
-BuildRequires: make >= 3.81, gcc, nodejs = 2:14.18.3, yarn, systemd-rpm-macros
+BuildRequires: make >= 3.81, gcc, nodejs, yarn, systemd-rpm-macros
 
 Conflicts: canopsis-pro
 
@@ -63,6 +63,7 @@ fi
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
+/opt/canopsis/var/lib/upload-files
 %defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service

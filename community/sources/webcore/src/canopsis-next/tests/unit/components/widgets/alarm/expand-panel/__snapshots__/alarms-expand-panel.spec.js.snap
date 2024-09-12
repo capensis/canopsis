@@ -94,7 +94,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -108,61 +108,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  aria-valuemax="100"
-                  aria-valuemin="0"
-                  class="v-progress-linear"
-                  role="progressbar"
-                  style="height: 3px;"
-                >
-                  <div
-                    class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
-                  />
-                  <div
-                    class="v-progress-linear__bar"
-                    style="height: 0px;"
-                  >
-                    <transition-stub
-                      name="fade-transition"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="v-card__text"
-                >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <!---->
@@ -172,27 +118,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 secondary lighten-2 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <pbehaviors-simple-list-stub
-                    entity="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <!---->
@@ -323,7 +249,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -337,61 +263,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  aria-valuemax="100"
-                  aria-valuemin="0"
-                  class="v-progress-linear"
-                  role="progressbar"
-                  style="height: 3px;"
-                >
-                  <div
-                    class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
-                  />
-                  <div
-                    class="v-progress-linear__bar"
-                    style="height: 0px;"
-                  >
-                    <transition-stub
-                      name="fade-transition"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="v-card__text"
-                >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <transition-stub
         name=""
@@ -399,27 +271,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <declared-tickets-list-stub
-                    tickets="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <transition-stub
@@ -428,27 +280,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 secondary lighten-2 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <pbehaviors-simple-list-stub
-                    entity="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <transition-stub
@@ -457,30 +289,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 secondary lighten-2 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <service-dependencies-stub
-                    columns="[object Object]"
-                    includeroot="true"
-                    openableroot="true"
-                    root="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <transition-stub
         name=""
@@ -488,31 +297,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 secondary lighten-2 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <service-dependencies-stub
-                    columns="[object Object]"
-                    impact="true"
-                    includeroot="true"
-                    openableroot="true"
-                    root="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
     </div>
@@ -622,7 +407,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -636,61 +421,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  aria-valuemax="100"
-                  aria-valuemin="0"
-                  class="v-progress-linear"
-                  role="progressbar"
-                  style="height: 3px;"
-                >
-                  <div
-                    class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
-                  />
-                  <div
-                    class="v-progress-linear__bar"
-                    style="height: 0px;"
-                  >
-                    <transition-stub
-                      name="fade-transition"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="v-card__text"
-                >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <!---->
@@ -700,27 +431,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 secondary lighten-2 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <pbehaviors-simple-list-stub
-                    entity="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <!---->
@@ -831,7 +542,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -845,61 +556,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  aria-valuemax="100"
-                  aria-valuemin="0"
-                  class="v-progress-linear"
-                  role="progressbar"
-                  style="height: 3px;"
-                >
-                  <div
-                    class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
-                  />
-                  <div
-                    class="v-progress-linear__bar"
-                    style="height: 0px;"
-                  >
-                    <transition-stub
-                      name="fade-transition"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="v-card__text"
-                >
-                  <alarms-time-line-stub
-                    steps="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <!---->
@@ -909,27 +566,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         <div
           class="v-window-item"
           style="display: none;"
-        >
-          <div
-            class="layout pa-3 secondary lighten-2 row"
-          >
-            <div
-              class="flex offset-xs0 xs12"
-            >
-              <div
-                class="tab-item-card v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <pbehaviors-simple-list-stub
-                    entity="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       </transition-stub>
       <!---->
       <!---->

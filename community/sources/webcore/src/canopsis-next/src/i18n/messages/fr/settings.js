@@ -69,6 +69,8 @@ export default {
   exportAsCsv: 'Exporter les données du widget en csv',
   criticityLevels: 'Niveaux de criticité',
   isPriorityEnabled: 'Afficher la priorité',
+  isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
+  isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
@@ -112,7 +114,7 @@ export default {
   },
   moreInfosModal: 'Fenêtre "Plus d\'infos"',
   exportPdfTemplate: 'Modèle pour l\'export PDF',
-  expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
+  expandGridRangeSize: 'Largeur-position "Plus d\'infos"',
   weatherTemplate: 'Template - Tuiles',
   modalTemplate: 'Template - Modale',
   entityTemplate: 'Template - Entités',
@@ -160,7 +162,7 @@ export default {
     linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
   },
   liveReporting: {
-    title: 'Suivi personnalisé',
+    title: 'Définir un intervalle de dates',
   },
   counterLevels: {
     title: 'Niveaux',
@@ -293,4 +295,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Diviser les données par chemin de valeur',
   },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
 };

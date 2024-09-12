@@ -38,7 +38,7 @@ func (a *api) ListKeys(c *gin.Context) {
 		return
 	}
 
-	findResult, err := a.store.FindKeys(c.Request.Context(), request)
+	findResult, err := a.store.FindKeys(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -62,7 +62,7 @@ func (a *api) ListValues(c *gin.Context) {
 		return
 	}
 
-	findResult, err := a.store.FindValues(c.Request.Context(), request)
+	findResult, err := a.store.FindValues(c, request)
 	if err != nil {
 		panic(err)
 	}

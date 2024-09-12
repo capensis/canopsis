@@ -1,6 +1,6 @@
 <template lang="pug">
   div.actions-panel(:class="{ 'actions-panel--small': small }")
-    v-layout(:wrap="wrap", row, align-center)
+    v-layout(row, align-center)
       c-action-btn(
         v-for="(action, index) in preparedActions.inline",
         :key="index",
@@ -11,6 +11,7 @@
         :color="action.iconColor",
         :badge-value="action.badgeValue",
         :badge-tooltip="action.badgeTooltip",
+        lazy,
         @click="action.method"
       )
       span(v-if="preparedActions.dropDown.length")
@@ -18,6 +19,7 @@
           key="dropdown-menu",
           bottom,
           left,
+          lazy,
           @click.native.stop=""
         )
           template(#activator="{ on }")
@@ -50,6 +52,8 @@
 </template>
 
 <script>
+import { DEFAULT_ALARM_ACTIONS_INLINE_COUNT } from '@/constants';
+
 export default {
   props: {
     actions: {
@@ -58,29 +62,38 @@ export default {
     },
     inlineCount: {
       type: Number,
-      default: 3,
+      default: DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
     },
     small: {
       type: Boolean,
       default: false,
     },
-    wrap: {
+    ignoreMediaQuery: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
     preparedActions() {
-      if (this.$mq === 'xl') {
+      if (!this.ignoreMediaQuery && this.$mq !== 'xl') {
         return {
-          inline: this.actions.slice(0, this.inlineCount),
-          dropDown: this.actions.slice(this.inlineCount),
+          inline: [],
+          dropDown: this.actions,
+        };
+      }
+
+      if (this.inlineCount < this.actions.length) {
+        const inlineCountWithoutMenu = this.inlineCount - 1;
+
+        return {
+          inline: this.actions.slice(0, inlineCountWithoutMenu),
+          dropDown: this.actions.slice(inlineCountWithoutMenu),
         };
       }
 
       return {
-        inline: [],
-        dropDown: this.actions,
+        inline: this.actions,
+        dropDown: [],
       };
     },
   },

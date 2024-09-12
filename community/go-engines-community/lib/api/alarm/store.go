@@ -4,6 +4,7 @@ package alarm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
@@ -17,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -56,6 +58,7 @@ type Store interface {
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error)
+	GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error)
 }
 
 type store struct {
@@ -74,6 +77,8 @@ type store struct {
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
+	tplExecutor template.Executor
+
 	decoder encoding.Decoder
 
 	logger zerolog.Logger
@@ -85,6 +90,7 @@ func NewStore(
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
+	tplExecutor template.Executor,
 	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Store {
@@ -104,10 +110,38 @@ func NewStore(
 
 		timezoneConfigProvider: timezoneConfigProvider,
 
+		tplExecutor: tplExecutor,
+
 		decoder: decoder,
 
 		logger: logger,
 	}
+}
+
+func (s *store) GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error) {
+	now := types.NewCpsTime()
+
+	pipeline, err := s.getQueryBuilder().CreateGetDisplayNamesPipeline(r, now)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var result GetDisplayNamesResponse
+	for cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &result, nil
 }
 
 func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error) {
@@ -120,6 +154,11 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userId)
 	if err != nil {
 		return nil, err
+	}
+	if r.QueryLog {
+		if b, err := json.Marshal(pipeline); err == nil {
+			s.logger.Info().RawJSON("pipeline", b).Send()
+		}
 	}
 
 	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
@@ -140,7 +179,9 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 }
 
 func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime(), userId, onlyParents)
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
+		OpenedAndRecentResolved, onlyParents)
 	if err != nil {
 		return nil, err
 	}
@@ -193,10 +234,9 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 		return nil, false, err
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
-		"d":          entityID,
-		"v.resolved": nil,
-	}, types.NewCpsTime(), userId, false)
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userId,
+		OnlyOpened, false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -245,14 +285,20 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		}}
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
-		ctx,
-		bson.M{"v.resolved": nil},
+	opened := true
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+		nil,
 		entityMatch,
-		r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		r.Query,
+		r.SortRequest,
+		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			Opened:   &opened,
 			Category: r.Category,
 			Search:   r.Search,
-		}}, now, userId)
+		}},
+		now,
+		userId,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -289,11 +335,18 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 		return nil, err
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
-		ctx,
-		bson.M{"v.resolved": nil},
+	opened := true
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+		nil,
 		bson.M{"entity.component": component.ID},
-		r.Query, r.SortRequest, FilterRequest{}, now, userId)
+		r.Query,
+		r.SortRequest,
+		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			Opened: &opened,
+		}},
+		now,
+		userId,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -329,13 +382,20 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId 
 		return nil, err
 	}
 
-	match := bson.M{"d": r.ID}
 	opened := false
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, match, nil, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
-		StartFrom: r.StartFrom,
-		StartTo:   r.StartTo,
-		Opened:    &opened,
-	}}, now, userId)
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+		bson.M{"d": r.ID},
+		nil,
+		r.Query,
+		r.SortRequest,
+		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			StartFrom: r.StartFrom,
+			StartTo:   r.StartTo,
+			Opened:    &opened,
+		}},
+		now,
+		userId,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -385,6 +445,9 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 			"as":           "entity",
 		}},
 		{"$unwind": "$entity"},
+	}
+	if r.WithDependencies {
+		pipeline = append(pipeline, getImpactsCountPipeline()...)
 	}
 
 	if r.Steps != nil {
@@ -642,13 +705,20 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	project := make(bson.M, len(t.Fields))
 	withInstructions := false
 	withLinks := false
+	withModel := false
 	for _, field := range t.Fields {
 		if field.Name == "assigned_instructions" {
 			withInstructions = true
+			withModel = true
 			continue
 		}
 		if field.Name == "links" || strings.HasPrefix(field.Name, "links.") {
 			withLinks = true
+			withModel = true
+			continue
+		}
+		if field.Template != "" {
+			withModel = true
 			continue
 		}
 
@@ -667,7 +737,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 	}
 
-	if withInstructions || withLinks {
+	if withModel {
 		project["model"] = bson.M{
 			"alarm": "$$ROOT",
 			"entity": bson.M{"$mergeObjects": bson.A{
@@ -709,8 +779,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields.Fields(), common.GetRealFormatTime(r.TimeFormat), location,
-		instructions, linkGenerator, user, s.logger)
+	exportCursor := newExportCursor(cursor, t.Fields, common.GetRealFormatTime(r.TimeFormat), location,
+		instructions, linkGenerator, user, s.tplExecutor, withModel, s.logger)
 	return exportCursor, nil
 }
 

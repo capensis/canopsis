@@ -86,5 +86,10 @@ export default {
       message: 'This action allows you to modify an event field from a template.',
       description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
     },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
+      text: 'Set entity info from a dictionary',
+      message: 'This action can be used for setting entity infos from event fields with a dictionary type node.',
+      description: 'The parameters of the action are:\n- Value: the event field from which the infos are retrieved. The value must contain an array of name: value pairs.\n- Description (optional): the description which is used for the entity infos description. If not defined, the entity infos description is left empty.',
+    },
   },
 };

@@ -49,9 +49,11 @@
                 alarms-expand-panel-more-infos(
                   :alarm="alarm",
                   :template="widget.parameters.moreInfoTemplate",
-                  @select:tag="$emit('select:tag', $event)"
+                  :selected-tag="selectedTag",
+                  @select:tag="$emit('select:tag', $event)",
+                  @clear:tag="$emit('clear:tag')"
                 )
-      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
+      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine", lazy)
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -66,7 +68,7 @@
                   :is-html-enabled="isHtmlEnabled",
                   @update:page="updateStepsQueryPage"
                 )
-      v-tab-item(v-if="hasTickets", :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared")
+      v-tab-item(v-if="hasTickets", :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared", lazy)
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -82,7 +84,7 @@
                   :entity="alarm.entity",
                   :available-metrics="filteredPerfData"
                 )
-      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
+      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -92,7 +94,7 @@
                   :removable="hasDeleteAnyPbehaviorAccess",
                   :updatable="hasUpdateAnyPbehaviorAccess"
                 )
-      v-tab-item(v-if="hasChildren", :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren")
+      v-tab-item(v-if="hasChildren", :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -105,7 +107,7 @@
                   :query.sync="childrenQuery",
                   :refresh-alarms-list="fetchList"
                 )
-      v-tab-item(v-if="hasServiceDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource")
+      v-tab-item(v-if="hasServiceDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -116,7 +118,7 @@
                   include-root,
                   openable-root
                 )
-      v-tab-item(v-if="hasImpactsDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain")
+      v-tab-item(v-if="hasImpactsDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -139,19 +141,21 @@
 <script>
 import { isEqual, map } from 'lodash';
 
-import { ENTITY_TYPES, GRID_SIZES, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import { ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
+import { setField } from '@/helpers/immutable';
 import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
+import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
@@ -198,6 +202,10 @@ export default {
       type: String,
       default: '',
     },
+    selectedTag: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -207,12 +215,7 @@ export default {
   },
   computed: {
     cardFlexClass() {
-      const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
-
-      return [
-        `offset-xs${start}`,
-        `xs${end - start}`,
-      ];
+      return getFlexClassesForGridRangeSize(this.widget.parameters.expandGridRangeSize);
     },
 
     isHtmlEnabled() {
@@ -220,7 +223,12 @@ export default {
     },
 
     dependency() {
-      return alarmToServiceDependency(this.alarm);
+      const alarmWithDependenciesCounts = setField(this.alarm, 'entity', entity => ({
+        ...entity,
+        ...this.alarmDetails.entity,
+      }));
+
+      return alarmToServiceDependency(alarmWithDependenciesCounts);
     },
 
     hasMoreInfos() {
@@ -240,12 +248,9 @@ export default {
     },
 
     hasImpactsDependencies() {
-      const { impact } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.alarm.entity;
 
-      return this.hasServiceDependencies
-        ? impact?.length > 0
-        // resource and component types having one basic entity into impact
-        : impact?.length > 1;
+      return impactsCount > 0;
     },
 
     hasEntityGantt() {

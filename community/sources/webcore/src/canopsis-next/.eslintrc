@@ -68,6 +68,11 @@
       "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
       "pathGroups": [
         {
+          "pattern": "@unit/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
           "pattern": "@/+(config|constants)",
           "group": "internal",
           "position": "before"

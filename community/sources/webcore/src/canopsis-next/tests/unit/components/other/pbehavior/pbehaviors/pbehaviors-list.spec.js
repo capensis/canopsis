@@ -9,7 +9,7 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-advanced-search-field': true,
   'c-expand-btn': true,
-  'c-action-btn': true,
+  'pbehavior-actions': true,
   'c-table-pagination': true,
   'c-ellipsis': true,
   'c-enabled': true,

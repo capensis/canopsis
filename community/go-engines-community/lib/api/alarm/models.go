@@ -55,6 +55,8 @@ type ListRequest struct {
 	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
+	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
+	QueryLog           bool `form:"query_log" json:"query_log"`
 }
 
 type FilterRequest struct {
@@ -136,6 +138,7 @@ type DetailsRequest struct {
 	Opened             *bool                `json:"opened"`
 	WithInstructions   bool                 `json:"with_instructions"`
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
+	WithDependencies   bool                 `json:"with_dependencies"`
 	Steps              *StepsRequest        `json:"steps"`
 	Children           *ChildDetailsRequest `json:"children"`
 	PerfData           []string             `json:"perf_data"`
@@ -196,6 +199,14 @@ type DetailsResponse struct {
 	Error  string            `json:"error,omitempty"`
 }
 
+type EntityDetails struct {
+	types.Entity `bson:",inline" json:",inline"`
+	// DependsCount contains only service's dependencies
+	DependsCount int `bson:"depends_count" json:"depends_count"`
+	// ImpactsCount contains only services
+	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
+}
+
 type Details struct {
 	// Only for websocket
 	ID string `bson:"-" json:"_id,omitempty"`
@@ -205,9 +216,9 @@ type Details struct {
 
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 
-	IsMetaAlarm bool         `json:"-" bson:"is_meta_alarm"`
-	StepsCount  int64        `json:"-" bson:"steps_count"`
-	Entity      types.Entity `json:"-" bson:"entity"`
+	IsMetaAlarm bool          `json:"-" bson:"is_meta_alarm"`
+	StepsCount  int64         `json:"-" bson:"steps_count"`
+	Entity      EntityDetails `json:"entity" bson:"entity"`
 }
 
 type StepDetails struct {
@@ -295,6 +306,7 @@ type AlarmValue struct {
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
@@ -484,4 +496,33 @@ func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
 
 type LinksRequest struct {
 	Ids []string `form:"ids[]" json:"ids" binding:"required,notblank"`
+}
+
+type GetDisplayNamesRequest struct {
+	pagination.Query
+
+	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	Search string `form:"search" json:"search"`
+
+	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
+	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
+	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+}
+
+type DisplayNameData struct {
+	ID          string `bson:"_id" json:"_id"`
+	DisplayName string `bson:"display_name" json:"display_name"`
+}
+
+type GetDisplayNamesResponse struct {
+	Data       []DisplayNameData `bson:"data" json:"data"`
+	TotalCount int64             `bson:"total_count" json:"total_count"`
+}
+
+func (r *GetDisplayNamesResponse) GetData() interface{} {
+	return r.Data
+}
+
+func (r *GetDisplayNamesResponse) GetTotal() int64 {
+	return r.TotalCount
 }

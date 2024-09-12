@@ -11,7 +11,10 @@
 </template>
 
 <script>
+import { isArray } from 'lodash';
+
 import {
+  ALARM_EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   EVENT_ENTITY_TYPES,
@@ -19,6 +22,7 @@ import {
   EVENT_FILTER_SOURCE_TYPES,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
+  PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
 import CEntityOldStateField from '@/components/forms/fields/entity/c-entity-old-state-field.vue';
@@ -151,7 +155,7 @@ export default {
         EVENT_ENTITY_TYPES.snooze,
       ].map(value => ({
         value,
-        text: this.$t(`common.entityEventTypes.${value}`),
+        text: value,
       }));
     },
 
@@ -163,13 +167,22 @@ export default {
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
           PATTERN_OPERATORS.regexp,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
           is: 'v-combobox',
-          props: {
-            items: this.eventTypes,
-            returnObject: false,
-            combobox: true,
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              items: this.eventTypes,
+              returnObject: false,
+              combobox: true,
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+            };
           },
         },
       };
@@ -196,11 +209,40 @@ export default {
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
           PATTERN_OPERATORS.regexp,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+        valueField: {
+          is: 'c-select-field',
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              items: this.sourceTypes,
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+            };
+          },
+        },
+      };
+    },
+
+    initiatorOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
           is: 'c-select-field',
           props: {
-            items: this.sourceTypes,
+            items: Object.values(ALARM_EVENT_INITIATORS),
           },
         },
       };
@@ -218,6 +260,17 @@ export default {
         valueField: {
           is: CEntityOldStateField,
         },
+      };
+    },
+
+    stringWithOneOfOptions() {
+      return {
+        operators: [
+          ...PATTERN_STRING_OPERATORS,
+
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
       };
     },
 
@@ -261,6 +314,7 @@ export default {
         {
           text: this.$t('common.output'),
           value: EVENT_FILTER_PATTERN_FIELDS.output,
+          options: this.stringWithOneOfOptions,
         },
         {
           text: this.$tc('common.extraInfo'),
@@ -270,6 +324,17 @@ export default {
         {
           text: this.$t('common.longOutput'),
           value: EVENT_FILTER_PATTERN_FIELDS.longOutput,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          text: this.$t('common.author'),
+          value: EVENT_FILTER_PATTERN_FIELDS.author,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          text: this.$t('common.initiator'),
+          value: EVENT_FILTER_PATTERN_FIELDS.initiator,
+          options: this.initiatorOptions,
         },
       ];
     },

@@ -96,6 +96,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		entity = *event.Entity
 		updatedServiceStates = nil
 
 		alarm := types.Alarm{}
@@ -115,6 +116,10 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 		if err != nil {
 			return err
+		}
+
+		if result.Entity.ID != "" {
+			entity = result.Entity
 		}
 
 		if !event.Healthcheck {
@@ -208,7 +213,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		if pbehaviorInfo.IsActive() {
 			alarm.NotAckedSince = &alarm.Time
 		} else {
-			alarm.Value.InactiveStart = &params.Timestamp
+			alarm.Value.InactiveStart = &now
 		}
 
 		pbhOutput := fmt.Sprintf(
@@ -288,6 +293,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	inc := bson.M{
 		"v.events_count": 1,
 	}
+	unset := bson.M{}
 	author := ""
 	if entity.Type != types.EntityTypeService {
 		author = strings.Replace(entity.Connector, "/", ".", 1)
@@ -305,7 +311,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	var stateStep types.AlarmStep
-	if newState != previousState && (alarm.Value.State.Type != types.AlarmStepChangeState || newState == types.AlarmStateOK) {
+	if newState != previousState && (!alarm.IsStateLocked() || newState == types.AlarmStateOK) {
 		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
 			params.Output, params.User, params.Role, params.Initiator)
 		stateStep.Value = newState
@@ -323,17 +329,26 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		set["v.state"] = stateStep
 		set["v.last_update_date"] = params.Timestamp
 		inc["v.total_state_changes"] = 1
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
 	if newStatus == previousStatus {
 		if stateStep.Type != "" {
-			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+			if newState != types.AlarmStateOK {
+				match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+			}
 			push["v.steps"] = stateStep
 			inc["v.state_changes_since_status_update"] = 1
 		}
 	} else {
-		match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+		if len(alarm.Value.Steps) <= types.AlarmStepsHardLimit {
+			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
+		}
 		statusStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, params.Timestamp, author,
 			params.Output, params.User, params.Role, params.Initiator)
 		statusStep.Value = newStatus
@@ -362,6 +377,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		"$push":     push,
 		"$inc":      inc,
 		"$addToSet": addToSet,
+		"$unset":    unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -485,9 +501,14 @@ func (p *checkProcessor) postProcess(
 	result Result,
 	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
 ) {
+	entity := *event.Entity
+	if result.Entity.ID != "" {
+		entity = result.Entity
+	}
+
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
-		*event.Entity,
+		entity,
 		result.AlarmChange,
 		event.Parameters.Timestamp.Time,
 		event.Parameters.Initiator,

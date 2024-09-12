@@ -116,7 +116,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 
 	authorProvider := author.NewProvider(dbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	s := alarm.NewStore(dbClient, dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
-		authorProvider, json.NewDecoder(), zerolog.Nop())
+		authorProvider, nil, json.NewDecoder(), zerolog.Nop())
 
 	b.ResetTimer()
 

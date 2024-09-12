@@ -21,7 +21,10 @@
         :label="$t('settings.exportColumnNames')",
         :type="type",
         :with-instructions="withInstructions",
-        without-infos-attributes,
+        :variables="variables",
+        :optional-infos-attributes="optionalInfosAttributes",
+        :with-simple-template="withSimpleTemplate",
+        :without-infos-attributes="withoutInfosAttributes",
         @update:template="updateTemplate"
       )
 </template>
@@ -64,6 +67,22 @@ export default {
       default: false,
     },
     withInstructions: {
+      type: Boolean,
+      default: false,
+    },
+    variables: {
+      type: Array,
+      required: false,
+    },
+    optionalInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withSimpleTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    withoutInfosAttributes: {
       type: Boolean,
       default: false,
     },

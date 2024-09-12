@@ -24,7 +24,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Author
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector: Not sorted."
@@ -34,7 +42,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Connector
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component: Not sorted."
@@ -44,7 +60,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Component
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource: Not sorted."
@@ -54,7 +78,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               role="columnheader"
               scope="col"
             >
-              Resource
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
           <tr
@@ -186,7 +218,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Author
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Author
+                </span>
+              </div>
             </th>
             <th
               aria-label="Connector: Not sorted."
@@ -196,7 +236,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Connector
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Connector
+                </span>
+              </div>
             </th>
             <th
               aria-label="Component: Not sorted."
@@ -206,7 +254,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Component
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Component
+                </span>
+              </div>
             </th>
             <th
               aria-label="Resource: Not sorted."
@@ -216,7 +272,15 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               role="columnheader"
               scope="col"
             >
-              Resource
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Resource
+                </span>
+              </div>
             </th>
           </tr>
           <tr

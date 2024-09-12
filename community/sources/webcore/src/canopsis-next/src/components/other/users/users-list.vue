@@ -17,7 +17,6 @@
         type="delete",
         @click="$emit('remove-selected', selected)"
       )
-    template(#name="{ item }") {{ item.display_name }}
     template(#enable="{ item }")
       c-enabled(:value="item.enable")
     template(#active="{ item }")
@@ -34,6 +33,7 @@
         )
         c-action-btn(
           v-if="removable",
+          :disabled="!item.deletable",
           type="delete",
           @click.stop="$emit('remove', item)"
         )
@@ -73,6 +73,10 @@ export default {
         {
           text: this.$t('common.username'),
           value: 'name',
+        },
+        {
+          text: this.$t('user.displayName'),
+          value: 'display_name',
         },
         {
           text: this.$t('user.firstName'),

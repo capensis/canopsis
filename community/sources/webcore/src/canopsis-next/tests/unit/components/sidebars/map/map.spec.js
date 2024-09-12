@@ -1,10 +1,9 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import {
   createSettingsMocks,
@@ -69,9 +68,6 @@ const selectAlarmsColumns = wrapper => selectFieldColumns(wrapper).at(0);
 const selectEntitiesColumns = wrapper => selectFieldColumns(wrapper).at(1);
 
 describe('map', () => {
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
   const $sidebar = mockSidebar();
 
   const {
@@ -127,6 +123,10 @@ describe('map', () => {
       },
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   afterEach(() => {
     createWidget.mockReset();

@@ -19,6 +19,7 @@ type rpcMessageProcessor struct {
 	EventProcessor           libevent.Processor
 	ActionRpc                engine.RPCClient
 	PbhRpc                   engine.RPCClient
+	DynamicInfosRpc          engine.RPCClient
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
@@ -86,7 +87,8 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		}
 
 		p.logError(err, "RPC Message Processor: cannot update alarm", msg)
-		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err), alarm), nil
+
+		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %w", err), alarm), nil
 	}
 
 	if res.Alarm.ID != "" {
@@ -94,6 +96,14 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	p.sendEventToAction(ctx, *alarm, d.CorrelationId, event, res.AlarmChange, msg)
+	if p.DynamicInfosRpc != nil && p.forwardToDynamicInfos(res.AlarmChange.Type) {
+		entity := *event.Entity
+		if res.Entity.ID != "" {
+			entity = res.Entity
+		}
+
+		return p.sendEventToDynamicInfos(ctx, res.Alarm, entity, res.AlarmChange, d)
+	}
 
 	return p.getRpcEvent(rpc.AxeResultEvent{
 		AlarmChangeType: res.AlarmChange.Type,
@@ -131,7 +141,7 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode rpc call to pbehavior", d.Body)
 
-		return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %v", err), event.Alarm), nil
+		return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %w", err), event.Alarm), nil
 	}
 
 	err = p.PbhRpc.Call(ctx, engine.RPCMessage{
@@ -145,7 +155,7 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 
 		p.logError(err, "RPC Message Processor: failed to send rpc call to pbehavior", d.Body)
 
-		return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %v", err), event.Alarm), nil
+		return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %w", err), event.Alarm), nil
 	}
 
 	return nil, nil
@@ -187,6 +197,41 @@ func (p *rpcMessageProcessor) sendEventToAction(
 	}
 }
 
+func (p *rpcMessageProcessor) sendEventToDynamicInfos(
+	ctx context.Context,
+	alarm types.Alarm,
+	entity types.Entity,
+	alarmChange types.AlarmChange,
+	d amqp.Delivery,
+) ([]byte, error) {
+	body, err := p.Encoder.Encode(rpc.DynamicInfosEvent{
+		Alarm:           &alarm,
+		Entity:          &entity,
+		AlarmChangeType: alarmChange.Type,
+	})
+	if err != nil {
+		p.logError(err, "failed to encode rpc call to dynamic-infos", d.Body)
+
+		return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event: %w", err), &alarm), nil
+	}
+
+	err = p.DynamicInfosRpc.Call(ctx, engine.RPCMessage{
+		CorrelationID: fmt.Sprintf("%s**%s", d.CorrelationId, d.ReplyTo),
+		Body:          body,
+	})
+	if err != nil {
+		if engine.IsConnectionError(err) {
+			return nil, err
+		}
+
+		p.logError(err, "failed to send rpc call to dynamic-infos", d.Body)
+
+		return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to dynamic-infos: %w", err), &alarm), nil
+	}
+
+	return nil, nil
+}
+
 func (p *rpcMessageProcessor) logError(err error, errMsg string, msg []byte) {
 	if p.FeaturePrintEventOnError {
 		p.Logger.Debug().Err(err).Str("event", string(msg)).Msg(errMsg)
@@ -201,4 +246,33 @@ func (p *rpcMessageProcessor) getErrRpcEvent(err error, alarm *types.Alarm) []by
 		Error: &rpc.Error{Error: err}},
 	)
 	return msg
+}
+
+func (p *rpcMessageProcessor) forwardToDynamicInfos(alarmChangeType types.AlarmChangeType) bool {
+	switch alarmChangeType {
+	case types.AlarmChangeTypeStateIncrease,
+		types.AlarmChangeTypeStateDecrease,
+		types.AlarmChangeTypeCreate,
+		types.AlarmChangeTypeCreateAndPbhEnter,
+		types.AlarmChangeTypeAck,
+		types.AlarmChangeTypeDoubleAck,
+		types.AlarmChangeTypeAckremove,
+		types.AlarmChangeTypeCancel,
+		types.AlarmChangeTypeUncancel,
+		types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeSnooze,
+		types.AlarmChangeTypeUnsnooze,
+		types.AlarmChangeTypeComment,
+		types.AlarmChangeTypeChangeState,
+		types.AlarmChangeTypePbhEnter,
+		types.AlarmChangeTypePbhLeave,
+		types.AlarmChangeTypePbhLeaveAndEnter,
+		types.AlarmChangeTypeUpdateStatus,
+		types.AlarmChangeTypeActivate,
+		types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
+		return true
+	}
+
+	return false
 }

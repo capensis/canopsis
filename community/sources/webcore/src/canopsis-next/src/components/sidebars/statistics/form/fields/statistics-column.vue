@@ -11,6 +11,7 @@
     c-enabled-field.pa-0.my-2(
       v-model="customLabel",
       :label="$t('settings.columns.customLabel')",
+      hide-details,
       @change="updateCustomLabel"
     )
     v-text-field(
@@ -24,7 +25,8 @@
     c-enabled-field(
       v-field="column.split",
       :label="$t('settings.statisticsWidgetColumn.split')",
-      :disabled="!hasPossibilityToSplit"
+      :disabled="!hasPossibilityToSplit",
+      hide-details
     )
     c-select-field(
       v-if="column.split",

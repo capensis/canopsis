@@ -1088,21 +1088,16 @@ permission:
     _id: numbers_userFilter
     name: <Current()._id>
     description: Numbers user filter
-  permission_listalarm_addBookmark:
+  permission_models_maintenance:
     <<: *permission
-    _id: listalarm_addBookmark
+    _id: models_maintenance
     name: <Current()._id>
-    description: "List alarm add bookmark"
-  permission_listalarm_removeBookmark:
-    <<: *permission
-    _id: listalarm_removeBookmark
+    description: Maintenance
+  permission_models_profile_color_theme:
+    <<: *permission_crud
+    _id: models_profile_color_theme
     name: <Current()._id>
-    description: "List alarm remove bookmark"
-  permission_listalarm_filterByBookmark:
-    <<: *permission
-    _id: listalarm_filterByBookmark
-    name: <Current()._id>
-    description: "List alarm filter by bookmark"
+    description: Color theme
 
   # API permissions
   permission_api_alarm_read:
@@ -1380,6 +1375,16 @@ permission:
     _id: api_alarm_tag
     name: <Current()._id>
     description: Alarm tags
+  permission_api_maintenance:
+    <<: *permission
+    _id: api_maintenance
+    name: <Current()._id>
+    description: Trigger maintenance mode
+  permission_api_color_theme:
+    <<: *permission_crud
+    _id: api_color_theme
+    name: <Current()._id>
+    description: Color theme
 
   # Views permissions
   permission_view_open_alarms:
@@ -1451,6 +1456,7 @@ role:
       "@permission_models_techmetrics": 1
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
+      "@permission_models_profile_color_theme": 15
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -1562,6 +1568,7 @@ role:
       "@permission_numbers_editFilter": 1
       "@permission_numbers_addFilter": 1
       "@permission_numbers_userFilter": 1
+      "@permission_models_maintenance": 1
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -1618,6 +1625,8 @@ role:
       "@permission_api_declare_ticket_execution": 1
       "@permission_api_link_rule": 15
       "@permission_api_alarm_tag": 15
+      "@permission_api_color_theme": 15
+      "@permission_api_maintenance": 1
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
@@ -1664,9 +1673,6 @@ role_template:
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
-      "@permission_listalarm_addBookmark": 1
-      "@permission_listalarm_removeBookmark": 1
-      "@permission_listalarm_filterByBookmark": 1
       "@permission_serviceweather_entityAck": 1
       "@permission_serviceweather_entityAssocTicket": 1
       "@permission_serviceweather_entityValidate": 1

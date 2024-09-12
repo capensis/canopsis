@@ -1,51 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
-  <div class="layout extra-details-ticket__list column">
-    <div class="text-md-center"><strong>ticket-rule-name-1 Ok</strong>
-      <div>By : ticket-author-1</div>
-      <div>Date : 6:00:00</div>
-      <div>Ticket number : ticket-1</div>
-      <div>Comment : ticket-comment-1</div>
-    </div>
-    <div class="text-md-center"><strong>ticket-rule-name-2 Failed</strong>
-      <div>By : ticket-author-2</div>
-      <div>Date : 07/08/2013 19:00:00</div>
-      <!---->
-      <!---->
-    </div>
-  </div>
-  <div class="mt-2">
-    <!---->
-  </div>
-</div>
 <div><span class="v-badge time-line-flag v-badge--overlap"><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span>
   <transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub>
-  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
+  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets and without failed last ticket 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
-  <div class="layout extra-details-ticket__list column">
-    <div class="text-md-center"><strong>ticket-rule-name-2 Failed</strong>
-      <div>By : ticket-author-2</div>
-      <div>Date : 07/08/2013 19:00:00</div>
-      <!---->
-      <!---->
-    </div>
-    <div class="text-md-center"><strong>ticket-rule-name-1 Ok</strong>
-      <div>By : ticket-author-1</div>
-      <div>Date : 6:00:00</div>
-      <div>Ticket number : ticket-1</div>
-      <div>Comment : ticket-comment-1</div>
-    </div>
-  </div>
-  <div class="mt-2">
-    <!---->
-  </div>
-</div>
 <div><span class="v-badge time-line-flag v-badge--overlap"><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span>
   <transition-stub name="fab-transition"><span class="v-badge__badge transparent" style="display: none;"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub>
-  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
+  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>
 `;

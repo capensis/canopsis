@@ -1,7 +1,7 @@
 <template lang="pug">
   v-flex(
     v-on="wrapperListeners",
-    v-resize="changeHeaderPositionOnResize"
+    v-resize="resizeHandler"
   )
     c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
@@ -25,7 +25,7 @@
         v-flex.alarms-list-table__top-pagination--center-absolute(v-if="!hidePagination", xs4)
           c-pagination(
             :page="pagination.page",
-            :limit="pagination.limit",
+            :limit="pagination.rowsPerPage",
             :total="totalItems",
             type="top",
             @input="updateQueryPage"
@@ -70,6 +70,7 @@
             :header="header",
             :selected-tag="selectedTag",
             :resizing="resizingMode",
+            :ellipsis-headers="isCellContentTruncated",
             @clear:tag="$emit('clear:tag')"
           )
           template
@@ -81,14 +82,16 @@
             )
         template(#items="props")
           alarms-list-row(
+            v-if="props.item",
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
             :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
-            :row="props",
             :widget="widget",
+            :expanded="props.expanded",
+            :alarm="props.item",
             :headers="headers",
             :parent-alarm="parentAlarm",
             :refresh-alarms-list="refreshAlarmsList",
@@ -98,24 +101,30 @@
             :small="isSmallDense",
             :resizing="resizingMode",
             :search="search",
-            :wrap-actions="resizableColumn",
+            :wrap-actions="isCellContentWrapped",
+            :truncate-actions="isCellContentTruncated",
             :show-instruction-icon="hasInstructionsAlarms",
+            :actions-inline-count="actionsInlineCount",
+            :actions-ignore-media-query="resizableColumn",
             @start:resize="startColumnResize",
-            @select:tag="$emit('select:tag', $event)"
+            @select:tag="$emit('select:tag', $event)",
+            @expand="props.expanded = $event"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
+            :selected-tag="selectedTag",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :search="search",
             :hide-children="hideChildren",
-            @select:tag="$emit('select:tag', $event)"
+            @select:tag="$emit('select:tag', $event)",
+            @clear:tag="$emit('clear:tag')"
           )
     c-table-pagination(
       v-if="!hidePagination",
       :total-items="totalItems",
-      :rows-per-page="pagination.limit",
+      :rows-per-page="pagination.rowsPerPage",
       :page="pagination.page",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
@@ -130,7 +139,14 @@
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import {
+  ALARM_ACTION_BUTTON_MARGINS,
+  ALARM_ACTION_BUTTON_WIDTHS,
+  ALARM_ACTIONS_PADDINGS,
+  ALARM_DENSE_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
+} from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -267,7 +283,7 @@ export default {
     },
 
     unresolvedSelected() {
-      return this.selected.filter(item => isActionAvailableForAlarm(item));
+      return this.selected.filter(item => isActionAvailableForAlarm(item, this.widget));
     },
 
     expanded() {
@@ -357,6 +373,22 @@ export default {
       }
 
       return this.headers;
+    },
+
+    actionsInlineCount() {
+      if (!this.resizableColumn) {
+        return DEFAULT_ALARM_ACTIONS_INLINE_COUNT;
+      }
+
+      const denseType = {
+        [this.isSmallDense]: ALARM_DENSE_TYPES.small,
+        [this.isMediumDense]: ALARM_DENSE_TYPES.medium,
+      }.true ?? ALARM_DENSE_TYPES.large;
+      const width = this.getColumnWidthByField('actions') ?? 0;
+      const widthInPixelWithoutPaddings = (width / this.percentsInPixel) - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
+      const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[denseType] + ALARM_ACTION_BUTTON_MARGINS[denseType];
+
+      return Math.floor(widthInPixelWithoutPaddings / actionWidth) || 1;
     },
 
     vDataTableClass() {
@@ -489,11 +521,11 @@ export default {
     },
 
     resetColumnsSettings() {
-      if (this.resizableColumn) {
+      if (this.draggableColumn) {
         this.setColumnsPosition({});
       }
 
-      if (this.draggableColumn) {
+      if (this.resizableColumn) {
         this.setColumnsWidth({});
         this.$nextTick(this.calculateColumnsWidths);
       }
@@ -507,7 +539,11 @@ export default {
       this.$emit('update:page', page);
     },
 
-    changeHeaderPositionOnResize() {
+    updatePaginationHandler(data) {
+      this.$emit('update:pagination', data);
+    },
+
+    resizeHandler() {
       if (this.stickyHeader) {
         this.changeHeaderPosition();
       }
@@ -515,10 +551,10 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-    },
 
-    updatePaginationHandler(data) {
-      this.$emit('update:pagination', data);
+      if (!this.resizingMode) {
+        this.throttledCalculateColumnsWidths();
+      }
     },
   },
 };
@@ -526,6 +562,14 @@ export default {
 
 <style lang="scss">
 .alarms-list-table {
+  .theme--light & {
+    --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .theme--dark & {
+    --alarms-list-table-border-color: rgba(255, 255, 255, 0.12);
+  }
+
   &__top-pagination {
     position: relative;
     min-height: 48px;
@@ -682,8 +726,17 @@ export default {
   }
 
   &--truncated {
+    .color-indicator {
+      max-width: 100%;
+    }
+
+    .alarms-column-cell__layout .alarm-column-cell__text {
+      display: grid;
+    }
+
     .alarm-list-row__cell {
-      .alarm-column-cell__text > span {
+      .alarm-column-cell__text > span,
+      .alarm-column-value {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -694,6 +747,20 @@ export default {
 
   tbody {
     position: relative;
+
+    tr:not(.v-datatable__expand-row):not(:first-child) {
+      border-top: unset !important;
+
+      td:first-child:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        top: 0;
+        left: 0;
+      }
+    }
   }
 
   thead {
@@ -702,10 +769,27 @@ export default {
     transition-property: opacity, background-color;
     z-index: 1;
 
+    tr:first-child {
+      border-bottom: unset !important;
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
     &.head-shadow {
       tr:first-child {
-        border-bottom: none !important;
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+
+        &:after {
+          content: unset;
+        }
       }
     }
 

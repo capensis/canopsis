@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
@@ -15,7 +14,14 @@ const stubs = {
 };
 
 describe('alarm-column-value', () => {
-  const snapshotFactory = generateRenderer(AlarmColumnValue, { stubs });
+  const snapshotFactory = generateRenderer(AlarmColumnValue, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Renders `alarm-column-value` with required props', async () => {
     const wrapper = snapshotFactory({

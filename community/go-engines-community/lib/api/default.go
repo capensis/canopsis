@@ -54,6 +54,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -217,10 +218,11 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
-		author.NewProvider(dbClient, p.ApiConfigProvider), json.NewDecoder(), logger)
+		author.NewProvider(dbClient, p.ApiConfigProvider), tplExecutor, json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
+	websocketHub, err := newWebsocketHub(ctx, enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
 		dbClient, alarmStore, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
@@ -229,7 +231,7 @@ func Default(
 	broadcastMessageChan := make(chan bool)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
 
@@ -296,7 +298,7 @@ func Default(
 	legacyUrl := GetLegacyURL(logger)
 	if linkGenerator == nil {
 		linkGenerators := []link.Generator{
-			linkv2.NewGenerator(dbClient, template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider), logger),
+			linkv2.NewGenerator(dbClient, tplExecutor, logger),
 		}
 		if legacyUrl != nil {
 			linkGenerators = append(linkGenerators, linkv1.NewGenerator(legacyUrl.String(), dbClient, &http.Client{Timeout: linkFetchTimeout}, json.NewEncoder(), json.NewDecoder()))
@@ -350,6 +352,7 @@ func Default(
 			metricsUserMetaUpdater,
 			author.NewProvider(dbClient, p.ApiConfigProvider),
 			healthcheckStore,
+			tplExecutor,
 			logger,
 		)
 	})
@@ -454,6 +457,7 @@ func Default(
 }
 
 func newWebsocketHub(
+	ctx context.Context,
 	enforcer libsecurity.Enforcer,
 	tokenProviders []libsecurity.TokenProvider,
 	checkAuthInterval time.Duration,
@@ -469,7 +473,7 @@ func newWebsocketHub(
 		},
 	})
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
-	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
+	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
 		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}

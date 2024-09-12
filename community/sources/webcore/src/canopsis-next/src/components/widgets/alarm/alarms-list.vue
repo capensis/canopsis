@@ -32,11 +32,11 @@
       v-flex
         v-layout(v-if="hasAccessToUserFilter", row, align-end)
           filter-selector(
+            :value="query.filter",
+            :locked-value="query.lockedFilter",
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
-            :locked-value="lockedFilter",
-            :value="mainFilter",
             :disabled="!hasAccessToListFilters",
             :clearable="!widget.parameters.clearFilterDisabled",
             hide-details,
@@ -122,10 +122,12 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USERS_PERMISSIONS, LIVE_REPORTING_QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
+import { setSeveralFields } from '@/helpers/immutable';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -145,6 +147,7 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -176,6 +179,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
+    entitiesWidgetMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
@@ -221,16 +225,10 @@ export default {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findQuickRangeValue(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop, LIVE_REPORTING_QUICK_RANGES, LIVE_REPORTING_QUICK_RANGES.custom);
       }
 
       return null;
-    },
-
-    firstAlarmExpanded() {
-      const [alarm] = this.alarms;
-
-      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
     },
 
     hasAccessToExportAsCsv() {
@@ -256,6 +254,9 @@ export default {
     draggableColumn() {
       return !!this.widget.parameters?.columns?.draggable;
     },
+  },
+  created() {
+    this.actualizeUsedProperties();
   },
   methods: {
     refreshExpanded() {
@@ -331,17 +332,12 @@ export default {
         ...this.query,
 
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       };
     },
 
     updateDense(dense) {
       this.updateContentInUserPreference({ dense });
-    },
-
-    expandFirstAlarm() {
-      if (!this.firstAlarmExpanded) {
-        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
-      }
     },
 
     removeHistoryFilter() {
@@ -388,15 +384,28 @@ export default {
       }
     },
 
-    getExportQuery() {
-      const query = this.getQuery();
+    getExportQueryColumns() {
       const {
         widgetExportColumns,
         widgetColumns,
+      } = this.widget.parameters;
+
+      const hasExportColumns = !!widgetExportColumns?.length;
+      const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
+
+      return columns.map(({ value, text, template }) => ({
+        name: value,
+        label: text,
+        template: hasExportColumns ? template : undefined,
+      }));
+    },
+
+    getExportQuery() {
+      const query = this.getQuery();
+      const {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
         ...pick(query, [
@@ -409,7 +418,7 @@ export default {
           'only_bookmarks',
         ]),
 
-        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
+        fields: this.getExportQueryColumns(),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**
@@ -436,6 +445,21 @@ export default {
       } finally {
         this.downloading = false;
       }
+    },
+
+    actualizeUsedProperties() {
+      const unwatch = this.$watch(() => this.query.active_columns, (activeColumns) => {
+        if (!isEqual(activeColumns, this.widget.parameters.usedAlarmProperties)) {
+          this.updateWidget({
+            id: this.widget._id,
+            data: setSeveralFields(this.widget, {
+              'parameters.usedAlarmProperties': activeColumns,
+            }),
+          });
+        }
+
+        unwatch();
+      });
     },
   },
 };

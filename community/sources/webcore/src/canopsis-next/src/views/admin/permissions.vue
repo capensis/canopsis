@@ -241,6 +241,8 @@ export default {
 
         this.clearChangedRoles();
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       } finally {
         this.pending = false;

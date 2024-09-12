@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
@@ -13,9 +12,14 @@ const stubs = {
   'c-enabled-field': true,
   'c-duration-field': true,
   'date-time-splitted-range-picker-field': true,
+  'pbehavior-comments-field': true,
+  'recurrence-rule-form': true,
+  'pbehavior-recurrence-rule-exceptions-field': true,
+  'c-enabled-color-picker-field': true,
   'c-pbehavior-reason-field': true,
   'c-pbehavior-type-field': true,
   'c-color-picker-field': true,
+  'c-collapse-panel': true,
   'v-checkbox': createCheckboxInputStub('v-checkbox'),
 };
 
@@ -24,8 +28,13 @@ const snapshotStubs = {
   'c-enabled-field': true,
   'c-duration-field': true,
   'date-time-splitted-range-picker-field': true,
+  'pbehavior-comments-field': true,
+  'recurrence-rule-form': true,
+  'pbehavior-recurrence-rule-exceptions-field': true,
   'c-pbehavior-reason-field': true,
   'c-pbehavior-type-field': true,
+  'c-enabled-color-picker-field': true,
+  'c-collapse-panel': true,
 };
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
@@ -43,6 +52,8 @@ const selectFullDayCheckbox = wrapper => selectCheckboxFields(wrapper)
   .at(0);
 const selectNoEndingCheckbox = wrapper => selectCheckboxFields(wrapper)
   .at(1);
+const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
+const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
 
 describe('pbehavior-general-form', () => {
   const { pbehaviorTypesModule } = createPbehaviorTypesModule();
@@ -59,16 +70,27 @@ describe('pbehavior-general-form', () => {
     reason: {},
     type: {},
     color: Faker.internet.color(),
+    comments: [],
   };
 
   const factory = generateShallowRenderer(PbehaviorGeneralForm, {
     stubs,
     store,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   const snapshotFactory = generateRenderer(PbehaviorGeneralForm, {
     stubs: snapshotStubs,
     store,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Name changed after trigger name field', () => {
@@ -207,7 +229,7 @@ describe('pbehavior-general-form', () => {
       ...form,
 
       start_on_trigger: false,
-      tstop: new Date(1233299999),
+      tstop: new Date(1233266565),
     });
   });
 
@@ -484,6 +506,46 @@ describe('pbehavior-general-form', () => {
     });
   });
 
+  test('Comments updated after trigger pbehavior comments field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newComments = [
+      {
+        key: Faker.datatype.string(),
+        message: Faker.datatype.string(),
+      },
+    ];
+
+    selectPbehaviorCommentsField(wrapper).vm.$emit('input', newComments);
+
+    expect(wrapper).toEmit('input', {
+      ...form,
+      comments: newComments,
+    });
+  });
+
+  test('Color changed after trigger color field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newColor = Faker.internet.color();
+
+    selectEnabledColorPickerField(wrapper).vm.$emit('input', newColor);
+
+    expect(wrapper).toEmit('input', {
+      ...form,
+
+      color: newColor,
+    });
+  });
+
   test('Renders `pbehavior-general-form` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -494,6 +556,7 @@ describe('pbehavior-general-form', () => {
           tstop: new Date(1614861200000),
           reason: {},
           type: {},
+          comments: [],
           color: '#123123',
         },
       },
@@ -515,6 +578,7 @@ describe('pbehavior-general-form', () => {
           },
           reason: {},
           type: {},
+          comments: [],
           color: '#123123',
         },
         noEnabled: true,

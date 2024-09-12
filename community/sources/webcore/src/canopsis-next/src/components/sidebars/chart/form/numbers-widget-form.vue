@@ -23,11 +23,11 @@
       field-sampling(v-field="form.parameters.default_sampling")
       field-filters(
         v-if="withFilters",
+        v-field="form.parameters.mainFilter",
         :filters="form.filters",
         addable,
         editable,
         with-entity,
-        hide-selector,
         @update:filters="updateFilters"
       )
       field-switcher(v-field="form.parameters.show_trend", :title="$t('settings.chart.showTrend')")

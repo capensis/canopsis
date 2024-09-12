@@ -5,6 +5,7 @@
     :active-item="selectedTag",
     :small="small",
     :inline-count="inlineCount",
+    :closable-active="closableActive",
     item-text="text",
     item-value="text",
     row
@@ -30,6 +31,10 @@ export default {
       default: 2,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    closableActive: {
       type: Boolean,
       default: false,
     },

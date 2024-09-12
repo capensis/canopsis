@@ -15,7 +15,7 @@
       template(v-if="$slots.actions")
         v-divider(key="divider")
         v-card-actions(key="actions")
-          v-layout.py-1(justify-end)
+          v-layout.py-1(justify-end, align-center)
             slot(name="actions")
 </template>
 

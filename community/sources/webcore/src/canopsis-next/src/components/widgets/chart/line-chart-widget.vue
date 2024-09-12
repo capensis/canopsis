@@ -4,8 +4,8 @@
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
-      :locked-value="lockedFilter",
-      :filters="mainFilter",
+      :locked-filters="query.lockedFilter",
+      :filters="query.filter",
       :interval="query.interval",
       :min-interval-date="minAvailableDate",
       :sampling="query.sampling",
@@ -38,7 +38,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -144,7 +144,7 @@ export default {
       return {
         ...this.getIntervalQuery(),
         ...pick(this.query, ['parameters', 'sampling', 'with_history']),
-        widget_filters: convertFilterToQuery(this.query.filter),
+        widget_filters: convertFiltersToQuery(this.query.filter, this.query.lockedFilter),
       };
     },
 

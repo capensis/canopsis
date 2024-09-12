@@ -99,6 +99,8 @@ type User struct {
 	AuthApiKey             string           `bson:"authkey" json:"authkey"`
 
 	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
+
+	Deletable *bool `bson:"-" json:"deletable,omitempty"`
 }
 
 type Role struct {

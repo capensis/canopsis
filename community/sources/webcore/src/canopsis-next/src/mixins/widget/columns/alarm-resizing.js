@@ -8,7 +8,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
     minColumnWidth: {
       type: Number,
-      default: 10,
+      default: 40,
     },
   },
   data() {
@@ -22,34 +22,26 @@ export const widgetColumnResizingAlarmMixin = {
   },
   created() {
     this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
+    this.throttledCalculateColumnsWidths = throttle(this.calculateColumnsWidths, 50);
   },
   beforeDestroy() {
     this.finishColumnResize();
   },
   computed: {
     tableRow() {
-      return this.tableHeader.querySelector('tr:first-of-type');
+      return this.tableHeader?.querySelector('tr:first-of-type');
     },
 
     headerCells() {
-      return this.tableRow.querySelectorAll('th');
+      return this.tableRow?.querySelectorAll('th');
     },
 
     sumOfColumnsWidth() {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
     },
 
-    minColumnsWidth() {
-      /**
-       * 24 - max padding size
-       * 22 - max sort position icon width
-       * 16 - max sort direction icon width
-       */
-      return (24 + 22 + 16 + this.minColumnWidth);
-    },
-
     minColumnsWidthInPercent() {
-      return this.minColumnsWidth * this.percentsInPixel;
+      return this.minColumnWidth * this.percentsInPixel;
     },
   },
   methods: {
@@ -80,6 +72,10 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     setPercentsInPixel() {
+      if (!this.tableRow) {
+        return;
+      }
+
       const { width: rowWidth } = this.tableRow.getBoundingClientRect();
 
       this.percentsInPixel = 100 / rowWidth;
@@ -89,16 +85,21 @@ export const widgetColumnResizingAlarmMixin = {
       return Object.values(columnsWidth).reduce((acc, width) => acc + width, 0);
     },
 
+    calculateElementNormalizedWidth(element, field) {
+      const { width: headerWidth } = element.getBoundingClientRect();
+      const width = headerWidth * this.percentsInPixel;
+
+      return this.getNormalizedWidth(field, width);
+    },
+
     calculateColumnsWidths() {
       this.setPercentsInPixel();
 
       this.columnsWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
-          const { width: headerWidth } = headerElement.getBoundingClientRect();
-          const width = headerWidth * this.percentsInPixel;
 
-          acc[value] = this.getNormalizedWidth(value, width);
+          acc[value] = this.calculateElementNormalizedWidth(headerElement, value);
         }
 
         return acc;
@@ -132,20 +133,32 @@ export const widgetColumnResizingAlarmMixin = {
       this.throttledResizeColumnByDiff(this.resizingColumnIndex);
     },
 
+    startColumnResize(columnName) {
+      const body = document.querySelector('body');
+
+      this.resizingColumnIndex = this.headers.findIndex(({ value }) => value === columnName);
+
+      if (!body) {
+        return;
+      }
+
+      body.addEventListener('mousemove', this.handleColumnResize);
+      body.addEventListener('mouseup', this.finishColumnResize);
+      body.addEventListener('mouseleave', this.finishColumnResize);
+    },
+
     finishColumnResize() {
       this.aggregatedMovementDiff = 0;
 
-      document.body.removeEventListener('mousemove', this.handleColumnResize);
-      document.body.removeEventListener('mouseup', this.finishColumnResize);
-      document.body.removeEventListener('mouseleave', this.finishColumnResize);
-    },
+      const body = document.querySelector('body');
 
-    startColumnResize(columnName) {
-      this.resizingColumnIndex = this.headers.findIndex(({ value }) => value === columnName);
+      if (!body) {
+        return;
+      }
 
-      document.body.addEventListener('mousemove', this.handleColumnResize);
-      document.body.addEventListener('mouseup', this.finishColumnResize);
-      document.body.addEventListener('mouseleave', this.finishColumnResize);
+      body.removeEventListener('mousemove', this.handleColumnResize);
+      body.removeEventListener('mouseup', this.finishColumnResize);
+      body.removeEventListener('mouseleave', this.finishColumnResize);
     },
   },
 };

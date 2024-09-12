@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { omit, pick } from 'lodash';
 import Faker from 'faker';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { triggerDocumentMouseEvent, triggerDocumentKeyboardEvent } from '@unit/utils/events';
 
 import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';

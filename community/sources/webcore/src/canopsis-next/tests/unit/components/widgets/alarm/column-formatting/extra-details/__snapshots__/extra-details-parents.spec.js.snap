@@ -1,28 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`extra-details-parents Renders \`extra-details-parents\` with full parents 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
-  <div class="text-md-center"><strong>Meta alarm</strong>
-    <div class="layout column">
-      <div>Rules&nbsp;:</div>
-      <div class="rule-name">&nbsp;parent-rule-1-name</div>
-      <div class="rule-name">&nbsp;parent-rule-2-name</div>
-      <div class="rule-name">&nbsp;parent-rule-3-name</div>
-    </div>
-    <div>Causes : 3</div>
-  </div>
-</div>
-<div><span class="c-extra-details__badge brown darken-1"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">center_focus_weak</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
-`;
+exports[`extra-details-parents Renders \`extra-details-parents\` with full parents 1`] = `<div><span class="c-extra-details__badge brown darken-1"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">center_focus_weak</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>`;
 
-exports[`extra-details-parents Renders \`extra-details-parents\` without rules 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
-  <div class="text-md-center"><strong>Meta alarm</strong>
-    <div class="layout column">
-      <div>Rules&nbsp;:</div>
-    </div>
-    <div>Causes : 3</div>
-  </div>
-</div>
-<div><span class="c-extra-details__badge brown darken-1"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">center_focus_weak</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
-`;
+exports[`extra-details-parents Renders \`extra-details-parents\` without rules 1`] = `<div><span class="c-extra-details__badge brown darken-1"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">center_focus_weak</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>`;

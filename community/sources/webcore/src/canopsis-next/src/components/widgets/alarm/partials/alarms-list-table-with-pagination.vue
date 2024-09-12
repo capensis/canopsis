@@ -24,6 +24,8 @@ import { isEqual, pick } from 'lodash';
 
 import { SORT_ORDERS } from '@/constants';
 
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
+
 /**
  * Group-alarm-list component
  *
@@ -95,7 +97,13 @@ export default {
         const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, page, limit, descending, multiSortBy };
+        return {
+          sortBy,
+          page,
+          descending,
+          multiSortBy,
+          rowsPerPage: limit,
+        };
       },
 
       set(value) {
@@ -132,6 +140,7 @@ export default {
         ...this.query,
 
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       });
     },
 

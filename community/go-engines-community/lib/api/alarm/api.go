@@ -31,6 +31,7 @@ type API interface {
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
 	GetLinks(c *gin.Context)
+	GetDisplayNames(c *gin.Context)
 }
 
 type api struct {
@@ -205,7 +206,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			response[idx].ID = request.ID
 			response[idx].Status = http.StatusInternalServerError
 			response[idx].Error = common.InternalServerErrorResponse.Error
-			a.logger.Err(err).Msg("cannot fetch alarm details")
+			a.logger.Err(err).Str("ID", request.ID).Msg("cannot fetch alarm details")
 			continue
 		}
 
@@ -438,4 +439,35 @@ func (a *api) GetLinks(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, links)
+}
+
+// GetDisplayNames
+// @Success 200 {object} common.PaginatedListResponse{data=[]DisplayNameData}
+func (a *api) GetDisplayNames(c *gin.Context) {
+	var r GetDisplayNamesRequest
+	r.Query = pagination.GetDefaultQuery()
+
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	aggregationResult, err := a.store.GetDisplayNames(c, r)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
+		panic(err)
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }

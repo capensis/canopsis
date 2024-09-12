@@ -1,7 +1,6 @@
 <template lang="pug">
   v-tabs.view-tabs(
     ref="tabs",
-    :key="vTabsKey",
     :value="$route.fullPath",
     :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }",
     :hide-slider="changed",
@@ -19,14 +18,14 @@
       @input="$emit('update:tabs', $event)"
     )
       v-tab.draggable-item(
-        v-for="tab in tabs",
-        :key="tab._id",
+        v-for="{ to, tab, title, key } in preparedTabs",
+        :key="key",
         :disabled="changed",
-        :to="getTabHrefById(tab._id)",
+        :to="to",
         exact,
         ripple
       )
-        span {{ tab.title }}
+        span {{ title }}
         template(v-if="updatable && editing")
           v-btn(small, flat, icon, @click.prevent="showUpdateTabModal(tab)")
             v-icon(small) edit
@@ -37,12 +36,12 @@
     template(v-if="$scopedSlots.default")
       v-tabs-items(touchless)
         v-tab-item(
-          v-for="tab in tabs",
-          :key="tab._id",
-          :value="getTabHrefById(tab._id)",
+          v-for="{ to, tab, key } in preparedTabs",
+          :key="key",
+          :value="to",
           lazy
         )
-          slot(:tab="tab")
+          slot(:tab="tab", :visible="to === $route.fullPath")
 </template>
 
 <script>
@@ -77,8 +76,13 @@ export default {
     },
   },
   computed: {
-    vTabsKey() {
-      return this.view.tabs.map(tab => tab._id).join('-');
+    preparedTabs() {
+      return this.tabs.map(tab => ({
+        key: tab._id,
+        to: this.getTabHrefById(tab._id),
+        title: tab.title,
+        tab,
+      }));
     },
 
     getTabHrefById() {

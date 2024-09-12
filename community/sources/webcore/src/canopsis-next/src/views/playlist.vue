@@ -3,7 +3,7 @@
     v-fade-transition(mode="out-in")
       c-progress-overlay(v-if="pending", pending)
       div.playlist(v-else-if="playlist")
-        c-page-header {{ playlist.name }}
+        c-page-header(v-if="!isFullscreenMode") {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
           v-fade-transition
             v-toolbar-items.playlist__actions.mr-2(v-if="!pending")
@@ -23,12 +23,12 @@
                 color="white",
                 @click="toggleFullScreenMode"
               )
-        div.position-relative.playlist__tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
+        div.position-relative.playlist__tabs-wrapper
           div.playlist__play-button-wrapper(v-if="!played")
             v-btn(color="primary", large, @click="play")
               v-icon(large) play_arrow
           v-fade-transition(mode="out-in")
-            view-tab-widgets(:tab="activeTab", :key="activeTab._id")
+            view-tab-widgets(v-if="activeTab", :tab="activeTab", :key="activeTab._id", visible)
 </template>
 
 <script>
@@ -171,8 +171,9 @@ export default {
       }
     },
 
-    toggleFullScreenMode() {
-      this.$fullscreen.toggle(this.$refs.playlistTabsWrapper, {
+    async toggleFullScreenMode() {
+      this.$fullscreen.toggle(this.$el, {
+        background: 'var(--v-application-background-base)',
         fullscreenClass: 'full-screen',
         callback: value => this.isFullscreenMode = value,
       });

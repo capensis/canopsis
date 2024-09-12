@@ -1,4 +1,4 @@
-import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
+import themeVuetify from 'vuetify/es5/components/Vuetify/mixins/theme';
 import { kebabCase, merge } from 'lodash';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
@@ -55,8 +55,12 @@ export const systemThemeMixin = {
       document.head.removeChild(this.styleElement);
     },
 
-    setTheme({ colors, font_size: fontSize }) {
+    setTheme(theme) {
+      const { colors, font_size: fontSize } = theme;
       const { main, table, state } = colors;
+
+      const white = '#fff';
+      const black = '#000';
 
       const isDark = isDarkColor(main.background);
 
@@ -69,10 +73,10 @@ export const systemThemeMixin = {
 
       const variables = themePropertiesToCSSVariables(vuetifyVariables);
 
-      this.$vuetify.theme = theme(variables);
+      this.$vuetify.theme = themeVuetify(variables);
 
-      const lightBaseColor = isDark ? '#000' : main.active_color;
-      const darkBaseColor = isDark ? main.active_color : '#fff';
+      const lightBaseColor = isDark ? black : main.active_color;
+      const darkBaseColor = isDark ? main.active_color : white;
 
       const textLight = {
         primary: colorToRgba(lightBaseColor, 0.87),
@@ -94,11 +98,13 @@ export const systemThemeMixin = {
         focused: colorToRgba(lightBaseColor, 0.12),
       };
 
-      const stepperBaseColor = isDark ? '#000' : '#fff';
+      const active = isDark ? black : white;
+      const completed = isDark ? white : black;
+
       const stepper = {
-        active: stepperBaseColor,
-        completed: colorToRgba(stepperBaseColor, 0.87),
-        hover: colorToRgba(stepperBaseColor, isDark ? 0.75 : 0.54),
+        active,
+        completed: colorToRgba(completed, 0.87),
+        hover: colorToRgba(completed, isDark ? 0.75 : 0.54),
       };
 
       this.otherVariables = {
@@ -110,6 +116,7 @@ export const systemThemeMixin = {
         stepper,
       };
       this.system.dark = isDark;
+      this.system.theme = theme;
     },
   },
 };

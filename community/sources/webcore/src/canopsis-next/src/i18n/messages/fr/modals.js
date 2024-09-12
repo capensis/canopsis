@@ -173,7 +173,7 @@ export default {
     title: 'Annuler l\'annulation',
   },
   liveReporting: {
-    editLiveReporting: 'Suivi personnalisé',
+    editLiveReporting: 'Définir un intervalle de dates',
     dateInterval: 'Intervalle de dates',
     today: 'Aujourd\'hui',
     yesterday: 'Hier',
@@ -199,6 +199,8 @@ export default {
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
+    massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
+    actionInQueue: 'action en file d\'attente|actions en file d\'attente',
     entity: {
       tabs: {
         info: 'Info',
@@ -918,6 +920,9 @@ export default {
     edit: {
       title: 'Modifier le générateur de liens',
     },
+    duplicate: {
+      title: 'Dupliquer un générateur de liens',
+    },
   },
   createAlarmChart: {
     [WIDGET_TYPES.barChart]: {
@@ -982,5 +987,8 @@ export default {
     duplicate: {
       title: 'Thème en double',
     },
+  },
+  archiveDisabledEntities: {
+    text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
   },
 };

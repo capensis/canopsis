@@ -53,6 +53,43 @@ export const getInfosWidgetColumn = (value = '') => [
 export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
+ * Convert widget column value to form
+ *
+ * @param {string} [value = '']
+ * @returns {WidgetColumnForm}
+ */
+export const widgetColumnValueToForm = (value = '') => {
+  const result = {};
+
+  const infosColumn = getInfosWidgetColumn(value) ?? '';
+
+  if (infosColumn === ALARM_FIELDS.infos) {
+    const [rule, dictionary] = value === ALARM_FIELDS.infos
+      ? ['', '']
+      : value.replace(`${infosColumn}.`, '').split('.');
+
+    result.column = infosColumn;
+    result.rule = rule;
+    result.dictionary = dictionary;
+  } else if (infosColumn) {
+    const [dictionary, field] = value.replace(`${infosColumn}.`, '').split('.');
+
+    result.column = infosColumn;
+    result.dictionary = dictionary;
+    result.field = field;
+  } else if (isLinksWidgetColumn(value)) {
+    const [column, field = ''] = value.split('.');
+
+    result.column = column;
+    result.field = field;
+  } else {
+    result.column = value;
+  }
+
+  return result;
+};
+
+/**
  * Convert widget column to form
  *
  * @param {string} [value = '']
@@ -75,27 +112,11 @@ export const widgetColumnToForm = ({
     label,
     key: uid(),
     column: value,
+
+    ...widgetColumnValueToForm(value),
   };
 
-  const infosColumn = getInfosWidgetColumn(value) ?? '';
-
-  if (infosColumn === ALARM_FIELDS.infos) {
-    const [rule, dictionary] = value.replace(`${infosColumn}.`, '').split('.');
-
-    result.column = infosColumn;
-    result.rule = rule;
-    result.dictionary = dictionary;
-  } else if (infosColumn) {
-    const [dictionary, field] = value.replace(`${infosColumn}.`, '').split('.');
-
-    result.column = infosColumn;
-    result.dictionary = dictionary;
-    result.field = field;
-  } else if (isLinksWidgetColumn(value)) {
-    const [column, field = ''] = value.split('.');
-
-    result.column = column;
-    result.field = field;
+  if (isLinksWidgetColumn(value)) {
     result.onlyIcon = onlyIcon;
   }
 
@@ -111,35 +132,41 @@ export const widgetColumnToForm = ({
 export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToForm);
 
 /**
+ * Convert form column to widget column
+ *
+ * @param {WidgetColumnForm} form
+ * @returns {WidgetColumn}
+ */
+export const formToWidgetColumn = ({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
+  const result = {
+    ...rest,
+
+    value: column,
+  };
+
+  if (column === ALARM_FIELDS.infos) {
+    result.value = [column, rule, dictionary].filter(Boolean).join('.');
+  } else if (getInfosWidgetColumn(column)) {
+    result.value = `${column}.${dictionary}.${field}`;
+  } else if (isLinksWidgetColumn(column)) {
+    result.onlyIcon = onlyIcon;
+
+    if (onlyIcon) {
+      result.linksInRowCount = linksInRowCount;
+    }
+
+    if (field) {
+      result.value = `${column}.${field}`;
+    }
+  }
+
+  return result;
+};
+
+/**
  * Convert form array to widget columns array
  *
  * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}
  */
-export const formToWidgetColumns = (form = []) => (
-  form.map(({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
-    const result = {
-      ...rest,
-
-      value: column,
-    };
-
-    if (column === ALARM_FIELDS.infos) {
-      result.value = `${column}.${rule}.${dictionary}`;
-    } else if (getInfosWidgetColumn(column)) {
-      result.value = `${column}.${dictionary}.${field}`;
-    } else if (isLinksWidgetColumn(column)) {
-      result.onlyIcon = onlyIcon;
-
-      if (onlyIcon) {
-        result.linksInRowCount = linksInRowCount;
-      }
-
-      if (field) {
-        result.value = `${column}.${field}`;
-      }
-    }
-
-    return result;
-  })
-);
+export const formToWidgetColumns = (form = []) => form.map(formToWidgetColumn);

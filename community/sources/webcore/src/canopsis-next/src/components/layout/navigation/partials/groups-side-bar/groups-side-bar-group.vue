@@ -3,6 +3,7 @@
     :group="group",
     :order-changed="isGroupsOrderChanged",
     :is-editing="isNavigationEditingMode",
+    :editable="hasViewGroupEditAccess && isNavigationEditingMode",
     @change="showEditGroupModal"
   )
     c-draggable-list-field.views-panel.secondary.lighten-1(
@@ -38,6 +39,12 @@ export default {
   computed: {
     isGroupEmpty() {
       return this.group.views && this.group.views.length === 0;
+    },
+
+    hasViewGroupEditAccess() {
+      return this.group.is_private
+        || this.hasDeleteAnyViewAccess
+        || this.hasUpdateAnyViewAccess;
     },
   },
   methods: {

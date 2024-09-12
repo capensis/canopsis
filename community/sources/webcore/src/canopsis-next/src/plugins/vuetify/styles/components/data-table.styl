@@ -48,6 +48,15 @@ theme(v-datatable, "v-datatable")
   & tbody tr:not(.v-datatable__expand-row):hover
     background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base)) !important
 
+  &-header
+    &__span--ellipsis
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+    &__icon
+      white-space: nowrap;
+
 table.v-datatable
   transition: background-color .3s cubic-bezier(.25,.8,.5,1)
 

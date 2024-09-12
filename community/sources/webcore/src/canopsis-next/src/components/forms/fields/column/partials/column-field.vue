@@ -1,5 +1,16 @@
 <template lang="pug">
-  v-card
+  v-card.column-field
+    v-tooltip(left)
+      template(#activator="{ on }")
+        v-btn.column-field__remove-btn(
+          v-on="on",
+          small,
+          flat,
+          icon,
+          @click="$emit('remove')"
+        )
+          v-icon(color="error", small) close
+      span {{ $t('common.delete') }}
     v-card-text
       v-layout(row, align-center)
         span.handler.mr-1
@@ -8,7 +19,16 @@
           v-model="expanded",
           :color="hasChildrenError ? 'error' : ''"
         )
+        c-name-field(
+          v-if="isCustom",
+          v-field="column.label",
+          :name="columnLabelFieldName",
+          :label="$t('common.label')",
+          :error-messages="columnLabelErrorMessages",
+          required
+        )
         v-select(
+          v-else,
           v-validate="'required'",
           :value="column.column",
           :items="availableColumns",
@@ -21,23 +41,29 @@
           template(#activator="{ on }")
             v-btn.mr-0(
               v-on="on",
+              :class="isCustom ? 'text--primary' : 'text--disabled'",
               small,
               flat,
               icon,
-              @click="$emit('remove')"
+              @click="convertToCustom"
             )
-              v-icon(color="error", small) close
-          span {{ $t('common.delete') }}
+              v-icon(small) tune
+          span {{ $t('common.convertToCustomColumn') }}
       v-expand-transition(mode="out-in")
         column-field-expand-panel.pl-1(
           v-show="expanded",
           v-field="column",
           :name="name",
+          :with-label="!isCustom",
+          :with-field="isCustom",
           :with-html="withHtml",
           :with-template="withTemplate",
           :with-color-indicator="withColorIndicator",
           :with-instructions="withInstructions",
-          :without-infos-attributes="withoutInfosAttributes"
+          :with-simple-template="withSimpleTemplate",
+          :optional-infos-attributes="optionalInfosAttributes",
+          :without-infos-attributes="withoutInfosAttributes",
+          :variables="variables"
         )
 </template>
 
@@ -52,6 +78,8 @@ import {
   ENTITY_FIELDS_TO_LABELS_KEYS,
   ALARM_OUTPUT_FIELDS,
 } from '@/constants';
+
+import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
 import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -105,10 +133,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    optionalInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withSimpleTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    variables: {
+      type: Array,
+      required: false,
+    },
   },
   data() {
     return {
       expanded: !this.column?.column,
+      isCustom: false,
     };
   },
   computed: {
@@ -139,6 +180,14 @@ export default {
         ? this.alarmListAvailableColumns
         : this.contextAvailableColumns;
     },
+
+    columnLabelFieldName() {
+      return `${this.name}.label`;
+    },
+
+    columnLabelErrorMessages() {
+      return this.errors.collect(this.columnLabelFieldName);
+    },
   },
   watch: {
     type() {
@@ -148,6 +197,15 @@ export default {
       }));
 
       this.updateModel(columns);
+    },
+
+    availableColumns: {
+      immediate: true,
+      handler(columns) {
+        this.isCustom = this.column.column
+          ? columns.every(column => column.value !== this.column.column)
+          : false;
+      },
     },
   },
   methods: {
@@ -164,6 +222,52 @@ export default {
 
       this.updateModel(newValue);
     },
+
+    convertToCustom() {
+      this.isCustom = !this.isCustom;
+
+      const newColumn = {
+        ...this.column,
+      };
+
+      if (this.isCustom) {
+        const { value } = formToWidgetColumn(this.column);
+
+        const selectedColumn = this.availableColumns.find(column => column.value === this.column.column);
+
+        const label = this.column.label || selectedColumn?.text || '';
+
+        newColumn.column = value;
+        newColumn.label = label;
+        newColumn.field = '';
+        newColumn.rule = '';
+        newColumn.dictionary = '';
+      } else {
+        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(this.column.column);
+
+        const selectedColumn = this.availableColumns.find(column => column.value === value);
+
+        newColumn.column = value === selectedColumn?.value ? value : '';
+        newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;
+        newColumn.field = field;
+        newColumn.rule = rule;
+        newColumn.dictionary = dictionary;
+      }
+
+      this.updateModel(newColumn);
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.column-field {
+  position: relative;
+
+  &__remove-btn.v-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+</style>
