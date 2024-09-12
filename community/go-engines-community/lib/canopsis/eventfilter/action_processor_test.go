@@ -1861,7 +1861,6 @@ func TestActionProcessor(t *testing.T) {
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
-		dataset := dataset
 		t.Run(dataset.testName, func(t *testing.T) {
 			resultEntityUpdated, resultErr := processor.Process(context.Background(), "test", dataset.action, &dataset.event,
 				dataset.regexMatches, dataset.externalData)
