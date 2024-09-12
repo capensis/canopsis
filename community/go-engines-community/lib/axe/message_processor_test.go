@@ -299,6 +299,7 @@ func benchmarkMessageProcessor(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
+	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
 		template.NewExecutor(templateConfigProvider, tzConfigProvider), logger)
@@ -326,6 +327,7 @@ func benchmarkMessageProcessor(
 			event.NewNullAutoInstructionMatcher(),
 			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
 			metaAlarmEventProcessor,
+			metaAlarmStatesService,
 			metrics.NewNullSender(),
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
 			nil,

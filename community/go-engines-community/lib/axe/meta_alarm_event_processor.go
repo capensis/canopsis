@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libaxeevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -760,7 +761,7 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 						return fmt.Errorf("cannot update alarm: %w", err)
 					}
 
-					return nil
+					return libaxeevent.RemoveMetaAlarmState(ctx, parentAlarm.Alarm, rule, p.metaAlarmStatesService)
 				})
 				if err != nil {
 					return err
