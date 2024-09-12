@@ -4,7 +4,8 @@
       v-if="template",
       :template="template",
       :context="templateContext",
-      @select:tag="$emit('select:tag', $event)"
+      @select:tag="$emit('select:tag', $event)",
+      @clear:tag="$emit('clear:tag')"
     )
     v-layout(v-else, justify-center)
       v-icon(color="info") infos
@@ -31,6 +32,10 @@ export default {
     template: {
       type: String,
       required: false,
+    },
+    selectedTag: {
+      type: String,
+      default: '',
     },
   },
   computed: {

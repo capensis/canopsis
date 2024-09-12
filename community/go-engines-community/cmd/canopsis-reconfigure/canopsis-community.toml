@@ -125,6 +125,8 @@ ReconnectRetries = 3
 # The dictionary is used in UI autocomplete hints for infos key and values.
 BuildEntityInfosDictionary = true
 BuildDynamicInfosDictionary = true
+# Maximum unique infos key-value pairs to store in dictionary
+InfosDictionaryLimit = 1100
 # The default value for a check events count trigger threshold.
 EventsCountTriggerDefaultThreshold = 10
 
@@ -146,6 +148,8 @@ DisableActionSnoozeDelayOnPbh = false
 # TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 TimeToKeepResolvedAlarms = "720h"
 AllowDoubleAck = false
+# EnableArraySortingInEntityInfos enables sorting string array infos before saving to an entity.
+EnableArraySortingInEntityInfos = true
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]
@@ -195,6 +199,13 @@ PartsOrder = ["time", "level", "caller", "message"]
 Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
+GoMetricsInterval = "1s"
+GoMetrics = [
+    "proc_cpu_total",
+    "proc_virtual_memory",
+    "proc_resident_memory",
+    "proc_file_descriptors",
+]
 
 # Template vars can be used in any template like this {{ .Env.Location }}.
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.

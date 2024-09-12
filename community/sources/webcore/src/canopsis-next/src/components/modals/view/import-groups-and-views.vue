@@ -108,6 +108,8 @@ export default {
           data: prepareViewGroupsForImportRequest(this.currentGroups),
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
         await this.fetchAllGroupsListWithWidgetsWithCurrentUser();

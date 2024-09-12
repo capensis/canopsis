@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { keyBy, merge } from 'lodash';
+import { isArray, keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -35,6 +35,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
+  PATTERN_EXISTS_OPERATORS,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
@@ -93,6 +94,17 @@ export default {
     };
   },
   computed: {
+    stringWithOneOfOptions() {
+      return {
+        operators: [
+          ...PATTERN_STRING_OPERATORS,
+
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+      };
+    },
+
     entitiesOperators() {
       return [
         PATTERN_OPERATORS.equal,
@@ -255,6 +267,14 @@ export default {
       };
     },
 
+    existsOptions() {
+      return {
+        operators: [
+          ...PATTERN_EXISTS_OPERATORS,
+        ],
+      };
+    },
+
     canceledOptions() {
       return {
         operators: [
@@ -287,16 +307,35 @@ export default {
 
     ackByOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
         valueField: {
           is: 'c-user-picker-field',
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+              itemValue: 'display_name',
+            };
+          },
         },
       };
     },
 
-    stringWithExistOptions() {
+    stringWithExistAndOneOfOptions() {
       return {
-        operators: [...PATTERN_STRING_OPERATORS, PATTERN_OPERATORS.exist],
+        operators: [
+          ...this.stringWithOneOfOptions.operators,
+
+          PATTERN_OPERATORS.exist,
+        ],
       };
     },
 
@@ -311,11 +350,23 @@ export default {
 
     initiatorOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
         valueField: {
           is: 'c-select-field',
-          props: {
-            items: Object.values(ALARM_EVENT_INITIATORS),
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              items: Object.values(ALARM_EVENT_INITIATORS),
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+            };
           },
         },
       };
@@ -330,7 +381,10 @@ export default {
 
     alarmAttributes() {
       return [
-        { value: ALARM_PATTERN_FIELDS.displayName },
+        {
+          value: ALARM_PATTERN_FIELDS.displayName,
+          options: this.stringWithOneOfOptions,
+        },
         {
           value: ALARM_PATTERN_FIELDS.state,
           options: this.stateOptions,
@@ -369,7 +423,7 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.output,
-          options: this.stringWithExistOptions,
+          options: this.stringWithExistAndOneOfOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.lastEventDate,
@@ -393,7 +447,7 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.ackMessage,
-          options: this.stringWithExistOptions,
+          options: this.stringWithExistAndOneOfOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.ackInitiator,
@@ -409,11 +463,11 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.ticketValue,
-          options: this.stringWithExistOptions,
+          options: this.stringWithExistAndOneOfOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.ticketMessage,
-          options: this.stringWithExistOptions,
+          options: this.stringWithExistAndOneOfOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.ticketInitiator,
@@ -437,7 +491,7 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.lastComment,
-          options: this.stringWithExistOptions,
+          options: this.stringWithExistAndOneOfOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.lastCommentInitiator,
@@ -455,9 +509,22 @@ export default {
           value: ALARM_PATTERN_FIELDS.activationDate,
           options: this.dateOptions,
         },
-        { value: ALARM_PATTERN_FIELDS.longOutput },
-        { value: ALARM_PATTERN_FIELDS.initialOutput },
-        { value: ALARM_PATTERN_FIELDS.initialLongOutput },
+        {
+          value: ALARM_PATTERN_FIELDS.longOutput,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.initialOutput,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.initialLongOutput,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.changeState,
+          options: this.existsOptions,
+        },
         {
           value: ALARM_PATTERN_FIELDS.totalStateChanges,
           options: this.totalStateChangesOptions,

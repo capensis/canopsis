@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -35,6 +37,7 @@ func NewNoEventsProcessor(
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -51,6 +54,7 @@ func NewNoEventsProcessor(
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
 		metricsSender:           metricsSender,
 		remediationRpcClient:    remediationRpcClient,
+		internalTagAlarmMatcher: internalTagAlarmMatcher,
 		encoder:                 encoder,
 		logger:                  logger,
 	}
@@ -69,6 +73,7 @@ type noEventsProcessor struct {
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	remediationRpcClient    engine.RPCClient
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
 	encoder                 encoding.Encoder
 	logger                  zerolog.Logger
 }
@@ -84,6 +89,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		entity = *event.Entity
 		updatedServiceStates = nil
 
 		alarm := types.Alarm{}
@@ -103,6 +109,10 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		if err != nil {
 			return err
+		}
+
+		if result.Entity.ID != "" {
+			entity = result.Entity
 		}
 
 		if result.Alarm.ID == "" {
@@ -176,7 +186,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		if pbehaviorInfo.IsActive() {
 			alarm.NotAckedSince = &alarm.Time
 		} else {
-			alarm.Value.InactiveStart = &params.Timestamp
+			alarm.Value.InactiveStart = &now
 		}
 
 		pbhOutput := fmt.Sprintf(
@@ -205,6 +215,10 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 
 		alarm.InactiveAutoInstructionInProgress = matched
 	}
+
+	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
+	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.Tags = slices.Clone(alarm.InternalTags)
 
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
 	if err != nil {
@@ -249,6 +263,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	}
 	push := bson.M{}
 	inc := bson.M{}
+	unset := bson.M{}
 
 	var stateStep types.AlarmStep
 	if newState != previousState {
@@ -268,6 +283,11 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		}
 		set["v.state"] = stateStep
 		inc["v.last_update_date"] = params.Timestamp
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := types.CpsNumber(types.AlarmStatusNoEvents)
@@ -304,9 +324,10 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 
 	newAlarm := types.Alarm{}
 	err := p.alarmCollection.FindOneAndUpdate(ctx, match, bson.M{
-		"$set":  set,
-		"$push": push,
-		"$inc":  inc,
+		"$set":   set,
+		"$push":  push,
+		"$inc":   inc,
+		"$unset": unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -397,9 +418,14 @@ func (p *noEventsProcessor) postProcess(
 	result Result,
 	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
 ) {
+	entity := *event.Entity
+	if result.Entity.ID != "" {
+		entity = result.Entity
+	}
+
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
-		*event.Entity,
+		entity,
 		result.AlarmChange,
 		event.Parameters.Timestamp.Time,
 		event.Parameters.Initiator,

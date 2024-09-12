@@ -1,9 +1,9 @@
 <template lang="pug">
   component.c-select-field(
-    :value="value",
     v-bind="$attrs",
     v-on="$listeners",
     v-validate="rules",
+    :value="value",
     :class="{ 'c-select-field--ellipsis': ellipsis }",
     :is="component",
     :item-text="itemText",

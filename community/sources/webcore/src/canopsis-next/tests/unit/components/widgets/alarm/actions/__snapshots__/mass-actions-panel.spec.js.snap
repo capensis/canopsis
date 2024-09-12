@@ -5,6 +5,30 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
   class="shared-actions-panel"
 >
   <button
+    class="action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-fastAck"
+  >
+    Fast ack|check|fastAck
+  </button>
+  <button
+    class="action-createManualMetaAlarm"
+  >
+    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `<div class="shared-actions-panel"><button class="action-pbehaviorAdd">Periodical behavior|pause|pbehaviorAdd</button><button class="action-ack">Ack|playlist_add_check|ack</button><button class="action-fastAck">Fast ack|check|fastAck</button><button class="action-ackRemove">Cancel ack|not_interested|ackRemove</button><button class="action-cancel">Cancel alarm|$vuetify.icons.list_delete|cancel</button><button class="action-fastCancel">Fast cancel|delete|fastCancel</button><button class="action-comment">Comment|comment|comment</button><button class="action-declareTicket">Declare ticket|report_problem|declareTicket</button><button class="action-associateTicket">Associate ticket|local_play|associateTicket</button><button class="action-snooze">Snooze alarm|alarm|snooze</button><button class="action-createManualMetaAlarm">Manual meta alarm management|center_focus_strong|createManualMetaAlarm</button></div>`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -18,11 +42,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     class="action-fastAck"
   >
     Fast ack|check|fastAck
-  </button>
-  <button
-    class="action-ackRemove"
-  >
-    Cancel ack|not_interested|ackRemove
   </button>
   <button
     class="action-cancel"
@@ -59,15 +78,10 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
   >
     Manual meta alarm management|center_focus_strong|createManualMetaAlarm
   </button>
-  <button
-    class="action-rule_id..with rule id"
-  >
-    Follow the link "with rule id"||rule_id..with rule id
-  </button>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] = `
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 1`] = `
 <div
   class="shared-actions-panel"
 >
@@ -87,9 +101,61 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     Fast ack|check|fastAck
   </button>
   <button
-    class="action-ackRemove"
+    class="action-cancel"
   >
-    Cancel ack|not_interested|ackRemove
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-createManualMetaAlarm"
+  >
+    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-fastAck"
+  >
+    Fast ack|check|fastAck
   </button>
   <button
     class="action-cancel"

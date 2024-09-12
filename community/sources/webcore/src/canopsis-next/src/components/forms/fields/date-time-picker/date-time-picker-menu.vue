@@ -12,7 +12,6 @@
     template(#activator="{ on }")
       v-btn(
         v-on="on",
-        color="secondary",
         icon,
         fab,
         small

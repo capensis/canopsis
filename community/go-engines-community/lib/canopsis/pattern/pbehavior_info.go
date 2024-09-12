@@ -147,7 +147,7 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 			}
 
 			if _, ok := getPbehaviorInfoStringField(emptyPbhInfo, fieldCond.Field); ok {
-				condQueries[j], err = cond.StringToMongoQuery(mongoField)
+				condQueries[j], err = cond.StringToMongoQuery(mongoField, false)
 			} else {
 				err = ErrUnsupportedField
 			}

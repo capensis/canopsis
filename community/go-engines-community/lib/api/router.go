@@ -74,6 +74,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -118,6 +119,7 @@ func RegisterRoutes(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	authorProvider author.Provider,
 	healthcheckStore healthcheck.Store,
+	tplExecutor libtemplate.Executor,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -263,7 +265,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
+		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
+			tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
@@ -364,6 +367,11 @@ func RegisterRoutes(
 			"/alarm-counters",
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.Count,
+		)
+		protected.GET(
+			"/alarm-display-names",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmAPI.GetDisplayNames,
 		)
 		exportExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")

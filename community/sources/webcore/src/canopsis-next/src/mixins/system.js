@@ -16,6 +16,7 @@ export const systemMixin = {
       system: {
         timezone: this.timezone ?? DEFAULT_TIMEZONE,
         dark: false,
+        theme: {},
         setTheme: this.setTheme,
       },
     };

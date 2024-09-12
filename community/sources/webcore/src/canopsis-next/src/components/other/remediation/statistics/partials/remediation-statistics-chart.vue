@@ -97,7 +97,7 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediation.statistic.labels.notRemediated'),
+        label: this.$t('remediation.statistic.labels.withAssignedRemediations'),
         order: 2,
         data: assigned,
       }, {

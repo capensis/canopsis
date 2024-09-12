@@ -22,15 +22,17 @@ const (
 // NewAdapter creates mongo adapter.
 func NewAdapter(db mongo.DbClient) persist.Adapter {
 	return &adapter{
-		userCollection: db.Collection(mongo.UserCollection),
-		roleCollection: db.Collection(mongo.RoleCollection),
+		userCollection:       db.Collection(mongo.UserCollection),
+		roleCollection:       db.Collection(mongo.RoleCollection),
+		permissionCollection: db.Collection(mongo.PermissionCollection),
 	}
 }
 
 // adapter implements casbin adapter interface.
 type adapter struct {
-	userCollection mongo.DbCollection
-	roleCollection mongo.DbCollection
+	userCollection       mongo.DbCollection
+	roleCollection       mongo.DbCollection
+	permissionCollection mongo.DbCollection
 }
 
 type role struct {
@@ -90,41 +92,10 @@ func (a *adapter) loadRoles(
 	ctx context.Context,
 	model model.Model,
 ) (resErr error) {
-	cursor, err := a.roleCollection.Aggregate(ctx, []bson.M{
-		{"$addFields": bson.M{
-			"permissions": bson.M{"$objectToArray": "$permissions"},
-		}},
-		{"$unwind": "$permissions"},
-		{"$lookup": bson.M{
-			"from":         mongo.PermissionCollection,
-			"localField":   "permissions.k",
-			"foreignField": "_id",
-			"as":           "permissions.model",
-		}},
-		{"$unwind": "$permissions.model"},
-		{"$group": bson.M{
-			"_id": "$_id",
-			"permissions": bson.M{"$push": bson.M{
-				"k": "$permissions.k",
-				"v": bson.M{
-					"bitmask": "$permissions.v",
-					"type":    "$permissions.model.type",
-				},
-			}},
-		}},
-		{"$project": bson.M{
-			"permissions": bson.M{"$arrayToObject": "$permissions"},
-		}},
-	})
+	roles, err := a.getRolesWithPermissions(ctx)
 	if err != nil {
 		return err
 	}
-
-	defer func() {
-		if err := cursor.Close(ctx); err != nil && resErr == nil {
-			resErr = err
-		}
-	}()
 
 	ptype := casbinPtypePolicy
 	sec := ptype
@@ -142,13 +113,7 @@ func (a *adapter) loadRoles(
 		},
 	}
 
-	for cursor.Next(ctx) {
-		var r role
-		err = cursor.Decode(&r)
-		if err != nil {
-			return err
-		}
-
+	for _, r := range roles {
 		for objId, obj := range r.Permissions {
 			if obj.Type != "" {
 				if permBitmasksByName, ok := permBitmasksByType[obj.Type]; ok {
@@ -198,4 +163,64 @@ func (a *adapter) loadSubjects(ctx context.Context, model model.Model) (resErr e
 	}
 
 	return nil
+}
+
+type permissionDocument struct {
+	ID   string `bson:"_id"`
+	Name string `bson:"name"`
+	Type string `bson:"type"`
+}
+
+type roleDocument struct {
+	ID          string           `bson:"_id"`
+	Permissions map[string]int64 `bson:"permissions"`
+}
+
+func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
+	// Read all permissions into memory
+	var permissions []permissionDocument
+	cursor, err := a.permissionCollection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(ctx, &permissions)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a map of permission IDs to permission names
+	permissionByIDs := make(map[string]permissionDocument)
+	for _, permission := range permissions {
+		permissionByIDs[permission.ID] = permission
+	}
+
+	// Read all roles into memory
+	var roles []roleDocument
+	cursorRole, err := a.roleCollection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	err = cursorRole.All(ctx, &roles)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a slice of role type
+	var result []role
+	for _, roleItem := range roles {
+		permissions := make(map[string]permission)
+		for permissionID, mask := range roleItem.Permissions {
+			permissionItem := permissionByIDs[permissionID]
+			permissions[permissionItem.Name] = permission{
+				Bitmask: mask,
+				Type:    permissionItem.Type,
+			}
+		}
+		result = append(result, role{
+			ID:          roleItem.ID,
+			Permissions: permissions,
+		})
+	}
+
+	return result, nil
 }

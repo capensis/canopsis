@@ -126,6 +126,8 @@ export default {
 
         await saveFile(chartBlob, `${HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX}${day}(${fromTime}-${toTime})`);
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       }
     },

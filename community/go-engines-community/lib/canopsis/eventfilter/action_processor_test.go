@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/golang/mock/gomock"
@@ -218,7 +219,7 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       []interface{}{"test", "test2"},
+				Value:       []interface{}{"test2", "test"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -231,7 +232,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       []interface{}{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
@@ -245,10 +246,18 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       primitive.A{"test", "test2"},
+				Value:       primitive.A{"test2", "test"},
 			},
 			event: types.Event{
-				Entity: &types.Entity{},
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []string{"test"},
+						},
+					},
+				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
@@ -258,7 +267,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       primitive.A{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
@@ -859,7 +868,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test", "test2"},
+					"Test": []interface{}{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
@@ -870,13 +879,13 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       []interface{}{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test", "test2"},
+					"Test": []interface{}{"test2", "test"},
 				},
 			},
 			expectedError: false,
@@ -892,7 +901,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test", "test2"},
+					"Test": primitive.A{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
@@ -903,13 +912,13 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       primitive.A{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test", "test2"},
+					"Test": primitive.A{"test2", "test"},
 				},
 			},
 			expectedError: false,
@@ -1193,13 +1202,342 @@ func TestActionProcessor(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			testName: "given set_entity_info action with string slice with another order of items then in entity should return is updated false",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       []interface{}{"test2", "test3", "test1"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       primitive.A{"test3", "test1", "test2"},
+						},
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       primitive.A{"test3", "test1", "test2"},
+						},
+					},
+					IsUpdated: false,
+				},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action should return success",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+					IsUpdated: true,
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action should update ExtraInfos and return success",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:  "key1",
+							Value: float32(1),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+					IsUpdated: true,
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and without a dictionary should return success without EntityUpdated",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:  "key1",
+							Value: float32(1),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "",
+							Value:       float32(1),
+						},
+					},
+					IsUpdated: false,
+				},
+				ExtraInfos: map[string]any{},
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and dictionary is not a map should return error",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": "not a map",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": "not a map",
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and dictionary has invalid field should return error",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": map[string]any{
+							"subkey": "value",
+						},
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": map[string]any{
+							"subkey": "value",
+						},
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action and dictionary is nil should return error",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": nil,
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]any{
+					"dict": nil,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info_from_dictionary action without infos change should return entity not updated",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfoFromDictionary,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.dict",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]any{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"key1": {
+							Name:        "key1",
+							Description: "Test description",
+							Value:       "value1",
+						},
+						"key2": {
+							Name:        "key2",
+							Description: "Test description",
+							Value:       []string{"value2", "value3"},
+						},
+						"key3": {
+							Name:        "key3",
+							Description: "Test description",
+							Value:       float64(3),
+						},
+					},
+				},
+				ExtraInfos: map[string]any{
+					"dict": map[string]any{
+						"key1": "value1",
+						"key2": []string{"value2", "value3"},
+						"key3": float64(3),
+					},
+				},
+			},
+			expectedError: false,
+		},
 	}
 
+	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
+	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{
+		EnableArraySortingInEntityInfos: true,
+	}).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
-	processor := eventfilter.NewActionProcessor(mockFailureService, tplExecutor, mockTechMetricsSender)
+	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event, eventfilter.RegexMatchWrapper{

@@ -22,19 +22,16 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import { isArray, keyBy, pick } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
-
-import { formArrayMixin } from '@/mixins/form';
 
 const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 
 export default {
   inject: ['$validator'],
-  mixins: [formArrayMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -119,7 +116,7 @@ export default {
         return this.label;
       }
 
-      if (this.isMultiply) {
+      if (isArray(this.value)) {
         return this.$tc('common.entity', this.value.length);
       }
 

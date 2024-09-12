@@ -20,11 +20,11 @@
       v-flex
         v-layout(v-if="hasAccessToUserFilter", row, align-center)
           filter-selector(
+            :value="query.filter",
+            :locked-value="query.lockedFilter",
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
-            :value="mainFilter",
-            :locked-value="lockedFilter",
             :disabled="!hasAccessToListFilters",
             @input="updateSelectedFilter"
           )

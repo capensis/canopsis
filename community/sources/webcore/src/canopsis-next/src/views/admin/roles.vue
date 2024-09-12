@@ -58,7 +58,9 @@ export default {
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
+              console.error(err);
+
+              this.$popups.error({ text: err.error ?? this.$t('errors.default') });
             }
           },
         },
@@ -77,7 +79,9 @@ export default {
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
+              console.error(err);
+
+              this.$popups.error({ text: err.error ?? this.$t('errors.default') });
             }
           },
         },

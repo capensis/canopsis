@@ -2,13 +2,15 @@
 import { VDataTable } from 'vuetify/es5/components/VDataTable';
 import { VIcon } from 'vuetify/es5/components/VIcon';
 import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
+import { VLayout } from 'vuetify/es5/components/VGrid';
 import { consoleWarn } from 'vuetify/es5/util/console';
 import { getObjectValueByPath } from 'vuetify/es5/util/helpers';
-import ExpandTransitionGenerator from 'vuetify/es5/components/transitions/expand-transition';
 
 import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
 
 import { isDarkColor } from '@/helpers/color';
+
+import ExpandTransitionGenerator from '../transitions/expand-transition';
 
 export default {
   extends: VDataTable,
@@ -30,6 +32,10 @@ export default {
       default: false,
     },
     ultraDense: {
+      type: Boolean,
+      default: false,
+    },
+    ellipsisHeaders: {
       type: Boolean,
       default: false,
     },
@@ -70,13 +76,8 @@ export default {
         children.push(expand);
       }
 
-      const classes = {
-        'v-datatable__expand-col': true,
-        'v-datatable__expand-col--expanded': this.isExpanded(props.item),
-      };
-
       const transition = this.$createElement('transition-group', {
-        class: classes,
+        class: 'v-datatable__expand-col',
         attrs: { colspan: this.headerColumns },
         props: {
           tag: 'td',
@@ -88,85 +89,6 @@ export default {
         class: 'v-datatable__expand-row',
         key: `${getObjectValueByPath(props.item, this.itemKey) || props.index}-row`,
       });
-    },
-
-    genHeaderData(header, children, key) {
-      const classes = ['column'];
-      const data = {
-        key,
-        attrs: {
-          role: 'columnheader',
-          scope: 'col',
-          width: header.width || null,
-          'aria-label': header[this.headerText] || '',
-          'data-value': header.value || '',
-          'aria-sort': 'none',
-        },
-      };
-
-      if (header.sortable == null || header.sortable) {
-        this.genHeaderSortingData(header, children, data, classes);
-      } else {
-        data.attrs['aria-label'] += ': Not sorted.'; // TODO: Localization
-      }
-
-      classes.push(`text-xs-${header.align || 'left'}`);
-      if (Array.isArray(header.class)) {
-        classes.push(...header.class);
-      } else if (header.class) {
-        classes.push(header.class);
-      }
-      data.class = classes;
-
-      return [data, children];
-    },
-    /**
-     * Get thead element for a table
-     *
-     * @note Was replaced for disabling select all checkbox if all items is disabled
-     */
-    genTHead() {
-      if (this.hideHeaders) {
-        return null;
-      }
-
-      let children = [];
-
-      if (this.$scopedSlots.headers) {
-        const row = this.$scopedSlots.headers({
-          headers: this.headers,
-          indeterminate: this.indeterminate,
-          all: this.everyItem,
-        });
-
-        children = [this.hasTag(row, 'th') ? this.genTR(row) : row, this.genTProgress()];
-      } else {
-        const row = this.headers.map((o, i) => this.genHeader(o, this.headerKey ? o[this.headerKey] : i));
-        const checkbox = this.$createElement(VCheckbox, {
-          props: {
-            dark: this.dark,
-            light: this.light,
-            color: this.selectAll === true ? '' : this.selectAll,
-            hideDetails: true,
-            inputValue: this.everyItem,
-            indeterminate: this.indeterminate,
-
-            /**
-             * disabled added for case with all inactive items
-             */
-            disabled: !this.activeItems.length,
-          },
-          on: { change: this.toggle },
-        });
-
-        if (this.hasSelectAll) {
-          row.unshift(this.$createElement('th', [checkbox]));
-        }
-
-        children = [this.genTR(row), this.genTProgress()];
-      }
-
-      return this.$createElement('thead', [children]);
     },
 
     /* eslint-disable no-param-reassign */
@@ -255,11 +177,13 @@ export default {
 
       classes.push('sortable');
 
-      const icon = this.$createElement(VIcon, {
+      const icon = this.$createElement('span', [this.$createElement(VIcon, {
+        class: 'v-datatable-header__icon',
         props: {
           small: true,
         },
-      }, this.sortIcon);
+      }, this.sortIcon)]);
+
       if (!header.align || header.align === 'left') {
         children.push(icon);
       } else {
@@ -267,6 +191,106 @@ export default {
       }
     },
     /* eslint-enable no-param-reassign */
+
+    genHeaderData(header, children, key) {
+      const classes = ['column'];
+      const data = {
+        key,
+        attrs: {
+          role: 'columnheader',
+          scope: 'col',
+          width: header.width || null,
+          'aria-label': header[this.headerText] || '',
+          'data-value': header.value || '',
+          'aria-sort': 'none',
+        },
+      };
+
+      if (header.sortable == null || header.sortable) {
+        this.genHeaderSortingData(header, children, data, classes);
+      } else {
+        data.attrs['aria-label'] += ': Not sorted.'; // TODO: Localization
+      }
+
+      classes.push(`text-xs-${header.align || 'left'}`);
+      if (Array.isArray(header.class)) {
+        classes.push(...header.class);
+      } else if (header.class) {
+        classes.push(header.class);
+      }
+      data.class = classes;
+
+      return [
+        data,
+        [this.$createElement(VLayout, { class: 'align-center' }, children)],
+      ];
+    },
+
+    genHeader: function genHeader(header, key) {
+      const array = [
+        this.$scopedSlots.headerCell
+          ? this.$scopedSlots.headerCell({ header })
+          : this.$createElement(
+            'span',
+            {
+              attrs: this.ellipsisHeaders ? { title: header[this.headerText] } : {},
+              class: { 'v-datatable-header__span--ellipsis': this.ellipsisHeaders },
+            },
+            header[this.headerText],
+          ),
+      ];
+
+      return this.$createElement.apply(this, ['th', ...this.genHeaderData(header, array, key)]);
+    },
+
+    /**
+     * Get thead element for a table
+     *
+     * @note Was replaced for disabling select all checkbox if all items is disabled
+     */
+    genTHead() {
+      if (this.hideHeaders) {
+        return null;
+      }
+
+      let children = [];
+
+      if (this.$scopedSlots.headers) {
+        const row = this.$scopedSlots.headers({
+          headers: this.headers,
+          indeterminate: this.indeterminate,
+          all: this.everyItem,
+        });
+
+        children = [this.hasTag(row, 'th') ? this.genTR(row) : row, this.genTProgress()];
+      } else {
+        const row = this.headers.map((o, i) => this.genHeader(o, this.headerKey ? o[this.headerKey] : i));
+        const checkbox = this.$createElement(VCheckbox, {
+          props: {
+            dark: this.dark,
+            light: this.light,
+            color: this.selectAll === true ? '' : this.selectAll,
+            hideDetails: true,
+            inputValue: this.everyItem,
+            indeterminate: this.indeterminate,
+
+            /**
+             * disabled added for case with all inactive items
+             */
+            disabled: !this.activeItems.length,
+          },
+          on: { change: this.toggle },
+        });
+
+        if (this.hasSelectAll) {
+          row.unshift(this.$createElement('th', [checkbox]));
+        }
+
+        children = [this.genTR(row), this.genTProgress()];
+      }
+
+      return this.$createElement('thead', [children]);
+    },
 
     /**
      * Update pagination parameters for the sorting

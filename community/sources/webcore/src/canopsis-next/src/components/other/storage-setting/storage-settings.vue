@@ -77,8 +77,11 @@ export default {
     },
 
     archiveDisabledEntities() {
-      this.showConfirmationPhraseModal({
-        action: () => this.archiveDisabledEntitiesData({ data: this.form.entity_disabled }),
+      this.$modals.show({
+        name: MODALS.archiveDisabledEntities,
+        config: {
+          action: data => this.archiveDisabledEntitiesData({ data }),
+        },
       });
     },
 

@@ -53,6 +53,8 @@ export default {
           counters,
         });
       } catch (err) {
+        console.error(err);
+
         commit(types.FETCH_LIST_FAILED, { widgetId });
 
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });

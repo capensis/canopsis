@@ -82,7 +82,10 @@ export default {
           meta: data.meta,
         });
       } catch (err) {
+        console.error(err);
+
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+
         commit(types.FETCH_LIST_FAILED);
       }
     },
@@ -124,6 +127,7 @@ export default {
         return pbehavior;
       } catch (err) {
         console.error(err);
+
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         throw err;
@@ -132,6 +136,10 @@ export default {
 
     bulkCreate(context, { data }) {
       return request.post(API_ROUTES.pbehavior.bulkPbehaviors, data);
+    },
+
+    fetchItemWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.pbehavior.pbehaviors}/${id}`);
     },
 
     async update({ dispatch }, { data, id }) {

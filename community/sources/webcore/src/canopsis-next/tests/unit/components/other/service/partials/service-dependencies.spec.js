@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
@@ -104,7 +103,6 @@ describe('service-dependencies', () => {
   ].map(column => ({
     ...column,
 
-    value: `entity.${column.value}`,
     sortable: false,
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
@@ -315,7 +313,6 @@ describe('service-dependencies', () => {
         ].map(column => ({
           ...column,
 
-          value: `entity.${column.value}`,
           sortable: false,
           text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),

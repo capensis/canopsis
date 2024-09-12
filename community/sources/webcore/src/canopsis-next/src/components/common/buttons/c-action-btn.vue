@@ -5,7 +5,8 @@
     :bottom="bottom",
     :left="left",
     :disabled="disabled",
-    :custom-activator="customTooltipActivator"
+    :custom-activator="customTooltipActivator",
+    :lazy="lazy"
   )
     template(#activator="{ on: tooltipOn }")
       slot(name="button", :on="tooltipOn")
@@ -119,6 +120,10 @@ export default {
       default: '',
     },
     customTooltipActivator: {
+      type: Boolean,
+      default: false,
+    },
+    lazy: {
       type: Boolean,
       default: false,
     },

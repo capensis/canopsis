@@ -304,7 +304,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		serviceIDs = append(serviceIDs, service.ID)
 
-		return request.ID, nil
+		return service.ID, nil
 	}, a.logger)
 	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
 }

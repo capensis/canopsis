@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { QUICK_RANGES } from '@/constants';
@@ -95,7 +93,6 @@ describe('c-quick-date-interval-field', () => {
       QUICK_RANGES.last6Hour,
       QUICK_RANGES.last12Hour,
       QUICK_RANGES.last24Hour,
-      QUICK_RANGES.today,
       QUICK_RANGES.todaySoFar,
       QUICK_RANGES.custom,
     ]);

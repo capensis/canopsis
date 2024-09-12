@@ -1,7 +1,11 @@
 <template lang="pug">
   v-layout(column)
     role-template-field(v-if="withTemplate", v-field="form.permissions")
-    c-name-field(v-field="form.name", required)
+    c-name-field(
+      v-field="form.name",
+      :disabled="!!form._id",
+      required
+    )
     v-text-field(v-field="form.description", :label="$t('common.description')")
 
     c-information-block(:title="$t('role.expirationSettings')")

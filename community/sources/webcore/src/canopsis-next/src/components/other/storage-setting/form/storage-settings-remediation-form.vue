@@ -15,13 +15,15 @@
       v-field="form.delete_stats_after",
       :label="$t('storageSetting.remediation.deleteStatsAfter')",
       :help-text="$t('storageSetting.remediation.deleteStatsAfterHelpText')",
-      :name="remediationDeleteStatsAfterFieldName"
+      :name="remediationDeleteStatsAfterFieldName",
+      :after="form.delete_after"
     )
     c-enabled-duration-field(
       v-field="form.delete_mod_stats_after",
       :label="$t('storageSetting.remediation.deleteModStatsAfter')",
       :help-text="$t('storageSetting.remediation.deleteModStatsAfterHelpText')",
-      :name="remediationDeleteModStatsAfterFieldName"
+      :name="remediationDeleteModStatsAfterFieldName",
+      :after="form.delete_stats_after"
     )
 </template>
 

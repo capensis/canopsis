@@ -3,6 +3,7 @@
     v-layout.ml-4.mb-4(align-center)
       c-quick-date-interval-field(
         :interval="pagination.interval",
+        :quick-ranges="quickRanges",
         :min="deletedBefore",
         @input="updateInterval"
       )
@@ -31,6 +32,7 @@ import { debounce } from 'lodash';
 import {
   DATETIME_FORMATS,
   HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR,
+  HEALTHCHECK_QUICK_RANGES,
   MESSAGE_STATS_INTERVALS,
   QUICK_RANGES,
   TIME_UNITS,
@@ -77,6 +79,10 @@ export default {
     };
   },
   computed: {
+    quickRanges() {
+      return Object.values(HEALTHCHECK_QUICK_RANGES);
+    },
+
     interval() {
       return {
         from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
@@ -220,6 +226,8 @@ export default {
 
         await saveFile(chartBlob, `${HEALTHCHECK_HISTORY_FILENAME_PREFIX}${fromTime}-${toTime}`);
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       }
     },

@@ -17,11 +17,17 @@ func NewEngineAXE(ctx context.Context, options axe.Options, logger zerolog.Logge
 	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
-	e := axe.NewEngine(ctx, options, dbClient, cfg, metrics.NewNullSender(), event.NewNullAutoInstructionMatcher(), logger)
+	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	e := axe.NewEngine(ctx, options, dbClient, amqpConnection, cfg, metrics.NewNullSender(), event.NewNullAutoInstructionMatcher(), nil, nil, nil, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)
 		if err != nil {
 			logger.Err(err).Msg("failed to close mongo connection")
+		}
+
+		err = amqpConnection.Close()
+		if err != nil {
+			logger.Error().Err(err).Msg("failed to close amqp connection")
 		}
 	})
 	return e

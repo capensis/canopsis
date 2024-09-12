@@ -11,15 +11,8 @@
         deleted-count-message-key="storageSetting.history.entity.deletedCount",
         hide-deleted
       )
-    v-checkbox(
-      v-field="form.with_dependencies",
-      :label="$t('storageSetting.entity.archiveDependencies')",
-      color="primary"
-    )
-      template(#append="")
-        c-help-icon(:text="$t('storageSetting.entity.archiveDependenciesHelp')", color="info", max-width="300", top)
     v-flex
-      v-btn.ma-0.mb-4(color="primary", @click="$emit('archive')") {{ $t('storageSetting.entity.archiveDisabled') }}
+      v-btn.ma-0.my-4(color="primary", @click="$emit('archive')") {{ $t('storageSetting.entity.archiveDisabled') }}
 </template>
 
 <script>
@@ -32,10 +25,6 @@ export default {
     event: 'input',
   },
   props: {
-    form: {
-      type: Object,
-      required: true,
-    },
     history: {
       type: Object,
       required: false,

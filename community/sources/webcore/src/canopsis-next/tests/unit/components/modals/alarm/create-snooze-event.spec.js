@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -29,9 +28,6 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectSnoozeEventForm = wrapper => wrapper.find('snooze-event-form-stub');
 
 describe('create-snooze-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -91,6 +87,10 @@ describe('create-snooze-event', () => {
     },
   });
 
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   test('Default parameters applied to form', () => {
     const wrapper = factory({
       mocks: {
@@ -130,7 +130,7 @@ describe('create-snooze-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(snoozeEventData);
     expect($modals.hide).toBeCalledWith();
@@ -168,7 +168,7 @@ describe('create-snooze-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
 
@@ -200,7 +200,7 @@ describe('create-snooze-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -239,7 +239,7 @@ describe('create-snooze-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -284,7 +284,7 @@ describe('create-snooze-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(newForm);
     expect($modals.hide).toBeCalled();
@@ -306,7 +306,7 @@ describe('create-snooze-event', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

@@ -67,8 +67,11 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {number} heightFactor
  * @property {number} modalItemsPerPage
  * @property {boolean} isPriorityEnabled
+ * @property {boolean} isHideGrayEnabled
+ * @property {boolean} isSecondaryIconEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
+ * @property {boolean} entitiesActionsInQueue
  */
 
 /**
@@ -129,7 +132,10 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
       state_types: [],
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
+  isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
+  isSecondaryIconEnabled: parameters.isSecondaryIconEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
+  entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
 });
 
 /**
@@ -162,7 +168,6 @@ export const prepareServiceWeatherWidget = (widget = {}) => setSeveralFields(wid
 
       sortable: false,
       text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      value: column.value.startsWith('entity.') ? column.value : `entity.${column.value}`,
     }))
   ),
 

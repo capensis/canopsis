@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { USERS_PERMISSIONS } from '@/constants';
@@ -20,8 +19,12 @@ describe('service-entity-template', () => {
   const store = createMockedStoreModules([authModule]);
 
   const snapshotFactory = generateRenderer(ServiceEntityTemplate, {
-
     stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Renders `service-entity-template` with default props', async () => {

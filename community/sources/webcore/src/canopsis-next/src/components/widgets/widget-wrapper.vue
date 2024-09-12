@@ -11,7 +11,8 @@
       component(
         v-bind="widgetProps",
         :widget="preparedWidget",
-        :tab-id="tab._id"
+        :tab-id="tab._id",
+        :visible="visible"
       )
 </template>
 
@@ -78,6 +79,10 @@ export default {
       default: false,
     },
     kiosk: {
+      type: Boolean,
+      default: false,
+    },
+    visible: {
       type: Boolean,
       default: false,
     },

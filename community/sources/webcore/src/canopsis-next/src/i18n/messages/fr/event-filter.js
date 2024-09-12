@@ -86,5 +86,10 @@ export default {
       message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
       description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
     },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
+      text: 'Définir plusieurs chaînes d\'informations sur une entité à partir d\'un dictionnaire',
+      message: 'Cette action peut être utilisée pour définir plusieurs informations d\'entité à partir d\'un dictionnaire.',
+      description: 'Les paramètres de l\'action sont :\n- Valeur : le nom du champ dont la valeur doit être découpée. Ce champ doit avoir la forme suivante.\n- Description (facultatif) : Description des informations de l\'entité. Si elle n\'est pas définie, la description des informations de l\'entité est laissée vide.',
+    },
   },
 };

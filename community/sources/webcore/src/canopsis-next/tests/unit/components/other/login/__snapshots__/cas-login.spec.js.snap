@@ -14,7 +14,7 @@ exports[`cas-login Renders \`cas-login\` with redirect query and title 1`] = `
     </div>
     <a
       class="v-btn theme--light primary"
-      href="https://canopsis/backend/api/v4/cas/login?redirect=http%3A%2F%2Flocalhostundefined%2Fredirect&service=https%3A%2F%2Fcanopsis%2Fbackend%2Fapi%2Fv4%2Fcas%2Floggedin"
+      href="https://canopsis/backend/api/v4/cas/login?redirect=http%3A%2F%2Flocalhost%2Fredirect&service=https%3A%2F%2Fcanopsis%2Fbackend%2Fapi%2Fv4%2Fcas%2Floggedin"
     >
       <div
         class="v-btn__content"
@@ -40,7 +40,7 @@ exports[`cas-login Renders \`cas-login\` without redirect 1`] = `
     </div>
     <a
       class="v-btn theme--light primary"
-      href="https://canopsis/backend/api/v4/cas/login?redirect=http%3A%2F%2Flocalhostundefined&service=https%3A%2F%2Fcanopsis%2Fbackend%2Fapi%2Fv4%2Fcas%2Floggedin"
+      href="https://canopsis/backend/api/v4/cas/login?redirect=http%3A%2F%2Flocalhost&service=https%3A%2F%2Fcanopsis%2Fbackend%2Fapi%2Fv4%2Fcas%2Floggedin"
     >
       <div
         class="v-btn__content"

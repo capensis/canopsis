@@ -20,3 +20,10 @@ export const deleteAction = {
   title: 'Delete title',
   method: jest.fn(),
 };
+
+export const ackAction = {
+  icon: 'done',
+  iconColor: 'secondary',
+  title: 'Ack title',
+  method: jest.fn(),
+};

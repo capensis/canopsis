@@ -19,6 +19,7 @@
           :locale="$i18n.locale",
           :value="dateString",
           color="primary",
+          first-day-of-week="1",
           no-title,
           @input="updateDate"
         )
@@ -76,6 +77,13 @@ export default {
 
     dateString() {
       return convertDateToString(this.localValue, DATETIME_FORMATS.datePicker, null);
+    },
+  },
+  watch: {
+    value() {
+      if (this.value !== this.localValue) {
+        this.localValue = this.value ? convertDateToDateObject(this.value) : null;
+      }
     },
   },
   methods: {

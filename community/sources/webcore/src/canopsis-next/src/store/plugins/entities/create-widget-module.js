@@ -11,7 +11,7 @@ export const DEFAULT_WIDGET_MODULE_TYPES = {
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
-export default ({
+export const createWidgetModule = ({
   types = DEFAULT_WIDGET_MODULE_TYPES,
   method = REQUEST_METHODS.post,
   route,
@@ -21,7 +21,7 @@ export default ({
   };
 
   const moduleGetters = {
-    getListByWidgetId: state => widgetId => state.widgets[widgetId]?.metrics ?? [],
+    getListByWidgetId: state => widgetId => state.widgets[widgetId]?.data ?? [],
     getPendingByWidgetId: state => widgetId => state.widgets[widgetId]?.pending ?? false,
     getMetaByWidgetId: state => widgetId => state.widgets[widgetId]?.meta ?? {},
   };
@@ -31,8 +31,8 @@ export default ({
       Vue.setSeveral(state.widgets, widgetId, { pending: true, error: null });
     },
 
-    [types.FETCH_LIST_COMPLETED]: (state, { widgetId, metrics, meta }) => {
-      Vue.setSeveral(state.widgets, widgetId, { widgetId, metrics, meta, pending: false });
+    [types.FETCH_LIST_COMPLETED]: (state, { widgetId, data, meta }) => {
+      Vue.setSeveral(state.widgets, widgetId, { widgetId, data, meta, pending: false });
     },
 
     [types.FETCH_LIST_FAILED]: (state, { widgetId }) => {
@@ -46,7 +46,7 @@ export default ({
         commit(types.FETCH_LIST, { widgetId });
 
         const {
-          data: metrics,
+          data,
           meta,
         } = await request({
           method,
@@ -56,11 +56,13 @@ export default ({
 
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,
-          metrics,
+          data,
           meta,
         });
       } catch (err) {
         console.error(err);
+
+        commit(types.FETCH_LIST_FAILED, { widgetId, pending: false });
       }
     },
   };

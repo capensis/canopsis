@@ -21,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
@@ -59,7 +60,7 @@ func NewEngine(
 	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater, logger)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+	techMetricsSender := techmetrics.NewSender(canopsis.CheEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
@@ -70,7 +71,7 @@ func NewEngine(
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
 		externalDataContainer,
-		eventfilter.NewActionProcessor(eventFilterFailureService, templateExecutor, techMetricsSender),
+		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor, techMetricsSender),
 		eventFilterFailureService,
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
@@ -193,7 +194,7 @@ func NewEngine(
 		Decoder:             json.NewDecoder(),
 		Logger:              logger,
 	}
-	engine.AddConsumer(libengine.NewDefaultConsumer(
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
 		cfg.Global.PrefetchCount,
@@ -203,6 +204,7 @@ func NewEngine(
 		options.PublishToQueue,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,

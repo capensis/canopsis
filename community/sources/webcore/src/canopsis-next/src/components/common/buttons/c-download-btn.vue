@@ -84,6 +84,8 @@ export default {
       try {
         await this.download();
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
       } finally {
         this.downloading = false;

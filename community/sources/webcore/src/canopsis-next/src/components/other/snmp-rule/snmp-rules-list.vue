@@ -8,6 +8,7 @@
       :pagination="pagination",
       :select-all="removable",
       advanced-pagination,
+      search,
       @update:pagination="$emit('update:pagination', $event)"
     )
       template(#mass-actions="{ selected }")

@@ -161,6 +161,63 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarm-display-names:
+    get:
+      tags:
+        - alarm-display-names
+      summary: Find alarm display names
+      description: |
+        Get paginated alarm display names.
+        
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-find-alarm-display-names
+      parameters:
+        - in: query
+          name: alarm_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"v.component\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_component\"}}]]"
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
+        - in: query
+          name: pbehavior_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}]]"
+        - in: query
+          name: sort
+          description: sort query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.DisplayNameData'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarm-export:
     post:
       tags:
@@ -675,6 +732,11 @@ paths:
           description: show bookmarked alarms
           schema:
             type: boolean
+        - name: with_dependencies
+          in: query
+          description: count connected services depends_count and impacts_count
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -692,6 +754,11 @@ paths:
             items:
               type: string
           example: t,asc
+        - name: query_log
+          in: query
+          description: show query log
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
@@ -5838,9 +5905,15 @@ paths:
         -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilters-find-all
       parameters:
+        - name: with_counts
+          in: query
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
       responses:
         200:
           description: OK
@@ -6483,6 +6556,16 @@ paths:
         
         -  PERMISSIONS (for private files): `api_file:read`
       operationId: files-list
+      parameters:
+        - name: id
+          in: query
+          description: file id
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -6553,7 +6636,7 @@ paths:
       tags:
         - auth
       summary: Get file access
-      description: Get file access.
+      description: Get file access. Sets cookie with file access token. Need to be called before downloading file when it's impossible to pass token in header.
       operationId: auth-get-file-access
       responses:
         204:
@@ -11537,7 +11620,7 @@ paths:
                       "label": "Dashboard",
                       "category": "Prod",
                       "icon_name": "build",
-                      "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                      "url": "https://prod.local?user={{ .User.Username }}&{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
                       "action": "open",
                       "single": false
                     }
@@ -11571,7 +11654,7 @@ paths:
                 value: {
                   "name": "Link rule",
                   "enabled": true,
-                  "source_code": "function generate(alarms, data) {\n    var queryStr = \"\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
+                  "source_code": "function generate(alarms, user) {\n    var queryStr = \"user=\" + user.Username + \"&\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
                   "entity_pattern": [
                     [
                       {
@@ -11674,7 +11757,7 @@ paths:
                         "label": "Dashboard",
                         "category": "Prod",
                         "icon_name": "build",
-                        "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                        "url": "https://prod.local?user={{ .User.Username }}&{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
                         "action": "open",
                         "single": true
                       }
@@ -11967,6 +12050,7 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/withFlags'
         - name: permission
           in: query
           description: role permission

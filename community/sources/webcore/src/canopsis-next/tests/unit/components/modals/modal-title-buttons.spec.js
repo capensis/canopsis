@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';

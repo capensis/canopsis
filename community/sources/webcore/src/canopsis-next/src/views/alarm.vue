@@ -14,6 +14,7 @@
 <script>
 import { WIDGET_TYPES } from '@/constants';
 
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { authMixin } from '@/mixins/auth';
@@ -60,25 +61,32 @@ export default {
   },
 
   async mounted() {
-    try {
-      this.pending = true;
+    this.fetchAlarmAndWidget();
+  },
+  methods: {
+    async fetchAlarmAndWidget() {
+      try {
+        this.pending = true;
 
-      const requests = [this.fetchAlarmItem({ id: this.id })];
+        const requests = [this.fetchAlarmItem({ id: this.id })];
 
-      if (this.widgetId) {
-        requests.push(this.fetchWidgetWithoutStore({ id: this.widgetId }));
+        if (this.widgetId) {
+          requests.push(this.fetchWidgetWithoutStore({ id: this.widgetId }));
+        }
+
+        const [, widget] = await Promise.all(requests);
+
+        if (widget?.type === WIDGET_TYPES.alarmList) {
+          this.widget = prepareAlarmListWidget(widget);
+        }
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.description || this.$t('errors.default') });
+      } finally {
+        this.pending = false;
       }
-
-      const [, widget] = await Promise.all(requests);
-
-      if (widget?.type === WIDGET_TYPES.alarmList) {
-        this.widget = widget;
-      }
-    } catch (err) {
-      this.$popups.error({ text: err.description || this.$t('errors.default') });
-    } finally {
-      this.pending = false;
-    }
+    },
   },
 };
 </script>

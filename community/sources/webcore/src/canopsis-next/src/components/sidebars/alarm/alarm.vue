@@ -33,6 +33,7 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.groupColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
+        with-template,
         with-html,
         with-color-indicator,
         @update:template="updateWidgetGroupColumnsTemplate"
@@ -167,8 +168,11 @@
         :type="$constants.ENTITIES_TYPES.alarm",
         :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
+        :variables="columnsVariables",
         datetime-format,
-        with-instructions
+        with-instructions,
+        with-simple-template,
+        optional-infos-attributes
       )
       v-divider
       field-switcher(
@@ -202,7 +206,7 @@
 </template>
 
 <script>
-import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS, ALARM_PAYLOADS_VARIABLES } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
@@ -215,6 +219,7 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
@@ -230,10 +235,10 @@ import FieldFilters from '../form/fields/filters.vue';
 import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
 import FieldNumber from '../form/fields/number.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
 
-import FieldGridRangeSize from './form/fields/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
 import FieldDensity from './form/fields/density.vue';
 import FieldLiveReporting from './form/fields/live-reporting.vue';
@@ -272,6 +277,7 @@ export default {
     FieldResizeColumnBehavior,
   },
   mixins: [
+    payloadVariablesMixin,
     widgetSettingsMixin,
     entitiesInfosMixin,
     alarmVariablesMixin,
@@ -294,6 +300,16 @@ export default {
 
     defaultExportPdfTemplateValue() {
       return ALARM_EXPORT_PDF_TEMPLATE;
+    },
+
+    columnsVariables() {
+      return [
+        ...this.alarmPayloadVariables,
+        {
+          value: ALARM_PAYLOADS_VARIABLES.infosValue,
+          text: this.$t('alarm.fields.alarmInfos'),
+        },
+      ];
     },
   },
   mounted() {

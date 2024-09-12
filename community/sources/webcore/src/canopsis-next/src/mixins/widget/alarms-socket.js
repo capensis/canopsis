@@ -59,17 +59,8 @@ export const widgetAlarmsSocketMixin = {
       }
     },
 
-    liveWatching(liveWatching) {
-      if (liveWatching) {
-        this.joinToAlarmsSocketRoom(this.alarms);
-        this.joinToAlarmDetailsSocketRoom(this.allAlarmDetailsQueries);
-
-        return;
-      }
-
-      this.leaveAlarmsSocketRoom();
-      this.leaveAlarmDetailsSocketRoom();
-    },
+    liveWatching: 'toggleSubscription',
+    visible: 'toggleSubscription',
   },
   beforeDestroy() {
     this.leaveAlarmsSocketRoom();
@@ -105,6 +96,18 @@ export const widgetAlarmsSocketMixin = {
       this.$socket
         .leave(this.alarmDetailsSocketRoom)
         .removeListener(this.updateAlarmDetailsInStore);
+    },
+
+    toggleSubscription() {
+      if (this.visible && this.liveWatching) {
+        this.joinToAlarmsSocketRoom(this.alarms);
+        this.joinToAlarmDetailsSocketRoom(this.allAlarmDetailsQueries);
+
+        return;
+      }
+
+      this.leaveAlarmsSocketRoom();
+      this.leaveAlarmDetailsSocketRoom();
     },
   },
 };

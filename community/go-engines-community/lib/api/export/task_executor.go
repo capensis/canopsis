@@ -254,7 +254,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 		_, err := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
 			"completed":   types.NewCpsTime(),
-			"fail_reason": "unknown type",
+			"fail_reason": "unknown type: " + t.Type,
 		}})
 		return err
 	}
@@ -264,7 +264,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
 			"completed":   types.NewCpsTime(),
-			"fail_reason": "cannot fetch data",
+			"fail_reason": "cannot fetch data: " + err.Error(),
 		}})
 		if updateErr != nil {
 			e.logger.Err(updateErr).Msg("cannot update export task")
@@ -278,7 +278,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
 			"completed":   types.NewCpsTime(),
-			"fail_reason": "cannot fetch data",
+			"fail_reason": "cannot fetch data: " + err.Error(),
 		}})
 		if updateErr != nil {
 			e.logger.Err(updateErr).Msg("cannot update export task")

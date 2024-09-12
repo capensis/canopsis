@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createMockedStoreModules,
@@ -443,6 +442,7 @@ describe('service-weather', () => {
           parameters: {
             columnDesktop: 2,
             margin: {},
+            isHideGrayEnabled: false,
           },
         },
         editing: false,

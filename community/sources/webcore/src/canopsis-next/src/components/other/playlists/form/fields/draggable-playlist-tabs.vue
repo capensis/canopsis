@@ -56,7 +56,9 @@ export default {
     },
 
     tabsWithDetails() {
-      return this.tabs.map(tab => this.tabsDetailsById[tab._id]);
+      return this.tabs
+        .map(tab => this.tabsDetailsById[tab._id])
+        .filter(Boolean);
     },
 
     isTabsEmpty() {

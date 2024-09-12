@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import KpiRatingChart from '@/components/other/kpi/charts/partials/kpi-rating-chart';

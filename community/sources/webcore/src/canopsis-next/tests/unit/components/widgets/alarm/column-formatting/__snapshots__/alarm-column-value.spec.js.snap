@@ -16,7 +16,9 @@ exports[`alarm-column-value Renders \`alarm-column-value\` with custom props 1`]
 `;
 
 exports[`alarm-column-value Renders \`alarm-column-value\` with custom template 1`] = `
-<div>
+<div
+  class="alarm-column-value"
+>
   entity-name === entity-name in the alarm-name
 </div>
 `;

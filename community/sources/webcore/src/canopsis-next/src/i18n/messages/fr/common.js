@@ -285,6 +285,8 @@ export default {
   seeEntities: 'Voir les entités',
   new: 'Nouvelle',
   regexp: 'Expression régulière',
+  archive: 'Archive',
+  convertToCustomColumn: 'Convertir la colonne en personnalisé',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

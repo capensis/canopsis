@@ -4,7 +4,7 @@
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
-      :locked-filter="lockedFilter",
+      :locked-filters="query.lockedFilter",
       :filters="query.filter",
       :interval="query.interval",
       :sampling="query.sampling",
@@ -162,6 +162,10 @@ export default {
     },
 
     preparedGroupMetrics() {
+      if (!this.query.parameters?.length) {
+        return [];
+      }
+
       return this.groupMetrics.map(({ title, data = [] }) => {
         const preparedMetrics = Object.values(data)
           .reduce((acc, value, index) => {

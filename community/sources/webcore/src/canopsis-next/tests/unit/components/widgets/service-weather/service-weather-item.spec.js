@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES, DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -34,11 +33,21 @@ describe('service-weather-item', () => {
   const factory = generateShallowRenderer(ServiceWeatherItem, {
     stubs,
     attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherItem, {
     stubs,
     attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Alarms list modal showed after click on button', async () => {
@@ -120,6 +129,8 @@ describe('service-weather-item', () => {
         heightFactor: 12,
         colorIndicator: COLOR_INDICATOR_TYPES.impactState,
         template: DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
+        showVariablesHelpButton: true,
+        showAlarmsButton: true,
       },
     });
 

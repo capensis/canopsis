@@ -1,5 +1,9 @@
 <template lang="pug">
-  c-compiled-template(v-if="column.template", :template="column.template", :context="templateContext")
+  c-compiled-template.alarm-column-value(
+    v-if="column.template",
+    :template="column.template",
+    :context="templateContext"
+  )
   color-indicator-wrapper(
     v-else-if="column.colorIndicatorEnabled",
     :type="column.colorIndicator",

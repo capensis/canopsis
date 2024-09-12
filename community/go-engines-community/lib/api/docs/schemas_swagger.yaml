@@ -26,6 +26,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      deletable:
+        type: boolean
       display_name:
         type: string
       email:
@@ -228,6 +230,8 @@ definitions:
         type: integer
       canceled:
         $ref: '#/definitions/common.AlarmStep'
+      change_state:
+        $ref: '#/definitions/common.AlarmStep'
       children:
         items:
           type: string
@@ -378,6 +382,8 @@ definitions:
         type: string
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
+      entity:
+        $ref: '#/definitions/alarm.EntityDetails'
       filtered_perf_data:
         items:
           type: string
@@ -407,6 +413,8 @@ definitions:
         $ref: '#/definitions/alarm.StepsRequest'
       with_declare_tickets:
         type: boolean
+      with_dependencies:
+        type: boolean
       with_instructions:
         type: boolean
     required:
@@ -426,6 +434,89 @@ definitions:
         type: object
       status:
         type: integer
+    type: object
+  alarm.DisplayNameData:
+    properties:
+      _id:
+        type: string
+      display_name:
+        type: string
+    type: object
+  alarm.EntityDetails:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      component_infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      connector:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      description:
+        type: string
+      enable_history:
+        items:
+          $ref: '#/definitions/types.CpsTime'
+        type: array
+      enabled:
+        type: boolean
+      idle_since:
+        $ref: '#/definitions/types.CpsTime'
+        description: IdleSince represents since when entity didn't receive any events.
+      impact_level:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
+        $ref: '#/definitions/types.CpsTime'
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+      last_idle_rule_apply:
+        description: LastIdleRuleApply is used to mark entity if some idle rule was
+          applied.
+        type: string
+      last_pbehavior_date:
+        $ref: '#/definitions/types.CpsTime'
+      measurements:
+        description: unused collection ids
+      name:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+      services:
+        items:
+          type: string
+        type: array
+      services_to_add:
+        items:
+          type: string
+        type: array
+      services_to_remove:
+        items:
+          type: string
+        type: array
+      sli_avail_state:
+        type: integer
+      soft_deleted:
+        $ref: '#/definitions/types.CpsTime'
+      type:
+        type: string
     type: object
   alarm.Execution:
     properties:
@@ -2285,6 +2376,8 @@ definitions:
       label:
         type: string
       name:
+        type: string
+      template:
         type: string
     type: object
   exportconfiguration.Request:
@@ -4936,6 +5029,11 @@ definitions:
     - lat
     - lng
     type: object
+  types.CpsTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
   types.CropCounter:
     properties:
       state:0:
@@ -5008,6 +5106,35 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: ReasonID is ID of pbehavior.Reason.
+        type: string
+      reason_name:
+        description: ReasonName is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: integer
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -5156,6 +5283,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      deletable:
+        type: boolean
       display_name:
         type: string
       email:
@@ -5607,6 +5736,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      is_user_preference:
+        type: boolean
       pbehavior_pattern:
         items:
           items:
@@ -5622,11 +5753,9 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      is_user_preference:
-        type: boolean
     required:
-    - title
     - is_user_preference
+    - title
     type: object
   widgetfilter.OldMongoQuery:
     additionalProperties: true
@@ -5665,6 +5794,8 @@ definitions:
         type: array
       is_private:
         type: boolean
+      is_user_preference:
+        type: boolean
       old_mongo_query:
         $ref: '#/definitions/widgetfilter.OldMongoQuery'
       pbehavior_pattern:
@@ -5683,8 +5814,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      is_user_preference:
-        type: boolean
     type: object
   widgettemplate.EditRequest:
     properties:

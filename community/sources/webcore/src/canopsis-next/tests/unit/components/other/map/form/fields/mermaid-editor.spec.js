@@ -1,7 +1,5 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import MermaidEditor from '@/components/other/map/form/fields/mermaid-editor.vue';
 import { MERMAID_THEMES } from '@/constants';

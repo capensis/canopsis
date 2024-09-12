@@ -46,24 +46,24 @@ export default {
     },
   },
   table: {
-    title: 'Paramètres du bac à alarmes',
+    title: 'Paramètres des tableaux',
 
-    background: 'Couleur d\'arrière-plan du bac',
-    backgroundHelpText: 'Couleur d\'arrière plan pour le bac à alarmes',
+    background: 'Couleur d\'arrière-plan des tableaux',
+    backgroundHelpText: 'Couleur d\'arrière plan pour les tableaux',
 
-    rowColor: 'Couleur des lignes du bac',
+    rowColor: 'Couleur des lignes des tableaux',
     rowColorHelpText: 'Couleur des lignes du tableau',
 
-    shiftRowEnable: 'Alterner les couleurs d’arrière-plan du bac',
-    shiftRowEnableHelpText: 'Sélecteur pour activer/désactiver les changements de couleur pour les lignes du bac',
+    shiftRowEnable: 'Alterner les couleurs d’arrière-plan des tableaux',
+    shiftRowEnableHelpText: 'Sélecteur pour activer/désactiver les changements de couleur pour les lignes des tableaux',
 
-    shiftRowColor: 'Couleur de la deuxième ligne du bac',
+    shiftRowColor: 'Couleur de la deuxième ligne des tableaux',
     shiftRowColorHelpText: 'Lorsqu\'elle est activée, les couleurs des lignes changent (une couleur de ligne sur deux est différente)',
 
     hoverRowEnable: 'Changer la couleur de la ligne au survol',
-    hoverRowEnableHelpText: 'Sélecteur pour activer/désactiver le changement de couleur des lignes du bac au survol',
+    hoverRowEnableHelpText: 'Sélecteur pour activer/désactiver le changement de couleur des lignes au survol',
 
-    hoverRowColor: 'Couleur des lignes du bac au survol',
+    hoverRowColor: 'Couleur des lignes des tableaux au survol',
   },
   state: {
     title: 'Couleurs de criticités',

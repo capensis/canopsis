@@ -1,8 +1,0 @@
-notification:
-  notification_1:
-    _id: notification
-    instruction:
-      rate: true
-      rate_frequency:
-        unit: s
-        value: 604800

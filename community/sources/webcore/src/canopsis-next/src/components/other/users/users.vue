@@ -87,7 +87,11 @@ export default {
     },
 
     fetchList() {
-      return this.fetchUsersList({ params: this.getQuery() });
+      const params = this.getQuery();
+
+      params.with_flags = true;
+
+      return this.fetchUsersList({ params });
     },
   },
 };

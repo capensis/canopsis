@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { KPI_SLI_GRAPH_DATA_TYPE, SAMPLINGS } from '@/constants';
 
 import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart';

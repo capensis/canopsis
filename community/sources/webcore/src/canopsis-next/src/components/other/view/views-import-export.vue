@@ -107,7 +107,9 @@ export default {
             importedViews: views,
           },
         });
-      } catch (e) {
+      } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       }
 

@@ -43,7 +43,7 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	}
 
 	entity := *event.Entity
-	match := getOpenAlarmMatchWithStepsLimit(event)
+	match := getOpenAlarmMatch(event)
 	match["v.canceled"] = nil
 	output := event.Parameters.Output
 	newStep := types.NewAlarmStep(types.AlarmStepCancel, event.Parameters.Timestamp, event.Parameters.Author, output,

@@ -17,4 +17,6 @@ const (
 	ApiRequests         = "api_requests"
 
 	CorrelationRetries = "correlation_retries"
+
+	GoMetrics = "go_metrics"
 )

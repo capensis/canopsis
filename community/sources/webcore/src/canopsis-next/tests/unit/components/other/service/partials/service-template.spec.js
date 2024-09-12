@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
@@ -38,6 +37,11 @@ describe('service-template', () => {
       service,
       pagination: {},
     },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Refresh applied after triggers entities list', async () => {
@@ -57,6 +61,25 @@ describe('service-template', () => {
     await entitiesList.vm.$emit('refresh');
 
     expect(wrapper).toEmit('refresh');
+  });
+
+  test('Add action applied after triggers entities list', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        serviceEntities: [{}, {}],
+        widgetParameters: {
+          modalTemplate,
+        },
+      },
+    });
+
+    await flushPromises();
+
+    const entitiesList = selectEntitiesList(wrapper);
+
+    await entitiesList.vm.$emit('add:action');
+
+    expect(wrapper).toEmit('add:action');
   });
 
   test('Pagination updated after triggers entities list', async () => {

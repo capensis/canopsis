@@ -105,7 +105,7 @@ export default {
     },
 
     x() {
-      const { x = 0, w = 0 } = this.item;
+      const { x = 0, w = 1 } = this.item;
 
       return x + w > this.columnsCount
         ? 0
@@ -117,7 +117,7 @@ export default {
     },
 
     w() {
-      const { x = 0, w = 0 } = this.item;
+      const { x = 0, w = 1 } = this.item;
 
       return (x + w > this.columnsCount) && (w > this.columnsCount)
         ? this.columnsCount
@@ -125,7 +125,7 @@ export default {
     },
 
     h() {
-      return this.item.h ?? 0;
+      return this.item.h ?? 1;
     },
 
     autoHeight() {

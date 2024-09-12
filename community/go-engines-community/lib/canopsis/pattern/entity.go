@@ -498,13 +498,13 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 
 				switch cond.FieldType {
 				case FieldTypeString:
-					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, true)
 				case FieldTypeInt:
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, true)
 				case FieldTypeBool:
 					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
 				case FieldTypeStringArray:
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, true)
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
@@ -513,13 +513,6 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 
 				if err != nil {
 					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
-				}
-
-				conds := getTypeMongoQuery(mongoField, cond.FieldType)
-
-				if len(conds) > 0 {
-					conds = append(conds, condQueries[j])
-					condQueries[j] = bson.M{"$and": conds}
 				}
 
 				continue
@@ -530,13 +523,13 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 
 				switch cond.FieldType {
 				case FieldTypeString:
-					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, true)
 				case FieldTypeInt:
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, true)
 				case FieldTypeBool:
 					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
 				case FieldTypeStringArray:
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, true)
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
@@ -547,21 +540,14 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
 				}
 
-				conds := getTypeMongoQuery(mongoField, cond.FieldType)
-
-				if len(conds) > 0 {
-					conds = append(conds, condQueries[j])
-					condQueries[j] = bson.M{"$and": conds}
-				}
-
 				continue
 			}
 
 			mongoField := prefix + cond.Field
 			if _, ok := getEntityStringField(emptyEntity, cond.Field); ok {
-				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, false)
 			} else if _, ok := getEntityIntField(emptyEntity, cond.Field); ok {
-				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, false)
 			} else if _, ok := getEntityTimeField(emptyEntity, cond.Field); ok {
 				condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField)
 			} else {

@@ -149,6 +149,8 @@ export default {
           ? convertPayloadToJson(value)
           : stringifyJson(value);
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
 
         return '{}';

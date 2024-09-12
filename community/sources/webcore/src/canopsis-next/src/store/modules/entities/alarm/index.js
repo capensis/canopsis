@@ -1,24 +1,21 @@
 import Vue from 'vue';
-import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request, { useRequestCancelling } from '@/services/request';
 
 import i18n from '@/i18n';
 
-import { alarmSchema } from '@/store/schemas';
+import { mergeReactiveChangedProperties } from '@/helpers/vue-base';
+import { mapIds } from '@/helpers/array';
+
+import { types as activeWidgetsTypes, getters as activeWidgetGetters } from '../../active-view/active-widgets';
 
 import detailsModule from './details';
 import linksModule from './links';
 
 export const types = {
-  FETCH_LIST: 'FETCH_LIST',
-  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
-  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
-
-  DOWNLOAD_LIST_COMPLETED: 'DOWNLOAD_LIST_COMPLETED',
+  SET_ALARMS: 'SET_ALARMS',
 };
 
 export default {
@@ -28,36 +25,41 @@ export default {
     links: linksModule,
   },
   state: {
+    alarmsById: {},
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
-      ENTITIES_TYPES.alarm,
-      get(state.widgets[widgetId], 'allIds', []),
+    getItem: state => id => state.alarmsById[id],
+
+    getList: (state, getters) => ids => ids.map(getters.getItem),
+
+    getListByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => getters.getList(rootGetters[activeWidgetGetters.GET_ALL_IDS_BY_WIDGET_ID](widgetId))
     ),
 
-    getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
-    getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending', false),
-    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
-
-    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
-      ENTITIES_TYPES.alarm,
-      id,
+    getMetaByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => rootGetters[activeWidgetGetters.GET_META_BY_WIDGET_ID](widgetId)
     ),
-    getList: (state, getters, rootState, rootGetters) => ids => rootGetters['entities/getList'](
-      ENTITIES_TYPES.alarm,
-      ids,
+
+    getPendingByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => rootGetters[activeWidgetGetters.GET_PENDING_BY_WIDGET_ID](widgetId)
+    ),
+
+    getFetchingParamsByWidgetId: (state, getters, rootState, rootGetters) => (
+      widgetId => rootGetters[activeWidgetGetters.GET_FETCHING_PARAMS_BY_WIDGET_ID](widgetId)
     ),
   },
   mutations: {
-    [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
-    },
-    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
-    },
-    [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: false });
+    [types.SET_ALARMS](state, { data }) {
+      data.forEach((alarm) => {
+        const oldAlarm = state.alarmsById[alarm._id];
+
+        const updatedAlarm = oldAlarm
+          ? mergeReactiveChangedProperties(oldAlarm, alarm)
+          : alarm;
+
+        Vue.set(state.alarmsById, alarm._id, updatedAlarm);
+      });
     },
   },
   actions: {
@@ -85,36 +87,33 @@ export default {
       try {
         await useRequestCancelling(async (source) => {
           if (!withoutPending) {
-            commit(types.FETCH_LIST, { widgetId, params });
+            commit(activeWidgetsTypes.FETCH_LIST, { widgetId, params }, { root: true });
           }
 
-          await dispatch('entities/fetch', {
-            route: API_ROUTES.alarms.list,
-            schema: [alarmSchema],
-            params,
-            cancelToken: source.token,
-            dataPreparer: d => d.data,
-            afterCommit: ({ normalizedData, data }) => {
-              commit(types.FETCH_LIST_COMPLETED, {
-                widgetId,
-                allIds: normalizedData.result,
-                meta: data.meta,
-              });
-            },
+          const { data, meta } = await request.get(API_ROUTES.alarms.list, { params, cancelToken: source.token });
+
+          commit(types.SET_ALARMS, { data });
+          commit(activeWidgetsTypes.FETCH_LIST_COMPLETED, {
+            widgetId,
+            allIds: mapIds(data),
+            meta,
           }, { root: true });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
+        console.error(err);
+
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
-        commit(types.FETCH_LIST_FAILED, { widgetId });
+        commit(activeWidgetsTypes.FETCH_LIST_FAILED, { widgetId }, { root: true });
       }
     },
 
-    fetchItem({ dispatch }, { id }) {
-      return dispatch('entities/fetch', {
-        route: `${API_ROUTES.alarms.list}/${id}`,
-        schema: alarmSchema,
-      }, { root: true });
+    async fetchItem({ commit }, { id }) {
+      const alarm = await request.get(`${API_ROUTES.alarms.list}/${id}`);
+
+      commit(types.SET_ALARMS, { data: [alarm] });
+
+      return alarm;
     },
 
     fetchItemWithoutStore(context, { id }) {
@@ -201,11 +200,14 @@ export default {
       return request.delete(`${API_ROUTES.alarms.list}/${id}/bookmark`);
     },
 
-    updateItemInStore({ dispatch }, alarm) {
-      return dispatch('entities/addToStore', {
-        schema: alarmSchema,
-        data: alarm,
-      }, { root: true });
+    fetchDisplayNamesWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.alarmDisplayNames, { params });
+    },
+
+    updateItemInStore({ commit }, alarm) {
+      commit(types.SET_ALARMS, { data: [alarm] });
+
+      return alarm;
     },
   },
 };

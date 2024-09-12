@@ -1,8 +1,7 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { omit } from 'lodash';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
@@ -12,7 +11,7 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   MODALS,
-  QUICK_RANGES,
+  LIVE_REPORTING_QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
   USERS_PERMISSIONS,
@@ -73,7 +72,7 @@ describe('alarms-list', () => {
   const $socket = mockSocket();
 
   const nowTimestamp = 1386435600000;
-  const nowSubtractOneYearUnix = 1354921200;
+  const nowSubtractOneYearUnix = 1354834800;
 
   mockDateNow(nowTimestamp);
 
@@ -107,14 +106,15 @@ describe('alarms-list', () => {
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
   const defaultQuery = {
+    page: 1,
     filters: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
     limit: userPreferences.content.itemsPerPage,
-    tstart: QUICK_RANGES.last1Year.start,
-    tstop: QUICK_RANGES.last1Year.stop,
+    tstart: LIVE_REPORTING_QUICK_RANGES.last1Year.start,
+    tstop: LIVE_REPORTING_QUICK_RANGES.last1Year.stop,
     opened: null,
     search: 'search',
   };
@@ -622,7 +622,10 @@ describe('alarms-list', () => {
           instructions: [
             {
               exclude: [manualInstructionFilter.instructions[0]._id],
-              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.simpleManual],
+              exclude_types: [
+                REMEDIATION_INSTRUCTION_TYPES.manual,
+                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              ],
             },
             {
               exclude: [autoInstructionFilter.instructions[0]._id],
@@ -634,7 +637,11 @@ describe('alarms-list', () => {
                 allAndWithInstructionFilter.instructions[0]._id,
                 allAndWithInstructionFilter.instructions[1]._id,
               ],
-              include_types: [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual],
+              include_types: [
+                REMEDIATION_INSTRUCTION_TYPES.auto,
+                REMEDIATION_INSTRUCTION_TYPES.manual,
+                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              ],
               running: false,
             },
           ],
@@ -783,8 +790,8 @@ describe('alarms-list', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     const actionValue = {
-      tstart: QUICK_RANGES.last3Hour.start,
-      tstop: QUICK_RANGES.last3Hour.stop,
+      tstart: LIVE_REPORTING_QUICK_RANGES.last3Hour.start,
+      tstop: LIVE_REPORTING_QUICK_RANGES.last3Hour.stop,
     };
 
     modalArguments.config.action(actionValue);
@@ -905,6 +912,7 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+          page: 1,
           limit: newLimit,
         },
       },
@@ -991,7 +999,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1082,7 +1090,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1148,7 +1156,7 @@ describe('alarms-list', () => {
           only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: 1386370800,
+          tstop: 1386435600,
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,

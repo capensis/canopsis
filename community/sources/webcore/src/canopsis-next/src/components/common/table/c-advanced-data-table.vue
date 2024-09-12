@@ -49,6 +49,7 @@
       :table-class="tableClass",
       :disable-initial-sort="disableInitialSort",
       :dense="dense",
+      :ellipsis-headers="ellipsisHeaders",
       @update:pagination="updatePagination"
     )
       template(#items="props")
@@ -88,6 +89,8 @@
 
 <script>
 import { omit } from 'lodash';
+
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 export default {
   model: {
@@ -195,6 +198,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ellipsisHeaders: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -256,7 +263,12 @@ export default {
     },
 
     updateRecordsPerPage(rowsPerPage) {
-      this.updatePagination({ ...this.pagination, rowsPerPage });
+      this.updatePagination({
+        ...this.pagination,
+
+        rowsPerPage,
+        page: getPageForNewRecordsPerPage(rowsPerPage, this.pagination.rowsPerPage, this.pagination.page),
+      });
     },
 
     updatePage(page) {

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import AlarmColumnCellPopupBody from '@/components/widgets/alarm/columns-formatting/alarm-column-cell-popup-body.vue';
@@ -14,8 +12,22 @@ const stubs = {
 const selectCloseButton = wrapper => wrapper.find('v-btn-stub');
 
 describe('alarm-column-cell-popup-body', () => {
-  const factory = generateShallowRenderer(AlarmColumnCellPopupBody, { stubs });
-  const snapshotFactory = generateRenderer(AlarmColumnCellPopupBody, { stubs });
+  const factory = generateShallowRenderer(AlarmColumnCellPopupBody, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmColumnCellPopupBody, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Popup template closed after click on the button', async () => {
     const wrapper = factory({

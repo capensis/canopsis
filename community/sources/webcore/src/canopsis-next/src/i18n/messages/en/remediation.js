@@ -170,7 +170,7 @@ export default {
     autoInstructions: 'Automatic instructions',
     labels: {
       remediated: 'Remediated',
-      notRemediated: 'Not remediated',
+      withAssignedRemediations: 'Remediable (With assigned instructions)',
     },
     tooltips: {
       remediated: '{value} alarms remediated',

@@ -54,6 +54,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -546,7 +547,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       max="12"
       min="0"
       step="1"
-      title="Expand card (more infos / timeline) width"
+      title="Expand card (more infos) width"
       value="0,12"
     />
     <hr
@@ -622,9 +623,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      optionalinfosattributes="true"
       templates=""
       type="alarm"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       withinstructions="true"
+      withsimpletemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -727,6 +731,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -1201,7 +1206,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       max="12"
       min="0"
       step="1"
-      title="Expand card (more infos / timeline) width"
+      title="Expand card (more infos) width"
       value="1,11"
     />
     <hr
@@ -1280,9 +1285,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      optionalinfosattributes="true"
       templates=""
       type="alarm"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       withinstructions="true"
+      withsimpletemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -1386,6 +1394,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       type="alarm"
       withcolorindicator="true"
       withhtml="true"
+      withtemplate="true"
     />
     <hr
       class="v-divider theme--light"
@@ -1860,7 +1869,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       max="12"
       min="0"
       step="1"
-      title="Expand card (more infos / timeline) width"
+      title="Expand card (more infos) width"
       value="0,12"
     />
     <hr
@@ -1936,9 +1945,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      optionalinfosattributes="true"
       templates=""
       type="alarm"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       withinstructions="true"
+      withsimpletemplate="true"
     />
     <hr
       class="v-divider theme--light"

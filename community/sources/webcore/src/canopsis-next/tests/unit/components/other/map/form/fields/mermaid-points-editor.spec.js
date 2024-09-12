@@ -1,7 +1,5 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import MermaidPoints from '@/components/other/map/form/fields/mermaid-points-editor.vue';

@@ -12,11 +12,12 @@
           alarms-list-row-bookmark-icon
         alarms-expand-panel-btn(
           v-if="expandable",
-          v-model="row.expanded",
+          :expanded="expanded",
           :alarm="alarm",
           :widget="widget",
           :small="small",
-          :search="search"
+          :search="search",
+          @input="$emit('expand', $event)"
         )
     td.alarm-list-row__cell(v-for="header in availableHeaders", :key="header.value")
       actions-panel(
@@ -26,7 +27,8 @@
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
         :small="small",
-        :wrap="wrapActions"
+        :ignore-media-query="actionsIgnoreMediaQuery",
+        :inline-count="actionsInlineCount"
       )
       alarm-column-value(
         v-else,
@@ -88,7 +90,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    row: {
+    alarm: {
       type: Object,
       required: true,
     },
@@ -132,7 +134,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
     wrapActions: {
+      type: Boolean,
+      default: false,
+    },
+    truncateActions: {
       type: Boolean,
       default: false,
     },
@@ -144,6 +154,14 @@ export default {
       type: String,
       default: '',
     },
+    actionsInlineCount: {
+      type: Number,
+      required: false,
+    },
+    actionsIgnoreMediaQuery: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -151,10 +169,6 @@ export default {
     };
   },
   computed: {
-    alarm() {
-      return this.row.item;
-    },
-
     hasBookmark() {
       return !!this.alarm.bookmark;
     },
@@ -177,7 +191,7 @@ export default {
     },
 
     isAlarmSelectable() {
-      return isActionAvailableForAlarm(this.alarm);
+      return isActionAvailableForAlarm(this.alarm, this.widget);
     },
 
     isNotFiltered() {

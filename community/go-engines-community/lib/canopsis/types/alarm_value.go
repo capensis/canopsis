@@ -182,9 +182,9 @@ type AlarmSteps []AlarmStep
 
 // Add handle adding a step to the list
 func (s *AlarmSteps) Add(step AlarmStep) error {
-	if len(*s) < AlarmStepsHardLimit ||
-		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
-		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
+	isDecreaseStepWithOKState := (step.Type == AlarmStepStateDecrease || step.Type == AlarmStepStatusDecrease ||
+		step.Type == AlarmStepChangeState) && step.Value == AlarmStateOK
+	if len(*s) < AlarmStepsHardLimit || isDecreaseStepWithOKState ||
 		step.Type == AlarmStepCancel ||
 		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
 
@@ -385,6 +385,7 @@ type AlarmValue struct {
 	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	ChangeState *AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	// Ticket contains the last created ticket
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`

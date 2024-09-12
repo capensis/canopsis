@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'xl' 1`] = `
 <div
   class="actions-panel"
 >
@@ -10,11 +10,13 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the e
     <c-action-btn-stub
       color="primary"
       icon="edit"
+      lazy="lazy"
       tooltip="Edit title"
     />
     <c-action-btn-stub
       color="secondary"
       icon="delete"
+      lazy="lazy"
       tooltip="Delete title"
     />
     <!---->
@@ -22,113 +24,9 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the e
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'xl' 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 1`] = `
-<div
-  class="actions-panel"
->
-  <div
-    class="layout row align-center"
-  >
-    <span>
-      <button
-        class="ma-0 v-btn v-btn--icon theme--light"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </div>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <transition-stub
-          name="v-menu-transition"
-        />
-      </div>
-    </span>
-  </div>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list theme--light"
-    role="list"
-  >
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Edit title
-          </span>
-        </div>
-      </a>
-    </div>
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Delete title
-          </span>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with default props correctly 1`] = `
 <div
   class="actions-panel"
 >
@@ -140,330 +38,136 @@ exports[`actions-panel Renders \`actions-panel\` with default props correctly on
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with default props correctly 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center"><span><button type="button" class="ma-0 v-btn v-btn--icon theme--light"><div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">more_vert</i></div></button><div class="v-menu"><transition-stub name="v-menu-transition"><div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"></div></transition-stub></div></span></div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 2`] = `
 <div
-  class="actions-panel"
->
-  <div
-    class="layout row align-center"
-  >
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+/>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'm' 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center"><span><button type="button" class="ma-0 v-btn v-btn--icon theme--light"><div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">more_vert</i></div></button><div class="v-menu"><transition-stub name="v-menu-transition"><div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"></div></transition-stub></div></span></div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'm' 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+/>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 't' 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center"><span><button type="button" class="ma-0 v-btn v-btn--icon theme--light"><div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">more_vert</i></div></button><div class="v-menu"><transition-stub name="v-menu-transition"><div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"></div></transition-stub></div></span></div>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 't' 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+/>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Delete title" icon="delete" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Ack title" icon="done" color="secondary" lazy="lazy"></c-action-btn-stub>
     <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 2`] = `undefined`;
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 1`] = `
-<div
-  class="actions-panel"
->
-  <div
-    class="layout row align-center"
-  >
-    <span>
-      <button
-        class="ma-0 v-btn v-btn--icon theme--light"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </div>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <transition-stub
-          name="v-menu-transition"
-        />
-      </div>
-    </span>
+exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and ignoreMediaQuery 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub><span><button type="button" class="ma-0 v-btn v-btn--icon theme--light"><div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light">more_vert</i></div></button><div class="v-menu"><transition-stub name="v-menu-transition"><div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"></div></transition-stub></div></span>
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and ignoreMediaQuery 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list theme--light"
-    role="list"
-  >
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Edit title
-          </span>
-        </div>
-      </a>
-    </div>
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Delete title
-          </span>
-        </div>
-      </a>
-    </div>
+/>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Delete title" icon="delete" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Ack title" icon="done" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 1`] = `
-<div
-  class="actions-panel"
->
-  <div
-    class="layout row align-center"
-  >
-    <span>
-      <button
-        class="ma-0 v-btn v-btn--icon theme--light"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </div>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <transition-stub
-          name="v-menu-transition"
-        />
-      </div>
-    </span>
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Delete title" icon="delete" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Ack title" icon="done" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list theme--light"
-    role="list"
-  >
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Edit title
-          </span>
-        </div>
-      </a>
-    </div>
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Delete title
-          </span>
-        </div>
-      </a>
-    </div>
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Delete title" icon="delete" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Ack title" icon="done" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 1`] = `
-<div
-  class="actions-panel"
->
-  <div
-    class="layout row align-center"
-  >
-    <span>
-      <button
-        class="ma-0 v-btn v-btn--icon theme--light"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </div>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <transition-stub
-          name="v-menu-transition"
-        />
-      </div>
-    </span>
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Delete title" icon="delete" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Ack title" icon="done" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list theme--light"
-    role="list"
-  >
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Edit title
-          </span>
-        </div>
-      </a>
-    </div>
-    <div
-      role="listitem"
-    >
-      <a
-        class="v-list__tile v-list__tile--link theme--light"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          <span
-            class="mr-4"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-          </span>
-          <span
-            class="body-1"
-          >
-            Delete title
-          </span>
-        </div>
-      </a>
-    </div>
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 2`] = `undefined`;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 1`] = `
+<div class="actions-panel">
+  <div class="layout row align-center">
+    <c-action-btn-stub tooltip="Edit title" icon="edit" color="primary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Delete title" icon="delete" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <c-action-btn-stub tooltip="Ack title" icon="done" color="secondary" lazy="lazy"></c-action-btn-stub>
+    <!---->
   </div>
 </div>
 `;
+
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 2`] = `undefined`;

@@ -12,6 +12,7 @@ const (
 	AckDuration             = "ack_duration"
 	ResolveDuration         = "resolve_duration"
 	SliDuration             = "sli_duration"
+	AlarmStateChangeNumber  = "alarm_state_change_number"
 
 	UserActivity = "user_activity"
 	UserSessions = "user_sessions"

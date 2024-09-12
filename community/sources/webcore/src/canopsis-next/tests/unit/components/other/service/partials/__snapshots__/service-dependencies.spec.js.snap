@@ -98,7 +98,17 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      
+                    </span>
+                  </div>
+                </th>
                 <th
                   aria-label="Custom name label: Not sorted."
                   aria-sort="none"
@@ -107,7 +117,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   role="columnheader"
                   scope="col"
                 >
-                  Custom name label
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Custom name label
+                    </span>
+                  </div>
                 </th>
                 <th
                   aria-label="Custom type label: Not sorted."
@@ -117,7 +135,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   role="columnheader"
                   scope="col"
                 >
-                  Custom type label
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Custom type label
+                    </span>
+                  </div>
                 </th>
               </tr>
               <tr
@@ -495,7 +521,17 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      
+                    </span>
+                  </div>
+                </th>
                 <th
                   aria-label="Name: Not sorted."
                   aria-sort="none"
@@ -504,7 +540,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Name
+                    </span>
+                  </div>
                 </th>
                 <th
                   aria-label="Type: Not sorted."
@@ -514,7 +558,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Type
+                    </span>
+                  </div>
                 </th>
               </tr>
               <tr
@@ -865,7 +917,17 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      
+                    </span>
+                  </div>
+                </th>
                 <th
                   aria-label="Name: Not sorted."
                   aria-sort="none"
@@ -874,7 +936,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Name
+                    </span>
+                  </div>
                 </th>
                 <th
                   aria-label="Type: Not sorted."
@@ -884,7 +954,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Type
+                    </span>
+                  </div>
                 </th>
               </tr>
               <tr
@@ -977,7 +1055,17 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      
+                    </span>
+                  </div>
+                </th>
                 <th
                   aria-label="Name: Not sorted."
                   aria-sort="none"
@@ -986,7 +1074,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Name
+                    </span>
+                  </div>
                 </th>
                 <th
                   aria-label="Type: Not sorted."
@@ -996,7 +1092,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class=""
+                    >
+                      Type
+                    </span>
+                  </div>
                 </th>
               </tr>
               <tr

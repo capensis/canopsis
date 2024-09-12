@@ -29,6 +29,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
           class="mr-1"
           value="3"
         />
+        <!---->
       </div>
       <i
         aria-hidden="true"
@@ -46,6 +47,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
 exports[`service-weather-item Renders \`service-weather-item\` with full access 1`] = `
 <card-with-see-alarms-btn-stub
   class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7"
+  showbutton="true"
   style="height: 16em; color: white;"
 >
   <div
@@ -90,6 +92,22 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           class="mr-1"
           value="0"
         />
+        <button
+          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+              style="font-size: 16px;"
+            >
+              help
+            </i>
+          </div>
+        </button>
       </div>
       <i
         aria-hidden="true"

@@ -3,7 +3,7 @@ export const LINK_RULE_TYPES = {
   entity: 'entity',
 };
 
-export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms) {
+export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms, user) {
   return [
     {
       label: "",
@@ -16,7 +16,7 @@ export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms) {
   ];
 }`;
 
-export const LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE = `function generate(entities) {
+export const LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE = `function generate(entities, user) {
   return [
     {
       label: "",

@@ -3,7 +3,7 @@
 exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` with custom props 1`] = `
 <div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -64,7 +64,7 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
 exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` with default props 1`] = `
 <div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"

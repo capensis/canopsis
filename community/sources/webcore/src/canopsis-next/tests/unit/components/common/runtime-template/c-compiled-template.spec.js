@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -10,7 +8,14 @@ const stubs = {
 };
 
 describe('c-compiled-template', () => {
-  const snapshotFactory = generateRenderer(CCompiledTemplate, { stubs });
+  const snapshotFactory = generateRenderer(CCompiledTemplate, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `c-compiled-template` after mount', async () => {
     const wrapper = snapshotFactory({

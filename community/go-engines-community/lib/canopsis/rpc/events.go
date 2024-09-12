@@ -1,5 +1,7 @@
 package rpc
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"encoding/json"
 	"errors"
@@ -108,6 +110,28 @@ type PbehaviorResultEvent struct {
 	Entity   *types.Entity `json:"entity"`
 	PbhEvent types.Event   `json:"event"`
 	Error    *Error        `json:"error"`
+}
+
+// DynamicInfosEvent
+//
+//easyjson:json
+type DynamicInfosEvent struct {
+	// On update rule
+	ID     string `json:"_id"`
+	Action int    `json:"action"`
+	// On update alarm
+	Alarm           *types.Alarm          `json:"alarm"`
+	Entity          *types.Entity         `json:"entity"`
+	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
+}
+
+// DynamicInfosResultEvent
+//
+//easyjson:json
+type DynamicInfosResultEvent struct {
+	Alarm           *types.Alarm          `json:"alarm"`
+	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
+	Error           *Error                `json:"error"`
 }
 
 type Error struct {

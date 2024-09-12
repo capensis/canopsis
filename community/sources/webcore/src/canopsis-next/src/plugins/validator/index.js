@@ -39,18 +39,21 @@ export default {
       getMessage: () => i18n.t('errors.JSONNotValid'),
       validate: isValidJson,
     });
+
     Validator.extend('unique', {
       getMessage: () => i18n.t('errors.unique'),
       validate: isUniqueValue,
     }, {
       paramNames: ['values', 'initialValue'],
     });
+
     Validator.extend('picker_format', {
       getMessage: () => i18n.t('errors.endDateLessOrEqualStartDate'),
       validate: isValidPicker,
     }, {
       paramNames: ['preparer'],
     });
+
     Validator.extend('url', { validate: isValidUrl });
 
     const sourceDirective = Vue.directive('validate');

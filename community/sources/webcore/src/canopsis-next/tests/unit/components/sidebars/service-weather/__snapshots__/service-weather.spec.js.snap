@@ -151,6 +151,20 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <hr
       class="v-divider theme--light"
     />
+    <field-switcher-stub
+      title="Show hide gray"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Show secondary icon"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
     <field-modal-type-stub
       name="modalType"
       value="both"
@@ -160,6 +174,12 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     />
     <field-action-required-settings-stub
       value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
     />
   </widget-settings-group-stub>
   <hr
@@ -324,6 +344,20 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <hr
       class="v-divider theme--light"
     />
+    <field-switcher-stub
+      title="Show hide gray"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Show secondary icon"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
     <field-modal-type-stub
       name="modalType"
       value="both"
@@ -333,6 +367,12 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     />
     <field-action-required-settings-stub
       value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
     />
   </widget-settings-group-stub>
   <hr

@@ -1,7 +1,5 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -166,7 +164,7 @@ describe('kpi-rating', () => {
   it('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
-      /* now - 30d  */
+      /* now - 1d  */
       from: 1386284400,
       criteria: 1,
       filter: Faker.datatype.string(),
@@ -218,7 +216,7 @@ describe('kpi-rating', () => {
   it('Metrics refreshed without filter with total active time metric', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
-      /* now - 30d  */
+      /* now - 1d  */
       from: 1386284400,
       criteria: 1,
       metric: USER_METRIC_PARAMETERS.totalUserActivity,

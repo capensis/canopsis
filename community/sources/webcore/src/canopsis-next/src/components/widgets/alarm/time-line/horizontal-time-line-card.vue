@@ -9,10 +9,11 @@
       div.pre-line
         div
           strong {{ stepTitle }}
-        c-compiled-template(:template="step.m")
+        div(v-html="sanitizedStepMessage")
 </template>
 
 <script>
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { formatStep } from '@/helpers/entities/entity/formatting';
 
 import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
@@ -28,6 +29,10 @@ export default {
   computed: {
     style() {
       return formatStep(this.step);
+    },
+
+    sanitizedStepMessage() {
+      return sanitizeHtml(linkifyHtml(String(this.step?.m ?? '')));
     },
   },
 };

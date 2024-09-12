@@ -79,12 +79,17 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	entity := *event.Entity
-	match := getOpenAlarmMatchWithStepsLimit(event)
+	var match bson.M
+	if *event.Parameters.State == types.AlarmStateOK {
+		match = getOpenAlarmMatch(event)
+	} else {
+		match = getOpenAlarmMatchWithStepsLimit(event)
+	}
 	match["$and"] = []bson.M{
 		{"v.state.val": bson.M{"$ne": types.AlarmStateOK}},
 		{"$or": []bson.M{
 			{"v.state.val": bson.M{"$ne": event.Parameters.State}},
-			{"v.state._t": bson.M{"$ne": types.AlarmStepChangeState}},
+			{"v.change_state": nil},
 		}},
 	}
 	matchUpdate := getOpenAlarmMatch(event)
@@ -114,6 +119,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
 		alarmChange.PreviousStatus = alarm.Value.Status.Value
+		alarm.Value.ChangeState = &newStepState
 		alarm.Value.State = &newStepState
 		err = alarm.Value.Steps.Add(newStepState)
 		if err != nil {
@@ -125,7 +131,10 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		var update bson.M
 		if newStatus == currentStatus {
 			update = bson.M{
-				"$set":  bson.M{"v.state": newStepState},
+				"$set": bson.M{
+					"v.state":        newStepState,
+					"v.change_state": newStepState,
+				},
 				"$push": bson.M{"v.steps": newStepState},
 			}
 		} else {
@@ -139,6 +148,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			update = bson.M{
 				"$set": bson.M{
 					"v.state":                             newStepState,
+					"v.change_state":                      newStepState,
 					"v.status":                            newStepStatus,
 					"v.state_changes_since_status_update": 0,
 					"v.last_update_date":                  event.Parameters.Timestamp,

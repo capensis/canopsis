@@ -26,6 +26,7 @@ export const MODALS = {
   textEditor: 'text-editor',
   textEditorWithTemplate: 'text-editor-with-template',
   textFieldEditor: 'text-field-editor',
+  payloadTextareaEditor: 'payload-textarea-editor',
   selectView: 'select-view',
   createView: 'create-view',
   shareView: 'share-view',
@@ -111,4 +112,6 @@ export const MODALS = {
   entitiesList: 'entities-list',
 
   createTheme: 'create-theme',
+
+  archiveDisabledEntities: 'archive-disabled-entities',
 };

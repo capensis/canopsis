@@ -27,10 +27,11 @@ export const widgetRowsSelectingAlarmMixin = {
 
   async mounted() {
     if (this.selectable) {
-      window.addEventListener('keydown', this.enableSelecting);
-      window.addEventListener('keyup', this.disableSelecting);
+      window.addEventListener('keydown', this.handleKeyDown);
+      window.addEventListener('keyup', this.handleKeyUp);
       window.addEventListener('mousedown', this.mousedownHandler);
       window.addEventListener('mouseup', this.mouseupHandler);
+      window.addEventListener('blur', this.disableSelecting);
     }
   },
   updated() {
@@ -39,10 +40,11 @@ export const widgetRowsSelectingAlarmMixin = {
     }
   },
   beforeDestroy() {
-    window.removeEventListener('keydown', this.enableSelecting);
-    window.removeEventListener('keyup', this.disableSelecting);
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
     window.removeEventListener('mousedown', this.mousedownHandler);
     window.removeEventListener('mouseup', this.mouseupHandler);
+    window.removeEventListener('blur', this.disableSelecting);
   },
 
   methods: {
@@ -61,15 +63,15 @@ export const widgetRowsSelectingAlarmMixin = {
             y1: position.y,
             y2: position.y + position.height,
           },
-          row: value.$options.propsData.row,
+          alarm: value.$options.propsData.alarm,
         });
 
         return acc;
       }, []);
     },
 
-    getIntersectRowsByPosition(newX, newY, prevX, prevY) {
-      return this.rowsPositions?.reduce((acc, { position, row }) => {
+    getIntersectAlarmsByPosition(newX, newY, prevX, prevY) {
+      return this.rowsPositions?.reduce((acc, { position, alarm }) => {
         if (
           (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
           || (newX < position.x1 && prevX < position.x1)
@@ -80,7 +82,7 @@ export const widgetRowsSelectingAlarmMixin = {
           return acc;
         }
 
-        acc.push(row);
+        acc.push(alarm);
 
         return acc;
       }, []) ?? [];
@@ -99,7 +101,7 @@ export const widgetRowsSelectingAlarmMixin = {
         return;
       }
 
-      const rows = this.getIntersectRowsByPosition(
+      const alarms = this.getIntersectAlarmsByPosition(
         event.clientX,
         event.clientY,
         this.prevEvent.clientX,
@@ -108,7 +110,7 @@ export const widgetRowsSelectingAlarmMixin = {
 
       this.prevEvent = event;
 
-      rows.forEach(row => this.toggleSelected(row.item));
+      alarms.forEach(alarm => this.toggleSelected(alarm));
     },
 
     toggleSelected(alarm) {
@@ -127,15 +129,23 @@ export const widgetRowsSelectingAlarmMixin = {
       this.selected = [];
     },
 
-    enableSelecting({ key }) {
+    enableSelecting() {
+      this.selecting = true;
+    },
+
+    disableSelecting() {
+      this.selecting = false;
+    },
+
+    handleKeyDown({ key }) {
       if (key === 'Control') {
-        this.selecting = true;
+        this.enableSelecting();
       }
     },
 
-    disableSelecting({ key }) {
+    handleKeyUp({ key }) {
       if (key === 'Control') {
-        this.selecting = false;
+        this.disableSelecting();
       }
     },
   },
