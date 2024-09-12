@@ -18,6 +18,8 @@ type MetaAlarmStateService interface {
 	UpdateOpenedState(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error)
 	// ArchiveState moves state to a separate document, needed for late create metaalarm events to get their state instead of new one.
 	ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error)
+	// DeleteState deletes current alarm state.
+	DeleteState(ctx context.Context, ruleID string) (bool, error)
 	// SwitchStateToReady switch state status to ready, should be used only after metaalarm is triggered.
 	SwitchStateToReady(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error)
 	// SwitchStateToCreated switch state status to created, should be used only after or during the metaalarm creation.
@@ -99,6 +101,12 @@ func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlar
 	}
 
 	return true, nil
+}
+
+func (a *metaAlarmStateService) DeleteState(ctx context.Context, ruleID string) (bool, error) {
+	deleted, err := a.metaAlarmStatesCollection.DeleteOne(ctx, bson.M{"_id": ruleID})
+
+	return deleted > 0, err
 }
 
 func (a *metaAlarmStateService) SwitchStateToReady(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error) {
