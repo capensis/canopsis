@@ -243,7 +243,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		updatedChildrenAlarms = make([]types.Alarm, 0)
 		var lastChild types.AlarmWithEntity
 
-		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
+		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID, "v.resolved": nil}).Decode(&metaAlarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -368,7 +368,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = make([]types.Alarm, 0)
 
-		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
+		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID, "v.resolved": nil}).Decode(&metaAlarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
