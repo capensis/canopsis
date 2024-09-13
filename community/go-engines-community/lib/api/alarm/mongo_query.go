@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"sort"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -314,9 +315,14 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 
 	if len(q.excludeLookupsBeforeSort) > 0 {
 		project := bson.M{}
+		sort.Strings(q.excludeLookupsBeforeSort)
+		prevValue := ""
 		for _, k := range q.excludeLookupsBeforeSort {
 			addedLookups[k] = false
-			project[k] = 0
+			if !strings.HasPrefix(k, prevValue+".") {
+				prevValue = k
+				project[k] = 0
+			}
 		}
 		beforeLimit = append(beforeLimit, bson.M{"$project": project})
 	}
@@ -1004,18 +1010,24 @@ func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 		}
 	case reflect.Map:
 		for _, key := range val.MapKeys() {
-			newVal := q.resolveAliasesInQuery(val.MapIndex(key).Interface())
-			newKey := q.resolveAlias(key.String())
+			subquery := val.MapIndex(key).Interface()
+			switch key.String() {
+			case "$ne", "$eq", "$gt", "$gte", "$lt", "$lte", "$in", "$nin":
+				// subquery hasn't contain expression with alias and should remain as is
+			default:
+				newKey := q.resolveAlias(key.String())
+				newVal := q.resolveAliasesInQuery(subquery)
 
-			var mapVal reflect.Value
-			if newVal == nil {
-				mapVal = reflect.ValueOf(&newVal).Elem()
-			} else {
-				mapVal = reflect.ValueOf(newVal)
+				var mapVal reflect.Value
+				if newVal == nil {
+					mapVal = reflect.ValueOf(&newVal).Elem()
+				} else {
+					mapVal = reflect.ValueOf(newVal)
+				}
+
+				val.SetMapIndex(key, reflect.Value{})
+				val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 			}
-
-			val.SetMapIndex(key, reflect.Value{})
-			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	}
 
