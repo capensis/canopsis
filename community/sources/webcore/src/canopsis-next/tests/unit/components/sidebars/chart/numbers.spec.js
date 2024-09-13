@@ -3,7 +3,7 @@ import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createSettingsMocks, submitWithExpects } from '@unit/utils/settings';
 
@@ -41,9 +41,6 @@ const generateDefaultNumbersWidget = () => ({
 const selectWidgetForm = wrapper => wrapper.find('numbers-widget-form-stub');
 
 describe('numbers', () => {
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
   const $sidebar = mockSidebar();
 
   const {
@@ -108,6 +105,10 @@ describe('numbers', () => {
       $sidebar,
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   test('Create widget with default parameters', async () => {
     const localWidget = getEmptyWidgetByType(WIDGET_TYPES.numbers);

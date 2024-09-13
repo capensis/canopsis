@@ -3,7 +3,7 @@ import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import {
   createSettingsMocks,
   getWidgetRequestWithNewProperty,
@@ -52,6 +52,7 @@ const stubs = {
   'field-switcher': true,
   'field-modal-type': true,
   'field-action-required-settings': true,
+  'field-no-action-required-settings': true,
   'field-tree-of-dependencies-settings': true,
   'field-root-cause-settings': true,
 };
@@ -91,9 +92,6 @@ const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-act
 const selectFieldRootCauseSettings = wrapper => wrapper.find('field-root-cause-settings-stub');
 
 describe('service-weather', () => {
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
   const $sidebar = mockSidebar();
 
   const {
@@ -165,6 +163,10 @@ describe('service-weather', () => {
       },
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   afterEach(() => {
     createWidget.mockReset();

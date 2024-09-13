@@ -140,6 +140,10 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
+					if execution == nil {
+						return
+					}
+
 					step := 0
 					for _, e := range execution.ActionExecutions {
 						if e.Executed {
