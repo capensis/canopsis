@@ -57,11 +57,27 @@ Afin de recevoir un message l'option *get messages* permet d'inspecter manuellem
 
 Afin d’éviter de remplir inutilement les files de RabbitMQ, il est possible de mettre en place une *policy*.
 
+*Il est recommandé de mettre en place une telle politique. Le nombre de 200 000
+(dans la commande ci-dessous) peut être revu en fonction du contexte.*
+
+
+### Avec l'interface graphique
+
 La procédure est la suivante :
+
+![img](../img/rabbitmq_add_policy.png)
+
+Ensuite, vous devez voir apparaître votre policy sur les files dans l’onglet « Queues »:
 
 ![img](../img/rabbitmq_policy.png)
 
-Ensuite, vous devez voir apparaître votre policy sur les files dans l’onglet « Queues ».
+### En ligne de commande
+
+**Depuis un seul nœud**, invoquer la commande suivante:
+
+```sh
+rabbitmqctl set_policy --vhost canopsis --apply-to queues MaxMessages "" '{"max-length": 200000}'
+```
 
 ## Aller plus loin
 

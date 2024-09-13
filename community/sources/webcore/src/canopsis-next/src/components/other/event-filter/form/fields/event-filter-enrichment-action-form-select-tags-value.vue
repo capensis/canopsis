@@ -16,8 +16,11 @@ import { find, isEqual } from 'lodash';
 
 import { EVENT_FILTER_SET_TAGS_REGEX } from '@/constants';
 
+import { formMixin } from '@/mixins/form';
+
 export default {
   inject: ['$validator'],
+  mixins: [formMixin],
   model: {
     prop: 'value',
     event: 'input',

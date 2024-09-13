@@ -47,6 +47,8 @@ describe('point-form-dialog', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Point dialog submitted with changes', async () => {
     const point = {
       _id: 'id',
@@ -60,7 +62,7 @@ describe('point-form-dialog', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', point);
   });
@@ -84,7 +86,7 @@ describe('point-form-dialog', () => {
     const submitButton = selectSubmitButton(wrapper);
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', newPoint);
   });
@@ -111,7 +113,7 @@ describe('point-form-dialog', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', newPoint);
   });
@@ -141,7 +143,7 @@ describe('point-form-dialog', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).not.toHaveBeenEmit('submit');
   });
@@ -240,7 +242,7 @@ describe('point-form-dialog', () => {
       _id: pointId,
     };
 
-    const wrapper = snapshotFactory({
+    const wrapper = factory({
       propsData: {
         point,
         editing: true,
@@ -265,6 +267,8 @@ describe('point-form-dialog', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     await modalArguments.config.action(true);
+
+    await flushPromises();
 
     expect(wrapper).toEmit('submit', newPoint);
   });
