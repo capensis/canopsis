@@ -10,6 +10,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const (
+	PbehaviorEventTypeCreate = "create"
+	PbehaviorEventTypeDelete = "delete"
+)
+
 // AxeEvent
 //
 //easyjson:json
@@ -56,6 +61,9 @@ type AxeParameters struct {
 	Tstart         *datetime.CpsTime `json:"tstart,omitempty"`
 	Tstop          *datetime.CpsTime `json:"tstop,omitempty"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty"`
+	Color          string            `json:"color,omitempty"`
+	Comment        string            `json:"comment,omitempty"`
+	Origin         string            `json:"origin,omitempty"`
 	// Instruction and Webhook
 	Execution string `json:"execution,omitempty"`
 	// Instruction
@@ -112,6 +120,7 @@ type PbehaviorRecomputeEvent struct {
 type PbehaviorEvent struct {
 	Alarm       *types.Alarm        `json:"alarm"`
 	Entity      *types.Entity       `json:"entity"`
+	Type        string              `json:"type"`
 	Params      PbehaviorParameters `json:"params"`
 	Healthcheck bool                `json:"healthcheck"`
 }
@@ -128,6 +137,9 @@ type PbehaviorParameters struct {
 	StartOnTrigger *bool                      `json:"start_on_trigger,omitempty"`
 	Duration       *datetime.DurationWithUnit `json:"duration,omitempty"`
 	RuleName       string                     `json:"rule_name,omitempty"`
+	Color          string                     `json:"color,omitempty"`
+	Origin         string                     `json:"origin,omitempty"`
+	Comment        string                     `json:"comment,omitempty"`
 }
 
 // PbehaviorResultEvent

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -23,6 +24,7 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type rpcServerMessageProcessor struct {
@@ -54,7 +56,18 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 		})
 	}
 
-	pbhEvent, err := p.processCreatePbhEvent(ctx, *event.Entity, event.Params)
+	var pbhEvent *types.Event
+	switch event.Type {
+	case rpc.PbehaviorEventTypeCreate:
+		pbhEvent, err = p.processCreatePbhEvent(ctx, *event.Entity, event.Params)
+	case rpc.PbehaviorEventTypeDelete:
+		pbhEvent, err = p.processDeletePbhEvent(ctx, *event.Entity, event.Params)
+	default:
+		p.logError(nil, "invalid event type: "+event.Type, msg)
+
+		return p.getErrRpcEvent(errors.New("invalid event type: " + event.Type)), nil
+	}
+
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
@@ -113,12 +126,13 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	entity types.Entity,
 	params rpc.PbehaviorParameters,
 ) (*types.Event, error) {
-	pbehavior, err := p.createPbehavior(ctx, params, entity)
+	pbehavior, oldPbhIds, err := p.createPbehavior(ctx, params, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbehavior.ID})
+	oldPbhIds = append(oldPbhIds, pbehavior.ID)
+	resolver, err := p.PbhService.RecomputeByIds(ctx, oldPbhIds)
 	if err != nil {
 		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
 	}
@@ -154,29 +168,75 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	return &pbhEvent, nil
 }
 
+func (p *rpcServerMessageProcessor) processDeletePbhEvent(
+	ctx context.Context,
+	entity types.Entity,
+	params rpc.PbehaviorParameters,
+) (*types.Event, error) {
+	pbhId, err := p.deletePbehavior(ctx, params, entity)
+	if pbhId == "" || err != nil {
+		return nil, err
+	}
+
+	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbhId})
+	if err != nil {
+		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
+	}
+
+	p.Logger.Debug().Str("pbehavior", pbhId).Msg("pbehavior removed")
+
+	resolveResult, err := p.getResolveResult(ctx, entity, resolver)
+	if err != nil {
+		return nil, err
+	}
+
+	pbhEvent, err := p.EventManager.GetEvent(resolveResult, entity, datetime.NewCpsTime())
+	if err != nil {
+		return nil, err
+	}
+
+	if pbhEvent.EventType == "" {
+		return nil, nil
+	}
+
+	if pbhEvent.PbehaviorInfo.ID == "" {
+		if params.RuleName != "" {
+			prevPbhInfo := entity.PbehaviorInfo
+			prevPbhInfo.RuleName = params.RuleName
+			pbhEvent.Output = prevPbhInfo.GetStepMessage()
+		}
+
+		if params.Author != "" {
+			pbhEvent.Author = params.Author
+		}
+	}
+
+	return &pbhEvent, nil
+}
+
 func (p *rpcServerMessageProcessor) createPbehavior(
 	ctx context.Context,
 	params rpc.PbehaviorParameters,
 	entity types.Entity,
-) (*libpbehavior.PBehavior, error) {
+) (*libpbehavior.PBehavior, []string, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
 	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
+			return nil, nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
 		}
 
-		return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
+		return nil, nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
 	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
+			return nil, nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
 		}
 
-		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
+		return nil, nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
 	now := datetime.NewCpsTime()
@@ -191,22 +251,24 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	}
 
 	if start.IsZero() {
-		return nil, fmt.Errorf("invalid action parameters, tstart with tstop or start_on_trigger with duration must be defined: %+v", params)
+		return nil, nil, fmt.Errorf("invalid action parameters, tstart with tstop or start_on_trigger with duration must be defined: %+v", params)
 	}
 
 	pbehavior := libpbehavior.PBehavior{
-		ID:      utils.NewID(),
-		Enabled: true,
-		Name:    params.Name,
-		Reason:  params.Reason,
-		RRule:   params.RRule,
-		Start:   &start,
-		Stop:    &stop,
-		Type:    params.Type,
-		Color:   types.ActionPbehaviorColor,
-		Created: &now,
-		Updated: &now,
-
+		ID:       utils.NewID(),
+		Enabled:  true,
+		Comments: make([]libpbehavior.Comment, 0),
+		Name:     params.Name,
+		Reason:   params.Reason,
+		RRule:    params.RRule,
+		Start:    &start,
+		Stop:     &stop,
+		Type:     params.Type,
+		Color:    params.Color,
+		Created:  &now,
+		Updated:  &now,
+		Origin:   params.Origin,
+		Entity:   entity.ID,
 		EntityPatternFields: savedpattern.EntityPatternFields{
 			EntityPattern: pattern.Entity{
 				{
@@ -222,15 +284,81 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		},
 	}
 
+	if params.Comment != "" {
+		pbehavior.Comments = append(pbehavior.Comments, libpbehavior.Comment{
+			ID:        utils.NewID(),
+			Origin:    cmp.Or(params.Author, canopsis.DefaultEventAuthor),
+			Timestamp: &now,
+			Message:   params.Comment,
+		})
+	}
+
+	oldPbhIds := make([]string, 0)
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
-	_, err = collection.InsertOne(ctx, pbehavior)
+	err = p.DbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		oldPbhIds = oldPbhIds[:0]
+		cursor, err := collection.Find(ctx, bson.M{
+			"entity": entity.ID,
+			"origin": params.Origin,
+		}, options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find old pbehavior: %w", err)
+		}
+
+		defer cursor.Close(ctx)
+		for cursor.Next(ctx) {
+			pbh := libpbehavior.PBehavior{}
+			err = cursor.Decode(&pbh)
+			if err != nil {
+				return err
+			}
+
+			oldPbhIds = append(oldPbhIds, pbh.ID)
+		}
+
+		_, err = collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": oldPbhIds}})
+		if err != nil {
+			return fmt.Errorf("cannot delete old pbehavior: %w", err)
+		}
+
+		_, err = collection.InsertOne(ctx, pbehavior)
+		if err != nil {
+			return fmt.Errorf("create new pbehavior failed: %w", err)
+		}
+
+		return nil
+	})
 	if err != nil {
-		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
+		return nil, nil, err
 	}
 
 	p.Logger.Info().Str("pbehavior", pbehavior.ID).Msg("create pbehavior")
 
-	return &pbehavior, nil
+	return &pbehavior, oldPbhIds, nil
+}
+
+func (p *rpcServerMessageProcessor) deletePbehavior(
+	ctx context.Context,
+	params rpc.PbehaviorParameters,
+	entity types.Entity,
+) (string, error) {
+	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
+	var pbehavior libpbehavior.PBehavior
+	err := collection.FindOneAndDelete(ctx, bson.M{
+		"entity": entity.ID,
+		"origin": params.Origin,
+	}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).Decode(&pbehavior)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return "", nil
+		}
+
+		return "", fmt.Errorf("delete pbehavior failed: %w", err)
+	}
+
+	p.Logger.Info().Str("pbehavior", pbehavior.ID).Msg("delete pbehavior")
+
+	return pbehavior.ID, nil
 }
 
 func (p *rpcServerMessageProcessor) getResolveResult(
