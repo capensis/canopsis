@@ -76,7 +76,10 @@ type Rule struct {
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *datetime.CpsTime                 `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *datetime.CpsTime                 `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-	EventsCount  int64                             `bson:"events_count,omitempty" json:"events_count,omitempty"`
+
+	EventsCount         int64 `bson:"events_count,omitempty" json:"events_count,omitempty"`
+	FailuresCount       int64 `bson:"failures_count,omitempty" json:"failures_count,omitempty"`
+	UnreadFailuresCount int64 `bson:"unread_failures_count,omitempty" json:"unread_failures_count,omitempty"`
 
 	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
