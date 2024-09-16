@@ -25,7 +25,9 @@ export default {
     + '}</pre>',
   actions: {
     [ACTION_TYPES.snooze]: 'Mettre en veille',
+    [ACTION_TYPES.unsnooze]: 'Annuler la répétition',
     [ACTION_TYPES.pbehavior]: 'Définir un comportement périodique',
+    [ACTION_TYPES.pbehaviorRemove]: 'Pbehavior supprimer',
     [ACTION_TYPES.changeState]: 'Changer l\'état (Change et vérouille la criticité)',
     [ACTION_TYPES.ack]: 'Acquitter',
     [ACTION_TYPES.ackremove]: 'Supprimer l\'acquittement',
