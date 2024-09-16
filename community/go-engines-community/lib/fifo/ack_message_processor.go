@@ -12,6 +12,9 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// 1 day in microseconds
+const intervalWrnThreshold = int64(24 * time.Hour / time.Microsecond)
+
 type ackMessageProcessor struct {
 	FeaturePrintEventOnError bool
 
@@ -44,6 +47,10 @@ func (p *ackMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			if event.EventType == types.EventTypeCheck {
 				isOkState := event.State == types.AlarmStateOK
 				eventMetric.IsOkState = &isOkState
+			}
+
+			if eventMetric.Interval.Microseconds() > intervalWrnThreshold {
+				p.Logger.Warn().RawJSON("event", d.Body).Msg("cps_event interval exceeds a day")
 			}
 
 			p.TechMetricsSender.SendCpsEvent(eventMetric)
