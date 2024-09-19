@@ -46,7 +46,7 @@ export default {
     isTimed() {
       return !isFullDayEvent(
         convertDateToDateObjectByTimezone(this.pbehavior.tstart, this.$system.timezone),
-        convertDateToDateObjectByTimezone(this.pbehavior.tstop, this.$system.timezone),
+        this.pbehavior.tstop && convertDateToDateObjectByTimezone(this.pbehavior.tstop, this.$system.timezone),
       );
     },
 
