@@ -2,7 +2,7 @@ build_doc:
   stage: build
   tags: 
     - executor-docker
-  image: python:alpine
+  image: python:3.12.4-alpine
   variables:
     MKDOCS_BRANCH: mkdocs
     URL_REPO: https://${ACCESS_TOKEN_NAME}:${ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git

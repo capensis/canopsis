@@ -201,7 +201,7 @@ export default {
     }) {
       const isTimed = !isFullDayEvent(
         convertDateToDateObjectByTimezone(pbehavior.tstart, this.$system.timezone),
-        convertDateToDateObjectByTimezone(pbehavior.tstop, this.$system.timezone),
+        pbehavior.tstop && convertDateToDateObjectByTimezone(pbehavior.tstop, this.$system.timezone),
       );
 
       return timespans.map((timespan, index) => {
