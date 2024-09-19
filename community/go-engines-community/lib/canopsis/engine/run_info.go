@@ -105,7 +105,7 @@ func (m *runInfoManager) GetEngines(ctx context.Context) ([]RunInfo, error) {
 				if v, ok := infosByName[info.Name]; ok {
 					v.Instances++
 
-					if v.ConsumeQueue != info.ConsumeQueue || v.PublishQueue != info.PublishQueue ||
+					if v.ConsumeQueue != info.ConsumeQueuePrefix || v.PublishQueue != info.PublishQueuePrefix ||
 						!reflect.DeepEqual(v.RpcConsumeQueues, info.RpcConsumeQueues) ||
 						!reflect.DeepEqual(v.RpcPublishQueues, info.RpcPublishQueues) {
 						v.HasDiffConfig = true
@@ -116,8 +116,8 @@ func (m *runInfoManager) GetEngines(ctx context.Context) ([]RunInfo, error) {
 						v.Time = info.Time
 
 						if v.HasDiffConfig {
-							v.ConsumeQueue = info.ConsumeQueue
-							v.PublishQueue = info.PublishQueue
+							v.ConsumeQueue = info.ConsumeQueuePrefix
+							v.PublishQueue = info.PublishQueuePrefix
 							v.RpcConsumeQueues = info.RpcConsumeQueues
 							v.RpcPublishQueues = info.RpcPublishQueues
 						}
@@ -125,8 +125,8 @@ func (m *runInfoManager) GetEngines(ctx context.Context) ([]RunInfo, error) {
 				} else {
 					infosByName[info.Name] = &RunInfo{
 						Name:             info.Name,
-						ConsumeQueue:     info.ConsumeQueue,
-						PublishQueue:     info.PublishQueue,
+						ConsumeQueue:     info.ConsumeQueuePrefix,
+						PublishQueue:     info.PublishQueuePrefix,
 						RpcConsumeQueues: info.RpcConsumeQueues,
 						RpcPublishQueues: info.RpcPublishQueues,
 						Instances:        1,

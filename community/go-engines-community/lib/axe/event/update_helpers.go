@@ -304,7 +304,7 @@ func sendTriggerEvent(
 
 	err = amqpPublisher.PublishWithContext(
 		ctx,
-		"",
+		canopsis.DefaultExchangeName,
 		canopsis.FIFOQueueName,
 		false,
 		false,

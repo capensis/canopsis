@@ -59,7 +59,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", []string{canopsis.PBehaviorRPCQueueServerName}),
+		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
 		amqpChannel,
 		logger,
 	)
@@ -153,7 +153,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		rpcMessageProcessor,
 		logger,
 	))
-	enginePbehavior.AddConsumer(engine.NewDivergingConsumer(
+	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
 		canopsis.PBehaviorConsumerName,
 		canopsis.PBehaviorQueueRecomputeName,
 		cfg.Global.PrefetchCount,
@@ -174,12 +174,10 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Publisher:                amqpChannel,
-			Exchange:                 canopsis.FIFOExchangeName,
+			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
 			Logger:                   logger,
 		},
-		"event_type",
-		[]string{types.EventTypeCheck},
 		logger,
 	))
 	enginePbehavior.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)

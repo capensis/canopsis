@@ -15,6 +15,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	redismod "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
+	"github.com/valyala/fastjson"
 )
 
 var (
@@ -30,9 +31,9 @@ type Scheduler interface {
 }
 
 type scheduler struct {
-	redisConn      redismod.UniversalClient
-	channelPub     libamqp.Channel
-	publishToQueue string
+	redisConn            redismod.UniversalClient
+	channelPub           libamqp.Channel
+	publishToQueuePrefix string
 
 	decoder encoding.Decoder
 	encoder encoding.Encoder
@@ -50,17 +51,17 @@ func NewSchedulerService(
 	redisLockStorage redismod.UniversalClient,
 	redisQueueStorage redismod.UniversalClient,
 	channelPub libamqp.Channel,
-	publishToQueue string,
+	publishToQueuePrefix string,
 	logger zerolog.Logger,
 	lockTtl int,
 	decoder encoding.Decoder,
 	encoder encoding.Encoder,
 ) Scheduler {
 	return &scheduler{
-		redisConn:      redisLockStorage,
-		channelPub:     channelPub,
-		publishToQueue: publishToQueue,
-		logger:         logger,
+		redisConn:            redisLockStorage,
+		channelPub:           channelPub,
+		publishToQueuePrefix: publishToQueuePrefix,
+		logger:               logger,
 
 		decoder: decoder,
 		encoder: encoder,
@@ -133,7 +134,7 @@ func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
 		return nil
 	}
 
-	return s.publishToNext(ctx, bevent)
+	return s.publishToNext(ctx, bevent, event.Initiator)
 }
 
 func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
@@ -141,23 +142,27 @@ func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 	s.logger.Debug().Str("lockID", lockID).Msg("AckEvent")
 
 	nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to ack event: %w", err)
 	}
 
 	if nextEvent == nil {
 		return nil
 	}
 
-	return s.publishToNext(ctx, nextEvent)
+	initiator, err := s.getInitiator(nextEvent)
+	if err != nil {
+		return fmt.Errorf("failed to ack event: %w", err)
+	}
+
+	return s.publishToNext(ctx, nextEvent, initiator)
 }
 
-func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte) error {
+func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte, initiator string) error {
 	return s.channelPub.PublishWithContext(
 		ctx,
-		"",
-		s.publishToQueue,
+		canopsis.EngineExchangeName,
+		libamqp.BuildRoutingKey(s.publishToQueuePrefix, initiator),
 		false,
 		false,
 		amqp.Publishing{
@@ -207,11 +212,33 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 		return
 	}
 
-	err = s.publishToNext(ctx, nextEvent)
+	initiator, err := s.getInitiator(nextEvent)
 	if err != nil {
 		s.logger.
 			Err(err).
 			Str("lockID", lockID).
-			Msg("error on publishsing event to queue")
+			Msg("error on getting initiator from the event")
 	}
+
+	err = s.publishToNext(ctx, nextEvent, initiator)
+	if err != nil {
+		s.logger.
+			Err(err).
+			Str("lockID", lockID).
+			Msg("error on publishing event to queue")
+	}
+}
+
+func (s *scheduler) getInitiator(event []byte) (string, error) {
+	msg, err := fastjson.ParseBytes(event)
+	if err != nil {
+		return "", fmt.Errorf("failed to get initiator: %w", err)
+	}
+
+	initiator := string(msg.GetStringBytes(types.InitiatorTag))
+	if !types.IsValidInitiator(initiator) {
+		initiator = types.InitiatorExternal
+	}
+
+	return initiator, nil
 }

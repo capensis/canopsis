@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -21,11 +22,9 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
-	queueName := "testQueue"
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
-		queueName,
 	)
 	alarm := types.Alarm{}
 
@@ -39,8 +38,8 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		EXPECT().
 		PublishWithContext(
 			gomock.Any(),
-			gomock.Eq(""),
-			gomock.Eq(queueName),
+			gomock.Eq(canopsis.EngineExchangeName),
+			gomock.Eq(canopsis.CheSystemQueueName),
 			gomock.Eq(false),
 			gomock.Eq(false),
 			gomock.Eq(amqp.Publishing{
@@ -67,7 +66,6 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
-		"testQueue",
 	)
 	alarm := types.Alarm{
 		Value: types.AlarmValue{},
@@ -133,7 +131,6 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
-		"testQueue",
 	)
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
@@ -175,7 +172,6 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
-		"testQueue",
 	)
 	alarm := types.Alarm{
 		EntityID: "testID",
@@ -216,7 +212,6 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 	service := NewActivationService(
 		encoderMock,
 		publisherMock,
-		"testQueue",
 	)
 
 	now := datetime.NewCpsTime()
