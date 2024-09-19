@@ -33,13 +33,53 @@ internal = false
 noWait = false
 # args =
 
+[[RabbitMQ.exchanges]]
+name = "canopsis.engine"
+kind = "direct"
+durable = true
+autoDelete = false
+internal = false
+noWait = false
+# args =
+
 [[RabbitMQ.queues]]
-name = "Engine_action"
+name = "Engine_action_external"
 durable = true
 autoDelete = false
 exclusive = false
 noWait = false
 # args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_action_external"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_action_user"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_action_user"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_action_system"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_action_system"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
 
 [[RabbitMQ.queues]]
 name = "Engine_action_axe_rpc_client"
@@ -50,15 +90,41 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_axe"
+name = "Engine_axe_external"
 durable = true
 autoDelete = false
 exclusive = false
 noWait = false
 # args =
   [RabbitMQ.queues.bind]
-  key = "Engine_axe"
-  exchange = "amq.direct"
+  key = "Engine_axe_external"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_axe_user"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_axe_user"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_axe_system"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_axe_system"
+  exchange = "canopsis.engine"
   noWait = false
   # args =
 
@@ -95,12 +161,43 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_che"
+name = "Engine_che_external"
 durable = true
 autoDelete = false
 exclusive = false
 noWait = false
 # args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_che_external"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_che_user"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_che_user"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_che_system"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_che_system"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
 
 [[RabbitMQ.queues]]
 name = "Engine_fifo"
@@ -137,17 +234,43 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_dynamic_infos"
+name = "Engine_dynamic_infos_external"
 durable = true
 autoDelete = false
 exclusive = false
 noWait = false
 # args =
-[RabbitMQ.queues.bind]
-key = "Engine_dynamic_infos"
-exchange = "amq.direct"
+  [RabbitMQ.queues.bind]
+  key = "Engine_dynamic_infos_external"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_dynamic_infos_user"
+durable = true
+autoDelete = false
+exclusive = false
 noWait = false
 # args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_dynamic_infos_user"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_dynamic_infos_system"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_dynamic_infos_system"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
 
 [[RabbitMQ.queues]]
 name = "Engine_dynamic_infos_rpc_server"
@@ -158,17 +281,43 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_correlation"
+name = "Engine_correlation_external"
 durable = true
 autoDelete = false
 exclusive = false
 noWait = false
 # args =
-[RabbitMQ.queues.bind]
-key = "Engine_correlation"
-exchange = "amq.direct"
+  [RabbitMQ.queues.bind]
+  key = "Engine_correlation_external"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_correlation_user"
+durable = true
+autoDelete = false
+exclusive = false
 noWait = false
 # args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_correlation_user"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
+
+[[RabbitMQ.queues]]
+name = "Engine_correlation_system"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+  [RabbitMQ.queues.bind]
+  key = "Engine_correlation_system"
+  exchange = "canopsis.engine"
+  noWait = false
+  # args =
 
 [[RabbitMQ.queues]]
 name = "Engine_correlation_axe_rpc_client"

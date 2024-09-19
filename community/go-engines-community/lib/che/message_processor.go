@@ -176,8 +176,8 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 
 		err = p.AmqpPublisher.PublishWithContext(
 			ctx,
-			"",
-			canopsis.AxeQueueName,
+			canopsis.EngineExchangeName,
+			canopsis.AxeSystemQueueName,
 			false,
 			false,
 			amqp.Publishing{

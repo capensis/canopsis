@@ -16,7 +16,6 @@ import (
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -28,8 +27,6 @@ type Options struct {
 	Version                bool
 	PrintEventOnError      bool
 	ModeDebug              bool
-	ConsumeFromQueue       string
-	PublishToQueue         string
 	LockTtl                int
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
@@ -39,8 +36,8 @@ type Options struct {
 func ParseOptions() Options {
 	var opts Options
 
-	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.CheQueueName, "Publish event to this queue.")
-	flag.StringVar(&opts.ConsumeFromQueue, "consumeQueue", canopsis.FIFOQueueName, "Consume events from this queue.")
+	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
+	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
@@ -83,7 +80,7 @@ func Default(
 		lockRedisClient,
 		queueRedisClient,
 		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg)),
-		options.PublishToQueue,
+		canopsis.CheQueuePrefix,
 		logger,
 		options.LockTtl,
 		json.NewDecoder(),
@@ -100,7 +97,7 @@ func Default(
 	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, canopsis.FIFOQueueName, canopsis.CheQueuePrefix, []string{canopsis.FIFOQueueName}),
 		amqpChannel,
 		techMetricsSender,
 		techmetrics.FIFOQueue,
@@ -166,9 +163,10 @@ func Default(
 		Decoder:            json.NewDecoder(),
 		Logger:             logger,
 	}
-	engine.AddConsumer(libengine.NewDivergingConsumer(
+
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOConsumerName,
-		options.ConsumeFromQueue,
+		canopsis.FIFOQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		false,
@@ -176,11 +174,9 @@ func Default(
 		"",
 		"",
 		"",
-		options.Workers,
+		1, // TODO: 1 worker for now, to think about making fifo concurrent
 		amqpConnection,
 		mainMessageProcessor,
-		"event_type",
-		[]string{types.EventTypeCheck},
 		logger,
 	))
 	engine.AddConsumer(libengine.NewConcurrentConsumer(

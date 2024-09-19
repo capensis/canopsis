@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -33,7 +32,10 @@ type Options struct {
 	PeriodicalWaitTime       time.Duration
 	WorkerPoolSize           int
 	LastRetryInterval        time.Duration
-	Workers                  int
+	ExternalWorkers          int
+	SystemWorkers            int
+	UserWorkers              int
+	RpcWorkers               int
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -46,13 +48,17 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
-	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
+	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.DefaultExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.StringVar(&opts.FifoAckQueue, "fifoAckQueue", canopsis.FIFOAckQueueName, "Publish FIFO Ack event to this queue.")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.IntVar(&opts.WorkerPoolSize, "workerPoolSize", 10, "Number of workers for scenario executions")
 	flag.DurationVar(&opts.LastRetryInterval, "lastRetryInterval", time.Minute, "Retry last step of running scenario execution after interval")
-	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process each event flow")
+	flag.IntVar(&opts.ExternalWorkers, "externalWorkers", canopsis.DefaultExternalEventWorkers, "Amount of workers to process external event flow.")
+	flag.IntVar(&opts.SystemWorkers, "systemWorkers", canopsis.DefaultSystemEventWorkers, "Amount of workers to process system event flow.")
+	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
+	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
 
+	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
 	flag.Bool("withWebhook", false, "Deprecated: handle webhook actions")
 
 	flag.Parse()
@@ -94,7 +100,7 @@ func NewEngineAction(
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName), techMetricsSender, logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpChannel), techMetricsSender, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
@@ -105,7 +111,7 @@ func NewEngineAction(
 		canopsis.ActionAxeRPCClientQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
-		options.Workers,
+		options.RpcWorkers,
 		amqpConnection,
 		amqpChannel,
 		&axeRpcClientMessageProcessor{
@@ -119,7 +125,7 @@ func NewEngineAction(
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	)
@@ -200,9 +206,9 @@ func NewEngineAction(
 		Decoder:                  json.NewDecoder(),
 		Logger:                   logger,
 	}
-	engineAction.AddConsumer(engine.NewDivergingConsumer(
-		canopsis.ActionConsumerName,
-		canopsis.ActionQueueName,
+	engineAction.AddConsumer(engine.NewConcurrentConsumer(
+		canopsis.ActionExternalConsumerName,
+		canopsis.ActionExternalQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		false,
@@ -210,11 +216,39 @@ func NewEngineAction(
 		"",
 		"",
 		"",
-		options.Workers,
+		options.ExternalWorkers,
 		amqpConnection,
 		mainMessageProcessor,
-		"event_type",
-		[]string{types.EventTypeCheck},
+		logger,
+	))
+	engineAction.AddConsumer(engine.NewConcurrentConsumer(
+		canopsis.ActionSystemConsumerName,
+		canopsis.ActionSystemQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		options.SystemWorkers,
+		amqpConnection,
+		mainMessageProcessor,
+		logger,
+	))
+	engineAction.AddConsumer(engine.NewConcurrentConsumer(
+		canopsis.ActionUserConsumerName,
+		canopsis.ActionUserQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		options.UserWorkers,
+		amqpConnection,
+		mainMessageProcessor,
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)

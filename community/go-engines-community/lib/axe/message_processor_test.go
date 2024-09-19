@@ -321,7 +321,7 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, "", alarmConfigProvider)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, "", alarmConfigProvider)
 
 	m := DependencyMaker{}
 	p := MessageProcessor{

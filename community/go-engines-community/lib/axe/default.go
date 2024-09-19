@@ -46,13 +46,15 @@ type Options struct {
 	Version                  bool
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
-	PublishToQueue           string
 	FifoAckExchange          string
 	PeriodicalWaitTime       time.Duration
 	TagsPeriodicalWaitTime   time.Duration
 	SliPeriodicalWaitTime    time.Duration
+	ExternalWorkers          int
+	SystemWorkers            int
+	UserWorkers              int
+	RpcWorkers               int
 	RecomputeAllOnInit       bool
-	Workers                  int
 }
 
 func ParseOptions() Options {
@@ -60,16 +62,20 @@ func ParseOptions() Options {
 
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
-	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.ActionQueueName, "Publish event to this queue")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
-	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
+	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.DefaultExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
-	flag.IntVar(&opts.Workers, "workers", 4, "Amount of workers to process each event flow")
+	flag.IntVar(&opts.ExternalWorkers, "externalWorkers", canopsis.DefaultExternalEventWorkers, "Amount of workers to process external event flow.")
+	flag.IntVar(&opts.SystemWorkers, "systemWorkers", canopsis.DefaultSystemEventWorkers, "Amount of workers to process system event flow.")
+	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
+	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
 
+	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
 	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
+	flag.String("publishQueue", "", "Deprecated: Publish event to this queue")
 
 	flag.Parse()
 
@@ -87,6 +93,7 @@ func NewEngine(
 	remediationRpcClient libengine.RPCClient,
 	dynamicInfosRpcClient libengine.RPCClient,
 	rpcPublishQueues []string,
+	publishQueuePrefix string,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -131,7 +138,7 @@ func NewEngine(
 	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
 	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
-	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.AxeConnector, alarmConfigProvider)
 	entityServiceCountersCalculator := calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, timezoneConfigProvider), eventsSender)
 	componentCountersCalculator := calculator.NewComponentCountersCalculator(dbClient, eventsSender)
 
@@ -163,7 +170,7 @@ func NewEngine(
 		canopsis.AxePbehaviorRPCClientQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
-		options.Workers,
+		options.RpcWorkers,
 		amqpConnection,
 		amqpChannel,
 		&rpcPBehaviorClientMessageProcessor{
@@ -188,7 +195,7 @@ func NewEngine(
 		"",
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
-		options.Workers,
+		options.RpcWorkers,
 		amqpConnection,
 		amqpChannel,
 		&rpcPBehaviorClientMessageProcessor{
@@ -210,9 +217,13 @@ func NewEngine(
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(
 			canopsis.AxeEngineName,
-			canopsis.AxeQueueName,
-			options.PublishToQueue,
-			nil,
+			canopsis.AxeQueuePrefix,
+			publishQueuePrefix,
+			[]string{
+				canopsis.AxeExternalQueueName,
+				canopsis.AxeSystemQueueName,
+				canopsis.AxeUserQueueName,
+			},
 			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...),
 		),
 		amqpChannel,
@@ -298,21 +309,49 @@ func NewEngine(
 		AlarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		Logger:                   logger,
 	}
-	engineAxe.AddConsumer(libengine.NewDivergingConsumer(
-		canopsis.AxeConsumerName,
-		canopsis.AxeQueueName,
+	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
+		canopsis.AxeExternalConsumerName,
+		canopsis.AxeExternalQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		false,
-		"",
-		options.PublishToQueue,
+		canopsis.EngineExchangeName,
+		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorExternal),
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
-		options.Workers,
+		options.ExternalWorkers,
 		amqpConnection,
 		mainMessageProcessor,
-		"event_type",
-		[]string{types.EventTypeCheck},
+		logger,
+	))
+	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
+		canopsis.AxeSystemConsumerName,
+		canopsis.AxeSystemQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		canopsis.EngineExchangeName,
+		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorSystem),
+		options.FifoAckExchange,
+		canopsis.FIFOAckQueueName,
+		options.SystemWorkers,
+		amqpConnection,
+		mainMessageProcessor,
+		logger,
+	))
+	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
+		canopsis.AxeUserConsumerName,
+		canopsis.AxeUserQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		canopsis.EngineExchangeName,
+		amqp.BuildRoutingKey(publishQueuePrefix, types.InitiatorUser),
+		options.FifoAckExchange,
+		canopsis.FIFOAckQueueName,
+		options.UserWorkers,
+		amqpConnection,
+		mainMessageProcessor,
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewRPCServer(
@@ -320,7 +359,7 @@ func NewEngine(
 		canopsis.AxeRPCQueueServerName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
-		options.Workers,
+		options.RpcWorkers,
 		amqpConnection,
 		&rpcMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,

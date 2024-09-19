@@ -49,14 +49,16 @@ func updateInstanceRunInfo(
 	channel amqp.Channel,
 	logger zerolog.Logger,
 ) InstanceRunInfo {
-	if info.ConsumeQueue != "" {
-		queue, err := channel.QueueInspect(info.ConsumeQueue)
+	info.QueueLength = 0
+
+	for i := range info.ConsumeQueues {
+		queue, err := channel.QueueInspect(info.ConsumeQueues[i])
 		if err != nil {
 			logger.Err(err).Msg("cannot get consume queue length")
 			return InstanceRunInfo{}
 		}
 
-		info.QueueLength = queue.Messages
+		info.QueueLength += queue.Messages
 	}
 
 	info.Time = datetime.NewCpsTime()
