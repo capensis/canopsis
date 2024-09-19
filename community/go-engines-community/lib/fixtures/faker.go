@@ -12,7 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/brianvoe/gofakeit/v7"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -60,7 +60,11 @@ func (f *Faker) Password(password string) (string, error) {
 func (f *Faker) UniqueName() (string, error) {
 	for nameLen := 5; nameLen < 11; nameLen++ {
 		for try := 0; try < 3; try++ {
-			v := f.Generate(strings.Repeat("?", nameLen))
+			v, err := f.Generate(strings.Repeat("?", nameLen))
+			if err != nil {
+				return "", err
+			}
+
 			if _, ok := f.usedNames[v]; !ok {
 				f.usedNames[v] = struct{}{}
 				return v, nil

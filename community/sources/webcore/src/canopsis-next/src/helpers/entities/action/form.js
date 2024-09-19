@@ -18,7 +18,9 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 /**
  * @typedef {
  *   "snooze" |
+ *   "unsnooze" |
  *   "pbehavior" |
+ *   "pbehaviorremove" |
  *   "changestate" |
  *   "webhook" |
  *   "ack" |
@@ -113,6 +115,14 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @return {boolean}
  */
 export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
+
+/**
+ * Check action type is pbehaviorremove
+ *
+ * @param {ActionType} type
+ * @return {boolean}
+ */
+export const isPbehaviorRemoveActionType = type => type === ACTION_TYPES.pbehaviorRemove;
 
 /**
  * Check action type is webhook
@@ -222,7 +232,9 @@ const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocaleTi
  */
 const prepareDefaultActionParameters = () => ({
   [ACTION_TYPES.snooze]: snoozeActionParametersToForm(),
+  [ACTION_TYPES.unsnooze]: defaultActionParametersToForm(),
   [ACTION_TYPES.pbehavior]: pbehaviorActionParametersToForm(),
+  [ACTION_TYPES.pbehaviorRemove]: defaultActionForwardAuthorToForm(),
   [ACTION_TYPES.changeState]: changeStateActionParametersToForm(),
   [ACTION_TYPES.ack]: defaultActionParametersToForm(),
   [ACTION_TYPES.ackremove]: defaultActionParametersToForm(),

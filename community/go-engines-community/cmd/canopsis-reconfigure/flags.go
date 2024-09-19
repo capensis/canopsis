@@ -46,6 +46,8 @@ type flags struct {
 
 	mongoFixtureMigrations        bool
 	mongoFixtureMigrationsVersion string
+
+	forceGenerateSerialName bool
 }
 
 func (f *flags) Parse() {
@@ -74,6 +76,8 @@ func (f *flags) Parse() {
 	flag.StringVar(&f.techPostgresMigrationDirectory, "tech-postgres-migration-directory", DefaultTechPostgresMigrationsPath, "The directory with Tech Postgres migration scripts")
 	flag.StringVar(&f.techPostgresMigrationMode, "tech-postgres-migration-mode", "up", "Should be up or down")
 	flag.IntVar(&f.techPostgresMigrationSteps, "tech-postgres-migration-steps", 0, "Number of migration steps, will execute all migrations if empty or 0")
+
+	flag.BoolVar(&f.forceGenerateSerialName, "force-generate-serial-name", false, "If true, it will regenerate serial name even if it exists")
 
 	flag.Parse()
 }
