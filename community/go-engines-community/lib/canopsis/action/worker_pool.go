@@ -266,6 +266,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		Tstart:         params.Tstart,
 		Tstop:          params.Tstop,
 		StartOnTrigger: params.StartOnTrigger,
+		Color:          params.Color,
 	}
 
 	switch task.Action.Type {
@@ -280,6 +281,9 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 			TicketComment:    task.Action.Comment,
 		}
 		axeParams.Output = axeParams.TicketInfo.GetStepMessage()
+	case types.ActionTypePbehavior, types.ActionTypePbehaviorRemove:
+		axeParams.Origin = PbehaviorOrigin
+		axeParams.Comment = task.Action.Comment
 	default:
 		if params.Output != "" {
 			outputBuilder := strings.Builder{}

@@ -13,6 +13,8 @@ const (
 	RuleTypeEntity               = "entity"
 	RuleAlarmConditionLastEvent  = "last_event"  // alarms which don't receive events after "now - duration"
 	RuleAlarmConditionLastUpdate = "last_update" // alarms which don't change after "now - duration"
+
+	PbehaviorOrigin = "idle-rule"
 )
 
 type Operation struct {
@@ -68,6 +70,7 @@ type Parameters struct {
 	Tstart         *datetime.CpsTime `json:"tstart" bson:"tstart,omitempty"`
 	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty"`
 	StartOnTrigger *bool             `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
+	Color          string            `json:"color" bson:"color,omitempty"`
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.
