@@ -48,7 +48,7 @@ export default {
     convertPbehaviorsCalendarToEvents(pbehaviors) {
       return pbehaviors.map((pbehavior, index) => {
         const start = convertDateToDateObjectByTimezone(pbehavior.from, this.$system.timezone);
-        const end = convertDateToDateObjectByTimezone(pbehavior.to, this.$system.timezone);
+        const end = pbehavior.to && convertDateToDateObjectByTimezone(pbehavior.to, this.$system.timezone);
 
         const isTimed = !isFullDayEvent(start, end);
 
