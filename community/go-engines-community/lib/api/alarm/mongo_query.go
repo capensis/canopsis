@@ -1366,8 +1366,18 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"pbehavior.last_comment": bson.M{
 			"$cond": bson.M{
-				"if":   "$pbehavior.last_comment._id",
-				"then": "$pbehavior.last_comment",
+				"if": "$pbehavior.last_comment._id",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$pbehavior.last_comment",
+					bson.M{"author": bson.M{"$cond": bson.M{
+						"if": "$pbehavior.last_comment.origin",
+						"then": bson.M{
+							"name":         "$pbehavior.last_comment.origin",
+							"display_name": "$pbehavior.last_comment.origin",
+						},
+						"else": "$pbehavior.last_comment.author",
+					}}},
+				}},
 				"else": "$$REMOVE",
 			},
 		},
