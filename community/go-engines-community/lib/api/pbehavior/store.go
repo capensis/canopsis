@@ -105,7 +105,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 	doc.Created = &now
 	doc.Updated = &now
-	doc.Comments = make([]*pbehavior.Comment, 0)
+	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
 
 	var pbh *Response
@@ -585,7 +585,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 	doc := pbehavior.PBehavior{
 		ID:       utils.NewID(),
 		Author:   r.Author,
-		Comments: make([]*pbehavior.Comment, 0),
+		Comments: make([]pbehavior.Comment, 0),
 		Enabled:  true,
 		Name:     r.Name,
 		Reason:   r.Reason,
@@ -613,7 +613,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 	}
 
 	if r.Comment != "" {
-		doc.Comments = append(doc.Comments, &pbehavior.Comment{
+		doc.Comments = append(doc.Comments, pbehavior.Comment{
 			ID:        utils.NewID(),
 			Author:    r.Author,
 			Timestamp: &now,
@@ -724,7 +724,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 				},
 			},
 		},
-		Comments: []*pbehavior.Comment{
+		Comments: []pbehavior.Comment{
 			{
 				ID:        utils.NewID(),
 				Author:    r.Author,
