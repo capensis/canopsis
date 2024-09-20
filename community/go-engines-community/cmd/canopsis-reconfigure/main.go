@@ -94,15 +94,15 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to run tech postgres migrations")
 	}
 
+	err = generateSerialName(ctx, logger, f.forceGenerateSerialName)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to generate serial name")
+	}
+
 	// keep it in the end for cmd/ready
 	err = updateVersionConfig(ctx, f, client)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to update config in mongo")
-	}
-
-	err = generateSerialName(ctx, logger, f.forceGenerateSerialName)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to generate serial name")
 	}
 }
 
@@ -347,7 +347,7 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 	return nil
 }
 
-func generateSerialName(ctx context.Context, logger zerolog.Logger, force bool) error {
+func generateSerialName(ctx context.Context, logger zerolog.Logger, forceUpdate bool) error {
 	if os.Getenv(postgres.EnvURL) == "" {
 		return nil
 	}
@@ -357,25 +357,29 @@ func generateSerialName(ctx context.Context, logger zerolog.Logger, force bool) 
 		return err
 	}
 
-	res := pool.QueryRow(ctx, "SELECT id FROM serial_name LIMIT 1")
-
 	serialName := ""
-	err = res.Scan(&serialName)
-	if errors.Is(err, pgxdriver.ErrNoRows) {
-		_, err = pool.Exec(ctx, "INSERT INTO serial_name (id) VALUES ($1)", petname.Generate(2, "-"))
+
+	err = pool.QueryRow(ctx, "SELECT id FROM serial_name").Scan(&serialName)
+
+	isNoRows := errors.Is(err, pgxdriver.ErrNoRows)
+	if err != nil && !isNoRows {
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
+	if isNoRows || forceUpdate {
+		serialName = petname.Generate(2, "-")
+		var query string
 
-	if force {
-		_, err = pool.Exec(ctx, "UPDATE serial_name SET id = $1 WHERE id = $2", petname.Generate(2, "-"), serialName)
-	}
+		if isNoRows {
+			query = "INSERT INTO serial_name (id) VALUES ($1)"
+		} else {
+			query = "UPDATE serial_name SET id = $1"
+		}
 
-	if err != nil {
-		return err
+		_, err = pool.Exec(ctx, query, serialName)
+		if err != nil {
+			return err
+		}
 	}
 
 	logger.Info().Msgf("serial name: %q", serialName)
