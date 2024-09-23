@@ -10,3 +10,4 @@ export * from './kpi';
 export * from './map';
 export * from './theme';
 export * from './event';
+export * from './meta-alarm-rule';

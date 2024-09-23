@@ -24,16 +24,16 @@ export const usePendingWithLocalQuery = ({
 } = {}) => {
   const {
     pending,
-    handler: fetchWithPending,
+    handler: fetchHandlerWithPending,
   } = usePendingHandler(fetchHandler, initialPending);
 
   const queryData = useLocalQuery({
     initialQuery,
     comparator,
-    onUpdate: fetchWithPending,
+    onUpdate: fetchHandlerWithPending,
   });
 
-  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) => fetchWithPending(requestQuery);
+  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) => fetchHandlerWithPending(requestQuery);
 
   return {
     ...queryData,
