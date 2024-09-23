@@ -454,6 +454,7 @@ export default {
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
+    [PATTERN_OPERATORS.ruleIs]: 'Rule is',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
   },
@@ -461,7 +462,6 @@ export default {
     [EVENT_TYPES.ack]: 'Ack',
     [EVENT_TYPES.ackRemove]: 'Ack remove',
     [EVENT_TYPES.assocTicket]: 'Associate ticket',
-    [EVENT_TYPES.declareTicket]: 'Declare ticket',
     [EVENT_TYPES.cancel]: 'Cancel',
     [EVENT_TYPES.uncancel]: 'Uncancel',
     [EVENT_TYPES.changeState]: 'Change state',

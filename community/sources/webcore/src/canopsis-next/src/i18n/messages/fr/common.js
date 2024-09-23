@@ -454,6 +454,7 @@ export default {
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
+    [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
@@ -461,7 +462,6 @@ export default {
     [EVENT_TYPES.ack]: 'Acquitter',
     [EVENT_TYPES.ackRemove]: 'Supprimer l\'acquittement',
     [EVENT_TYPES.assocTicket]: 'Associer un ticket',
-    [EVENT_TYPES.declareTicket]: 'Déclarer un incident',
     [EVENT_TYPES.cancel]: 'Annuler',
     [EVENT_TYPES.uncancel]: 'Annuler l\'annulation',
     [EVENT_TYPES.changeState]: 'Changer et vérrouiller la criticité',
