@@ -84,4 +84,8 @@ export default {
   errors: {
     noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
   },
+  field: {
+    title: 'Règle de méta-alarme',
+    noData: 'Aucune règle de méta-alarme n\'est trouvée selon les modèles définis',
+  },
 };
