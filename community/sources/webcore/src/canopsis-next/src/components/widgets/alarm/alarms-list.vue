@@ -447,10 +447,10 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
+      const { selected = [] } = this.$refs.alarmsTable;
 
       return {
         ...pick(query, [
-          'search',
           'category',
           'correlation',
           'opened',
@@ -469,6 +469,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
+        search: selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : query.search,
       };
     },
 
