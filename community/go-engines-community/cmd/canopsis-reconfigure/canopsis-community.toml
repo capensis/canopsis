@@ -209,6 +209,19 @@ FlushInterval = "10s"
 SliInterval = "1h"
 # UserSessionGapInterval splitts user activity by sessions.
 UserSessionGapInterval = "1h"
+# AllowedPerfDataUnits defines white list of units, perf data with unit which is not in this list will be skipped.
+AllowedPerfDataUnits = [
+    "%",
+    "°C",
+    "s",
+    "us",
+    "ms",
+    "B",
+    "KB",
+    "MB",
+    "TB",
+    "c"
+]
 
 [Canopsis.tech_metrics]
 Enabled = false
