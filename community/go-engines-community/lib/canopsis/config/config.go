@@ -101,12 +101,13 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	Enabled                bool   `toml:"Enabled"`
-	FlushInterval          string `toml:"FlushInterval"`
-	SliInterval            string `toml:"SliInterval"`
-	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
-	EnabledInstructions    bool   `toml:"EnabledInstructions"`
-	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
+	Enabled                bool     `toml:"Enabled"`
+	FlushInterval          string   `toml:"FlushInterval"`
+	SliInterval            string   `toml:"SliInterval"`
+	UserSessionGapInterval string   `toml:"UserSessionGapInterval"`
+	AllowedPerfDataUnits   []string `toml:"AllowedPerfDataUnits"`
+	EnabledInstructions    bool     `toml:"EnabledInstructions"`
+	EnabledNotAckedMetrics bool     `toml:"EnabledNotAckedMetrics"`
 }
 
 type SectionTechMetrics struct {
