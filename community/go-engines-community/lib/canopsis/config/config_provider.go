@@ -161,6 +161,7 @@ type MetricsConfig struct {
 	FlushInterval          time.Duration
 	SliInterval            time.Duration
 	UserSessionGapInterval time.Duration
+	AllowedPerfDataUnits   []string
 	EnabledInstructions    bool
 	EnabledNotAckedMetrics bool
 }
@@ -818,11 +819,19 @@ func (p *BaseHealthCheckConfigProvider) Get() HealthCheckConf {
 }
 
 func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
-	return MetricsConfig{
-		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
-		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
-		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
+	sectionName := "metrics"
+	config := MetricsConfig{
+		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", sectionName, logger),
+		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", sectionName, logger),
+		AllowedPerfDataUnits:   cfg.Metrics.AllowedPerfDataUnits,
 	}
+
+	logger.Info().
+		Strs("value", config.AllowedPerfDataUnits).
+		Msgf("AllowedPerfDataUnits of %s config section is used", sectionName)
+
+	return config
 }
 
 func parseScheduledTime(
@@ -1448,6 +1457,13 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, p.conf.UserSessionGapInterval, "UserSessionGapInterval", sectionName, p.logger)
 	if ok {
 		p.conf.UserSessionGapInterval = d
+	}
+
+	if !slices.Equal(p.conf.AllowedPerfDataUnits, cfg.Metrics.AllowedPerfDataUnits) {
+		p.conf.AllowedPerfDataUnits = cfg.Metrics.AllowedPerfDataUnits
+		p.logger.Info().
+			Strs("new", p.conf.AllowedPerfDataUnits).
+			Msgf("AllowedPerfDataUnits of %s config section is loaded", sectionName)
 	}
 }
 
