@@ -60,6 +60,7 @@ type ExternalDataParameters struct {
 	Regexp     map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
 	SortBy     string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`
 	Sort       string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
+	Optional   bool              `json:"optional,omitempty" bson:"optional,omitempty"`
 
 	// are used in api external data
 	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
