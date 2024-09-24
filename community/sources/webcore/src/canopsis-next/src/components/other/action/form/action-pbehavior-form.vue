@@ -1,5 +1,12 @@
 <template lang="pug">
-  pbehavior-form(v-field="value", no-pattern, no-enabled, no-comments, with-start-on-trigger)
+  pbehavior-form(
+    v-field="value",
+    :name-label="$t('common.namePrefix')",
+    no-pattern,
+    no-enabled,
+    no-comments,
+    with-start-on-trigger
+  )
 </template>
 
 <script>
