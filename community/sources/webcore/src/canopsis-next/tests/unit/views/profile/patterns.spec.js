@@ -153,7 +153,6 @@ describe('patterns', () => {
         data: newPattern,
         id: pattern._id,
       },
-      undefined,
     );
 
     expect(fetchPatternsListWithPreviousParams).toBeCalled();
@@ -220,7 +219,6 @@ describe('patterns', () => {
     expect(createPattern).toBeCalledWith(
       expect.any(Object),
       { data: pattern },
-      undefined,
     );
 
     expect(fetchPatternsListWithPreviousParams).toBeCalled();
@@ -260,7 +258,6 @@ describe('patterns', () => {
     expect(createPattern).toBeCalledWith(
       expect.any(Object),
       { data: pattern },
-      undefined,
     );
 
     expect(fetchPatternsListWithPreviousParams).toBeCalled();
@@ -300,7 +297,6 @@ describe('patterns', () => {
     expect(createPattern).toBeCalledWith(
       expect.any(Object),
       { data: pattern },
-      undefined,
     );
 
     expect(fetchPatternsListWithPreviousParams).toBeCalled();
@@ -334,7 +330,6 @@ describe('patterns', () => {
     expect(removePattern).toBeCalledWith(
       expect.any(Object),
       { id: pattern._id },
-      undefined,
     );
   });
 
@@ -365,7 +360,6 @@ describe('patterns', () => {
     expect(bulkRemovePattern).toBeCalledWith(
       expect.any(Object),
       { data: patterns },
-      undefined,
     );
   });
 
