@@ -92,7 +92,6 @@ describe('maps', () => {
           limit: 10,
         },
       },
-      undefined,
     );
   });
 
@@ -116,7 +115,6 @@ describe('maps', () => {
           limit: 10,
         },
       },
-      undefined,
     );
   });
 
@@ -157,7 +155,6 @@ describe('maps', () => {
       {
         data: newMap,
       },
-      undefined,
     );
     expect(fetchMapsList).toBeCalled();
   });
@@ -187,7 +184,6 @@ describe('maps', () => {
     expect(fetchMapWithoutStore).toBeCalledWith(
       expect.any(Object),
       { id: map._id },
-      undefined,
     );
 
     const title = {
@@ -230,7 +226,6 @@ describe('maps', () => {
         id: map._id,
         data: newMap,
       },
-      undefined,
     );
     expect(fetchMapsList).toBeCalled();
   });
@@ -260,7 +255,6 @@ describe('maps', () => {
     expect(fetchMapWithoutStore).toBeCalledWith(
       expect.any(Object),
       { id: map._id },
-      undefined,
     );
 
     const title = {
@@ -302,7 +296,6 @@ describe('maps', () => {
       {
         data: newMap,
       },
-      undefined,
     );
     expect(fetchMapsList).toBeCalled();
   });
@@ -343,7 +336,6 @@ describe('maps', () => {
       {
         id: map._id,
       },
-      undefined,
     );
     expect(fetchMapsList).toBeCalled();
   });
@@ -388,7 +380,6 @@ describe('maps', () => {
           },
         ],
       },
-      undefined,
     );
     expect(fetchMapsList).toBeCalled();
   });

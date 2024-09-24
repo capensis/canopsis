@@ -58,7 +58,6 @@ describe('tags', () => {
           with_flags: true,
         },
       },
-      undefined,
     );
   });
 
@@ -82,7 +81,6 @@ describe('tags', () => {
           with_flags: true,
         },
       },
-      undefined,
     );
   });
 
@@ -122,7 +120,6 @@ describe('tags', () => {
       {
         data: newTag,
       },
-      undefined,
     );
     expect(fetchAlarmTagsList).toBeCalled();
   });
@@ -172,7 +169,6 @@ describe('tags', () => {
         data: newTag,
         id: tag._id,
       },
-      undefined,
     );
     expect(fetchAlarmTagsList).toBeCalled();
   });
@@ -220,7 +216,6 @@ describe('tags', () => {
       {
         data: newTag,
       },
-      undefined,
     );
     expect(fetchAlarmTagsList).toBeCalled();
   });
@@ -261,7 +256,6 @@ describe('tags', () => {
       {
         id: tag._id,
       },
-      undefined,
     );
     expect(fetchAlarmTagsList).toBeCalled();
   });
@@ -302,7 +296,6 @@ describe('tags', () => {
       {
         data: [{ _id: tag._id }],
       },
-      undefined,
     );
     expect(fetchAlarmTagsList).toBeCalled();
   });
