@@ -3,7 +3,8 @@
     v-if="noPattern",
     v-field="form",
     :no-enabled="noEnabled",
-    :with-start-on-trigger="withStartOnTrigger"
+    :with-start-on-trigger="withStartOnTrigger",
+    :name-label="nameLabel"
   )
   v-tabs(v-else, slider-color="primary", centered, fixed-tabs)
     v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
@@ -13,7 +14,8 @@
         v-field="form",
         :no-enabled="noEnabled",
         :no-comments="noComments",
-        :with-start-on-trigger="withStartOnTrigger"
+        :with-start-on-trigger="withStartOnTrigger",
+        :name-label="nameLabel"
       )
     v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern', 2) }}
     v-tab-item
@@ -57,6 +59,10 @@ export default {
     withStartOnTrigger: {
       type: Boolean,
       default: false,
+    },
+    nameLabel: {
+      type: String,
+      required: false,
     },
   },
   data() {
