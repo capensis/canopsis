@@ -223,7 +223,6 @@ describe('view-tab-widgets', () => {
     expect(updateGridPositions).toHaveBeenCalledWith(
       expect.any(Object),
       { data: newPositions },
-      undefined,
     );
   });
 

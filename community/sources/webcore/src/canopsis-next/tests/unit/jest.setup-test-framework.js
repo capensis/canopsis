@@ -144,7 +144,7 @@ function toBeDispatchedWith(received, expected) {
     expect(received).toBeCalledWith(
       expect.any(Object),
       expected,
-      undefined,
+
     );
 
     return { pass: true };

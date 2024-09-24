@@ -208,7 +208,6 @@ describe('service-entities-list', () => {
           comment,
         }],
       },
-      undefined,
     );
   });
 
@@ -257,7 +256,6 @@ describe('service-entities-list', () => {
           ...event,
         }],
       },
-      undefined,
     );
   });
 
@@ -295,7 +293,6 @@ describe('service-entities-list', () => {
           comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
         }],
       },
-      undefined,
     );
 
     expect(bulkCreateAlarmChangestateEvent).toBeCalledWith(
@@ -307,7 +304,6 @@ describe('service-entities-list', () => {
           state: ALARM_STATES.critical,
         }],
       },
-      undefined,
     );
   });
 
@@ -346,7 +342,6 @@ describe('service-entities-list', () => {
           comment: WEATHER_ACK_EVENT_OUTPUT.ack,
         }],
       },
-      undefined,
     );
 
     expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
@@ -357,7 +352,6 @@ describe('service-entities-list', () => {
           comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
         }],
       },
-      undefined,
     );
   });
 
@@ -422,7 +416,6 @@ describe('service-entities-list', () => {
           type: undefined,
         }],
       },
-      undefined,
     );
   });
 
@@ -453,7 +446,6 @@ describe('service-entities-list', () => {
           origin: PBEHAVIOR_ORIGINS.serviceWeather,
         }],
       },
-      undefined,
     );
   });
 
@@ -496,7 +488,6 @@ describe('service-entities-list', () => {
       {
         data: [{ _id: entity.alarm_id, comment }],
       },
-      undefined,
     );
   });
 
@@ -536,7 +527,6 @@ describe('service-entities-list', () => {
       {
         data: [{ _id: entity.alarm_id, comment }],
       },
-      undefined,
     );
   });
 
@@ -633,7 +623,6 @@ describe('service-entities-list', () => {
     expect(bulkCreateAlarmAckEvent).toBeCalledWith(
       expect.any(Object),
       { data: [] },
-      undefined,
     );
   });
 
