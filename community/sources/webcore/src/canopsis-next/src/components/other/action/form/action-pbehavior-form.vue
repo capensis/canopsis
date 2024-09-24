@@ -1,6 +1,7 @@
 <template>
   <pbehavior-form
     v-field="value"
+    :name-label="$t('common.namePrefix')"
     no-pattern
     no-enabled
     no-comments
