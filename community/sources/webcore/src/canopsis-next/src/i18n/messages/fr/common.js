@@ -22,6 +22,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
   submit: 'Soumettre',
