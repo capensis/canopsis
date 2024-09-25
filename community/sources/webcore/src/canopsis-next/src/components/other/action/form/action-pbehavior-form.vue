@@ -2,6 +2,7 @@
   <pbehavior-form
     v-field="value"
     :name-label="$t('common.namePrefix')"
+    :name-tooltip="$t('scenario.tooltips.pbehaviorActionsNamePrefix')"
     no-pattern
     no-enabled
     no-comments

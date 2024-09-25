@@ -6,10 +6,19 @@
     :label="label || $t('common.name')"
     :error-messages="errors.collect(name)"
     :name="name"
-  />
+  >
+    <template v-if="tooltip" #append>
+      <c-help-icon
+        :text="tooltip"
+        icon="help"
+        left
+      />
+    </template>
+  </v-text-field>
 </template>
 
 <script>
+
 export default {
   inject: ['$validator'],
   inheritAttrs: false,
@@ -36,6 +45,10 @@ export default {
     },
     maxLength: {
       type: Number,
+      required: false,
+    },
+    tooltip: {
+      type: String,
       required: false,
     },
   },
