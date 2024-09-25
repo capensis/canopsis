@@ -13,9 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewEntityToggledProcessor(
@@ -60,8 +58,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, nil
 	}
 
-	entity := *event.Entity
-	if entity.Enabled {
+	if event.Entity.Enabled {
 		var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			updatedServiceStates = nil
@@ -78,9 +75,9 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
 			if result.Alarm.ID == "" {
-				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
+				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, *event.Entity, nil, result.AlarmChange)
 			} else {
-				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, *event.Entity, &result.Alarm, result.AlarmChange)
 			}
 
 			return err
@@ -95,7 +92,6 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	match := getOpenAlarmMatch(event)
-	update := getResolveAlarmUpdate(types.NewCpsTime())
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
@@ -104,41 +100,24 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		updatedServiceStates = nil
 		notAckedMetricType = ""
 
-		beforeAlarm := types.Alarm{}
-		opts := options.FindOneAndUpdate().
-			SetReturnDocument(options.Before).
-			SetProjection(bson.M{
-				"not_acked_metric_type":      1,
-				"not_acked_metric_send_time": 1,
-			})
-		err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		beforeAlarm, err := updateAlarmToResolve(ctx, p.alarmCollection, match)
+		if err != nil {
 			return err
 		}
 
+		entity := *event.Entity
 		if beforeAlarm.ID != "" {
 			if beforeAlarm.NotAckedMetricSendTime != nil {
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}
 
-			alarm := types.Alarm{}
-			err = p.alarmCollection.FindOne(ctx, bson.M{"_id": beforeAlarm.ID}).Decode(&alarm)
-			if err != nil {
-				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil
-				}
+			entity, err = updateEntityOfResolvedAlarm(ctx, p.entityCollection, event.Entity.ID)
+			if err != nil || entity.ID == "" {
 				return err
 			}
 
-			entity = types.Entity{}
-			entityUpdate := getResolveEntityUpdate()
-			err = p.entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": event.Entity.ID}, entityUpdate,
-				options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&entity)
-			if err != nil {
-				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil
-				}
-
+			alarm, err := copyAlarmToResolvedCollection(ctx, p.alarmCollection, p.resolvedAlarmCollection, beforeAlarm.ID)
+			if err != nil || alarm.ID == "" {
 				return err
 			}
 
@@ -148,16 +127,6 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Alarm = alarm
 			result.Entity = entity
 			result.AlarmChange = alarmChange
-
-			_, err = p.resolvedAlarmCollection.UpdateOne(
-				ctx,
-				bson.M{"_id": alarm.ID},
-				bson.M{"$set": alarm},
-				options.Update().SetUpsert(true),
-			)
-			if err != nil {
-				return err
-			}
 		}
 
 		if result.Alarm.ID == "" {

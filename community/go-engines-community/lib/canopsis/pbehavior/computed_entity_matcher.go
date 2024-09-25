@@ -134,6 +134,7 @@ func (m *computedEntityMatcher) GetComputedEntityIDs() ([]string, error) {
 func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter interface{}) ([]string, error) {
 	cursor, err := m.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": filter},
+		{"$match": bson.M{"enabled": true}},
 		{"$project": bson.M{
 			"_id": 1,
 		}},

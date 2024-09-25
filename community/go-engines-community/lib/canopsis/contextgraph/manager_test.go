@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"reflect"
 	"slices"
 	"sort"
 	"testing"
@@ -21,6 +20,7 @@ import (
 	mock_metrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/metrics"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
+	"github.com/kylelemons/godebug/pretty"
 )
 
 func TestCheckServices(t *testing.T) {
@@ -932,7 +932,7 @@ func TestRecomputeService(t *testing.T) {
 	}{
 		{
 			name:        "service deleted",
-			service:     entityservice.EntityService{},
+			service:     entityservice.EntityService{Entity: types.Entity{ID: "service-id"}},
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
@@ -956,6 +956,7 @@ func TestRecomputeService(t *testing.T) {
 				},
 			},
 			expectedResult: []types.Entity{
+				{ID: "service-id"},
 				{
 					ID:        "id-1",
 					Enabled:   true,
@@ -1569,6 +1570,7 @@ func TestRecomputeService(t *testing.T) {
 	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 	for _, dataset := range dataSets {
 		t.Run(dataset.name, func(t *testing.T) {
+			storage.EXPECT().GetAll(gomock.Any()).Return(nil, nil).AnyTimes()
 			storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(dataset.service, nil)
 
 			call = 0
@@ -1630,8 +1632,8 @@ func TestRecomputeService(t *testing.T) {
 				return dataset.expectedResult[i].ID < dataset.expectedResult[j].ID
 			})
 
-			if !reflect.DeepEqual(result, dataset.expectedResult) {
-				t.Error("result is not expected")
+			if diff := pretty.Compare(result, dataset.expectedResult); diff != "" {
+				t.Errorf("result is not expected: %s", diff)
 			}
 		})
 	}

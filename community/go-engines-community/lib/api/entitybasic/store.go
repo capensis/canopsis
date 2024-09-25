@@ -193,6 +193,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
+
 			return err
 		}
 
@@ -201,6 +202,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			if err != nil {
 				return err
 			}
+
 			if c > 0 {
 				return ErrComponent
 			}
@@ -212,26 +214,25 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		}).Err()
 		if err == nil {
 			return ErrLinkedEntityToAlarm
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+		}
+
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
-		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
-		})
-		if err != nil || deleted == 0 {
+		updateRes, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": id, "type": bson.M{"$in": s.basicTypes}},
+			bson.M{"$set": bson.M{
+				"enabled":      false,
+				"soft_deleted": types.NewCpsTime(),
+			}},
+		)
+		if err != nil || updateRes.ModifiedCount == 0 {
 			return err
-		}
-
-		if entity.Type == types.EntityTypeConnector {
-			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID}, bson.M{"$unset": bson.M{"connector": ""}})
-			if err != nil {
-				return err
-			}
 		}
 
 		res = true
+
 		return nil
 	})
 
