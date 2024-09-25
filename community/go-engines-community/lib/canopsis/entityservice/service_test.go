@@ -402,7 +402,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		Return(nil)
 	gomock.InOrder(firstReplaceCall, secondReplaceCall)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Reload(gomock.Any(), gomock.Any()).Return(&serviceData, false, false, nil)
+	mockStorage.EXPECT().Reload(gomock.Any(), gomock.Any()).Return(&serviceData, false, false, false, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockRedisClient.EXPECT().
 		HGetAll(gomock.Any(), gomock.Eq(fmt.Sprintf("skipped-entities-%s", serviceID))).

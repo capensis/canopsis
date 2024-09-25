@@ -49,6 +49,8 @@ type Adapter interface {
 
 	FindConnector(ctx context.Context, id string) (*types.Entity, error)
 	FindComponent(ctx context.Context, id string) (*types.Entity, error)
+
+	SetResolveDeletedEventProcessed(ctx context.Context, id string) error
 }
 
 // Service glue Adapter and Cache together
