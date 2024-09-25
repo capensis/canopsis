@@ -44,6 +44,7 @@
           :name="name"
           :disabled="disabled"
           :variables="variables"
+          :optionally="optionally"
         />
         <request-form
           v-else
@@ -97,6 +98,10 @@ export default {
     variables: {
       type: Array,
       default: () => ([]),
+    },
+    optionally: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

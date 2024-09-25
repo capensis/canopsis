@@ -84,10 +84,19 @@ export const payloadFieldMixin = {
       }));
     },
 
+    prepareVariableWithOptionally(variable) {
+      return {
+        ...variable,
+        value: `{{ if ${variable.value} }}{{ ${variable.value}${variable.suffix ? variable.suffix : ''} }}{{ end }}`,
+      };
+    },
+
     prepareVariables(variables, prefix) {
       return variables.reduce((acc, variable) => {
         if (variable.enumerable) {
           acc.push(...this.prepareVariableWithEnumerable(variable));
+        } else if (variable.optional) {
+          acc.push(this.prepareVariableWithOptionally(variable));
         } else {
           acc.push(this.prepareVariable(variable, prefix));
         }
