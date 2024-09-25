@@ -131,6 +131,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
       <external-data-form-stub
         form=""
         name="external_data"
+        optionally="true"
         types=""
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
@@ -275,6 +276,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
       <external-data-form-stub
         form=""
         name="external_data"
+        optionally="true"
         types=""
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />

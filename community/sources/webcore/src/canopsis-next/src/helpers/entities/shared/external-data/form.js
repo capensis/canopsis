@@ -25,6 +25,7 @@ import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } fr
  * @property {string} [sort_by]
  * @property {string} [sort]
  * @property {string} [collection]
+ * @property {boolean} [optional]
  * @property {Request} [request]
  */
 
@@ -47,6 +48,7 @@ import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } fr
  * @property {string} collection
  * @property {string} sort_by
  * @property {string} sort
+ * @property {boolean} optional
  * @property {ExternalDataConditionForm[]} conditions
  */
 
@@ -116,6 +118,7 @@ export const externalDataItemToForm = (reference = '', item = { type: EXTERNAL_D
   request: requestToForm(item.request),
   sort_by: item.sort_by,
   sort: item.sort,
+  optional: item.optional ?? false,
   collection: item.collection ?? '',
   conditions: externalDataItemConditionsToForm(item),
 });
