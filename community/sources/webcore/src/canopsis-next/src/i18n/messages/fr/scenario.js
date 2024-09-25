@@ -42,4 +42,7 @@ export default {
       + 'Veuillez mettre à jour les déclencheurs de scénario ou créer une nouvelle règle de déclaration de ticket.',
     testQueryRequireSteps: 'La requête de test n\'est pas disponible : aucun webhook n\'a été ajouté au scénario',
   },
+  tooltips: {
+    pbehaviorActionsNamePrefix: 'Le nom va être `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
+  },
 };
