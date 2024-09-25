@@ -4,7 +4,8 @@
     v-field="form",
     :no-enabled="noEnabled",
     :with-start-on-trigger="withStartOnTrigger",
-    :name-label="nameLabel"
+    :name-label="nameLabel",
+    :name-tooltip="nameTooltip"
   )
   v-tabs(v-else, slider-color="primary", centered, fixed-tabs)
     v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
@@ -15,7 +16,8 @@
         :no-enabled="noEnabled",
         :no-comments="noComments",
         :with-start-on-trigger="withStartOnTrigger",
-        :name-label="nameLabel"
+        :name-label="nameLabel",
+        :name-tooltip="nameTooltip"
       )
     v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern', 2) }}
     v-tab-item
@@ -61,6 +63,10 @@ export default {
       default: false,
     },
     nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
       type: String,
       required: false,
     },
