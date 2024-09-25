@@ -6,6 +6,7 @@
     :no-comments="noComments"
     :with-start-on-trigger="withStartOnTrigger"
     :name-label="nameLabel"
+    :name-tooltip="nameTooltip"
   />
 
   <v-tabs
@@ -75,6 +76,10 @@ export default {
       default: false,
     },
     nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
       type: String,
       required: false,
     },

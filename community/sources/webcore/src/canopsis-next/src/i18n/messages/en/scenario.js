@@ -42,4 +42,7 @@ export default {
       + 'Please update the scenario triggers or create a new ticket declaration rule.',
     testQueryRequireSteps: 'Test query is unavailable: no webhooks were added to the scenario',
   },
+  tooltips: {
+    pbehaviorActionsNamePrefix: 'Name is going to be `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
+  },
 };
