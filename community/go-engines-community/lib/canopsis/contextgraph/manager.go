@@ -282,7 +282,33 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	}
 
 	if !service.Enabled || service.ID == "" {
-		return m.processDisabledService(ctx, service, serviceID)
+		serviceEntity, updatedEntities, err := m.processDisabledService(ctx, service, serviceID)
+		if err != nil {
+			return serviceEntity, updatedEntities, err
+		}
+
+		updatedServicesEntities, err := m.CheckServices(ctx, []types.Entity{serviceEntity})
+		if err != nil {
+			return serviceEntity, updatedEntities, err
+		}
+
+		if len(updatedServicesEntities) > 0 {
+			serviceEntity = updatedServicesEntities[0]
+			found := false
+			for i := range updatedEntities {
+				if updatedEntities[i].ID == serviceEntity.ID {
+					updatedEntities[i] = serviceEntity
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				updatedEntities = append(updatedEntities, serviceEntity)
+			}
+		}
+
+		return serviceEntity, updatedEntities, nil
 	}
 
 	var updatedEntities []types.Entity
