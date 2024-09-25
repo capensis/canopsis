@@ -1848,6 +1848,18 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.SoftDeleted).UnmarshalJSON(data))
 				}
 			}
+		case "resolve_deleted_event_processed":
+			if in.IsNull() {
+				in.Skip()
+				out.ResolveDeletedEventProcessed = nil
+			} else {
+				if out.ResolveDeletedEventProcessed == nil {
+					out.ResolveDeletedEventProcessed = new(types.CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.ResolveDeletedEventProcessed).UnmarshalJSON(data))
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2041,6 +2053,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"soft_deleted\":"
 		out.RawString(prefix)
 		out.Raw((*in.SoftDeleted).MarshalJSON())
+	}
+	if in.ResolveDeletedEventProcessed != nil {
+		const prefix string = ",\"resolve_deleted_event_processed\":"
+		out.RawString(prefix)
+		out.Raw((*in.ResolveDeletedEventProcessed).MarshalJSON())
 	}
 	out.RawByte('}')
 }

@@ -362,14 +362,15 @@ func (mr *MockStorageMockRecorder) GetAll(arg0 interface{}) *gomock.Call {
 }
 
 // Reload mocks base method.
-func (m *MockStorage) Reload(arg0 context.Context, arg1 string) (*entityservice.ServiceData, bool, bool, error) {
+func (m *MockStorage) Reload(arg0 context.Context, arg1 string) (*entityservice.ServiceData, bool, bool, bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Reload", arg0, arg1)
 	ret0, _ := ret[0].(*entityservice.ServiceData)
 	ret1, _ := ret[1].(bool)
 	ret2, _ := ret[2].(bool)
-	ret3, _ := ret[3].(error)
-	return ret0, ret1, ret2, ret3
+	ret3, _ := ret[3].(bool)
+	ret4, _ := ret[4].(error)
+	return ret0, ret1, ret2, ret3, ret4
 }
 
 // Reload indicates an expected call of Reload.
