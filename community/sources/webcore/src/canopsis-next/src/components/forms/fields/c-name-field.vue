@@ -18,7 +18,6 @@
 </template>
 
 <script>
-
 export default {
   inject: ['$validator'],
   inheritAttrs: false,
