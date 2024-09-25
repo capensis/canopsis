@@ -126,7 +126,7 @@ func (c *center) HandleEntityServiceUpdate(ctx context.Context, serviceID string
 		return nil, err
 	}
 
-	if entity == nil || !entity.Enabled {
+	if entity == nil {
 		return updatedServices, nil
 	}
 
