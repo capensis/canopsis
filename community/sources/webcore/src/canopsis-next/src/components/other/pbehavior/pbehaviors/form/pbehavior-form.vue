@@ -29,6 +29,7 @@
         :no-comments="noComments"
         :with-start-on-trigger="withStartOnTrigger"
         :name-label="nameLabel"
+        :name-tooltip="nameTooltip"
       />
     </v-tab-item>
     <v-tab-item eager>
