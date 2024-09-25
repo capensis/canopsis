@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -81,7 +81,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		"enabled":         *r.Enabled,
 		"category":        r.Category,
 		"impact_level":    r.ImpactLevel,
-		"infos":           entity.TransformInfosRequest(r.Infos),
+		"infos":           libentity.TransformInfosRequest(r.Infos),
 		"sli_avail_state": r.SliAvailState,
 		"author":          r.Author,
 		"updated":         now,
@@ -181,18 +181,15 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
 		entity := &types.Entity{}
-		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{
+		err := s.dbCollection.FindOne(ctx, bson.M{
 			"_id":  id,
 			"type": bson.M{"$in": s.basicTypes},
-		}, bson.M{
-			"$set": bson.M{
-				"author": userID,
-			},
 		}).Decode(&entity)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
+
 			return err
 		}
 
@@ -201,6 +198,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			if err != nil {
 				return err
 			}
+
 			if c > 0 {
 				return ErrComponent
 			}
@@ -212,34 +210,26 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}).Err()
 		if err == nil {
 			return ErrLinkedEntityToAlarm
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+		}
+
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
-		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
-		})
-		if err != nil || deleted == 0 {
+		updateRes, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": id, "type": bson.M{"$in": s.basicTypes}},
+			bson.M{"$set": bson.M{
+				"enabled":      false,
+				"soft_deleted": datetime.NewCpsTime(),
+				"author":       userID,
+			}},
+		)
+		if err != nil || updateRes.ModifiedCount == 0 {
 			return err
-		}
-
-		if entity.Type == types.EntityTypeConnector {
-			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID},
-				bson.M{
-					"$set": bson.M{
-						"author":  userID,
-						"updated": datetime.NewCpsTime(),
-					},
-					"$unset": bson.M{"connector": ""},
-				},
-			)
-			if err != nil {
-				return err
-			}
 		}
 
 		res = true
+
 		return nil
 	})
 
