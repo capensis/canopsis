@@ -1,6 +1,11 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name", :label="nameLabel", required)
+    c-name-field(
+      v-field="form.name",
+      :label="nameLabel",
+      :tooltip="nameTooltip",
+      required
+    )
     c-enabled-field(v-if="!noEnabled", v-field="form.enabled", hide-details)
     v-flex.mt-3(xs12)
       c-enabled-field.mt-0.mb-1(
@@ -102,6 +107,10 @@ export default {
       default: false,
     },
     nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
       type: String,
       required: false,
     },
