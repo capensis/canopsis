@@ -166,7 +166,7 @@ export const formToExternalData = (form = []) => (
     const additionalFields = isApiExternalDataType(type)
       ? { request: formToRequest(externalData.request) }
       : {
-        ...pick(externalData, ['sort', 'sort_by', 'collection']),
+        ...pick(externalData, ['sort', 'sort_by', 'collection', 'optional']),
         ...formToExternalDataConditions(externalData.conditions),
       };
 
