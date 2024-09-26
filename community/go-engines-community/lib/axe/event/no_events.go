@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -38,7 +37,7 @@ func NewNoEventsProcessor(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
@@ -57,7 +56,7 @@ func NewNoEventsProcessor(
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
 		internalTagAlarmMatcher:         internalTagAlarmMatcher,
@@ -78,7 +77,7 @@ type noEventsProcessor struct {
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
 	internalTagAlarmMatcher         alarmtag.InternalTagAlarmMatcher
@@ -149,7 +148,6 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		return result, err
 	}
 
-	result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
 
 	return result, nil
@@ -225,13 +223,13 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
 	}
 
-	if p.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
-		matched, err := p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
-		if err != nil {
-			return result, err
-		}
+	result.IsInstructionMatched, err = p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+	if err != nil {
+		return result, err
+	}
 
-		alarm.InactiveAutoInstructionInProgress = matched
+	if p.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
+		alarm.InactiveAutoInstructionInProgress = result.IsInstructionMatched
 	}
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
@@ -490,7 +488,7 @@ func (p *noEventsProcessor) postProcess(
 		}
 	}
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})

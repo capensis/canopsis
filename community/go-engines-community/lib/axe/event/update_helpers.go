@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -18,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -25,6 +27,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+const (
+	outputMetaAlarmNamePrefix   = "Display name: "
+	outputMetaAlarmEntityPrefix = "Entity: "
+	outputMetaAlarmPrefix       = "Meta alarm name: "
 )
 
 func NewAlarmStep(t string, params rpc.AxeParameters, inPbehaviorInterval bool) types.AlarmStep {
@@ -49,7 +57,7 @@ func ConcatOutputAndRuleName(output, ruleName string) string {
 	return output
 }
 
-func RemoveMetaAlarmState(
+func removeMetaAlarmState(
 	ctx context.Context,
 	metaAlarm types.Alarm,
 	rule correlation.Rule,
@@ -473,7 +481,7 @@ func processResolve(
 			return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
 		}
 
-		return RemoveMetaAlarmState(ctx, result.Alarm, rule, metaAlarmStatesService)
+		return removeMetaAlarmState(ctx, result.Alarm, rule, metaAlarmStatesService)
 	})
 	if err != nil || result.Alarm.ID == "" {
 		return result, nil, "", false, 0, err
@@ -491,7 +499,7 @@ func postProcessResolve(
 	newComponentState int,
 	notAckedMetricType string,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	pbehaviorCollection mongo.DbCollection,
@@ -523,7 +531,7 @@ func postProcessResolve(
 		}
 	}
 
-	err := metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
@@ -619,4 +627,207 @@ func getResolveEntityUpdate() bson.M {
 		"idle_since":           "",
 		"last_idle_rule_apply": "",
 	}}
+}
+
+func getAlarmsWithEntityByMatch(ctx context.Context, alarmCollection mongo.DbCollection, match bson.M) ([]types.AlarmWithEntity, error) {
+	var alarms []types.AlarmWithEntity
+
+	cursor, err := alarmCollection.Aggregate(ctx, []bson.M{
+		{"$match": match},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$sort": bson.M{
+			"alarm.v.last_update_date": 1,
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	err = cursor.All(ctx, &alarms)
+	if err != nil {
+		return nil, err
+	}
+
+	return alarms, err
+}
+
+func updateMetaAlarmState(
+	alarm *types.Alarm,
+	entity types.Entity,
+	timestamp datetime.CpsTime,
+	state types.CpsNumber,
+	output string,
+	service alarmstatus.Service,
+) (bson.M, bson.M, error) {
+	var currentState, currentStatus types.CpsNumber
+	if alarm.Value.State != nil {
+		currentState = alarm.Value.State.Value
+		currentStatus = alarm.Value.Status.Value
+	}
+
+	author := canopsis.DefaultEventAuthor
+	if state != currentState {
+		// Event is an Ok, so the alarm should be resolved anyway
+		if alarm.IsStateLocked() && state != types.AlarmStateOK {
+			return nil, nil, nil
+		}
+
+		// Create new Step to keep track of the alarm history
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "",
+			types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
+		newStep.Value = state
+
+		if state < currentState {
+			newStep.Type = types.AlarmStepStateDecrease
+		}
+
+		alarm.Value.State = &newStep
+		err := alarm.Value.Steps.Add(newStep)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		alarm.Value.TotalStateChanges++
+		alarm.Value.LastUpdateDate = timestamp
+	}
+
+	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
+	statusStepMessage := ConcatOutputAndRuleName(output, statusRuleName)
+	if newStatus == currentStatus {
+		if state == currentState {
+			return nil, nil, nil
+		}
+
+		alarm.Value.StateChangesSinceStatusUpdate++
+
+		return bson.M{
+				"v.state":                             alarm.Value.State,
+				"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+				"v.total_state_changes":               alarm.Value.TotalStateChanges,
+				"v.last_update_date":                  alarm.Value.LastUpdateDate,
+			},
+			bson.M{"v.steps": alarm.Value.State},
+			nil
+	}
+
+	// Create new Step to keep track of the alarm history
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, statusStepMessage, "", "",
+		types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
+	newStepStatus.Value = newStatus
+
+	if newStatus < currentStatus {
+		newStepStatus.Type = types.AlarmStepStatusDecrease
+	}
+
+	alarm.Value.Status = &newStepStatus
+	err := alarm.Value.Steps.Add(newStepStatus)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	alarm.Value.StateChangesSinceStatusUpdate = 0
+	alarm.Value.LastUpdateDate = timestamp
+
+	set := bson.M{
+		"v.status":                            alarm.Value.Status,
+		"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+		"v.last_update_date":                  alarm.Value.LastUpdateDate,
+	}
+	newSteps := bson.A{}
+	if state != currentState {
+		set["v.total_state_changes"] = alarm.Value.TotalStateChanges
+		set["v.state"] = alarm.Value.State
+		newSteps = append(newSteps, alarm.Value.State)
+	}
+
+	newSteps = append(newSteps, alarm.Value.Status)
+
+	return set, bson.M{"v.steps": bson.M{"$each": newSteps}}, nil
+}
+
+func getMetaAlarmChildStepMsg(
+	rule correlation.Rule,
+	metaAlarm types.Alarm,
+	event rpc.AxeEvent,
+) string {
+	msgBuilder := strings.Builder{}
+	if !rule.IsManual() {
+		msgBuilder.WriteString(types.RuleNameRulePrefix)
+		msgBuilder.WriteString(rule.Name)
+		msgBuilder.WriteString(". ")
+	}
+
+	msgBuilder.WriteString(outputMetaAlarmNamePrefix)
+	msgBuilder.WriteString(metaAlarm.Value.DisplayName)
+	msgBuilder.WriteString(". ")
+	msgBuilder.WriteString(outputMetaAlarmEntityPrefix)
+	msgBuilder.WriteString(metaAlarm.EntityID)
+	msgBuilder.WriteRune('.')
+
+	if event.Parameters.Output != "" {
+		msgBuilder.WriteRune(' ')
+		msgBuilder.WriteString(types.OutputCommentPrefix)
+		msgBuilder.WriteString(event.Parameters.Output)
+		msgBuilder.WriteRune('.')
+	}
+
+	return msgBuilder.String()
+}
+
+func getMetaAlarmChildEventOutput(
+	metaAlarm types.Alarm,
+	msg string,
+	initiator string,
+	isTicket bool,
+) string {
+	outputBuilder := strings.Builder{}
+	msgLen := len(msg)
+	if msgLen == 0 {
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
+		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
+
+		return outputBuilder.String()
+	}
+
+	outputBuilder.WriteString(msg)
+	if initiator == types.InitiatorSystem || initiator == types.InitiatorUser && isTicket {
+		if msg[msgLen-1] != '.' {
+			outputBuilder.WriteRune('.')
+		}
+
+		outputBuilder.WriteRune(' ')
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
+		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
+		outputBuilder.WriteRune('.')
+	} else {
+		outputBuilder.WriteString("\n")
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
+		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
+	}
+
+	return outputBuilder.String()
+}
+
+func executeMetaAlarmOutputTpl(templateExecutor template.Executor, data correlation.EventExtraInfosMeta) (string, error) {
+	rule := data.Rule
+	if rule.OutputTemplate == "" {
+		return "", nil
+	}
+
+	res, err := templateExecutor.Execute(rule.OutputTemplate, data)
+	if err != nil {
+		return "", fmt.Errorf("unable to execute output template for metaalarm rule %s: %w", rule.ID, err)
+	}
+
+	return res, nil
 }

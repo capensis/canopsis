@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -18,24 +17,24 @@ import (
 func NewUncancelProcessor(
 	dbClient mongo.DbClient,
 	alarmStatusService alarmstatus.Service,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	logger zerolog.Logger,
 ) Processor {
 	return &uncancelProcessor{
-		dbClient:                dbClient,
-		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
-		alarmStatusService:      alarmStatusService,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		logger:                  logger,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		alarmStatusService:     alarmStatusService,
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		logger:                 logger,
 	}
 }
 
 type uncancelProcessor struct {
-	dbClient                mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	alarmStatusService      alarmstatus.Service
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	logger                  zerolog.Logger
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	alarmStatusService     alarmstatus.Service
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	logger                 zerolog.Logger
 }
 
 func (p *uncancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -113,7 +112,7 @@ func (p *uncancelProcessor) postProcess(
 	event rpc.AxeEvent,
 	result Result,
 ) {
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
