@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -20,7 +19,7 @@ import (
 
 func NewWebhookCompleteProcessor(
 	client mongo.DbClient,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	amqpPublisher libamqp.Publisher,
 	eventGenerator event.Generator,
@@ -28,24 +27,24 @@ func NewWebhookCompleteProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &webhookCompleteProcessor{
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		metricsSender:           metricsSender,
-		amqpPublisher:           amqpPublisher,
-		eventGenerator:          eventGenerator,
-		encoder:                 encoder,
-		logger:                  logger,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		metricsSender:          metricsSender,
+		amqpPublisher:          amqpPublisher,
+		eventGenerator:         eventGenerator,
+		encoder:                encoder,
+		logger:                 logger,
 	}
 }
 
 type webhookCompleteProcessor struct {
-	alarmCollection         mongo.DbCollection
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	metricsSender           metrics.Sender
-	amqpPublisher           libamqp.Publisher
-	eventGenerator          event.Generator
-	encoder                 encoding.Encoder
-	logger                  zerolog.Logger
+	alarmCollection        mongo.DbCollection
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	metricsSender          metrics.Sender
+	amqpPublisher          libamqp.Publisher
+	eventGenerator         event.Generator
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
 }
 
 func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -121,7 +120,7 @@ func (p *webhookCompleteProcessor) postProcess(
 		"",
 	)
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
