@@ -41,4 +41,7 @@ export default {
     deprecatedTriggerExist: 'Ce scénario n\'est plus pris en charge en raison de son ancien format et donc désactivé. \n'
       + 'Veuillez mettre à jour les déclencheurs de scénario ou créer une nouvelle règle de déclaration de ticket.',
   },
+  tooltips: {
+    pbehaviorActionsNamePrefix: 'Le nom va être `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
+  },
 };

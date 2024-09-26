@@ -3,7 +3,9 @@
     pbehavior-general-form(
       v-field="form",
       :no-enabled="noEnabled",
-      :with-start-on-trigger="withStartOnTrigger"
+      :with-start-on-trigger="withStartOnTrigger",
+      :name-label="nameLabel",
+      :name-tooltip="nameTooltip"
     )
     pbehavior-comments-field(v-if="!noComments", v-field="form.comments")
     pbehavior-filter-field(v-if="!noPattern", v-field="form.patterns")
@@ -53,6 +55,14 @@ export default {
     withStartOnTrigger: {
       type: Boolean,
       default: false,
+    },
+    nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
+      type: String,
+      required: false,
     },
   },
 };
