@@ -70,7 +70,6 @@ describe('c-filter-field', () => {
     expect(fetchFiltersList).toBeCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT } },
-      undefined,
     );
   });
 
