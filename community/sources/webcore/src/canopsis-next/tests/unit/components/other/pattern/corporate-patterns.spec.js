@@ -64,7 +64,6 @@ describe('corporate-patterns', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -107,7 +106,6 @@ describe('corporate-patterns', () => {
           page,
         },
       },
-      undefined,
     );
   });
 
