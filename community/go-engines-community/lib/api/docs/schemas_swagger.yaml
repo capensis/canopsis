@@ -2487,6 +2487,8 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      optional:
+        type: boolean
       regexp:
         additionalProperties:
           type: string
