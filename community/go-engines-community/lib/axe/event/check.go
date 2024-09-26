@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -36,7 +35,7 @@ func NewCheckProcessor(
 	alarmStatusService alarmstatus.Service,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
 	remediationRpcClient engine.RPCClient,
@@ -57,7 +56,7 @@ func NewCheckProcessor(
 		alarmStatusService:              alarmStatusService,
 		pbhTypeResolver:                 pbhTypeResolver,
 		autoInstructionMatcher:          autoInstructionMatcher,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
 		metricsSender:                   metricsSender,
 		eventStatisticsSender:           eventStatisticsSender,
 		remediationRpcClient:            remediationRpcClient,
@@ -80,7 +79,7 @@ type checkProcessor struct {
 	alarmStatusService              alarmstatus.Service
 	pbhTypeResolver                 pbehavior.EntityTypeResolver
 	autoInstructionMatcher          AutoInstructionMatcher
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
 	metricsSender                   metrics.Sender
 	eventStatisticsSender           statistics.EventStatisticsSender
 	remediationRpcClient            engine.RPCClient
@@ -167,7 +166,6 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	if result.Alarm.ID != "" {
-		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 		result.AlarmChange.EventsCount = int(result.Alarm.Value.EventsCount)
 	}
 
@@ -271,13 +269,13 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
 	}
 
-	if alarmConfig.ActivateAlarmAfterAutoRemediation {
-		matched, err := p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
-		if err != nil {
-			return result, err
-		}
+	result.IsInstructionMatched, err = p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+	if err != nil {
+		return result, err
+	}
 
-		alarm.InactiveAutoInstructionInProgress = matched
+	if alarmConfig.ActivateAlarmAfterAutoRemediation {
+		alarm.InactiveAutoInstructionInProgress = result.IsInstructionMatched
 	}
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
@@ -610,7 +608,7 @@ func (p *checkProcessor) postProcess(
 
 	p.sendEventStatistics(ctx, event)
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
