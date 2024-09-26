@@ -53,7 +53,6 @@ describe('c-pattern-field', () => {
       {
         params: { limit: MAX_LIMIT },
       },
-      undefined,
     );
   });
 
@@ -72,7 +71,6 @@ describe('c-pattern-field', () => {
       {
         params: { limit: MAX_LIMIT, type: PATTERN_TYPES.pbehavior },
       },
-      undefined,
     );
   });
 

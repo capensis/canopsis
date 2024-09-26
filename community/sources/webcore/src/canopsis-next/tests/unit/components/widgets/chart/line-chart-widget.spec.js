@@ -87,7 +87,6 @@ describe('line-chart-widget', () => {
     expect(fetchUserPreference).toBeCalledWith(
       expect.any(Object),
       { id: widget._id },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -97,7 +96,6 @@ describe('line-chart-widget', () => {
           search: '',
         },
       },
-      undefined,
     );
   });
 
@@ -145,7 +143,6 @@ describe('line-chart-widget', () => {
           parameters,
         },
       },
-      undefined,
     );
   });
 
