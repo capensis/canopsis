@@ -2,10 +2,12 @@ package action
 
 import (
 	"context"
+	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -24,6 +26,7 @@ type service struct {
 	fifoChan                libamqp.Channel
 	fifoExchange, fifoQueue string
 	activationService       libalarm.ActivationService
+	techMetricsSender       techmetrics.Sender
 	logger                  zerolog.Logger
 }
 
@@ -39,6 +42,7 @@ func NewService(
 	fifoExchange string,
 	fifoQueue string,
 	activationService libalarm.ActivationService,
+	techMetricsSender techmetrics.Sender,
 	logger zerolog.Logger,
 ) Service {
 	service := service{
@@ -52,6 +56,7 @@ func NewService(
 		fifoExchange:           fifoExchange,
 		fifoQueue:              fifoQueue,
 		activationService:      activationService,
+		techMetricsSender:      techMetricsSender,
 		logger:                 logger,
 	}
 
@@ -85,9 +90,9 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					break
 				}
 
-				event := result.FifoAckEvent
-				if event.EventType == "" {
-					event = types.Event{
+				fifoAckEvent := result.FifoAckEvent
+				if fifoAckEvent.EventType == "" {
+					fifoAckEvent = types.Event{
 						Connector:     alarm.Value.Connector,
 						ConnectorName: alarm.Value.ConnectorName,
 						Component:     alarm.Value.Component,
@@ -101,7 +106,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
+					ok, err = s.activationService.Process(ctx, alarm, fifoAckEvent)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
@@ -112,17 +117,33 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					}
 				}
 
-				if !activationSent {
-					s.sendEventToFifoAck(ctx, event)
+				if activationSent {
+					s.sendCpsEventMetric(fifoAckEvent)
+				} else {
+					s.sendEventToFifoAck(ctx, fifoAckEvent)
 				}
+
+				eventMetric := techmetrics.EventMetric{}
+				eventMetric.Timestamp = result.StartEventProcessing
+				eventMetric.EventType = fifoAckEvent.EventType
+				eventMetric.Interval = time.Since(eventMetric.Timestamp)
+				s.techMetricsSender.SendSimpleEvent(techmetrics.ActionEvent, eventMetric)
 			}
 		}
 	}()
 }
 
 func (s *service) Process(ctx context.Context, event *types.Event) error {
+	eventMetric := techmetrics.EventMetric{}
+	start := time.Now()
+	eventMetric.Timestamp = start
+	eventMetric.EventType = event.EventType
+
 	if event.Alarm == nil || event.Entity == nil {
 		s.sendEventToFifoAck(ctx, *event)
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		s.techMetricsSender.SendSimpleEvent(techmetrics.ActionEvent, eventMetric)
+
 		return nil
 	}
 
@@ -138,6 +159,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		Author:            event.Author,
 		UserID:            event.UserID,
 		Initiator:         event.Initiator,
+		State:             event.State,
 	}
 
 	alarm := *event.Alarm
@@ -166,6 +188,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:             alarm,
 			Entity:            entity,
+			Start:             start,
 			DelayedScenarioID: event.DelayedScenarioID,
 			AdditionalData:    additionalData,
 			FifoAckEvent:      fifoAckEvent,
@@ -179,15 +202,20 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		var activated bool
 		var err error
 		if event.AlarmChange.Type != types.AlarmChangeTypeNone {
-			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
+			activated, err = s.activationService.Process(ctx, alarm, *event)
 			if err != nil {
 				return err
 			}
 		}
 
-		if !activated {
+		if activated {
+			s.sendCpsEventMetric(*event)
+		} else {
 			s.sendEventToFifoAck(ctx, *event)
 		}
+
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		s.techMetricsSender.SendSimpleEvent(techmetrics.ActionEvent, eventMetric)
 
 		return nil
 	}
@@ -196,6 +224,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		Triggers: triggers,
 		Alarm:    alarm,
 		Entity:   entity,
+		Start:    start,
 		AdditionalData: AdditionalData{
 			AlarmChangeType: event.AlarmChange.Type,
 			Author:          event.Author,
@@ -247,6 +276,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 		s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:                alarm,
 			Entity:               execution.Entity,
+			Start:                time.Unix(execution.StartEventProcessing, 0),
 			AdditionalData:       execution.AdditionalData,
 			FifoAckEvent:         execution.FifoAckEvent,
 			IsMetaAlarmUpdated:   execution.IsMetaAlarmUpdated,
@@ -284,5 +314,15 @@ func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
 	)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("failed to send fifo ack event: failed to publish message")
+	}
+}
+
+func (s *service) sendCpsEventMetric(event types.Event) {
+	if event.ReceivedTimestamp.Time.Unix() > 0 {
+		s.techMetricsSender.SendSimpleEvent(techmetrics.CanopsisEvent, techmetrics.EventMetric{
+			Timestamp: event.ReceivedTimestamp.Time,
+			EventType: event.EventType,
+			Interval:  time.Since(event.ReceivedTimestamp.Time),
+		})
 	}
 }
