@@ -3,7 +3,6 @@
     <c-alert
       :value="!form.length"
       type="info"
-      transition="fade-transition"
     >
       {{ $t('externalData.empty') }}
     </c-alert>
@@ -15,6 +14,7 @@
       :disabled="disabled"
       :types="types"
       :variables="variables"
+      :optionally="optionally"
       class="mb-3"
       @remove="removeItemFromArray(index)"
     />
@@ -66,6 +66,10 @@ export default {
     name: {
       type: String,
       default: 'external_data',
+    },
+    optionally: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
