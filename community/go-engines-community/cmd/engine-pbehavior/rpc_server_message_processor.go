@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -145,10 +146,11 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		return nil, fmt.Errorf("invalid action parameters, tstart with tstop or start_on_trigger with duration must be defined: %+v", params)
 	}
 
+	name := params.Name + " " + entity.ID + " " + strconv.FormatInt(start.Unix(), 10) + "-" + strconv.FormatInt(stop.Unix(), 10)
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
 		Enabled: true,
-		Name:    params.Name,
+		Name:    name,
 		Reason:  params.Reason,
 		RRule:   params.RRule,
 		Start:   &start,
@@ -176,7 +178,14 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
 	_, err = collection.InsertOne(ctx, pbehavior)
 	if err != nil {
-		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
+		if mongodriver.IsDuplicateKeyError(err) {
+			pbehavior.Name = params.Name + " " + utils.NewID()
+			_, err = collection.InsertOne(ctx, pbehavior)
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf("create new pbehavior failed: %w", err)
+		}
 	}
 
 	p.Logger.Info().Str("pbehavior", pbehavior.ID).Msg("create pbehavior")
