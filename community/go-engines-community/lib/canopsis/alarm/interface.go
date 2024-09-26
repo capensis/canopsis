@@ -1,6 +1,6 @@
 package alarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService,MetaAlarmEventProcessor
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
@@ -67,17 +66,6 @@ type EventProcessor interface {
 	// representing the change that occurred on this alarm and its previous
 	// state.
 	Process(ctx context.Context, event *types.Event) (types.AlarmChange, error)
-}
-
-type MetaAlarmEventProcessor interface {
-	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
-	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
-	// CreateMetaAlarm creates meta alarm by event.
-	CreateMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, error)
-	// AttachChildrenToMetaAlarm attaches children to meta alarm by event.
-	AttachChildrenToMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, []types.Event, error)
-	// DetachChildrenFromMetaAlarm detaches children from meta alarm by event.
-	DetachChildrenFromMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error)
 }
 
 type Service interface {
