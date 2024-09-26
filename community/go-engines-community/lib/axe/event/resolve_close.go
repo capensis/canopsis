@@ -3,7 +3,6 @@ package event
 import (
 	"context"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -21,7 +20,7 @@ func NewResolveCloseProcessor(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -37,7 +36,7 @@ func NewResolveCloseProcessor(
 		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
 		metaAlarmStatesService:          metaAlarmStatesService,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
@@ -56,7 +55,7 @@ type resolveCloseProcessor struct {
 	metaAlarmRuleCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
 	metaAlarmStatesService          correlation.MetaAlarmStateService
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
@@ -99,7 +98,7 @@ func (p *resolveCloseProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 		newComponentState,
 		notAckedMetricType,
 		p.eventsSender,
-		p.metaAlarmEventProcessor,
+		p.metaAlarmPostProcessor,
 		p.metricsSender,
 		p.remediationRpcClient,
 		p.pbehaviorCollection,
