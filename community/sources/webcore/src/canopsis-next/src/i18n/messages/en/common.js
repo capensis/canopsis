@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Toggle view edition mode',
   toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
+  namePrefix: 'Name prefix',
   description: 'Description',
   author: 'Author',
   submit: 'Submit',
