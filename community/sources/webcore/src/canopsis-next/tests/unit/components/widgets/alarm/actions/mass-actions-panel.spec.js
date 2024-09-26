@@ -282,7 +282,6 @@ describe('mass-actions-panel', () => {
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
-      undefined,
     );
 
     expect(wrapper).toHaveBeenEmit('clear:items');
@@ -318,7 +317,6 @@ describe('mass-actions-panel', () => {
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment: '' })),
       },
-      undefined,
     );
 
     expect(wrapper).toHaveBeenEmit('clear:items');
@@ -368,7 +366,6 @@ describe('mass-actions-panel', () => {
       {
         data: itemsForAck.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -421,7 +418,6 @@ describe('mass-actions-panel', () => {
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, ...cancelEvent })),
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -461,7 +457,6 @@ describe('mass-actions-panel', () => {
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -495,7 +490,6 @@ describe('mass-actions-panel', () => {
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment: '' })),
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -551,7 +545,6 @@ describe('mass-actions-panel', () => {
           ...ticketEvent,
         }],
       },
-      undefined,
     );
 
     expect(wrapper).toHaveBeenEmit('clear:items');
@@ -609,7 +602,6 @@ describe('mass-actions-panel', () => {
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, ...snoozeEvent })),
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -664,7 +656,6 @@ describe('mass-actions-panel', () => {
         id: manualMetaAlarmEventWithId.id,
         data: manualMetaAlarmEventWithId,
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -686,7 +677,6 @@ describe('mass-actions-panel', () => {
         id: manualMetaAlarmEventWithoutId.id,
         data: manualMetaAlarmEventWithoutId,
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -736,7 +726,6 @@ describe('mass-actions-panel', () => {
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);

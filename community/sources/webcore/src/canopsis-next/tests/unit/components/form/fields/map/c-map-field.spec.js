@@ -51,7 +51,6 @@ describe('c-map-field', () => {
     expect(fetchMapsListWithoutStore).toBeCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT } },
-      undefined,
     );
   });
 
