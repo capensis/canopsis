@@ -3,4 +3,5 @@ export default {
   metricsDisabled: 'Les métriques des moteurs sont désactivées',
   generateDump: 'Générer un nouveau dump',
   downloadDump: 'Télécharger le dump',
+  enabled: 'Mesures techniques activées',
 };
