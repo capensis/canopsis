@@ -224,7 +224,6 @@ AllowedPerfDataUnits = [
 ]
 
 [Canopsis.tech_metrics]
-Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
 GoMetricsInterval = "1s"

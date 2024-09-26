@@ -11791,6 +11791,52 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /tech-metrics-settings:
+    get:
+      tags:
+        - tech-metrics-settings
+      summary: Get tech metrics settings
+      description: |
+        Get tech metrics settings.
+
+        -  PERMISSIONS: `api_techmetrics_settings:read`
+      operationId: tech-metrics-settings-get
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
+    put:
+      tags:
+        - tech-metrics-settings
+      summary: Update tech metrics settings
+      description: |
+        Update tech metrics settings.
+
+        -  PERMISSIONS: `api_techmetrics_settings:update`
+      operationId: tech-metrics-settings-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /link-categories:
     get:
       tags:
