@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -21,26 +20,26 @@ func NewUpdateStatusProcessor(
 	dbClient mongo.DbClient,
 	alarmStatusService alarmstatus.Service,
 	configProvider config.AlarmConfigProvider,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	logger zerolog.Logger,
 ) Processor {
 	return &updateStatusProcessor{
-		dbClient:                dbClient,
-		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
-		alarmStatusService:      alarmStatusService,
-		configProvider:          configProvider,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		logger:                  logger,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		alarmStatusService:     alarmStatusService,
+		configProvider:         configProvider,
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		logger:                 logger,
 	}
 }
 
 type updateStatusProcessor struct {
-	dbClient                mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	alarmStatusService      alarmstatus.Service
-	configProvider          config.AlarmConfigProvider
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	logger                  zerolog.Logger
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	alarmStatusService     alarmstatus.Service
+	configProvider         config.AlarmConfigProvider
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	logger                 zerolog.Logger
 }
 
 func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -122,7 +121,7 @@ func (p *updateStatusProcessor) postProcess(
 	event rpc.AxeEvent,
 	result Result,
 ) {
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
