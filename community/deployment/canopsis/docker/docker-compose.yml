@@ -7,6 +7,8 @@ volumes:
     driver: local
   timescaledata:
     driver: local
+  techmetricsdata:
+    driver: local
   junitsharedata:
     driver: local
   nginxcerts:
@@ -46,8 +48,6 @@ x-app_service_base: &app_service_base
   depends_on:
     reconfigure:
       condition: service_completed_successfully
-
-
 
 services:
 
@@ -144,6 +144,25 @@ services:
       timeout: 5s
       retries: 5
 
+  timescaledb-techmetrics:
+    image: timescale/timescaledb:${TIMESCALEDB_TAG}
+    ports:
+      - "5433:5432"
+    environment:
+      - TIMESCALEDB_TELEMETRY=off
+    volumes:
+      - techmetricsdata:/var/lib/postgresql/data
+    env_file:
+      - compose.env
+      - ${CPS_EDITION:?CPS_EDITION not set}.env
+      - tech-metrics.env
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   #
   # Initial configuration
   #
@@ -151,7 +170,7 @@ services:
   reconfigure:
     <<: *inital_config_base
     image: ${DOCKER_REPOSITORY}community/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
-    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     volumes:
       - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
   #
