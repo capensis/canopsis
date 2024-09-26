@@ -5,12 +5,20 @@ import request from '@/services/request';
 export default {
   namespaced: true,
   actions: {
-    async createTechMetricsExport() {
+    createTechMetricsExport() {
       return request.post(API_ROUTES.techMetrics);
     },
 
-    async fetchTechMetricsExport() {
+    fetchTechMetricsExport() {
       return request.get(API_ROUTES.techMetrics);
+    },
+
+    fetchTechMetricsSettings() {
+      return request.get(API_ROUTES.techMetricsSettings);
+    },
+
+    updateTechMetricsSettings(context, { data }) {
+      return request.put(API_ROUTES.techMetricsSettings, data);
     },
   },
 };
