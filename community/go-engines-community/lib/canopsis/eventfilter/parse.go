@@ -57,6 +57,7 @@ type ParsedExternalDataParameters struct {
 	Regexp     map[string]libtemplate.ParsedTemplate
 	SortBy     string
 	Sort       string
+	Optional   bool
 
 	RequestParameters *request.ParsedParameters
 }
@@ -116,6 +117,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 			Regexp:            parsedRegexp,
 			SortBy:            params.SortBy,
 			Sort:              params.Sort,
+			Optional:          params.Optional,
 			RequestParameters: parsedRequestParameters,
 		}
 	}
