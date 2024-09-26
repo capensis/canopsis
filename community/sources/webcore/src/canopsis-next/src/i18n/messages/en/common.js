@@ -64,7 +64,7 @@ export default {
   authKey: 'Auth. key',
   widgetId: 'Widget id',
   connect: 'Connect',
-  optional: 'optional',
+  optional: 'Optional',
   logout: 'Logout',
   title: 'Title',
   save: 'Save',
