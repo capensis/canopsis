@@ -7,6 +7,12 @@
     :error-messages="errors.collect(name)",
     :name="name"
   )
+    template(v-if="tooltip", #append)
+      c-help-icon(
+        :text="tooltip",
+        icon="help",
+        left
+      )
 </template>
 
 <script>
@@ -36,6 +42,10 @@ export default {
     },
     maxLength: {
       type: Number,
+      required: false,
+    },
+    tooltip: {
+      type: String,
       required: false,
     },
   },

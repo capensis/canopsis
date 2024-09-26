@@ -207,7 +207,10 @@ const assocTicketActionParametersToForm = (parameters = {}) => ({
  * @returns {PbehaviorForm}
  */
 const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocaleTimezone()) => {
-  const pbehaviorForm = pbehaviorToForm(parameters, null, timezone);
+  const pbehaviorForm = {
+    ...defaultActionForwardAuthorToForm(parameters),
+    ...pbehaviorToForm(parameters, null, timezone),
+  };
 
   pbehaviorForm.start_on_trigger = !!parameters.start_on_trigger;
   pbehaviorForm.duration = durationToForm(parameters.duration);
