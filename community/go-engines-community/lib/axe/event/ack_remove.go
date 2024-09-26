@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -22,31 +21,31 @@ func NewAckRemoveProcessor(
 	client mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
 	stateCountersService statecounters.StateCountersService,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) Processor {
 	return &ackRemoveProcessor{
-		client:                  client,
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:        client.Collection(mongo.EntityMongoCollection),
-		configProvider:          configProvider,
-		stateCountersService:    stateCountersService,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		metricsSender:           metricsSender,
-		logger:                  logger,
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		configProvider:         configProvider,
+		stateCountersService:   stateCountersService,
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		metricsSender:          metricsSender,
+		logger:                 logger,
 	}
 }
 
 type ackRemoveProcessor struct {
-	client                  mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	entityCollection        mongo.DbCollection
-	configProvider          config.AlarmConfigProvider
-	stateCountersService    statecounters.StateCountersService
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	metricsSender           metrics.Sender
-	logger                  zerolog.Logger
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	configProvider         config.AlarmConfigProvider
+	stateCountersService   statecounters.StateCountersService
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	metricsSender          metrics.Sender
+	logger                 zerolog.Logger
 }
 
 func (p *ackRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -139,7 +138,7 @@ func (p *ackRemoveProcessor) postProcess(
 		}
 	}
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &res.Alarm,
 		AlarmChangeType: res.AlarmChange.Type,
 	})

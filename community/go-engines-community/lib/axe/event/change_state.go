@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -29,7 +28,7 @@ func NewChangeStateProcessor(
 	alarmStatusService alarmstatus.Service,
 	autoInstructionMatcher AutoInstructionMatcher,
 	stateCountersService statecounters.StateCountersService,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -44,7 +43,7 @@ func NewChangeStateProcessor(
 		alarmStatusService:          alarmStatusService,
 		autoInstructionMatcher:      autoInstructionMatcher,
 		stateCountersService:        stateCountersService,
-		metaAlarmEventProcessor:     metaAlarmEventProcessor,
+		metaAlarmPostProcessor:      metaAlarmPostProcessor,
 		metricsSender:               metricsSender,
 		remediationRpcClient:        remediationRpcClient,
 		encoder:                     encoder,
@@ -61,7 +60,7 @@ type changeStateProcessor struct {
 	alarmStatusService          alarmstatus.Service
 	autoInstructionMatcher      AutoInstructionMatcher
 	stateCountersService        statecounters.StateCountersService
-	metaAlarmEventProcessor     libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor      MetaAlarmPostProcessor
 	metricsSender               metrics.Sender
 	remediationRpcClient        engine.RPCClient
 	encoder                     encoding.Encoder
@@ -218,7 +217,7 @@ func (p *changeStateProcessor) postProcess(
 		}
 	}
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})

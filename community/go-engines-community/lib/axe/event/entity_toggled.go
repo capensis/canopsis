@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -21,7 +20,7 @@ import (
 func NewEntityToggledProcessor(
 	dbClient mongo.DbClient,
 	stateCountersService statecounters.StateCountersService,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -33,7 +32,7 @@ func NewEntityToggledProcessor(
 		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
 		resolvedAlarmCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		stateCountersService:    stateCountersService,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
 		metricsSender:           metricsSender,
 		remediationRpcClient:    remediationRpcClient,
 		encoder:                 encoder,
@@ -47,7 +46,7 @@ type entityToggledProcessor struct {
 	entityCollection        mongo.DbCollection
 	resolvedAlarmCollection mongo.DbCollection
 	stateCountersService    statecounters.StateCountersService
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
 	metricsSender           metrics.Sender
 	remediationRpcClient    engine.RPCClient
 	encoder                 encoding.Encoder
@@ -172,7 +171,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
-	go postProcessResolve(context.Background(), event, result, updatedServiceStates, notAckedMetricType, p.stateCountersService, p.metaAlarmEventProcessor, p.metricsSender, p.remediationRpcClient, p.encoder, p.logger)
+	go postProcessResolve(context.Background(), event, result, updatedServiceStates, notAckedMetricType, p.stateCountersService, p.metaAlarmPostProcessor, p.metricsSender, p.remediationRpcClient, p.encoder, p.logger)
 
 	return result, nil
 }
