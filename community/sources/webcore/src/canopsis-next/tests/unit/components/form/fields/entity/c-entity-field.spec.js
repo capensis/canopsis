@@ -98,7 +98,6 @@ describe('c-entity-field', () => {
           type: Object.values(BASIC_ENTITY_TYPES),
         },
       },
-      undefined,
     );
   });
 

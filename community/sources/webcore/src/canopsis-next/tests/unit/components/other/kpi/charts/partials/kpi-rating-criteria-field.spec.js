@@ -63,7 +63,6 @@ describe('kpi-rating-criteria-field', () => {
     expect(fetchRatingSettings).toBeCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT, enabled: true } },
-      undefined,
     );
   });
 

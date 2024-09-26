@@ -62,7 +62,6 @@ describe('kpi-sli', () => {
     expect(fetchSliMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedDefaultParams },
-      undefined,
     );
   });
 
@@ -108,7 +107,6 @@ describe('kpi-sli', () => {
     expect(fetchSliMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
-      undefined,
     );
   });
 
