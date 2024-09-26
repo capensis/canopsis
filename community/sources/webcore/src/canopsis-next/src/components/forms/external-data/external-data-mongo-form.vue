@@ -1,13 +1,20 @@
 <template>
   <v-layout column>
-    <v-text-field
-      v-field="form.collection"
-      v-validate="'required'"
-      :label="$t('externalData.fields.collection')"
-      :name="collectionFieldName"
-      :error-messages="errors.collect(collectionFieldName)"
-      :disabled="disabled"
-    />
+    <v-layout class="gap-4">
+      <c-enabled-field
+        v-if="optionally"
+        v-field="form.optional"
+        :label="$t('common.optional')"
+      />
+      <v-text-field
+        v-field="form.collection"
+        v-validate="'required'"
+        :label="$t('externalData.fields.collection')"
+        :name="collectionFieldName"
+        :error-messages="errors.collect(collectionFieldName)"
+        :disabled="disabled"
+      />
+    </v-layout>
     <v-layout>
       <v-flex xs6>
         <v-text-field
@@ -89,6 +96,10 @@ export default {
     variables: {
       type: Array,
       default: () => ([]),
+    },
+    optionally: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
