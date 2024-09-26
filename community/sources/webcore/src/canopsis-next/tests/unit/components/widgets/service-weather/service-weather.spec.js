@@ -196,7 +196,6 @@ describe('service-weather', () => {
           },
         },
       },
-      undefined,
     );
 
     expect(updateQuery).toBeCalledWith(
@@ -207,7 +206,6 @@ describe('service-weather', () => {
           category: category._id,
         },
       },
-      undefined,
     );
   });
 
@@ -247,7 +245,6 @@ describe('service-weather', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -258,7 +255,6 @@ describe('service-weather', () => {
           filter: selectedFilter._id,
         },
       },
-      undefined,
     );
   });
 
@@ -282,7 +278,6 @@ describe('service-weather', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -292,7 +287,6 @@ describe('service-weather', () => {
           hide_grey: true,
         },
       },
-      undefined,
     );
   });
 
@@ -346,7 +340,6 @@ describe('service-weather', () => {
     expect(fetchServiceAlarmsWithoutStore).toBeCalledWith(
       expect.any(Object),
       { id: service._id, params },
-      undefined,
     );
   });
 
