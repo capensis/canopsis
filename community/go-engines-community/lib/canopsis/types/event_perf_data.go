@@ -1,6 +1,7 @@
 package types
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -11,7 +12,6 @@ const (
 	singleQuoteRune  = '\''
 	dotRune          = '.'
 	spaceRune        = ' '
-	percentRune      = '%'
 	undefinedValRune = 'U'
 	invalidIndex     = -1
 )
@@ -22,7 +22,7 @@ type PerfData struct {
 	Unit  string
 }
 
-func (e *Event) GetPerfData() []PerfData {
+func (e *Event) GetPerfData(allowedUnits []string) []PerfData {
 	if e.PerfData == "" {
 		return nil
 	}
@@ -31,7 +31,7 @@ func (e *Event) GetPerfData() []PerfData {
 	i := 0
 	l := len(e.PerfData)
 	for {
-		d, lastIndex := parseNextPerfData(e.PerfData[i:])
+		d, lastIndex := parseNextPerfData(e.PerfData[i:], allowedUnits)
 		if lastIndex < 0 {
 			return nil
 		}
@@ -48,7 +48,7 @@ func (e *Event) GetPerfData() []PerfData {
 	return parsed
 }
 
-func parseNextPerfData(s string) (PerfData, int) {
+func parseNextPerfData(s string, allowedUnits []string) (PerfData, int) {
 	data := PerfData{}
 	lastIndex := invalidIndex
 	l := len(s)
@@ -58,7 +58,7 @@ func parseNextPerfData(s string) (PerfData, int) {
 		return data, lastIndex
 	}
 
-	val, unit, ok, j := parsePerfDataValue(s[i+1:])
+	val, unit, ok, j := parsePerfDataValue(s[i+1:], allowedUnits)
 	if j < 0 {
 		return data, lastIndex
 	}
@@ -116,7 +116,7 @@ func parsePerfDataName(s string) (string, int) {
 	return name, lastIndex
 }
 
-func parsePerfDataValue(s string) (float64, string, bool, int) {
+func parsePerfDataValue(s string, allowedUnits []string) (float64, string, bool, int) {
 	lastIndex := strings.IndexRune(s, spaceRune)
 	paramsStr := ""
 	if lastIndex < 0 {
@@ -160,12 +160,8 @@ func parsePerfDataValue(s string) (float64, string, bool, int) {
 		unit = valWithUnit[i:]
 	}
 
-	if unit != "" && unit != string(percentRune) {
-		for _, r := range unit {
-			if !unicode.IsLetter(r) {
-				return 0, "", false, invalidIndex
-			}
-		}
+	if unit != "" && !slices.Contains(allowedUnits, unit) {
+		return 0, "", false, invalidIndex
 	}
 
 	val, err := strconv.ParseFloat(valStr, 64)

@@ -585,6 +585,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 		{"$count": "count"},
 	}
 
+	totalUnackPipeline := []bson.M{
+		{"$match": bson.M{"v.ack": bson.M{"$exists": false}}},
+		{"$count": "count"},
+	}
+
 	totalTicketPipeline := []bson.M{
 		{"$match": bson.M{"v.ticket": bson.M{"$exists": true}}},
 		{"$count": "count"},
@@ -604,6 +609,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 			"total_active":    totalActivePipeline,
 			"total_snooze":    totalSnoozePipeline,
 			"total_ack":       totalAckPipeline,
+			"total_unack":     totalUnackPipeline,
 			"total_ticket":    totalTicketPipeline,
 			"total_pbehavior": totalPbehaviorPipeline,
 		}},

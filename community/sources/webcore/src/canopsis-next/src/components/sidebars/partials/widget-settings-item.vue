@@ -14,7 +14,7 @@
             v-if="optional || subTitle"
             class="font-italic text-caption ml-1"
           >
-            <span v-if="optional">({{ $t('common.optional') }})</span>
+            <span v-if="optional" class="text-lowercase">({{ $t('common.optional') }})</span>
             <span v-if="subTitle">{{ subTitle }}</span>
           </span>
         </v-list-item-title>

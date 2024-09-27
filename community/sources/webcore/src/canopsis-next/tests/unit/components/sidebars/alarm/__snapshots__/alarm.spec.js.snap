@@ -596,6 +596,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Virtual scroll enabled"
     />
+    <field-switcher-stub
+      title="Is correlation enabled by default?"
+    />
   </widget-settings-group-stub>
   <charts-form-stub
     charts=""
@@ -1191,6 +1194,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-switcher-stub
       title="Virtual scroll enabled"
     />
+    <field-switcher-stub
+      title="Is correlation enabled by default?"
+    />
   </widget-settings-group-stub>
   <charts-form-stub
     charts=""
@@ -1781,6 +1787,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Virtual scroll enabled"
+    />
+    <field-switcher-stub
+      title="Is correlation enabled by default?"
     />
   </widget-settings-group-stub>
   <charts-form-stub

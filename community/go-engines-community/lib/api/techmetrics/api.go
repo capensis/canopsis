@@ -10,6 +10,8 @@ import (
 )
 
 type API interface {
+	GetSettings(c *gin.Context)
+	UpdateSettings(c *gin.Context)
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
@@ -17,19 +19,51 @@ type API interface {
 
 type api struct {
 	taskExecutor TaskExecutor
+	store        Store
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
 func NewApi(
 	taskExecutor TaskExecutor,
+	store Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) API {
 	return &api{
 		taskExecutor: taskExecutor,
+		store:        store,
 
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
+}
+
+// GetSettings
+// @Success 200 {object} Settings
+func (a *api) GetSettings(c *gin.Context) {
+	res, err := a.store.GetSettings(c)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// UpdateSettings
+// @Param body body Settings true "body"
+// @Success 200 {object} Settings
+func (a *api) UpdateSettings(c *gin.Context) {
+	req := Settings{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
+		return
+	}
+
+	err := a.store.UpdateSettings(c, req)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, req)
 }
 
 // StartExport
