@@ -68,8 +68,9 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		}
 	}
 
-	if event.EventType == types.ActionTypePbehavior {
-		return p.processPbehaviorEvent(ctx, event, d)
+	ok, resEvent, err := p.processPbehaviorEvent(ctx, event, d)
+	if ok || err != nil {
+		return resEvent, err
 	}
 
 	if event.Parameters.Timestamp.Unix() <= 0 {
@@ -122,28 +123,52 @@ func (p *rpcMessageProcessor) getRpcEvent(event rpc.AxeResultEvent) ([]byte, err
 	return msg, nil
 }
 
-func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event rpc.AxeEvent, d amqp.Delivery) ([]byte, error) {
-	body, err := p.Encoder.Encode(rpc.PbehaviorEvent{
-		Alarm:  event.Alarm,
-		Entity: event.Entity,
-		Params: rpc.PbehaviorParameters{
-			Author:         event.Parameters.Author,
-			UserID:         event.Parameters.User,
-			Name:           event.Parameters.Name,
-			Reason:         event.Parameters.Reason,
-			Type:           event.Parameters.Type,
-			RRule:          event.Parameters.RRule,
-			Tstart:         event.Parameters.Tstart,
-			Tstop:          event.Parameters.Tstop,
-			StartOnTrigger: event.Parameters.StartOnTrigger,
-			Duration:       event.Parameters.Duration,
-			RuleName:       event.Parameters.RuleName,
-		},
-	})
+func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event rpc.AxeEvent, d amqp.Delivery) (bool, []byte, error) {
+	var pbhEvent rpc.PbehaviorEvent
+	switch event.EventType {
+	case types.ActionTypePbehavior:
+		pbhEvent = rpc.PbehaviorEvent{
+			Alarm:  event.Alarm,
+			Entity: event.Entity,
+			Type:   rpc.PbehaviorEventTypeCreate,
+			Params: rpc.PbehaviorParameters{
+				Author:         event.Parameters.Author,
+				UserID:         event.Parameters.User,
+				Name:           event.Parameters.Name,
+				Reason:         event.Parameters.Reason,
+				Type:           event.Parameters.Type,
+				RRule:          event.Parameters.RRule,
+				Tstart:         event.Parameters.Tstart,
+				Tstop:          event.Parameters.Tstop,
+				StartOnTrigger: event.Parameters.StartOnTrigger,
+				Duration:       event.Parameters.Duration,
+				RuleName:       event.Parameters.RuleName,
+				Color:          event.Parameters.Color,
+				Origin:         event.Parameters.Origin,
+				Comment:        event.Parameters.Comment,
+			},
+		}
+	case types.ActionTypePbehaviorRemove:
+		pbhEvent = rpc.PbehaviorEvent{
+			Alarm:  event.Alarm,
+			Entity: event.Entity,
+			Type:   rpc.PbehaviorEventTypeDelete,
+			Params: rpc.PbehaviorParameters{
+				RuleName: event.Parameters.RuleName,
+				Author:   event.Parameters.Author,
+				UserID:   event.Parameters.User,
+				Origin:   event.Parameters.Origin,
+			},
+		}
+	default:
+		return false, nil, nil
+	}
+
+	body, err := p.Encoder.Encode(pbhEvent)
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode rpc call to pbehavior", d.Body)
 
-		return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %w", err), event.Alarm), nil
+		return false, p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %w", err), event.Alarm), nil
 	}
 
 	err = p.PbhRpc.Call(ctx, engine.RPCMessage{
@@ -152,15 +177,15 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 	})
 	if err != nil {
 		if engine.IsConnectionError(err) {
-			return nil, err
+			return false, nil, err
 		}
 
 		p.logError(err, "RPC Message Processor: failed to send rpc call to pbehavior", d.Body)
 
-		return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %w", err), event.Alarm), nil
+		return false, p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %w", err), event.Alarm), nil
 	}
 
-	return nil, nil
+	return true, nil, nil
 }
 
 func (p *rpcMessageProcessor) sendEventToAction(
