@@ -96,7 +96,6 @@ describe('numbers-widget', () => {
     expect(fetchUserPreference).toBeCalledWith(
       expect.any(Object),
       { id: widget._id },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -106,7 +105,6 @@ describe('numbers-widget', () => {
           search: '',
         },
       },
-      undefined,
     );
   });
 
@@ -157,7 +155,6 @@ describe('numbers-widget', () => {
           parameters,
         },
       },
-      undefined,
     );
   });
 

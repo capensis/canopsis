@@ -22,6 +22,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
   submit: 'Soumettre',
@@ -455,6 +456,7 @@ export default {
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
+    [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
@@ -462,7 +464,6 @@ export default {
     [EVENT_TYPES.ack]: 'Acquitter',
     [EVENT_TYPES.ackRemove]: 'Supprimer l\'acquittement',
     [EVENT_TYPES.assocTicket]: 'Associer un ticket',
-    [EVENT_TYPES.declareTicket]: 'Déclarer un incident',
     [EVENT_TYPES.cancel]: 'Annuler',
     [EVENT_TYPES.uncancel]: 'Annuler l\'annulation',
     [EVENT_TYPES.changeState]: 'Changer et vérrouiller la criticité',

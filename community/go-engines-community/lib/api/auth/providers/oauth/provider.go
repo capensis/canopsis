@@ -166,6 +166,10 @@ func (p *provider) Callback(c *gin.Context) {
 		panic(err)
 	}
 
+	if len(session.Values) == 0 {
+		panic(errors.New("session is empty"))
+	}
+
 	// expire auth session
 	session.Options.MaxAge = -1
 	err = session.Save(c.Request, c.Writer)

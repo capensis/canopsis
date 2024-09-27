@@ -18,7 +18,9 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 /**
  * @typedef {
  *   "snooze" |
+ *   "unsnooze" |
  *   "pbehavior" |
+ *   "pbehaviorremove" |
  *   "changestate" |
  *   "webhook" |
  *   "ack" |
@@ -115,6 +117,14 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
 
 /**
+ * Check action type is pbehaviorremove
+ *
+ * @param {ActionType} type
+ * @return {boolean}
+ */
+export const isPbehaviorRemoveActionType = type => type === ACTION_TYPES.pbehaviorRemove;
+
+/**
  * Check action type is webhook
  *
  * @param {ActionType} type
@@ -207,7 +217,10 @@ const assocTicketActionParametersToForm = (parameters = {}) => ({
  * @returns {PbehaviorForm}
  */
 const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocaleTimezone()) => {
-  const pbehaviorForm = pbehaviorToForm(parameters, null, timezone);
+  const pbehaviorForm = {
+    ...defaultActionForwardAuthorToForm(parameters),
+    ...pbehaviorToForm(parameters, null, timezone),
+  };
 
   pbehaviorForm.start_on_trigger = !!parameters.start_on_trigger;
   pbehaviorForm.duration = durationToForm(parameters.duration);
@@ -222,7 +235,9 @@ const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocaleTi
  */
 const prepareDefaultActionParameters = () => ({
   [ACTION_TYPES.snooze]: snoozeActionParametersToForm(),
+  [ACTION_TYPES.unsnooze]: defaultActionParametersToForm(),
   [ACTION_TYPES.pbehavior]: pbehaviorActionParametersToForm(),
+  [ACTION_TYPES.pbehaviorRemove]: defaultActionForwardAuthorToForm(),
   [ACTION_TYPES.changeState]: changeStateActionParametersToForm(),
   [ACTION_TYPES.ack]: defaultActionParametersToForm(),
   [ACTION_TYPES.ackremove]: defaultActionParametersToForm(),

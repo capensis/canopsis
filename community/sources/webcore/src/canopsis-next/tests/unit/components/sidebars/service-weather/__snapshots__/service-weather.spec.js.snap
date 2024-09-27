@@ -117,9 +117,16 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       name="modalType"
       value="both"
     />
-    <field-action-required-settings-stub
-      value="[object Object]"
-    />
+    <widget-settings-group-stub
+      title="State settings"
+    >
+      <field-action-required-settings-stub
+        value="[object Object]"
+      />
+      <field-no-action-required-settings-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
@@ -254,9 +261,16 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       name="modalType"
       value="both"
     />
-    <field-action-required-settings-stub
-      value="[object Object]"
-    />
+    <widget-settings-group-stub
+      title="State settings"
+    >
+      <field-action-required-settings-stub
+        value="[object Object]"
+      />
+      <field-no-action-required-settings-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"

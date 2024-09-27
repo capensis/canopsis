@@ -96,7 +96,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
           view_to: 1386543599,
         },
       },
-      undefined,
     );
   });
 
@@ -143,7 +142,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
           view_to: 1387148399,
         },
       },
-      undefined,
     );
   });
 
@@ -173,7 +171,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
           view_to: 1387753199,
         },
       },
-      undefined,
     );
   });
 
@@ -203,7 +200,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
           view_to: 1388530799,
         },
       },
-      undefined,
     );
   });
 
@@ -233,7 +229,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
           view_to: 1391209199,
         },
       },
-      undefined,
     );
   });
 

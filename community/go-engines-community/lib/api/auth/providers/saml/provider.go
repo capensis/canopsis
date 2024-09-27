@@ -368,7 +368,7 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 		query.Set("access_token", accessToken)
 		relayUrl.RawQuery = query.Encode()
 
-		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
+		c.Redirect(http.StatusSeeOther, relayUrl.String())
 	}
 }
 

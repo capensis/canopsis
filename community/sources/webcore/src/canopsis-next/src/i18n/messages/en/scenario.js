@@ -25,7 +25,9 @@ export default {
     + '}</pre>',
   actions: {
     [ACTION_TYPES.snooze]: 'Snooze',
+    [ACTION_TYPES.unsnooze]: 'Unsnooze',
     [ACTION_TYPES.pbehavior]: 'Pbehavior',
+    [ACTION_TYPES.pbehaviorRemove]: 'Pbehavior remove',
     [ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
     [ACTION_TYPES.ack]: 'Acknowledge',
     [ACTION_TYPES.ackremove]: 'Acknowledge remove',
@@ -41,5 +43,8 @@ export default {
     deprecatedTriggerExist: 'This scenario is not supported anymore due to its old format and thus disabled. \n'
       + 'Please update the scenario triggers or create a new ticket declaration rule.',
     testQueryRequireSteps: 'Test query is unavailable: no webhooks were added to the scenario',
+  },
+  tooltips: {
+    pbehaviorActionsNamePrefix: 'Name is going to be `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
   },
 };
