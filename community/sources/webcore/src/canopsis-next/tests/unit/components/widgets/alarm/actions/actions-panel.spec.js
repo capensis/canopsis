@@ -306,7 +306,6 @@ describe('actions-panel', () => {
           comment: widgetData.parameters.fastAckOutput.value,
         }],
       },
-      undefined,
     );
   });
 
@@ -355,7 +354,6 @@ describe('actions-panel', () => {
           comment,
         }],
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -452,7 +450,6 @@ describe('actions-panel', () => {
           ...snoozeEvent,
         }],
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -579,7 +576,6 @@ describe('actions-panel', () => {
           ...ticketEvent,
         }],
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -633,7 +629,6 @@ describe('actions-panel', () => {
           ...changeStateEvent,
         }],
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -687,7 +682,6 @@ describe('actions-panel', () => {
           ...cancelEvent,
         }],
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -747,7 +741,6 @@ describe('actions-panel', () => {
           comment: 'Output',
         }],
       },
-      undefined,
     );
   });
 
@@ -1059,7 +1052,6 @@ describe('actions-panel', () => {
           comment,
         }],
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -1113,7 +1105,6 @@ describe('actions-panel', () => {
         id: parentAlarm?._id,
         data: newRemoveAlarmsEvent,
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -1172,7 +1163,6 @@ describe('actions-panel', () => {
         id: parentAlarm?._id,
         data: newRemoveAlarmsEvent,
       },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -1314,7 +1304,6 @@ describe('actions-panel', () => {
     expect(addBookmarkToAlarm).toBeCalledWith(
       expect.any(Object),
       { id: alarm._id },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
@@ -1348,7 +1337,6 @@ describe('actions-panel', () => {
     expect(removeBookmarkFromAlarm).toBeCalledWith(
       expect.any(Object),
       { id: alarm._id },
-      undefined,
     );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);

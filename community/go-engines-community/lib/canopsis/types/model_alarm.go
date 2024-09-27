@@ -489,6 +489,8 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		return a.Value.ACK.GetInitiator(), true
 	case "v.canceled.initiator":
 		return a.Value.Canceled.GetInitiator(), true
+	case "v.meta":
+		return a.Value.Meta, true
 	default:
 		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
 			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {

@@ -265,6 +265,7 @@ func (s *baseService) applyAlarmRule(
 		rpcEvent := rpc.PbehaviorEvent{
 			Alarm:  &alarm,
 			Entity: &entity,
+			Type:   rpc.PbehaviorEventTypeCreate,
 			Params: rpc.PbehaviorParameters{
 				Name:           rule.Operation.Parameters.Name,
 				Reason:         rule.Operation.Parameters.Reason,
@@ -275,6 +276,9 @@ func (s *baseService) applyAlarmRule(
 				StartOnTrigger: rule.Operation.Parameters.StartOnTrigger,
 				Duration:       rule.Operation.Parameters.Duration,
 				RuleName:       types.RuleNameIdleRulePrefix + rule.Name,
+				Color:          rule.Operation.Parameters.Color,
+				Origin:         idlerule.PbehaviorOrigin,
+				Comment:        rule.Comment,
 			},
 		}
 		b, err := s.encoder.Encode(rpcEvent)

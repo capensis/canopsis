@@ -115,7 +115,7 @@ type BulkDeleteRequestItem struct {
 }
 
 type ActionRequest struct {
-	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
+	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior pbehaviorremove snooze unsnooze webhook"`
 	Parameters               action.Parameters `json:"parameters,omitempty"`
 	Comment                  string            `json:"comment"`
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
