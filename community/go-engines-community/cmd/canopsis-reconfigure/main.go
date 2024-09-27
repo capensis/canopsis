@@ -15,6 +15,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/goja"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/mongosh"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/golang-migrate/migrate/v4"
@@ -216,6 +218,7 @@ func updateMongoConfig(ctx context.Context, conf Conf, dbClient mongo.DbClient) 
 	//todo: fix it with config refactoring
 	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
+	conf.Canopsis.TechMetrics.Enabled = prevGlobalConf.TechMetrics.Enabled
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
 	if err != nil {
 		return fmt.Errorf("failed to update global config: %w", err)
@@ -270,8 +273,18 @@ func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger 
 		return errors.New("-mongo-migration-directory is not set")
 	}
 
+	var executor mongo.ScriptExecutor
+	switch f.mongoMigrationExec {
+	case MongoMigrationExecGoja:
+		executor = goja.NewScriptExecutor(dbClient)
+	case MongoMigrationExecMongosh:
+		executor = mongosh.NewScriptExecutor()
+	default:
+		return errors.New("-mongo-migration-exec is invalid")
+	}
+
 	logger.Info().Msg("start mongo migrations")
-	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, mongo.NewScriptExecutor(), logger)
+	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, executor, logger)
 	err := cmd.Exec(ctx)
 	if err != nil {
 		return err

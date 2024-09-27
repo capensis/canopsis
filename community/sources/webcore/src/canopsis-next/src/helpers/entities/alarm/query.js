@@ -62,7 +62,7 @@ export const getAlarmVariablesByTemplate = template => getTemplateVariables(temp
  * @returns {string[]}
  */
 export const convertAlarmWidgetParametersToActiveColumns = ({
-  widgetColumns,
+  widgetColumns = [],
   moreInfoTemplate,
   infoPopups,
 }) => {
@@ -103,6 +103,7 @@ export function convertAlarmWidgetToQuery(widget) {
     sort,
     mainFilter,
     usedAlarmProperties,
+    isCorrelationEnabled,
   } = widget.parameters;
 
   const query = {
@@ -140,6 +141,10 @@ export function convertAlarmWidgetToQuery(widget) {
     query.sortDesc = [sort.order === SORT_ORDERS.desc];
   }
 
+  if (!isUndefined(isCorrelationEnabled)) {
+    query.correlation = isCorrelationEnabled;
+  }
+
   return query;
 }
 
@@ -154,16 +159,19 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
     itemsPerPage,
     category,
     mainFilter,
+    isCorrelationEnabled,
     onlyBookmarks = false,
-    isCorrelationEnabled = false,
   } = content;
 
   const query = {
     category,
-    correlation: isCorrelationEnabled,
     filter: mainFilter,
     only_bookmarks: onlyBookmarks,
   };
+
+  if (!isUndefined(isCorrelationEnabled)) {
+    query.correlation = isCorrelationEnabled;
+  }
 
   if (itemsPerPage) {
     query.itemsPerPage = itemsPerPage;

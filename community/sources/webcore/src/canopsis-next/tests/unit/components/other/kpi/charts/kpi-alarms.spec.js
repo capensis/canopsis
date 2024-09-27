@@ -62,7 +62,6 @@ describe('kpi-alarms', () => {
     expect(fetchAlarmsMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedDefaultParams },
-      undefined,
     );
   });
 
@@ -108,7 +107,6 @@ describe('kpi-alarms', () => {
     expect(fetchAlarmsMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
-      undefined,
     );
   });
 

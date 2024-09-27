@@ -5,7 +5,7 @@ import { ALARMS_OPENED_VALUES } from '@/constants';
 import OpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
 
 const selectRadioElementsByValue = (wrapper, value) => wrapper
-  .find(`.v-input--radio-group__input input[value="${value ?? ''}"]`);
+  .find(`.v-input--radio-group__input input[value="${String(value)}"]`);
 
 describe('opened-resolved-filter', () => {
   const snapshotFactory = generateRenderer(OpenedResolvedFilter, {

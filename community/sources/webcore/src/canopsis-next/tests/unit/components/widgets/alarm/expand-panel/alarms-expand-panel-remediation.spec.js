@@ -48,7 +48,6 @@ describe('alarms-expand-panel-remediation', () => {
         id: alarm._id,
         params: options,
       },
-      undefined,
     );
   });
 
@@ -70,7 +69,6 @@ describe('alarms-expand-panel-remediation', () => {
         id: alarm._id,
         params: omit(newOptions, ['itemsPerPage']),
       },
-      undefined,
     );
   });
 });

@@ -238,6 +238,10 @@ export default {
       name: 'Service weather: Access to \'Associate Ticket\' action',
       description: 'Users with this permission can associate tickets for alarms',
     },
+    [USERS_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: {
+      name: 'Service weather: Access to \'Declare Ticket\' action',
+      description: 'Users with this permission can declare tickets for alarms',
+    },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityComment]: {
       name: 'Service weather: Access to \'Comment\' action',
       description: 'Users with this permission can add comments',

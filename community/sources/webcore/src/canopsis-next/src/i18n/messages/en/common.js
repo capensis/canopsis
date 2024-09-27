@@ -22,6 +22,7 @@ export default {
   toggleEditView: 'Toggle view edition mode',
   toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
+  namePrefix: 'Name prefix',
   description: 'Description',
   author: 'Author',
   submit: 'Submit',
@@ -64,7 +65,7 @@ export default {
   authKey: 'Auth. key',
   widgetId: 'Widget id',
   connect: 'Connect',
-  optional: 'optional',
+  optional: 'Optional',
   logout: 'Logout',
   title: 'Title',
   save: 'Save',
@@ -455,6 +456,7 @@ export default {
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
+    [PATTERN_OPERATORS.ruleIs]: 'Rule is',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
   },
@@ -462,7 +464,6 @@ export default {
     [EVENT_TYPES.ack]: 'Ack',
     [EVENT_TYPES.ackRemove]: 'Ack remove',
     [EVENT_TYPES.assocTicket]: 'Associate ticket',
-    [EVENT_TYPES.declareTicket]: 'Declare ticket',
     [EVENT_TYPES.cancel]: 'Cancel',
     [EVENT_TYPES.uncancel]: 'Uncancel',
     [EVENT_TYPES.changeState]: 'Change state',

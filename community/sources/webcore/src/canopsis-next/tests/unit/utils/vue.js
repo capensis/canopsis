@@ -8,7 +8,7 @@ import {
   Wrapper,
 } from '@vue/test-utils';
 // eslint-disable-next-line no-restricted-imports
-import flushPromises from 'flush-promises';
+import flushPromisesLib from 'flush-promises';
 
 import { MqLayout } from '@unit/stubs/mq';
 
@@ -65,6 +65,20 @@ const vuetify = createVuetify(Vue, {
 
 const stubs = {
   'mq-layout': MqLayout,
+};
+
+/**
+ * Flush Promises with optional timers.
+ *
+ * @param {boolean} [withTimers = true] - Flag to indicate whether to run pending timers.
+ * @returns {Promise<void>} - A Promise that resolves when all promises are flushed.
+ */
+const flushPromises = (withTimers = false) => {
+  if (withTimers) {
+    jest.runOnlyPendingTimers();
+  }
+
+  return flushPromisesLib();
 };
 
 /**

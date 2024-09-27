@@ -7,7 +7,7 @@
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
-      :locked-filter="query.lockedFilter"
+      :locked-filters="query.lockedFilter"
       :filters="query.filter"
       :interval="query.interval"
       :sampling="query.sampling"
