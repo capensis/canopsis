@@ -754,6 +754,11 @@ permission:
     _id: serviceweather_entityLinks
     name: <Current()._id>
     description: "Service weather: Access to Links"
+  permission_serviceweather_entityDeclareTicket:
+    <<: *permission
+    _id: serviceweather_entityDeclareTicket
+    name: <Current()._id>
+    description: "Service weather: Access to 'Declare Ticket' action"
   permission_serviceweather_moreInfos:
     <<: *permission
     _id: serviceweather_moreInfos
@@ -1461,6 +1466,11 @@ permission:
     _id: api_icon
     name: <Current()._id>
     description: Create icons
+  permission_api_techmetrics_settings:
+    <<: *permission_crud
+    _id: api_techmetrics_settings
+    name: <Current()._id>
+    description: Tech metrics settings
 
   # Views permissions
   permission_view_open_alarms:
@@ -1579,6 +1589,7 @@ role:
       "@permission_serviceweather_entityManagePbehaviors": 1
       "@permission_serviceweather_entityLinks": 1
       "@permission_serviceweather_entityComment": 1
+      "@permission_serviceweather_entityDeclareTicket": 1
       "@permission_serviceweather_moreInfos": 1
       "@permission_serviceweather_alarmsList": 1
       "@permission_serviceweather_pbehaviorList": 1
@@ -1712,6 +1723,7 @@ role:
       "@permission_api_maintenance": 1
       "@permission_api_private_view_groups": 1
       "@permission_api_icon": 1
+      "@permission_api_techmetrics_settings": 15
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
@@ -1767,6 +1779,7 @@ role_template:
       "@permission_serviceweather_entityManagePbehaviors": 1
       "@permission_serviceweather_entityLinks": 1
       "@permission_serviceweather_entityComment": 1
+      "@permission_serviceweather_entityDeclareTicket": 1
       "@permission_serviceweather_moreInfos": 1
       "@permission_serviceweather_alarmsList": 1
       "@permission_serviceweather_pbehaviorList": 1

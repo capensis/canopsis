@@ -207,7 +207,7 @@ Puis vous devez renseigner les différents paramètres d'authentification SAML.
        # Type: string or array
        role: role
     canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
-    default_role: "admin"
+    default_role: "admin" 
     insecure_skip_verify: false
     canopsis_sso_binding: redirect
     canopsis_acs_binding: redirect
@@ -242,8 +242,9 @@ Définition des paramètres :
 | `skip_signature_validation` | Permet de bypasser la validation de la signature de l'idp lors du décodage des réponses envoyées par l'idp si positionné à `true` |
 | `acs_index`                 | Valeur entière à utiliser lorsque l'on configure le service ACS Index dans les Metadata XML |
 | `auto_user_registration`    | Permet de créer automatiquement les utilisateurs dans Canopsis ( s'ils n'existent pas déjà ) si cette valeur est mise à `true`|
-| `default_role`              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
+| [`default_role`](#multi-role)              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
 | `insecure_skip_verify`      | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `false`   |
+
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
@@ -353,25 +354,26 @@ Définition des paramètres :
 | `client_secret`  | Chaîne secrète du client oauth/openid | Chaîne de caractères |
 | `redirect_url`  | Définit une route de rappel vers l'api de Canopsis; doit être ajoutée dans votre provider oauth2  | votre.canopsis/api/v4/oauth/votre-nom-de-provider/callback |
 | `pkce`  | Mécanisme qui permet de prévenir des attaques à injections de code d'authentifications. A definir sur `false` si votre provider ne le supporte pas | true / false |
-| `default_role`  | Rôle par défaut attribué aux utilisateurs de votre Canopsis lorsqu'ils se connectent avec oauth2 | Chaîne de caractères |
+| [`default_role`](#multi-role)  | Rôle par défaut attribué aux utilisateurs lorsqu'ils se connectent avec oauth2 | Chaîne de caractères |
 | `user_id`  | Permet de définir l'identifiant dans Canopsis. A definir uniquement si `open_id` est à `false` | users.votre_champs_id |
 | `attributes_map`  | Permet de remplir les champs d'informations utilisateurs sur votre Canopsis avec les informations fournies par le provider. Récupérer des informations depuis le token OpenID n'est possible que si `open_id` est défini à `true` (Exemple plus bas) | Liste au format `champ: valeur` |
 | `scopes`  | Les scopes sont utiliséés par une application lors de l'authentification pour autoriser l'accès à certaines données. Ces accès sont à définir côté provider. Doit être défini dans le cas où le champ `open_id` est à `true` (Ex: Le scope `openid` indique au serveur d’interpréter les requêtes faites aux points d’entrée selon les spécifications d’OpenID Connect.) | Liste |
 
+
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
-### Mettre en place l'attribute_map
+### Mettre en place l'attributes_map
 
 Il est possible de mapper des champs utilisateurs `Canopsis` avec des informations provenant des champs utilisateurs `OAuth2/OpenID`. 
 
-    - user_id
-    - name
-    - email
-    - firstname
-    - lastname
-    - role
+- user_id
+- name
+- email
+- firstname
+- lastname
+- role (Supporte le [multi-roles](#multi-role))
 
-=== Mapper avec "OAuth2"
+=== "Mapper avec OAuth2"
 
     Pour OAuth2, il faut explicitement définir le chemin vers l'identifiant utilisateur en utilisant le champ `user_id`. Les autres champs sont optionnels.
     L'API fait une requête à l'adresse définie dans le `user_url` pour récupérer les informations utilisateurs. Les informations sont utilisables dans le mapping en utilisant comme prefix `user.`.
@@ -387,7 +389,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
           "first_name": "test_first_name",
           "last_name": "test_last_name"
       },
-      "role": "test_role"
+      "role": [ "test_role", "test_role2" ]
     }
     ```
 
@@ -414,7 +416,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
               role: user.role
     ```
 
-=== Mapper avec "OpenID"
+=== "Mapper avec OpenID"
 
     Pour OpenID, il n'est pas possible de définir le `user_id` car l'ID est contenu directement dans le token JWT OpenID `id_token`. 
     **Note**: le champ `user_id` est ignoré si le champ `open_id` est défini à `true`.
@@ -573,6 +575,7 @@ Il est possible de mapper des champs utilisateurs `Canopsis` avec des informatio
               attributes_map:
                 email: token.email
                 name: user.name
+                role: user.groups
     ```
 
     Une fois que vous avez redémarré l'API de Canopsis, vous pourrez voir apparaître un nouveau bouton sur la page d'accueil: 
@@ -671,6 +674,34 @@ La mire de connexion de Canopsis doit maintenant proposer un nouveau menu de log
 
 Pour tester l’authentification, il faudra vous authentifier avec un compte valide sur l'un des providers configurés précédement.
 
+
+### Multi-role
+
+Depuis la version `24.04.1`, les méthodes d'authentifications `SAML` et `OAUTH2/OPENID` supportent le multi-roles.  
+Cela signifie que le fournisseur d'identités peut renvoyer plusieurs rôles lors de la première authentification d'un utilisateur.
+
+Pour qu'une authentification réussisse :
+
+* au moins un des rôles renvoyés par le fournisseur doit exister dans Canopsis ou
+* le rôle par défaut (défini dans la configuration) doit exister
+
+Attention cependant, Canopsis ne créera pas les rôles manquant, il est nécessaire de les créer au préalable.  
+
+Le schéma ci-après vous présente le fonctionnement dans le détail :
+
+```mermaid
+flowchart TD
+    Role{Attribut 'role' <br>défini dans<br>idp_attributes_map ou attributes_map<br>du fichier api/security/config.yml} -->|Non| Default_role
+    Default_role{default_role<br>défini dans api/security/config.yml} -->|Non<br>Aucun rôle ne peut être attribué| Refusée
+    Default_role -->|Oui| Default_role_existence{Le rôle par defaut existe<br>t-il dans Canopsis ?}
+    Refusée[Connexion refusée]
+    Role -->|Oui| IdP[Liste de rôles transmise par<br>le fournisseur d'identités]
+    IdP --> Roles_existence{Au moins 1 des rôles transmis<br> existe dans Canopsis ?}
+    Roles_existence -->|Non| Default_role
+    Roles_existence -->|Oui| AuthentificationOK[Authentification et<br>Attribution du ou des rôles]
+    Default_role_existence -->|Non| Refusée
+    Default_role_existence -->|Oui| AuthentificationOK
+```
 
 ### Troubleshooting
 

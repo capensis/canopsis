@@ -1,16 +1,21 @@
-# Canopsis community docker-compose environment
+# Canopsis Community Docker Compose environment
 
 ## Starting the environment
 
-To start the environment you need to set `CPS_EDITION` to `community` in the
-environment :
+In order to start the stack, you need to set env variable `CPS_EDITION` to
+`community`:
+
 ```bash
 export CPS_EDITION=community
-docker-compose up -d
-```
-or
-```
-CPS_EDITION=community docker-compose up -d
+docker compose up -d
 ```
 
-More informations on the [official documentation (french)](https://doc.canopsis.net/guide-administration/installation/installation-conteneurs/)
+or:
+
+```bash
+CPS_EDITION=community docker compose up -d
+```
+
+More information on the [official documentation (french)][doc].
+
+[doc]: https://doc.canopsis.net/guide-administration/installation/installation-conteneurs/

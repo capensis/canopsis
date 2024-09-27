@@ -5,6 +5,8 @@
     :no-enabled="noEnabled"
     :no-comments="noComments"
     :with-start-on-trigger="withStartOnTrigger"
+    :name-label="nameLabel"
+    :name-tooltip="nameTooltip"
   />
 
   <v-tabs
@@ -26,6 +28,8 @@
         :no-enabled="noEnabled"
         :no-comments="noComments"
         :with-start-on-trigger="withStartOnTrigger"
+        :name-label="nameLabel"
+        :name-tooltip="nameTooltip"
       />
     </v-tab-item>
     <v-tab-item eager>
@@ -71,6 +75,14 @@ export default {
     withStartOnTrigger: {
       type: Boolean,
       default: false,
+    },
+    nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
+      type: String,
+      required: false,
     },
   },
   data() {

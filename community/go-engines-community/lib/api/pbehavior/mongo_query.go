@@ -367,8 +367,19 @@ func getCommentAuthorPipeline(authorProvider author.Provider) []bson.M {
 			"includeArrayIndex":          "comment_index",
 		}},
 	}
-
 	pipeline = append(pipeline, authorProvider.PipelineForField("comments.author")...)
+	pipeline = append(pipeline, bson.M{
+		"$addFields": bson.M{
+			"comments.author": bson.M{"$cond": bson.M{
+				"if": "$comments.origin",
+				"then": bson.M{
+					"name":         "$comments.origin",
+					"display_name": "$comments.origin",
+				},
+				"else": "$comments.author",
+			}},
+		},
+	})
 	pipeline = append(pipeline,
 		bson.M{"$group": bson.M{
 			"_id":  "$_id",

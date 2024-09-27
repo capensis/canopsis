@@ -62,7 +62,7 @@ export const widgetActionPanelServiceEntityMixin = {
         [WEATHER_ACTIONS_TYPES.entityPlay]: this.applyPlayAction,
         [WEATHER_ACTIONS_TYPES.entityCancel]: this.showCancelModal,
         [WEATHER_ACTIONS_TYPES.entityComment]: this.showCreateCommentEventModal,
-        [WEATHER_ACTIONS_TYPES.declareTicket]: this.showCreateDeclareTicketModal,
+        [WEATHER_ACTIONS_TYPES.entityDeclareTicket]: this.showCreateDeclareTicketModal,
       };
     },
   },
@@ -286,7 +286,7 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     async showCreateDeclareTicketModal(entities) {
-      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.declareTicket, true);
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityDeclareTicket, true);
 
       try {
         const alarms = await this.fetchAlarmsByEntities(entities);
@@ -326,7 +326,7 @@ export const widgetActionPanelServiceEntityMixin = {
       } catch (err) {
         console.error(err);
       } finally {
-        this.setActionPendingByType(WEATHER_ACTIONS_TYPES.declareTicket, false);
+        this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityDeclareTicket, false);
       }
     },
 

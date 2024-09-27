@@ -30,7 +30,13 @@ func GetStringField(a interface{}, field string) string {
 
 // NewID generate an uuid
 func NewID() string {
-	return uuid.New().String()
+	id, err := uuid.NewV7()
+	if err != nil {
+		// error is extremely rare so panic is ok
+		panic(fmt.Errorf("cannot generate new ID: %w", err))
+	}
+
+	return id.String()
 }
 
 func MatchWithRegexExpression(re RegexExpression, s string) bool {

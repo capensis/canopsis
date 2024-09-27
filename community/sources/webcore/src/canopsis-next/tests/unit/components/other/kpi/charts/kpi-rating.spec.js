@@ -107,7 +107,6 @@ describe('kpi-rating', () => {
           to: 1386370800,
         },
       },
-      undefined,
     );
   });
 
@@ -209,7 +208,6 @@ describe('kpi-rating', () => {
     expect(fetchRatingMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
-      undefined,
     );
   });
 
@@ -260,7 +258,6 @@ describe('kpi-rating', () => {
     expect(fetchRatingMetrics).toBeCalledWith(
       expect.any(Object),
       { params: expectedParamsAfterUpdate },
-      undefined,
     );
   });
 

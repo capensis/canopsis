@@ -11,7 +11,7 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 
 ### Authentification
 
-- [Méthodes d'authentification avancées (LDAP, CAS, SAML2)](methodes-authentification-avancees.md)
+- [Méthodes d'authentification avancées (LDAP, CAS, SAML2, OAUTH2, OPENID)](methodes-authentification-avancees.md)
 
 ### Sécurisation
 

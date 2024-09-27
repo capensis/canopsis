@@ -104,6 +104,8 @@
             :action-required-blinking="actionRequiredSettings.is_blinking"
             :action-required-color="actionRequiredSettings.color"
             :action-required-icon="actionRequiredSettings.icon_name"
+            :no-action-required-color="noActionRequiredSettings.color"
+            :no-action-required-icon="noActionRequiredSettings.icon_name"
             :show-alarms-button="isBothModalType && hasAlarmsListAccess"
             :show-variables-help-button="hasVariablesHelpAccess"
             :template="widget.parameters.blockTemplate"
@@ -196,6 +198,10 @@ export default {
 
     actionRequiredSettings() {
       return this.widget.parameters.actionRequiredSettings ?? {};
+    },
+
+    noActionRequiredSettings() {
+      return this.widget.parameters.noActionRequiredSettings ?? {};
     },
 
     isBothModalType() {

@@ -311,7 +311,6 @@ describe('alarms-list', () => {
     expect(fetchUserPreference).toBeCalledWith(
       expect.any(Object),
       { id: widget._id },
-      undefined,
     );
 
     expect(updateQuery).toHaveBeenCalledWith(
@@ -329,7 +328,6 @@ describe('alarms-list', () => {
           opened: true,
         },
       },
-      undefined,
     );
   });
 
@@ -361,7 +359,6 @@ describe('alarms-list', () => {
           opened: true,
         },
       },
-      undefined,
     );
   });
 
@@ -411,7 +408,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -424,7 +420,6 @@ describe('alarms-list', () => {
           correlation: !userPreferences.content.isCorrelationEnabled,
         },
       },
-      undefined,
     );
   });
 
@@ -474,7 +469,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -487,7 +481,6 @@ describe('alarms-list', () => {
           only_bookmarks: !userPreferences.content.onlyBookmarks,
         },
       },
-      undefined,
     );
   });
 
@@ -543,7 +536,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -555,7 +547,6 @@ describe('alarms-list', () => {
           filter: selectedFilter._id,
         },
       },
-      undefined,
     );
   });
 
@@ -621,7 +612,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -658,7 +648,6 @@ describe('alarms-list', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -712,7 +701,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -729,7 +717,6 @@ describe('alarms-list', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -761,7 +748,6 @@ describe('alarms-list', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -817,7 +803,6 @@ describe('alarms-list', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -871,7 +856,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -884,7 +868,6 @@ describe('alarms-list', () => {
           category: newCategory._id,
         },
       },
-      undefined,
     );
   });
 
@@ -915,7 +898,6 @@ describe('alarms-list', () => {
           },
         },
       },
-      undefined,
     );
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -928,7 +910,6 @@ describe('alarms-list', () => {
           itemsPerPage: newLimit,
         },
       },
-      undefined,
     );
   });
 
@@ -958,7 +939,6 @@ describe('alarms-list', () => {
           page: newPage,
         },
       },
-      undefined,
     );
   });
 
@@ -1021,7 +1001,6 @@ describe('alarms-list', () => {
         },
         widgetId: widget._id,
       },
-      undefined,
     );
 
     await flushPromises();
@@ -1034,7 +1013,6 @@ describe('alarms-list', () => {
         id: exportAlarmData._id,
         widgetId: widget._id,
       },
-      undefined,
     );
 
     await flushPromises();
@@ -1113,7 +1091,6 @@ describe('alarms-list', () => {
         },
         widgetId: widget._id,
       },
-      undefined,
     );
 
     wrapper.destroy();
@@ -1181,7 +1158,6 @@ describe('alarms-list', () => {
         },
         widgetId: widget._id,
       },
-      undefined,
     );
 
     wrapper.destroy();
@@ -1247,7 +1223,6 @@ describe('alarms-list', () => {
         id: exportAlarmData._id,
         widgetId: widget._id,
       },
-      undefined,
     );
 
     await flushPromises();
@@ -1260,7 +1235,6 @@ describe('alarms-list', () => {
         id: exportAlarmData._id,
         widgetId: widget._id,
       },
-      undefined,
     );
 
     await flushPromises();
@@ -1495,7 +1469,6 @@ describe('alarms-list', () => {
           tstop: expect.any(Number),
         },
       },
-      undefined,
     );
   });
 
@@ -1547,7 +1520,6 @@ describe('alarms-list', () => {
           tstop: expect.any(Number),
         },
       },
-      undefined,
     );
     expect(expanded).toEqual({
       'non-exist-id': false,
@@ -1604,7 +1576,6 @@ describe('alarms-list', () => {
           tstop: expect.any(Number),
         },
       },
-      undefined,
     );
   });
 

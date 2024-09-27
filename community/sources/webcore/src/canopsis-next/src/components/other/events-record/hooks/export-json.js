@@ -1,5 +1,6 @@
 import { ref, unref } from 'vue';
 
+import { openUrlInNewTab } from '@/helpers/url';
 import { getEventsRecordFileUrl } from '@/helpers/entities/events-record/url';
 
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
@@ -24,7 +25,7 @@ export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [] }) => 
   const { generateFile } = useExportFile({
     createHandler: createEventsRecordExport,
     fetchHandler: fetchEventsRecordExport,
-    urlPreparer: fileData => getEventsRecordFileUrl(fileData?._id),
+    endHandler: fileData => openUrlInNewTab(getEventsRecordFileUrl(fileData?._id)),
   });
 
   /**

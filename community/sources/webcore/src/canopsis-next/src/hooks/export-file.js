@@ -3,8 +3,6 @@ import { unref } from 'vue';
 import { EXPORT_FETCHING_INTERVAL } from '@/config';
 import { EXPORT_STATUSES } from '@/constants';
 
-import { openUrlInNewTab } from '@/helpers/url';
-
 import { usePolling } from './polling';
 
 /**
@@ -13,7 +11,7 @@ import { usePolling } from './polling';
  * @param {Object} options - Options for exporting a file
  * @param {Function} options.createHandler - Function to create the file
  * @param {Function} options.fetchHandler - Function to fetch the file
- * @param {Function} [options.urlPreparer = () => ''] - Function to prepare the URL for the file (default: empty string)
+ * @param {Function} [options.endHandler] - Function to handle end of polling
  * @param {number} [options.completedStatus = EXPORT_STATUSES.completed] - Status code for completed export (default: 1)
  * @param {number} [options.failedStatus = EXPORT_STATUSES.failed] - Status code for failed export (default: 2)
  * @param {number} [options.interval = EXPORT_FETCHING_INTERVAL] - Interval in milliseconds for polling (default: 2000)
@@ -22,7 +20,7 @@ import { usePolling } from './polling';
 export const useExportFile = ({
   createHandler,
   fetchHandler,
-  urlPreparer = () => '',
+  endHandler = () => {},
   completedStatus = EXPORT_STATUSES.completed,
   failedStatus = EXPORT_STATUSES.failed,
   interval = EXPORT_FETCHING_INTERVAL,
@@ -50,13 +48,6 @@ export const useExportFile = ({
 
     return exportData;
   };
-
-  /**
-   * Function to handle the end of the export process
-   *
-   * @param {Object} fileData - Data of the exported file
-   */
-  const endHandler = fileData => openUrlInNewTab(urlPreparer(fileData));
 
   const {
     poll,

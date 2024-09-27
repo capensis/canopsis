@@ -5,7 +5,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import {
   createSettingsMocks,
   getWidgetRequestWithNewProperty,
@@ -135,6 +135,10 @@ const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle
   wrapper,
   'Actions allowed when state OK?',
 );
+const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Is correlation enabled by default?',
+);
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
@@ -155,10 +159,6 @@ describe('alarm', () => {
     stubs: snapshotStubs,
     parentComponent,
   });
-
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
 
   const $sidebar = mockSidebar();
 
@@ -212,6 +212,10 @@ describe('alarm', () => {
     serviceModule,
     infosModule,
   ]);
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   afterEach(() => {
     createWidget.mockReset();
@@ -1363,6 +1367,32 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isActionsAllowWithOkState', isActionsAllowWithOkState),
+      },
+    });
+  });
+
+  test('Actions allowed with state ok changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const isCorrelationEnabled = Faker.datatype.boolean();
+
+    selectFieldCorrelationEnabled(wrapper).triggerCustomEvent('input', isCorrelationEnabled);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isCorrelationEnabled', isCorrelationEnabled),
       },
     });
   });

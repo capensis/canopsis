@@ -32,9 +32,6 @@ const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 
 describe('create-declare-ticket-event', () => {
-  const timestamp = 1386435600000;
-  jest.useFakeTimers({ now: timestamp });
-
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -103,6 +100,10 @@ describe('create-declare-ticket-event', () => {
     },
   });
 
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
 
@@ -122,7 +123,7 @@ describe('create-declare-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledTimes(1);
     expect(action).toBeCalledWith([], false);
@@ -166,7 +167,7 @@ describe('create-declare-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.show).toBeCalledWith(
       {
@@ -215,7 +216,7 @@ describe('create-declare-ticket-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -239,7 +240,7 @@ describe('create-declare-ticket-event', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

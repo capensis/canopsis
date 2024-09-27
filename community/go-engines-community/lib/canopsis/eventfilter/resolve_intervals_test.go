@@ -265,7 +265,6 @@ func TestUpdateIntervals(t *testing.T) {
 	}
 
 	for testName, dataSet := range dataSets {
-		dataSet := dataSet
 		t.Run(testName, func(t *testing.T) {
 			opt, err := rrule.StrToROption(dataSet.rrule)
 			if err != nil {

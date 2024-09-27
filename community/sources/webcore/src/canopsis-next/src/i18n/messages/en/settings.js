@@ -64,6 +64,7 @@ export default {
   fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
   isCorrelationEnabled: 'Is correlation enabled?',
+  isCorrelationEnabledDefault: 'Is correlation enabled by default?',
   duration: 'Duration',
   tstop: 'End date',
   periodsNumber: 'Number of steps',
@@ -169,7 +170,7 @@ export default {
     linksInRowCountTooltip: 'This count of links always will be displayed in the one row includes more links (`...`) button',
   },
   liveReporting: {
-    title: 'Live reporting',
+    title: 'Set a custom date range',
   },
   counterLevels: {
     title: 'Levels',
@@ -276,6 +277,12 @@ export default {
     customColor: 'Custom color',
     customIcon: 'Custom icon',
   },
+  noActionRequiredSettings: {
+    title: 'No action required state settings',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
+  stateSettings: 'State settings',
   kioskMode: 'Kiosk mode',
   kiosk: {
     hideActions: 'Hide actions',

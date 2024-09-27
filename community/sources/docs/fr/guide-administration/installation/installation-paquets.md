@@ -108,18 +108,18 @@ rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/clo
 
 cat << EOF > /etc/yum.repos.d/rabbitmq.repo
 ##
-## Zero dependency Erlang
+## Zero dependency Erlang RPM
 ##
 
-[modern-erlang-noarch]
-name=modern-erlang-el8-noarch
-baseurl=https://yum1.novemberain.com/erlang/el/8/noarch
-        https://yum2.novemberain.com/erlang/el/8/noarch
-        https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/rpm/el/8/noarch
+[modern-erlang]
+name=modern-erlang-el8
+# Use a set of mirrors maintained by the RabbitMQ core team.
+# The mirrors have significantly higher bandwidth quotas.
+baseurl=https://yum1.novemberain.com/erlang/el/8/$basearch
+        https://yum2.novemberain.com/erlang/el/8/$basearch
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
-       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
 gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
@@ -136,9 +136,9 @@ type=rpm-md
 name=rabbitmq-el8-noarch
 baseurl=https://yum2.novemberain.com/rabbitmq/el/8/noarch
         https://yum1.novemberain.com/rabbitmq/el/8/noarch
-        https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/rpm/el/8/noarch
 repo_gpgcheck=1
 enabled=1
+# Cloudsmith's repository key and RabbitMQ package signing key
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
 gpgcheck=1
@@ -201,14 +201,22 @@ dnf module enable redis:6
 
 ```sh
 dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.14.2 timescaledb-2-loader-postgresql-13-2.14.2
-dnf install --repo rabbitmq_erlang --repo rabbitmq_server rabbitmq-server
+dnf install rabbitmq-server
 ```
 
-Pour éviter un upgrade automatique des dépendances de Canopsis, vous pouvez épingler leurs paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
+Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
+ou RabbitMQ, vous devriez utiliser [*versionlock*][dnf-versionlock] :
 
+```sh
+dnf install 'dnf-command(versionlock)'
+dnf versionlock add timescaledb-2-loader-postgresql-13 timescaledb-2-postgresql-13
+dnf versionlock add --raw 'rabbitmq-server-3.*'
 ```
-exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,nginx,nginx-filesystem,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-13,timescaledb-2-loader-postgresql-13
-```
+
+Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
+maintien dans la branche majeure souhaitée (exemples : MongoDB 7.0, Redis 6).
+
+[dnf-versionlock]: https://dnf-plugins-core.readthedocs.io/en/latest/versionlock.html
 
 ### Ouverture des ports
 
@@ -549,5 +557,28 @@ systemctl enable --now nginx.service
 
 Une fois cette commande terminée, vous pouvez alors réaliser votre [première connexion à l'interface Canopsis](premiere-connexion.md).
 
-Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
+## Mises à jour
 
+Lorsque vous souhaitez réaliser une mise à jour, la procédure est décrite dans
+le [Guide de mise à jour](../mise-a-jour/index.md).
+
+Il est fortement conseillé d'utiliser à nouveau [*versionlock*][dnf-versionlock]
+pour rester dans la version majeure de Canopsis que vous venez d'installer.
+
+Ainsi, vous bénéficierez des mises à jour mineures. Mais vous ne risquez pas
+une montée de version majeure non prévue vers une majeure suivante à l'occasion
+d'une mise à jour de routine de l'ensemble des paquets système.
+
+=== "Canopsis Community (édition open-source)"
+
+    ```sh
+    dnf versionlock add --raw 'canopsis-24.04.*'
+    dnf versionlock add --raw 'canopsis-webui-24.04.*'
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    ```sh
+    dnf versionlock add --raw 'canopsis-pro-24.04.*'
+    dnf versionlock add --raw 'canopsis-webui-24.04.*'
+    ```

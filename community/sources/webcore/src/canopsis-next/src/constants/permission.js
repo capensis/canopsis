@@ -231,6 +231,7 @@ export const USERS_PERMISSIONS = {
       actions: {
         entityAck: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityAck`,
         entityAssocTicket: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityAssocTicket`,
+        entityDeclareTicket: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityDeclareTicket`,
         entityComment: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityComment`,
         entityValidate: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityValidate`,
         entityInvalidate: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityInvalidate`,
@@ -408,6 +409,7 @@ export const USERS_PERMISSIONS = {
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
       theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
       icon: `${USER_PERMISSIONS_PREFIXES.api}_icon`,
+      techmetricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_techmetrics_settings`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
@@ -515,6 +517,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.entityAck]: USERS_PERMISSIONS.business.serviceWeather.actions.entityAck,
     [WEATHER_ACTIONS_TYPES.entityAssocTicket]:
       USERS_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket,
+    [WEATHER_ACTIONS_TYPES.entityDeclareTicket]:
+      USERS_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket,
     [WEATHER_ACTIONS_TYPES.entityValidate]: USERS_PERMISSIONS.business.serviceWeather.actions.entityValidate,
     [WEATHER_ACTIONS_TYPES.entityInvalidate]:
       USERS_PERMISSIONS.business.serviceWeather.actions.entityInvalidate,

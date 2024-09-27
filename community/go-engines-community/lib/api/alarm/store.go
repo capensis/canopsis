@@ -132,7 +132,7 @@ func NewStore(
 func (s *store) GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error) {
 	now := datetime.NewCpsTime()
 
-	pipeline, err := s.getQueryBuilder().CreateGetDisplayNamesPipeline(r, now)
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetDisplayNamesPipeline(r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userID st
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userID)
+	pipeline, err := s.getQueryBuilder(collection.Name()).CreateListAggregationPipeline(ctx, r, now, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userID st
 
 func (s *store) GetByID(ctx context.Context, id, userID string, onlyParents bool) (*Alarm, error) {
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, now, userID,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"_id": id}, now, userID,
 		OpenedAndRecentResolved, onlyParents)
 	if err != nil {
 		return nil, err
@@ -212,7 +212,13 @@ func (s *store) GetByID(ctx context.Context, id, userID string, onlyParents bool
 	}
 
 	if len(result.Data) == 0 {
-		resolvedCursor, err := s.resolvedDbCollection.Aggregate(ctx, pipeline)
+		resolvedPipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateGetAggregationPipeline(
+			bson.M{"_id": id}, now, userID, OpenedAndRecentResolved, onlyParents)
+		if err != nil {
+			return nil, err
+		}
+
+		resolvedCursor, err := s.resolvedDbCollection.Aggregate(ctx, resolvedPipeline)
 		if err != nil {
 			return nil, err
 		}
@@ -246,7 +252,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userID string) 
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userID,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userID,
 		OnlyOpened, false)
 	if err != nil {
 		return nil, false, err
@@ -288,16 +294,16 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		return nil, err
 	}
 
-	entityMatch := bson.M{"entity.services": service.ID}
+	entityMatch := bson.M{entityDbPrefix + ".services": service.ID}
 	if r.WithService {
 		entityMatch = bson.M{"$or": []bson.M{
-			{"entity._id": service.ID},
+			{entityDbPrefix + "._id": service.ID},
 			entityMatch,
 		}}
 	}
 
 	opened := true
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		nil,
 		entityMatch,
 		r.Query,
@@ -347,9 +353,9 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 	}
 
 	opened := true
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		nil,
-		bson.M{"entity.component": component.ID},
+		bson.M{entityDbPrefix + ".component": component.ID},
 		r.Query,
 		r.SortRequest,
 		FilterRequest{BaseFilterRequest: BaseFilterRequest{
@@ -394,7 +400,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userID 
 	}
 
 	opened := false
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+	pipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateAggregationPipelineByMatch(ctx,
 		bson.M{"d": r.ID},
 		nil,
 		r.Query,
@@ -503,7 +509,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children,
+			childrenPipeline, err := s.getQueryBuilder(collection.Name()).CreateChildrenAggregationPipeline(*r.Children,
 				r.GetOpenedFilter(), details.Entity.ID, r.Search, userID, r.SearchBy, now)
 			if err != nil {
 				return nil, err
@@ -551,7 +557,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 		collection = s.resolvedDbCollection
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, userID, datetime.NewCpsTime())
+	pipeline, err := s.getQueryBuilder(collection.Name()).CreateCountAggregationPipeline(ctx, r, userID, datetime.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -579,6 +585,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 		{"$count": "count"},
 	}
 
+	totalUnackPipeline := []bson.M{
+		{"$match": bson.M{"v.ack": bson.M{"$exists": false}}},
+		{"$count": "count"},
+	}
+
 	totalTicketPipeline := []bson.M{
 		{"$match": bson.M{"v.ticket": bson.M{"$exists": true}}},
 		{"$count": "count"},
@@ -598,6 +609,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 			"total_active":    totalActivePipeline,
 			"total_snooze":    totalSnoozePipeline,
 			"total_ack":       totalAckPipeline,
+			"total_unack":     totalUnackPipeline,
 			"total_ticket":    totalTicketPipeline,
 			"total_pbehavior": totalPbehaviorPipeline,
 		}},
@@ -659,7 +671,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	now := datetime.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+	pipeline, err := s.getQueryBuilder(collectionName).CreateOnlyListAggregationPipeline(ctx, ListRequest{
 		FilterRequest: FilterRequest{
 			BaseFilterRequest: r.BaseFilterRequest,
 			SearchBy:          t.Fields.Fields(),
@@ -1398,8 +1410,8 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userID
 	return nil
 }
 
-func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient, s.authorProvider)
+func (s *store) getQueryBuilder(collectionName string) *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider, collectionName)
 }
 
 func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {

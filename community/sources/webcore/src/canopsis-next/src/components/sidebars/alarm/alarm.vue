@@ -35,6 +35,7 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.groupColumnNames')"
         :type="$constants.ENTITIES_TYPES.alarm"
+        with-template
         with-html
         with-color-indicator
         @update:template="updateWidgetGroupColumnsTemplate"
@@ -182,6 +183,10 @@
       <field-switcher
         v-model="form.parameters.isVirtualScrollEnabled"
         :title="$t('settings.isVirtualScrollEnabled')"
+      />
+      <field-switcher
+        v-model="form.parameters.isCorrelationEnabled"
+        :title="$t('settings.isCorrelationEnabledDefault')"
       />
     </widget-settings-group>
     <charts-form v-model="form.parameters.charts" />

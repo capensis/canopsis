@@ -30,6 +30,8 @@ definitions:
         type: integer
       defaultview:
         $ref: '#/definitions/user.View'
+      deletable:
+        type: boolean
       display_name:
         type: string
       email:
@@ -70,6 +72,9 @@ definitions:
   action.Parameters:
     properties:
       author:
+        type: string
+      color:
+        description: Color is used in pbehavior action.
         type: string
       declare_ticket:
         $ref: '#/definitions/request.WebhookDeclareTicket'
@@ -377,6 +382,8 @@ definitions:
       total:
         type: integer
       total_active:
+        type: integer
+      unack:
         type: integer
     type: object
   alarm.Details:
@@ -2480,6 +2487,8 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      optional:
+        type: boolean
       regexp:
         additionalProperties:
           type: string
@@ -4753,7 +4762,9 @@ definitions:
         - cancel
         - changestate
         - pbehavior
+        - pbehaviorremove
         - snooze
+        - unsnooze
         - webhook
         type: string
     required:
@@ -5477,6 +5488,11 @@ definitions:
             * `4` - Disabled
         type: integer
     type: object
+  techmetrics.Settings:
+    properties:
+      enabled:
+        type: boolean
+    type: object
   template.Request:
     properties:
       text:
@@ -5709,6 +5725,8 @@ definitions:
         type: integer
       defaultview:
         $ref: '#/definitions/user.View'
+      deletable:
+        type: boolean
       display_name:
         type: string
       email:

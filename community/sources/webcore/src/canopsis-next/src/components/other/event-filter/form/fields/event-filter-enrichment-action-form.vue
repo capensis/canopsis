@@ -8,9 +8,10 @@
         <v-layout column>
           <v-layout>
             <v-select
-              v-field="form.type"
+              :value="form.type"
               :items="eventFilterActionTypes"
               :label="$t('common.type')"
+              @change="changeActionType"
             />
             <v-btn
               class="mr-0"
@@ -34,12 +35,14 @@
             :label="$t('common.description')"
           />
           <v-layout v-if="isStringDictionaryValueType">
-            <c-payload-text-field
+            <v-text-field
               v-field="form.value"
+              v-validate="'required'"
               key="value"
               :label="$t('common.value')"
               :name="valueFieldName"
-              required
+              :error-messages="errors.collect(valueFieldName)"
+              :prefix="eventExtraPrefix"
               clearable
             />
           </v-layout>
@@ -76,7 +79,7 @@
                 :name="valueFieldName"
                 class="ml-2"
               />
-              <event-filter-enrichment-action-form-select-rags-value
+              <event-filter-enrichment-action-form-select-tags-value
                 v-else-if="isSelectValueType"
                 v-field="form.value"
                 key="value"
@@ -100,18 +103,27 @@
 </template>
 
 <script>
-import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import {
+  ACTION_COPY_PAYLOAD_VARIABLES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
+} from '@/constants';
+
+import {
+  eventFilterDictionaryActionValueToForm,
+  formToEventFilterDictionaryActionValue,
+} from '@/helpers/entities/event-filter/rule/form';
 
 import { formMixin } from '@/mixins/form';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
-import EventFilterEnrichmentActionFormSelectRagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
+import EventFilterEnrichmentActionFormSelectTagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     EventFilterEnrichmentActionFormTypeInfo,
-    EventFilterEnrichmentActionFormSelectRagsValue,
+    EventFilterEnrichmentActionFormSelectTagsValue,
   },
   mixins: [formMixin],
   model: {
@@ -137,6 +149,9 @@ export default {
     },
   },
   computed: {
+    eventExtraPrefix() {
+      return EVENT_FILTER_EVENT_EXTRA_PREFIX;
+    },
     nameFieldName() {
       return `${this.name}.name`;
     },
@@ -180,12 +195,24 @@ export default {
       return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === this.form.type;
     },
   },
-  watch: {
-    'form.type': function typeWatcher() {
+  methods: {
+    changeActionType(type) {
+      const newForm = {
+        ...this.form,
+
+        type,
+      };
+
+      if (this.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = formToEventFilterDictionaryActionValue(this.form.value);
+      } else if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = eventFilterDictionaryActionValueToForm(this.form.value);
+      }
+
+      this.updateModel(newForm);
       this.errors.clear();
     },
-  },
-  methods: {
+
     remove() {
       this.$emit('remove', this.form);
     },

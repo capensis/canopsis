@@ -60,6 +60,7 @@ type ExternalDataParameters struct {
 	Regexp     map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
 	SortBy     string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`
 	Sort       string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
+	Optional   bool              `json:"optional,omitempty" bson:"optional,omitempty"`
 
 	// are used in api external data
 	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
@@ -76,7 +77,10 @@ type Rule struct {
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *datetime.CpsTime                 `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *datetime.CpsTime                 `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-	EventsCount  int64                             `bson:"events_count,omitempty" json:"events_count,omitempty"`
+
+	EventsCount         int64 `bson:"events_count,omitempty" json:"events_count,omitempty"`
+	FailuresCount       int64 `bson:"failures_count,omitempty" json:"failures_count,omitempty"`
+	UnreadFailuresCount int64 `bson:"unread_failures_count,omitempty" json:"unread_failures_count,omitempty"`
 
 	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`

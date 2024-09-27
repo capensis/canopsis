@@ -15,6 +15,9 @@ const (
 
 	EditionCommunity = "community"
 	EditionPro       = "pro"
+
+	MongoMigrationExecGoja    = "goja"
+	MongoMigrationExecMongosh = "mongosh"
 )
 
 type flags struct {
@@ -28,6 +31,7 @@ type flags struct {
 
 	modeMigrateMongo        bool
 	mongoMigrationDirectory string
+	mongoMigrationExec      string
 	mongoFixtureDirectory   string
 
 	modeMigratePostgres        bool
@@ -55,6 +59,7 @@ func (f *flags) Parse() {
 
 	flag.BoolVar(&f.modeMigrateMongo, "migrate-mongo", true, "If true, it will execute Mongo migration scripts")
 	flag.StringVar(&f.mongoMigrationDirectory, "mongo-migration-directory", DefaultMongoMigrationsPath, "The directory with Mongo migration scripts")
+	flag.StringVar(&f.mongoMigrationExec, "mongo-migration-exec", MongoMigrationExecGoja, "The execution of Mongo migration scripts: "+MongoMigrationExecGoja+" or "+MongoMigrationExecMongosh)
 
 	flag.StringVar(&f.mongoFixtureDirectory, "mongo-fixture-directory", DefaultMongoFixturesPath, "The directory with Mongo fixtures")
 	flag.BoolVar(&f.mongoFixtureMigrations, "mongo-fixture-migrations", false, "If true, it will fill migration collection with migration versions without executing them during mongo fixtures loading")

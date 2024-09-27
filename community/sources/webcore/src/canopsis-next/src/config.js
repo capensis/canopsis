@@ -38,7 +38,7 @@ export const PAGINATION_TOTAL_VISIBLE = 7;
 export const DEFAULT_SANITIZE_OPTIONS = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([
     'h1', 'h2', 'u', 'nl', 'font', 'img', 'video', 'audio', 'area', 'map', 'strike', 'button', 'span', 'address',
-    'bdo', 'cite', 'q', 'dfn', 'var', 'dl', 'dt', 'dd', 'section', 'article', 'colgroup', 'col',
+    'bdo', 'cite', 'q', 'dfn', 'var', 'dl', 'dt', 'dd', 'section', 'article', 'colgroup', 'col', 'center',
 
     /**
      * VUE COMPONENTS
@@ -276,6 +276,7 @@ export const API_ROUTES = {
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
+  techMetricsSettings: '/api/v4/tech-metrics-settings',
   templateVars: '/api/v4/template-vars',
   templateValidator: {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
