@@ -95,7 +95,7 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (_ 
 	}
 
 	defer func() {
-		err = lock.Release(ctx)
+		err = lock.Release(context.WithoutCancel(ctx))
 		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) && resErr == nil {
 			resErr = fmt.Errorf("cannot release lock: %w", err)
 		}
@@ -139,7 +139,7 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedE
 	}
 
 	defer func() {
-		err = lock.Release(ctx)
+		err = lock.Release(context.WithoutCancel(ctx))
 		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) && resErr == nil {
 			resErr = fmt.Errorf("cannot release lock: %w", err)
 		}
