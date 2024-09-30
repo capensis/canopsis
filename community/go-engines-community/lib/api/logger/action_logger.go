@@ -10,6 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/bsm/redislock"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,11 +19,19 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+var errFailedToRefreshLock = errors.New("failed to refresh lock")
+
 const (
 	getLogQuery    = "SELECT id FROM action_log WHERE type = $1 AND value_type = $2 AND value_id = $3"
 	insertLogQuery = "INSERT INTO action_log (type, value_type, value_id, author, time, data) VALUES ($1, $2, $3, $4, $5, $6)"
 
 	workerPoolSize = 10
+
+	redisLockTTLDuration     = 30 * time.Second
+	redisLockRefreshDuration = redisLockTTLDuration / 2
+
+	redisLockAcquireRetries  = 5
+	redisLockAcquireInterval = redisLockRefreshDuration / redisLockAcquireRetries
 )
 
 const (
@@ -39,6 +49,8 @@ type logger struct {
 	pgPoolProvider postgres.PoolProvider
 	zLog           zerolog.Logger
 
+	redisLockClient libredis.LockClient
+
 	collectionValueTypeMap map[string]string
 	watchedCollections     []string
 
@@ -48,6 +60,7 @@ type logger struct {
 
 func NewActionLogger(
 	dbClient mongo.DbClient,
+	redisLockClient libredis.LockClient,
 	pgPoolProvider postgres.PoolProvider,
 	zLog zerolog.Logger,
 	retryCount int,
@@ -101,6 +114,8 @@ func NewActionLogger(
 		dbClient:       dbClient,
 		pgPoolProvider: pgPoolProvider,
 		zLog:           zLog,
+
+		redisLockClient: redisLockClient,
 
 		collectionValueTypeMap: collectionValueTypeMap,
 		watchedCollections:     watchedCollections,
@@ -164,47 +179,146 @@ func (l *logger) log(ctx context.Context, log ActionLog) error {
 	return err
 }
 
-func (l *logger) Watch(ctx context.Context) error {
-	var retryTimeout time.Duration
+func (l *logger) obtainLock(ctx context.Context) (libredis.Lock, error) {
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, nil
+		default:
+		}
 
-	for attempt := 0; attempt <= l.maxRetries; attempt++ {
-		g := errgroup.Group{}
-
-		eventChan, err := l.runWatcher(ctx, &g)
-		if err == nil {
-			// if err = nil, means that stream is created, so we drop counter and timeout to default values.
-			attempt = 0
-			retryTimeout = l.retryTimeout
-
-			for j := 0; j < workerPoolSize; j++ {
-				g.Go(func() error {
-					l.runWorker(ctx, eventChan)
-
-					return nil
-				})
+		lock, err := l.redisLockClient.Obtain(ctx, libredis.ApiActionLogWatchLockKey, redisLockTTLDuration, &redislock.Options{
+			RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(redisLockAcquireInterval), redisLockAcquireRetries),
+		})
+		if err != nil {
+			if errors.Is(err, redislock.ErrNotObtained) {
+				l.zLog.Debug().Msg("action logger redis lock is not obtained, retry")
+				continue
 			}
 
-			err = g.Wait()
+			return nil, fmt.Errorf("cannot obtain lock: %w", err)
 		}
 
-		if err != nil && !mongo.IsConnectionError(err) {
-			return err
+		l.zLog.Debug().Msg("action logger redis lock is obtained")
+
+		return lock, nil
+	}
+}
+
+func (l *logger) startLockRefresher(ctx context.Context, lock libredis.Lock) chan struct{} {
+	exitChan := make(chan struct{})
+
+	go func() {
+		defer close(exitChan)
+
+		ticker := time.NewTicker(redisLockRefreshDuration)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := lock.Refresh(ctx, redisLockTTLDuration, &redislock.Options{})
+				if err != nil {
+					l.zLog.Err(err).Msg("failed to refresh lock")
+					return
+				}
+
+				l.zLog.Debug().Msg("action logger redis lock is refreshed")
+			}
+		}
+	}()
+
+	return exitChan
+}
+
+func (l *logger) Watch(ctx context.Context) error {
+	var lock libredis.Lock
+
+	defer func() {
+		if lock == nil {
+			return
 		}
 
-		if attempt == l.maxRetries || retryTimeout == 0 {
-			return fmt.Errorf("action log failed to watch db after %d retries: %w", attempt, err)
+		err := lock.Release(context.WithoutCancel(ctx))
+		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
+			l.zLog.Err(err).Msg("failed to release lock")
 		}
 
+		l.zLog.Debug().Msg("action logger redis lock is released")
+	}()
+
+	for {
 		select {
 		case <-ctx.Done():
 			return nil
-		case <-time.After(retryTimeout):
-			l.zLog.Warn().Int("attempt", attempt+1).Int("max_attempts", l.maxRetries).Msg("action log watcher: connection retry")
-			retryTimeout *= 2
+		default:
+		}
+
+		var err error
+
+		lock, err = l.obtainLock(ctx)
+		if err != nil {
+			return err
+		}
+
+		exitChan := l.startLockRefresher(ctx, lock)
+
+		var retryTimeout time.Duration
+
+		for attempt := 0; attempt <= l.maxRetries; attempt++ {
+			g, gCtx := errgroup.WithContext(ctx)
+
+			g.Go(func() error {
+				select {
+				case <-gCtx.Done():
+					return nil
+				case <-exitChan:
+					return errFailedToRefreshLock
+				}
+			})
+
+			eventChan, err := l.runWatcher(gCtx, g)
+			if err == nil {
+				// if err = nil, means that stream is created, so we drop counter and timeout to default values.
+				attempt = 0
+				retryTimeout = l.retryTimeout
+
+				for j := 0; j < workerPoolSize; j++ {
+					g.Go(func() error {
+						l.runWorker(gCtx, eventChan)
+
+						return nil
+					})
+				}
+
+				err = g.Wait()
+			}
+
+			if err != nil && !mongo.IsConnectionError(err) {
+				if errors.Is(err, errFailedToRefreshLock) {
+					// refresh is failed, so the lock is no longer belong to us for whatever reason,
+					// do not retry watcher again, break from mongo retries cycle and try to obtain the lock again.
+					break
+				}
+
+				return err
+			}
+
+			if attempt == l.maxRetries || retryTimeout == 0 {
+				return fmt.Errorf("action log failed to watch db after %d retries: %w", attempt, err)
+			}
+
+			select {
+			case <-ctx.Done():
+				return nil
+			case <-time.After(retryTimeout):
+				l.zLog.Warn().Int("attempt", attempt+1).Int("max_attempts", l.maxRetries).Msg("action log watcher: connection retry")
+				retryTimeout *= 2
+			}
 		}
 	}
-
-	return nil
 }
 
 func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan ActionLogEvent, error) {
