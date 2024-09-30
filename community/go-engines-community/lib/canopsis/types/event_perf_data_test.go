@@ -154,12 +154,22 @@ func TestEvent_GetPerfData(t *testing.T) {
 		{
 			Input: "cpu=20&",
 		},
+		{
+			Input: "temp=20°C",
+			Expected: []types.PerfData{
+				{
+					Name:  "temp_°C",
+					Value: 20,
+					Unit:  "°C",
+				},
+			},
+		},
 	}
-
+	units := []string{"%", "°C", "B", "MB", "GB", "TB"}
 	event := types.Event{}
 	for _, data := range dataSet {
 		event.PerfData = data.Input
-		result := event.GetPerfData()
+		result := event.GetPerfData(units)
 		if diff := pretty.Compare(data.Expected, result); diff != "" {
 			t.Errorf("%q: %s", data.Input, diff)
 		}

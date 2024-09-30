@@ -383,6 +383,8 @@ definitions:
         type: integer
       total_active:
         type: integer
+      unack:
+        type: integer
     type: object
   alarm.Details:
     properties:
@@ -2485,6 +2487,8 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      optional:
+        type: boolean
       regexp:
         additionalProperties:
           type: string
@@ -5483,6 +5487,11 @@ definitions:
             * `3` - Failed
             * `4` - Disabled
         type: integer
+    type: object
+  techmetrics.Settings:
+    properties:
+      enabled:
+        type: boolean
     type: object
   template.Request:
     properties:
