@@ -7,6 +7,8 @@ volumes:
     driver: local
   timescaledata:
     driver: local
+  techmetricsdata:
+    driver: local
   junitsharedata:
     driver: local
   nginxcerts:
@@ -49,8 +51,6 @@ x-app_service_base: &app_service_base
   depends_on:
     reconfigure:
       condition: service_completed_successfully
-
-
 
 services:
 
@@ -144,6 +144,7 @@ services:
       - TIMESCALEDB_TELEMETRY=off
     volumes:
       - timescaledata:/var/lib/postgresql/data
+      - ./files/postgresql/tech_metrics.sh:/docker-entrypoint-initdb.d/tech_metrics.sh
     shm_size: 1g
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
@@ -158,7 +159,7 @@ services:
   reconfigure:
     <<: *inital_config_base
     image: ${DOCKER_REPOSITORY}community/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
-    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     volumes:
       - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
   #

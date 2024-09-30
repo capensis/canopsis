@@ -444,6 +444,7 @@ type Count struct {
 	TotalActive    int `bson:"total_active" json:"total_active"`
 	TotalSnooze    int `bson:"total_snooze" json:"snooze"`
 	TotalAck       int `bson:"total_ack" json:"ack"`
+	TotalUnack     int `bson:"total_unack" json:"unack"`
 	TotalTicket    int `bson:"total_ticket" json:"ticket"`
 	TotalPbehavior int `bson:"total_pbehavior" json:"pbehavior_active"`
 }
