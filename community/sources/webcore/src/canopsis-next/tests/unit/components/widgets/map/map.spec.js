@@ -130,7 +130,6 @@ describe('map', () => {
         id: mapId,
         params: {},
       },
-      undefined,
     );
   });
 
@@ -165,7 +164,6 @@ describe('map', () => {
         id: nextMap._id,
         params: {},
       },
-      undefined,
     );
   });
 
@@ -201,7 +199,6 @@ describe('map', () => {
         id: mapId,
         params: {},
       },
-      undefined,
     );
   });
 
@@ -238,7 +235,6 @@ describe('map', () => {
         id: mapId,
         params: {},
       },
-      undefined,
     );
   });
 
@@ -288,7 +284,6 @@ describe('map', () => {
           },
         },
       },
-      undefined,
     );
 
     expect(updateQuery).toBeCalledWith(
@@ -299,7 +294,6 @@ describe('map', () => {
           category: category._id,
         },
       },
-      undefined,
     );
   });
 
@@ -366,7 +360,6 @@ describe('map', () => {
         id: entityId,
         params,
       },
-      undefined,
     );
 
     expect(response).toEqual(serviceAlarmsResponse);
@@ -415,7 +408,6 @@ describe('map', () => {
           _id: entityId,
         },
       },
-      undefined,
     );
     fetchOpenAlarmsListWithoutStore.mockClear();
 

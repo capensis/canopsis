@@ -3,6 +3,7 @@ package techmetrics
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -47,18 +48,18 @@ type Task struct {
 }
 
 func NewTaskExecutor(
-	configProvider config.TechMetricsConfigProvider,
+	store Store,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
-		configProvider: configProvider,
-		logger:         logger,
+		store:  store,
+		logger: logger,
 	}
 }
 
 type taskExecutor struct {
-	configProvider config.TechMetricsConfigProvider
-	logger         zerolog.Logger
+	store  Store
+	logger zerolog.Logger
 
 	pgPoolMx     sync.Mutex
 	pgPool       postgres.Pool
@@ -134,7 +135,13 @@ func (e *taskExecutor) Run(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				if !e.configProvider.Get().Enabled {
+				conf, err := e.store.GetSettings(ctx)
+				if err != nil {
+					e.logger.Err(err).Msg("cannot get config")
+					continue
+				}
+
+				if !conf.Enabled {
 					continue
 				}
 
@@ -167,7 +174,12 @@ func (e *taskExecutor) Run(ctx context.Context) {
 }
 
 func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
-	if !e.configProvider.Get().Enabled {
+	conf, err := e.store.GetSettings(ctx)
+	if err != nil {
+		return Task{}, fmt.Errorf("cannot get config: %w", err)
+	}
+
+	if !conf.Enabled {
 		return Task{}, errors.New("tech metrics are disabled")
 	}
 
@@ -215,7 +227,12 @@ func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
 }
 
 func (e *taskExecutor) GetStatus(ctx context.Context) (Task, error) {
-	if !e.configProvider.Get().Enabled {
+	conf, err := e.store.GetSettings(ctx)
+	if err != nil {
+		return Task{}, fmt.Errorf("cannot get config: %w", err)
+	}
+
+	if !conf.Enabled {
 		return Task{
 			Status: TaskStatusDisabled,
 		}, nil
@@ -240,7 +257,13 @@ func (e *taskExecutor) GetStatus(ctx context.Context) (Task, error) {
 }
 
 func (e *taskExecutor) executeLastTask(ctx context.Context) {
-	if !e.configProvider.Get().Enabled {
+	conf, err := e.store.GetSettings(ctx)
+	if err != nil {
+		e.logger.Err(err).Msg("cannot get config")
+		return
+	}
+
+	if !conf.Enabled {
 		return
 	}
 
@@ -278,9 +301,19 @@ func (e *taskExecutor) executeLastTask(ctx context.Context) {
 }
 
 func (e *taskExecutor) deleteTasks(ctx context.Context) {
-	conf := e.configProvider.Get()
+	conf, err := e.store.GetSettings(ctx)
+	if err != nil {
+		e.logger.Err(err).Msg("cannot get config")
+		return
+	}
+
 	if !conf.Enabled {
 		return
+	}
+
+	dumpKeepInterval, err := time.ParseDuration(conf.DumpKeepInterval)
+	if err == nil || dumpKeepInterval <= 0 {
+		dumpKeepInterval = config.TechMetricsDumpKeepInterval
 	}
 
 	pgPool, err := e.getPgPool(ctx)
@@ -290,7 +323,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 	}
 
 	now := time.Now().UTC()
-	date := now.Add(-conf.DumpKeepInterval)
+	date := now.Add(-dumpKeepInterval)
 	rows, err := pgPool.Query(ctx, "SELECT id, filepath FROM export WHERE status != $1 AND completed < $2", TaskStatusRunning, date)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot get tasks")

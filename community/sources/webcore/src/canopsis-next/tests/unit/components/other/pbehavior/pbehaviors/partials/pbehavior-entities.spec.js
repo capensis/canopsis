@@ -58,7 +58,6 @@ describe('pbehavior-entities', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 

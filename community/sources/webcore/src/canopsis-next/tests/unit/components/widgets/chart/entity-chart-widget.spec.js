@@ -107,7 +107,6 @@ describe('entity-chart-widget', () => {
           ],
         },
       },
-      undefined,
     );
   });
 
@@ -156,7 +155,6 @@ describe('entity-chart-widget', () => {
           ],
         },
       },
-      undefined,
     );
   });
 

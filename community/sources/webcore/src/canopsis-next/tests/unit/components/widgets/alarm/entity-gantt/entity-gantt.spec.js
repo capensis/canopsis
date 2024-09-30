@@ -72,7 +72,6 @@ describe('entity-gantt', () => {
           page: newQuery.page,
         },
       },
-      undefined,
     );
   });
 
@@ -99,7 +98,6 @@ describe('entity-gantt', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
