@@ -1043,7 +1043,7 @@ export default {
   },
   eventsRecord: {
     title: 'Enregistrement des événements {date}',
-    subtitle: '{count} événements de RabbitMQ reçus',
+    subtitle: '{count} événements reçus',
     buttonTooltip: 'Supprimer les événements reçus',
   },
 };
