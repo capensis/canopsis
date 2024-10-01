@@ -230,6 +230,21 @@ func (mr *MockChannelMockRecorder) QueueDeclare(arg0, arg1, arg2, arg3, arg4, ar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclare", reflect.TypeOf((*MockChannel)(nil).QueueDeclare), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
+// QueueDelete mocks base method.
+func (m *MockChannel) QueueDelete(arg0 string, arg1, arg2, arg3 bool) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueDelete", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// QueueDelete indicates an expected call of QueueDelete.
+func (mr *MockChannelMockRecorder) QueueDelete(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDelete", reflect.TypeOf((*MockChannel)(nil).QueueDelete), arg0, arg1, arg2, arg3)
+}
+
 // QueueInspect mocks base method.
 func (m *MockChannel) QueueInspect(arg0 string) (amqp091.Queue, error) {
 	m.ctrl.T.Helper()
@@ -258,6 +273,20 @@ func (m *MockChannel) QueuePurge(arg0 string, arg1 bool) (int, error) {
 func (mr *MockChannelMockRecorder) QueuePurge(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueuePurge", reflect.TypeOf((*MockChannel)(nil).QueuePurge), arg0, arg1)
+}
+
+// Reject mocks base method.
+func (m *MockChannel) Reject(arg0 uint64, arg1 bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Reject", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Reject indicates an expected call of Reject.
+func (mr *MockChannelMockRecorder) Reject(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockChannel)(nil).Reject), arg0, arg1)
 }
 
 // MockPublisher is a mock of Publisher interface.

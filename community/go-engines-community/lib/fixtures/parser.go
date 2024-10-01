@@ -22,6 +22,7 @@ const (
 	methodCurrent          = "Current"
 	methodIndex            = "Index"
 	methodRangeIndex       = "RangeIndex"
+	methodBytes            = "Bytes"
 )
 
 type Parser interface {
@@ -273,6 +274,11 @@ func (p *parser) processMethod(val string, fieldVal interface{}, index int, rang
 			return nil, errors.New("cannot use range index")
 		}
 		return *rangeIndex, nil
+	case methodBytes:
+		if args == "" {
+			return nil, fmt.Errorf("%q args not defined", methodBytes)
+		}
+		return []byte(args), nil
 	default:
 		newVal, err := callReflectMethod(p.reflectFaker, method, args)
 		if err != nil {

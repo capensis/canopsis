@@ -116,7 +116,7 @@ func (p Alarm) RemoveFields(fields, onlyTimeAbsoluteFields []string) Alarm {
 }
 
 func GetAlarmInfoName(f string) string {
-	if n := strings.TrimPrefix(f, "v.infos."); n != f {
+	if n, ok := strings.CutPrefix(f, "v.infos."); ok {
 		return n
 	}
 

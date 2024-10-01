@@ -539,6 +539,11 @@ permission:
     _id: models_tag
     name: <Current()._id>
     description: "Alarm tags"
+  permission_models_eventsRecord:
+    <<: *permission
+    _id: models_eventsRecord
+    name: <Current()._id>
+    description: "Events record"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -1471,6 +1476,16 @@ permission:
     _id: api_techmetrics_settings
     name: <Current()._id>
     description: Tech metrics settings
+  permission_api_launch_event_recording:
+    <<: *permission
+    _id: api_launch_event_recording
+    name: <Current()._id>
+    description: Launch event recording
+  permission_api_resend_events:
+    <<: *permission
+    _id: api_resend_events
+    name: <Current()._id>
+    description: Event recorder resend events
 
   # Views permissions
   permission_view_open_alarms:
@@ -1540,6 +1555,7 @@ role:
       "@permission_models_profile_color_theme": 15
       "@permission_models_stateSetting": 15
       "@permission_models_icon": 15
+      "@permission_models_eventsRecord": 1
       "@permission_availability_interval": 1
       "@permission_availability_listFilters": 1
       "@permission_availability_editFilter": 1
@@ -1724,6 +1740,8 @@ role:
       "@permission_api_private_view_groups": 1
       "@permission_api_icon": 1
       "@permission_api_techmetrics_settings": 15
+      "@permission_api_launch_event_recording": 1
+      "@permission_api_resend_events": 1
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15

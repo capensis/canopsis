@@ -103,6 +103,7 @@ func NewActionLogger(
 		mongo.MetaAlarmRulesMongoCollection:     ValueTypeMetaalarmRule,
 		mongo.SnmpRulesCollection:               ValueTypeSnmpRule,
 		mongo.InstructionMongoCollection:        ValueTypeInstruction,
+		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))

@@ -35,7 +35,7 @@ func (p Entity) RemoveFields(fields []string) Entity {
 }
 
 func GetEntityInfoName(f string) string {
-	if n := strings.TrimPrefix(f, "infos."); n != f {
+	if n, ok := strings.CutPrefix(f, "infos."); ok {
 		return n
 	}
 
@@ -43,7 +43,7 @@ func GetEntityInfoName(f string) string {
 }
 
 func GetEntityComponentInfoName(f string) string {
-	if n := strings.TrimPrefix(f, "component_infos."); n != f {
+	if n, ok := strings.CutPrefix(f, "component_infos."); ok {
 		return n
 	}
 

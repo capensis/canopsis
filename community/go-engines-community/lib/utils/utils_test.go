@@ -64,22 +64,6 @@ func TestFindStringSubmatchMapWithRegexExpression(t *testing.T) {
 	})
 }
 
-func TestGetStringField(t *testing.T) {
-	Convey("Given an alarm", t, func() {
-		s := Station{"Loubyanka", "Red", 1234}
-
-		Convey("We can read a field", func() {
-			So(utils.GetStringField(s, "Faction"), ShouldEqual, "Red")
-		})
-		Convey("We cannot read an int field", func() {
-			So(utils.GetStringField(s, "Population"), ShouldEqual, "<int Value>")
-		})
-		Convey("We cannot read a missing field", func() {
-			So(utils.GetStringField(s, "Evolution"), ShouldEqual, "")
-		})
-	})
-}
-
 func TestAsString(t *testing.T) {
 	Convey("Given a string", t, func() {
 		s := "a string"
@@ -124,7 +108,33 @@ func TestTruncateString(t *testing.T) {
 		Convey("Calling TruncateString where chars > 0 should truncate string", func() {
 			So(utils.TruncateString(s, 6), ShouldEqual, "string")
 		})
+
+		s = "こんにちは"
+		Convey("Calling TruncateString where chars > 0 should truncate unicode string", func() {
+			So(utils.TruncateString(s, 3), ShouldEqual, "こんに")
+		})
 	})
+}
+
+func BenchmarkTruncateStringUnicode(b *testing.B) {
+	s := "こんにちは"
+	for i := 0; i < b.N; i++ {
+		utils.TruncateString(s, 3)
+	}
+}
+
+func BenchmarkTruncateStringShort(b *testing.B) {
+	s := "string to truncate"
+	for i := 0; i < b.N; i++ {
+		utils.TruncateString(s, 30)
+	}
+}
+
+func BenchmarkTruncateStringASCII(b *testing.B) {
+	s := "string to truncate"
+	for i := 0; i < b.N; i++ {
+		utils.TruncateString(s, 6)
+	}
 }
 
 var findAllStringSubmatchMapCases = []struct {
