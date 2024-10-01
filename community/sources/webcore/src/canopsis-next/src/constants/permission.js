@@ -121,6 +121,7 @@ export const USERS_PERMISSIONS = {
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
+    eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -439,6 +440,11 @@ export const USERS_PERMISSIONS = {
       pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
+    },
+
+    eventsRecord: {
+      launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
+      resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
     },
   },
 };

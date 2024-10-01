@@ -76,6 +76,7 @@ import { ref, computed, onMounted } from 'vue';
 import { TECH_METRICS_EXPORT_STATUSES } from '@/constants';
 
 import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { openUrlInNewTab } from '@/helpers/url';
 
 import { useI18n } from '@/hooks/i18n';
 import { useExportFile } from '@/hooks/export-file';
@@ -136,7 +137,7 @@ export default {
     /**
      * Handles file generation and download for technical metrics export.
      */
-    const { generateFile, downloadFile } = useExportFile({
+    const { generateFile } = useExportFile({
       createHandler: createTechMetricsExport,
       fetchHandler: fetchTechMetrics,
       completedStatus: TECH_METRICS_EXPORT_STATUSES.success,
@@ -146,7 +147,7 @@ export default {
     /**
      * Initiates the download of the technical metrics file.
      */
-    const downloadTechMetrics = () => downloadFile(getTechMetricsDownloadFileUrl());
+    const downloadTechMetrics = () => openUrlInNewTab(getTechMetricsDownloadFileUrl());
 
     /**
      * Handles exporting technical metrics and managing the state of the export process.
