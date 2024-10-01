@@ -28,6 +28,7 @@
           >
             <slot
               :selected="selected"
+              :selected-keys="selectedKeys"
               :count="selected.length"
               :clear-selected="clearSelected"
               name="mass-actions"
@@ -128,6 +129,8 @@
 </template>
 
 <script>
+import { mapIds } from '@/helpers/array';
+
 export default {
   model: {
     prop: 'selected',
@@ -271,6 +274,10 @@ export default {
       set(selected) {
         this.selectedItems = selected;
       },
+    },
+
+    selectedKeys() {
+      return mapIds(this.selected, this.itemKey);
     },
 
     visibleItems() {

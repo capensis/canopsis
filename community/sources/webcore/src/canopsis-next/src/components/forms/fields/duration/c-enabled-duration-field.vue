@@ -43,9 +43,9 @@
 </template>
 
 <script>
-import { AVAILABLE_TIME_UNITS } from '@/constants';
+import { computed, toRef } from 'vue';
 
-import { convertUnit } from '@/helpers/date/duration';
+import { useEnabledDurationField } from '@/components/forms/fields/duration/hooks/enabled-duration-field';
 
 export default {
   inject: ['$validator'],
@@ -79,59 +79,26 @@ export default {
       required: false,
     },
   },
-  computed: {
-    enabledFieldName() {
-      return `${this.name}.enabled`;
-    },
+  setup(props) {
+    const enabledFieldName = computed(() => `${props.name}.enabled`);
 
-    timeUnits() {
-      const units = this.units || [
-        AVAILABLE_TIME_UNITS.day,
-        AVAILABLE_TIME_UNITS.week,
-        AVAILABLE_TIME_UNITS.month,
-        AVAILABLE_TIME_UNITS.year,
-      ];
+    const {
+      timeUnits,
+      min,
+      validate,
+    } = useEnabledDurationField({
+      duration: toRef(props, 'duration'),
+      name: toRef(props, 'name'),
+      units: toRef(props, 'units'),
+      after: toRef(props, 'after'),
+    });
 
-      return units.map(({ value, text }) => ({
-        value,
-        text: this.$tc(text, this.duration.value),
-      }));
-    },
-
-    min() {
-      if (!this.duration.enabled || !this.after) {
-        return 1;
-      }
-
-      return Math.floor(convertUnit(this.after.value, this.after.unit, this.duration.unit)) + 1;
-    },
-  },
-  mounted() {
-    this.attachField();
-  },
-  beforeDestroy() {
-    this.detachField();
-  },
-  methods: {
-    attachField() {
-      const fieldOptions = {
-        name: this.name,
-        vm: this,
-        getter: () => this.duration,
-      };
-
-      this.$validator.attach(fieldOptions);
-    },
-
-    detachField() {
-      this.$validator.detach(this.name);
-    },
-
-    validate() {
-      if (this.errors.has(this.name)) {
-        this.$validator.validate(this.name);
-      }
-    },
+    return {
+      enabledFieldName,
+      timeUnits,
+      min,
+      validate,
+    };
   },
 };
 </script>

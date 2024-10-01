@@ -91,4 +91,9 @@ export default {
       deletedCount: 'Alarm external tags deleted: {count}.',
     },
   },
+  eventsRecords: {
+    title: 'Events recordings data storage',
+    titleHelp: 'All recordings older than the defined time period will be deleted',
+    deleteAfter: 'Delete events recordings after',
+  },
 };

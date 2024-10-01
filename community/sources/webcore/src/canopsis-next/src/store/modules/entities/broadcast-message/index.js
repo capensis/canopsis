@@ -9,6 +9,10 @@ export default createCRUDModule({
   withFetchingParams: true,
 }, {
   actions: {
+    async fetchListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.broadcastMessage.list, { params });
+    },
+
     async fetchActiveListWithoutStore() {
       return request.get(API_ROUTES.broadcastMessage.activeList);
     },

@@ -368,6 +368,13 @@ export const API_ROUTES = {
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
   },
+  eventsRecord: {
+    list: '/api/v4/cat/event-records',
+    export: '/api/v4/cat/event-records/exports',
+    current: '/api/v4/cat/event-records-current',
+    event: '/api/v4/cat/event-records/events',
+    bulkEvent: '/api/v4/cat/event-records/events/bulk',
+  },
 };
 
 export const COLORS = {
