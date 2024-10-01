@@ -31,6 +31,8 @@ import { omit } from 'lodash';
 
 import { MODALS, MAP_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
 
+import { pickIds } from '@/helpers/array';
+
 import { authMixin } from '@/mixins/auth';
 import { permissionsTechnicalMapMixin } from '@/mixins/permissions/technical/map';
 import { entitiesMapMixin } from '@/mixins/entities/map';
@@ -132,7 +134,7 @@ export default {
         config: {
           action: async () => {
             await this.bulkRemoveMaps({
-              data: selected.map(({ _id: id }) => ({ _id: id })),
+              data: pickIds(selected),
             });
 
             return this.fetchList();
