@@ -979,7 +979,7 @@ export default {
     },
 
     [USERS_PERMISSIONS.api.eventsRecord.launchEventRecording]: {
-      name: 'Enregistrement des événements de lancement',
+      name: 'Lancement d\'un enregistrement d\'événements',
       description: 'Accès à la route API pour lancer et récupérer les enregistrements d\'événements',
     },
     [USERS_PERMISSIONS.api.eventsRecord.resendEvents]: {
