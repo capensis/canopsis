@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -44,15 +43,7 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 					"$v.inactive_start",
 				}},
 			}},
-			"v.inactive_start": bson.M{"$cond": bson.M{
-				"if": bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$v.snooze", nil}},
-					{"$in": bson.A{"$v.pbehavior_info", bson.A{nil, "", pbehavior.TypeActive}}},
-					{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
-				}},
-				"then": nil,
-				"else": event.Parameters.Timestamp,
-			}},
+			"v.inactive_start": updateInactiveStart(event.Parameters.Timestamp, true, true, false, true),
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
