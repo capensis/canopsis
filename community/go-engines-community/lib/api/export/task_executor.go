@@ -28,6 +28,7 @@ type TaskExecutor interface {
 	// StartExecute creates new export task.
 	StartExecute(ctx context.Context, t TaskParameters) (*Task, error)
 	Get(ctx context.Context, id string) (*Task, error)
+	SetFormatter(t string, f OutputFormatter)
 }
 
 type FetchData func(ctx context.Context, t Task) (DataCursor, error)
@@ -36,6 +37,16 @@ type DataCursor interface {
 	Next(ctx context.Context) bool
 	Scan(*map[string]any) error
 	Close(ctx context.Context) error
+}
+
+type OutputFormatter interface {
+	GetFileExtension() string
+	DataFetcher(context.Context, FieldsSeparatorGetter, DataCursor) (string, error)
+}
+
+type FieldsSeparatorGetter interface {
+	GetFields() Fields
+	GetSeparator() rune
 }
 
 func NewTaskExecutor(
@@ -55,6 +66,8 @@ func NewTaskExecutor(
 
 		fetches: make(map[string]FetchData),
 
+		formatter:              &csvFormatter{}, // default formatter, can be changed by SetFormatter
+		customFormatter:        make(map[string]OutputFormatter),
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
@@ -74,6 +87,8 @@ type taskExecutor struct {
 	taskCh   chan<- string
 	taskChMx sync.Mutex
 
+	formatter              OutputFormatter
+	customFormatter        map[string]OutputFormatter
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
@@ -188,9 +203,10 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 		Parameters: params.Parameters,
 		Fields:     params.Fields,
 		Separator:  params.Separator,
-		Filename:   params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) + ".csv",
-		User:       params.UserID,
-		Created:    now,
+		Filename: params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) +
+			e.getFormatter(params.Type).GetFileExtension(),
+		User:    params.UserID,
+		Created: now,
 	}
 
 	_, err := e.collection.InsertOne(ctx, t)
@@ -204,6 +220,15 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 	}
 
 	return &t, nil
+}
+
+func (e *taskExecutor) getFormatter(t string) OutputFormatter {
+	formatter, ok := e.customFormatter[t]
+	if !ok {
+		formatter = e.formatter
+	}
+
+	return formatter
 }
 
 func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
@@ -273,7 +298,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 		return err
 	}
 
-	fileName, err := ToCsv(ctx, t.Fields, t.Separator, cursor)
+	fileName, err := e.getFormatter(t.Type).DataFetcher(ctx, t, cursor)
 	if err != nil {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
@@ -389,4 +414,8 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (e *taskExecutor) SetFormatter(t string, f OutputFormatter) {
+	e.customFormatter[t] = f
 }

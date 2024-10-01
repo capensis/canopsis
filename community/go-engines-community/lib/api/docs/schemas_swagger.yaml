@@ -1421,6 +1421,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      event_records:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithUnit'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -1483,6 +1488,8 @@ definitions:
       entity_unlinked:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
+        type: integer
+      event_records:
         type: integer
       health_check:
         type: integer
