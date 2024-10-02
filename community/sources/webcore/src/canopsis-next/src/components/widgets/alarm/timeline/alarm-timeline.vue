@@ -5,7 +5,7 @@
       :label="$t('alarm.timeline.groupItems')"
       @input="updateGroup"
     />
-    <alarm-timeline-days :days="days" />
+    <alarm-timeline-days :days="days" :is-html-enabled="isHtmlEnabled" />
     <c-pagination
       :total="meta.total_count"
       :limit="meta.per_page"
@@ -36,6 +36,10 @@ export default {
     query: {
       type: Object,
       default: () => ({}),
+    },
+    isHtmlEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
