@@ -1,4 +1,4 @@
-import { isString, escapeRegExp } from 'lodash';
+import { escapeRegExp } from 'lodash';
 import Handlebars from 'handlebars';
 
 import { MAX_LIMIT } from '@/constants';
@@ -7,32 +7,19 @@ import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 export const alarmHandlebarsTagsHelper = {
   beforeCreate() {
+    /**
+     * @example {{tags 'tag1' 'tag2' regex='tag.*'}}
+     */
     registerHelper('tags', (...args) => {
-      const filterPatterns = args.reduce((acc, arg) => {
-        if (!arg) {
-          return acc;
-        }
-
-        if (isString(arg)) {
-          acc.push(escapeRegExp(arg));
-
-          return acc;
-        }
-
-        const { regex = '' } = arg?.hash ?? {};
-
-        if (regex) {
-          acc.push(`(${regex})`);
-        }
-
-        return acc;
-      }, []).join('|');
+      const { hash: { regex } = {} } = args.pop() ?? {};
+      const nameFilter = args.filter(Boolean).map(arg => escapeRegExp(arg)).join('|');
 
       return new Handlebars.SafeString(
         `<c-alarm-tags-chips
         :alarm="alarm"
         :selected-tag="selectedTag"
-        filter-pattern="${filterPatterns}"
+        name-filter="^${nameFilter}$"
+        regex-filter="${regex}"
         inline-count="${MAX_LIMIT}"
         closable-active
         @select="$emit('select:tag', $event)"
