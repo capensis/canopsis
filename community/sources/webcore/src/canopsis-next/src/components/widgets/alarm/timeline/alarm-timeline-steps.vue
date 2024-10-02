@@ -4,6 +4,7 @@
       <alarm-timeline-step
         :key="step._id"
         :step="step"
+        :is-html-enabled="isHtmlEnabled"
         @expand="toggleExpandedForStep(step._id, $event)"
       />
       <alarm-timeline-step-expand
@@ -27,6 +28,10 @@ export default {
     steps: {
       type: Array,
       default: () => [],
+    },
+    isHtmlEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {
