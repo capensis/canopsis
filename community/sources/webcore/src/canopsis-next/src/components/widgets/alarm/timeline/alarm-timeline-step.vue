@@ -23,7 +23,8 @@
           </div>
         </v-layout>
         <div v-if="step.m" class="grey--text mt-2 pre-wrap">
-          {{ step.m }}
+          <span v-if="isHtmlEnabled" v-html="sanitizedStepMessage" />
+          <span v-else>{{ step.m }}</span>
         </div>
       </v-layout>
     </v-flex>
@@ -36,6 +37,7 @@ import { ref, computed } from 'vue';
 import { ALARM_LIST_STEPS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 
 import AlarmTimelineStepIcon from './alarm-timeline-step-icon.vue';
 import AlarmTimelineStepTitle from './alarm-timeline-step-title.vue';
@@ -48,6 +50,10 @@ export default {
       default: () => ({}),
     },
     deep: {
+      type: Boolean,
+      default: false,
+    },
+    isHtmlEnabled: {
       type: Boolean,
       default: false,
     },
@@ -79,6 +85,8 @@ export default {
       }
     });
 
+    const sanitizedStepMessage = computed(() => sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))));
+
     const expand = () => {
       expanded.value = !expanded.value;
 
@@ -92,6 +100,7 @@ export default {
       wrapperClass,
       time,
       resultIcon,
+      sanitizedStepMessage,
 
       expand,
     };
