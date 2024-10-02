@@ -39,19 +39,29 @@ export default {
       type: Boolean,
       default: false,
     },
-    filterPattern: {
+    nameFilter: {
+      type: String,
+      default: '',
+    },
+    regexFilter: {
       type: String,
       default: '',
     },
   },
   computed: {
     filteredTags() {
-      const { tags = [] } = this.alarm;
+      let { tags } = this.alarm;
 
-      if (this.filterPattern) {
-        const filterPatternRegex = new RegExp(this.filterPattern, 'i');
+      if (this.nameFilter) {
+        const regex = new RegExp(this.nameFilter);
 
-        return tags.filter(tag => tag.match(filterPatternRegex));
+        tags = tags.filter(tag => tag.match(regex));
+      }
+
+      if (this.regexFilter) {
+        const regex = new RegExp(this.regexFilter, 'i');
+
+        tags = tags.filter(tag => tag.match(regex));
       }
 
       return tags;
