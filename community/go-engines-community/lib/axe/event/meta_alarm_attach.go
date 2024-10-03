@@ -74,7 +74,7 @@ func (p *metaAlarmAttachProcessor) Process(ctx context.Context, event rpc.AxeEve
 		return result, nil
 	}
 
-	_, updatedChildrenAlarms, updatedChildrenEvents, err := p.attachChildrenToMetaAlarm(ctx, event)
+	updatedChildrenAlarms, updatedChildrenEvents, err := p.attachChildrenToMetaAlarm(ctx, event)
 	if err != nil {
 		return result, err
 	}
@@ -120,9 +120,9 @@ func (p *metaAlarmAttachProcessor) sendToFifo(ctx context.Context, event types.E
 	return nil
 }
 
-func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, []types.Event, error) {
+func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context, event rpc.AxeEvent) ([]types.Alarm, []types.Event, error) {
 	if len(event.Parameters.MetaAlarmChildren) == 0 {
-		return nil, nil, nil, nil
+		return nil, nil, nil
 	}
 
 	var updatedChildrenAlarms []types.Alarm
@@ -284,22 +284,22 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 		return err
 	})
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 
 	if metaAlarm.ID == "" {
-		return nil, nil, nil, nil
+		return nil, nil, nil
 	}
 
 	childrenEvents := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarmsWithEntity)
 	for _, e := range activateChildEvents {
 		err = p.sendToFifo(ctx, e)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 	}
 
-	return &metaAlarm, updatedChildrenAlarms, childrenEvents, nil
+	return updatedChildrenAlarms, childrenEvents, nil
 }
 
 func (p *metaAlarmAttachProcessor) applyActionsOnChildren(

@@ -466,8 +466,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 
 	result.Alarm = newAlarm
 	result.AlarmChange = alarmChange
+	result.IsInstructionMatched, err = p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: newAlarm, Entity: entity})
 
-	return result, nil
+	return result, err
 }
 
 func (p *checkProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange {
