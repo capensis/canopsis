@@ -49,7 +49,7 @@ func (p *metaAlarmDetachProcessor) Process(ctx context.Context, event rpc.AxeEve
 		return result, nil
 	}
 
-	_, err := p.detachChildrenFromMetaAlarm(ctx, event)
+	err := p.detachChildrenFromMetaAlarm(ctx, event)
 	if err != nil {
 		return result, err
 	}
@@ -59,15 +59,15 @@ func (p *metaAlarmDetachProcessor) Process(ctx context.Context, event rpc.AxeEve
 	return result, nil
 }
 
-func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error) {
+func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Context, event rpc.AxeEvent) error {
 	if len(event.Parameters.MetaAlarmChildren) == 0 {
-		return nil, nil
+		return nil
 	}
 
 	var updatedChildrenAlarms []types.Alarm
 	var metaAlarm types.Alarm
 
-	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	return p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = updatedChildrenAlarms[:0]
 		metaAlarm = types.Alarm{}
 
@@ -206,9 +206,4 @@ func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Conte
 
 		return err
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &metaAlarm, nil
 }
