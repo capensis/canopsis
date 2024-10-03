@@ -426,7 +426,7 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 		}
 	}
 
-	if (a.Value.Snooze != nil || !a.Value.PbehaviorInfo.IsActive()) && a.Value.InactiveStart != nil {
+	if (a.Value.Snooze != nil || !a.Value.PbehaviorInfo.IsActive() || a.InactiveAutoInstructionInProgress) && a.Value.InactiveStart != nil {
 		inactiveDuration := int64(timestamp.Sub(a.Value.InactiveStart.Time).Seconds())
 		a.Value.InactiveDuration += inactiveDuration
 		a.AddUpdate("$inc", bson.M{"v.inactive_duration": inactiveDuration})
