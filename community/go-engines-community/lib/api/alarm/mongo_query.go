@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
@@ -1406,15 +1407,57 @@ func getComputedFields(now types.CpsTime) bson.M {
 		}},
 		"v.active_duration": bson.M{"$ifNull": bson.A{
 			"$v.active_duration",
-			bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
+			bson.M{"$cond": bson.M{
+				"if": "$v.resolved",
+				"then": bson.M{"$subtract": bson.A{
+					"$v.resolved",
+					bson.M{"$sum": bson.A{
+						"$v.creation_date",
+						"$v.inactive_duration",
+					}},
 				}},
-				bson.M{"$sum": bson.A{
-					"$v.creation_date",
-					"$v.inactive_duration",
+				"else": bson.M{"$subtract": bson.A{
+					now,
+					bson.M{"$sum": bson.A{
+						"$v.creation_date",
+						"$v.inactive_duration",
+						bson.M{"$cond": bson.M{
+							"if":   "$v.inactive_start",
+							"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+							"else": 0,
+						}},
+					}},
+				}},
+			}},
+		}},
+		"v.snooze_duration": bson.M{"$cond": bson.M{
+			"if":   "$v.resolved",
+			"then": "$v.snooze_duration",
+			"else": bson.M{"$sum": bson.A{
+				"$v.snooze_duration",
+				bson.M{"$cond": bson.M{
+					"if":   "$v.snooze",
+					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"else": 0,
+				}},
+			}},
+		}},
+		"v.pbh_inactive_duration": bson.M{"$cond": bson.M{
+			"if":   "$v.resolved",
+			"then": "$v.pbh_inactive_duration",
+			"else": bson.M{"$sum": bson.A{
+				"$v.pbh_inactive_duration",
+				bson.M{"$cond": bson.M{
+					"if": bson.M{"$not": bson.M{"$in": bson.A{
+						bson.M{"$cond": bson.M{
+							"if":   "$v.pbehavior_info",
+							"then": "$v.pbehavior_info.canonical_type",
+							"else": nil,
+						}},
+						bson.A{nil, "", pbehavior.TypeActive},
+					}}},
+					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"else": 0,
 				}},
 			}},
 		}},
