@@ -17,9 +17,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	petname "github.com/dustinkirkland/golang-petname"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	pgxdriver "github.com/jackc/pgx/v5"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -88,6 +90,11 @@ func main() {
 	err = migrateTechPostgres(f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to run tech postgres migrations")
+	}
+
+	err = generateSerialName(ctx, logger, f.forceGenerateSerialName)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to generate serial name")
 	}
 
 	// keep it in the end for cmd/ready
@@ -325,6 +332,51 @@ func migrateTechPostgres(f flags, logger zerolog.Logger) error {
 	}
 
 	logger.Info().Msg("finish tech postgres migrations")
+	return nil
+}
+
+func generateSerialName(ctx context.Context, logger zerolog.Logger, forceUpdate bool) error {
+	if os.Getenv(postgres.EnvURL) == "" {
+		return nil
+	}
+
+	pool, err := postgres.NewPool(ctx, 0, 0)
+	if err != nil {
+		return fmt.Errorf("failed to create postgres pool: %w", err)
+	}
+
+	_, err = pool.Exec(ctx, "CREATE TABLE IF NOT EXISTS serial_name (id VARCHAR(255) PRIMARY KEY);")
+	if err != nil {
+		return fmt.Errorf("failed to create serial_name table: %w", err)
+	}
+
+	serialName := ""
+
+	err = pool.QueryRow(ctx, "SELECT id FROM serial_name").Scan(&serialName)
+
+	isNoRows := errors.Is(err, pgxdriver.ErrNoRows)
+	if err != nil && !isNoRows {
+		return fmt.Errorf("failed to get serial_name from db: %w", err)
+	}
+
+	if isNoRows || forceUpdate {
+		serialName = petname.Generate(2, "-")
+		var query string
+
+		if isNoRows {
+			query = "INSERT INTO serial_name (id) VALUES ($1)"
+		} else {
+			query = "UPDATE serial_name SET id = $1"
+		}
+
+		_, err = pool.Exec(ctx, query, serialName)
+		if err != nil {
+			return fmt.Errorf("failed to execute serial_name query: %w", err)
+		}
+	}
+
+	logger.Info().Msgf("serial name: %q", serialName)
+
 	return nil
 }
 
