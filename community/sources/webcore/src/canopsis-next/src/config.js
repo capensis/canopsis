@@ -57,7 +57,10 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     marquee: ['direction'],
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
-    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
+    'c-alarm-tags-chips': [
+      ':alarm', ':selected-tag', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
+      '@select', '@close',
+    ],
     'c-entity-tags-chips': [':entity', 'inline-count'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
