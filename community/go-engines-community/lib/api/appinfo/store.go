@@ -2,12 +2,16 @@ package appinfo
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"github.com/jackc/pgx/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,21 +27,24 @@ type Store interface {
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
+	RetrieveSerialName(ctx context.Context) (string, error)
 }
 
 type store struct {
 	dbClient         mongo.DbClient
 	configCollection mongo.DbCollection
+	pgPoolProvider   postgres.PoolProvider
 
 	authProviders       []string
 	casTitle, samlTitle string
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, authProviders []string, casTitle, samlTitle string) Store {
+func NewStore(db mongo.DbClient, pgPoolProvider postgres.PoolProvider, authProviders []string, casTitle, samlTitle string) Store {
 	return &store{
 		dbClient:         db,
 		configCollection: db.Collection(mongo.ConfigurationMongoCollection),
+		pgPoolProvider:   pgPoolProvider,
 		authProviders:    authProviders,
 		casTitle:         casTitle,
 		samlTitle:        samlTitle,
@@ -174,4 +181,19 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
 	_, err := s.configCollection.DeleteOne(ctx, bson.M{"_id": config.UserInterfaceKeyName})
 	return err
+}
+
+func (s *store) RetrieveSerialName(ctx context.Context) (string, error) {
+	pool, err := s.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get postgres pool: %w", err)
+	}
+
+	var serialName string
+	err = pool.QueryRow(ctx, "SELECT id FROM serial_name LIMIT 1").Scan(&serialName)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return "", fmt.Errorf("failed to get serial name: %w", err)
+	}
+
+	return serialName, nil
 }
