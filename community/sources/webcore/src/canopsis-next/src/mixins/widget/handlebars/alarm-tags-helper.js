@@ -12,8 +12,8 @@ export const alarmHandlebarsTagsHelper = {
      */
     registerHelper('tags', (...args) => {
       const { hash: { regex = '', flags = '' } = {} } = args.pop() ?? {};
-      const escapedArgs = args.filter(Boolean).map(arg => escapeRegExp(arg)).join('|');
-      const nameFilter = escapedArgs.length ? `^${escapedArgs.join('|')}$` : '';
+      const escapedArgs = args.filter(Boolean).map(arg => escapeRegExp(arg));
+      const nameFilter = escapedArgs.length ? `^(${escapedArgs.join('|')})$` : '';
 
       return new Handlebars.SafeString(
         `<c-alarm-tags-chips
