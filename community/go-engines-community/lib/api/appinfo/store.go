@@ -3,6 +3,7 @@ package appinfo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -10,7 +11,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -28,6 +31,7 @@ type Store interface {
 	DeleteUserInterfaceConfig(ctx context.Context) error
 	RetrieveMaintenanceState(ctx context.Context) (bool, error)
 	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Response, error)
+	RetrieveSerialName(ctx context.Context) (string, error)
 }
 
 type store struct {
@@ -35,18 +39,20 @@ type store struct {
 	configCollection     mongo.DbCollection
 	colorThemeCollection mongo.DbCollection
 	maintenanceAdapter   config.MaintenanceAdapter
+	pgPoolProvider       postgres.PoolProvider
 	securityConfig       security.Config
 	authorProvider       author.Provider
 }
 
 // NewStore instantiates configuration store.
 func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter,
-	securityConfig security.Config, authorProvider author.Provider) Store {
+	pgPoolProvider postgres.PoolProvider, securityConfig security.Config, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:             db,
 		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
 		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
 		maintenanceAdapter:   maintenanceAdapter,
+		pgPoolProvider:       pgPoolProvider,
 		securityConfig:       securityConfig,
 		authorProvider:       authorProvider,
 	}
@@ -236,4 +242,19 @@ func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Respo
 	}
 
 	return response, errors.New("no default theme found")
+}
+
+func (s *store) RetrieveSerialName(ctx context.Context) (string, error) {
+	pool, err := s.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get postgres pool: %w", err)
+	}
+
+	var serialName string
+	err = pool.QueryRow(ctx, "SELECT id FROM serial_name LIMIT 1").Scan(&serialName)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return "", fmt.Errorf("failed to get serial name: %w", err)
+	}
+
+	return serialName, nil
 }
