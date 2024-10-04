@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"sort"
 	"sync"
 	"text/template"
 
@@ -914,5 +915,19 @@ func (g *generator) getCodeArgs(
 		items = entities
 	}
 
-	return []any{items, user}
+	args := []any{items, user}
+	tplVars := g.tplExecutor.GetDefaultTplVars()
+	if len(tplVars) > 0 {
+		keys := make([]string, 0, len(tplVars))
+		for k := range tplVars {
+			keys = append(keys, k)
+		}
+
+		sort.Strings(keys)
+		for _, k := range keys {
+			args = append(args, tplVars[k])
+		}
+	}
+
+	return args
 }

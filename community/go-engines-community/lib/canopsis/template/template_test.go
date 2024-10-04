@@ -785,7 +785,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 
 	for i, data := range dataSet {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			res := addEnvVarsToData(data.Data, envVars)
+			res := addDefaultTplVarsToData(data.Data, map[string]any{EnvVar: envVars})
 			if diff := pretty.Compare(res, data.ExpectedRes); diff != "" {
 				t.Errorf("unexpected result %s", diff)
 			}
