@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     filteredTags() {
-      const { tags = [] } = this.alarm;
+      const tags = (this.alarm.tags ?? []);
       const regexps = [];
 
       if (this.nameFilter) {
