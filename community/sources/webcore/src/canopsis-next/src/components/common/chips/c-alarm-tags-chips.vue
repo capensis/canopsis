@@ -47,21 +47,26 @@ export default {
       type: String,
       default: '',
     },
+    regexFilterFlags: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     filteredTags() {
-      let { tags } = this.alarm;
+      const { tags } = this.alarm;
+      const regexps = [];
 
       if (this.nameFilter) {
-        const regex = new RegExp(this.nameFilter);
-
-        tags = tags.filter(tag => tag.match(regex));
+        regexps.push(new RegExp(this.nameFilter));
       }
 
       if (this.regexFilter) {
-        const regex = new RegExp(this.regexFilter, 'i');
+        regexps.push(new RegExp(this.regexFilter, this.regexFilterFlags));
+      }
 
-        tags = tags.filter(tag => tag.match(regex));
+      if (regexps.length) {
+        return tags.filter(tag => regexps.every(regex => tag.match(regex)));
       }
 
       return tags;
