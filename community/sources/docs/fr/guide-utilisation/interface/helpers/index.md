@@ -509,7 +509,39 @@ Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`
 {{tags}}
 ```
 
-Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'attend pas de paramètre.  
+Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge.
+
+#### Exemple d'utilisation du helper `tags`
+
+Afficher tous les tags d'une alarme :
+
+```handlebars
+{{ tags }}
+```
+
+Afficher les tags d'une alarme à partir de leur nom :
+
+```handlebars
+{{ tags 'Tag1' 'Tag2' }}
+```
+
+Afficher les tags d'une alarme à partir d'une expression régulière :
+
+```handlebars
+{{ tags regex='Tag\d+' }}
+```
+
+Afficher les tags d'une alarme à partir d'une expression régulière et de flags supplémentaires :
+
+```handlebars
+{{ tags regex='Tag\d+' flags='i' }}
+```
+
+Afficher les tags d'une alarme en combinant les options :
+
+```handlebars
+{{ tags 'Tag1' 'Tag2' regex='Tag\d+' flags='i' }}
+```
 
 ### Helper `links`
 
@@ -563,4 +595,3 @@ Renvoyer au format json une alarme complète :
 ```handlebars
 {{json alarm.v }}
 ```
-
