@@ -271,6 +271,7 @@ export default {
   copyPropertyPath: 'Copier le chemin de la propriété',
   hidden: 'Caché',
   numberField: 'Champ numérique',
+  serialName: 'Nom de série',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
