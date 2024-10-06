@@ -45,6 +45,7 @@ export default {
     isCASAuthEnabled: state => !!state.appInfo?.login?.casconfig?.enable,
     isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
     eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
+    serialName: state => state.appInfo?.serial_name,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {
