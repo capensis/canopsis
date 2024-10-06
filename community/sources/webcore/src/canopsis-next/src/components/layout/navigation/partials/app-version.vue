@@ -9,6 +9,7 @@
       <div>
         <div>{{ $t('common.stack') }}:<strong> {{ stack }}</strong></div>
         <div>{{ $t('common.edition') }}:<strong> {{ edition }}</strong></div>
+        <div>{{ $t('common.serialName') }}:<strong> {{ serialName }}</strong></div>
       </div>
     </v-tooltip>
   </div>
@@ -21,7 +22,7 @@ const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   computed: {
-    ...mapGetters(['version', 'stack', 'edition']),
+    ...mapGetters(['version', 'stack', 'edition', 'serialName']),
   },
 };
 </script>

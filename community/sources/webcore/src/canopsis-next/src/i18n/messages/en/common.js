@@ -303,6 +303,7 @@ export default {
   noResponse: 'No response',
   loadingItems: 'Loading items...',
   lastComment: 'Last comment',
+  serialName: 'Serial name',
   variableTypes: {
     string: 'String',
     number: 'Number',
