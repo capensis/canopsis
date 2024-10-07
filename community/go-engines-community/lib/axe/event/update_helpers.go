@@ -561,19 +561,11 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 						{"$gt": bson.A{"$v.inactive_start", 0}},
 						{"$or": []bson.M{
 							{"$ne": bson.A{
-								bson.M{"$cond": bson.M{
-									"if":   "$v.snooze",
-									"then": "$v.snooze",
-									"else": nil,
-								}},
+								bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
 								nil,
 							}},
 							{"$not": bson.M{"$in": bson.A{
-								bson.M{"$cond": bson.M{
-									"if":   "$v.pbehavior_info",
-									"then": "$v.pbehavior_info.canonical_type",
-									"else": nil,
-								}},
+								bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
 								bson.A{nil, "", pbehavior.TypeActive},
 							}}},
 							{"$eq": bson.A{"$auto_instruction_in_progress", true}},
@@ -603,11 +595,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 				"$v.snooze_duration",
 				bson.M{"$cond": bson.M{
 					"if": bson.M{"$ne": bson.A{
-						bson.M{"$cond": bson.M{
-							"if":   "$v.snooze",
-							"then": "$v.snooze",
-							"else": nil,
-						}},
+						bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
 						nil,
 					}},
 					"then": bson.M{"$subtract": bson.A{
@@ -621,11 +609,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 				"$v.pbh_inactive_duration",
 				bson.M{"$cond": bson.M{
 					"if": bson.M{"$not": bson.M{"$in": bson.A{
-						bson.M{"$cond": bson.M{
-							"if":   "$v.pbehavior_info",
-							"then": "$v.pbehavior_info.canonical_type",
-							"else": nil,
-						}},
+						bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
 						bson.A{nil, "", pbehavior.TypeActive},
 					}}},
 					"then": bson.M{"$subtract": bson.A{
@@ -661,22 +645,14 @@ func updateInactiveStart(
 	conds := make([]bson.M, 0)
 	if withSnoozeCond {
 		conds = append(conds, bson.M{"$eq": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.snooze",
-				"then": "$v.snooze",
-				"else": nil,
-			}},
+			bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
 			nil,
 		}})
 	}
 
 	if withPbhCond {
 		conds = append(conds, bson.M{"$in": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.pbehavior_info",
-				"then": "$v.pbehavior_info.canonical_type",
-				"else": nil,
-			}},
+			bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
 			bson.A{nil, "", pbehavior.TypeActive},
 		}})
 	}
