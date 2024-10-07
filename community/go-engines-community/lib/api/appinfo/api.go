@@ -50,6 +50,11 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	}
 	response.Remediation = &remediation
 
+	response.SerialName, err = a.store.RetrieveSerialName(c)
+	if err != nil {
+		panic(err)
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
