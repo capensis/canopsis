@@ -591,6 +591,8 @@ definitions:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
         $ref: '#/definitions/appinfo.RemediationConf'
+      serial_name:
+        type: string
       show_header_on_kiosk_mode:
         type: boolean
       stack:
