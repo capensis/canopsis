@@ -65,6 +65,20 @@ func (mr *MockExecutorMockRecorder) ExecuteByTpl(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteByTpl", reflect.TypeOf((*MockExecutor)(nil).ExecuteByTpl), arg0, arg1)
 }
 
+// GetDefaultTplVars mocks base method.
+func (m *MockExecutor) GetDefaultTplVars() map[string]interface{} {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDefaultTplVars")
+	ret0, _ := ret[0].(map[string]interface{})
+	return ret0
+}
+
+// GetDefaultTplVars indicates an expected call of GetDefaultTplVars.
+func (mr *MockExecutorMockRecorder) GetDefaultTplVars() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDefaultTplVars", reflect.TypeOf((*MockExecutor)(nil).GetDefaultTplVars))
+}
+
 // Parse mocks base method.
 func (m *MockExecutor) Parse(arg0 string) template.ParsedTemplate {
 	m.ctrl.T.Helper()
