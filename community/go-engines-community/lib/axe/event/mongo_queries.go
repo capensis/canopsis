@@ -88,11 +88,7 @@ func addStepUpdateQuery(newStepQueries ...bson.M) bson.M {
 
 func addTicketUpdateQuery(newStepQuery bson.M) bson.M {
 	return bson.M{"$concatArrays": bson.A{
-		bson.M{"$cond": bson.M{
-			"if":   "$v.tickets",
-			"then": "$v.tickets",
-			"else": bson.A{},
-		}},
+		bson.M{"$ifNull": bson.A{"$v.tickets", bson.A{}}},
 		bson.A{newStepQuery},
 	}}
 }
