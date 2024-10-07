@@ -212,7 +212,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return ErrLinkedEntityToAlarm
 		}
 
-		if !errors.Is(err, mongodriver.ErrNoDocuments) {
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
