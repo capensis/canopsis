@@ -271,6 +271,7 @@ export default {
   copyPropertyPath: 'Copy property path',
   hidden: 'Hidden',
   numberField: 'Number field',
+  serialName: 'Serial name',
   variableTypes: {
     string: 'String',
     number: 'Number',
