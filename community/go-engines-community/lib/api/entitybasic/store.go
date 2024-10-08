@@ -17,7 +17,7 @@ import (
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Entity, error)
 	Update(ctx context.Context, r EditRequest) (*Entity, bool, error)
-	Delete(ctx context.Context, id, userID string) (bool, error)
+	Delete(ctx context.Context, id, userID string) (*Entity, error)
 }
 
 type store struct {
@@ -176,20 +176,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	return updatedEntity, isToggled, nil
 }
 
-func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	res := false
+func (s *store) Delete(ctx context.Context, id, userID string) (*Entity, error) {
+	var res *Entity
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		res = false
-		entity := &types.Entity{}
-		err := s.dbCollection.FindOne(ctx, bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
-		}).Decode(&entity)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
-
+		res = nil
+		entity, err := s.GetOneBy(ctx, id)
+		if err != nil || entity == nil {
 			return err
 		}
 
@@ -228,7 +220,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return err
 		}
 
-		res = true
+		res = entity
 
 		return nil
 	})
