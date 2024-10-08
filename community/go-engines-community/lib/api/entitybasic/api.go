@@ -130,21 +130,24 @@ func (a *api) Delete(c *gin.Context) {
 	var request IdRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
 		return
 	}
 
-	ok, err := a.store.Delete(c, request.ID)
-
+	entity, err := a.store.Delete(c, request.ID)
 	if err != nil {
 		if err == ErrLinkedEntityToAlarm || err == ErrComponent {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
 			return
 		}
+
 		panic(err)
 	}
 
-	if !ok {
+	if entity == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
 		return
 	}
 
@@ -158,6 +161,11 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	a.metricMetaUpdater.DeleteById(c, request.ID)
+	a.sendChangeMessage(entityservice.ChangeEntityMessage{
+		ID:         entity.ID,
+		EntityType: entity.Type,
+		IsDeleted:  true,
+	})
 
 	c.Status(http.StatusNoContent)
 }
