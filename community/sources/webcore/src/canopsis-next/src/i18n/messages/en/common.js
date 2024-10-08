@@ -288,6 +288,7 @@ export default {
   regexp: 'Regexp',
   archive: 'Archive',
   convertToCustomColumn: 'Convert column to custom',
+  serialName: 'Serial name',
   variableTypes: {
     string: 'String',
     number: 'Number',
