@@ -89,7 +89,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}).
+		FindOne(ctx, bson.M{
+			"_id":          r.ID,
+			"type":         types.EntityTypeService,
+			"soft_deleted": bson.M{"$exists": false},
+		}).
 		Decode(&service)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -98,7 +102,10 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*Co
 		return nil, err
 	}
 	now := types.NewCpsTime()
-	match := bson.M{"services": service.ID}
+	match := bson.M{
+		"services":     service.ID,
+		"soft_deleted": bson.M{"$exists": false},
+	}
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -142,8 +149,9 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*Context
 	}
 
 	match := bson.M{
-		"_id":  bson.M{"$in": e.Services},
-		"type": types.EntityTypeService,
+		"_id":          bson.M{"$in": e.Services},
+		"type":         types.EntityTypeService,
+		"soft_deleted": bson.M{"$exists": false},
 	}
 	now := types.NewCpsTime()
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
