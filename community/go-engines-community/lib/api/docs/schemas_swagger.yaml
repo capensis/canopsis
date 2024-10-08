@@ -943,6 +943,8 @@ definitions:
         $ref: '#/definitions/appinfo.RemediationConf'
       required_instruction_approve:
         type: boolean
+      serial_name:
+        type: string
       show_header_on_kiosk_mode:
         type: boolean
       stack:

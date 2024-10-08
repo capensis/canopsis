@@ -2,13 +2,17 @@ package appinfo
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -26,6 +30,7 @@ type Store interface {
 	DeleteUserInterfaceConfig(ctx context.Context) error
 	RetrieveMaintenanceState(ctx context.Context) (bool, error)
 	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error)
+	RetrieveSerialName(ctx context.Context) (string, error)
 }
 
 type store struct {
@@ -33,18 +38,20 @@ type store struct {
 	configCollection     mongo.DbCollection
 	colorThemeCollection mongo.DbCollection
 	maintenanceAdapter   config.MaintenanceAdapter
+	pgPoolProvider       postgres.PoolProvider
 
 	authProviders       []string
 	casTitle, samlTitle string
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
+func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, pgPoolProvider postgres.PoolProvider, authProviders []string, casTitle, samlTitle string) Store {
 	return &store{
 		dbClient:             db,
 		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
 		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
 		maintenanceAdapter:   maintenanceAdapter,
+		pgPoolProvider:       pgPoolProvider,
 		authProviders:        authProviders,
 		casTitle:             casTitle,
 		samlTitle:            samlTitle,
@@ -203,4 +210,19 @@ func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme
 	var t colortheme.Theme
 
 	return t, s.colorThemeCollection.FindOne(ctx, bson.M{"_id": colortheme.Canopsis}).Decode(&t)
+}
+
+func (s *store) RetrieveSerialName(ctx context.Context) (string, error) {
+	pool, err := s.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get postgres pool: %w", err)
+	}
+
+	var serialName string
+	err = pool.QueryRow(ctx, "SELECT id FROM serial_name LIMIT 1").Scan(&serialName)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return "", fmt.Errorf("failed to get serial name: %w", err)
+	}
+
+	return serialName, nil
 }

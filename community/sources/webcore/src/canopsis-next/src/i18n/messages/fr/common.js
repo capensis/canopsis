@@ -288,6 +288,7 @@ export default {
   regexp: 'Expression régulière',
   archive: 'Archive',
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
+  serialName: 'Nom de série',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
