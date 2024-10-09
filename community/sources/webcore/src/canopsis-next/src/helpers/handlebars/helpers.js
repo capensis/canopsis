@@ -489,6 +489,6 @@ export function mapHelper(string, options) {
     .join('');
 
   return new Handlebars.SafeString(
-    `<v-chip-group>${chips}</v-chip-group>`,
+    `<v-row class="gap-2" wrap>${chips}</v-row>`,
   );
 }
