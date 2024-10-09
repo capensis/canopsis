@@ -8,6 +8,8 @@
           strong  {{ stack }}
         div {{ $t('common.edition') }}:
           strong  {{ edition }}
+        div {{ $t('common.serialName') }}:
+          strong  {{ serialName }}
 </template>
 
 <script>
@@ -17,7 +19,7 @@ const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   computed: {
-    ...mapGetters(['version', 'stack', 'edition']),
+    ...mapGetters(['version', 'stack', 'edition', 'serialName']),
   },
 };
 </script>

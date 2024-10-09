@@ -136,6 +136,7 @@ func NewEngine(
 	entityAdapter := entity.NewAdapter(dbClient)
 	alarmAdapter := alarm.NewAdapter(dbClient)
 
+	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
 		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), logger)
@@ -152,6 +153,7 @@ func NewEngine(
 		autoInstructionMatcher,
 		stateCountersService,
 		metaAlarmEventProcessor,
+		metaAlarmStatesService,
 		metricsSender,
 		statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 		remediationRpcClient,
@@ -433,6 +435,7 @@ func (m DependencyMaker) EventProcessor(
 	autoInstructionMatcher event.AutoInstructionMatcher,
 	stateCountersService statecounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
 	remediationRpcClient libengine.RPCClient,
@@ -460,11 +463,11 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypePbhLeave, event.NewPbhLeaveProcessor(dbClient, autoInstructionMatcher, stateCountersService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypePbhLeaveAndEnter, event.NewPbhLeaveAndEnterProcessor(dbClient, autoInstructionMatcher, stateCountersService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeDeclareTicketWebhook, event.NewDeclareTicketWebhookProcessor(dbClient, metricsSender, amqpPublisher, json.NewEncoder(), logger))
-	container.Set(types.EventTypeResolveCancel, event.NewResolveCancelProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeResolveClose, event.NewResolveCloseProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeResolveDeleted, event.NewResolveDeletedProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResolveCancel, event.NewResolveCancelProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResolveClose, event.NewResolveCloseProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResolveDeleted, event.NewResolveDeletedProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeEntityToggled, event.NewEntityToggledProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeRecomputeEntityService, event.NewRecomputeEntityServiceProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeRecomputeEntityService, event.NewRecomputeEntityServiceProcessor(dbClient, stateCountersService, metaAlarmEventProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeEntityUpdated, event.NewEntityUpdatedProcessor(dbClient, stateCountersService))
 	container.Set(types.EventTypeUpdateCounters, event.NewUpdateCountersProcessor(dbClient, stateCountersService))
 	container.Set(types.EventTypeSnooze, event.NewSnoozeProcessor(dbClient, metaAlarmEventProcessor, logger))
