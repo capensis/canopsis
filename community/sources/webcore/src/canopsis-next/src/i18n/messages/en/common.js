@@ -1,7 +1,6 @@
 import {
   ALARM_STATES,
   ALARM_STATUSES,
-  EVENT_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   TRIGGERS_TYPES,
@@ -461,18 +460,6 @@ export default {
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
   },
-  eventTypes: {
-    [EVENT_TYPES.ack]: 'Ack',
-    [EVENT_TYPES.ackRemove]: 'Ack remove',
-    [EVENT_TYPES.assocTicket]: 'Associate ticket',
-    [EVENT_TYPES.cancel]: 'Cancel',
-    [EVENT_TYPES.uncancel]: 'Uncancel',
-    [EVENT_TYPES.changeState]: 'Change state',
-    [EVENT_TYPES.check]: 'Check',
-    [EVENT_TYPES.comment]: 'Comment',
-    [EVENT_TYPES.snooze]: 'Snooze',
-  },
-
   triggers: {
     [TRIGGERS_TYPES.create]: {
       text: 'Alarm creation',
