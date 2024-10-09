@@ -41,7 +41,7 @@ export const userToForm = (user = {}) => ({
   email: user.email || '',
   password: user.password || '',
   role: user.role,
-  enable: !!user.enable,
+  enable: user.enable ?? true,
   defaultview: user.defaultview ? user.defaultview._id : '',
   ui_language: user.ui_language || '',
   ui_tours: user.ui_tours || {},
