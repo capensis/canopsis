@@ -9,7 +9,7 @@
       v-if="request.body"
       class="request-content__body"
     >
-      <json-treeview
+      <c-json-treeview
         v-if="request.isJsonBody"
         :json="request.body"
       />
@@ -23,12 +23,10 @@
 <script>
 import { isValidJsonData } from '@/helpers/json';
 
-import JsonTreeview from '@/components/common/request/c-json-treeview.vue';
-
 import RequestInformationContentRow from './request-information-content-row.vue';
 
 export default {
-  components: { RequestInformationContentRow, JsonTreeview },
+  components: { RequestInformationContentRow },
   props: {
     text: {
       type: String,

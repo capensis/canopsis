@@ -968,6 +968,8 @@ definitions:
         $ref: '#/definitions/appinfo.RemediationConf'
       required_instruction_approve:
         type: boolean
+      serial_name:
+        type: string
       show_header_on_kiosk_mode:
         type: boolean
       stack:
@@ -1421,6 +1423,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      event_records:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithUnit'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -1483,6 +1490,8 @@ definitions:
       entity_unlinked:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
+        type: integer
+      event_records:
         type: integer
       health_check:
         type: integer

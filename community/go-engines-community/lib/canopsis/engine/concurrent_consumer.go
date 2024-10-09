@@ -64,7 +64,7 @@ type concurrentConsumer struct {
 
 func (c *concurrentConsumer) Consume(ctx context.Context) error {
 	consumeCh, msgs, err := getConsumeChannel(c.connection, c.name, c.queue,
-		c.consumePrefetchCount, c.consumePrefetchSize, c.purgeQueue)
+		c.consumePrefetchCount, c.consumePrefetchSize, c.purgeQueue, false)
 	if err != nil {
 		return err
 	}

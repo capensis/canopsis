@@ -540,6 +540,43 @@ func TestFunctions(t *testing.T) {
 				ExpectedErr: ErrFailedConvertToInt64,
 			},
 		},
+		"strjoin": {
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []string{"a", "b", "c"},
+				},
+				ExpectedRes: "a,b,c",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{"a", "b", "c"},
+				},
+				ExpectedRes: "a,b,c",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{"a"},
+				},
+				ExpectedRes: "a",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{},
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{ strjoin .A "," }}`,
+				TplData: map[string]any{
+					"A": []any{1, 2, 3},
+				},
+				ExpectedErr: ErrFailedConvertToStringSlice,
+			},
+		},
 	}
 
 	for name, v := range dataSets {
@@ -785,7 +822,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 
 	for i, data := range dataSet {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			res := addEnvVarsToData(data.Data, envVars)
+			res := addDefaultTplVarsToData(data.Data, map[string]any{EnvVar: envVars})
 			if diff := pretty.Compare(res, data.ExpectedRes); diff != "" {
 				t.Errorf("unexpected result %s", diff)
 			}

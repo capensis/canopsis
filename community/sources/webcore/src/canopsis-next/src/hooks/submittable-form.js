@@ -1,9 +1,9 @@
 import { computed } from 'vue';
 
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useI18n } from '@/hooks/i18n';
-import { usePopups } from '@/hooks/popups';
+import { usePendingHandler } from './query/pending';
+import { useValidationFormErrors } from './validator/validation-form-errors';
+import { useI18n } from './i18n';
+import { usePopups } from './popups';
 
 /**
  * Creates a submittable form handler with validation and error handling.

@@ -135,6 +135,20 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryEventFilterFailure(arg0, arg1 in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEventFilterFailure", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEventFilterFailure), arg0, arg1)
 }
 
+// UpdateHistoryEventRecords mocks base method.
+func (m *MockAdapter) UpdateHistoryEventRecords(arg0 context.Context, arg1 datetime.CpsTime) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryEventRecords", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryEventRecords indicates an expected call of UpdateHistoryEventRecords.
+func (mr *MockAdapterMockRecorder) UpdateHistoryEventRecords(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEventRecords", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEventRecords), arg0, arg1)
+}
+
 // UpdateHistoryHealthCheck mocks base method.
 func (m *MockAdapter) UpdateHistoryHealthCheck(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()

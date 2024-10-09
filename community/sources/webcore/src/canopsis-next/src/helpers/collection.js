@@ -1,4 +1,4 @@
-import { isEqual, omit } from 'lodash';
+import { isEqual, isMatch, pick, omit } from 'lodash';
 
 /**
  * Is equal objects without keys
@@ -9,6 +9,16 @@ import { isEqual, omit } from 'lodash';
  * @return {boolean}
  */
 export const isOmitEqual = (value, other, paths) => isEqual(omit(value, paths), omit(other, paths));
+
+/**
+ * Is equal objects with special keys
+ *
+ * @param {Object|Array} value
+ * @param {Object|Array} other
+ * @param {String|Array} [paths]
+ * @return {boolean}
+ */
+export const isPickEqual = (value, other, paths) => isMatch(value, pick(other, paths));
 
 /**
  * Check is some fields in objects equal

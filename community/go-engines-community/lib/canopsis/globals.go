@@ -77,6 +77,9 @@ const (
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
 	RemediationConnector             = "remediation"
 
+	RecorderConsumerName    = "recorder"
+	RecorderRPCConsumerName = "recorder_rpc"
+
 	SnmpEngineName = "engine-snmp"
 
 	TechMetricsFlushInterval = time.Second * 10

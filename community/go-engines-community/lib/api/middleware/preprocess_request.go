@@ -24,7 +24,8 @@ func SetAuthor() func(c *gin.Context) {
 		err := encodedBody.Decode(&body)
 		if err != nil {
 			var syntaxError *json.SyntaxError
-			if errors.Is(err, io.EOF) || errors.As(err, &syntaxError) {
+			var unmarshalTypeError *json.UnmarshalTypeError
+			if errors.Is(err, io.EOF) || errors.As(err, &syntaxError) || errors.As(err, &unmarshalTypeError) {
 				c.Next()
 				return
 			}
@@ -53,6 +54,11 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) fun
 		raw, err := c.GetRawData()
 		if err != nil {
 			panic(err)
+		}
+
+		if len(raw) == 0 {
+			c.Next()
+			return
 		}
 
 		jsonValue, err := fastjson.ParseBytes(raw)

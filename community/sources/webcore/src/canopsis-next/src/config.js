@@ -57,7 +57,10 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     marquee: ['direction'],
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
-    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
+    'c-alarm-tags-chips': [
+      ':alarm', ':selected-tag', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
+      '@select', '@close',
+    ],
     'c-entity-tags-chips': [':entity', 'inline-count'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
@@ -367,6 +370,13 @@ export const API_ROUTES = {
   tags: '/api/v4/cat/tags',
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
+  },
+  eventsRecord: {
+    list: '/api/v4/cat/event-records',
+    export: '/api/v4/cat/event-records/exports',
+    current: '/api/v4/cat/event-records-current',
+    event: '/api/v4/cat/event-records/events',
+    bulkEvent: '/api/v4/cat/event-records/events/bulk',
   },
 };
 

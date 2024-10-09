@@ -59,6 +59,8 @@ type AppInfoResponse struct {
 
 	DefaultColorTheme colortheme.Response `json:"default_color_theme"`
 	Maintenance       bool                `json:"maintenance"`
+
+	SerialName string `json:"serial_name"`
 }
 
 type LoginConf struct {

@@ -393,15 +393,13 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
-	if flags.EnableActionLog {
-		actionLogger := apilogger.NewActionLogger(dbClient, pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-		api.AddWorker("action_log", func(ctx context.Context) {
-			err := actionLogger.Watch(ctx)
-			if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
-				panic(FatalWorkerError{err: err})
-			}
-		})
-	}
+	actionLogger := apilogger.NewActionLogger(dbClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	api.AddWorker("action_log", func(ctx context.Context) {
+		err := actionLogger.Watch(ctx)
+		if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
+			panic(FatalWorkerError{err: err})
+		}
+	})
 
 	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)

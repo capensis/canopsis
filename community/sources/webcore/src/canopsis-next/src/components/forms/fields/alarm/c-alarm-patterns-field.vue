@@ -24,7 +24,13 @@
 </template>
 
 <script>
-import { isArray, keyBy, merge } from 'lodash';
+import {
+  isArray,
+  keyBy,
+  merge,
+  omit,
+  map,
+} from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -64,6 +70,10 @@ export default {
       required: true,
     },
     attributes: {
+      type: Array,
+      default: () => [],
+    },
+    excludedAttributes: {
       type: Array,
       default: () => [],
     },
@@ -119,15 +129,6 @@ export default {
         PATTERN_OPERATORS.notContains,
         PATTERN_OPERATORS.regexp,
       ];
-    },
-
-    entitiesValueField() {
-      return {
-        is: 'c-entity-field',
-        props: {
-          required: true,
-        },
-      };
     },
 
     connectorOptions() {
@@ -189,14 +190,6 @@ export default {
             itemValue: 'name',
           },
         },
-      };
-    },
-
-    entitiesOptions() {
-      return {
-        operators: this.entitiesOperators,
-        defaultValue: '',
-        valueField: this.entitiesValueField,
       };
     },
 
@@ -418,16 +411,16 @@ export default {
           options: this.componentOptions,
         },
         {
-          value: ALARM_PATTERN_FIELDS.resource,
-          options: this.resourceOptions,
-        },
-        {
           value: ALARM_PATTERN_FIELDS.connector,
           options: this.connectorOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.connectorName,
           options: this.connectorNameOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.resource,
+          options: this.resourceOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
@@ -569,11 +562,11 @@ export default {
     },
 
     availableAlarmAttributes() {
-      const mergedAttributes = merge(
+      const mergedAttributes = omit(merge(
         {},
         this.availableAttributesByValue,
         this.externalAttributesByValue,
-      );
+      ), map(this.excludedAttributes, 'value'));
 
       return Object.values(mergedAttributes);
     },

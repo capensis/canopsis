@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
 	"regexp"
@@ -17,12 +18,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 const EnvVar = "Env"
 
 var ErrFailedConvertToInt64 = errors.New("failed convert to int64")
 var ErrDivisionByZero = errors.New("division by zero")
+var ErrFailedConvertToStringSlice = errors.New("failed convert to []string")
 
 type ParsedTemplate struct {
 	Text string
@@ -34,6 +37,7 @@ type Executor interface {
 	Execute(tplStr string, data any) (string, error)
 	Parse(text string) ParsedTemplate
 	ExecuteByTpl(tpl *template.Template, data any) (string, error)
+	GetDefaultTplVars() map[string]any
 }
 
 type executor struct {
@@ -99,12 +103,21 @@ func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error
 
 	defer e.bufPool.Put(buf)
 	buf.Reset()
-	err := tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
+	err := tpl.Execute(buf, addDefaultTplVarsToData(data, e.GetDefaultTplVars()))
 	if err != nil {
 		return "", err
 	}
 
 	return buf.String(), nil
+}
+
+func (e *executor) GetDefaultTplVars() map[string]any {
+	envVars := e.templateConfigProvider.Get().Vars
+	if len(envVars) == 0 {
+		return nil
+	}
+
+	return map[string]any{EnvVar: envVars}
 }
 
 func GetFunctions(appLocation *time.Location) template.FuncMap {
@@ -371,6 +384,21 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 				return x / y, nil
 			})
 		},
+		"strjoin": func(raw any, sep string) (string, error) {
+			switch val := raw.(type) {
+			case []string:
+				return strings.Join(val, sep), nil
+			case []any:
+				strSlice, ok := utils.InterfaceSliceToStringSlice(val)
+				if !ok {
+					return "", ErrFailedConvertToStringSlice
+				}
+
+				return strings.Join(strSlice, sep), nil
+			default:
+				return "", fmt.Errorf("unsupported type: %T", val)
+			}
+		},
 	}
 }
 
@@ -436,8 +464,8 @@ func castTime(v interface{}) (time.Time, bool) {
 	}
 }
 
-func addEnvVarsToData(data any, envVars map[string]any) any {
-	if len(envVars) == 0 {
+func addDefaultTplVarsToData(data any, defaultVars map[string]any) any {
+	if len(defaultVars) == 0 {
 		return data
 	}
 
@@ -446,6 +474,9 @@ func addEnvVarsToData(data any, envVars map[string]any) any {
 		return data
 	}
 
-	mapData[EnvVar] = envVars
+	for k, v := range defaultVars {
+		mapData[k] = v
+	}
+
 	return mapData
 }

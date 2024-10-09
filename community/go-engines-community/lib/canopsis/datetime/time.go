@@ -48,7 +48,7 @@ func (t *CpsTime) UnmarshalJSON(b []byte) error {
 	if string(b) == "null" {
 		return nil
 	}
-	if nl := bytes.TrimPrefix(b, []byte("{\"$numberLong\":\"")); len(nl) < len(b) {
+	if nl, ok := bytes.CutPrefix(b, []byte("{\"$numberLong\":\"")); ok {
 		// json value can be recorded as "tstop":{"$numberLong":"4733481300"}
 		nl = bytes.TrimSuffix(nl, []byte("\"}"))
 		b = nl[:]

@@ -32,6 +32,9 @@ const (
 	CheEntityInfosDictionaryPeriodicalLockKey = "che-entity-infos-dictionary-periodical-lock-key"
 	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
 
+	RecorderLockKey                         = "recorder-lock-key"
+	RecorderDeleteOutdatedRecordingsLockKey = "recorder-delete-outdated-recordings-lock-key"
+
 	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
 	RemediationStatsPeriodicalLockKey   = "remediation-stats-periodical-lock-key"
 	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
@@ -46,6 +49,7 @@ const (
 	ApiCleanEntitiesLockKey      = "api-clean-entities-lock-key"
 	ApiUserActivityMetricLockKey = "api-user-activity-metric"
 	ApiCacheRequestKey           = "api-cache-request"
+	ApiActionLogWatchLockKey     = "api-action-log-watch-lock-key"
 
 	CorrelationInactiveDelayPeriodicalLockKey = "correlation-inactive-delay-periodical-lock-key"
 )
