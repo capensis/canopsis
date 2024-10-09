@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -23,6 +24,7 @@ func NewRecomputeEntityServiceProcessor(
 	dbClient mongo.DbClient,
 	stateCountersService statecounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -33,8 +35,10 @@ func NewRecomputeEntityServiceProcessor(
 		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
 		resolvedAlarmCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		metaAlarmRuleCollection: dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
 		stateCountersService:    stateCountersService,
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
+		metaAlarmStatesService:  metaAlarmStatesService,
 		metricsSender:           metricsSender,
 		remediationRpcClient:    remediationRpcClient,
 		encoder:                 encoder,
@@ -47,8 +51,10 @@ type recomputeEntityServiceProcessor struct {
 	alarmCollection         mongo.DbCollection
 	entityCollection        mongo.DbCollection
 	resolvedAlarmCollection mongo.DbCollection
+	metaAlarmRuleCollection mongo.DbCollection
 	stateCountersService    statecounters.StateCountersService
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
+	metaAlarmStatesService  correlation.MetaAlarmStateService
 	metricsSender           metrics.Sender
 	remediationRpcClient    engine.RPCClient
 	encoder                 encoding.Encoder
@@ -145,7 +151,25 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
 		}
 
-		return err
+		if err != nil {
+		    return err
+		}
+
+		if !result.Alarm.IsMetaAlarm() {
+			return nil
+		}
+
+		var rule correlation.Rule
+		err = p.metaAlarmRuleCollection.FindOne(ctx, bson.M{"_id": result.Alarm.Value.Meta}).Decode(&rule)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return fmt.Errorf("meta alarm rule %s not found", result.Alarm.Value.Meta)
+			}
+
+			return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+		}
+
+		return RemoveMetaAlarmState(ctx, result.Alarm, rule, p.metaAlarmStatesService)
 	})
 	if err != nil {
 		return result, err
