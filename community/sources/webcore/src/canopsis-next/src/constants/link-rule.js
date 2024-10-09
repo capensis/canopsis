@@ -53,6 +53,7 @@ export const LINK_RULE_ADVANCED_COMPLETIONS = {
   alarm: {
     Value: {
       Component: '',
+      Connector: '',
     },
   },
   entity: {

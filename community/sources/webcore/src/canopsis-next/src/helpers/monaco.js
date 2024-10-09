@@ -1,3 +1,5 @@
+import { isUndefined } from 'lodash';
+
 /**
  * Determines the completion item kind for a given completion object.
  *
@@ -72,60 +74,45 @@ export const registerJavaScriptCompletion = (monaco, completions) => monaco && (
         endColumn: position.column,
       });
 
-      const words = lastChars.replace('\t', '').split(' ');
+      const words = lastChars.trim().split(' ');
       const activeTyping = words[words.length - 1];
-      const isMember = activeTyping.endsWith('.');
+      const path = activeTyping.split('.');
+      const lastKey = path.pop();
+      let current = completions;
 
-      const result = [];
-      let lastToken = completions;
-      let prefix = '';
-
-      if (isMember) {
-        const parents = activeTyping.slice(0, -1).split('.');
-        lastToken = completions[parents[0]];
-        [prefix] = parents;
-
-        for (let i = 1; i < parents.length; i += 1) {
-          if (Object.prototype.hasOwnProperty.call(lastToken, parents[i])) {
-            prefix += `.${parents[i]}`;
-            lastToken = lastToken[parents[i]];
-          } else {
-            return result;
-          }
+      for (const key of path) {
+        if (isUndefined(current[key])) {
+          return undefined;
         }
 
-        prefix += '.';
+        current = current[key];
       }
 
-      for (const prop in lastToken) {
-        if (Object.prototype.hasOwnProperty.call(lastToken, prop) && !prop.startsWith('__')) {
-          let details = '';
-          try {
-            // eslint-disable-next-line no-proto
-            details = lastToken[prop]?.__proto__?.constructor?.name ?? typeof lastToken[prop];
-          } catch (e) {
-            console.error(`Error accessing prototype of ${prop}:`, e);
-            details = typeof lastToken[prop];
-          }
+      const prefix = path.join('.');
 
-          const toPush = {
-            label: `${prefix}${prop}`,
-            kind: getCompletionType(monaco, lastToken[prop], isMember),
-            detail: details,
-            insertText: prop,
+      const suggestions = Object.entries(current).reduce((acc, [key, value]) => {
+        if (!lastKey || key.startsWith(lastKey)) {
+          const suggestion = {
+            label: `${prefix}${prefix ? '.' : ''}${key}`,
+            kind: getCompletionType(monaco, value, path.length > 0),
+            // eslint-disable-next-line no-proto
+            detail: value?.__proto__?.constructor?.name ?? typeof value,
+            insertText: key,
           };
 
-          if (toPush.detail.toLowerCase() === 'function') {
-            toPush.insertText += '(';
-            [toPush.documentation] = lastToken[prop].toString().split('{');
+          if (suggestion.detail.toLowerCase() === 'function') {
+            suggestion.insertText += '(';
+            [suggestion.documentation] = value.toString().split('{');
           }
 
-          result.push(toPush);
+          acc.push(suggestion);
         }
-      }
+
+        return acc;
+      }, []);
 
       return {
-        suggestions: result,
+        suggestions,
       };
     },
   })
