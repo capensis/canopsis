@@ -125,7 +125,7 @@ func processResolve(
 
 		updatedServiceStates, err = stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
 		if err != nil {
-		    return err
+			return err
 		}
 
 		if !result.Alarm.IsMetaAlarm() {
