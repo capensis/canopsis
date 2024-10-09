@@ -303,6 +303,7 @@ export default {
   noResponse: 'No response',
   loadingItems: 'Loading items...',
   lastComment: 'Last comment',
+  serialName: 'Serial name',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -329,6 +330,7 @@ export default {
     fifth: 'Fifth',
   },
   times: {
+    millisecond: 'millisecond | milliseconds',
     second: 'second | seconds',
     minute: 'minute | minutes',
     hour: 'hour | hours',

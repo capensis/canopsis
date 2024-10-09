@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"regexp"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -257,13 +256,14 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 	}
 
 	unmatchedParams := make(map[string]interface{})
-	if err := json.Unmarshal(source, &unmatchedParams); err == nil {
-		for _, jsonKey := range e.GetRequiredKeys() {
-			delete(unmatchedParams, jsonKey)
-		}
-	} else {
+	if err := json.Unmarshal(source, &unmatchedParams); err != nil {
 		return fmt.Errorf("Event.InjectExtraInfos json decode: %w", err)
 	}
+
+	for _, jsonKey := range e.GetRequiredKeys() {
+		delete(unmatchedParams, jsonKey)
+	}
+
 	if e.ExtraInfos == nil {
 		e.ExtraInfos = make(map[string]interface{})
 	}
@@ -293,18 +293,6 @@ func (e *Event) IsOnlyServiceUpdate() bool {
 	default:
 		return false
 	}
-}
-
-// IsMatched tell if an event is catched by a regex
-func (e *Event) IsMatched(regex string, fields []string) bool {
-	for _, fieldName := range fields {
-		field := utils.GetStringField(e, fieldName)
-		matched, _ := regexp.MatchString(regex, field)
-		if matched {
-			return true
-		}
-	}
-	return false
 }
 
 // IsValid checks if an Event is valid for Canopsis processing.
@@ -379,15 +367,16 @@ func (e *Event) GetCompatRK() string {
 
 // GetRequiredKeys read all declared json tags in the struct
 func (e *Event) GetRequiredKeys() []string {
-	var values []string
-
 	typeof := reflect.TypeOf(e).Elem()
+	n := typeof.NumField()
+	values := make([]string, 0, n)
 
-	for i := 0; i < typeof.NumField(); i++ {
+	for i := 0; i < n; i++ {
 		field := typeof.Field(i)
 		tag := field.Tag.Get("json")
-
-		values = append(values, tag)
+		if tag != "-" {
+			values = append(values, tag)
+		}
 	}
 
 	return values
@@ -537,11 +526,8 @@ func (e *Event) GetIntField(f string) (int64, bool) {
 
 // GetExtraInfoVal is a magic getter for extra infos fields for easier field retrieving when matching event pattern
 func (e *Event) GetExtraInfoVal(f string) (interface{}, bool) {
-	if v, ok := e.ExtraInfos[f]; ok {
-		return v, true
-	}
-
-	return nil, false
+	v, ok := e.ExtraInfos[f]
+	return v, ok
 }
 
 // setMapStringStringField sets the value of a field of type map[string]string

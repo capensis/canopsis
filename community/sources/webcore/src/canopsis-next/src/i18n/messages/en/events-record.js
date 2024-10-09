@@ -1,0 +1,16 @@
+export default {
+  recorded: 'Recorded at',
+  eventsCount: 'Number of events recorded',
+  subheader: 'Record all events from RabbitMQ',
+  launch: 'Launch events recording',
+  stop: 'Stop events recording',
+  stopResending: 'Stop resending',
+  inProgress: 'Recording in progress...',
+  resendingInProgress: 'Resending in progress...',
+  viewEvents: 'View events',
+  export: 'Export to JSON',
+  applyEventFilter: 'Apply event filter',
+  delayBetweenEvents: 'Delay between events',
+  resendEvents: 'Resend event | Resend events',
+  launchEventRecording: 'Launch events recording',
+};

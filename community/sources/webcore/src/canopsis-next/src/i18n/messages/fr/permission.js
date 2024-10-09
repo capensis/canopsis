@@ -28,6 +28,7 @@ export default {
     rules: 'Règles',
     remediation: 'Remédiation',
     pbehavior: 'Comportements périodiques',
+    eventsRecord: 'Enregistrement des événements',
   },
   permissions: {
     /**
@@ -665,6 +666,10 @@ export default {
       name: 'Gestion des tags',
       description: 'Cette autorisation définit l\'accès à la gestion des tags',
     },
+    [USERS_PERMISSIONS.technical.eventsRecord]: {
+      name: 'Enregistrement des événements',
+      description: 'Cette autorisation définit l\'accès aux enregistrements d\'événements',
+    },
 
     /**
      * Technical Exploitation Permissions
@@ -971,6 +976,15 @@ export default {
     [USERS_PERMISSIONS.api.pbehavior.pbehaviorType]: {
       name: 'Comportements périodiques : Types',
       description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les types de comportements périodiques par API',
+    },
+
+    [USERS_PERMISSIONS.api.eventsRecord.launchEventRecording]: {
+      name: 'Lancement d\'un enregistrement d\'événements',
+      description: 'Accès à la route API pour lancer et récupérer les enregistrements d\'événements',
+    },
+    [USERS_PERMISSIONS.api.eventsRecord.resendEvents]: {
+      name: 'Renvoyer les événements',
+      description: 'Accès à la route API pour renvoyer les événements à partir des enregistrements d\'événements',
     },
   },
 };
