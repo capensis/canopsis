@@ -152,7 +152,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 		}
 
 		if err != nil {
-		    return err
+			return err
 		}
 
 		if !result.Alarm.IsMetaAlarm() {
