@@ -5,6 +5,7 @@
     </p>
     <java-script-code-editor
       v-field="value"
+      :completions="completions"
       class="java-script-code-editor"
       resettable
     />
@@ -12,13 +13,14 @@
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
+import { LINK_RULE_ADVANCED_COMPLETIONS } from '@/constants';
+
+import { useValidationHeader } from '@/hooks/validator/validation-header';
 
 import JavaScriptCodeEditor from './fields/javascript-code-editor.vue';
 
 export default {
   components: { JavaScriptCodeEditor },
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -28,6 +30,15 @@ export default {
       type: String,
       default: '',
     },
+  },
+  setup() {
+    const { hasAnyError } = useValidationHeader();
+
+    return {
+      hasAnyError,
+
+      completions: LINK_RULE_ADVANCED_COMPLETIONS,
+    };
   },
 };
 </script>
