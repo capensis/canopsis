@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Faker struct {
@@ -118,4 +119,18 @@ func (*Faker) GenerateBookmarks(prefix string, count int) []string {
 	}
 
 	return bookmarks
+}
+
+// ToObjectID converts a string of hex digits to a MongoDB ObjectId
+func (*Faker) ToObjectID(s string) interface{} {
+	s = utils.ToObjectIDHex(s)
+	objectID, err := primitive.ObjectIDFromHex(s)
+	if err != nil {
+		return primitive.NilObjectID
+	}
+	return objectID
+}
+
+func (*Faker) ObjectID() interface{} {
+	return primitive.NewObjectID()
 }

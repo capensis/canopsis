@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS serial_name (
+    id VARCHAR(255) PRIMARY KEY
+);

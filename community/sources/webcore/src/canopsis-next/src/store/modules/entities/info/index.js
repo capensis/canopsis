@@ -50,6 +50,7 @@ export default {
     isOauthAuthEnabled: state => !!state.appInfo?.login?.oauth2config?.enable,
     eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
     disabledTransitions: state => state.appInfo?.disabled_transitions,
+    serialName: state => state.appInfo?.serial_name,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {

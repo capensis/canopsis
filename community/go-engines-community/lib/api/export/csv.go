@@ -13,13 +13,18 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
+type csvFormatter struct{}
+
+func (f *csvFormatter) GetFileExtension() string {
+	return ".csv"
+}
+
+func (f *csvFormatter) DataFetcher(ctx context.Context, t FieldsSeparatorGetter, cursor DataCursor) (string, error) {
+	return ToCsv(ctx, t, cursor)
+}
+
 // ToCsv fetches data and saves it in csv file.
-func ToCsv(
-	ctx context.Context,
-	exportFields Fields,
-	separator rune,
-	dataCursor DataCursor,
-) (resFileName string, resErr error) {
+func ToCsv(ctx context.Context, fsg FieldsSeparatorGetter, dataCursor DataCursor) (resFileName string, resErr error) {
 	defer func() {
 		err := dataCursor.Close(ctx)
 		if err != nil && resErr == nil {
@@ -46,12 +51,12 @@ func ToCsv(
 	}()
 
 	w := csv.NewWriter(file)
-	if separator != 0 {
+	if separator := fsg.GetSeparator(); separator != 0 {
 		w.Comma = separator
 	}
 
 	var fields []string
-	if len(exportFields) > 0 {
+	if exportFields := fsg.GetFields(); len(exportFields) > 0 {
 		fieldsLabels := exportFields.Labels()
 		fields = exportFields.Fields()
 

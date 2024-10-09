@@ -36,6 +36,32 @@ func NewDefaultConsumer(
 	}
 }
 
+func NewExclusiveDefaultConsumer(
+	name, queue string,
+	consumePrefetchCount, consumePrefetchSize int,
+	purgeQueue bool,
+	nextExchange, nextQueue, fifoExchange, fifoQueue string,
+	connection libamqp.Connection,
+	processor MessageProcessor,
+	logger zerolog.Logger,
+) Consumer {
+	return &defaultConsumer{
+		name:                 name,
+		queue:                queue,
+		consumePrefetchCount: consumePrefetchCount,
+		consumePrefetchSize:  consumePrefetchSize,
+		purgeQueue:           purgeQueue,
+		exclusive:            true,
+		nextExchange:         nextExchange,
+		nextQueue:            nextQueue,
+		fifoExchange:         fifoExchange,
+		fifoQueue:            fifoQueue,
+		connection:           connection,
+		processor:            processor,
+		logger:               logger,
+	}
+}
+
 // defaultConsumer implements AMQP consumer.
 type defaultConsumer struct {
 	// name is consumer name.
@@ -44,6 +70,7 @@ type defaultConsumer struct {
 	queue                                     string
 	consumePrefetchCount, consumePrefetchSize int
 	purgeQueue                                bool
+	exclusive                                 bool
 	// processor handles AMQP messages.
 	processor MessageProcessor
 	// nextQueue is name of AMQP queue to where consumer sends message after succeeded processing.
@@ -60,7 +87,7 @@ type defaultConsumer struct {
 
 func (c *defaultConsumer) Consume(ctx context.Context) error {
 	consumeCh, msgs, err := getConsumeChannel(c.connection, c.name, c.queue,
-		c.consumePrefetchCount, c.consumePrefetchSize, c.purgeQueue)
+		c.consumePrefetchCount, c.consumePrefetchSize, c.purgeQueue, c.exclusive)
 	if err != nil {
 		return err
 	}
@@ -137,7 +164,7 @@ func getConsumeChannel(
 	connection libamqp.Connection,
 	name, queue string,
 	consumePrefetchCount, consumePrefetchSize int,
-	purgeQueue bool,
+	purgeQueue, exclusive bool,
 ) (libamqp.Channel, <-chan amqp.Delivery, error) {
 	channel, err := connection.Channel()
 	if err != nil {
@@ -157,13 +184,13 @@ func getConsumeChannel(
 	}
 
 	msgs, err := channel.Consume(
-		queue, // queue
-		name,  // consumer
-		false, // auto-ack
-		false, // exclusive
-		false, // no-local
-		false, // no-wait
-		nil,   // args
+		queue,     // queue
+		name,      // consumer
+		false,     // auto-ack
+		exclusive, // exclusive
+		false,     // no-local
+		false,     // no-wait
+		nil,       // args
 	)
 	if err != nil {
 		return nil, nil, err

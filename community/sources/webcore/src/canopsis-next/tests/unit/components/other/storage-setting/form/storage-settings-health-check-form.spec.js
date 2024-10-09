@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { randomDurationValue } from '@unit/utils/duration';
+import { randomDurationEnabledValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -36,7 +36,7 @@ describe('storage-settings-health-check-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectHealthCheckDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
