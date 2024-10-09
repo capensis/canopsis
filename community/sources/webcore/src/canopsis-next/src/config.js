@@ -44,7 +44,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
-    'service-entities-list', 'v-icon', 'v-chip-group', 'v-chip',
+    'service-entities-list', 'v-icon', 'v-row', 'v-chip',
   ]),
   allowedAttributes: {
     '*': [
