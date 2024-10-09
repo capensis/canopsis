@@ -328,6 +328,8 @@ func (p *metaAlarmProcessor) newAlarm(
 		ID:       utils.NewID(),
 		Time:     now,
 		Value: types.AlarmValue{
+			Component:         entity.Component,
+			Resource:          entity.Name,
 			CreationDate:      now,
 			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
 			InitialOutput:     params.Output,
@@ -345,17 +347,7 @@ func (p *metaAlarmProcessor) newAlarm(
 		},
 	}
 
-	switch entity.Type {
-	case types.EntityTypeResource:
-		alarm.Value.Resource = entity.Name
-		alarm.Value.Component = entity.Component
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
-	case types.EntityTypeComponent, types.EntityTypeService:
-		alarm.Value.Component = entity.Name
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
-	case types.EntityTypeConnector:
-		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
-	}
+	alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
 
 	return alarm
 }
