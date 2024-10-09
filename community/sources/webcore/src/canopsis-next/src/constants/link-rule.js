@@ -3,7 +3,11 @@ export const LINK_RULE_TYPES = {
   entity: 'entity',
 };
 
-export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms, user) {
+export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms, user, env) {
+  for (const alarm of alarms) {
+
+  }
+
   return [
     {
       label: "",
@@ -16,14 +20,19 @@ export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms, us
   ];
 }`;
 
-export const LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE = `function generate(entities, user) {
+export const LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE = `function generate(entities, user, env) {
+  for (const entity of entities) {
+
+  }
+
   return [
     {
       label: "",
       category: "",
       icon_name: "",
       url: "",
-      action: 0
+      action: 0,
+      single: true
     }
   ];
 }`;
@@ -38,4 +47,25 @@ export const DEFAULT_LINKS_INLINE_COUNT = 3;
 export const LINK_RULE_ACTIONS = {
   open: 'open',
   copy: 'copy',
+};
+
+export const LINK_RULE_ADVANCED_COMPLETIONS = {
+  alarm: {
+    Value: {
+      Component: '',
+    },
+  },
+  entity: {
+    Infos: {
+      '%infos_name%': {
+        Value: '',
+      },
+    },
+  },
+  user: {
+    Username: '',
+  },
+  env: {
+    var1: '',
+  },
 };
