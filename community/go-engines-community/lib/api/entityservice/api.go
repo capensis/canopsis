@@ -264,9 +264,9 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	a.sendChangeMsg(entityservice.ChangeEntityMessage{
-		ID:                      id,
-		EntityType:              types.EntityTypeService,
-		IsServicePatternChanged: true,
+		ID:         id,
+		EntityType: types.EntityTypeService,
+		IsDeleted:  true,
 	})
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
