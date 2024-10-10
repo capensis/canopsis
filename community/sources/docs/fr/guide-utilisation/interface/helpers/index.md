@@ -543,6 +543,30 @@ Afficher les tags d'une alarme en combinant les options :
 {{ tags 'Tag1' 'Tag2' regex='Tag\d+' flags='i' }}
 ```
 
+### Helper `map`
+
+```handlebars
+{{map}}
+```
+
+Ce helper permet d'afficher un champ "map" sous forme de badges.
+
+Le champ "map" doit être de la forme suivante : `map[item1:valeur1 item2:valeur2 ... ]`
+
+#### Exemple d'utilisation du helper `map`
+
+Afficher tous les items d'un champ map :
+
+```handlebars
+{{ map alarm.entity.infos.prom_labels_all.value }}
+```
+
+Afficher tous les items d'un champ map sous forme de badges bleus, écrits en blanc :
+
+```handlebars
+{{ map alarm.entity.infos.prom_labels_all.value color='blue' textColor='white' }}
+```
+
 ### Helper `links`
 
 ```handlebars
