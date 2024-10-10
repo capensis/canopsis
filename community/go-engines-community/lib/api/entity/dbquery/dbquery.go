@@ -97,6 +97,7 @@ func GetDependsCountPipeline(prefixArg ...string) []bson.M {
 			"foreignField": "services",
 			"as":           prefix + "service_depends",
 			"pipeline": []bson.M{
+				{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
@@ -106,7 +107,10 @@ func GetDependsCountPipeline(prefixArg ...string) []bson.M {
 			"foreignField": "component",
 			"as":           prefix + "component_depends",
 			"pipeline": []bson.M{
-				{"$match": bson.M{"type": types.EntityTypeResource}},
+				{"$match": bson.M{
+					"type":         types.EntityTypeResource,
+					"soft_deleted": bson.M{"$exists": false},
+				}},
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
@@ -138,6 +142,7 @@ func GetImpactsCountPipeline(prefixArg ...string) []bson.M {
 			"foreignField": "_id",
 			"as":           prefix + "service_impacts",
 			"pipeline": []bson.M{
+				{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
