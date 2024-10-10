@@ -19,7 +19,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
+	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
 }
 
 type EntitiesListRequest struct {
@@ -33,6 +33,7 @@ type EditRequest struct {
 	Name       string                             `json:"name" binding:"required,max=255"`
 	Reason     string                             `json:"reason" binding:"required"`
 	RRule      string                             `json:"rrule"`
+	Timezone   string                             `json:"timezone"`
 	Start      *datetime.CpsTime                  `json:"tstart" binding:"required" swaggertype:"integer"`
 	Stop       *datetime.CpsTime                  `json:"tstop" swaggertype:"integer"`
 	Type       string                             `json:"type" binding:"required"`
@@ -69,6 +70,7 @@ type PatchRequest struct {
 	Enabled    *bool                              `json:"enabled"`
 	Reason     *string                            `json:"reason"`
 	Type       *string                            `json:"type"`
+	Timezone   *string                            `json:"timezone"`
 	Start      *int64                             `json:"tstart" swaggertype:"integer"`
 	Stop       NullableTime                       `json:"tstop" swaggertype:"integer"`
 	RRule      *string                            `json:"rrule"`
@@ -95,6 +97,7 @@ type Response struct {
 	Reason        *pbehaviorreason.Response     `bson:"reason" json:"reason"`
 	RRule         string                        `bson:"rrule" json:"rrule"`
 	RRuleEnd      *datetime.CpsTime             `bson:"rrule_end" json:"rrule_end" swaggertype:"integer"`
+	Timezone      string                        `bson:"timezone" json:"timezone"`
 	Start         *datetime.CpsTime             `bson:"tstart" json:"tstart" swaggertype:"integer"`
 	Stop          *datetime.CpsTime             `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Created       *datetime.CpsTime             `bson:"created" json:"created" swaggertype:"integer"`

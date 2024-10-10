@@ -127,6 +127,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("rrule", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("timezone", trans, func(ut ut.Translator) error {
+		return ut.Add("timezone", "{0} is invalid timezone.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("timezone", fe.StructField())
+		return t
+	})
 	_ = v.RegisterTranslation("not_exist", trans, func(ut ut.Translator) error {
 		return ut.Add("not_exist", "{0} doesn't exist.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
