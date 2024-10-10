@@ -538,30 +538,13 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 				}}},
 			}},
 		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "services",
-			"as":           "depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
 		{"$addFields": bson.M{
-			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
 				"if":   bson.M{"$gt": bson.A{"$counters.unacked", 0}},
 				"then": true,
 				"else": false,
 			}},
-			"counters.under_pbh": bson.M{"$sum": bson.M{
-				"$map": bson.M{
-					"input": "$counters.pbh_types",
-					"in":    "$$this.count",
-				},
-			}},
 		}},
-		{"$project": bson.M{"depends": 0}},
 		{"$addFields": bson.M{
 			"icon": bson.M{"$switch": bson.M{
 				"branches": append(
