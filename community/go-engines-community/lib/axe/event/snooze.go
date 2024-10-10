@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -16,24 +15,24 @@ import (
 
 func NewSnoozeProcessor(
 	client mongo.DbClient,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	logger zerolog.Logger,
 ) Processor {
 	return &snoozeProcessor{
-		client:                  client,
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:        client.Collection(mongo.EntityMongoCollection),
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		logger:                  logger,
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		logger:                 logger,
 	}
 }
 
 type snoozeProcessor struct {
-	client                  mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	entityCollection        mongo.DbCollection
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	logger                  zerolog.Logger
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	logger                 zerolog.Logger
 }
 
 func (p *snoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -110,7 +109,7 @@ func (p *snoozeProcessor) postProcess(
 	event rpc.AxeEvent,
 	result Result,
 ) {
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
