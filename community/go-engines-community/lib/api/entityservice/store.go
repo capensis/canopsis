@@ -116,8 +116,10 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 	service := types.Entity{}
 	err := s.dbCollection.
 		FindOne(ctx, bson.M{
-			"_id": r.ID, "type": bson.M{"$in": []string{types.EntityTypeService, types.EntityTypeComponent}},
-			"soft_deleted": bson.M{"$exists": false}}).
+			"_id":          r.ID,
+			"type":         bson.M{"$in": []string{types.EntityTypeService, types.EntityTypeComponent}},
+			"soft_deleted": bson.M{"$exists": false},
+		}).
 		Decode(&service)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -126,16 +128,18 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		return nil, err
 	}
 	now := datetime.NewCpsTime()
-	var match bson.M
+	match := bson.M{"soft_deleted": bson.M{"$exists": false}}
 	switch service.Type {
 	case types.EntityTypeService:
-		match = bson.M{"services": service.ID, "_id": bson.M{"$ne": service.ID}}
+		match["services"] = service.ID
+		match["_id"] = bson.M{"$ne": service.ID}
 	case types.EntityTypeComponent:
 		if service.StateInfo == nil {
 			return &ContextGraphAggregationResult{Data: make([]ContextGraphEntity, 0)}, nil
 		}
 
-		match = bson.M{"component": service.ID, "_id": bson.M{"$ne": service.ID}}
+		match["component"] = service.ID
+		match["_id"] = bson.M{"$ne": service.ID}
 	}
 
 	if r.DefineState {
@@ -233,13 +237,15 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userID st
 			"_id":            e.Component,
 			"type":           types.EntityTypeComponent,
 			"state_info._id": bson.M{"$nin": bson.A{nil, ""}},
+			"soft_deleted":   bson.M{"$exists": false},
 		})
 	}
 
 	if len(e.Services) > 0 {
 		match = append(match, bson.M{
-			"_id":  bson.M{"$in": e.Services},
-			"type": types.EntityTypeService,
+			"_id":          bson.M{"$in": e.Services},
+			"type":         types.EntityTypeService,
+			"soft_deleted": bson.M{"$exists": false},
 		})
 	}
 
