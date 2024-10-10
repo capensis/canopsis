@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -21,7 +20,7 @@ func NewAckRemoveProcessor(
 	client mongo.DbClient,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) Processor {
@@ -31,7 +30,7 @@ func NewAckRemoveProcessor(
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		eventsSender:                    eventsSender,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
 		metricsSender:                   metricsSender,
 		logger:                          logger,
 	}
@@ -43,7 +42,7 @@ type ackRemoveProcessor struct {
 	entityCollection                mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	eventsSender                    entitycounters.EventsSender
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
 	metricsSender                   metrics.Sender
 	logger                          zerolog.Logger
 }
@@ -137,7 +136,7 @@ func (p *ackRemoveProcessor) postProcess(
 		}
 	}
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &res.Alarm,
 		AlarmChangeType: res.AlarmChange.Type,
 	})

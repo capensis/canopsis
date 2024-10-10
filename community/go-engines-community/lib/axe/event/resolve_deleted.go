@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -26,7 +25,7 @@ func NewResolveDeletedProcessor(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -43,7 +42,7 @@ func NewResolveDeletedProcessor(
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
 		metaAlarmStatesService:          metaAlarmStatesService,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
@@ -62,7 +61,7 @@ type resolveDeletedProcessor struct {
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
 	metaAlarmStatesService          correlation.MetaAlarmStateService
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
@@ -156,7 +155,7 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 		newComponentState,
 		notAckedMetricType,
 		p.eventsSender,
-		p.metaAlarmEventProcessor,
+		p.metaAlarmPostProcessor,
 		p.metricsSender,
 		p.remediationRpcClient,
 		p.pbehaviorCollection,
