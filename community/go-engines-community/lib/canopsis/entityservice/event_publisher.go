@@ -35,6 +35,7 @@ type ChangeEntityMessage struct {
 	Component string
 	// IsToggled is true if entity is disabled or enabled.
 	IsToggled  bool
+	IsDeleted  bool
 	EntityType string
 	// IsPatternChanged defines should service's context graph and state be recomputed.
 	IsServicePatternChanged bool
@@ -90,7 +91,7 @@ func (p *eventPublisher) Publish(
 
 func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEntityMessage) {
 	var eventType string
-	if msg.IsServicePatternChanged || msg.IsToggled {
+	if msg.IsServicePatternChanged || msg.IsToggled || msg.IsDeleted {
 		eventType = types.EventTypeRecomputeEntityService
 	} else {
 		eventType = types.EventTypeEntityUpdated
@@ -144,6 +145,8 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 
 	if msg.IsToggled {
 		event.EventType = types.EventTypeEntityToggled
+	} else if msg.IsDeleted {
+		event.EventType = types.EventTypeResolveDeleted
 	} else {
 		event.EventType = types.EventTypeEntityUpdated
 	}
