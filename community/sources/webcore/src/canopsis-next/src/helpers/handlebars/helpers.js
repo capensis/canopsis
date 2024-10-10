@@ -464,3 +464,31 @@ export function jsonHelper(object, ...args) {
 
   return JSON.stringify(fields.length ? pick(object, fields) : object, undefined, 2);
 }
+
+/**
+ * Transform string from `map` format to chips
+ * Map format: map[field:value anotherField:value]
+ *
+ * @example {{ map alarm.entity.infos.prom_labels_all.value color='blue' textColor='white' }}
+ * @example {{ map 'map[field:value anotherField:value]' }}
+ *
+ * @param {String} string
+ * @param {Object} [options]
+ * @returns {*}
+ */
+export function mapHelper(string, options) {
+  if (!isString(string)) {
+    throw new Error('handlebars helper {{map}} expects string');
+  }
+
+  const color = Handlebars.escapeExpression(options?.hash?.color ?? 'gray');
+  const textColor = Handlebars.escapeExpression(options?.hash?.textColor ?? 'black');
+  const chips = string.replace(/map\[|]/g, '')
+    .split(/\s+/)
+    .map(item => `<v-chip color="${color}" text-color="${textColor}">${item}</v-chip>`)
+    .join('');
+
+  return new Handlebars.SafeString(
+    `<v-row class="gap-2" wrap>${chips}</v-row>`,
+  );
+}
