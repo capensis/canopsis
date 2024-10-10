@@ -505,7 +505,7 @@ func (w *worker) parseEntities(
 				eventType = types.EventTypeEntityToggled
 			}
 
-			writeModels = append(writeModels, w.changeState(ci.ID, false, source, now))
+			writeModels = append(writeModels, w.changeState(oldEntity.ID, false, source, now))
 			updatedIds = append(updatedIds, oldEntity.ID)
 		default:
 			return res, fmt.Errorf("the action %s is not recognized", ci.Action)
