@@ -118,24 +118,35 @@ func (a *api) Delete(c *gin.Context) {
 	var request IdRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
 		return
 	}
 
-	ok, err := a.store.Delete(c, request.ID, c.MustGet(auth.UserKey).(string))
+	entity, err := a.store.Delete(c, request.ID, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrLinkedEntityToAlarm) || errors.Is(err, ErrComponent) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
 			return
 		}
+
 		panic(err)
 	}
 
-	if !ok {
+	if entity == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
 		return
 	}
 
 	a.metricMetaUpdater.DeleteById(c, request.ID)
+	a.sendChangeMessage(entityservice.ChangeEntityMessage{
+		ID:         entity.ID,
+		Name:       entity.Name,
+		Component:  entity.Component,
+		EntityType: entity.Type,
+		IsDeleted:  true,
+	})
 
 	c.Status(http.StatusNoContent)
 }
