@@ -87,17 +87,17 @@ export const LINK_RULE_ADVANCED_ALARM_COMPLETIONS = {
         Author: '',
         Message: '',
       },
-      Entity: {
-        Name: '',
-        Infos: {
-          '%infos_name%': {
-            Value: '',
-          },
+    },
+    Entity: {
+      Name: '',
+      Infos: {
+        '%infos_name%': {
+          Value: '',
         },
       },
-      ExternalData: {
-        '%reference%': '',
-      },
+    },
+    ExternalData: {
+      '%reference%': '',
     },
   },
 
