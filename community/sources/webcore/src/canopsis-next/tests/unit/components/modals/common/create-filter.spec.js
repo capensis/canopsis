@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -64,6 +62,8 @@ describe('create-filter', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Form submitted without fields after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
@@ -83,7 +83,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       is_user_preference: false,
@@ -116,7 +116,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       is_user_preference: false,
@@ -160,7 +160,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -182,7 +182,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -222,7 +222,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -273,7 +273,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -341,7 +341,7 @@ describe('create-filter', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       alarm_pattern: [
@@ -378,7 +378,7 @@ describe('create-filter', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

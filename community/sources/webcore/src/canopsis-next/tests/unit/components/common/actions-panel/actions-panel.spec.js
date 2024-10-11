@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { createButtonStub } from '@unit/stubs/button';
 

@@ -1,8 +1,7 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -101,6 +100,8 @@ describe('text', () => {
       },
     },
   });
+
+  beforeAll(() => jest.useFakeTimers());
 
   afterEach(() => {
     createWidget.mockReset();

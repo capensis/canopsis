@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { TIME_UNITS } from '@/constants';
 
 import PeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';

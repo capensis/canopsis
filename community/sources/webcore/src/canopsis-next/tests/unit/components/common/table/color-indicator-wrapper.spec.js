@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES } from '@/constants';
 
