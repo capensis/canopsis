@@ -26,7 +26,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **24.04.3**  | [:material-file-document:](notes-de-version/24.04.3.md)  | 09/10/2024 ||
+    | **24.04.3**  | [:material-file-document:](notes-de-version/24.04.3.md)  | 11/10/2024 | Une des opérations de migration doit être exécutée manuellement, consultez les notes de version |
     | 24.04.2      | [:material-file-document:](notes-de-version/24.04.2.md)  | 05/09/2024 ||
     | 24.04.1      | [:material-file-document:](notes-de-version/24.04.1.md)  | 25/07/2024 | D'importantes optimisations de performances de l'interface graphique ont été apportées |
     | 24.04.0      | [:material-file-document:](notes-de-version/24.04.0.md)  | 03/05/2024 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.04.0.md) |
