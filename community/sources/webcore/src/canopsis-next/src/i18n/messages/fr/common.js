@@ -250,7 +250,7 @@ export default {
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
   more: 'plus',
-  all: 'Toute',
+  all: 'Tous',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
