@@ -13,9 +13,16 @@
 </template>
 
 <script>
-import { LINK_RULE_ADVANCED_COMPLETIONS } from '@/constants';
+import { computed } from 'vue';
+
+import {
+  LINK_RULE_ADVANCED_ALARM_COMPLETIONS,
+  LINK_RULE_ADVANCED_ENTITY_COMPLETIONS,
+  LINK_RULE_TYPES,
+} from '@/constants';
 
 import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 
 import JavaScriptCodeEditor from './fields/javascript-code-editor.vue';
 
@@ -30,14 +37,27 @@ export default {
       type: String,
       default: '',
     },
+    type: {
+      type: String,
+      default: LINK_RULE_TYPES.alarm,
+    },
   },
-  setup() {
+  setup(props) {
     const { hasAnyError } = useValidationHeader();
+    const { templateVars } = useTemplateVars();
+
+    const completions = computed(() => ({
+      ...(
+        props.type === LINK_RULE_TYPES.alarm
+          ? LINK_RULE_ADVANCED_ALARM_COMPLETIONS
+          : LINK_RULE_ADVANCED_ENTITY_COMPLETIONS
+      ),
+      env: templateVars?.value,
+    }));
 
     return {
       hasAnyError,
-
-      completions: LINK_RULE_ADVANCED_COMPLETIONS,
+      completions,
     };
   },
 };
