@@ -12,8 +12,13 @@ import (
 
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
+
 type ActivationService interface {
-	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp types.MicroTime) (bool, error)
+	Process(
+		ctx context.Context,
+		alarm types.Alarm,
+		fifoAckEvent types.Event,
+	) (bool, error)
 }
 
 type baseActivationService struct {
@@ -37,9 +42,9 @@ func NewActivationService(
 	}
 }
 
-func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp types.MicroTime) (bool, error) {
+func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, fifoAckEvent types.Event) (bool, error) {
 	if alarm.CanActivate() {
-		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp)
+		err := s.sendActivationEvent(ctx, fifoAckEvent)
 
 		if err != nil {
 			return false, err
@@ -51,14 +56,14 @@ func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, 
 	return false, nil
 }
 
-func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp types.MicroTime) error {
+func (s *baseActivationService) sendActivationEvent(ctx context.Context, fifoAckEvent types.Event) error {
 	event := types.Event{
-		Connector:         alarm.Value.Connector,
-		ConnectorName:     alarm.Value.ConnectorName,
-		Component:         alarm.Value.Component,
-		Resource:          alarm.Value.Resource,
+		Connector:         fifoAckEvent.Connector,
+		ConnectorName:     fifoAckEvent.ConnectorName,
+		Component:         fifoAckEvent.Component,
+		Resource:          fifoAckEvent.Resource,
 		Timestamp:         types.NewCpsTime(),
-		ReceivedTimestamp: eventReceivedTimestamp,
+		ReceivedTimestamp: types.NewMicroTime(),
 		EventType:         types.EventTypeActivate,
 		Initiator:         types.InitiatorSystem,
 	}

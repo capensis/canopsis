@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -28,10 +27,6 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectServicePauseEventForm = wrapper => wrapper.find('service-pause-event-form-stub');
 
 describe('create-service-pause-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
-
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -62,6 +57,10 @@ describe('create-service-pause-event', () => {
       },
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   test('Default parameters applied to form', () => {
     const wrapper = factory({
@@ -105,7 +104,7 @@ describe('create-service-pause-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledTimes(1);
     expect(action).toBeCalledWith(newData);
@@ -128,7 +127,7 @@ describe('create-service-pause-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
   });
@@ -162,7 +161,7 @@ describe('create-service-pause-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -192,7 +191,7 @@ describe('create-service-pause-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -227,7 +226,7 @@ describe('create-service-pause-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -251,7 +250,7 @@ describe('create-service-pause-event', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

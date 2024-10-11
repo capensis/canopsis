@@ -100,9 +100,10 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if scenario == nil {
 						e.logger.Error().Str("scenario", task.DelayedScenarioID).Msg("cannot find scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm:        task.Alarm,
-							FifoAckEvent: task.FifoAckEvent,
-							Err:          errors.New("scenario doesn't exist"),
+							Alarm:                task.Alarm,
+							StartEventProcessing: task.Start,
+							FifoAckEvent:         task.FifoAckEvent,
+							Err:                  errors.New("scenario doesn't exist"),
 						}
 						return
 					}
@@ -110,15 +111,16 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if err != nil {
 						e.logger.Err(err).Str("scenario", task.DelayedScenarioID).Str("alarm", task.Alarm.ID).Msg("cannot run scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm:        task.Alarm,
-							FifoAckEvent: task.FifoAckEvent,
-							Err:          err,
+							Alarm:                task.Alarm,
+							StartEventProcessing: task.Start,
+							FifoAckEvent:         task.FifoAckEvent,
+							Err:                  err,
 						}
 						return
 					}
 
 					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent,
-						task.IsMetaAlarmUpdated, task.IsInstructionMatched)
+						task.Start, task.IsMetaAlarmUpdated, task.IsInstructionMatched)
 					return
 				}
 
@@ -127,9 +129,10 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if err != nil {
 						e.logger.Err(err).Str("execution", task.AbandonedExecutionCacheKey).Msg("cannot find abandoned scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm:        task.Alarm,
-							FifoAckEvent: task.FifoAckEvent,
-							Err:          err,
+							Alarm:                task.Alarm,
+							StartEventProcessing: task.Start,
+							FifoAckEvent:         task.FifoAckEvent,
+							Err:                  err,
 						}
 						return
 					}
@@ -179,17 +182,19 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 				if err != nil {
 					e.logger.Err(err).Str("alarm", task.Alarm.ID).Msg("cannot run scenarios")
 					e.outputChannel <- ScenarioResult{
-						Alarm:        task.Alarm,
-						FifoAckEvent: task.FifoAckEvent,
-						Err:          err,
+						Alarm:                task.Alarm,
+						StartEventProcessing: task.Start,
+						FifoAckEvent:         task.FifoAckEvent,
+						Err:                  err,
 					}
 					return
 				}
 
 				if !ok {
 					e.outputChannel <- ScenarioResult{
-						Alarm:        task.Alarm,
-						FifoAckEvent: task.FifoAckEvent,
+						Alarm:                task.Alarm,
+						StartEventProcessing: task.Start,
+						FifoAckEvent:         task.FifoAckEvent,
 					}
 				}
 			}(ctx, scenariosTask)
@@ -234,10 +239,11 @@ func (e *redisBasedManager) finishExecution(
 		return
 	default:
 		e.outputChannel <- ScenarioResult{
-			Alarm:            alarm,
-			Err:              executionErr,
-			ActionExecutions: execution.ActionExecutions,
-			FifoAckEvent:     execution.FifoAckEvent,
+			Alarm:                alarm,
+			StartEventProcessing: time.Unix(execution.StartEventProcessing, 0),
+			Err:                  executionErr,
+			ActionExecutions:     execution.ActionExecutions,
+			FifoAckEvent:         execution.FifoAckEvent,
 		}
 	}
 }
@@ -499,7 +505,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 		additionalData.Trigger = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent,
-				task.IsMetaAlarmUpdated, task.IsInstructionMatched)
+				task.Start, task.IsMetaAlarmUpdated, task.IsInstructionMatched)
 		}
 	}
 
@@ -548,7 +554,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 		additionalData.Trigger = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
-				prevScenarioExecution.FifoAckEvent, prevScenarioExecution.IsMetaAlarmUpdated, prevScenarioExecution.IsInstructionMatched)
+				prevScenarioExecution.FifoAckEvent, time.Unix(prevScenarioExecution.StartEventProcessing, 0), prevScenarioExecution.IsMetaAlarmUpdated, prevScenarioExecution.IsInstructionMatched)
 		}
 	}
 
@@ -562,6 +568,7 @@ func (e *redisBasedManager) startExecution(
 	entity types.Entity,
 	data AdditionalData,
 	fifoAckEvent types.Event,
+	start time.Time,
 	isMetaAlarmUpdated bool,
 	isInstructionMatched bool,
 ) {
@@ -591,6 +598,7 @@ func (e *redisBasedManager) startExecution(
 		FifoAckEvent:         fifoAckEvent,
 		IsMetaAlarmUpdated:   isMetaAlarmUpdated,
 		IsInstructionMatched: isInstructionMatched,
+		StartEventProcessing: start.Unix(),
 	}
 	ok, err := e.executionStorage.Create(ctx, execution)
 	if err != nil {

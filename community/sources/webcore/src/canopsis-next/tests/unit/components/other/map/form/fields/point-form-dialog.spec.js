@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -48,6 +47,8 @@ describe('point-form-dialog', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers());
+
   test('Point dialog submitted with changes', async () => {
     const point = {
       _id: 'id',
@@ -63,7 +64,7 @@ describe('point-form-dialog', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', point);
   });
@@ -87,7 +88,7 @@ describe('point-form-dialog', () => {
     const submitButton = selectSubmitButton(wrapper);
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', newPoint);
   });
@@ -116,7 +117,7 @@ describe('point-form-dialog', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', newPoint);
   });
@@ -148,7 +149,7 @@ describe('point-form-dialog', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper).not.toEmit('submit');
   });
@@ -249,7 +250,7 @@ describe('point-form-dialog', () => {
       _id: pointId,
     };
 
-    const wrapper = snapshotFactory({
+    const wrapper = factory({
       propsData: {
         point,
         editing: true,
@@ -269,11 +270,15 @@ describe('point-form-dialog', () => {
 
     wrapper.clickOutside();
 
+    await flushPromises(true);
+
     expect($modals.show).toBeCalled();
 
     const [modalArguments] = $modals.show.mock.calls[0];
 
     await modalArguments.config.action(true);
+
+    await flushPromises(true);
 
     expect(wrapper).toEmit('submit', newPoint);
   });

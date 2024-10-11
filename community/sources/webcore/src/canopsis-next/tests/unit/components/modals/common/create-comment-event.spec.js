@@ -1,8 +1,7 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createInputStub } from '@unit/stubs/input';
@@ -31,9 +30,6 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectNameField = wrapper => wrapper.find('.c-name-field');
 
 describe('create-comment-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
 
@@ -60,6 +56,10 @@ describe('create-comment-event', () => {
     },
   });
 
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
     const config = { action };
@@ -84,7 +84,7 @@ describe('create-comment-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledTimes(1);
     expect(action).toBeCalledWith({ comment });
@@ -117,6 +117,8 @@ describe('create-comment-event', () => {
 
     selectSubmitButton(wrapper).trigger('click');
 
+    await flushPromises(true);
+
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
   });
@@ -143,7 +145,7 @@ describe('create-comment-event', () => {
     selectNameField(wrapper).setValue(comment);
     selectSubmitButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
@@ -183,7 +185,7 @@ describe('create-comment-event', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -212,7 +214,7 @@ describe('create-comment-event', () => {
 
     cancelButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

@@ -41,4 +41,7 @@ export default {
     deprecatedTriggerExist: 'This scenario is not supported anymore due to its old format and thus disabled. \n'
       + 'Please update the scenario triggers or create a new ticket declaration rule.',
   },
+  tooltips: {
+    pbehaviorActionsNamePrefix: 'Name is going to be `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
+  },
 };

@@ -1,10 +1,9 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createSettingsMocks, submitWithExpects } from '@unit/utils/settings';
 
@@ -44,9 +43,6 @@ const generateDefaultPieChartWidget = () => ({
 const selectWidgetForm = wrapper => wrapper.find('pie-chart-widget-form-stub');
 
 describe('pie-chart', () => {
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
   const $sidebar = mockSidebar();
 
   const {
@@ -111,6 +107,10 @@ describe('pie-chart', () => {
       $sidebar,
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   test('Create widget with default parameters', async () => {
     const localWidget = getEmptyWidgetByType(WIDGET_TYPES.pieChart);
