@@ -40,12 +40,19 @@ export default {
       type: String,
       default: 'event_type',
     },
+    types: {
+      type: Array,
+      default: () => [],
+    },
   },
   setup(props) {
-    const eventTypes = computed(() => Object.values(EVENT_TYPES).map(value => ({
-      value,
-      text: value,
-    })));
+    const eventTypes = computed(() => (
+      props.types?.length
+        ? props.types
+        : Object.values(EVENT_TYPES).map(value => ({
+          value,
+          text: value,
+        }))));
 
     const rules = computed(() => ({
       required: props.required,
