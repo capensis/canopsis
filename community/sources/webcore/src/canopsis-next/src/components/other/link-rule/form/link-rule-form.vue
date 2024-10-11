@@ -58,6 +58,7 @@
       <link-rule-advanced-form
         v-field="form.source_code"
         ref="advanced"
+        :type="form.type"
         @input="resetLinksErrors"
       />
     </v-tab-item>

@@ -49,24 +49,72 @@ export const LINK_RULE_ACTIONS = {
   copy: 'copy',
 };
 
-export const LINK_RULE_ADVANCED_COMPLETIONS = {
+export const LINK_RULE_ADVANCED_USER_COMPLETIONS = {
+  user: {
+    Email: '',
+    Username: '',
+    Firstname: '',
+    Lastname: '',
+    ExternalID: '',
+    Source: '',
+    Role: '',
+  },
+};
+
+export const LINK_RULE_ADVANCED_ALARM_COMPLETIONS = {
   alarm: {
     Value: {
       Component: '',
       Connector: '',
+      Resource: '',
+      State: {
+        Message: '',
+        Value: 0,
+      },
+      Status: {
+        Value: 0,
+      },
+      Ticket: {
+        Author: '',
+        Ticket: '',
+        Message: '',
+      },
+      ACK: {
+        Author: '',
+        Message: '',
+      },
+      LastComment: {
+        Author: '',
+        Message: '',
+      },
+      Entity: {
+        Name: '',
+        Infos: {
+          '%infos_name%': {
+            Value: '',
+          },
+        },
+      },
+      ExternalData: {
+        '%reference%': '',
+      },
     },
   },
-  entity: {
+
+  ...LINK_RULE_ADVANCED_USER_COMPLETIONS,
+};
+
+export const LINK_RULE_ADVANCED_ENTITY_COMPLETIONS = {
+  Entity: {
     Infos: {
       '%infos_name%': {
         Value: '',
       },
     },
+    ExternalData: {
+      '%reference%': '',
+    },
   },
-  user: {
-    Username: '',
-  },
-  env: {
-    var1: '',
-  },
+
+  ...LINK_RULE_ADVANCED_USER_COMPLETIONS,
 };
