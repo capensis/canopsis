@@ -3,12 +3,17 @@ export const EVENT_TYPES = {
   ackRemove: 'ackremove',
   assocTicket: 'assocticket',
   cancel: 'cancel',
+  uncancel: 'uncancel',
+  changeState: 'changestate',
   check: 'check',
   comment: 'comment',
-  changeState: 'changestate',
   snooze: 'snooze',
+};
+
+export const HEALTHCHECK_EVENT_TYPES = {
+  ...EVENT_TYPES,
+
   unsnooze: 'unsnooze',
-  uncancel: 'uncancel',
   pbhenter: 'pbhenter',
   pbhleaveandenter: 'pbhleaveandenter',
   pbhleave: 'pbhleave',
