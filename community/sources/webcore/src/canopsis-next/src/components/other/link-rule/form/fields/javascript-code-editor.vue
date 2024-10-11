@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
 import { useJavaScriptCompletions } from '@/hooks/monaco';
 
@@ -52,7 +52,7 @@ export default {
 
     useJavaScriptCompletions({
       codeEditor,
-      completions: props.completions,
+      completions: toRef(props, 'completions'),
     });
 
     return {
