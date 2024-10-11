@@ -105,7 +105,7 @@ export const LINK_RULE_ADVANCED_ALARM_COMPLETIONS = {
 };
 
 export const LINK_RULE_ADVANCED_ENTITY_COMPLETIONS = {
-  Entity: {
+  entity: {
     Infos: {
       '%infos_name%': {
         Value: '',
