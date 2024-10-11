@@ -1,7 +1,12 @@
 <template lang="pug">
   v-layout(column)
     c-enabled-field(v-if="!noEnabled", v-field="form.enabled", hide-details)
-    c-name-field(v-field="form.name", required)
+    c-name-field(
+      v-field="form.name",
+      :label="nameLabel",
+      :tooltip="nameTooltip",
+      required
+    )
     v-flex.mt-3(xs12)
       c-enabled-field.mt-0.mb-1(
         v-if="withStartOnTrigger",
@@ -131,6 +136,14 @@ export default {
     withStartOnTrigger: {
       type: Boolean,
       default: false,
+    },
+    nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
+      type: String,
+      required: false,
     },
   },
   data() {

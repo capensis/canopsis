@@ -268,7 +268,7 @@ func (a *Alarm) IsStateLocked() bool {
 
 // IsMalfunctioning...
 func (a *Alarm) IsMalfunctioning() bool {
-	return a.Value.Status.Value != AlarmStateOK
+	return a.Value.State.Value != AlarmStateOK
 }
 
 // HasSingleAck returns true if the alarm has been acknowledged exactly once.

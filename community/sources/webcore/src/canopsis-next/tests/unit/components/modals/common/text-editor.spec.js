@@ -1,19 +1,19 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+import { createInputStub } from '@unit/stubs/input';
+
 import ClickOutside from '@/services/click-outside';
 
 import TextEditor from '@/components/modals/common/text-editor.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'text-editor-field': true,
+  'text-editor-field': createInputStub('text-editor-field'),
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -26,7 +26,7 @@ const snapshotStubs = {
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
+const selectTextEditorField = wrapper => wrapper.find('.text-editor-field');
 
 describe('text-editor', () => {
   const $modals = mockModals();
@@ -36,9 +36,6 @@ describe('text-editor', () => {
     stubs,
     attachTo: document.body,
     parentComponent: {
-      $_veeValidate: {
-        validator: 'new',
-      },
       provide: {
         $clickOutside: new ClickOutside(),
         $system: {},
@@ -48,15 +45,14 @@ describe('text-editor', () => {
   const snapshotFactory = generateRenderer(TextEditor, {
     stubs: snapshotStubs,
     parentComponent: {
-      $_veeValidate: {
-        validator: 'new',
-      },
       provide: {
         $clickOutside: new ClickOutside(),
         $system: {},
       },
     },
   });
+
+  beforeAll(() => jest.useFakeTimers());
 
   test('Form submitted with empty string after trigger submit button', async () => {
     const action = jest.fn();
@@ -73,16 +69,12 @@ describe('text-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -102,16 +94,12 @@ describe('text-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith(text);
     expect($modals.hide).toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -121,6 +109,9 @@ describe('text-editor', () => {
         modal: {
           config: {
             action,
+            rules: {
+              required: true,
+            },
           },
         },
       },
@@ -129,28 +120,12 @@ describe('text-editor', () => {
       },
     });
 
-    const textEditorField = selectTextEditorField(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => textEditorField.vm,
-      vm: textEditorField.vm,
-    });
-
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
-
-    wrapper.destroy();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -165,15 +140,11 @@ describe('text-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -195,18 +166,14 @@ describe('text-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     expect(wrapper.getValidator().errors.any()).toBeTruthy();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
-
-    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -230,19 +197,15 @@ describe('text-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith(text);
     expect($modals.hide).not.toBeCalledWith();
-
-    wrapper.destroy();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -269,11 +232,9 @@ describe('text-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    selectSubmitButton(wrapper).trigger('click');
 
-    submitButton.trigger('click');
-
-    await flushPromises();
+    await flushPromises(true);
 
     expect(consoleErrorSpy).toBeCalledWith(errors);
     expect($popups.error).toBeCalledWith({
@@ -283,11 +244,11 @@ describe('text-editor', () => {
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
-
-    wrapper.destroy();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
+    jest.useFakeTimers();
+
     const action = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -304,22 +265,19 @@ describe('text-editor', () => {
       },
     });
 
-    const textEditorField = selectTextEditorField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textEditorField.vm.$emit('input', newValue);
+    await selectTextEditorField(wrapper).vm.$emit('input', newValue);
+    await selectSubmitButton(wrapper).trigger('click');
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    jest.runAllTimers();
 
     await flushPromises();
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
 
-    wrapper.destroy();
+    jest.useRealTimers();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -334,15 +292,9 @@ describe('text-editor', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
-
-    await flushPromises();
+    await selectCancelButton(wrapper).trigger('click');
 
     expect($modals.hide).toBeCalled();
-
-    wrapper.destroy();
   });
 
   test('Renders `text-editor` with empty modal', async () => {
@@ -360,8 +312,6 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-
-    wrapper.destroy();
+    expect(wrapper).toMatchSnapshot();
   });
 });

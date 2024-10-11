@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import { get, merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
+import flushPromisesLib from 'flush-promises';
 
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
@@ -48,6 +49,20 @@ Vue.filter('json', stringifyJsonFilter);
 
 const stubs = {
   'mq-layout': MqLayout,
+};
+
+/**
+ * Flush Promises with optional timers.
+ *
+ * @param {boolean} [withTimers = true] - Flag to indicate whether to run pending timers.
+ * @returns {Promise<void>} - A Promise that resolves when all promises are flushed.
+ */
+export const flushPromises = (withTimers = false) => {
+  if (withTimers) {
+    jest.runOnlyPendingTimers();
+  }
+
+  return flushPromisesLib();
 };
 
 /**

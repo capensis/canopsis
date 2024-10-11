@@ -163,7 +163,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
           <div
             class="v-list__tile__content"
           >
-            Text
+            <span>
+              Text
+              <span
+                class="v-list__tile__mask"
+              >
+                
+              </span>
+              
+            </span>
           </div>
           <span
             class="ml-4 grey--text"
@@ -182,7 +190,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
           <div
             class="v-list__tile__content"
           >
-            Text 2
+            <span>
+              Text 2
+              <span
+                class="v-list__tile__mask"
+              >
+                
+              </span>
+              
+            </span>
           </div>
           <span
             class="ml-4 grey--text"
@@ -201,7 +217,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
           <div
             class="v-list__tile__content"
           >
-            Text 3
+            <span>
+              Text 3
+              <span
+                class="v-list__tile__mask"
+              >
+                
+              </span>
+              
+            </span>
           </div>
           <span
             class="ml-4 grey--text"
@@ -242,19 +266,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
         >
           Custom label
         </label>
-        <div
-          class="v-select__selections"
-        >
-          Text 3
-          <input
-            aria-label="Custom label"
-            autocomplete="off"
-            disabled="disabled"
-            name="customName"
-            role="combobox"
-            type="text"
-          />
-        </div>
+        <input
+          aria-label="Custom label"
+          autocomplete="off"
+          disabled="disabled"
+          name="customName"
+          role="combobox"
+          type="text"
+        />
         <div
           class="v-input__append-inner"
         >
@@ -349,17 +368,13 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
         >
           Entity
         </label>
-        <div
-          class="v-select__selections"
-        >
-          <input
-            aria-label="Entity"
-            autocomplete="off"
-            name="entities"
-            role="combobox"
-            type="text"
-          />
-        </div>
+        <input
+          aria-label="Entity"
+          autocomplete="off"
+          name="entities"
+          role="combobox"
+          type="text"
+        />
         <div
           class="v-input__append-inner"
         >
@@ -418,7 +433,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           <div
             class="v-list__tile__content"
           >
-            id
+            <span>
+              id
+              <span
+                class="v-list__tile__mask"
+              >
+                
+              </span>
+              
+            </span>
           </div>
           <span
             class="ml-4 grey--text"
@@ -437,7 +460,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           <div
             class="v-list__tile__content"
           >
-            id 2
+            <span>
+              id 2
+              <span
+                class="v-list__tile__mask"
+              >
+                
+              </span>
+              
+            </span>
           </div>
           <span
             class="ml-4 grey--text"
@@ -456,7 +487,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           <div
             class="v-list__tile__content"
           >
-            id 3
+            <span>
+              id 3
+              <span
+                class="v-list__tile__mask"
+              >
+                
+              </span>
+              
+            </span>
           </div>
           <span
             class="ml-4 grey--text"

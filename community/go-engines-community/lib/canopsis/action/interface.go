@@ -4,6 +4,7 @@ package action
 
 import (
 	"context"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -75,6 +76,7 @@ type ScenarioExecution struct {
 	FifoAckEvent         types.Event            `json:"fev"`
 	IsMetaAlarmUpdated   bool                   `json:"mau,omitempty"`
 	IsInstructionMatched bool                   `json:"im,omitempty"`
+	StartEventProcessing int64                  `json:"sep"`
 }
 
 func (e ScenarioExecution) GetCacheKey() string {
@@ -86,6 +88,8 @@ type ScenarioResult struct {
 	Err              error
 	ActionExecutions []Execution
 	FifoAckEvent     types.Event
+
+	StartEventProcessing time.Time
 }
 
 type ExecuteScenariosTask struct {
@@ -99,6 +103,8 @@ type ExecuteScenariosTask struct {
 	IsInstructionMatched bool
 
 	AbandonedExecutionCacheKey string
+
+	Start time.Time
 }
 
 type AdditionalData struct {

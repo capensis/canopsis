@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsParents from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-parents.vue';
 

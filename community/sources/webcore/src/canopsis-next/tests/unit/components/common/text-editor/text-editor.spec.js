@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { mockXMLHttpRequest } from '@unit/utils/mock-hooks';
 import { API_HOST, API_ROUTES } from '@/config';
 

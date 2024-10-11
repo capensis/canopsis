@@ -1,7 +1,5 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsPbehavior from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-pbehavior.vue';
 

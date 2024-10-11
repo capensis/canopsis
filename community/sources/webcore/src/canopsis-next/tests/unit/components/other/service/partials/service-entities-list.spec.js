@@ -1,7 +1,5 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import {
   createAlarmModule,

@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
   submit: 'Soumettre',
@@ -287,6 +288,7 @@ export default {
   regexp: 'Expression régulière',
   archive: 'Archive',
   convertToCustomColumn: 'Convertir la colonne en personnalisé',
+  serialName: 'Nom de série',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

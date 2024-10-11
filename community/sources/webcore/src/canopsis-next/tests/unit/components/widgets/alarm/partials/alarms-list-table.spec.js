@@ -1,8 +1,7 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';

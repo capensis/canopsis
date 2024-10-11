@@ -214,7 +214,7 @@ func (e *Event) Format() {
 	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
 		e.Timestamp = now
 	}
-	e.ReceivedTimestamp = NewMicroTime()
+
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
 	}

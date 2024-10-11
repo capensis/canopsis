@@ -1,8 +1,7 @@
 import Faker from 'faker';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { API_ROUTES } from '@/config';

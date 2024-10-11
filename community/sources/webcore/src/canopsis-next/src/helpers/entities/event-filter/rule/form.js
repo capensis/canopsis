@@ -106,13 +106,14 @@ import {
  */
 
 /**
- * Remove 'Event.ExtraInfos.' prefix from value, if it exists
+ * Remove 'Event.ExtraInfos.' prefix from value, if it exists for dictionary type
  *
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const eventFilterActionValueToForm = (eventFilterActionValue = '') => eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
-
+export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') => (
+  eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '')
+);
 /**
  * Convert event filter action to form
  *
@@ -123,7 +124,9 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => ({
   key: uid(),
   type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
   name: eventFilterAction.name ?? '',
-  value: eventFilterActionValueToForm(eventFilterAction.value),
+  value: eventFilterAction.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
+    ? eventFilterDictionaryActionValueToForm(eventFilterAction.value)
+    : eventFilterAction.value,
   description: eventFilterAction.description ?? '',
 });
 
@@ -188,6 +191,16 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
 });
 
 /**
+ * Add 'Event.ExtraInfos.' prefix for value for dictionary type
+ *
+ * @param {string} [eventFilterActionValue = '']
+ * @returns {string}
+ */
+export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = '') => (
+  `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionValue}`
+);
+
+/**
  * Convert from to event filter action fields
  *
  * @param {EventFilterActionForm} eventFilterActionForm
@@ -196,7 +209,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
 export const formToEventFilterAction = eventFilterActionForm => (omit({
   ...eventFilterActionForm,
   value: eventFilterActionForm.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
-    ? `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionForm.value}`
+    ? formToEventFilterDictionaryActionValue(eventFilterActionForm.value)
     : eventFilterActionForm.value,
 }, ['key']));
 

@@ -1,10 +1,9 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import { mockSidebar } from '@unit/utils/mock-hooks';
 import {
   createSettingsMocks,
   getWidgetRequestWithNewProperty,
@@ -83,9 +82,6 @@ const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
 const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
 
 describe('service-weather', () => {
-  const nowTimestamp = 1386435600000;
-
-  mockDateNow(nowTimestamp);
   const $sidebar = mockSidebar();
 
   const {
@@ -127,7 +123,6 @@ describe('service-weather', () => {
   ]);
 
   const factory = generateShallowRenderer(ServiceWeatherSettings, {
-
     stubs,
     store,
     propsData: {
@@ -145,7 +140,6 @@ describe('service-weather', () => {
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherSettings, {
-
     stubs,
     store,
     propsData: {
@@ -161,6 +155,10 @@ describe('service-weather', () => {
       },
     },
   });
+
+  const timestamp = 1386435600000;
+
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
 
   afterEach(() => {
     createWidget.mockReset();
