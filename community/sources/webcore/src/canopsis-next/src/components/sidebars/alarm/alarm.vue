@@ -131,6 +131,7 @@
           :label="$t('settings.fastCancelOutput')"
         />
       </widget-settings-group>
+      <fast-pbehavior-form v-model="form.parameters" />
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
         :title="$t('settings.isSnoozeNoteRequired')"
@@ -234,6 +235,7 @@ import FieldFastActionOutput from './form/fields/fast-action-output.vue';
 import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
 import FieldInfoPopup from './form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
+import FastPbehaviorForm from './form/fast-pbehavior-form.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -260,6 +262,7 @@ export default {
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
     FieldDensity,
+    FastPbehaviorForm,
     ExportCsvForm,
     ChartsForm,
     FieldResizeColumnBehavior,
