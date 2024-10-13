@@ -238,6 +238,7 @@ export const ALARM_STATUSES_TEXTS = {
 
 export const ALARM_LIST_ACTIONS_TYPES = {
   pbehaviorAdd: 'pbehaviorAdd',
+  fastPbehaviorAdd: 'fastPbehaviorAdd',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
@@ -281,6 +282,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 
 export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: '$vuetify.icons.motion_photos_paused',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
   [ALARM_LIST_ACTIONS_TYPES.associateTicket]: '$vuetify.icons.sticky_note_2',

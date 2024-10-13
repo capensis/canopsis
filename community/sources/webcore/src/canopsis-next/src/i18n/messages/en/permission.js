@@ -70,6 +70,10 @@ export default {
       name: 'Rights on alarm list: pbehavior action',
       description: 'Users with this permission can access to the action "Periodical behavior" and edit PBehaviors for alarms',
     },
+    [USERS_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: {
+      name: 'Rights on alarm list: fast pbehavior action',
+      description: 'Users with this permission can access to the action "Fast periodical behavior"',
+    },
     [USERS_PERMISSIONS.business.alarmsList.actions.snooze]: {
       name: 'Rights on alarm list: snooze alarm',
       description: 'Users with this permission can snooze alarms',

@@ -1,4 +1,3 @@
-import { isEmpty, pick } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -7,24 +6,24 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   WEATHER_ACTIONS_TYPES,
   PBEHAVIOR_TYPE_TYPES,
-  PBEHAVIOR_ORIGINS,
   ALARM_STATES,
 } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity/actions';
-import { createDowntimePbehavior } from '@/helpers/entities/pbehavior/form';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+import { widgetActionsPanelCommonMixin } from '@/mixins/widget/actions-panel/common';
 
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionPanelServiceEntityMixin = {
   mixins: [
     authMixin,
+    widgetActionsPanelCommonMixin,
     entitiesPbehaviorTypeMixin,
     entitiesPbehaviorMixin,
     entitiesPbehaviorTypeMixin,
@@ -138,38 +137,6 @@ export const widgetActionPanelServiceEntityMixin = {
       if (handler) {
         handler(entities);
       }
-    },
-
-    showPbehaviorResponseErrorPopups(response) {
-      if (response?.length) {
-        response.forEach(({ error, errors }) => {
-          if (error || !isEmpty(errors)) {
-            this.$popups.error({ text: error || Object.values(errors).join('\n') });
-          }
-        });
-      }
-    },
-
-    async createPauseEvent(entities, payload) {
-      const response = await this.createEntityPbehaviors({
-        data: entities.map(entity => createDowntimePbehavior({
-          entity,
-          ...pick(payload, ['comment', 'reason', 'type']),
-        }), []),
-      });
-
-      this.showPbehaviorResponseErrorPopups(response);
-    },
-
-    async createPlayEvent(entities) {
-      const response = await this.removeEntityPbehaviors({
-        data: entities.map(({ _id: id }) => ({
-          entity: id,
-          origin: PBEHAVIOR_ORIGINS.serviceWeather,
-        })),
-      });
-
-      this.showPbehaviorResponseErrorPopups(response);
     },
 
     /**
@@ -436,7 +403,7 @@ export const widgetActionPanelServiceEntityMixin = {
             await this.runAction(
               WEATHER_ACTIONS_TYPES.entityPause,
               entities,
-              () => this.createPauseEvent(entities, {
+              () => this.createDowntimePbehavior(entities, {
                 comment: pause.comment,
                 reason: pause.reason,
                 type: pauseType,
@@ -452,7 +419,7 @@ export const widgetActionPanelServiceEntityMixin = {
     async applyPlayAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityPlay, entities, () => this.createPlayEvent(entities));
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityPlay, entities, () => this.removeDowntimePbehavior(entities));
 
       this.refreshEntities();
 
