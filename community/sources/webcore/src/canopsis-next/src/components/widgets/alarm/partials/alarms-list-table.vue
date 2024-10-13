@@ -595,7 +595,9 @@ export default {
     },
 
     dense() {
-      this.$nextTick(() => this.calculateColumnsWidths());
+      if (!this.resizableColumn) {
+        this.$nextTick(() => this.calculateColumnsWidths());
+      }
     },
   },
 

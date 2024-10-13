@@ -387,21 +387,31 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   return result;
 };
+
 /**
  * Create downtime pbehavior, without stop time
  *
  * @param {Entity} entity
  * @param {PbehaviorReason} reason
- * @param {string} comment
  * @param {PbehaviorType} type
+ * @param {string} [comment]
+ * @param {string} [origin = PBEHAVIOR_ORIGINS.serviceWeather]
+ * @param {string} [prefix = WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE]
  * @return {Pbehavior}
  */
-export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pbehaviorToRequest(formToPbehavior({
+export const createDowntimePbehavior = ({
+  entity,
+  reason,
+  comment,
+  type,
+  origin = PBEHAVIOR_ORIGINS.serviceWeather,
+  prefix = WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
+}) => pbehaviorToRequest(formToPbehavior({
   reason,
   type,
-  origin: PBEHAVIOR_ORIGINS.serviceWeather,
+  origin,
   color: COLORS.secondary,
-  name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uid()}`,
+  name: `${prefix}-${entity.name}-${uid()}`,
   tstart: getNowTimestamp(),
   comment,
   entity: entity._id,

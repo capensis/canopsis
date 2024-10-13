@@ -14,6 +14,7 @@
     :small-chips="chips"
     :item-disabled="isItemDisabled"
     :return-object="returnObject"
+    :clearable="clearable"
     item-text="name"
     item-value="_id"
   />
@@ -70,6 +71,14 @@ export default {
       type: Number,
       required: false,
     },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    independent: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -96,6 +105,11 @@ export default {
         required: this.required,
       };
     },
+  },
+  mounted() {
+    if (this.independent) {
+      this.fetchFieldPbehaviorTypesList();
+    }
   },
   methods: {
     isItemDisabled(item) {
