@@ -497,3 +497,11 @@ func (a *mongoAdapter) FindComponent(ctx context.Context, id string) (*types.Ent
 
 	return nil, nil
 }
+
+func (a *mongoAdapter) SetResolveDeletedEventProcessed(ctx context.Context, id string) error {
+	_, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
+		"resolve_deleted_event_processed": types.NewCpsTime(),
+	}})
+
+	return err
+}
