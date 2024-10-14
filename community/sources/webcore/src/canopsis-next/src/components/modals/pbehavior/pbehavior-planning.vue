@@ -12,6 +12,7 @@
           :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById"
           :read-only="readOnly"
           :entity-pattern="entityPattern"
+          :default-name="config.defaultName"
         />
       </template>
       <template #actions="">
