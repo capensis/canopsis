@@ -32,6 +32,11 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 				event.Entity.PbehaviorInfo.IsActive() {
 				isChanged = false
 			}
+		default:
+			currentCounters = &AlarmCounters{}
+			*currentCounters = getEntityCounters(event.Entity.PbehaviorInfo.CanonicalType, event.Entity.PbehaviorInfo.TypeID)
+			oldCounters = currentCounters
+			isChanged = false
 		}
 
 		return oldCounters, currentCounters, isChanged

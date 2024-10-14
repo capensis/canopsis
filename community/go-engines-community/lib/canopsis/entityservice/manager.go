@@ -79,7 +79,7 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 }
 
 func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []string, error) {
-	data, isNew, isDisabled, err := m.storage.Reload(ctx, serviceID)
+	data, isNew, isDisabled, _, err := m.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return false, nil, fmt.Errorf("cannot reload service: %w", err)
 	}
@@ -121,7 +121,7 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 }
 
 func (m *manager) ReloadService(ctx context.Context, serviceID string) error {
-	_, _, _, err := m.storage.Reload(ctx, serviceID)
+	_, _, _, _, err := m.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return fmt.Errorf("cannot reload service: %w", err)
 	}

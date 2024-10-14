@@ -166,7 +166,19 @@ func (s *service) Process(ctx context.Context, event types.Event) error {
 		return errt.NewUnknownError(fmt.Errorf("event's alarm_change is nil : %v", event))
 	}
 
-	return s.calculateState(ctx, event)
+	err := s.calculateState(ctx, event)
+	if err != nil {
+		return err
+	}
+
+	if event.EventType == types.EventTypeResolveDeleted && event.Entity.SoftDeleted != nil {
+		err = s.entityAdapter.SetResolveDeletedEventProcessed(ctx, event.Entity.ID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *service) markServices(parentCtx context.Context, idleSinceMap *ServicesIdleSinceMap, services []EntityService, impacts []string, timestamp int64) {
@@ -569,7 +581,7 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 		}()
 	}
 
-	serviceData, _, _, err := s.storage.Reload(ctx, serviceID)
+	serviceData, _, _, isSoftDeleted, err := s.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return err
 	}
@@ -580,8 +592,16 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 			return err
 		}
 
-		if event.Alarm != nil {
-			return s.calculateState(ctx, event)
+		err = s.calculateState(ctx, event)
+		if err != nil {
+			return err
+		}
+
+		if isSoftDeleted {
+			err = s.entityAdapter.SetResolveDeletedEventProcessed(ctx, serviceID)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -596,7 +616,7 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 }
 
 func (s *service) ReloadService(ctx context.Context, serviceID string) error {
-	data, _, _, err := s.storage.Reload(ctx, serviceID)
+	data, _, _, _, err := s.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return err
 	}

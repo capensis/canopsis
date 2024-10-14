@@ -566,6 +566,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"foreignField": "services",
 			"as":           "depends",
 			"pipeline": []bson.M{
+				{"$match": bson.M{"resolve_deleted_event_processed": bson.M{"$exists": false}}},
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},

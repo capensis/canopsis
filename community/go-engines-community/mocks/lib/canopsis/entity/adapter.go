@@ -229,6 +229,20 @@ func (mr *MockAdapterMockRecorder) Insert(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockAdapter)(nil).Insert), arg0, arg1)
 }
 
+// SetResolveDeletedEventProcessed mocks base method.
+func (m *MockAdapter) SetResolveDeletedEventProcessed(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetResolveDeletedEventProcessed", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetResolveDeletedEventProcessed indicates an expected call of SetResolveDeletedEventProcessed.
+func (mr *MockAdapterMockRecorder) SetResolveDeletedEventProcessed(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetResolveDeletedEventProcessed", reflect.TypeOf((*MockAdapter)(nil).SetResolveDeletedEventProcessed), arg0, arg1)
+}
+
 // Update mocks base method.
 func (m *MockAdapter) Update(arg0 context.Context, arg1 types.Entity) error {
 	m.ctrl.T.Helper()
