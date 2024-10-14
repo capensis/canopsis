@@ -15,7 +15,7 @@ import (
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Entity, error)
 	Update(ctx context.Context, r EditRequest) (*Entity, bool, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, id string) (*Entity, error)
 }
 
 type store struct {
@@ -180,19 +180,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	return updatedEntity, isToggled, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := false
+func (s *store) Delete(ctx context.Context, id string) (*Entity, error) {
+	var res *Entity
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		res = false
-		entity := &types.Entity{}
-		err := s.dbCollection.FindOne(ctx, bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
-		}).Decode(&entity)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
+		res = nil
+		entity, err := s.GetOneBy(ctx, id)
+		if err != nil || entity == nil {
 			return err
 		}
 
@@ -201,6 +194,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			if err != nil {
 				return err
 			}
+
 			if c > 0 {
 				return ErrComponent
 			}
@@ -212,26 +206,25 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		}).Err()
 		if err == nil {
 			return ErrLinkedEntityToAlarm
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+		}
+
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
-		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
-		})
-		if err != nil || deleted == 0 {
+		updateRes, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": id, "type": bson.M{"$in": s.basicTypes}},
+			bson.M{"$set": bson.M{
+				"enabled":      false,
+				"soft_deleted": types.NewCpsTime(),
+			}},
+		)
+		if err != nil || updateRes.ModifiedCount == 0 {
 			return err
 		}
 
-		if entity.Type == types.EntityTypeConnector {
-			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID}, bson.M{"$unset": bson.M{"connector": ""}})
-			if err != nil {
-				return err
-			}
-		}
+		res = entity
 
-		res = true
 		return nil
 	})
 

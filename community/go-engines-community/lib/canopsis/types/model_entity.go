@@ -65,7 +65,10 @@ type Entity struct {
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
 
+	// SoftDeleted is used to recompute service counters after dependency delete.
 	SoftDeleted *CpsTime `bson:"soft_deleted,omitempty" json:"soft_deleted,omitempty"`
+	// ResolveDeletedEventProcessed is set after processing service counters recalculation event on soft delete.
+	ResolveDeletedEventProcessed *CpsTime `bson:"resolve_deleted_event_processed,omitempty" json:"resolve_deleted_event_processed,omitempty"`
 
 	PerfData        []string `bson:"perf_data,omitempty" json:"-"`
 	PerfDataUpdated *CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
