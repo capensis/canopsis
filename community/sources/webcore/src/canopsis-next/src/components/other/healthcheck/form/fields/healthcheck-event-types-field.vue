@@ -1,6 +1,7 @@
 <template>
   <c-event-type-field
     :value="value"
+    :types="types"
     :placeholder="!value.length ? $t('common.all') : ''"
     :persistent-placeholder="!value.length"
     class="healthcheck-event-types-field"
@@ -24,6 +25,8 @@
 </template>
 
 <script>
+import { HEALTHCHECK_EVENT_TYPES } from '@/constants';
+
 export default {
   props: {
     value: {
@@ -34,6 +37,16 @@ export default {
       type: Number,
       default: 2,
     },
+  },
+  setup() {
+    const types = Object.values(HEALTHCHECK_EVENT_TYPES).map(value => ({
+      value,
+      text: value,
+    }));
+
+    return {
+      types,
+    };
   },
 };
 </script>
