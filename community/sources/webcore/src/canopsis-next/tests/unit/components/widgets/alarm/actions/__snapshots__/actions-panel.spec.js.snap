@@ -50,6 +50,11 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     Snooze alarm|alarm|snooze
   </button>
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -155,6 +160,11 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -282,6 +292,11 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     Snooze alarm|alarm|snooze
   </button>
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -377,6 +392,11 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     Snooze alarm|alarm|snooze
   </button>
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -470,6 +490,11 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -568,6 +593,11 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -685,6 +715,11 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
     Snooze alarm|alarm|snooze
   </button>
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -786,6 +821,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     Snooze alarm|alarm|snooze
   </button>
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -867,6 +907,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"
@@ -962,6 +1007,11 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
     Snooze alarm|alarm|snooze
   </button>
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -1033,6 +1083,11 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
   </button>
   <button
     class="action-pbehaviorAdd"

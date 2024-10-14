@@ -174,6 +174,9 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
+ * @property {string} fastPbehaviorNamePrefix
+ * @property {string} fastPbehaviorType
+ * @property {string} fastPbehaviorReason
  * @property {boolean} sticky_header
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
@@ -357,6 +360,9 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
+  fastPbehaviorNamePrefix: parameters.fastPbehaviorNamePrefix ?? '',
+  fastPbehaviorType: parameters.fastPbehaviorType,
+  fastPbehaviorReason: parameters.fastPbehaviorReason,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
