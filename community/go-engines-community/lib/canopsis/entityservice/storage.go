@@ -24,7 +24,7 @@ type Storage interface {
 	// Reload loads service by id from database and saves its data to cache.
 	// Return parameter isNew contains true if service didn't exist in cache.
 	// Return parameter isDisabled contains true if service is disabled. Service data is nil in this case.
-	Reload(ctx context.Context, id string) (s *ServiceData, isNew bool, isDisabled bool, err error)
+	Reload(ctx context.Context, id string) (s *ServiceData, isNew bool, isDisabled bool, isSoftDeleted bool, err error)
 	// GetAll returns all services data from cache.
 	GetAll(ctx context.Context) ([]ServiceData, error)
 	// Get returns service data  by id from cache.
@@ -133,14 +133,15 @@ func (s *redisStorage) ReloadAll(ctx context.Context) ([]ServiceData, error) {
 	return nil, errors.New("reached maximum number of retries")
 }
 
-func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, bool, bool, error) {
+func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, bool, bool, bool, error) {
 	var data *ServiceData
-	var isNew, isDisabled bool
+	var isNew, isDisabled, isSoftDeleted bool
 
 	txf := func(tx *redis.Tx) error {
 		data = nil
 		isNew = false
 		isDisabled = false
+		isSoftDeleted = false
 
 		service, err := s.adapter.GetByID(ctx, id)
 		if err != nil {
@@ -167,6 +168,7 @@ func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, boo
 			}
 		}
 
+		isSoftDeleted = service != nil && service.SoftDeleted != nil
 		res, err := tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
 			if data == nil {
 				pipe.HDel(ctx, cacheKey, id)
@@ -199,13 +201,13 @@ func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, boo
 				continue
 			}
 
-			return nil, false, false, err
+			return nil, false, false, false, err
 		}
 
-		return data, isNew, isDisabled, nil
+		return data, isNew, isDisabled, isSoftDeleted, nil
 	}
 
-	return nil, false, false, errors.New("reached maximum number of retries")
+	return nil, false, false, false, errors.New("reached maximum number of retries")
 }
 
 func (s *redisStorage) Get(ctx context.Context, id string) (*ServiceData, error) {

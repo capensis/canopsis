@@ -175,7 +175,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, e
 		ctx,
 		[]bson.M{
 			{
-				"$match": bson.M{"_id": bson.M{"$in": entIds}},
+				"$match": bson.M{"enabled": true, "_id": bson.M{"$in": entIds}},
 			},
 			{
 				"$project": bson.M{
