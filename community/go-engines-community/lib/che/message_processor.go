@@ -215,23 +215,27 @@ func (p *messageProcessor) handleEvent(ctx context.Context, event types.Event) (
 
 	event.Entity = &eventEntity
 	// Process event by event filters.
-	if event.Entity != nil && event.Entity.Enabled && !event.Healthcheck {
-		event, err = p.EventFilterService.ProcessEvent(ctx, event)
-		if err != nil {
-			return event, nil, eventMetric, err
-		}
-
-		if event.Entity.IsUpdated {
-			updatedEntityIds = append(updatedEntityIds, event.Entity.ID)
-
-			_, err = p.EntityCollection.UpdateOne(
-				ctx,
-				bson.M{"_id": event.Entity.ID},
-				bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
-			)
+	if event.Entity != nil && !event.Healthcheck {
+		if event.Entity.Enabled {
+			event, err = p.EventFilterService.ProcessEvent(ctx, event)
 			if err != nil {
-				return event, nil, eventMetric, fmt.Errorf("cannot update entities: %w", err)
+				return event, nil, eventMetric, err
 			}
+
+			if event.Entity.IsUpdated {
+				updatedEntityIds = append(updatedEntityIds, event.Entity.ID)
+
+				_, err = p.EntityCollection.UpdateOne(
+					ctx,
+					bson.M{"_id": event.Entity.ID},
+					bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
+				)
+				if err != nil {
+					return event, nil, eventMetric, fmt.Errorf("cannot update entities: %w", err)
+				}
+			}
+		} else if event.IsOnlyServiceUpdate() {
+			updatedEntityIds = append(updatedEntityIds, event.Entity.ID)
 		}
 	}
 
@@ -271,7 +275,7 @@ func (p *messageProcessor) handleEvent(ctx context.Context, event types.Event) (
 			return fmt.Errorf("cannot check services: %w", err)
 		}
 
-		if eventMetric.IsInfosUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
+		if eventEntity.Enabled && (eventMetric.IsInfosUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent) {
 			resources, err := p.ContextGraphManager.FillResourcesWithInfos(ctx, eventEntity)
 			if err != nil {
 				return fmt.Errorf("cannot update entity infos: %w", err)
