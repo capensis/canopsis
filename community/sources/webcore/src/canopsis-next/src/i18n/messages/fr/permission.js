@@ -71,8 +71,8 @@ export default {
       description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Comportement périodique" et modifier les comportements périodiques pour les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: {
-      name: 'Droits sur la liste d\'alarmes : action rapide pbehavior',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Comportement périodique rapide"',
+      name: 'Droits sur la liste d\'alarmes : Ajouter un comportement périodique rapidemment',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Définir un comportement périodique rapidemment"',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.snooze]: {
       name: 'Droits sur le bac à alarmes : mettre en veille une alarme',
