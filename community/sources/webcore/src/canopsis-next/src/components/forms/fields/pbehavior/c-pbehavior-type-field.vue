@@ -23,6 +23,8 @@
 <script>
 import { isArray, isObject, isEmpty } from 'lodash';
 
+import { MAX_LIMIT } from '@/constants';
+
 import { mapIds } from '@/helpers/array';
 
 import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
@@ -71,6 +73,10 @@ export default {
       type: Number,
       required: false,
     },
+    types: {
+      type: Array,
+      required: false,
+    },
     clearable: {
       type: Boolean,
       default: false,
@@ -108,7 +114,7 @@ export default {
   },
   mounted() {
     if (this.independent) {
-      this.fetchFieldPbehaviorTypesList();
+      this.fetchFieldPbehaviorTypesList({ params: { types: this.types, limit: MAX_LIMIT } });
     }
   },
   methods: {

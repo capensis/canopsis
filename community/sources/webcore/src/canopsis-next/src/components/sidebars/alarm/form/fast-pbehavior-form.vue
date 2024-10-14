@@ -7,6 +7,7 @@
     <c-pbehavior-type-field
       v-field="form.fastPbehaviorType"
       :label="$t('common.type')"
+      :types="types"
       independent
       clearable
     />
@@ -18,6 +19,8 @@
   </widget-settings-item>
 </template>
 <script>
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
@@ -31,6 +34,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  setup() {
+    return {
+      types: [PBEHAVIOR_TYPE_TYPES.pause],
+    };
   },
 };
 </script>
