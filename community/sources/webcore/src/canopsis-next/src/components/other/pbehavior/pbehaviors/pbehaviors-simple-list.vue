@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <v-layout justify-end>
+    <v-layout class="gap-2" justify-end>
       <c-action-fab-btn
         v-if="addable"
         :tooltip="$t('modals.createPbehavior.create.title')"
@@ -68,6 +68,7 @@ import { MODALS } from '@/constants';
 import Observer from '@/services/observer';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
@@ -172,6 +173,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity._id),
+          defaultName: getPbehaviorNameByEntities([this.entity], this.$system.timezone),
           afterSubmit: this.fetchList,
         },
       });

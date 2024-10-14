@@ -26,23 +26,33 @@ describe('pbehaviors-create-action-btn', () => {
 
     stubs,
     mocks: { $modals },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
   const snapshotFactory = generateRenderer(PbehaviorsCreateActionBtn, {
 
     stubs,
     mocks: { $modals },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Pbehavior planning modal opened after trigger button', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [CRUD_ACTIONS.create] },
     });
-    const entityId = Faker.datatype.string();
+    const entity = { _id: Faker.datatype.string() };
 
     const wrapper = factory({
       store: createMockedStoreModules([authModule]),
       propsData: {
-        entityId,
+        entity,
       },
     });
 
@@ -52,7 +62,8 @@ describe('pbehaviors-create-action-btn', () => {
       {
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: createEntityIdPatternByValue(entityId),
+          entityPattern: createEntityIdPatternByValue(entity._id),
+          defaultName: expect.any(String),
         },
       },
     );
@@ -62,7 +73,7 @@ describe('pbehaviors-create-action-btn', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        entityId: 'entityId',
+        entity: { _id: 'entityId' },
       },
     });
 
@@ -77,7 +88,7 @@ describe('pbehaviors-create-action-btn', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([authModule]),
       propsData: {
-        entityId: 'entity-id',
+        entity: { _id: 'entity-id' },
       },
     });
 

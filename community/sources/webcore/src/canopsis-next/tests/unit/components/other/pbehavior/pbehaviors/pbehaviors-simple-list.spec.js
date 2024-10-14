@@ -121,6 +121,7 @@ describe('pbehaviors-simple-list', () => {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(entityId),
+          defaultName: expect.any(String),
           afterSubmit: expect.any(Function),
         },
       },

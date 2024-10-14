@@ -35,12 +35,12 @@ describe('pbehaviors-list-action-btn', () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [CRUD_ACTIONS.read] },
     });
-    const entityId = Faker.datatype.string();
+    const entity = { _id: Faker.datatype.string() };
 
     const wrapper = factory({
       store: createMockedStoreModules([authModule]),
       propsData: {
-        entityId,
+        entity,
       },
     });
 
@@ -50,7 +50,7 @@ describe('pbehaviors-list-action-btn', () => {
       {
         name: MODALS.pbehaviorList,
         config: {
-          entityId,
+          entity,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       },
@@ -76,7 +76,7 @@ describe('pbehaviors-list-action-btn', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([authModule]),
       propsData: {
-        entityId: 'entity-id',
+        entity: { _id: 'entity-id' },
       },
     });
 
