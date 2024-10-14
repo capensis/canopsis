@@ -26,21 +26,11 @@ describe('pbehaviors-create-action-btn', () => {
 
     stubs,
     mocks: { $modals },
-    parentComponent: {
-      provide: {
-        $system: {},
-      },
-    },
   });
   const snapshotFactory = generateRenderer(PbehaviorsCreateActionBtn, {
 
     stubs,
     mocks: { $modals },
-    parentComponent: {
-      provide: {
-        $system: {},
-      },
-    },
   });
 
   test('Pbehavior planning modal opened after trigger button', async () => {
@@ -63,7 +53,7 @@ describe('pbehaviors-create-action-btn', () => {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(entity._id),
-          defaultName: expect.any(String),
+          entities: [entity],
         },
       },
     );

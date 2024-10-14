@@ -77,7 +77,6 @@
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
-import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
@@ -158,7 +157,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.entityId),
-          defaultName: getPbehaviorNameByEntities([this.config.entity], this.$system.timezone),
+          entities: [this.config.entity],
         },
       });
     },
