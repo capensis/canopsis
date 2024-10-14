@@ -18,13 +18,13 @@ import (
 const ResolveDeletedEventWaitTime = time.Hour
 
 type entityData struct {
-	ID                      string         `bson:"_id"`
-	Name                    string         `bson:"name"`
-	Component               string         `bson:"component"`
-	Type                    string         `bson:"type"`
-	ResolveDeletedEventSend *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
-	AlarmExists             bool           `bson:"alarm_exists"`
-	SoftDeleted             types.CpsTime  `bson:"soft_deleted"`
+	ID                           string         `bson:"_id"`
+	Name                         string         `bson:"name"`
+	Component                    string         `bson:"component"`
+	Type                         string         `bson:"type"`
+	ResolveDeletedEventSend      *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
+	ResolveDeletedEventProcessed *types.CpsTime `bson:"resolve_deleted_event_processed,omitempty"`
+	SoftDeleted                  types.CpsTime  `bson:"soft_deleted"`
 }
 
 type softDeletePeriodicalWorker struct {
@@ -40,6 +40,8 @@ func (w *softDeletePeriodicalWorker) GetInterval() time.Duration {
 	return w.periodicalInterval
 }
 
+// Work checks all soft deleted entities.
+// If service counters are recomputed it deletes entity. If not it sends another event (but not for services).
 func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	now := types.CpsTime{Time: time.Now()}
 
@@ -52,36 +54,14 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 				},
 			},
 			{
-				"$lookup": bson.M{
-					"from": mongo.AlarmMongoCollection,
-					"let":  bson.M{"id": "$_id"},
-					"pipeline": []bson.M{
-						{
-							"$match": bson.M{"$and": []bson.M{
-								{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
-								{"v.resolved": nil},
-							}},
-						},
-						{"$limit": 1},
-					},
-					"as": "alarm",
-				},
-			},
-			{
 				"$project": bson.M{
-					"_id":                        1,
-					"name":                       1,
-					"component":                  1,
-					"type":                       1,
-					"resolve_deleted_event_sent": 1,
-					"soft_deleted":               1,
-					"alarm_exists": bson.M{
-						"$cond": bson.M{
-							"if":   bson.M{"$eq": bson.A{bson.M{"$size": "$alarm"}, 0}},
-							"then": false,
-							"else": true,
-						},
-					},
+					"_id":                             1,
+					"name":                            1,
+					"component":                       1,
+					"type":                            1,
+					"resolve_deleted_event_sent":      1,
+					"resolve_deleted_event_processed": 1,
+					"soft_deleted":                    1,
 				},
 			},
 		},
@@ -100,7 +80,6 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 
 	for cursor.Next(ctx) {
 		sendEvent := false
-
 		var ent entityData
 		err = cursor.Decode(&ent)
 		if err != nil {
@@ -109,10 +88,8 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		}
 
 		var newModels []libmongo.WriteModel
-
 		if ent.Type == types.EntityTypeService {
 			serviceCountersIDs = append(serviceCountersIDs, ent.ID)
-
 			if len(serviceCountersIDs) == canopsis.DefaultBulkSize {
 				_, err = w.serviceCountersCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": serviceCountersIDs}})
 				if err != nil {
@@ -123,7 +100,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 			}
 		}
 
-		if !ent.AlarmExists {
+		if ent.ResolveDeletedEventProcessed != nil {
 			if now.Add(-w.softDeleteWaitTime).Before(ent.SoftDeleted.Time) {
 				continue
 			}
@@ -150,7 +127,6 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 			)
 		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(ResolveDeletedEventWaitTime).Before(now.Time)) {
 			sendEvent = true
-
 			newModels = []libmongo.WriteModel{
 				libmongo.
 					NewUpdateOneModel().
@@ -256,6 +232,10 @@ func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityDat
 	}
 
 	switch ent.Type {
+	case types.EntityTypeConnector:
+		event.SourceType = types.SourceTypeConnector
+		event.Connector = strings.TrimSuffix(ent.ID, "/"+ent.Name)
+		event.ConnectorName = ent.Name
 	case types.EntityTypeComponent:
 		event.SourceType = types.SourceTypeComponent
 		event.Component = ent.ID
