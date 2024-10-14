@@ -65,6 +65,7 @@ export default {
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
   isCorrelationEnabled: 'Corrélation activée ?',
   isCorrelationEnabledDefault: 'La corrélation est-elle activée par défaut ?',
+  fastPbehavior: 'Comportement périodique rapide',
   duration: 'Durée',
   tstop: 'Date de fin',
   periodsNumber: 'Nombre d\'étapes',
