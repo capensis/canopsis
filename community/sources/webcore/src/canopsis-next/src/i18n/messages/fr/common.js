@@ -1,7 +1,6 @@
 import {
   ALARM_STATES,
   ALARM_STATUSES,
-  EVENT_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   TRIGGERS_TYPES,
@@ -251,7 +250,7 @@ export default {
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
   more: 'plus',
-  all: 'Toute',
+  all: 'Tous',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
@@ -461,18 +460,6 @@ export default {
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
-  eventTypes: {
-    [EVENT_TYPES.ack]: 'Acquitter',
-    [EVENT_TYPES.ackRemove]: 'Supprimer l\'acquittement',
-    [EVENT_TYPES.assocTicket]: 'Associer un ticket',
-    [EVENT_TYPES.cancel]: 'Annuler',
-    [EVENT_TYPES.uncancel]: 'Annuler l\'annulation',
-    [EVENT_TYPES.changeState]: 'Changer et vérrouiller la criticité',
-    [EVENT_TYPES.check]: 'Vérifier',
-    [EVENT_TYPES.comment]: 'Commenter l\'alarme',
-    [EVENT_TYPES.snooze]: 'Mettre en veille',
-  },
-
   triggers: {
     [TRIGGERS_TYPES.create]: {
       text: 'Création d\'alarme',
