@@ -564,6 +564,11 @@ permission:
     _id: listalarm_pbehavior
     name: <Current()._id>
     description: "Rights on listalarm: pbehavior"
+  permission_listalarm_fastPbehavior:
+    <<: *permission
+    _id: listalarm_fastPbehavior
+    name: <Current()._id>
+    description: "Rights on listalarm: fast pbehavior"
   permission_listalarm_snoozeAlarm:
     <<: *permission
     _id: listalarm_snoozeAlarm
@@ -1566,6 +1571,7 @@ role:
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
       "@permission_listalarm_pbehavior": 1
+      "@permission_listalarm_fastPbehavior": 1
       "@permission_listalarm_snoozeAlarm": 1
       "@permission_listalarm_listPbehavior": 1
       "@permission_listalarm_declareanIncident": 1
@@ -1758,6 +1764,7 @@ role_template:
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
       "@permission_listalarm_pbehavior": 1
+      "@permission_listalarm_fastPbehavior": 1
       "@permission_listalarm_snoozeAlarm": 1
       "@permission_listalarm_listPbehavior": 1
       "@permission_listalarm_declareanIncident": 1
