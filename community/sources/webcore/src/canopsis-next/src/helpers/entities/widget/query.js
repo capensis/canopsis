@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, isArray } from 'lodash';
 
 import { WIDGET_TYPES } from '@/constants';
 
@@ -90,6 +90,8 @@ export function convertWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function prepareWidgetQuery(widget, userPreference) {
+  const { filters: widgetFilters = [] } = widget;
+  const { filters: userPreferenceFilters = [] } = userPreference;
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
 
@@ -98,12 +100,16 @@ export function prepareWidgetQuery(widget, userPreference) {
     ...userPreferenceQuery,
   };
 
-  if (query.filter) {
-    const allFiltersIds = mapIds([...widget.filters, ...userPreference.filters]);
+  const allFiltersIds = mapIds([...widgetFilters, ...userPreferenceFilters]);
 
-    if (!allFiltersIds.includes(query.filter)) {
+  if (isArray(query.filter)) {
+    query.filter = query.filter.filter(id => allFiltersIds.includes(id));
+
+    if (!query.filter.length) {
       query = omit(query, ['filter']);
     }
+  } else if (!allFiltersIds.includes(query.filter)) {
+    query = omit(query, ['filter']);
   }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
