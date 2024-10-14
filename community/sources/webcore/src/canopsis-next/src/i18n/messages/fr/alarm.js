@@ -32,7 +32,7 @@ export default {
       fastAck: 'Acquitter rapidement',
       ackRemove: 'Annuler l\'acquittement',
       pbehavior: 'Définir un comportement périodique',
-      fastPbehaviorAdd: 'Comportement périodique rapide',
+      fastPbehaviorAdd: 'Définir un comportement périodique rapidemment',
       snooze: 'Mettre en veille',
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
