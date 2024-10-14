@@ -14,7 +14,6 @@ import { mapIds } from '@/helpers/array';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 import { mapAlarmsEntities } from '@/helpers/entities/alarm/form';
-import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
@@ -27,7 +26,6 @@ import { clipboardMixin } from '@/mixins/clipboard';
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionsPanelAlarmMixin = {
-  inject: ['$system'],
   mixins: [
     authMixin,
     queryMixin,
@@ -432,7 +430,7 @@ export const widgetActionsPanelAlarmMixin = {
           entityPattern: createEntityIdPatternByValue(
             alarms.length === 1 ? alarms[0].entity?._id : alarms.map(item => item.entity._id),
           ),
-          defaultName: getPbehaviorNameByEntities(mapAlarmsEntities(alarms), this.$system.timezone),
+          entities: mapAlarmsEntities(alarms),
           afterSubmit: this.afterSubmit,
         },
       });

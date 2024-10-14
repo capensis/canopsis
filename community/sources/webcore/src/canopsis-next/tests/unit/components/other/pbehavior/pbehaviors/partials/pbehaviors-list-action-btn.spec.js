@@ -61,7 +61,7 @@ describe('pbehaviors-list-action-btn', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        entityId: 'entityId',
+        entity: { _id: 'entityId' },
       },
     });
 
