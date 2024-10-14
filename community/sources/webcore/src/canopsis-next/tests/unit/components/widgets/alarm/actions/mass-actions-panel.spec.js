@@ -153,9 +153,23 @@ describe('mass-actions-panel', () => {
 
   const refreshAlarmsList = jest.fn();
 
-  const factory = generateShallowRenderer(MassActionsPanel, { stubs });
+  const factory = generateShallowRenderer(MassActionsPanel, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
-  const snapshotFactory = generateRenderer(MassActionsPanel, { stubs });
+  const snapshotFactory = generateRenderer(MassActionsPanel, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -189,6 +203,7 @@ describe('mass-actions-panel', () => {
               value: [alarm.entity._id, metaAlarm.entity._id],
             },
           }]],
+          defaultName: expect.any(String),
           afterSubmit: expect.any(Function),
         },
       },

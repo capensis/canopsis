@@ -10,6 +10,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     events=""
   >
     <pbehavior-create-event-stub
+      defaultname=""
       event="[object Object]"
     />
     <pbehavior-planning-calendar-legend-stub

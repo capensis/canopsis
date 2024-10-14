@@ -14,6 +14,7 @@
         <pbehavior-create-event
           :event="event"
           :entity-pattern="entityPattern"
+          :default-name="defaultName"
           @close="close"
           @submit="addEventWithClose($event, close)"
           @remove="removePbehavior"
@@ -91,6 +92,10 @@ export default {
     readOnly: {
       type: Boolean,
       default: false,
+    },
+    defaultName: {
+      type: String,
+      default: '',
     },
   },
   data() {

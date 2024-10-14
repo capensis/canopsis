@@ -68,11 +68,15 @@ export default {
       type: Array,
       required: false,
     },
+    defaultName: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.$system.timezone),
+      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.defaultName, this.$system.timezone),
     };
   },
   computed: {
