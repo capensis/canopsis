@@ -11,12 +11,10 @@
 import { MODALS } from '@/constants';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
-import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 export default {
-  inject: ['$system'],
   mixins: [
     permissionsTechnicalExploitationPbehaviorMixin,
   ],
@@ -32,7 +30,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity?._id),
-          defaultName: getPbehaviorNameByEntities([this.entity], this.$system.timezone),
+          entities: [this.entity],
         },
       });
     },

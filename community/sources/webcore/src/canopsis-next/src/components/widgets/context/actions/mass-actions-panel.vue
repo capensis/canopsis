@@ -10,7 +10,6 @@ import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
-import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -24,7 +23,6 @@ import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actio
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  inject: ['$system'],
   components: { SharedMassActionsPanel },
   mixins: [widgetActionsPanelContextMixin],
   props: {
@@ -152,7 +150,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.items.map(({ _id: id }) => id)),
-          defaultName: getPbehaviorNameByEntities(this.items, this.$system.timezone),
+          entities: this.items,
           afterSubmit: this.afterSubmit,
         },
       });

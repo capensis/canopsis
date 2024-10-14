@@ -68,7 +68,6 @@ import { MODALS } from '@/constants';
 import Observer from '@/services/observer';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
-import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
@@ -173,7 +172,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity._id),
-          defaultName: getPbehaviorNameByEntities([this.entity], this.$system.timezone),
+          entities: [this.entity],
           afterSubmit: this.fetchList,
         },
       });

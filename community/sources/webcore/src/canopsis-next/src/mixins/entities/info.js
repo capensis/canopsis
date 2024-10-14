@@ -43,6 +43,7 @@ export const entitiesInfoMixin = {
       defaultColorTheme: 'defaultColorTheme',
       eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
       disabledTransitions: 'disabledTransitions',
+      autoSuggestPbehaviorName: 'autoSuggestPbehaviorName',
     }),
 
     isProVersion() {

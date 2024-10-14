@@ -9,7 +9,6 @@ import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, ENTITY_EXPORT_FILE_NAME_PR
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
-import { getPbehaviorNameByEntities } from '@/helpers/entities/pbehavior/form';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -23,7 +22,6 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  * @prop {Object} item - Item of context entities lists
  */
 export default {
-  inject: ['$system'],
   components: { SharedActionsPanel },
   mixins: [
     widgetActionsPanelContextMixin,
@@ -177,7 +175,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.item._id),
-          defaultName: getPbehaviorNameByEntities([this.item], this.$system.timezone),
+          entities: [this.item],
         },
       });
     },

@@ -12,7 +12,7 @@
           :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById"
           :read-only="readOnly"
           :entity-pattern="entityPattern"
-          :default-name="config.defaultName"
+          :default-name="defaultName"
         />
       </template>
       <template #actions="">
@@ -41,12 +41,17 @@ import { keyBy, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
+import {
+  getPbehaviorNameByEntities,
+  pbehaviorToDuplicateForm,
+  pbehaviorToRequest,
+} from '@/helpers/entities/pbehavior/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
@@ -54,9 +59,11 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.pbehaviorPlanning,
+  inject: ['$system'],
   components: { PbehaviorPlanningCalendar, ModalWrapper },
   mixins: [
     modalInnerMixin,
+    entitiesInfoMixin,
     entitiesPbehaviorMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
@@ -74,6 +81,12 @@ export default {
     };
   },
   computed: {
+    defaultName() {
+      return this.autoSuggestPbehaviorName
+        ? getPbehaviorNameByEntities(this.config.entities, this.$system.timezone)
+        : '';
+    },
+
     readOnly() {
       return !!this.config.readOnly;
     },

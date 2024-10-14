@@ -389,7 +389,7 @@ describe('actions-panel', () => {
               value: entity._id,
             },
           }]],
-          defaultName: expect.any(String),
+          entities: [entity],
           afterSubmit: expect.any(Function),
         },
       },
