@@ -938,10 +938,14 @@ definitions:
         type: boolean
       app_title:
         type: string
+      auto_suggest_pbehavior_name:
+        type: boolean
       check_count_request_timeout:
         type: integer
       default_color_theme:
         $ref: '#/definitions/colortheme.Response'
+      disabled_transitions:
+        type: boolean
       edition:
         type: string
       events_count_trigger_default_threshold:
@@ -1041,8 +1045,12 @@ definitions:
         type: boolean
       app_title:
         type: string
+      auto_suggest_pbehavior_name:
+        type: boolean
       check_count_request_timeout:
         type: integer
+      disabled_transitions:
+        type: boolean
       footer:
         type: string
       language:
