@@ -159,9 +159,9 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 				return err
 			}
 
-			if metaAlarmState.MetaAlarmName != entity.Name {
+			if metaAlarmState.GetEntityID() != entity.ID {
 				// try to get archived state
-				metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+entity.Name)
+				metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+entity.ID)
 				if err != nil {
 					return err
 				}
@@ -249,9 +249,10 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			output = event.Parameters.Output
 		} else {
 			output, err = executeMetaAlarmOutputTpl(p.templateExecutor, correlation.EventExtraInfosMeta{
-				Rule:     rule,
-				Count:    int64(len(updatedChildrenAlarms)),
-				Children: lastChild,
+				Rule:      rule,
+				Count:     int64(len(updatedChildrenAlarms)),
+				LastChild: lastChild,
+				Children:  lastChild,
 			})
 			if err != nil {
 				return err

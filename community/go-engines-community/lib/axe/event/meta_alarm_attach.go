@@ -231,9 +231,10 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			output = event.Parameters.Output
 		} else {
 			output, err = executeMetaAlarmOutputTpl(p.templateExecutor, correlation.EventExtraInfosMeta{
-				Rule:     rule,
-				Count:    childrenCount,
-				Children: lastChild,
+				Rule:      rule,
+				Count:     childrenCount,
+				LastChild: lastChild,
+				Children:  lastChild,
 			})
 			if err != nil {
 				return err
