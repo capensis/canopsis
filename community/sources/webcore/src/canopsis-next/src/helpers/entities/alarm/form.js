@@ -254,3 +254,21 @@ export const snoozeToForm = (snooze = {}) => ({
   },
   comment: snooze.comment ?? '',
 });
+
+/**
+ * Maps an array of alarm objects to a unique list of their associated entities.
+ *
+ * This function takes an array of alarm objects and reduces it to a unique set of entities
+ * by using the entity's `_id` as the key. It returns an array of these unique entities.
+ *
+ * @param {Array<Object>} alarms - An array of alarm objects. Each alarm object is expected
+ * to have an `entity` property, which is an object containing an `_id` property.
+ * @returns {Array<Object>} An array of unique entity objects extracted from the alarms.
+ */
+export const mapAlarmsEntities = (alarms = []) => Object.values(
+  alarms.reduce((acc, alarm) => {
+    acc[alarm?.entity?._id] = alarm?.entity;
+
+    return acc;
+  }, {}),
+);
