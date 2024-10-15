@@ -159,7 +159,8 @@ func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Conte
 			Count: int64(len(metaAlarmChildren)),
 		}
 		if len(metaAlarmChildren) > 0 {
-			infos.Children = metaAlarmChildren[len(metaAlarmChildren)-1]
+			infos.LastChild = metaAlarmChildren[len(metaAlarmChildren)-1]
+			infos.Children = infos.LastChild
 		}
 
 		output := ""

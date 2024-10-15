@@ -5,7 +5,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -59,6 +62,41 @@ func (r *Rule) GetStateID(group string) string {
 	}
 
 	return r.ID
+}
+
+func GetMetaAlarmComponentAndResource(
+	extraInfosMeta EventExtraInfosMeta,
+	templateExecutor template.Executor,
+	logger zerolog.Logger,
+) (string, string) {
+	component := ""
+	resource := ""
+	var err error
+	if extraInfosMeta.Rule.Config.ComponentTemplate != "" {
+		component, err = templateExecutor.Execute(extraInfosMeta.Rule.Config.ComponentTemplate, extraInfosMeta)
+		if err != nil {
+			logger.Warn().Err(err).Str("rule", extraInfosMeta.Rule.ID).Msg("invalid component template")
+		}
+	}
+
+	if extraInfosMeta.Rule.Config.ResourceTemplate != "" {
+		resource, err = templateExecutor.Execute(extraInfosMeta.Rule.Config.ResourceTemplate, extraInfosMeta)
+		if err != nil {
+			logger.Warn().Err(err).Str("rule", extraInfosMeta.Rule.ID).Msg("invalid resource template")
+		}
+
+		resource += utils.NewID()
+	}
+
+	if component == "" {
+		component = DefaultMetaAlarmComponent
+	}
+
+	if resource == "" {
+		resource = DefaultMetaAlarmEntityPrefix + utils.NewID()
+	}
+
+	return component, resource
 }
 
 type TotalEntityPatternFields struct {
