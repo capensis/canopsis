@@ -2,7 +2,6 @@ import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
-import localStorage from '@/services/local-storage';
 
 import { durationToSeconds } from '@/helpers/date/duration';
 
@@ -51,6 +50,7 @@ export default {
     eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
     disabledTransitions: state => state.appInfo?.disabled_transitions,
     serialName: state => state.appInfo?.serial_name,
+    autoSuggestPbehaviorName: state => state.appInfo?.auto_suggest_pbehavior_name,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {
@@ -70,12 +70,8 @@ export default {
         commit(types.FETCH_APP_INFO);
 
         const appInfo = await request.get(API_ROUTES.infos.app);
-        const preparedAppInfo = {
-          ...appInfo,
-          disabled_transitions: String(localStorage.get('disabled_transitions')) === 'true',
-        }; // TODO: remove it
 
-        commit(types.FETCH_APP_INFO_COMPLETED, { appInfo: preparedAppInfo }); // TODO: remove it
+        commit(types.FETCH_APP_INFO_COMPLETED, { appInfo });
 
         if (appInfo.language) {
           dispatch('i18n/setGlobalLocale', appInfo.language, { root: true });
@@ -92,8 +88,6 @@ export default {
     },
 
     updateUserInterface(context, { data } = {}) {
-      localStorage.set('disabled_transitions', data.disabled_transitions);
-
       return request.post(API_ROUTES.infos.userInterface, data);
     },
 

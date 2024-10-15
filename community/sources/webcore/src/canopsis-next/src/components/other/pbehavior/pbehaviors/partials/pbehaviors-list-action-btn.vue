@@ -17,8 +17,8 @@ export default {
     permissionsTechnicalExploitationPbehaviorMixin,
   ],
   props: {
-    entityId: {
-      type: [Number, String],
+    entity: {
+      type: Object,
       required: true,
     },
   },
@@ -27,7 +27,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
-          entityId: this.entityId,
+          entity: this.entity,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });

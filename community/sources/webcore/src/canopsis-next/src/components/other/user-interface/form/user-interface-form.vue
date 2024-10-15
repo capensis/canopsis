@@ -102,6 +102,13 @@
           </c-enabled-field>
         </v-layout>
       </v-flex>
+    </v-layout><v-layout>
+      <v-flex xs6>
+        <c-enabled-field
+          v-field="form.auto_suggest_pbehavior_name"
+          :label="$t('userInterface.autoSuggestPbehaviorName')"
+        />
+      </v-flex>
     </v-layout>
     <v-layout>
       <v-flex>

@@ -44,24 +44,22 @@
           <pbehaviors-list-expand-item :pbehavior="item" />
         </template>
       </c-advanced-data-table>
-      <v-layout justify-end>
+      <v-layout class="gap-2" justify-end>
         <c-action-fab-btn
           :tooltip="$t('modals.pbehaviorsCalendar.title')"
           icon="calendar_today"
           color="secondary"
-          left
+          top
           @click="showPbehaviorsCalendarModal"
         />
-        <v-btn
+        <c-action-fab-btn
           v-if="showAddButton"
+          :tooltip="$t('common.add')"
           color="primary"
-          icon
-          fab
-          small
+          icon="add"
+          top
           @click="showCreatePbehaviorModal"
-        >
-          <v-icon>add</v-icon>
-        </v-btn>
+        />
       </v-layout>
     </template>
     <template #actions="">
@@ -113,6 +111,9 @@ export default {
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },
+    entityId() {
+      return this.config.entity?._id;
+    },
     availableActions() {
       return this.modal.config.availableActions ?? [];
     },
@@ -138,7 +139,7 @@ export default {
   },
   mounted() {
     this.fetchPbehaviorsByEntityId({
-      params: { _id: this.modal.config.entityId },
+      params: { _id: this.entityId },
     });
   },
   methods: {
@@ -155,7 +156,8 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: createEntityIdPatternByValue(this.modal.config.entityId),
+          entityPattern: createEntityIdPatternByValue(this.entityId),
+          entities: [this.config.entity],
         },
       });
     },
@@ -176,7 +178,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorsCalendar,
         config: {
-          entityId: this.modal.config.entityId,
+          entityId: this.entityId,
         },
       });
     },

@@ -100,13 +100,13 @@ describe('pbehaviors-simple-list', () => {
   });
 
   test('Pbehavior create modal opened after trigger create button', async () => {
-    const entityId = Faker.datatype.string();
+    const entity = {
+      _id: Faker.datatype.string(),
+    };
     const wrapper = factory({
       store,
       propsData: {
-        entity: {
-          _id: entityId,
-        },
+        entity,
         addable: true,
       },
     });
@@ -120,7 +120,8 @@ describe('pbehaviors-simple-list', () => {
       {
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: createEntityIdPatternByValue(entityId),
+          entityPattern: createEntityIdPatternByValue(entity._id),
+          entities: [entity],
           afterSubmit: expect.any(Function),
         },
       },
@@ -131,7 +132,7 @@ describe('pbehaviors-simple-list', () => {
     await config.afterSubmit();
     expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalledWith(
       expect.any(Object),
-      { id: entityId, params: { with_flags: true } },
+      { id: entity._id, params: { with_flags: true } },
     );
   });
 

@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
-import { find, isArray, pick } from 'lodash';
+import { find, pick } from 'lodash';
 
 import {
   MODALS,
@@ -15,6 +15,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 import { mapIds } from '@/helpers/array';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { mapAlarmsEntities } from '@/helpers/entities/alarm/form';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
@@ -430,15 +431,14 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showAddPbehaviorModalByAlarms(alarmOrAlarms) {
+    showAddPbehaviorModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(
-            isArray(alarmOrAlarms)
-              ? alarmOrAlarms.map(item => item.entity._id)
-              : alarmOrAlarms.entity._id,
+            alarms.length === 1 ? alarms[0].entity?._id : alarms.map(item => item.entity._id),
           ),
+          entities: mapAlarmsEntities(alarms),
           afterSubmit: this.afterSubmit,
         },
       });

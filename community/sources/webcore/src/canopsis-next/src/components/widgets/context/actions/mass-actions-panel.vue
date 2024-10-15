@@ -8,8 +8,8 @@
 <script>
 import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
-import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 import { pickIds } from '@/helpers/array';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -150,6 +150,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.items.map(({ _id: id }) => id)),
+          entities: this.items,
           afterSubmit: this.afterSubmit,
         },
       });

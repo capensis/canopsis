@@ -492,7 +492,7 @@ export default {
     },
 
     showAddPbehaviorModal() {
-      this.showAddPbehaviorModalByAlarms(this.item);
+      this.showAddPbehaviorModalByAlarms([this.item]);
     },
 
     fastAddPbehavior() {
