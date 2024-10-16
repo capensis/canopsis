@@ -18,6 +18,7 @@
       />
       <v-menu
         v-if="preparedActions.dropDown.length"
+        v-model="opened"
         key="dropdown-menu"
         bottom
         left
@@ -94,6 +95,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      opened: false,
+    };
+  },
   computed: {
     preparedActions() {
       if (!this.ignoreMediaQuery && this.$mq !== 'xl') {
@@ -116,6 +122,11 @@ export default {
         inline: this.actions,
         dropDown: [],
       };
+    },
+  },
+  methods: {
+    closeMenu() {
+      this.opened = false;
     },
   },
 };
