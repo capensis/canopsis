@@ -1,5 +1,9 @@
 <template>
-  <shared-actions-panel v-bind="$attrs" :actions="preparedActions" />
+  <shared-actions-panel
+    ref="sharedActionsPanel"
+    v-bind="$attrs"
+    :actions="preparedActions"
+  />
 </template>
 
 <script>
@@ -427,6 +431,7 @@ export default {
   methods: {
     afterSubmit() {
       this.refreshAlarmsList();
+      this.$refs.sharedActionsPanel?.closeMenu?.();
     },
 
     showCreateChangeStateEventModal() {
