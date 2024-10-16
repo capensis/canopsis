@@ -52,6 +52,7 @@ func NewMetaAlarmProcessor(
 		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
 		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
 		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:       dbClient.Collection(mongo.PbehaviorMongoCollection),
 		metaAlarmStatesService:    metaAlarmStatesService,
 		adapter:                   adapter,
 		ruleAdapter:               ruleAdapter,
@@ -71,6 +72,7 @@ type metaAlarmProcessor struct {
 	alarmCollection           mongo.DbCollection
 	metaAlarmStatesCollection mongo.DbCollection
 	entityCollection          mongo.DbCollection
+	pbehaviorCollection       mongo.DbCollection
 	metaAlarmStatesService    correlation.MetaAlarmStateService
 	adapter                   libalarm.Adapter
 	ruleAdapter               correlation.RulesAdapter
@@ -433,5 +435,19 @@ func (p *metaAlarmProcessor) postProcess(
 	err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot send event to engine-remediation")
+	}
+
+	if result.AlarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
+		err = updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		if !result.Alarm.Value.PbehaviorInfo.IsDefaultActive() {
+			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
+			if err != nil {
+				p.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
 	}
 }
