@@ -912,3 +912,42 @@ func executeMetaAlarmOutputTpl(templateExecutor template.Executor, data correlat
 
 	return res, nil
 }
+
+func getMetaAlarmExternalTags(
+	filterByLabel []string,
+	children []types.AlarmWithEntity,
+	existedTags []string,
+) []string {
+	tagsMap := make(map[string]struct{})
+	existedTagsMap := make(map[string]struct{})
+	for _, tag := range existedTags {
+		existedTagsMap[tag] = struct{}{}
+	}
+
+	for _, child := range children {
+		for _, tag := range child.Alarm.ExternalTags {
+			if _, ok := existedTagsMap[tag]; ok {
+				continue
+			}
+
+			toCopy := len(filterByLabel) == 0
+			for _, label := range filterByLabel {
+				if tag == label || strings.HasPrefix(tag, label+":") {
+					toCopy = true
+					break
+				}
+			}
+
+			if toCopy {
+				tagsMap[tag] = struct{}{}
+			}
+		}
+	}
+
+	tags := make([]string, 0, len(tagsMap))
+	for tag := range tagsMap {
+		tags = append(tags, tag)
+	}
+
+	return tags
+}

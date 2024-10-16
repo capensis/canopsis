@@ -227,7 +227,7 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 		}
 
 		output := ""
-		if rule.Type == correlation.RuleTypeManualGroup {
+		if rule.IsManual() {
 			output = event.Parameters.Output
 		} else {
 			output, err = executeMetaAlarmOutputTpl(p.templateExecutor, correlation.EventExtraInfosMeta{
@@ -261,6 +261,12 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			setUpdate["v.meta"] = event.Parameters.MetaAlarmRuleID
 			metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 			setUpdate["v.meta_value_path"] = event.Parameters.MetaAlarmValuePath
+			if !rule.IsManual() && rule.Tags.CopyFromChildren {
+				metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
+				setUpdate["copy_ctags"] = metaAlarm.CopyTagsFromChildren
+				metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
+				setUpdate["filter_ctags"] = metaAlarm.FilterChildrenTagsByLabel
+			}
 		}
 
 		if metaAlarm.Value.LastEventDate.Unix() != lastEventDate.Unix() {
@@ -268,10 +274,21 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			setUpdate["v.last_event_date"] = lastEventDate
 		}
 
+		addToSet := bson.M{"v.children": bson.M{"$each": childrenIds}}
+		if !rule.IsManual() && metaAlarm.CopyTagsFromChildren {
+			newExternalTags := getMetaAlarmExternalTags(metaAlarm.FilterChildrenTagsByLabel, alarms, metaAlarm.ExternalTags)
+			if len(newExternalTags) > 0 {
+				metaAlarm.Tags = append(metaAlarm.Tags, newExternalTags...)
+				metaAlarm.ExternalTags = append(metaAlarm.ExternalTags, newExternalTags...)
+				addToSet["tags"] = bson.M{"$each": newExternalTags}
+				addToSet["etags"] = bson.M{"$each": newExternalTags}
+			}
+		}
+
 		update := bson.M{
 			"$set":      setUpdate,
 			"$inc":      bson.M{"v.events_count": eventsCount},
-			"$addToSet": bson.M{"v.children": bson.M{"$each": childrenIds}},
+			"$addToSet": addToSet,
 		}
 		if len(pushUpdate) > 0 {
 			update["$push"] = pushUpdate

@@ -28,6 +28,7 @@ type Rule struct {
 	Author         string     `bson:"author" json:"author"`
 	OutputTemplate string     `bson:"output_template" json:"output_template"`
 	Config         RuleConfig `bson:"config" json:"config"`
+	Tags           RuleTags   `bson:"tags" json:"tags"`
 	AutoResolve    bool       `bson:"auto_resolve" json:"auto_resolve"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
@@ -36,6 +37,11 @@ type Rule struct {
 
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+}
+
+type RuleTags struct {
+	CopyFromChildren bool     `bson:"copy_from_children,omitempty" json:"copy_from_children,omitempty"`
+	FilterByLabel    []string `bson:"filter_by_label,omitempty" json:"filter_by_label,omitempty"`
 }
 
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {

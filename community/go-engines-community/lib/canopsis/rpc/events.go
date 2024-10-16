@@ -94,6 +94,8 @@ type AxeResultEvent struct {
 	Error           *Error                `json:"error"`
 
 	Origin *types.Event `json:"origin,omitempty"`
+
+	NewExternalTags []string `json:"-"`
 }
 
 // WebhookEvent

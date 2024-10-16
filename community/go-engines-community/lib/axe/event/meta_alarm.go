@@ -181,9 +181,9 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 		eventsCount := types.CpsNumber(0)
 		var writeModels []mongodriver.WriteModel
-
+		var childAlarms []types.AlarmWithEntity
 		if len(childEntityIDs) > 0 {
-			childAlarms, err := getAlarmsWithEntityByMatch(ctx, p.alarmCollection, bson.M{
+			childAlarms, err = getAlarmsWithEntityByMatch(ctx, p.alarmCollection, bson.M{
 				"d":          bson.M{"$in": childEntityIDs},
 				"v.resolved": nil,
 			})
@@ -256,6 +256,13 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			})
 			if err != nil {
 				return err
+			}
+
+			if rule.Tags.CopyFromChildren {
+				metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
+				metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
+				metaAlarm.ExternalTags = getMetaAlarmExternalTags(rule.Tags.FilterByLabel, childAlarms, nil)
+				metaAlarm.Tags = metaAlarm.ExternalTags
 			}
 		}
 
