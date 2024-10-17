@@ -6,7 +6,7 @@ Ce guide vous propose d'interagir avec Mattermost et avec Logstash.
 !!! info
     Ces possibilités ne sont offertes que par l'utilisation de l'édition Pro de Canopsis.
 
-Le moteur [`engine-webhook`](../../menu-exploitation/scenarios/) vous permet de prendre en charge cette fonctionnalité.
+Le moteur [`engine-webhook`](../menu-exploitation/scenarios.md) vous permet de prendre en charge cette fonctionnalité.
 
 ## Mattermost
 
