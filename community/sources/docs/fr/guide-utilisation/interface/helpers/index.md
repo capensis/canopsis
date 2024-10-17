@@ -509,63 +509,7 @@ Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`
 {{tags}}
 ```
 
-Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge.
-
-#### Exemple d'utilisation du helper `tags`
-
-Afficher tous les tags d'une alarme :
-
-```handlebars
-{{ tags }}
-```
-
-Afficher les tags d'une alarme à partir de leur nom :
-
-```handlebars
-{{ tags 'Tag1' 'Tag2' }}
-```
-
-Afficher les tags d'une alarme à partir d'une expression régulière :
-
-```handlebars
-{{ tags regex='Tag\d+' }}
-```
-
-Afficher les tags d'une alarme à partir d'une expression régulière et de flags supplémentaires :
-
-```handlebars
-{{ tags regex='Tag\d+' flags='i' }}
-```
-
-Afficher les tags d'une alarme en combinant les options :
-
-```handlebars
-{{ tags 'Tag1' 'Tag2' regex='Tag\d+' flags='i' }}
-```
-
-### Helper `map`
-
-```handlebars
-{{map}}
-```
-
-Ce helper permet d'afficher un champ "map" sous forme de badges.
-
-Le champ "map" doit être de la forme suivante : `map[item1:valeur1 item2:valeur2 ... ]`
-
-#### Exemple d'utilisation du helper `map`
-
-Afficher tous les items d'un champ map :
-
-```handlebars
-{{ map alarm.entity.infos.prom_labels_all.value }}
-```
-
-Afficher tous les items d'un champ map sous forme de badges bleus, écrits en blanc :
-
-```handlebars
-{{ map alarm.entity.infos.prom_labels_all.value color='blue' textColor='white' }}
-```
+Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'attend pas de paramètre.  
 
 ### Helper `links`
 
@@ -619,3 +563,4 @@ Renvoyer au format json une alarme complète :
 ```handlebars
 {{json alarm.v }}
 ```
+
