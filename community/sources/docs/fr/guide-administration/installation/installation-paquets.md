@@ -338,11 +338,19 @@ dnf module disable postgresql
     dnf install erlang rabbitmq-server
     ```
 
-    Pour éviter un upgrade automatique des dépendances de Canopsis, vous pouvez épingler leurs paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
+    Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
+    ou RabbitMQ, vous devriez utiliser [*versionlock*][dnf-versionlock] :
 
+    ```sh
+    dnf install 'dnf-command(versionlock)'
+    dnf versionlock add timescaledb-2-loader-postgresql-13 timescaledb-2-postgresql-13
+    dnf versionlock add --raw 'rabbitmq-server-3.*'
     ```
-    exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,nginx,nginx-filesystem,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-13,timescaledb-2-loader-postgresql-13
-    ```
+
+    Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
+    maintien dans la branche majeure souhaitée (exemples : MongoDB 7.0, Redis 6).
+
+    [dnf-versionlock]: https://dnf-plugins-core.readthedocs.io/en/latest/versionlock.html
 
 === "RHEL 9"
 
@@ -351,12 +359,19 @@ dnf module disable postgresql
     dnf install erlang rabbitmq-server
     ```
 
-    Pour éviter un upgrade automatique des dépendances de Canopsis, vous pouvez épingler leurs paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
+    Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
+    ou RabbitMQ, vous devriez utiliser [*versionlock*][dnf-versionlock] :
 
+    ```sh
+    dnf install 'dnf-command(versionlock)'
+    dnf versionlock add timescaledb-2-loader-postgresql-16 timescaledb-2-postgresql-16
+    dnf versionlock add --raw 'rabbitmq-server-3.*'
     ```
-    exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,nginx,nginx-filesystem,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-6
-    ,timescaledb-2-loader-postgresql-6
-    ```
+
+    Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
+    maintien dans la branche majeure souhaitée (exemples : MongoDB 7.0, Redis 6).
+
+    [dnf-versionlock]: https://dnf-plugins-core.readthedocs.io/en/latest/versionlock.html
 
 ### Ouverture des ports
 
