@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
+	DefaultCfgFile         = "/opt/canopsis/etc/canopsis.toml"
+	DefaultOverrideCfgFile = "/opt/canopsis/etc/conf.d/canopsis-override.toml"
 
 	DefaultMongoMigrationsPath        = "/opt/canopsis/share/database/migrations"
 	DefaultMongoFixturesPath          = "/opt/canopsis/share/database/fixtures"
@@ -52,10 +53,10 @@ type flags struct {
 
 func (f *flags) Parse() {
 	flag.StringVar(&f.confFile, "conf", DefaultCfgFile, "The configuration file used to initialize Canopsis")
-	flag.StringVar(&f.overrideConfFile, "override", "", "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
+	flag.StringVar(&f.overrideConfFile, "override", DefaultOverrideCfgFile, "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
 
 	flag.BoolVar(&f.version, "version", false, "Show the version information")
-	flag.StringVar(&f.edition, "edition", EditionCommunity, fmt.Sprintf("Canopsis edition: %s or %s", EditionCommunity, EditionPro))
+	flag.StringVar(&f.edition, "edition", "", fmt.Sprintf("Canopsis edition: %s or %s", EditionCommunity, EditionPro))
 
 	flag.BoolVar(&f.modeDebug, "d", false, "debug mode")
 
