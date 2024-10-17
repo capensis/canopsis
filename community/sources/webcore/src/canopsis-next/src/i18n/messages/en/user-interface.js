@@ -14,6 +14,7 @@ export default {
   requiredInstructionApprove: 'Required instruction approvement',
   disabledTransitions: 'Disable some animations',
   disabledTransitionsTooltip: 'It will help to improve application performance',
+  autoSuggestPbehaviorName: 'Automatically suggest a pbehavior name',
   tooltips: {
     maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
     checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',

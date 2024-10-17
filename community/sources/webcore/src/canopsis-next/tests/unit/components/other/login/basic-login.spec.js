@@ -69,7 +69,6 @@ describe('basic-login', () => {
     expect(login).toBeCalledWith(
       expect.any(Object),
       { username, password },
-      undefined,
     );
 
     expect($router.push).toBeCalledWith({ name: ROUTES_NAMES.home });
@@ -96,7 +95,6 @@ describe('basic-login', () => {
     expect(login).toBeCalledWith(
       expect.any(Object),
       { username: '', password: '' },
-      undefined,
     );
 
     expect(selectAlert(wrapper).attributes('value')).toBeTruthy();
@@ -124,7 +122,6 @@ describe('basic-login', () => {
         username: '',
         password: '',
       },
-      undefined,
     );
 
     expect($router.push).toBeCalledWith(redirectUrl);
@@ -158,7 +155,6 @@ describe('basic-login', () => {
         username: '',
         password: '',
       },
-      undefined,
     );
 
     expect($router.push).toBeCalledWith({

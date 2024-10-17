@@ -2,14 +2,12 @@ package types
 
 import (
 	"log"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // Alarm states
@@ -274,18 +272,6 @@ func (a *Alarm) IsCanceled() bool {
 	return a.Value.Canceled != nil && !a.IsResolved()
 }
 
-// IsMatched tell if an alarm is catched by a regex
-func (a *Alarm) IsMatched(regex string, fields []string) bool {
-	for _, fieldName := range fields {
-		field := utils.GetStringField(a.Value, fieldName)
-		matched, _ := regexp.MatchString(regex, field)
-		if matched {
-			return true
-		}
-	}
-	return false
-}
-
 // IsResolved tell if an alarm has been resolved
 func (a *Alarm) IsResolved() bool {
 	return a.Value.Resolved != nil
@@ -489,8 +475,10 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		return a.Value.ACK.GetInitiator(), true
 	case "v.canceled.initiator":
 		return a.Value.Canceled.GetInitiator(), true
+	case "v.meta":
+		return a.Value.Meta, true
 	default:
-		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+		if n, ok := strings.CutPrefix(f, "v.ticket.ticket_data."); ok {
 			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {
 				return "", true
 			}

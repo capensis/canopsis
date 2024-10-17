@@ -21,62 +21,96 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
-### Dernières versions
 
-<!-- du plus récent au plus ancien -->
-*  [Canopsis 23.04.12](notes-de-version/23.04.12.md), publié le 21 mai 2024.
-*  [Canopsis 24.04.0](notes-de-version/24.04.0.md), publié le 3 mai 2024. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.04.0.md)
-*  [Canopsis 23.10.7](notes-de-version/23.10.7.md), publié le 2 mai 2024.
-*  [Canopsis 23.10.6](notes-de-version/23.10.6.md), publié le 12 avril 2024.
-*  [Canopsis 22.10.13](notes-de-version/22.10.13.md), publié le 25 mars 2024..
-*  [Canopsis 23.10.5](notes-de-version/23.10.5.md), publié le 28 février 2024.
-*  [Canopsis 23.04.11](notes-de-version/23.04.11.md), publié le 19 février 2024.
-*  [Canopsis 23.04.9](notes-de-version/23.04.9.md), publié le 10 janvier 2024.
-*  [Canopsis 23.10.4](notes-de-version/23.10.4.md), publié le 14 décembre 2023.
-*  [Canopsis 23.10.3](notes-de-version/23.10.3.md), publié le 11 décembre 2023.
-*  [Canopsis 23.04.8](notes-de-version/23.04.8.md), publié le 29 novembre 2023.
-*  [Canopsis 23.10.2](notes-de-version/23.10.2.md), publié le 22 novembre 2023.
-*  [Canopsis 23.10.1](notes-de-version/23.10.1.md), publié le 6 novembre 2023.
-*  [Canopsis 23.10.0](notes-de-version/23.10.0.md), publié le 31 octobre 2023. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.10.0.md)
-*  [Canopsis 23.04.7](notes-de-version/23.04.7.md), publié le 16 octobre 2023.
-*  [Canopsis 23.04.6](notes-de-version/23.04.6.md), publié le 11 septembre 2023.
-*  [Canopsis 22.10.10](notes-de-version/22.10.10.md), publié le 11 septembre 2023.
-*  [Canopsis 23.04.5](notes-de-version/23.04.5.md), publié le 21 juillet 2023.
-*  [Canopsis 23.04.4](notes-de-version/23.04.4.md), publié le 19 juillet 2023.
-*  [Canopsis 23.04.3](notes-de-version/23.04.3.md), publié le 18 juillet 2023.
-*  [Canopsis 23.04.2](notes-de-version/23.04.2.md), publié le 23 juin 2023.
-*  [Canopsis 23.04.1](notes-de-version/23.04.1.md), publié le 23 mai 2023.
-*  [Canopsis 22.10.9](notes-de-version/22.10.9.md), publié le 2 mai 2023.
-*  [Canopsis 23.04.0](notes-de-version/23.04.0.md), publié le 27 avril 2023. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.04.0.md)
+=== "24.04"
+
+    | Version      | Notes de version                                         | Date       | Remarques |
+    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+    | **24.04.3**  | [:material-file-document:](notes-de-version/24.04.3.md)  | 11/10/2024 | Une des opérations de migration doit être exécutée manuellement, consultez les notes de version |
+    | 24.04.2      | [:material-file-document:](notes-de-version/24.04.2.md)  | 05/09/2024 ||
+    | 24.04.1      | [:material-file-document:](notes-de-version/24.04.1.md)  | 25/07/2024 | D'importantes optimisations de performances de l'interface graphique ont été apportées |
+    | 24.04.0      | [:material-file-document:](notes-de-version/24.04.0.md)  | 03/05/2024 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.04.0.md) |
+
+=== "23.10"
+
+    | Version      | Notes de version                                         | Date       | Remarques |
+    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+    | **23.10.8**  | [:material-file-document:](notes-de-version/23.10.8.md)  | 28/06/2024 ||
+    | 23.10.7      | [:material-file-document:](notes-de-version/23.10.7.md)  | 02/05/2024 ||
+    | 23.10.6      | [:material-file-document:](notes-de-version/23.10.6.md)  | 12/04/2024 ||
+    | 23.10.5      | [:material-file-document:](notes-de-version/23.10.5.md)  | 28/02/2024 ||
+    | 23.10.4      | [:material-file-document:](notes-de-version/23.10.4.md)  | 14/12/2023 ||
+    | 23.10.3      | [:material-file-document:](notes-de-version/23.10.3.md)  | 11/12/2023 ||
+    | 23.10.2      | [:material-file-document:](notes-de-version/23.10.2.md)  | 22/11/2023 ||
+    | 23.10.1      | [:material-file-document:](notes-de-version/23.10.1.md)  | 06/11/2023 ||
+    | 23.10.0      | [:material-file-document:](notes-de-version/23.10.0.md)  | 31/10/2023 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.10.0.md) |
+    
+=== "23.04"
+
+    | Version      | Notes de version                                         | Date       | Remarques |
+    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+    | **23.04.13** | [:material-file-document:](notes-de-version/23.04.13.md) | 14/05/2024 ||
+    | 23.04.12     | [:material-file-document:](notes-de-version/23.04.12.md) | 21/05/2004 ||
+    | 23.04.11     | [:material-file-document:](notes-de-version/23.04.11.md) | 19/02/2024 ||
+    | 23.04.9      | [:material-file-document:](notes-de-version/23.04.9.md)  | 10/01/2024 ||
+    | 23.04.8      | [:material-file-document:](notes-de-version/23.04.8.md)  | 29/11/2023 ||
+    | 23.04.7      | [:material-file-document:](notes-de-version/23.04.7.md)  | 16/10/2023 ||
+    | 23.04.6      | [:material-file-document:](notes-de-version/23.04.6.md)  | 11/09/2023 ||
+    | 23.04.5      | [:material-file-document:](notes-de-version/23.04.5.md)  | 21/07/2023 ||
+    | 23.04.4      | [:material-file-document:](notes-de-version/23.04.4.md)  | 19/07/2023 ||
+    | 23.04.3      | [:material-file-document:](notes-de-version/23.04.3.md)  | 18/07/2023 ||
+    | 23.04.2      | [:material-file-document:](notes-de-version/23.04.2.md)  | 23/06/2023 ||
+    | 23.04.1      | [:material-file-document:](notes-de-version/23.04.1.md)  | 23/05/2023 ||
+    | 23.04.0      | [:material-file-document:](notes-de-version/23.04.0.md)  | 27/04/2023 |Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.04.0.md)
+
+=== "22.10 - Maintenance réduite"
+
+    | Version      | Notes de version                                         | Date       | Remarques |
+    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+    | **22.10.13** | [:material-file-document:](notes-de-version/22.10.13.md) | 25/03/2024 ||
+    | 22.10.10     | [:material-file-document:](notes-de-version/22.10.10.md) | 11/09/2023 ||
+    | 22.10.9      | [:material-file-document:](notes-de-version/22.10.9.md)  | 02/05/2023 ||
+    | 22.10.8      | [:material-file-document:](notes-de-version/22.10.8.md)  | 31/03/2023 ||
+    | 22.10.7      | [:material-file-document:](notes-de-version/22.10.7.md)  | 01/03/2023 ||
+    | 22.10.6      | [:material-file-document:](notes-de-version/22.10.6.md)  | 26/01/2023 ||
+    | 22.10.5      | [:material-file-document:](notes-de-version/22.10.5.md)  | 24/01/2023 ||
+    | 22.10.4      | [:material-file-document:](notes-de-version/22.10.4.md)  | 13/01/2023 ||
+    | 22.10.3      | [:material-file-document:](notes-de-version/22.10.3.md)  | 16/12/2023 ||
+    | 22.10.2      | [:material-file-document:](notes-de-version/22.10.2.md)  | 08/12/2023 ||
+    | 22.10.1      | [:material-file-document:](notes-de-version/22.10.1.md)  | 29/11/2023 ||
+    | 22.10.0      | [:material-file-document:](notes-de-version/22.10.0.md)  | 17/11/2023 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-22.10.0.md) |
 
 
 ??? note "Anciennes versions"
 
     La documentation des anciennes versions est disponible sur [https://old-doc.canopsis.net/](https://old-doc.canopsis.net/)    
-    
-    | | | | | | |
-    |-:|-|-|-|-|-|
-    | *mai 2023* | [4.5.14](notes-de-version/4.5.14.md) | | | | |
-    | *mars 2023* | [22.10.7](notes-de-version/22.10.7.md) | [22.10.8](notes-de-version/22.10.8.md) | | |
-    | *janvier 2023* | [4.6.3](notes-de-version/4.6.3.md) | [4.5.13](notes-de-version/4.5.13.md) | [22.10.4](notes-de-version/22.10.4.md) | [22.10.5](notes-de-version/22.10.5.md) | [22.10.6](notes-de-version/22.10.6.md) |
-    | *décembre 2022* | [22.10.2](notes-de-version/22.10.2.md) | [22.10.3](notes-de-version/22.10.3.md) | | | |
-    | *octobre-novembre 2022* | [4.6.2](notes-de-version/4.6.2.md) | [4.5.11](notes-de-version/4.5.11.md) | [22.10.0](notes-de-version/22.10.0.md) | [22.10.1](notes-de-version/22.10.1.md) | |
-    | *jullet-aout-septembre 2022* | [4.6.1](notes-de-version/4.6.1.md) | [4.6.0](notes-de-version/4.6.0.md) |[4.5.10](notes-de-version/4.5.10.md) |[4.5.9](notes-de-version/4.5.9.md) | |
-    | *avril-mai-juin 2022* | [4.5.8](notes-de-version/4.5.8.md) | [4.5.7](notes-de-version/4.5.7.md) |[4.5.6](notes-de-version/4.5.6.md) |[4.5.5](notes-de-version/4.5.5.md) | |
-    | *mars 2022* | [4.5.4](notes-de-version/4.5.4.md) | [4.5.3](notes-de-version/4.5.3.md) |[4.5.2](notes-de-version/4.5.2.md) |[4.5.1](notes-de-version/4.5.1.md) | [4.5.0](notes-de-version/4.5.0.md) |
-    | *janvier–mars 2022* | [4.4.1](notes-de-version/4.4.1.md) | [4.3.8](notes-de-version/4.3.8.md) | [4.3.7](notes-de-version/4.3.7.md) | |
-    | *novembre–décembre 2021* | [4.4.0](notes-de-version/4.4.0.md) | [4.3.6](notes-de-version/4.3.6.md) | [4.3.5](notes-de-version/4.3.5.md) | [4.3.4](notes-de-version/4.3.4.md) |
-    | *juin–octobre 2021* | [4.3.3](notes-de-version/4.3.3.md) | [4.3.2](notes-de-version/4.3.2.md) | [4.3.1](notes-de-version/4.3.1.md) | [4.3.0](notes-de-version/4.3.0.md) |
-    | *mars–mai 2021* | [4.2.0](notes-de-version/4.2.0.md) | [4.1.1](notes-de-version/4.1.1.md) | [4.1.0](notes-de-version/4.1.0.md) | |
-    | *janvier–février 2021* | [4.0.3](notes-de-version/4.0.3.md) | [4.0.2](notes-de-version/4.0.2.md) | [4.0.1](notes-de-version/4.0.1.md) | [4.0.0](notes-de-version/4.0.0.md) |
-    | *septembre–novembre 2020* | [3.48.0](notes-de-version/3.48.0.md) | [3.47.0](notes-de-version/3.47.0.md) | [3.46.0](notes-de-version/3.46.0.md) | [3.45.0](notes-de-version/3.45.0.md) |
-    | *juin–août 2020* | [3.44.1](notes-de-version/3.44.1.md) | [3.44.0](notes-de-version/3.44.0.md) | [3.43.1](notes-de-version/3.43.1.md) | [3.42.0](notes-de-version/3.42.0.md) |
-    | *mars–mai 2020* | [3.41.0](notes-de-version/3.41.0.md) | [3.40.0](notes-de-version/3.40.0.md) | [3.39.1](notes-de-version/3.39.1.md) | [3.39.0](notes-de-version/3.39.0.md) | [3.38.0](notes-de-version/3.38.0.md) |
-    | *janvier–février 2020* | [3.37.0](notes-de-version/3.37.0.md) | [3.36.0](notes-de-version/3.36.0.md) | [3.35.0](notes-de-version/3.35.0.md) | | |
-    | *octobre–décembre 2019* | [3.34.0](notes-de-version/3.34.0.md) | [3.33.0](notes-de-version/3.33.0.md) | [3.32.0](notes-de-version/3.32.0.md) | [3.31.0](notes-de-version/3.31.0.md) | [3.30.0](notes-de-version/3.30.0.md) |
-    | *août–septembre 2019* | [3.29.0](notes-de-version/3.29.0.md) | [3.28.0](notes-de-version/3.28.0.md) | [3.27.0](notes-de-version/3.27.0.md) | [3.26.0](notes-de-version/3.26.0.md) | [3.25.0](notes-de-version/3.25.0.md) |
-    | *juin–juillet 2019* | [3.24.0](notes-de-version/3.24.0.md) | [3.23.0](notes-de-version/3.23.0.md) | [3.22.0](notes-de-version/3.22.0.md) | [3.21.0](notes-de-version/3.21.0.md) | [3.20.0](notes-de-version/3.20.0.md) |
-    | *avril–juin 2019* | [3.19.0](notes-de-version/3.19.0.md) | [3.18.1](notes-de-version/3.18.1.md) | [3.18.0](notes-de-version/3.18.0.md) | [3.17.0](notes-de-version/3.17.0.md) | [3.16.0](notes-de-version/3.16.0.md) |
-    | *mars–avril 2019* | [3.15.0](notes-de-version/3.15.0.md) | [3.14.0](notes-de-version/3.14.0.md) | [3.13.2](notes-de-version/3.13.2.md) | [3.13.1](notes-de-version/3.13.1.md) | [3.13.0](notes-de-version/3.13.0.md) |
-    | *janvier–mars 2019* | [3.12.0](notes-de-version/3.12.0.md) | [3.11.0](notes-de-version/3.11.0.md) | [3.10.0](notes-de-version/3.10.0.md) | [3.9.0](notes-de-version/3.9.0.md) | [3.8.0](notes-de-version/3.8.0.md) |
-    | *fin 2018* | [3.7.0](notes-de-version/3.7.0.md) | [3.6.0](notes-de-version/3.6.0.md) | [3.5.0](notes-de-version/3.5.0.md) | | |
+
+	=== "4.6"
+
+	    | Version      | Notes de version                                         | Date       | Remarques |
+	    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+	    | 4.6.3        | [:material-file-document:](notes-de-version/4.6.3.md)    | 23/01/2023 ||
+	    | 4.6.2        | [:material-file-document:](notes-de-version/4.6.2.md)    | 26/10/2022 ||
+	    | 4.6.1        | [:material-file-document:](notes-de-version/4.6.1.md)    | 16/09/2022 ||
+	    | 4.6.0        | [:material-file-document:](notes-de-version/4.6.0.md)    | 29/07/2022 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-4.6.0.md) |
+
+	=== "4.5"
+
+	    | Version      | Notes de version                                         | Date       | Remarques |
+	    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+	    | 4.5.14       | [:material-file-document:](notes-de-version/4.5.14.md)   | 03/05/2023 ||
+	    | 4.5.13       | [:material-file-document:](notes-de-version/4.5.13.md)   | 09/01/2023 ||
+	    | 4.5.12       | [:material-file-document:](notes-de-version/4.5.12.md)   |            | Version non exploitable |
+	    | 4.5.11       | [:material-file-document:](notes-de-version/4.5.11.md)   | 28/11/2022 ||
+	    | 4.5.10       | [:material-file-document:](notes-de-version/4.5.10.md)   | 16/09/2022 ||
+	    | 4.5.9        | [:material-file-document:](notes-de-version/4.5.9.md)    | 31/08/2022 ||
+	    | 4.5.8        | [:material-file-document:](notes-de-version/4.5.8.md)    | 02/06/2022 ||
+	    | 4.5.7        | [:material-file-document:](notes-de-version/4.5.7.md)    | 12/05/2022 ||
+	    | 4.5.6        | [:material-file-document:](notes-de-version/4.5.6.md)    | 21/04/2022 ||
+	    | 4.5.5        | [:material-file-document:](notes-de-version/4.5.5.md)    | 13/04/2022 ||
+	    | 4.5.4        | [:material-file-document:](notes-de-version/4.5.4.md)    | 25/03/2022 ||
+	    | 4.5.3        | [:material-file-document:](notes-de-version/4.5.3.md)    | 18/03/2022 ||
+	    | 4.5.2        | [:material-file-document:](notes-de-version/4.5.2.md)    |            | Version non exploitable |
+	    | 4.5.1        | [:material-file-document:](notes-de-version/4.5.1.md)    | 04/03/2022 ||
+	    | 4.5.0        | [:material-file-document:](notes-de-version/4.5.0.md)    | 18/02/2022 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-4.5.0.md) |
+

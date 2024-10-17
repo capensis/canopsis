@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
+	DefaultCfgFile         = "/opt/canopsis/etc/canopsis.toml"
+	DefaultOverrideCfgFile = "/opt/canopsis/etc/conf.d/canopsis-override.toml"
 
 	DefaultMongoMigrationsPath        = "/opt/canopsis/share/database/migrations"
 	DefaultMongoFixturesPath          = "/opt/canopsis/share/database/fixtures"
@@ -46,14 +47,16 @@ type flags struct {
 
 	mongoFixtureMigrations        bool
 	mongoFixtureMigrationsVersion string
+
+	forceGenerateSerialName bool
 }
 
 func (f *flags) Parse() {
 	flag.StringVar(&f.confFile, "conf", DefaultCfgFile, "The configuration file used to initialize Canopsis")
-	flag.StringVar(&f.overrideConfFile, "override", "", "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
+	flag.StringVar(&f.overrideConfFile, "override", DefaultOverrideCfgFile, "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
 
 	flag.BoolVar(&f.version, "version", false, "Show the version information")
-	flag.StringVar(&f.edition, "edition", EditionCommunity, fmt.Sprintf("Canopsis edition: %s or %s", EditionCommunity, EditionPro))
+	flag.StringVar(&f.edition, "edition", "", fmt.Sprintf("Canopsis edition: %s or %s", EditionCommunity, EditionPro))
 
 	flag.BoolVar(&f.modeDebug, "d", false, "debug mode")
 
@@ -74,6 +77,8 @@ func (f *flags) Parse() {
 	flag.StringVar(&f.techPostgresMigrationDirectory, "tech-postgres-migration-directory", DefaultTechPostgresMigrationsPath, "The directory with Tech Postgres migration scripts")
 	flag.StringVar(&f.techPostgresMigrationMode, "tech-postgres-migration-mode", "up", "Should be up or down")
 	flag.IntVar(&f.techPostgresMigrationSteps, "tech-postgres-migration-steps", 0, "Number of migration steps, will execute all migrations if empty or 0")
+
+	flag.BoolVar(&f.forceGenerateSerialName, "force-generate-serial-name", false, "If true, it will regenerate serial name even if it exists")
 
 	flag.Parse()
 }

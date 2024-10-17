@@ -17,10 +17,7 @@
           v-field="action.emit_trigger"
           :label="$t('common.emitTrigger')"
         />
-        <action-author-field
-          v-if="!isPbehaviorAction"
-          v-model="parameters"
-        />
+        <action-author-field v-model="parameters" />
       </v-flex>
       <v-flex
         v-if="isWebhookActionType"
@@ -53,7 +50,7 @@
       background-color="transparent"
       centered
     >
-      <v-tab :class="{ 'error--text': hasGeneralError }">
+      <v-tab v-if="!isPbehaviorRemoveAction" :class="{ 'error--text': hasGeneralError }">
         {{ $t('common.general') }}
       </v-tab>
       <v-tab :class="{ 'error--text': hasPatternsError }">
@@ -65,7 +62,7 @@
       v-model="activeTab"
       class="pt-2"
     >
-      <v-tab-item eager>
+      <v-tab-item v-if="!isPbehaviorRemoveAction" eager>
         <action-parameters-form
           v-model="parameters"
           ref="general"
@@ -88,7 +85,7 @@
 </template>
 
 <script>
-import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/entities/action';
+import { isPbehaviorRemoveActionType, isWebhookActionType } from '@/helpers/entities/action';
 
 import { formMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
@@ -144,8 +141,8 @@ export default {
     };
   },
   computed: {
-    isPbehaviorAction() {
-      return isPbehaviorActionType(this.action.type);
+    isPbehaviorRemoveAction() {
+      return isPbehaviorRemoveActionType(this.action.type);
     },
 
     isWebhookActionType() {
@@ -164,7 +161,7 @@ export default {
     },
   },
   mounted() {
-    this.$watch(() => this.$refs.general.hasAnyError, (value) => {
+    this.$watch(() => this.$refs.general?.hasAnyError, (value) => {
       this.hasGeneralError = value;
     });
 

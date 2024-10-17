@@ -91,7 +91,6 @@ db.viewtabs.createIndex({view: 1}, {name: "view_1"});
 
 db.widgets.createIndex({tab: 1}, {name: "tab_1"});
 
-// Can be removed if index is added
 var collectionNames = db.getCollectionNames();
 if (!collectionNames.includes('pbehavior_reason')) {
     db.createCollection("pbehavior_reason");
@@ -111,9 +110,9 @@ if (!collectionNames.includes('eventfilter')) {
 if (!collectionNames.includes('broadcast_message')) {
     db.createCollection("broadcast_message");
 }
-if (!collectionNames.includes('viewgroups')) {
-    db.createCollection("viewgroups");
-}
 if (!collectionNames.includes('view_playlist')) {
     db.createCollection("view_playlist");
+}
+if (!collectionNames.includes('viewgroups')) {
+    db.createCollection("viewgroups");
 }

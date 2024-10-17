@@ -21,7 +21,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { isArray, keyBy, pick } from 'lodash';
+
+import { prepareDataForItemsById } from '@/helpers/search/lazy-search';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -118,11 +119,7 @@ export default {
 
         this.pageCount = meta.page_count;
 
-        this.alarmsById = {
-          ...(this.query.page !== 1 ? this.alarmsById : {}),
-          ...keyBy(data, '_id'),
-          ...pick(this.alarmsById, isArray(this.value) ? this.value : [this.value]),
-        };
+        this.alarmsById = prepareDataForItemsById(this.query.page !== 1 ? this.alarmsById : {}, this.value, data);
       } catch (err) {
         console.error(err);
       } finally {

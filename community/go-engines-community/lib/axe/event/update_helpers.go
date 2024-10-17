@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -18,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -25,6 +27,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+const (
+	outputMetaAlarmNamePrefix   = "Display name: "
+	outputMetaAlarmEntityPrefix = "Entity: "
+	outputMetaAlarmPrefix       = "Meta alarm name: "
 )
 
 func NewAlarmStep(t string, params rpc.AxeParameters, inPbehaviorInterval bool) types.AlarmStep {
@@ -49,7 +57,7 @@ func ConcatOutputAndRuleName(output, ruleName string) string {
 	return output
 }
 
-func RemoveMetaAlarmState(
+func removeMetaAlarmState(
 	ctx context.Context,
 	metaAlarm types.Alarm,
 	rule correlation.Rule,
@@ -371,7 +379,6 @@ func processResolve(
 	dbClient mongo.DbClient,
 	alarmCollection, entityCollection, resolvedCollection, metaAlarmRuleCollection mongo.DbCollection,
 ) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
-	update := getResolveAlarmUpdate(datetime.NewCpsTime(), event.Parameters)
 	result := Result{}
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
@@ -385,19 +392,8 @@ func processResolve(
 		componentStateChanged = false
 		newComponentState = 0
 
-		beforeAlarm := types.Alarm{}
-		opts := options.FindOneAndUpdate().
-			SetReturnDocument(options.Before).
-			SetProjection(bson.M{
-				"not_acked_metric_type":      1,
-				"not_acked_metric_send_time": 1,
-			})
-		err := alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
-
+		beforeAlarm, err := updateAlarmToResolve(ctx, alarmCollection, match, event.Parameters)
+		if err != nil || beforeAlarm.ID == "" {
 			return err
 		}
 
@@ -405,47 +401,22 @@ func processResolve(
 			notAckedMetricType = beforeAlarm.NotAckedMetricType
 		}
 
-		// extend alarm struct with bookmarks to copy user's bookmarks to a resolved alarm document
-		var alarm struct {
-			types.Alarm `bson:"inline"`
-			Bookmarks   []string `bson:"bookmarks"`
-		}
-		err = alarmCollection.FindOne(ctx, bson.M{"_id": beforeAlarm.ID}).Decode(&alarm)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
+		entity, err := updateEntityOfResolvedAlarm(ctx, entityCollection, event.Entity.ID)
+		if err != nil || entity.ID == "" {
 			return err
 		}
 
-		entity := types.Entity{}
-		entityUpdate := getResolveEntityUpdate()
-		err = entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": event.Entity.ID}, entityUpdate,
-			options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&entity)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
-
+		alarm, err := copyAlarmToResolvedCollection(ctx, alarmCollection, resolvedCollection, beforeAlarm.ID)
+		if err != nil || alarm.ID == "" {
 			return err
 		}
 
 		alarmChange := types.NewAlarmChange()
 		alarmChange.Type = types.AlarmChangeTypeResolve
 		result.Forward = true
-		result.Alarm = alarm.Alarm
+		result.Alarm = alarm
 		result.Entity = entity
 		result.AlarmChange = alarmChange
-
-		_, err = resolvedCollection.UpdateOne(
-			ctx,
-			bson.M{"_id": alarm.ID},
-			bson.M{"$set": alarm},
-			options.Update().SetUpsert(true),
-		)
-		if err != nil {
-			return err
-		}
 
 		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
 			ctx,
@@ -459,27 +430,94 @@ func processResolve(
 			return err
 		}
 
-		if !result.Alarm.IsMetaAlarm() {
-			return nil
-		}
-
-		var rule correlation.Rule
-		err = metaAlarmRuleCollection.FindOne(ctx, bson.M{"_id": result.Alarm.Value.Meta}).Decode(&rule)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return fmt.Errorf("meta alarm rule %s not found", result.Alarm.Value.Meta)
-			}
-
-			return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
-		}
-
-		return RemoveMetaAlarmState(ctx, result.Alarm, rule, metaAlarmStatesService)
+		return removeMetaAlarmStateOnResolve(ctx, metaAlarmRuleCollection, metaAlarmStatesService, result.Alarm)
 	})
 	if err != nil || result.Alarm.ID == "" {
 		return result, nil, "", false, 0, err
 	}
 
 	return result, updatedServiceStates, notAckedMetricType, componentStateChanged, newComponentState, nil
+}
+
+func updateAlarmToResolve(ctx context.Context, alarmCollection mongo.DbCollection, match bson.M, params rpc.AxeParameters) (types.Alarm, error) {
+	beforeAlarm := types.Alarm{}
+	update := getResolveAlarmUpdate(datetime.NewCpsTime(), params)
+	opts := options.FindOneAndUpdate().
+		SetReturnDocument(options.Before).
+		SetProjection(bson.M{
+			"not_acked_metric_type":      1,
+			"not_acked_metric_send_time": 1,
+		})
+	err := alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return beforeAlarm, err
+	}
+
+	return beforeAlarm, nil
+}
+
+func copyAlarmToResolvedCollection(
+	ctx context.Context,
+	alarmCollection, resolvedCollection mongo.DbCollection,
+	alarmID string,
+) (types.Alarm, error) {
+	// extend alarm struct with bookmarks to copy user's bookmarks to a resolved alarm document
+	var alarm struct {
+		types.Alarm `bson:"inline"`
+		Bookmarks   []string `bson:"bookmarks"`
+	}
+	err := alarmCollection.FindOne(ctx, bson.M{"_id": alarmID}).Decode(&alarm)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return alarm.Alarm, nil
+		}
+
+		return alarm.Alarm, err
+	}
+
+	_, err = resolvedCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": alarm.ID},
+		bson.M{"$set": alarm},
+		options.Update().SetUpsert(true),
+	)
+
+	return alarm.Alarm, err
+}
+
+func updateEntityOfResolvedAlarm(ctx context.Context, entityCollection mongo.DbCollection, entityID string) (types.Entity, error) {
+	entity := types.Entity{}
+	entityUpdate := getResolveEntityUpdate()
+	err := entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": entityID}, entityUpdate,
+		options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&entity)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return entity, err
+	}
+
+	return entity, nil
+}
+
+func removeMetaAlarmStateOnResolve(
+	ctx context.Context,
+	metaAlarmRuleCollection mongo.DbCollection,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
+	alarm types.Alarm,
+) error {
+	if !alarm.IsMetaAlarm() {
+		return nil
+	}
+
+	var rule correlation.Rule
+	err := metaAlarmRuleCollection.FindOne(ctx, bson.M{"_id": alarm.Value.Meta}).Decode(&rule)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return fmt.Errorf("meta alarm rule %s not found", alarm.Value.Meta)
+		}
+
+		return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+	}
+
+	return removeMetaAlarmState(ctx, alarm, rule, metaAlarmStatesService)
 }
 
 func postProcessResolve(
@@ -491,7 +529,7 @@ func postProcessResolve(
 	newComponentState int,
 	notAckedMetricType string,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	pbehaviorCollection mongo.DbCollection,
@@ -523,7 +561,7 @@ func postProcessResolve(
 		}
 	}
 
-	err := metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
@@ -558,10 +596,18 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 				"$v.inactive_duration",
 				bson.M{"$cond": bson.M{
 					"if": bson.M{"$and": []bson.M{
-						{"$ne": bson.A{"$v.inactive_start", nil}},
+						{"$gt": bson.A{"$v.inactive_start", 0}},
 						{"$or": []bson.M{
-							{"$ne": bson.A{"$v.snooze", nil}},
-							{"$not": bson.M{"$in": bson.A{"$v.pbehavior_info.canonical_type", bson.A{nil, "", pbehavior.TypeActive}}}},
+							{"$ne": bson.A{
+								bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
+								nil,
+							}},
+							{"$not": bson.M{"$in": bson.A{
+								bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
+								bson.A{nil, "", pbehavior.TypeActive},
+							}}},
+							{"$eq": bson.A{"$auto_instruction_in_progress", true}},
+							{"$eq": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
 						}},
 					}},
 					"then": bson.M{"$subtract": bson.A{
@@ -586,7 +632,10 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 			"v.snooze_duration": bson.M{"$sum": bson.A{
 				"$v.snooze_duration",
 				bson.M{"$cond": bson.M{
-					"if": bson.M{"$ne": bson.A{"$v.snooze", nil}},
+					"if": bson.M{"$ne": bson.A{
+						bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
+						nil,
+					}},
 					"then": bson.M{"$subtract": bson.A{
 						t,
 						"$v.snooze.t",
@@ -597,7 +646,10 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 			"v.pbh_inactive_duration": bson.M{"$sum": bson.A{
 				"$v.pbh_inactive_duration",
 				bson.M{"$cond": bson.M{
-					"if": bson.M{"$not": bson.M{"$in": bson.A{"$v.pbehavior_info.canonical_type", bson.A{nil, "", pbehavior.TypeActive}}}},
+					"if": bson.M{"$not": bson.M{"$in": bson.A{
+						bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
+						bson.A{nil, "", pbehavior.TypeActive},
+					}}},
 					"then": bson.M{"$subtract": bson.A{
 						t,
 						"$v.pbehavior_info.timestamp",
@@ -619,4 +671,244 @@ func getResolveEntityUpdate() bson.M {
 		"idle_since":           "",
 		"last_idle_rule_apply": "",
 	}}
+}
+
+func updateInactiveStart(
+	ts datetime.CpsTime,
+	withSnoozeCond bool,
+	withPbhCond bool,
+	withAutoInstructionCond bool,
+	withMetaAlarmCond bool,
+) bson.M {
+	conds := make([]bson.M, 0)
+	if withSnoozeCond {
+		conds = append(conds, bson.M{"$eq": bson.A{
+			bson.M{"$ifNull": bson.A{"$v.snooze", nil}},
+			nil,
+		}})
+	}
+
+	if withPbhCond {
+		conds = append(conds, bson.M{"$in": bson.A{
+			bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
+			bson.A{nil, "", pbehavior.TypeActive},
+		}})
+	}
+
+	if withAutoInstructionCond {
+		conds = append(conds, bson.M{"$ne": bson.A{"$auto_instruction_in_progress", true}})
+	}
+
+	if withMetaAlarmCond {
+		conds = append(conds, bson.M{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}})
+	}
+
+	return bson.M{"$cond": bson.M{
+		"if":   bson.M{"$and": conds},
+		"then": nil,
+		"else": ts,
+	}}
+}
+
+func getAlarmsWithEntityByMatch(ctx context.Context, alarmCollection mongo.DbCollection, match bson.M) ([]types.AlarmWithEntity, error) {
+	var alarms []types.AlarmWithEntity
+
+	cursor, err := alarmCollection.Aggregate(ctx, []bson.M{
+		{"$match": match},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$sort": bson.M{
+			"alarm.v.last_update_date": 1,
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	err = cursor.All(ctx, &alarms)
+	if err != nil {
+		return nil, err
+	}
+
+	return alarms, err
+}
+
+func updateMetaAlarmState(
+	alarm *types.Alarm,
+	entity types.Entity,
+	timestamp datetime.CpsTime,
+	state types.CpsNumber,
+	output string,
+	service alarmstatus.Service,
+) (bson.M, bson.M, error) {
+	var currentState, currentStatus types.CpsNumber
+	if alarm.Value.State != nil {
+		currentState = alarm.Value.State.Value
+		currentStatus = alarm.Value.Status.Value
+	}
+
+	author := canopsis.DefaultEventAuthor
+	if state != currentState {
+		// Event is an Ok, so the alarm should be resolved anyway
+		if alarm.IsStateLocked() && state != types.AlarmStateOK {
+			return nil, nil, nil
+		}
+
+		// Create new Step to keep track of the alarm history
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "",
+			types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
+		newStep.Value = state
+
+		if state < currentState {
+			newStep.Type = types.AlarmStepStateDecrease
+		}
+
+		alarm.Value.State = &newStep
+		err := alarm.Value.Steps.Add(newStep)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		alarm.Value.TotalStateChanges++
+		alarm.Value.LastUpdateDate = timestamp
+	}
+
+	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
+	statusStepMessage := ConcatOutputAndRuleName(output, statusRuleName)
+	if newStatus == currentStatus {
+		if state == currentState {
+			return nil, nil, nil
+		}
+
+		alarm.Value.StateChangesSinceStatusUpdate++
+
+		return bson.M{
+				"v.state":                             alarm.Value.State,
+				"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+				"v.total_state_changes":               alarm.Value.TotalStateChanges,
+				"v.last_update_date":                  alarm.Value.LastUpdateDate,
+			},
+			bson.M{"v.steps": alarm.Value.State},
+			nil
+	}
+
+	// Create new Step to keep track of the alarm history
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, statusStepMessage, "", "",
+		types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
+	newStepStatus.Value = newStatus
+
+	if newStatus < currentStatus {
+		newStepStatus.Type = types.AlarmStepStatusDecrease
+	}
+
+	alarm.Value.Status = &newStepStatus
+	err := alarm.Value.Steps.Add(newStepStatus)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	alarm.Value.StateChangesSinceStatusUpdate = 0
+	alarm.Value.LastUpdateDate = timestamp
+
+	set := bson.M{
+		"v.status":                            alarm.Value.Status,
+		"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+		"v.last_update_date":                  alarm.Value.LastUpdateDate,
+	}
+	newSteps := bson.A{}
+	if state != currentState {
+		set["v.total_state_changes"] = alarm.Value.TotalStateChanges
+		set["v.state"] = alarm.Value.State
+		newSteps = append(newSteps, alarm.Value.State)
+	}
+
+	newSteps = append(newSteps, alarm.Value.Status)
+
+	return set, bson.M{"v.steps": bson.M{"$each": newSteps}}, nil
+}
+
+func getMetaAlarmChildStepMsg(
+	rule correlation.Rule,
+	metaAlarm types.Alarm,
+	event rpc.AxeEvent,
+) string {
+	msgBuilder := strings.Builder{}
+	if !rule.IsManual() {
+		msgBuilder.WriteString(types.RuleNameRulePrefix)
+		msgBuilder.WriteString(rule.Name)
+		msgBuilder.WriteString(". ")
+	}
+
+	msgBuilder.WriteString(outputMetaAlarmNamePrefix)
+	msgBuilder.WriteString(metaAlarm.Value.DisplayName)
+	msgBuilder.WriteString(". ")
+	msgBuilder.WriteString(outputMetaAlarmEntityPrefix)
+	msgBuilder.WriteString(metaAlarm.EntityID)
+	msgBuilder.WriteRune('.')
+
+	if event.Parameters.Output != "" {
+		msgBuilder.WriteRune(' ')
+		msgBuilder.WriteString(types.OutputCommentPrefix)
+		msgBuilder.WriteString(event.Parameters.Output)
+		msgBuilder.WriteRune('.')
+	}
+
+	return msgBuilder.String()
+}
+
+func getMetaAlarmChildEventOutput(
+	metaAlarm types.Alarm,
+	msg string,
+	initiator string,
+	isTicket bool,
+) string {
+	outputBuilder := strings.Builder{}
+	msgLen := len(msg)
+	if msgLen == 0 {
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
+		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
+
+		return outputBuilder.String()
+	}
+
+	outputBuilder.WriteString(msg)
+	if initiator == types.InitiatorSystem || initiator == types.InitiatorUser && isTicket {
+		if msg[msgLen-1] != '.' {
+			outputBuilder.WriteRune('.')
+		}
+
+		outputBuilder.WriteRune(' ')
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
+		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
+		outputBuilder.WriteRune('.')
+	} else {
+		outputBuilder.WriteString("\n")
+		outputBuilder.WriteString(outputMetaAlarmPrefix)
+		outputBuilder.WriteString(metaAlarm.Value.DisplayName)
+	}
+
+	return outputBuilder.String()
+}
+
+func executeMetaAlarmOutputTpl(templateExecutor template.Executor, data correlation.EventExtraInfosMeta) (string, error) {
+	rule := data.Rule
+	if rule.OutputTemplate == "" {
+		return "", nil
+	}
+
+	res, err := templateExecutor.Execute(rule.OutputTemplate, data)
+	if err != nil {
+		return "", fmt.Errorf("unable to execute output template for metaalarm rule %s: %w", rule.ID, err)
+	}
+
+	return res, nil
 }

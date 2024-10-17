@@ -7,6 +7,8 @@ volumes:
     driver: local
   timescaledata:
     driver: local
+  techmetricsdata:
+    driver: local
   junitsharedata:
     driver: local
   nginxcerts:
@@ -20,10 +22,13 @@ volumes:
 # SERVICE FRAGMENTS (or templates)
 #
 
+x-backend_base: &backend_base
+  restart: unless-stopped
+
 x-service_base: &service_base
   restart: unless-stopped
   env_file:
-    - compose.env
+    - canopsis.env
     - ${CPS_EDITION:?CPS_EDITION not set}.env
 
 x-inital_config_base: &inital_config_base
@@ -47,8 +52,6 @@ x-app_service_base: &app_service_base
     reconfigure:
       condition: service_completed_successfully
 
-
-
 services:
 
   #
@@ -56,7 +59,7 @@ services:
   #
 
   rabbitmq:
-    <<: *service_base
+    <<: *backend_base
     image: rabbitmq:${RABBITMQ_TAG}
     # Prevent rabbit from loosing data on stack down and up
     # See : https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4005
@@ -64,6 +67,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    env_file:
+      - rabbitmq.env
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
     #mem_limit: 2g
@@ -76,12 +81,12 @@ services:
       retries: 3
 
   mongodb:
-    <<: *service_base
+    <<: *backend_base
     image: mongo:${MONGO_TAG}
     ports:
       - "27017:27017"
     env_file:
-      - compose.env
+      - mongodb.env
     volumes:
       - mongodbdata:/data/db
       - dumpdata:/dump/dumpdata
@@ -105,7 +110,7 @@ services:
     # script did not restrict the tmp instance with "--bind-ip 127.0.0.1".
     image: mongo:${MONGO_TAG}
     env_file:
-      - compose.env
+      - mongodb.env
     volumes:
       - "./files/mongo-rs-init/rs-initiate.js:/tmp/rs-initiate.js"
     command: ['sh', '-c', 'mongosh "mongodb://$$MONGO_INITDB_ROOT_USERNAME:$$MONGO_INITDB_ROOT_PASSWORD@mongodb/" /tmp/rs-initiate.js']
@@ -115,12 +120,12 @@ services:
         condition: service_healthy
 
   redis:
-    <<: *service_base
+    <<: *backend_base
     image: redis:${REDIS_TAG}
     ports:
       - "6379:6379"
     env_file:
-      - compose.env
+      - redis.env
     healthcheck:
       test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $$REDIS_PASSWORD ping | grep PONG"]
       interval: 1s
@@ -129,14 +134,17 @@ services:
     command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
 
   timescaledb:
-    <<: *service_base
+    <<: *backend_base
     image: timescale/timescaledb:${TIMESCALEDB_TAG}
     ports:
       - "5432:5432"
+    env_file:
+      - timescaledb.env
     environment:
       - TIMESCALEDB_TELEMETRY=off
     volumes:
       - timescaledata:/var/lib/postgresql/data
+      - ./files/postgresql/tech_metrics.sh:/docker-entrypoint-initdb.d/tech_metrics.sh
     shm_size: 1g
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
@@ -151,9 +159,10 @@ services:
   reconfigure:
     <<: *inital_config_base
     image: ${DOCKER_REPOSITORY}community/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
-    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml
     volumes:
       - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
+
   #
   # Canopsis Community components
   #

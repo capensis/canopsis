@@ -7,6 +7,8 @@
     />
     <c-name-field
       v-field="form.name"
+      :label="nameLabel"
+      :tooltip="nameTooltip"
       required
     />
     <v-flex
@@ -180,6 +182,14 @@ export default {
     withStartOnTrigger: {
       type: Boolean,
       default: false,
+    },
+    nameLabel: {
+      type: String,
+      required: false,
+    },
+    nameTooltip: {
+      type: String,
+      required: false,
     },
   },
   data() {

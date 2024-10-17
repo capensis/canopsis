@@ -19,10 +19,10 @@
     @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"
   >
-    <template #selection="props">
+    <template v-if="$scopedSlots.selection" #selection="props">
       <slot v-bind="props" name="selection" />
     </template>
-    <template #item="props">
+    <template v-if="$scopedSlots.item" #item="props">
       <slot v-bind="props" name="item" />
     </template>
   </c-lazy-search-field>
@@ -35,13 +35,10 @@ import { createNamespacedHelpers } from 'vuex';
 import { BASIC_ENTITY_TYPES } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
-import { formArrayMixin } from '@/mixins/form';
-
 const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 
 export default {
   inject: ['$validator'],
-  mixins: [formArrayMixin],
   inheritAttrs: false,
   model: {
     prop: 'value',

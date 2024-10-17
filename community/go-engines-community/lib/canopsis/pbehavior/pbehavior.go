@@ -37,7 +37,7 @@ type Type struct {
 	Hidden bool `bson:"hidden" json:"hidden"`
 }
 
-type Comments []*Comment
+type Comments []Comment
 
 // PBehavior represents a canopsis periodical behavior.
 type PBehavior struct {
