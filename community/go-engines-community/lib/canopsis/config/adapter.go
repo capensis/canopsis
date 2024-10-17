@@ -156,10 +156,15 @@ func (a *versionAdapter) GetConfig(ctx context.Context) (VersionConf, error) {
 }
 
 func (a *versionAdapter) UpsertConfig(ctx context.Context, conf VersionConf) error {
-	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": VersionKeyName},
-		bson.M{"$set": conf}, options.Update().SetUpsert(true))
-
-	return err
+	err := a.collection.FindOneAndUpdate(ctx, bson.M{"_id": VersionKeyName}, bson.M{"$set": conf},
+		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)).Decode(&conf)
+	if err != nil {
+		return err
+	}
+	if conf.Edition == "" {
+		return errors.New("edition is undefined")
+	}
+	return nil
 }
 
 type MaintenanceAdapter interface {
