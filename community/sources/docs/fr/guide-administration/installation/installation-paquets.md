@@ -53,6 +53,26 @@ dnf update
 
 ### Configuration système
 
+Vous pouvez vérifier les limites de ressources systèmes avec la commande suivante :
+
+```sh
+ulimit -a
+```
+
+Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v7.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
+
+```sh
+cat << EOF > /etc/security/limits.d/mongo.conf
+#<domain>      <type>  <item>         <value>
+mongo           soft    fsize           unlimited
+mongo           soft    cpu             unlimited
+mongo           soft    as              unlimited
+mongo           soft    memlock         unlimited
+mongo           hard    nofile          64000
+mongo           hald    nproc           64000
+EOF
+```
+
 Désactivez la gestion des `Transparent Huge Pages (THP)` selon la [préconisation MongoDB](https://www.mongodb.com/docs/manual/tutorial/transparent-huge-pages/)
 
 ```sh
@@ -99,13 +119,6 @@ EOF
 Ajout du dépôt pour RabbitMQ :
 
 ```sh
-## primary RabbitMQ signing key
-rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
-## modern Erlang repository
-rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
-## RabbitMQ server repository
-rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
-
 cat << EOF > /etc/yum.repos.d/rabbitmq.repo
 ##
 ## Zero dependency Erlang RPM
