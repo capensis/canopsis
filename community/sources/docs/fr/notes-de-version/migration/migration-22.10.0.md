@@ -248,7 +248,7 @@ Si vous avez modifié le fichier `canopsis.toml` (vous le voyez via une définit
 
 !!! information "Information"
 
-    Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../../guide-administration/administration-avancee/modification-canopsis-toml/). 
+    Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../guide-administration/administration-avancee/modification-canopsis-toml.md). 
 
 
 Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, uniquement continuer à le présenter dans un volume.

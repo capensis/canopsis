@@ -73,38 +73,30 @@ git :
 
 === "Canopsis Pro"
     Pour Canopsis Pro, les fichiers sont dans le
-    [dépôt git des sources de canopsis-pro][canopsis-pro-sources].
+    [dépôt git canopsis-pro][canopsis-pro] dans la partie "Release"..
 
-    Récupération du dépôt via Git+HTTPS :
-    ```sh
-    git clone https://git.canopsis.net/sources/canopsis-pro-sources.git
+    Décompresser l'archive :
     ```
-    Récupération du dépôt via Git+SSH :
-    ```sh
-    git clone git@git.canopsis.net:sources/canopsis-pro-sources.git
+    tar -xvzf canopsis-pro-docker-compose-XX.XX.X.tar.gz
     ```
 
-    Déplacez-vous ensuite dans le dossier contenant l'environnement :
-    ```sh
-    cd canopsis-pro-sources/pro/deployment/canopsis/docker
+    Déplacez-vous ensuite dans le dossier contenant l'environnement :
+    ```
+    cd canopsis-pro-docker-compose-XX.XX.X
     ```
 
 === "Canopsis Community"
     Pour Canopsis Community, les fichiers sont dans le
-    [dépôt git canopsis-community][canopsis-community].
+    [dépôt git canopsis-community][canopsis-community] dans la partie "Release".
 
-    Récupération du dépôt via Git+HTTPS :
-    ```sh
-    git clone https://git.canopsis.net/canopsis/canopsis-community.git
+    Décompresser l'archive :
     ```
-    Récupération du dépôt via Git+SSH :
-    ```sh
-    git clone git@git.canopsis.net:canopsis/canopsis-community.git
+    tar -xvzf canopsis-community-docker-compose-XX.XX.X.tar.gz
     ```
 
-    Déplacez-vous ensuite dans le dossier contenant l'environnement :
+    Déplacez-vous ensuite dans le dossier contenant l'environnement :
     ```
-    cd canopsis-community/community/deployment/canopsis/docker
+    cd canopsis-community-docker-compose-XX.XX.X
     ```
 
 ### Lancement de l'environnement
@@ -138,12 +130,12 @@ complet :
 
 === "Canopsis Pro"
     ```sh
-    CPS_EDITION=pro docker compose ps
+    docker compose ps
     ```
 
 === "Canopsis Community"
     ```sh
-    CPS_EDITION=community docker compose ps
+    docker compose ps
     ```
 
 Les services doivent être en état `Up`, `Up (healthy)` ou `Exit 0`. En fonction
@@ -156,12 +148,12 @@ Vous pouvez ensuite procéder à votre [première connexion à l'interface Canop
 
 === "Canopsis Pro"
     ```sh
-    CPS_EDITION=pro docker compose down
+    docker compose down
     ```
 
 === "Canopsis Community"
     ```sh
-    CPS_EDITION=community docker compose down
+    docker compose down
     ```
 
 ## Rétention des logs
@@ -198,5 +190,5 @@ logrotate -fv /etc/logrotate.d/docker-container
 [prereq-versions]: https://doc.canopsis.net/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
 [docker-compose]: https://docs.docker.com/compose/install/#install-compose
-[canopsis-pro-sources]: https://git.canopsis.net/sources/canopsis-pro-sources
-[canopsis-community]: https://git.canopsis.net/canopsis/canopsis-community
+[canopsis-pro]: https://git.canopsis.net/canopsis/canopsis-pro/-/releases
+[canopsis-community]: https://git.canopsis.net/canopsis/canopsis-community/-/releases
