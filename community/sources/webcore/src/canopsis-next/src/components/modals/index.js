@@ -153,6 +153,10 @@ export const Info = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/info.vue'),
   loading: LoaderOverlay,
 });
+export const Duration = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/duration.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
   loading: LoaderOverlay,
@@ -421,5 +425,15 @@ export const CreateTheme = () => ({
 
 export const CreateIcon = () => ({
   component: import(/* webpackChunkName: "Common" */ './icon/create-icon.vue'),
+  loading: LoaderOverlay,
+});
+
+export const EventsRecord = () => ({
+  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/events-record.vue'),
+  loading: LoaderOverlay,
+});
+
+export const ApplyEventFilter = () => ({
+  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/apply-event-filter.vue'),
   loading: LoaderOverlay,
 });

@@ -34,7 +34,7 @@ describe('c-pbehavior-reason-field', () => {
     expect(fetchPbehaviorReasonsListWithoutStore).toBeCalledWith(
       expect.any(Object),
       { params: { limit: MAX_LIMIT } },
-      undefined,
+
     );
   });
 

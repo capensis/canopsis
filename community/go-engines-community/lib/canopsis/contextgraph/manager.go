@@ -57,11 +57,6 @@ type manager struct {
 func (m *manager) InheritComponentFields(resource, component *types.Entity, commRegister libmongo.CommandsRegister) error {
 	update := make(bson.M)
 	var err error
-
-	if len(component.Infos) > 0 {
-		update["component_infos"] = component.Infos
-	}
-
 	if component.StateInfo != nil {
 		matched := true
 
@@ -376,6 +371,7 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 
 	var resource *types.Entity
 	var componentExist bool
+	var componentInfos map[string]types.Info
 	var connectorExist bool
 	var err error
 
@@ -403,7 +399,7 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 		return report, nil
 	}
 
-	resource, componentExist, connectorExist, err = m.getResourceEntities(ctx, resourceID, componentID, connectorID)
+	resource, componentExist, componentInfos, connectorExist, err = m.getResourceEntities(ctx, resourceID, componentID, connectorID)
 	if err != nil {
 		return report, err
 	}
@@ -457,18 +453,19 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 		}
 
 		resource = &types.Entity{
-			ID:            resourceID,
-			Name:          event.Resource,
-			EnableHistory: []datetime.CpsTime{now},
-			Enabled:       true,
-			Type:          types.EntityTypeResource,
-			Connector:     connectorID,
-			Component:     event.Component,
-			Infos:         map[string]types.Info{},
-			ImpactLevel:   types.EntityDefaultImpactLevel,
-			Created:       now,
-			LastEventDate: &now,
-			Healthcheck:   event.Healthcheck,
+			ID:             resourceID,
+			Name:           event.Resource,
+			EnableHistory:  []datetime.CpsTime{now},
+			Enabled:        true,
+			Type:           types.EntityTypeResource,
+			Connector:      connectorID,
+			Component:      event.Component,
+			ComponentInfos: componentInfos,
+			Infos:          map[string]types.Info{},
+			ImpactLevel:    types.EntityDefaultImpactLevel,
+			Created:        now,
+			LastEventDate:  &now,
+			Healthcheck:    event.Healthcheck,
 		}
 
 		commRegister.RegisterInsert(resource)
@@ -817,14 +814,15 @@ func (m *manager) AssignStateSetting(ctx context.Context, entity *types.Entity, 
 	return m.stateSettingService.AssignStateSetting(ctx, entity, commRegister)
 }
 
-func (m *manager) getResourceEntities(ctx context.Context, resourceID, componentID, connectorID string) (*types.Entity, bool, bool, error) {
+func (m *manager) getResourceEntities(ctx context.Context, resourceID, componentID, connectorID string) (*types.Entity, bool, map[string]types.Info, bool, error) {
 	var resource *types.Entity
 	var componentExist bool
+	var componentInfos map[string]types.Info
 	var connectorExist bool
 
 	cursor, err := m.entityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": bson.A{resourceID, componentID, connectorID}}})
 	if err != nil {
-		return nil, componentExist, connectorExist, err
+		return nil, componentExist, componentInfos, connectorExist, err
 	}
 
 	defer cursor.Close(ctx)
@@ -834,19 +832,20 @@ func (m *manager) getResourceEntities(ctx context.Context, resourceID, component
 
 		err = cursor.Decode(&ent)
 		if err != nil {
-			return nil, componentExist, connectorExist, err
+			return nil, componentExist, componentInfos, connectorExist, err
 		}
 
 		if ent.Type == types.EntityTypeResource {
 			resource = &ent
 		} else if ent.Type == types.EntityTypeComponent {
 			componentExist = true
+			componentInfos = ent.Infos
 		} else {
 			connectorExist = true
 		}
 	}
 
-	return resource, componentExist, connectorExist, nil
+	return resource, componentExist, componentInfos, connectorExist, nil
 }
 
 func (m *manager) getComponentEntities(ctx context.Context, componentID, connectorID string) (*types.Entity, bool, error) {

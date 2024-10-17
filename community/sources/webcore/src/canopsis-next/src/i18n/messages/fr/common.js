@@ -1,7 +1,6 @@
 import {
   ALARM_STATES,
   ALARM_STATUSES,
-  EVENT_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   TRIGGERS_TYPES,
@@ -22,6 +21,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
   submit: 'Soumettre',
@@ -250,7 +250,7 @@ export default {
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
   more: 'plus',
-  all: 'Toute',
+  all: 'Tous',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
@@ -302,6 +302,7 @@ export default {
   noResponse: 'Pas de réponse',
   loadingItems: 'Chargement d\'éléments...',
   lastComment: 'Dernier commentaire',
+  serialName: 'Nom de série',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -328,6 +329,7 @@ export default {
     fifth: 'Cinquième',
   },
   times: {
+    millisecond: 'milliseconde | millisecondes',
     second: 'seconde | secondes',
     minute: 'minute | minutes',
     hour: 'heure | heures',
@@ -454,22 +456,10 @@ export default {
 
     [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
+    [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
-  eventTypes: {
-    [EVENT_TYPES.ack]: 'Acquitter',
-    [EVENT_TYPES.ackRemove]: 'Supprimer l\'acquittement',
-    [EVENT_TYPES.assocTicket]: 'Associer un ticket',
-    [EVENT_TYPES.declareTicket]: 'Déclarer un incident',
-    [EVENT_TYPES.cancel]: 'Annuler',
-    [EVENT_TYPES.uncancel]: 'Annuler l\'annulation',
-    [EVENT_TYPES.changeState]: 'Changer et vérrouiller la criticité',
-    [EVENT_TYPES.check]: 'Vérifier',
-    [EVENT_TYPES.comment]: 'Commenter l\'alarme',
-    [EVENT_TYPES.snooze]: 'Mettre en veille',
-  },
-
   triggers: {
     [TRIGGERS_TYPES.create]: {
       text: 'Création d\'alarme',

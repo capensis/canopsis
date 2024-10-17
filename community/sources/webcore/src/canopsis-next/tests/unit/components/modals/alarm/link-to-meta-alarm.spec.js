@@ -34,8 +34,6 @@ const selectLinkMetaAlarmForm = wrapper => wrapper.find('link-meta-alarm-form-st
 
 describe('link-to-meta-alarm', () => {
   const timestamp = 1386435600000;
-  jest.useFakeTimers({ now: timestamp });
-
   const $modals = mockModals();
 
   const alarm = {
@@ -88,6 +86,8 @@ describe('link-to-meta-alarm', () => {
     },
   });
 
+  beforeAll(() => jest.useFakeTimers({ now: timestamp }));
+
   test('Default parameters applied to form', () => {
     const wrapper = factory({
       mocks: {
@@ -134,7 +134,7 @@ describe('link-to-meta-alarm', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).toBeCalledWith({
       name: newData.metaAlarm,
@@ -176,7 +176,7 @@ describe('link-to-meta-alarm', () => {
 
     submitButton.trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -198,7 +198,7 @@ describe('link-to-meta-alarm', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    await flushPromises();
+    await flushPromises(true);
 
     expect($modals.hide).toBeCalled();
   });

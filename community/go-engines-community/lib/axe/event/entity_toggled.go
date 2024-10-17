@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
@@ -15,9 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewEntityToggledProcessor(
@@ -25,7 +22,8 @@ func NewEntityToggledProcessor(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -37,10 +35,12 @@ func NewEntityToggledProcessor(
 		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
+		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
+		metaAlarmStatesService:          metaAlarmStatesService,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
 		encoder:                         encoder,
@@ -54,10 +54,12 @@ type entityToggledProcessor struct {
 	entityCollection                mongo.DbCollection
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
+	metaAlarmRuleCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
+	metaAlarmStatesService          correlation.MetaAlarmStateService
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
 	encoder                         encoding.Encoder
@@ -73,10 +75,11 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	var componentStateChanged bool
 	var newComponentState int
 
-	entity := *event.Entity
-	if entity.Enabled {
+	if event.Entity.Enabled {
 		var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+			componentStateChanged = false
+			newComponentState = 0
 			updatedServiceStates = nil
 			result = Result{}
 
@@ -97,7 +100,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 				p.entityServiceCountersCalculator,
 				p.componentCountersCalculator,
 				&result.Alarm,
-				&entity,
+				event.Entity,
 				result.AlarmChange,
 			)
 
@@ -113,50 +116,34 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	match := getOpenAlarmMatch(event)
-	update := getResolveAlarmUpdate(datetime.NewCpsTime(), event.Parameters)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		componentStateChanged = false
+		newComponentState = 0
 		updatedServiceStates = nil
 		notAckedMetricType = ""
 
-		beforeAlarm := types.Alarm{}
-		opts := options.FindOneAndUpdate().
-			SetReturnDocument(options.Before).
-			SetProjection(bson.M{
-				"not_acked_metric_type":      1,
-				"not_acked_metric_send_time": 1,
-			})
-		err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		beforeAlarm, err := updateAlarmToResolve(ctx, p.alarmCollection, match, event.Parameters)
+		if err != nil {
 			return err
 		}
 
+		entity := *event.Entity
 		if beforeAlarm.ID != "" {
 			if beforeAlarm.NotAckedMetricSendTime != nil {
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}
 
-			alarm := types.Alarm{}
-			err = p.alarmCollection.FindOne(ctx, bson.M{"_id": beforeAlarm.ID}).Decode(&alarm)
-			if err != nil {
-				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil
-				}
+			entity, err = updateEntityOfResolvedAlarm(ctx, p.entityCollection, event.Entity.ID)
+			if err != nil || entity.ID == "" {
 				return err
 			}
 
-			entity = types.Entity{}
-			entityUpdate := getResolveEntityUpdate()
-			err = p.entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": event.Entity.ID}, entityUpdate,
-				options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&entity)
-			if err != nil {
-				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil
-				}
-
+			alarm, err := copyAlarmToResolvedCollection(ctx, p.alarmCollection, p.resolvedAlarmCollection, beforeAlarm.ID)
+			if err != nil || alarm.ID == "" {
 				return err
 			}
 
@@ -167,12 +154,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Entity = entity
 			result.AlarmChange = alarmChange
 
-			_, err = p.resolvedAlarmCollection.UpdateOne(
-				ctx,
-				bson.M{"_id": alarm.ID},
-				bson.M{"$set": alarm},
-				options.Update().SetUpsert(true),
-			)
+			err = removeMetaAlarmStateOnResolve(ctx, p.metaAlarmRuleCollection, p.metaAlarmStatesService, result.Alarm)
 			if err != nil {
 				return err
 			}
@@ -202,7 +184,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		newComponentState,
 		notAckedMetricType,
 		p.eventsSender,
-		p.metaAlarmEventProcessor,
+		p.metaAlarmPostProcessor,
 		p.metricsSender,
 		p.remediationRpcClient,
 		p.pbehaviorCollection,

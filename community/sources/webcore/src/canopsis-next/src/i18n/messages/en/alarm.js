@@ -32,6 +32,7 @@ export default {
       fastAck: 'Fast ack',
       ackRemove: 'Cancel ack',
       pbehavior: 'Periodical behavior',
+      fastPbehaviorAdd: 'Fast periodical behavior',
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',

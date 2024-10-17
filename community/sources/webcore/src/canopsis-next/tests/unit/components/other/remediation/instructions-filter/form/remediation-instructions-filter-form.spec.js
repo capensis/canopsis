@@ -61,7 +61,6 @@ describe('remediation-instructions-filter-form', () => {
       {
         params: { limit: MAX_LIMIT },
       },
-      undefined,
     );
   });
 

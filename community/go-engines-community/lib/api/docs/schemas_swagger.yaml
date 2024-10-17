@@ -73,6 +73,9 @@ definitions:
     properties:
       author:
         type: string
+      color:
+        description: Color is used in pbehavior action.
+        type: string
       declare_ticket:
         $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
@@ -379,6 +382,8 @@ definitions:
       total:
         type: integer
       total_active:
+        type: integer
+      unack:
         type: integer
     type: object
   alarm.Details:
@@ -933,10 +938,14 @@ definitions:
         type: boolean
       app_title:
         type: string
+      auto_suggest_pbehavior_name:
+        type: boolean
       check_count_request_timeout:
         type: integer
       default_color_theme:
         $ref: '#/definitions/colortheme.Response'
+      disabled_transitions:
+        type: boolean
       edition:
         type: string
       events_count_trigger_default_threshold:
@@ -963,6 +972,8 @@ definitions:
         $ref: '#/definitions/appinfo.RemediationConf'
       required_instruction_approve:
         type: boolean
+      serial_name:
+        type: string
       show_header_on_kiosk_mode:
         type: boolean
       stack:
@@ -1034,8 +1045,12 @@ definitions:
         type: boolean
       app_title:
         type: string
+      auto_suggest_pbehavior_name:
+        type: boolean
       check_count_request_timeout:
         type: integer
+      disabled_transitions:
+        type: boolean
       footer:
         type: string
       language:
@@ -1416,6 +1431,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      event_records:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithUnit'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -1478,6 +1498,8 @@ definitions:
       entity_unlinked:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
+        type: integer
+      event_records:
         type: integer
       health_check:
         type: integer
@@ -2482,6 +2504,8 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      optional:
+        type: boolean
       regexp:
         additionalProperties:
           type: string
@@ -4755,7 +4779,9 @@ definitions:
         - cancel
         - changestate
         - pbehavior
+        - pbehaviorremove
         - snooze
+        - unsnooze
         - webhook
         type: string
     required:
@@ -5478,6 +5504,11 @@ definitions:
             * `3` - Failed
             * `4` - Disabled
         type: integer
+    type: object
+  techmetrics.Settings:
+    properties:
+      enabled:
+        type: boolean
     type: object
   template.Request:
     properties:

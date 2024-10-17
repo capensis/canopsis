@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -29,7 +28,7 @@ func NewChangeStateProcessor(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -45,7 +44,7 @@ func NewChangeStateProcessor(
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
-		metaAlarmEventProcessor:         metaAlarmEventProcessor,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
 		encoder:                         encoder,
@@ -63,7 +62,7 @@ type changeStateProcessor struct {
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
-	metaAlarmEventProcessor         libalarm.MetaAlarmEventProcessor
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
 	encoder                         encoding.Encoder
@@ -232,7 +231,7 @@ func (p *changeStateProcessor) postProcess(
 		}
 	}
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})

@@ -23,16 +23,14 @@
     <span
       class="request-information-content-row__key"
       @contextmenu.prevent="openContextmenu"
-    >{{ row.name }}</span>
-    <template v-if="hasRowValue">
+    >{{ row.name }}</span><template v-if="hasRowValue">
       :
-      <span
-        class="request-information-content-row__value"
-        @contextmenu.prevent="openContextmenu"
-      >
-        {{ parsedValue }}
-      </span>
     </template>
+    <span
+      v-if="hasRowValue"
+      class="request-information-content-row__value"
+      @contextmenu.prevent="openContextmenu"
+    >{{ parsedValue }}</span>
   </div>
 </template>
 
@@ -161,6 +159,7 @@ export default {
 
   &__key {
     font-weight: bold;
+    white-space: nowrap;
   }
 }
 </style>

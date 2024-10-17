@@ -124,7 +124,6 @@ describe('service-dependencies', () => {
           define_state: false,
         },
       },
-      undefined,
     );
   });
 
@@ -155,7 +154,6 @@ describe('service-dependencies', () => {
           define_state: false,
         },
       },
-      undefined,
     );
   });
 
@@ -202,7 +200,6 @@ describe('service-dependencies', () => {
           define_state: false,
         },
       },
-      undefined,
     );
   });
 

@@ -630,6 +630,18 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.SoftDeleted).UnmarshalJSON(data))
 				}
 			}
+		case "resolve_deleted_event_processed":
+			if in.IsNull() {
+				in.Skip()
+				out.ResolveDeletedEventProcessed = nil
+			} else {
+				if out.ResolveDeletedEventProcessed == nil {
+					out.ResolveDeletedEventProcessed = new(datetime.CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.ResolveDeletedEventProcessed).UnmarshalJSON(data))
+				}
+			}
 		case "state_info":
 			if in.IsNull() {
 				in.Skip()
@@ -910,6 +922,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"soft_deleted\":"
 		out.RawString(prefix)
 		out.Raw((*in.SoftDeleted).MarshalJSON())
+	}
+	if in.ResolveDeletedEventProcessed != nil {
+		const prefix string = ",\"resolve_deleted_event_processed\":"
+		out.RawString(prefix)
+		out.Raw((*in.ResolveDeletedEventProcessed).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"state_info\":"
@@ -3330,6 +3347,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes1(in, out.Entity)
 			}
+		case "type":
+			out.Type = string(in.String())
 		case "params":
 			easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisRpc6(in, &out.Params)
 		case "healthcheck":
@@ -3365,6 +3384,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes1(out, *in.Entity)
 		}
+	}
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix)
+		out.String(string(in.Type))
 	}
 	{
 		const prefix string = ",\"params\":"
@@ -3465,6 +3489,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "rule_name":
 			out.RuleName = string(in.String())
+		case "color":
+			out.Color = string(in.String())
+		case "origin":
+			out.Origin = string(in.String())
+		case "comment":
+			out.Comment = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -3533,6 +3563,21 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"rule_name\":"
 		out.RawString(prefix)
 		out.String(string(in.RuleName))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
+	}
+	if in.Origin != "" {
+		const prefix string = ",\"origin\":"
+		out.RawString(prefix)
+		out.String(string(in.Origin))
+	}
+	if in.Comment != "" {
+		const prefix string = ",\"comment\":"
+		out.RawString(prefix)
+		out.String(string(in.Comment))
 	}
 	out.RawByte('}')
 }
@@ -4129,6 +4174,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				*out.StartOnTrigger = bool(in.Bool())
 			}
+		case "color":
+			out.Color = string(in.String())
+		case "comment":
+			out.Comment = string(in.String())
+		case "origin":
+			out.Origin = string(in.String())
 		case "execution":
 			out.Execution = string(in.String())
 		case "instruction":
@@ -4422,6 +4473,21 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"start_on_trigger\":"
 		out.RawString(prefix)
 		out.Bool(bool(*in.StartOnTrigger))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		out.RawString(prefix)
+		out.String(string(in.Color))
+	}
+	if in.Comment != "" {
+		const prefix string = ",\"comment\":"
+		out.RawString(prefix)
+		out.String(string(in.Comment))
+	}
+	if in.Origin != "" {
+		const prefix string = ",\"origin\":"
+		out.RawString(prefix)
+		out.String(string(in.Origin))
 	}
 	if in.Execution != "" {
 		const prefix string = ",\"execution\":"

@@ -394,10 +394,6 @@ export default {
       return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
     },
 
-    hasLeftActions() {
-      return this.selectable || this.needToAddLeftActionsCell;
-    },
-
     headers() {
       const headers = this.preparedColumns.map((column) => {
         const header = {
@@ -498,19 +494,10 @@ export default {
       };
     },
 
-    leftActionsWidth() {
-      /**
-       * left expand/instruction icon/select actions width
-       */
-      return this.isMediumDense || this.isSmallDense ? 100 : 120;
-    },
-
     vDataTableStyle() {
       if (this.resizableColumn) {
-        const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
-
         return {
-          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}px)`,
+          '--alarms-list-table-width': `${this.sumOfColumnsWidth}px`,
         };
       }
 
@@ -605,6 +592,12 @@ export default {
         this.$intersectionObserver?.disconnect();
       },
       immediate: true,
+    },
+
+    dense() {
+      if (!this.resizableColumn) {
+        this.$nextTick(() => this.calculateColumnsWidths());
+      }
     },
   },
 

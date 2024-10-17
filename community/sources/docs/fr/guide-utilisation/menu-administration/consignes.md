@@ -292,3 +292,19 @@ exécutés.
 
 Cette vue simple, permet d'afficher les statistiques de traitement de vos consignes.  
 ![Statistiques vue graphique](./img/consignes_statistiques_liste.png)
+
+
+Il existe une possibilité de supprimer l'ensemble des statistiques de remédiation.  
+Le moteur `engine-remediation` peut être exécuté avec l'option `-cleanUp`.  
+
+```
+./engine-remediation -cleanUp
+```
+
+Les logs associés avertissent de la fin de l'opération :
+
+```
+canopsis-pro-remediation-1  | 2024-06-12T12:40:10Z INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/engine-remediation/dependencies.go:409 > instruction execution data cleaned up
+```
+
+Vous pouvez alors redémarrer le moteur sans l'option pour un fonctionnement normal.

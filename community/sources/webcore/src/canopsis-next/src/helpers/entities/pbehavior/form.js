@@ -2,16 +2,21 @@ import { cloneDeep, isObject, omit } from 'lodash';
 
 import { COLORS } from '@/config';
 import {
+  DATETIME_FORMATS,
+  ENTITY_TYPES,
   PATTERNS_FIELDS,
   PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { uid } from '@/helpers/uid';
 import {
   convertDateToDateObjectByTimezone,
   convertDateToTimestampByTimezone,
+  convertDateToTimezoneDateString,
   getLocaleTimezone,
   getNowTimestamp,
   isEndOfDay,
@@ -296,12 +301,14 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
  *
  * @param {Object} event
  * @param {Array} entityPattern
+ * @param {string} [defaultName = '']
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   event,
   entityPattern,
+  defaultName = '',
   timezone = getLocaleTimezone(),
 ) => {
   const {
@@ -310,8 +317,14 @@ export const calendarEventToPbehaviorForm = (
     data: { cachedForm = {}, pbehavior },
   } = event;
 
+  const pbehaviorForm = pbehaviorToForm(pbehavior, entityPattern, timezone);
+
+  if (defaultName) {
+    pbehaviorForm.name = defaultName;
+  }
+
   const form = {
-    ...pbehaviorToForm(pbehavior, entityPattern, timezone),
+    ...pbehaviorForm,
     ...cachedForm,
   };
 
@@ -387,21 +400,31 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   return result;
 };
+
 /**
  * Create downtime pbehavior, without stop time
  *
  * @param {Entity} entity
  * @param {PbehaviorReason} reason
- * @param {string} comment
  * @param {PbehaviorType} type
+ * @param {string} [comment]
+ * @param {string} [origin = PBEHAVIOR_ORIGINS.serviceWeather]
+ * @param {string} [prefix = WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE]
  * @return {Pbehavior}
  */
-export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pbehaviorToRequest(formToPbehavior({
+export const createDowntimePbehavior = ({
+  entity,
+  reason,
+  comment,
+  type,
+  origin = PBEHAVIOR_ORIGINS.serviceWeather,
+  prefix = WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
+}) => pbehaviorToRequest(formToPbehavior({
   reason,
   type,
-  origin: PBEHAVIOR_ORIGINS.serviceWeather,
+  origin,
   color: COLORS.secondary,
-  name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uid()}`,
+  name: `${prefix}-${entity.name}-${uid()}`,
   tstart: getNowTimestamp(),
   comment,
   entity: entity._id,
@@ -414,3 +437,41 @@ export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pb
  * @returns {string}
  */
 export const getPbehaviorColor = (pbehavior = {}) => pbehavior.color || pbehavior.type?.color || COLORS.secondary;
+
+/**
+ * Generates a default name for a pbehavior based on the provided entities.
+ *
+ * If no entities are provided, an empty string is returned. If a single entity
+ * is provided, the name is generated based on the entity's type and properties.
+ * For multiple entities, a generic name generated.
+ *
+ * @param {Array<Object>} [entities=[]] - The list of entities to generate the name from.
+ * @param {string} [timezone=getLocaleTimezone()] - The timezone to use for formatting the current date and time.
+ * @returns {string} The generated name for the pbehavior.
+ */
+export const getPbehaviorNameByEntities = (entities = [], timezone = getLocaleTimezone()) => {
+  if (!entities.length) {
+    return '';
+  }
+
+  const now = convertDateToTimezoneDateString(new Date(), timezone, DATETIME_FORMATS.dateTimePicker);
+
+  if (entities.length === 1) {
+    const [entity] = entities;
+
+    if (entity.type === ENTITY_TYPES.resource) {
+      return i18n.t('pbehavior.defaultNameForSingleResourceEntity', {
+        component: entity.component,
+        name: entity.name,
+        datetime: now,
+      });
+    }
+
+    return i18n.t('pbehavior.defaultNameForSingleEntity', {
+      name: entity.name,
+      datetime: now,
+    });
+  }
+
+  return i18n.t('pbehavior.defaultNameForMultipleEntities', { datetime: now });
+};

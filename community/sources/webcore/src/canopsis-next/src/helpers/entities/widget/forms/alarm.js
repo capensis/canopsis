@@ -5,6 +5,7 @@ import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
+  ALARMS_OPENED_VALUES,
   ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -172,6 +173,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} isVirtualScrollEnabled
+ * @property {boolean} isCorrelationEnabled
+ * @property {string} fastPbehaviorNamePrefix
+ * @property {string} fastPbehaviorType
+ * @property {string} fastPbehaviorReason
  * @property {boolean} sticky_header
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
@@ -240,7 +245,7 @@ export const openedToForm = (opened) => {
     return opened;
   }
 
-  return true;
+  return ALARMS_OPENED_VALUES.opened;
 };
 
 /**
@@ -354,6 +359,10 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
+  isCorrelationEnabled: !!parameters.isCorrelationEnabled,
+  fastPbehaviorNamePrefix: parameters.fastPbehaviorNamePrefix ?? '',
+  fastPbehaviorType: parameters.fastPbehaviorType,
+  fastPbehaviorReason: parameters.fastPbehaviorReason,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput

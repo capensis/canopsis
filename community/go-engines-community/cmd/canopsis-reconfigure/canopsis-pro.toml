@@ -223,6 +223,14 @@ exclusive = false
 noWait = false
 # args =
 
+[[RabbitMQ.queues]]
+name = "recorder_rpc"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.global]
@@ -241,6 +249,9 @@ InfosDictionaryLimit = 1100
 # The default value for a check events count trigger threshold.
 # EventsCountTriggerDefaultThreshold parameter doesn't require api or engines to restart.
 EventsCountTriggerDefaultThreshold = 10
+# Events limit for single session recorded by events recorder
+# This parameter after update in MongoDB by canopsis-reconfigure requires to restart events-recorder
+EventsRecorderLimit = 10000
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -308,6 +319,7 @@ ExportMongoClientTimeout = "1m"
 AuthorScheme = ["$username"]
 #AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 MetricsCacheExpiration = "24h"
+EventsRecorderFetchStatusTimeout = "3s"
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -337,9 +349,21 @@ FlushInterval = "10s"
 SliInterval = "1h"
 # UserSessionGapInterval splitts user activity by sessions.
 UserSessionGapInterval = "1h"
+# AllowedPerfDataUnits defines white list of units, perf data with unit which is not in this list will be skipped.
+AllowedPerfDataUnits = [
+    "%",
+    "°C",
+    "s",
+    "us",
+    "ms",
+    "B",
+    "KB",
+    "MB",
+    "TB",
+    "c"
+]
 
 [Canopsis.tech_metrics]
-Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
 GoMetricsInterval = "1s"
