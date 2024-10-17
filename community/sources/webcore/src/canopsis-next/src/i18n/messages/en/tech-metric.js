@@ -3,4 +3,5 @@ export default {
   metricsDisabled: 'Engine\'s metrics are disabled',
   generateDump: 'Generate a new dump',
   downloadDump: 'Download dump',
+  enabled: 'Tech metrics enabled',
 };

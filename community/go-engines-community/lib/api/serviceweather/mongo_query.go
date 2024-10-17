@@ -417,8 +417,18 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 		bson.M{"$addFields": bson.M{
 			"pbehavior.last_comment": bson.M{
 				"$cond": bson.M{
-					"if":   "$pbehavior.last_comment._id",
-					"then": "$pbehavior.last_comment",
+					"if": "$pbehavior.last_comment._id",
+					"then": bson.M{"$mergeObjects": bson.A{
+						"$pbehavior.last_comment",
+						bson.M{"author": bson.M{"$cond": bson.M{
+							"if": "$pbehavior.last_comment.origin",
+							"then": bson.M{
+								"name":         "$pbehavior.last_comment.origin",
+								"display_name": "$pbehavior.last_comment.origin",
+							},
+							"else": "$pbehavior.last_comment.author",
+						}}},
+					}},
 					"else": "$$REMOVE",
 				},
 			}}},
@@ -528,30 +538,13 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 				}}},
 			}},
 		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "services",
-			"as":           "depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
 		{"$addFields": bson.M{
-			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
 				"if":   bson.M{"$gt": bson.A{"$counters.unacked", 0}},
 				"then": true,
 				"else": false,
 			}},
-			"counters.under_pbh": bson.M{"$sum": bson.M{
-				"$map": bson.M{
-					"input": "$counters.pbh_types",
-					"in":    "$$this.count",
-				},
-			}},
 		}},
-		{"$project": bson.M{"depends": 0}},
 		{"$addFields": bson.M{
 			"icon": bson.M{"$switch": bson.M{
 				"branches": append(

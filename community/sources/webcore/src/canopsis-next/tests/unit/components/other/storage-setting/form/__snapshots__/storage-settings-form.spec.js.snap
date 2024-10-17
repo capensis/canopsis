@@ -45,6 +45,10 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
   <storage-settings-alarm-external-tag-form-stub
     form="[object Object]"
   />
+  <storage-settings-events-records-form-stub
+    form="[object Object]"
+    history="1611320000"
+  />
 </div>
 `;
 
@@ -85,6 +89,9 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
     form="[object Object]"
   />
   <storage-settings-alarm-external-tag-form-stub
+    form="[object Object]"
+  />
+  <storage-settings-events-records-form-stub
     form="[object Object]"
   />
 </div>

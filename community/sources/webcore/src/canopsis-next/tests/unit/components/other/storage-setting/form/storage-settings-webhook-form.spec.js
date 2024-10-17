@@ -1,6 +1,6 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
-import { randomDurationValue } from '@unit/utils/duration';
+import { randomDurationEnabledValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -45,7 +45,7 @@ describe('storage-settings-webhook-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectWebhookDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 

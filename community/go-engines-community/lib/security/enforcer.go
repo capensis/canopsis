@@ -21,7 +21,7 @@ type Enforcer interface {
 	LoadPolicy() error
 	GetRolesForUser(name string, domain ...string) ([]string, error)
 	GetPermissionsForUser(user string, domain ...string) ([][]string, error)
-	HasPermissionForUser(user string, permission ...string) bool
+	HasPermissionForUser(user string, permission ...string) (bool, error)
 }
 
 type enforcer struct {

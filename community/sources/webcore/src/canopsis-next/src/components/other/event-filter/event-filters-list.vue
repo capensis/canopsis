@@ -64,8 +64,8 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <pbehaviors-create-action-btn :entity-id="item._id" />
-        <pbehaviors-list-action-btn :entity-id="item._id" />
+        <pbehaviors-create-action-btn :entity="item" />
+        <pbehaviors-list-action-btn :entity="item" />
       </v-layout>
     </template>
     <template #expand="{ item }">

@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { randomDurationValue } from '@unit/utils/duration';
+import { randomDurationEnabledValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -21,6 +21,7 @@ const stubs = {
   'storage-settings-remediation-form': true,
   'storage-settings-alarm-form': true,
   'storage-settings-alarm-external-tag-form': true,
+  'storage-settings-events-records-form': true,
 };
 
 const selectStorageSettingsPerfDataMetricsForm = wrapper => wrapper.find('storage-settings-perf-data-metrics-form-stub');
@@ -106,6 +107,12 @@ describe('storage-settings-form', () => {
         enabled: false,
       },
     },
+    event_records: {
+      delete_after: {
+        value: 6,
+        unit: TIME_UNITS.month,
+      },
+    },
   });
 
   const factory = generateRenderer(StorageSettingsForm, { stubs });
@@ -120,8 +127,8 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      archive_after: randomDurationValue(),
-      delete_after: randomDurationValue(),
+      archive_after: randomDurationEnabledValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsAlarmForm(wrapper).triggerCustomEvent('input', newValue);
@@ -141,9 +148,9 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
-      delete_stats_after: randomDurationValue(),
-      delete_mod_stats_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
+      delete_stats_after: randomDurationEnabledValue(),
+      delete_mod_stats_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsRemediationForm(wrapper).triggerCustomEvent('input', newValue);
@@ -163,7 +170,7 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsPbehaviorForm(wrapper).triggerCustomEvent('input', newValue);
@@ -183,7 +190,7 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsJunitForm(wrapper).triggerCustomEvent('input', newValue);
@@ -203,7 +210,7 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsHealthCheckForm(wrapper).triggerCustomEvent('input', newValue);
@@ -223,7 +230,7 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsWebhookForm(wrapper).triggerCustomEvent('input', newValue);
@@ -243,7 +250,7 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsMetricsForm(wrapper).triggerCustomEvent('input', newValue);
@@ -263,7 +270,7 @@ describe('storage-settings-form', () => {
     });
 
     const newValue = {
-      delete_after: randomDurationValue(),
+      delete_after: randomDurationEnabledValue(),
     };
 
     selectStorageSettingsPerfDataMetricsForm(wrapper).triggerCustomEvent('input', newValue);
@@ -305,6 +312,7 @@ describe('storage-settings-form', () => {
             deleted: 1611300000,
             archived: 1611310000,
           },
+          event_records: 1611320000,
         },
       },
     });

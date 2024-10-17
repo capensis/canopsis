@@ -55,6 +55,7 @@
           <external-data-form
             v-field="form.external_data"
             :variables="externalDataVariables"
+            optionally
           />
         </c-collapse-panel>
         <event-filter-enrichment-form
@@ -151,10 +152,14 @@ export default {
         ? this.form.external_data.map(({ reference }) => ({
           value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData.replace('%reference%', reference),
           text: `${this.$t('externalData.title')}: ${reference}`,
+          optional: true,
+          suffix: '.%field%',
         }))
         : [{
           value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData,
           text: this.$t('externalData.title'),
+          optional: true,
+          suffix: '.%field%',
         }];
     },
 

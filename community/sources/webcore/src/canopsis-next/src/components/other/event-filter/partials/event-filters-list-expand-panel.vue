@@ -86,6 +86,7 @@
               <external-data-form
                 :form="externalDataForm"
                 disabled
+                optionally
               />
             </v-flex>
           </v-layout>

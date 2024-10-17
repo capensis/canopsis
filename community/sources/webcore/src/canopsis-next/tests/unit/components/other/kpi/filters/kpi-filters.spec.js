@@ -70,7 +70,6 @@ describe('kpi-filters', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -130,7 +129,6 @@ describe('kpi-filters', () => {
           page,
         },
       },
-      undefined,
     );
   });
 
@@ -206,7 +204,6 @@ describe('kpi-filters', () => {
         data: newFilterData,
         id: filter._id,
       },
-      undefined,
     );
   });
 
@@ -284,7 +281,6 @@ describe('kpi-filters', () => {
       {
         data: newFilterData,
       },
-      undefined,
     );
   });
 
@@ -352,7 +348,6 @@ describe('kpi-filters', () => {
       {
         id: filter._id,
       },
-      undefined,
     );
   });
 

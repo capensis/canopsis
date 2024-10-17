@@ -857,7 +857,7 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, security.GetConfig(), authorProvider))
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, pgPoolProvider, security.GetConfig(), authorProvider))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
@@ -2216,9 +2216,9 @@ func RegisterRoutes(
 			entityInfoDictionaryApi.ListValues,
 		)
 
+		techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor, techmetrics.NewStore(dbClient), timezoneConfigProvider)
 		techMetricsRouter := protected.Group("/tech-metrics-export")
 		{
-			techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor, timezoneConfigProvider)
 			techMetricsRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
@@ -2234,6 +2234,20 @@ func RegisterRoutes(
 				security.GetFileAuthMiddleware(),
 				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
 				techMetricsAPI.DownloadExport,
+			)
+		}
+
+		techMetricsSettingsRouter := protected.Group("/tech-metrics-settings")
+		{
+			techMetricsSettingsRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjTechMetricsSettings, model.PermissionRead, enforcer),
+				techMetricsAPI.GetSettings,
+			)
+			techMetricsSettingsRouter.PUT(
+				"",
+				middleware.Authorize(apisecurity.ObjTechMetricsSettings, model.PermissionUpdate, enforcer),
+				techMetricsAPI.UpdateSettings,
 			)
 		}
 

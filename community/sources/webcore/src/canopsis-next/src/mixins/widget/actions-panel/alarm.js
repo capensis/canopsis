@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
-import { find, isArray, pick } from 'lodash';
+import { find, pick } from 'lodash';
 
 import {
   MODALS,
@@ -7,20 +7,26 @@ import {
   LINK_RULE_ACTIONS,
   ALARM_LIST_ACTIONS_TYPES,
   ALARM_EXPORT_FILE_NAME_PREFIX,
+  PBEHAVIOR_TYPE_TYPES,
+  PBEHAVIOR_ORIGINS,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { mapIds } from '@/helpers/array';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { mapAlarmsEntities } from '@/helpers/entities/alarm/form';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
+import { widgetActionsPanelCommonMixin } from '@/mixins/widget/actions-panel/common';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
 import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
 import { clipboardMixin } from '@/mixins/clipboard';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
 
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
@@ -29,10 +35,13 @@ export const widgetActionsPanelAlarmMixin = {
     authMixin,
     queryMixin,
     clipboardMixin,
+    widgetActionsPanelCommonMixin,
     entitiesMetaAlarmMixin,
     entitiesPbehaviorMixin,
     entitiesAlarmLinksMixin,
     entitiesDeclareTicketRuleMixin,
+    entitiesPbehaviorTypeMixin,
+    entitiesPbehaviorReasonMixin,
   ],
   data() {
     return {
@@ -422,18 +431,66 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showAddPbehaviorModalByAlarms(alarmOrAlarms) {
+    showAddPbehaviorModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(
-            isArray(alarmOrAlarms)
-              ? alarmOrAlarms.map(item => item.entity._id)
-              : alarmOrAlarms.entity._id,
+            alarms.length === 1 ? alarms[0].entity?._id : alarms.map(item => item.entity._id),
           ),
+          entities: mapAlarmsEntities(alarms),
           afterSubmit: this.afterSubmit,
         },
       });
+    },
+
+    async addFastPbehaviorByAlarms(alarms) {
+      try {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, true);
+
+        const entitiesMap = alarms.reduce((acc, { entity }) => {
+          acc[entity._id] = entity;
+
+          return acc;
+        }, {});
+
+        const { fastPbehaviorNamePrefix: namePrefix = '' } = this.widget.parameters;
+        let { fastPbehaviorType: type, fastPbehaviorReason: reason } = this.widget.parameters;
+
+        /**
+         * Select first pause default type if default type is empty
+         */
+        if (!type) {
+          const defaultPbehaviorTypes = await this.fetchDefaultPbehaviorTypes();
+          const pauseType = defaultPbehaviorTypes.find(({ type: pbehaviorType }) => (
+            pbehaviorType === PBEHAVIOR_TYPE_TYPES.pause
+          ));
+
+          type = pauseType?._id;
+        }
+
+        /**
+         * Select first reason if default reason is empty
+         */
+        if (!reason) {
+          const { data: reasons } = await this.fetchPbehaviorReasonsListWithoutStore();
+
+          reason = reasons?.[0]?._id;
+        }
+
+        await this.createDowntimePbehavior(Object.values(entitiesMap), {
+          prefix: namePrefix,
+          type,
+          reason,
+          origin: PBEHAVIOR_ORIGINS.alarmList,
+        });
+
+        await this.afterSubmit();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd, false);
+      }
     },
 
     showHistoryModalByAlarm(alarm) {

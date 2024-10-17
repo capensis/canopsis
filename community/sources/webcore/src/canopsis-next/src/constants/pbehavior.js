@@ -48,5 +48,6 @@ export const PBEHAVIOR_INFO_FIELDS = {
 };
 
 export const PBEHAVIOR_ORIGINS = {
+  alarmList: 'AlarmList',
   serviceWeather: 'ServiceWeather',
 };

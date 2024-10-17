@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-junit-form Renders \`storage-settings-events-records-form\` with custom form and history 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="text-subtitle-1 font-weight-bold"
+    >
+      Events recordings data storage
+    </div>
+    <c-help-icon-stub
+      color="info"
+      icon-class="ml-2"
+      max-width="300"
+      text="All recordings older than the defined time period will be deleted"
+      top=""
+    />
+  </div>
+  <div
+    class="layout mt-2"
+  >
+    <span
+      class="text--secondary"
+    >
+      <storage-settings-history-message-stub
+        history="1611210000"
+      />
+    </span>
+  </div>
+  <storage-settings-duration-field-stub
+    duration="[object Object]"
+    label="Delete events recordings after"
+    name="eventsRecords.delete_after"
+  />
+</div>
+`;
+
+exports[`storage-settings-junit-form Renders \`storage-settings-events-records-form\` with default form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="text-subtitle-1 font-weight-bold"
+    >
+      Events recordings data storage
+    </div>
+    <c-help-icon-stub
+      color="info"
+      icon-class="ml-2"
+      max-width="300"
+      text="All recordings older than the defined time period will be deleted"
+      top=""
+    />
+  </div>
+  <!---->
+  <storage-settings-duration-field-stub
+    duration="[object Object]"
+    label="Delete events recordings after"
+    name="eventsRecords.delete_after"
+  />
+</div>
+`;

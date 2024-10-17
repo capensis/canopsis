@@ -17,6 +17,9 @@ export default {
   pbehaviorName: 'Pbehavior name',
   pbehaviorCanonicalType: 'Pbehavior canonical type',
   rruleEnd: 'End of recurrence',
+  defaultNameForSingleResourceEntity: '{component} - {name} - From {datetime}',
+  defaultNameForSingleEntity: '{name} - From {datetime}',
+  defaultNameForMultipleEntities: 'Periodical behavior - From {datetime}',
   buttons: {
     addFilter: 'Add filter',
     editFilter: 'Edit filter',

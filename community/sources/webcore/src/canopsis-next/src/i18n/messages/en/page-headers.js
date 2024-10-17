@@ -90,6 +90,9 @@ export default {
   /**
    * Admin general
    */
+  [USERS_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Events recordings',
+  },
   [USERS_PERMISSIONS.technical.parameters]: {
     title: 'Parameters',
   },
@@ -131,6 +134,10 @@ export default {
   },
   [USERS_PERMISSIONS.technical.stateSetting]: {
     title: 'State settings',
+    // message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Events records',
     // message: '', // TODO: add correct message
   },
 

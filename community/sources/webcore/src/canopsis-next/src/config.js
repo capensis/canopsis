@@ -38,13 +38,13 @@ export const PAGINATION_TOTAL_VISIBLE = 7;
 export const DEFAULT_SANITIZE_OPTIONS = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([
     'h1', 'h2', 'u', 'nl', 'font', 'img', 'video', 'audio', 'area', 'map', 'strike', 'button', 'span', 'address',
-    'bdo', 'cite', 'q', 'dfn', 'var', 'dl', 'dt', 'dd', 'section', 'article', 'colgroup', 'col',
+    'bdo', 'cite', 'q', 'dfn', 'var', 'dl', 'dt', 'dd', 'section', 'article', 'colgroup', 'col', 'center',
 
     /**
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
-    'service-entities-list', 'v-icon',
+    'service-entities-list', 'v-icon', 'v-row', 'v-chip',
   ]),
   allowedAttributes: {
     '*': [
@@ -57,7 +57,10 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     marquee: ['direction'],
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
-    'c-alarm-tags-chips': [':alarm', ':selected-tag', 'closable-active', 'inline-count', '@select', '@close'],
+    'c-alarm-tags-chips': [
+      ':alarm', ':selected-tag', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
+      '@select', '@close',
+    ],
     'c-entity-tags-chips': [':entity', 'inline-count'],
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
@@ -68,6 +71,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
+    'v-chip': ['color', 'text-color'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -276,6 +280,7 @@ export const API_ROUTES = {
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
+  techMetricsSettings: '/api/v4/tech-metrics-settings',
   templateVars: '/api/v4/template-vars',
   templateValidator: {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
@@ -366,6 +371,13 @@ export const API_ROUTES = {
   tags: '/api/v4/cat/tags',
   privateView: {
     groups: '/api/v4/cat/private-view-groups',
+  },
+  eventsRecord: {
+    list: '/api/v4/cat/event-records',
+    export: '/api/v4/cat/event-records/exports',
+    current: '/api/v4/cat/event-records-current',
+    event: '/api/v4/cat/event-records/events',
+    bulkEvent: '/api/v4/cat/event-records/events/bulk',
   },
 };
 

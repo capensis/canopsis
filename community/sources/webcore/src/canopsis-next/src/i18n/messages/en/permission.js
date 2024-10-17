@@ -28,6 +28,7 @@ export default {
     rules: 'Rules',
     remediation: 'Remediation',
     pbehavior: 'PBehavior',
+    eventsRecord: 'Events record',
   },
   permissions: {
     /**
@@ -68,6 +69,10 @@ export default {
     [USERS_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: {
       name: 'Rights on alarm list: pbehavior action',
       description: 'Users with this permission can access to the action "Periodical behavior" and edit PBehaviors for alarms',
+    },
+    [USERS_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: {
+      name: 'Rights on alarm list: fast pbehavior action',
+      description: 'Users with this permission can access to the action "Fast periodical behavior"',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.snooze]: {
       name: 'Rights on alarm list: snooze alarm',
@@ -665,6 +670,10 @@ export default {
       name: 'Tags management',
       description: 'This permission defines the access to the Tags management',
     },
+    [USERS_PERMISSIONS.technical.eventsRecord]: {
+      name: 'Events record',
+      description: 'This permission defines the access to the Events records',
+    },
 
     /**
      * Technical Exploitation Permissions
@@ -971,6 +980,15 @@ export default {
     [USERS_PERMISSIONS.api.pbehavior.pbehaviorType]: {
       name: 'PBehavior types',
       description: 'Users with this permission can CRUD PBehavior types dates by API',
+    },
+
+    [USERS_PERMISSIONS.api.eventsRecord.launchEventRecording]: {
+      name: 'Launch events recording',
+      description: 'Access to API route to launching and fetching events recordings',
+    },
+    [USERS_PERMISSIONS.api.eventsRecord.resendEvents]: {
+      name: 'Resend events',
+      description: 'Access to API route to resending events from events recordings',
     },
   },
 };

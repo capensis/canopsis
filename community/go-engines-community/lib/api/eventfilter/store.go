@@ -134,10 +134,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 			"as":           "exceptions",
 		}},
 	}
-	if query.WithCounts {
-		project = append(project, failureCountsPipeline()...)
-	}
-
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
@@ -168,7 +164,10 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	model.Updated = &updated
 
 	update := bson.M{"$set": model}
-	unset := bson.M{"events_count": ""}
+	unset := bson.M{
+		"events_count":          "",
+		"unread_failures_count": "",
+	}
 
 	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
 		unset["start"] = ""
@@ -279,22 +278,34 @@ func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (
 }
 
 func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
+	ruleExists := false
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		ruleExists = false
+		err := s.dbCollection.
+			FindOneAndUpdate(
+				ctx,
+				bson.M{"_id": id},
+				bson.M{"$unset": bson.M{"unread_failures_count": ""}},
+				options.FindOneAndUpdate().SetProjection(bson.M{"_id": 1}),
+			).
+			Err()
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
 		}
-		return false, err
-	}
 
-	_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": id, "unread": true}, bson.M{"$unset": bson.M{
-		"unread": "",
-	}})
-	if err != nil {
-		return false, err
-	}
+		ruleExists = true
+		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": id, "unread": true}, bson.M{"$unset": bson.M{
+			"unread": "",
+		}})
 
-	return true, nil
+		return err
+	})
+
+	return ruleExists, err
 }
 
 func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
@@ -321,40 +332,5 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		ResolvedStop:        r.Stop,
 		Exdates:             exdates,
 		Exceptions:          r.Exceptions,
-	}
-}
-
-func failureCountsPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from": mongo.EventFilterFailureCollection,
-			"let":  bson.M{"rule": "$_id", "updated": "$updated"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$expr": bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$rule", "$$rule"}},
-					{"$gt": bson.A{"$t", "$$updated"}},
-				}}}},
-				{"$project": bson.M{"_id": 1}},
-			},
-			"as": "failures_count",
-		}},
-		{"$lookup": bson.M{
-			"from": mongo.EventFilterFailureCollection,
-			"let":  bson.M{"rule": "$_id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"unread": true,
-					"$expr": bson.M{"$and": []bson.M{
-						{"$eq": bson.A{"$rule", "$$rule"}},
-					}},
-				}},
-				{"$project": bson.M{"_id": 1}},
-			},
-			"as": "unread_failures_count",
-		}},
-		{"$addFields": bson.M{
-			"failures_count":        bson.M{"$size": "$failures_count"},
-			"unread_failures_count": bson.M{"$size": "$unread_failures_count"},
-		}},
 	}
 }

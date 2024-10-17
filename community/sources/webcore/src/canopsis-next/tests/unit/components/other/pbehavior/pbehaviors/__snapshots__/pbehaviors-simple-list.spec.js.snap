@@ -5,7 +5,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
   class="layout column"
 >
   <div
-    class="layout justify-end"
+    class="layout gap-2 justify-end"
   >
     <c-action-fab-btn-stub
       color="primary"
@@ -1424,7 +1424,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
   class="layout column"
 >
   <div
-    class="layout justify-end"
+    class="layout gap-2 justify-end"
   >
     <!---->
     <c-action-fab-btn-stub

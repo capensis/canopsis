@@ -131,11 +131,11 @@ USER canopsis:canopsis
 FROM final-container AS canopsis-api-community
 EXPOSE 8082
 USER root
-RUN apk add --no-cache postgresql13-client
+RUN apk add --no-cache postgresql15-client
 USER canopsis:canopsis
 
 FROM final-container AS canopsis-api-pro
 EXPOSE 8082
 USER root
-RUN apk add --no-cache postgresql13-client
+RUN apk add --no-cache postgresql15-client
 USER canopsis:canopsis

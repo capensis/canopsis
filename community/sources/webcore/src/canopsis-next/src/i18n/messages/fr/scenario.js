@@ -25,7 +25,9 @@ export default {
     + '}</pre>',
   actions: {
     [ACTION_TYPES.snooze]: 'Mettre en veille',
+    [ACTION_TYPES.unsnooze]: 'Annuler la répétition',
     [ACTION_TYPES.pbehavior]: 'Définir un comportement périodique',
+    [ACTION_TYPES.pbehaviorRemove]: 'Pbehavior supprimer',
     [ACTION_TYPES.changeState]: 'Changer l\'état (Change et vérouille la criticité)',
     [ACTION_TYPES.ack]: 'Acquitter',
     [ACTION_TYPES.ackremove]: 'Supprimer l\'acquittement',
@@ -41,5 +43,8 @@ export default {
     deprecatedTriggerExist: 'Ce scénario n\'est plus pris en charge en raison de son ancien format et donc désactivé. \n'
       + 'Veuillez mettre à jour les déclencheurs de scénario ou créer une nouvelle règle de déclaration de ticket.',
     testQueryRequireSteps: 'La requête de test n\'est pas disponible : aucun webhook n\'a été ajouté au scénario',
+  },
+  tooltips: {
+    pbehaviorActionsNamePrefix: 'Le nom va être `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
   },
 };

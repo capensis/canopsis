@@ -53,6 +53,26 @@ dnf update
 
 ### Configuration système
 
+Vous pouvez vérifier les limites de ressources systèmes avec la commande suivante :
+
+```sh
+ulimit -a
+```
+
+Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v7.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
+
+```sh
+cat << EOF > /etc/security/limits.d/mongo.conf
+#<domain>      <type>  <item>         <value>
+mongo           soft    fsize           unlimited
+mongo           soft    cpu             unlimited
+mongo           soft    as              unlimited
+mongo           soft    memlock         unlimited
+mongo           hard    nofile          64000
+mongo           hald    nproc           64000
+EOF
+```
+
 Désactivez la gestion des `Transparent Huge Pages (THP)` selon la [préconisation MongoDB](https://www.mongodb.com/docs/manual/tutorial/transparent-huge-pages/)
 
 ```sh
@@ -757,5 +777,28 @@ systemctl enable --now nginx.service
 
 Une fois cette commande terminée, vous pouvez alors réaliser votre [première connexion à l'interface Canopsis](premiere-connexion.md).
 
-Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
+## Mises à jour
 
+Lorsque vous souhaitez réaliser une mise à jour, la procédure est décrite dans
+le [Guide de mise à jour](../mise-a-jour/index.md).
+
+Il est fortement conseillé d'utiliser à nouveau [*versionlock*][dnf-versionlock]
+pour rester dans la version majeure de Canopsis que vous venez d'installer.
+
+Ainsi, vous bénéficierez des mises à jour mineures. Mais vous ne risquez pas
+une montée de version majeure non prévue vers une majeure suivante à l'occasion
+d'une mise à jour de routine de l'ensemble des paquets système.
+
+=== "Canopsis Community (édition open-source)"
+
+    ```sh
+    dnf versionlock add --raw 'canopsis-24.04.*'
+    dnf versionlock add --raw 'canopsis-webui-24.04.*'
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    ```sh
+    dnf versionlock add --raw 'canopsis-pro-24.04.*'
+    dnf versionlock add --raw 'canopsis-webui-24.04.*'
+    ```

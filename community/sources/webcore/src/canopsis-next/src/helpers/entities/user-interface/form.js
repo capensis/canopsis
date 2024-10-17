@@ -23,7 +23,8 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} [logo]
  * @property {number} [max_matched_items]
  * @property {number} [check_count_request_timeout]
- * @property {number} [disabled_transitions]
+ * @property {boolean} [disabled_transitions]
+ * @property {boolean} [auto_suggest_pbehavior_name]
  */
 
 /**
@@ -73,4 +74,5 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   check_count_request_timeout: userInterface.check_count_request_timeout ?? '',
   popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
   disabled_transitions: userInterface.disabled_transitions ?? false,
+  auto_suggest_pbehavior_name: userInterface.auto_suggest_pbehavior_name ?? false,
 });

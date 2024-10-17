@@ -48,9 +48,9 @@ type Response struct {
 	Exdates      []types.Exdate                                `bson:"exdates" json:"exdates"`
 	Exceptions   []Exception                                   `bson:"exceptions" json:"exceptions"`
 
-	EventsCount         int64  `bson:"events_count" json:"events_count"`
-	FailuresCount       *int64 `bson:"failures_count" json:"failures_count,omitempty"`
-	UnreadFailuresCount *int64 `bson:"unread_failures_count" json:"unread_failures_count,omitempty"`
+	EventsCount         int64 `bson:"events_count" json:"events_count"`
+	FailuresCount       int64 `bson:"failures_count" json:"failures_count"`
+	UnreadFailuresCount int64 `bson:"unread_failures_count" json:"unread_failures_count"`
 
 	EventPattern                     pattern.Event `bson:"event_pattern" json:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
@@ -85,8 +85,7 @@ type BulkDeleteRequestItem struct {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy     string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author.name author.display_name priority created updated on_success on_failure"`
-	WithCounts bool   `json:"with_counts" form:"with_counts"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author.name author.display_name priority created updated on_success on_failure"`
 }
 
 type AggregationResult struct {

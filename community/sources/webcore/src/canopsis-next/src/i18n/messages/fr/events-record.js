@@ -1,0 +1,16 @@
+export default {
+  recorded: 'Enregistré à',
+  eventsCount: 'Nombre d\'événements enregistrés',
+  subheader: 'Enregistrer tous les événements',
+  launch: 'Lancement d\'un enregistrement d\'événements',
+  stop: 'Arrêter l\'enregistrement des événements',
+  stopResending: 'Arrêter de renvoyer',
+  inProgress: 'Enregistrement en cours...',
+  resendingInProgress: 'Renvoi en cours...',
+  viewEvents: 'Afficher les événements',
+  export: 'Exporter vers JSON',
+  applyEventFilter: 'Appliquer le filtre d\'événement',
+  delayBetweenEvents: 'Délai entre les événements',
+  resendEvents: 'Renvoyer l\'événement | Renvoyer les événements',
+  launchEventRecording: 'Lancement d\'un enregistrement d\'événements',
+};

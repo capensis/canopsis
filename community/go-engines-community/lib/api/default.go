@@ -242,7 +242,7 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(dbClient), logger)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
@@ -393,15 +393,13 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
-	if flags.EnableActionLog {
-		actionLogger := apilogger.NewActionLogger(dbClient, pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-		api.AddWorker("action_log", func(ctx context.Context) {
-			err := actionLogger.Watch(ctx)
-			if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
-				panic(FatalWorkerError{err: err})
-			}
-		})
-	}
+	actionLogger := apilogger.NewActionLogger(dbClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	api.AddWorker("action_log", func(ctx context.Context) {
+		err := actionLogger.Watch(ctx)
+		if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
+			panic(FatalWorkerError{err: err})
+		}
+	})
 
 	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)

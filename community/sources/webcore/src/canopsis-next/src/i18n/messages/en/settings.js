@@ -64,6 +64,8 @@ export default {
   fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
   isCorrelationEnabled: 'Is correlation enabled?',
+  isCorrelationEnabledDefault: 'Is correlation enabled by default?',
+  fastPbehavior: 'Fast pbehavior',
   duration: 'Duration',
   tstop: 'End date',
   periodsNumber: 'Number of steps',

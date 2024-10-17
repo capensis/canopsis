@@ -1,105 +1,152 @@
 <template>
-  <div>
-    <c-page-header />
-    <v-card class="ma-4 mt-0">
-      <broadcast-messages-list
-        :broadcast-messages="broadcastMessages"
-        :pending="broadcastMessagesPending"
-        :options.sync="options"
-        :total-items="broadcastMessagesMeta.total_count"
-        @edit="showEditBroadcastMessageModal"
-        @remove="showRemoveBroadcastMessageModal"
-      />
-    </v-card>
-    <c-fab-btn
-      :has-access="hasCreateAnyBroadcastMessageAccess"
-      @refresh="fetchList"
-      @create="showCreateBroadcastMessageModal"
-    >
-      <span>{{ $t('modals.createBroadcastMessage.create.title') }}</span>
-    </c-fab-btn>
-  </div>
+  <c-page
+    :creatable="hasCreateAnyBroadcastMessageAccess"
+    :create-tooltip="$t('modals.createBroadcastMessage.create.title')"
+    @refresh="fetchList"
+    @create="showCreateBroadcastMessageModal"
+  >
+    <broadcast-messages-list
+      :broadcast-messages="broadcastMessages"
+      :pending="pending"
+      :options.sync="options"
+      :total-items="meta.total_count"
+      :editable="hasUpdateAnyBroadcastMessageAccess"
+      :deletable="hasDeleteAnyBroadcastMessageAccess"
+      @edit="showEditBroadcastMessageModal"
+      @remove="showRemoveBroadcastMessageModal"
+    />
+  </c-page>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { ref, onMounted } from 'vue';
 
-import { permissionsTechnicalBroadcastMessageMixin } from '@/mixins/permissions/technical/broadcast-message';
-import { entitiesBroadcastMessageMixin } from '@/mixins/entities/broadcast-message';
-import { localQueryMixin } from '@/mixins/query/query';
+import { PAGINATION_LIMIT } from '@/config';
+import { MODALS, USERS_PERMISSIONS } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useBroadcastMessages } from '@/hooks/store/modules/broadcast-message';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useCallActionWithPopup } from '@/hooks/actions/call';
+import { useQueryOptions } from '@/hooks/query/options';
+import { useCRUDPermissions } from '@/hooks/auth';
 
 import BroadcastMessagesList from '@/components/other/broadcast-message/broadcast-messages-list.vue';
 
 export default {
-  components: {
-    BroadcastMessagesList,
-  },
-  mixins: [
-    localQueryMixin,
-    permissionsTechnicalBroadcastMessageMixin,
-    entitiesBroadcastMessageMixin,
-  ],
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
+  components: { BroadcastMessagesList },
+  setup() {
+    const broadcastMessages = ref([]);
+    const meta = ref({});
+
+    const { t } = useI18n();
+    const modals = useModals();
+
     /**
-     * Function for calling of the action with popups and fetching
-     *
-     * @param {Function} action
-     * @returns {Promise<void>}
+     * PERMISSIONS
      */
-    async callActionWithFetching(action) {
-      try {
-        await action();
+    const {
+      hasCreateAccess: hasCreateAnyBroadcastMessageAccess,
+      hasUpdateAccess: hasUpdateAnyBroadcastMessageAccess,
+      hasDeleteAccess: hasDeleteAnyBroadcastMessageAccess,
+    } = useCRUDPermissions(USERS_PERMISSIONS.technical.broadcastMessage);
 
-        this.fetchList();
+    /**
+     * STORE
+     */
+    const {
+      createBroadcastMessage,
+      updateBroadcastMessage,
+      removeBroadcastMessage,
+      fetchBroadcastMessagesListWithoutStore,
+    } = useBroadcastMessages();
+    const { callActionWithPopup } = useCallActionWithPopup();
 
-        this.$popups.success({ text: this.$t('success.default') });
-      } catch (err) {
-        console.error(err);
+    /**
+     * QUERY
+     */
+    const {
+      query,
+      pending,
+      updateQuery,
+      handler: fetchList,
+    } = usePendingWithLocalQuery({
+      initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
+      fetchHandler: async (fetchQuery) => {
+        const response = await fetchBroadcastMessagesListWithoutStore({
+          params: {
+            limit: fetchQuery.itemsPerPage,
+            page: fetchQuery.page,
+          },
+        });
 
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
-    },
+        broadcastMessages.value = response.data;
+        meta.value = response.meta;
+      },
+    });
 
-    showCreateBroadcastMessageModal() {
-      this.$modals.show({
+    const { options } = useQueryOptions(query, updateQuery);
+
+    /**
+     * METHODS
+     */
+    const showCreateBroadcastMessageModal = () => {
+      modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
-          action: newMessage => this.callActionWithFetching(
-            () => this.createBroadcastMessage({ data: newMessage }),
+          action: newMessage => callActionWithPopup(
+            () => createBroadcastMessage({ data: newMessage }),
+            fetchList,
           ),
         },
       });
-    },
+    };
 
-    showEditBroadcastMessageModal(message) {
-      this.$modals.show({
+    const showEditBroadcastMessageModal = (message) => {
+      modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
           message,
-          title: this.$t('modals.createBroadcastMessage.edit.title'),
+          title: t('modals.createBroadcastMessage.edit.title'),
 
-          action: newMessage => this.callActionWithFetching(
-            () => this.updateBroadcastMessage({ id: message._id, data: newMessage }),
+          action: newMessage => callActionWithPopup(
+            () => updateBroadcastMessage({ id: message._id, data: newMessage }),
+            fetchList,
           ),
         },
       });
-    },
+    };
 
-    showRemoveBroadcastMessageModal(id) {
-      this.$modals.show({
+    const showRemoveBroadcastMessageModal = (id) => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.callActionWithFetching(() => this.removeBroadcastMessage({ id })),
+          action: () => callActionWithPopup(
+            () => removeBroadcastMessage({ id }),
+            fetchList,
+          ),
         },
       });
-    },
+    };
 
-    fetchList() {
-      this.fetchBroadcastMessagesList({ params: this.getQuery() });
-    },
+    onMounted(() => fetchList());
+
+    return {
+      hasCreateAnyBroadcastMessageAccess,
+      hasUpdateAnyBroadcastMessageAccess,
+      hasDeleteAnyBroadcastMessageAccess,
+      broadcastMessages,
+      meta,
+      pending,
+      options,
+
+      updateQuery,
+      showCreateBroadcastMessageModal,
+      showEditBroadcastMessageModal,
+      showRemoveBroadcastMessageModal,
+      fetchList,
+    };
   },
 };
 </script>

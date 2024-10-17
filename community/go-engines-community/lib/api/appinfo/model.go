@@ -30,6 +30,8 @@ type UserInterfaceConf struct {
 	CheckCountRequestTimeout   int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
 	ShowHeaderOnKioskMode      bool          `json:"show_header_on_kiosk_mode" bson:"show_header_on_kiosk_mode"`
 	RequiredInstructionApprove bool          `json:"required_instruction_approve" bson:"required_instruction_approve"`
+	DisabledTransitions        bool          `json:"disabled_transitions" bson:"disabled_transitions"`
+	AutoSuggestPbehaviorName   bool          `json:"auto_suggest_pbehavior_name" bson:"auto_suggest_pbehavior_name"`
 }
 
 type GlobalConf struct {
@@ -59,6 +61,8 @@ type AppInfoResponse struct {
 
 	DefaultColorTheme colortheme.Response `json:"default_color_theme"`
 	Maintenance       bool                `json:"maintenance"`
+
+	SerialName string `json:"serial_name"`
 }
 
 type LoginConf struct {

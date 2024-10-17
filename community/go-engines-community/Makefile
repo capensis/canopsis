@@ -36,6 +36,12 @@ PLUGINS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/plugins/,$(PLUG
 # List of Docker containers targets
 DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
+# Support tool build variables
+SUPPORT_TOOLS_DIR=$(CURRENT_ROOT_DIR)/docker/support
+SUPPORT_TOOLS_SCRIPTS=$(notdir $(wildcard $(SUPPORT_TOOLS_DIR)/*))
+DOCKER_SUPPORT_TOOLS_TARGETS=$(addprefix docker-support-tool-,$(SUPPORT_TOOLS_SCRIPTS))
+SCRIPT_SUPPORT_TOOLS_TARGETS=$(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/support/,$(SUPPORT_TOOLS_SCRIPTS))
+
 #
 # BUILD FLAGS
 #
@@ -71,9 +77,9 @@ DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
-all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS) $(SCRIPT_SUPPORT_TOOLS_TARGETS)
 .DEFAULT_GOAL:=all
-docker-images: $(DOCKER_CMD_TARGETS)
+docker-images: $(DOCKER_CMD_TARGETS) $(DOCKER_SUPPORT_TOOLS_TARGETS)
 
 #
 # BINARY TARGETS
@@ -170,6 +176,23 @@ docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
 docker-cmd-engine-che: TARGET=engine-che
 docker-cmd-engine-webhook: TARGET=engine-webhook
 docker-cmd-import-context-graph: TARGET=import-context-graph
+
+# Support tool targets.
+$(CURRENT_BUILD_OUTPUT_DIR)/support/%:
+	mkdir -p $(CURRENT_BUILD_OUTPUT_DIR)/support && \
+	cp $(SUPPORT_TOOLS_DIR)/$*/$*.sh $@.sh
+
+$(DOCKER_SUPPORT_TOOLS_TARGETS):
+	cd $(SUPPORT_TOOLS_DIR)/$(subst docker-support-tool-,,$@) && \
+	docker build \
+		--build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
+		-f "./Dockerfile" \
+		-t "$(DOCKER_IMAGE_BASE_PATH)/canopsis-support-tool-$(subst docker-support-tool-,,$@):$(DOCKER_TAG)" \
+		.
+
+
+.PHONY: docker-support-tools
+docker-support-tools: $(DOCKER_SUPPORT_TOOLS_TARGETS)
 
 #
 # INSTALLATION

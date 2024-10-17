@@ -184,7 +184,7 @@ describe('c-entity-category-field', () => {
       }]),
     });
 
-    expect(fetchListMock).toBeCalledWith(expect.any(Object), { params: { limit: MAX_LIMIT } }, undefined);
+    expect(fetchListMock).toBeCalledWith(expect.any(Object), { params: { limit: MAX_LIMIT } });
   });
 
   it('Check v-validate uniq-name', async () => {
@@ -262,7 +262,7 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    expect(createMock).toBeCalledWith(expect.any(Object), { data: { name: categoryName } }, undefined);
+    expect(createMock).toBeCalledWith(expect.any(Object), { data: { name: categoryName } });
     expect(fetchListMock).toBeCalledTimes(2);
     expect(wrapper).toEmitInput(category);
     expect(textField.vm.value).toBe('');

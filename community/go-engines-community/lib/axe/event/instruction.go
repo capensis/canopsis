@@ -123,28 +123,16 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}}
 	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
 		set["kpi_executed_instructions"] = bson.M{"$concatArrays": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$kpi_executed_instructions",
-				"then": "$kpi_executed_instructions",
-				"else": bson.A{},
-			}},
+			bson.M{"$ifNull": bson.A{"$kpi_executed_instructions", bson.A{}}},
 			bson.M{"$cond": bson.M{
 				"if": bson.M{"$and": []bson.M{
 					{"$in": bson.A{
 						event.Parameters.Instruction,
-						bson.M{"$cond": bson.M{
-							"if":   "$kpi_assigned_instructions",
-							"then": "$kpi_assigned_instructions",
-							"else": bson.A{},
-						}},
+						bson.M{"$ifNull": bson.A{"$kpi_assigned_instructions", bson.A{}}},
 					}},
 					{"$not": bson.M{"$in": bson.A{
 						event.Parameters.Instruction,
-						bson.M{"$cond": bson.M{
-							"if":   "$kpi_executed_instructions",
-							"then": "$kpi_executed_instructions",
-							"else": bson.A{},
-						}},
+						bson.M{"$ifNull": bson.A{"$kpi_executed_instructions", bson.A{}}},
 					}}},
 				}},
 				"then": bson.A{event.Parameters.Instruction},
@@ -153,11 +141,7 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}}
 	case types.AlarmStepAutoInstructionComplete, types.AlarmStepAutoInstructionFail:
 		set["kpi_executed_auto_instructions"] = bson.M{"$setUnion": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$kpi_executed_auto_instructions",
-				"then": "$kpi_executed_auto_instructions",
-				"else": bson.A{},
-			}},
+			bson.M{"$ifNull": bson.A{"$kpi_executed_auto_instructions", bson.A{}}},
 			bson.A{event.Parameters.Instruction},
 		}}
 	}

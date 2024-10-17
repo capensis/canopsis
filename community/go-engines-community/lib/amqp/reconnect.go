@@ -313,6 +313,12 @@ func (ch *baseChannel) Nack(tag uint64, multiple bool, requeue bool) error {
 	})
 }
 
+func (ch *baseChannel) Reject(tag uint64, requeue bool) error {
+	return ch.retry(func() error {
+		return ch.amqpCh.Reject(tag, requeue)
+	})
+}
+
 func (ch *baseChannel) Qos(prefetchCount, prefetchSize int, global bool) error {
 	return ch.retry(func() error {
 		return ch.amqpCh.Qos(prefetchCount, prefetchSize, global)
@@ -563,4 +569,15 @@ func minTimeDuration(l, r time.Duration) time.Duration {
 	}
 
 	return r
+}
+
+func (ch *baseChannel) QueueDelete(name string, ifUnused, ifEmpty, noWait bool) (int, error) {
+	var res int
+	err := ch.retry(func() error {
+		var amqpErr error
+		res, amqpErr = ch.amqpCh.QueueDelete(name, ifUnused, ifEmpty, noWait)
+		return amqpErr
+	})
+
+	return res, err
 }

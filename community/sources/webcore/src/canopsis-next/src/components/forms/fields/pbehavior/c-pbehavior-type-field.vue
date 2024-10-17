@@ -14,6 +14,7 @@
     :small-chips="chips"
     :item-disabled="isItemDisabled"
     :return-object="returnObject"
+    :clearable="clearable"
     item-text="name"
     item-value="_id"
   />
@@ -21,6 +22,8 @@
 
 <script>
 import { isArray, isObject, isEmpty } from 'lodash';
+
+import { MAX_LIMIT } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 
@@ -70,6 +73,18 @@ export default {
       type: Number,
       required: false,
     },
+    types: {
+      type: Array,
+      required: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    independent: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -96,6 +111,11 @@ export default {
         required: this.required,
       };
     },
+  },
+  mounted() {
+    if (this.independent) {
+      this.fetchFieldPbehaviorTypesList({ params: { types: this.types, limit: MAX_LIMIT } });
+    }
   },
   methods: {
     isItemDisabled(item) {

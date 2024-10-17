@@ -1,9 +1,9 @@
 import { computed } from 'vue';
 
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useI18n } from '@/hooks/i18n';
-import { usePopups } from '@/hooks/popups';
+import { usePendingHandler } from './query/pending';
+import { useValidationFormErrors } from './validator/validation-form-errors';
+import { useI18n } from './i18n';
+import { usePopups } from './popups';
 
 /**
  * Creates a submittable form handler with validation and error handling.
@@ -16,6 +16,7 @@ import { usePopups } from '@/hooks/popups';
  * @param {Object} options - Configuration options for the submittable form.
  * @param {Object} options.form - The form data object that will be validated.
  * @param {Function} options.method - The submission method to be called if the form is valid.
+ * @param {boolean} options.withTimeout - The property for timeout enabling.
  * @returns {Object} An object containing methods and properties to manage the form submission.
  * @example
  * const form = reactive({ username: '', password: '' });
@@ -31,7 +32,7 @@ import { usePopups } from '@/hooks/popups';
  *   </form>
  * </template>
  */
-export const useSubmittableForm = ({ form, method }) => {
+export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
   const popups = usePopups();
   const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
@@ -59,7 +60,15 @@ export const useSubmittableForm = ({ form, method }) => {
   const {
     pending: submitting,
     handler: submit,
-  } = usePendingHandler(submitHandler);
+  } = usePendingHandler(
+    /**
+     * If `withTimeout` is true, a timeout is set to call `submitHandler` with the provided arguments after 0 ms
+     * to avoid combobox lag. Otherwise, `submitHandler` is called directly.
+     */
+    withTimeout
+      ? (...args) => setTimeout(() => submitHandler(...args), 0)
+      : submitHandler,
+  );
 
   const isDisabled = computed(() => submitting.value || validator.errors?.any?.());
 

@@ -1,147 +1,203 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="metrics"
-    :loading="pending"
-    loader-height="2"
-  >
-    <template #no-data="">
-      <td
-        class="text-center"
-        colspan="2"
-      >
-        <div>{{ $t('techMetric.noDumps') }}</div>
-      </td>
-      <td>
-        <c-action-btn
-          :disabled="exporting"
-          :tooltip="$t('techMetric.generateDump')"
-          icon="play_circle_filled"
-          color="secondary"
-          @click="exportTechMetrics"
-        />
-      </td>
-    </template>
-    <template #item="{ item }">
-      <td
-        v-if="!exporting && (item.disabled || isMetricNotCreated(item))"
-        class="text-center"
-        colspan="2"
-      >
-        <div>{{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}</div>
-      </td>
-      <template v-else>
-        <td>{{ item.created | date }}</td>
+  <v-layout class="pl-4" column>
+    <c-enabled-field
+      :value="settings.enabled"
+      :label="$t('techMetric.enabled')"
+      :disabled="settingsPending"
+      @change="changeTechMetricsEnabled"
+    />
+    <v-data-table
+      :headers="headers"
+      :items="metrics"
+      :loading="pending"
+      loader-height="2"
+    >
+      <template #no-data="">
+        <td
+          class="text-center"
+          colspan="2"
+        >
+          <div>{{ $t('techMetric.noDumps') }}</div>
+        </td>
         <td>
-          <v-progress-circular
-            v-if="exporting"
-            color="primary"
-            indeterminate
+          <c-action-btn
+            :disabled="exporting"
+            :tooltip="$t('techMetric.generateDump')"
+            icon="play_circle_filled"
+            color="secondary"
+            @click="exportTechMetrics"
           />
-          <span v-else>{{ item.duration | duration }}</span>
         </td>
       </template>
-      <td>
-        <c-action-btn
-          :disabled="exporting || item.disabled"
-          :tooltip="$t('techMetric.generateDump')"
-          icon="play_circle_filled"
-          color="secondary"
-          @click="exportTechMetrics"
-        />
-        <c-action-btn
-          v-if="isMetricReadyToDownload(item)"
-          :disabled="exporting"
-          :tooltip="$t('techMetric.downloadDump')"
-          icon="save_alt"
-          color="secondary"
-          @click="downloadTechMetrics"
-        />
-      </td>
-    </template>
-  </v-data-table>
+      <template #item="{ item }">
+        <td
+          v-if="!exporting && (item.disabled || item.notCreated)"
+          class="text-center"
+          colspan="2"
+        >
+          <div>{{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}</div>
+        </td>
+        <template v-else>
+          <td>{{ item.created | date }}</td>
+          <td>
+            <v-progress-circular
+              v-if="exporting"
+              color="primary"
+              indeterminate
+            />
+            <span v-else>{{ item.duration | duration }}</span>
+          </td>
+        </template>
+        <td>
+          <c-action-btn
+            :disabled="exporting || item.disabled"
+            :tooltip="$t('techMetric.generateDump')"
+            icon="play_circle_filled"
+            color="secondary"
+            @click="exportTechMetrics"
+          />
+          <c-action-btn
+            v-if="item.readyToDownload"
+            :disabled="exporting"
+            :tooltip="$t('techMetric.downloadDump')"
+            icon="save_alt"
+            color="secondary"
+            @click="downloadTechMetrics"
+          />
+        </td>
+      </template>
+    </v-data-table>
+  </v-layout>
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue';
+
 import { TECH_METRICS_EXPORT_STATUSES } from '@/constants';
 
 import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { openUrlInNewTab } from '@/helpers/url';
 
-import { entitiesTechMetricsMixin } from '@/mixins/entities/tech-metrics';
-import { exportMixinCreator } from '@/mixins/widget/export';
+import { useI18n } from '@/hooks/i18n';
+import { useExportFile } from '@/hooks/export-file';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useTechMetrics } from '@/hooks/store/modules/tech-metrics';
 
 export default {
-  mixins: [
-    entitiesTechMetricsMixin,
-    exportMixinCreator({
-      createExport: 'createTechMetricsExport',
-      fetchExport: 'fetchTechMetrics',
+  setup() {
+    const settings = ref({ enabled: false });
+    const metric = ref(null);
+
+    const { t } = useI18n();
+    const {
+      createTechMetricsExport,
+      fetchTechMetricsExport,
+      fetchTechMetricsSettings,
+      updateTechMetricsSettings,
+    } = useTechMetrics();
+
+    const metrics = computed(() => (
+      (metric.value ? [metric.value] : []).map(item => ({
+        ...item,
+
+        disabled: item.status === TECH_METRICS_EXPORT_STATUSES.disabled,
+        readyToDownload: item.status === TECH_METRICS_EXPORT_STATUSES.success,
+        notCreated: item.status === TECH_METRICS_EXPORT_STATUSES.none,
+      }))
+    ));
+
+    const headers = computed(() => [
+      { text: t('common.created'), width: '33%', sortable: false },
+      { text: t('common.timeTaken'), width: '33%', sortable: false },
+      { text: t('common.actionsLabel'), width: '33%', sortable: false },
+    ]);
+
+    /**
+     * Handles fetching and managing the state of technical metrics.
+     */
+    const {
+      pending,
+      handler: fetchTechMetrics,
+    } = usePendingHandler(async () => {
+      metric.value = await fetchTechMetricsExport();
+
+      return metric.value;
+    });
+
+    /**
+     * Handles fetching and managing the state of settings.
+     */
+    const {
+      pending: settingsPending,
+      handler: fetchSettings,
+    } = usePendingHandler(async () => {
+      settings.value = await fetchTechMetricsSettings();
+    });
+
+    /**
+     * Handles file generation and download for technical metrics export.
+     */
+    const { generateFile } = useExportFile({
+      createHandler: createTechMetricsExport,
+      fetchHandler: fetchTechMetrics,
       completedStatus: TECH_METRICS_EXPORT_STATUSES.success,
       failedStatus: TECH_METRICS_EXPORT_STATUSES.failed,
-    }),
-  ],
-  data() {
-    return {
-      pending: false,
-      exporting: false,
-      metric: null,
+    });
+
+    /**
+     * Initiates the download of the technical metrics file.
+     */
+    const downloadTechMetrics = () => openUrlInNewTab(getTechMetricsDownloadFileUrl());
+
+    /**
+     * Handles exporting technical metrics and managing the state of the export process.
+     */
+    const {
+      pending: exporting,
+      handler: exportTechMetrics,
+    } = usePendingHandler(generateFile);
+
+    /**
+     * Updates the enabled status of technical metrics settings.
+     *
+     * @param {boolean} enabled - The new enabled status.
+     */
+    const changeTechMetricsEnabled = async (enabled) => {
+      try {
+        settingsPending.value = true;
+
+        settings.value = await updateTechMetricsSettings({
+          data: {
+            ...settings.value,
+            enabled,
+          },
+        });
+      } finally {
+        settingsPending.value = false;
+      }
+
+      return fetchTechMetrics();
     };
-  },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.created'), width: '33%', sortable: false },
-        { text: this.$t('common.timeTaken'), width: '33%', sortable: false },
-        { text: this.$t('common.actionsLabel'), width: '33%', sortable: false },
-      ];
-    },
 
-    metrics() {
-      const metrics = this.metric ? [this.metric] : [];
+    onMounted(() => {
+      fetchTechMetrics();
+      fetchSettings();
+    });
 
-      return metrics.map(metric => ({
-        ...metric,
-        disabled: this.isMetricDisabled(metric),
-      }));
-    },
-  },
-  async mounted() {
-    this.pending = true;
+    return {
+      settings,
 
-    await this.fetchTechMetrics();
+      metrics,
+      headers,
 
-    this.pending = false;
-  },
-  methods: {
-    async fetchTechMetrics() {
-      this.metric = await this.fetchTechMetricsExport();
+      pending,
+      settingsPending,
+      exporting,
 
-      return this.metric;
-    },
-
-    async exportTechMetrics() {
-      this.exporting = true;
-
-      await this.generateFile();
-
-      this.exporting = false;
-    },
-
-    async downloadTechMetrics() {
-      this.downloadFile(getTechMetricsDownloadFileUrl());
-    },
-
-    isMetricReadyToDownload(item) {
-      return item.status === TECH_METRICS_EXPORT_STATUSES.success;
-    },
-
-    isMetricDisabled(item) {
-      return item.status === TECH_METRICS_EXPORT_STATUSES.disabled;
-    },
-
-    isMetricNotCreated(item) {
-      return item.status === TECH_METRICS_EXPORT_STATUSES.none;
-    },
+      exportTechMetrics,
+      downloadTechMetrics,
+      changeTechMetricsEnabled,
+    };
   },
 };
 </script>

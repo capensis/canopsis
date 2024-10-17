@@ -27,12 +27,12 @@
     <template #actions="{ item }">
       <v-layout>
         <c-action-btn
-          v-if="hasUpdateAnyBroadcastMessageAccess"
+          v-if="editable"
           type="edit"
           @click="$emit('edit', item)"
         />
         <c-action-btn
-          v-if="hasDeleteAnyBroadcastMessageAccess"
+          v-if="deletable"
           type="delete"
           @click="$emit('remove', item._id)"
         />
@@ -42,11 +42,13 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
 
 import { getNowTimestamp } from '@/helpers/date/date';
 
-import { permissionsTechnicalBroadcastMessageMixin } from '@/mixins/permissions/technical/broadcast-message';
+import { useI18n } from '@/hooks/i18n';
 
 import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
@@ -54,7 +56,6 @@ export default {
   components: {
     BroadcastMessage,
   },
-  mixins: [permissionsTechnicalBroadcastMessageMixin],
   props: {
     broadcastMessages: {
       type: Array,
@@ -72,57 +73,68 @@ export default {
       type: Object,
       required: true,
     },
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+    deletable: {
+      type: Boolean,
+      default: false,
+    },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.status'),
-          value: 'status',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.preview'),
-          value: 'message',
-          width: 300,
-          sortable: false,
-        },
-        {
-          text: this.$t('common.start'),
-          value: 'start',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.end'),
-          value: 'end',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
+  setup(props) {
+    const { t } = useI18n();
 
-    preparedBroadcastMessages() {
-      return this.broadcastMessages.map((message) => {
-        const now = getNowTimestamp();
-        let status = BROADCAST_MESSAGES_STATUSES.pending;
+    const headers = computed(() => [
+      {
+        text: t('common.status'),
+        value: 'status',
+        sortable: false,
+      },
+      {
+        text: t('common.preview'),
+        value: 'message',
+        width: 300,
+        sortable: false,
+      },
+      {
+        text: t('common.start'),
+        value: 'start',
+        sortable: false,
+      },
+      {
+        text: t('common.end'),
+        value: 'end',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
 
-        if (now >= message.start) {
-          status = now <= message.end
-            ? BROADCAST_MESSAGES_STATUSES.active
-            : BROADCAST_MESSAGES_STATUSES.expired;
-        }
+    const preparedBroadcastMessages = computed(() => props.broadcastMessages.map((message) => {
+      const now = getNowTimestamp();
+      let status = BROADCAST_MESSAGES_STATUSES.pending;
 
-        return {
-          ...message,
+      if (now >= message.start) {
+        status = now <= message.end
+          ? BROADCAST_MESSAGES_STATUSES.active
+          : BROADCAST_MESSAGES_STATUSES.expired;
+      }
 
-          status,
-        };
-      });
-    },
+      return {
+        ...message,
+
+        status,
+      };
+    }));
+
+    return {
+      headers,
+      preparedBroadcastMessages,
+    };
   },
 };
 </script>

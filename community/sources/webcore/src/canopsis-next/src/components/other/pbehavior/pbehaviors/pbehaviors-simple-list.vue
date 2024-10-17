@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <v-layout justify-end>
+    <v-layout class="gap-2" justify-end>
       <c-action-fab-btn
         v-if="addable"
         :tooltip="$t('modals.createPbehavior.create.title')"
@@ -172,6 +172,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity._id),
+          entities: [this.entity],
           afterSubmit: this.fetchList,
         },
       });

@@ -24,6 +24,7 @@ type Channel interface {
 	) (<-chan amqp.Delivery, error)
 	Ack(tag uint64, multiple bool) error
 	Nack(tag uint64, multiple bool, requeue bool) error
+	Reject(tag uint64, requeue bool) error
 	PublishWithContext(
 		ctx context.Context,
 		exchange, key string,
@@ -37,4 +38,5 @@ type Channel interface {
 	QueueBind(name, key, exchange string, noWait bool, args amqp.Table) error
 	QueuePurge(name string, noWait bool) (int, error)
 	QueueInspect(name string) (amqp.Queue, error)
+	QueueDelete(name string, ifUnused, ifEmpty, noWait bool) (int, error)
 }

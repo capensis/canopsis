@@ -133,6 +133,10 @@ export default {
     title: 'Paramètres de calcul d\'état/sévérité',
     // message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Enregistrements d\'événements',
+    // message: '', // TODO: add correct message
+  },
 
   /**
    * Notifications

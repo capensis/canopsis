@@ -1041,4 +1041,9 @@ export default {
       success: 'L\'icône a été supprimée',
     },
   },
+  eventsRecord: {
+    title: 'Enregistrement des événements {date}',
+    subtitle: '{count} événements reçus',
+    buttonTooltip: 'Supprimer les événements reçus',
+  },
 };

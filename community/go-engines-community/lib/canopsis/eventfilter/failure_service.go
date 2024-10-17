@@ -12,6 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -43,18 +45,23 @@ func NewFailureService(
 	logger zerolog.Logger,
 ) FailureService {
 	return &failureService{
-		collection: client.Collection(mongo.EventFilterFailureCollection),
-		interval:   interval,
-		logger:     logger,
+		collection:     client.Collection(mongo.EventFilterFailureCollection),
+		ruleCollection: client.Collection(mongo.EventFilterRuleCollection),
+		interval:       interval,
+		logger:         logger,
+		countsByRule:   make(map[string]int64),
 	}
 }
 
 type failureService struct {
-	collection mongo.DbCollection
-	interval   time.Duration
-	logger     zerolog.Logger
-	insertsMx  sync.Mutex
-	inserts    []any
+	collection     mongo.DbCollection
+	ruleCollection mongo.DbCollection
+	interval       time.Duration
+	logger         zerolog.Logger
+
+	insertsAndCountsByRuleMx sync.Mutex
+	inserts                  []any
+	countsByRule             map[string]int64
 }
 
 func (s *failureService) Run(ctx context.Context) {
@@ -75,8 +82,8 @@ func (s *failureService) Run(ctx context.Context) {
 }
 
 func (s *failureService) Add(ruleID string, failureType int64, message string, event *types.Event) {
-	s.insertsMx.Lock()
-	defer s.insertsMx.Unlock()
+	s.insertsAndCountsByRuleMx.Lock()
+	defer s.insertsAndCountsByRuleMx.Unlock()
 	s.inserts = append(s.inserts, Failure{
 		ID:        utils.NewID(),
 		Rule:      ruleID,
@@ -86,10 +93,11 @@ func (s *failureService) Add(ruleID string, failureType int64, message string, e
 		Event:     event,
 		Unread:    true,
 	})
+	s.countsByRule[ruleID]++
 }
 
 func (s *failureService) flush(ctx context.Context) error {
-	inserts := s.flushInserts()
+	inserts, countsByRule := s.flushInserts()
 	bulkSize := canopsis.DefaultBulkSize
 	l := len(inserts)
 	bulkCount := int(math.Ceil(float64(l) / float64(bulkSize)))
@@ -105,13 +113,41 @@ func (s *failureService) flush(ctx context.Context) error {
 		}
 	}
 
+	ruleWriteModels := make([]mongodriver.WriteModel, 0, bulkSize)
+	for ruleID, inc := range countsByRule {
+		ruleWriteModels = append(ruleWriteModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": ruleID}).
+			SetUpdate(bson.M{"$inc": bson.M{
+				"failures_count":        inc,
+				"unread_failures_count": inc,
+			}}))
+		if len(ruleWriteModels) == bulkSize {
+			_, err := s.ruleCollection.BulkWrite(ctx, ruleWriteModels)
+			if err != nil {
+				return err
+			}
+
+			ruleWriteModels = ruleWriteModels[:0]
+		}
+	}
+
+	if len(ruleWriteModels) > 0 {
+		_, err := s.ruleCollection.BulkWrite(ctx, ruleWriteModels)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func (s *failureService) flushInserts() []any {
-	s.insertsMx.Lock()
-	defer s.insertsMx.Unlock()
+func (s *failureService) flushInserts() ([]any, map[string]int64) {
+	s.insertsAndCountsByRuleMx.Lock()
+	defer s.insertsAndCountsByRuleMx.Unlock()
 	inserts := s.inserts
-	s.inserts = nil
-	return inserts
+	countsByRule := s.countsByRule
+	s.inserts = make([]any, 0, len(inserts))
+	s.countsByRule = make(map[string]int64, len(countsByRule))
+
+	return inserts, countsByRule
 }

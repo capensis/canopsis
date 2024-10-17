@@ -3,30 +3,21 @@ package utils
 import (
 	crand "crypto/rand"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"math/big"
-	"reflect"
+	"regexp"
 	"strconv"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/sha3"
 )
 
 const NamingCharacterSet = "abcdefghijklmnopqrstuvwxyz1234567890"
 
 var NumberOfCharacter = int64(len(NamingCharacterSet))
-
-// GetStringField read a string field in a struct, with introspection
-func GetStringField(a interface{}, field string) string {
-	r := reflect.ValueOf(a)
-	f := reflect.Indirect(r).FieldByName(field)
-	value := f.String()
-	if value == "<invalid Value>" {
-		// zero-ing invalid values
-		value = ""
-	}
-	return value
-}
 
 // NewID generate an uuid
 func NewID() string {
@@ -158,13 +149,25 @@ func AsString(value interface{}) (string, bool) {
 }
 
 func TruncateString(s string, chars int) string {
-	if chars < 1 {
+	if chars < 1 || chars >= len(s) || chars >= utf8.RuneCountInString(s) {
 		return s
 	}
 
-	format := fmt.Sprintf("%%.%ds", chars)
+	// Check if the string is ASCII
+	if len(s) == utf8.RuneCountInString(s) {
+		return s[:chars]
+	}
 
-	return fmt.Sprintf(format, s)
+	// Handle multi-byte characters
+	truncated := make([]rune, 0, chars)
+	for _, r := range s {
+		if len(truncated) >= chars {
+			break
+		}
+		truncated = append(truncated, r)
+	}
+
+	return string(truncated)
 }
 
 // RandString generate a random string
@@ -185,4 +188,15 @@ func RandBase64String(n int) (string, error) {
 	}
 
 	return base64.RawURLEncoding.EncodeToString(b), nil
+}
+
+func ToObjectIDHex(s string) string {
+	const hexLen = 24
+	re := regexp.MustCompile(fmt.Sprintf(`^[0-9a-fA-F]{%d}$`, hexLen))
+	if len(s) != hexLen || !re.MatchString(s) {
+		hash := sha3.New384()
+		hash.Write([]byte(s))
+		s = hex.EncodeToString(hash.Sum(nil)[:hexLen/2])
+	}
+	return s
 }
