@@ -63,7 +63,7 @@ Dans Canopsis, il existe la possibilité de définir des règles **event-filter*
 * d'enrichir les entités ;
 * d'enrichir les entités à partir d'une collection de données externe (Pro).
 
-La documentation complète se trouve [sur cette page](../menu-exploitation/filtres-evenements/).
+La documentation complète se trouve [sur cette page](../menu-exploitation/filtres-evenements.md).
 
 Prenons le cas d'usage suivant :
 
@@ -85,7 +85,7 @@ Considérons l'évènement suivant :
 }
 ```
 
-Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des évènements de la documentation de l'event-filter du moteur `engine-che`](../menu-exploitation/filtres-evenements/).
+Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des évènements de la documentation de l'event-filter du moteur `engine-che`](../menu-exploitation/filtres-evenements.md).
 
 Dans notre cas, l'attribut `groupe` est personalisé et sera donc *automatiquement* inséré dans un dictionnaire **`extrainfos`**.
 
@@ -104,7 +104,7 @@ Dernière étape, nous allons récupérer le contenu de l'attribut `groupe` et l
 ![Ajout d'une action](./img/event_filter_ajout_action.png "Ajout d'une action")
 
 !!! attention
-    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../menu-exploitation/filtres-evenements/) doit être présente.
+    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../menu-exploitation/filtres-evenements.md) doit être présente.
 
 Le résultat pourra être observé sur un Bac à alarmes, par exemple :
 

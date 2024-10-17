@@ -18,7 +18,7 @@
 
 
 Comme précisé dans le
-[guide d'utilisation](../../guide-utilisation/remediation), une opération de
+[guide d'utilisation](../../guide-utilisation/remediation/index.md), une opération de
 consigne peut être liée à un ou des jobs.  
 Le diagramme suivant vous présente cette possibilité.
 
@@ -149,7 +149,7 @@ consignes.
 Si vous devez passer des variables à votre job, suivez la section
 [Payload](#utilisation-des-payloads) qui vous explique comment faire.
 
-[doc-op]: ../../guide-utilisation/remediation/mise-en-oeuvre/#associer-un-job-a-une-operation
+[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-à-une-opération
 
 ### Association de job AWX dans Canopsis
 
@@ -186,7 +186,7 @@ consignes.
 Si vous devez passer des variables à votre job, suivez la section
 [Payload](#utilisation-des-payloads) qui vous explique comment faire.
 
-[doc-op]: ../../guide-utilisation/remediation/mise-en-oeuvre/#associer-un-job-a-une-operation
+[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-à-une-opération
 
 
 ## Utilisation des `payloads`
@@ -197,7 +197,7 @@ l'ordonnanceur au moment de l'exécution d'un job.
 !!! Note
     Vous avez accès aux variables `.Alarm` et `.Entity` dans ce payload.
 
-    Les différentes valeurs sont [documentées ici](../../../guide-utilisation/templates-go/).
+    Les différentes valeurs sont [documentées ici](../../guide-utilisation/templates-go/index.md).
 
 Cette section décrit la manière de procéder pour Rundeck, AWX, et Jenkins.
 
@@ -485,4 +485,4 @@ paramètres avancés du [widget bac à alarmes][baa].
 
 [remed-index]: ../../guide-utilisation/remediation/index.md
 [mise-en-oeuvre]: ../../guide-utilisation/menu-administration/consignes.md
-[baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/#parametres-du-widget
+[baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md#paramètres-du-widget

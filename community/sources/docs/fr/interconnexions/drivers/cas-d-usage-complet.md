@@ -1,6 +1,6 @@
 # Cas d'usage du driver API (`import-context-graph`)
 
-La documentation de référence du programme `import-context-graph` est [accessible par ce lien](../driver-api/).
+La documentation de référence du programme `import-context-graph` est [accessible par ce lien](driver-api.md).
 
 Ce cas d'usage décrit une organisation de services et de composants répartis sur 3 niveaux.
 

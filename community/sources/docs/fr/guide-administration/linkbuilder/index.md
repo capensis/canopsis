@@ -30,7 +30,7 @@ La variable **{alarm.v.component}** sera remplacée par le composant impacté pa
 
 !!! Note
     Notez que les variables attachées à l'alarme sont préfixées avec *alarm* tandis que les variables attachées à l'entité ne le sont pas.
-    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../../../../guide-utilisation/menu-exploitation/filtres-evenements/) pour utiliser les variables dans le `linkbuilder`
+    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../../guide-utilisation/menu-exploitation/filtres-evenements.md) pour utiliser les variables dans le `linkbuilder`
 
 Voici la configuration qui correspond aux captures d'écran visibles au début de cette documentation.
 
