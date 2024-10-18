@@ -25,7 +25,6 @@
         @refresh="$listeners.refresh"
       )
     c-table-pagination.mt-1(
-      v-if="totalItems > pagination.rowsPerPage",
       :total-items="totalItems",
       :rows-per-page="pagination.rowsPerPage",
       :page="pagination.page",

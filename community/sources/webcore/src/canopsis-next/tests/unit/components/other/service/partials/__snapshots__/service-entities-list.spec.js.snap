@@ -74,14 +74,19 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
       widgetparameters="[object Object]"
     />
   </div>
-  <!---->
+  <c-table-pagination-stub
+    class="mt-1"
+    total-items="2"
+  />
 </div>
 `;
 
 exports[`service-entities-list Renders \`service-entities-list\` with default props 1`] = `
 <div>
   <!---->
-  <!---->
+  <c-table-pagination-stub
+    class="mt-1"
+  />
 </div>
 `;
 
@@ -160,6 +165,9 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
       widgetparameters="[object Object]"
     />
   </div>
-  <!---->
+  <c-table-pagination-stub
+    class="mt-1"
+    total-items="2"
+  />
 </div>
 `;
