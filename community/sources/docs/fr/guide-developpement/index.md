@@ -10,8 +10,8 @@ Ces API ont connu 4 versions différentes. L'APIv4 est la version actuelle.
 
 ### APIv4
 
-La documentation des APIv4 `edition community` est disponible [par le biais de Swagger-community](./swagger-community/).  
-La documentation des APIv4 `edition pro` est disponible [par le biais de Swagger-pro](./swagger-pro/).
+La documentation des APIv4 `edition community` est disponible [par le biais de Swagger-community](./swagger-community/index.md).  
+La documentation des APIv4 `edition pro` est disponible [par le biais de Swagger-pro](./swagger-pro/index.md).
 
 Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md).
 
