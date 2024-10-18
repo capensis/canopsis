@@ -100,7 +100,7 @@ L'alarme prend alors le statut `cancel` et reste pendant 1h dans le bac des alar
 
 **Note 1 :** Toute alarme annulée garde son dernier niveau de criticité connu.
 
-**Note 2 :** Par défaut, une alarme annulée manuellement reste affichée dans le Bac des alarmes en cours durant une heure. Cette durée peut être modifiée à l'aide de [l'option `CancelAutosolveDelay` du fichier de configuration global](../../../../guide-administration/administration-avancee/modification-canopsis-toml/).
+**Note 2 :** Par défaut, une alarme annulée manuellement reste affichée dans le Bac des alarmes en cours durant une heure. Cette durée peut être modifiée à l'aide de [l'option `CancelAutosolveDelay` du fichier de configuration global](../../../../guide-administration/administration-avancee/modification-canopsis-toml.md).
 
 ### Annuler l'acquittement
 
@@ -184,7 +184,7 @@ L'action 'Historique' permet de consulter l'historique de cette alarme durant le
 
 ![Historique](./img/history.png  "Historique")
 
-En utilisant le [suivi personnalisé](../../bac-a-alarmes/#suivi-personnalise), vous pouvez modifier l'intervalle de dates pour cet historique.
+En utilisant le [suivi personnalisé](../bac-a-alarmes/index.md#suivi-personnalisé), vous pouvez modifier l'intervalle de dates pour cet historique.
 
 ### Liste des variables disponibles
 

@@ -260,7 +260,7 @@ Résultat:
 
 ![Template](./img/driver-api-template.png)
 
-Il est également possible d'utiliser des fonctions dans les templates ([Liste des fonctions disponibles](../../../guide-administration/architecture-interne/templates-golang/))
+Il est également possible d'utiliser des fonctions dans les templates ([Liste des fonctions disponibles](../../guide-utilisation/templates-go/index.md))
 
 ```yaml
 infos:
@@ -334,6 +334,73 @@ Retour :
 2022-02-18T14:10:15Z INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/import-context-graph/main.go:78 > import finished deleted=0 exec_time=16.775252ms updated=3
 ```
 
+#### Programme dans Docker-Compose:
+
+``` shell
+services:
+  import-context-graph-server:
+    profiles:
+      - "import-context-graph"
+    image: docker.canopsis.net/docker/pro/import-context-graph:${CANOPSIS_IMAGE_TAG}
+    volumes:
+      - "[/chemin/vers]/pro/deployment/canopsis/docker/files/api.yml:/opt/canopsis/share/config/import-context-graph/api.yml"
+    env_file:
+      - compose.env
+      - ${CPS_EDITION:?CPS_EDITION not set}.env
+      - votre-fichier-d-environnement.env
+    environment:
+      - EXTERNAL_API_USERNAME='[testuser]'
+      - EXTERNAL_API_PASSWORD='[testpassword]'
+    depends_on:
+      api:
+        condition: service_healthy
+
+```
+
+Retour :
+``` shell
+2024-09-06T15:10:15Z INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/import-context-graph/main.go:78 > import finished deleted=0 exec_time=16.775252ms updated=3
+```
+
+### Configuration d'un proxy
+
+!!! attention
+    Dans certains cas, il est nécessaire à Canopsis d'avoir accès à un proxy afin de pouvoir accéder aux API extérieurs.
+
+=== "Exécution RPM"
+  ```shell
+  export NO_PROXY='localhost,127.0.0.1,.example.com' # Remplace par les adresses ou domaines à exclure du proxy
+  export HTTP_PROXY=ip:port # Remplace par l'URL de votre proxy HTTP
+  export HTTPS_PROXY=ip:port # Remplace par l'URL de votre proxy HTTPS 
+  ```
+
+=== "Exécution Docker"
+  ```shell
+  -e NO_PROXY='localhost,127.0.0.1,.example.com' # Remplace par les adresses ou domaines à exclure du proxy
+  -e HTTP_PROXY='ip:port' # Remplace par l'URL de votre proxy HTTP
+  -e HTTPS_PROXY='ip:port' # Remplace par l'URL de votre proxy HTTPS 
+  ```
+
+=== "Exécution Docker Compose"
+  ```yaml
+  environment:
+    - NO_PROXY='localhost,127.0.0.1,.example.com' # Remplace par les adresses ou domaines à exclure du proxy
+    - HTTP_PROXY='ip:port' # Remplace par l'URL de votre proxy HTTP
+    - HTTPS_PROXY='ip:port' # Remplace par l'URL de votre proxy HTTPS 
+
+  ```
+
+=== "Exécution K8S"
+  ```yaml
+  env:
+  - name: no_proxy
+    value: "localhost,127.0.0.1,.example.com" # Remplace par les adresses ou domaines à exclure du proxy
+  - name: http_proxy
+    value: "http://proxy.example.com:8080" # Remplace par l'URL de votre proxy HTTP
+  - name: https_proxy
+    value: "https://proxy.example.com:8080" # Remplace par l'URL de votre proxy HTTPS 
+  ```
+
 ### Résultats dans Canopsis :
 
 ![](./img/imported_entity.png)
@@ -344,4 +411,4 @@ Retour :
 
 ## Cas d'usage complet
 
-[Ici](../cas-d-usage-complet/)
+[Ici](cas-d-usage-complet.md)
