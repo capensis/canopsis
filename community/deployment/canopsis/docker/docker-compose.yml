@@ -110,7 +110,7 @@ services:
     volumes:
       - "./files/mongo-rs-init/rs-initiate.js:/tmp/rs-initiate.js"
     command: ['sh', '-c', 'mongosh "mongodb://$$MONGO_INITDB_ROOT_USERNAME:$$MONGO_INITDB_ROOT_PASSWORD@mongodb/" /tmp/rs-initiate.js']
-    restart: "no"
+    restart: on-failure:3
     depends_on:
       mongodb:
         condition: service_healthy
