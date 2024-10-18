@@ -5,9 +5,9 @@ Bienvenue sur la nouvelle documentation Canopsis !
 Cette plateforme regroupe toutes les informations permettant de mettre en place, d'utiliser et de contribuer à Canopsis.
 
 
-[:material-clock-fast: Installation de Canopsis](guide-administration/installation){ .md-button }
-[:material-link: Interconnexions](interconnexions){ .md-button }
-[:material-spellcheck: Un peu de vocabulaire](guide-utilisation/vocabulaire){ .md-button }
+[:material-clock-fast: Installation de Canopsis](guide-administration/installation/index.md){ .md-button }
+[:material-link: Interconnexions](interconnexions/index.md){ .md-button }
+[:material-spellcheck: Un peu de vocabulaire](guide-utilisation/vocabulaire/index.md){ .md-button }
 
 ## Guides
 
