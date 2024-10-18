@@ -132,7 +132,7 @@ Exemple : Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", la
 
 Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
-Pour y accèder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues#mode-edition)*).
+Pour y accèder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues/index.md#mode-édition)*).
 
 Un bouton d'action supplémentaire "Liste des variables disponibles" apparaît alors pour chaque alarme.
 
