@@ -61,9 +61,9 @@ Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite
 Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue :
 
 * Canopsis Community :  
-  <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/deployment/canopsis/docker>
+  <https://git.canopsis.net/canopsis/canopsis-community/-/releases>
 * Canopsis Pro (autorisation nécessaire) :  
-  <https://git.canopsis.net/sources/canopsis-pro-sources/-/tree/develop/pro/deployment/canopsis/docker>
+  <https://git.canopsis.net/canopsis/canopsis-pro/-/releases>
 
 Puis, exécutez la commande suivante :
 
