@@ -1,42 +1,4 @@
 <script>
-const defineDescriptor = (src, dest, name) => {
-  // eslint-disable-next-line no-prototype-builtins
-  if (!dest.hasOwnProperty(name)) {
-    const descriptor = Object.getOwnPropertyDescriptor(src, name);
-
-    Object.defineProperty(dest, name, descriptor);
-  }
-};
-
-const merge = (objs) => {
-  const res = {};
-
-  // eslint-disable-next-line guard-for-in
-  for (const obj of objs) {
-    const objKeys = obj
-      ? Object.getOwnPropertyNames(obj)
-      : [];
-
-    // eslint-disable-next-line guard-for-in
-    for (const objProp of objKeys) {
-      defineDescriptor(obj, res, objProp);
-    }
-  }
-
-  return res;
-};
-
-const buildFromProps = (obj, props) => {
-  const res = {};
-
-  // eslint-disable-next-line guard-for-in
-  for (const prop of props) {
-    defineDescriptor(obj, res, prop);
-  }
-
-  return res;
-};
-
 export default {
   props: {
     template: {
@@ -52,79 +14,71 @@ export default {
       default: () => ({}),
     },
   },
+  computed: {
+    parentNode() {
+      return this.parent || this.$parent;
+    },
+
+    parentOptions() {
+      return this.parentNode.$options;
+    },
+
+    methodProps() {
+      return Object.entries(this.parentOptions.methods ?? {}).reduce((acc, [key]) => {
+        acc[key] = this.parentNode[key];
+
+        return acc;
+      }, {});
+    },
+
+    props() {
+      return Object.entries({
+        ...this.parentNode.$data,
+        ...this.parentNode.$props,
+        ...this.methodProps,
+        ...this.templateProps,
+      }).reduce((acc, [key, value]) => {
+        if (!this.isDeclaredByMixin(key)) {
+          acc[key] = value;
+        }
+
+        return acc;
+      }, {});
+    },
+
+    propsTypes() {
+      return Object.keys({
+        ...this.parentNode.$data,
+        ...this.parentOptions.props,
+        ...this.parentOptions.methods,
+        ...this.templateProps,
+      }).filter(key => !this.isDeclaredByMixin(key));
+    },
+
+    component() {
+      return {
+        template: this.template || '<div></div>',
+        components: this.parentOptions.components,
+        computed: this.parentOptions.computed,
+        props: this.propsTypes,
+        // eslint-disable-next-line no-underscore-dangle
+        provide: this.parentNode._provided,
+      };
+    },
+  },
+  methods: {
+    isDeclaredByMixin(key) {
+      return this.$data[key] || this.$props[key] || this.$options.computed[key] || this.$options.methods[key];
+    },
+  },
   render(h) {
     if (!this.template) {
       return null;
     }
 
-    const parent = this.parent || this.$parent;
-
-    const {
-      $props: parentProps = {},
-      $data: parentData = {},
-      $options: parentOptions = {},
-    } = parent;
-    const {
-      methods: parentMethods = {},
-    } = parentOptions;
-    const {
-      $data = {},
-      $props = {},
-      $options: { methods = {} } = {},
-    } = this;
-
-    // build new objects by removing keys if already exists (e.g. created by mixins)
-    const dataFromParent = {};
-    for (const name in parentData) {
-      if (typeof $data[name] === 'undefined') {
-        dataFromParent[name] = parentData[name];
-      }
-    }
-
-    const propsFromParent = {};
-    for (const name in parentProps) {
-      if (typeof $props[name] === 'undefined') {
-        propsFromParent[name] = parentProps[name];
-      }
-    }
-
-    const methodsFromParent = {};
-    for (const name in parentMethods) {
-      if (typeof methods[name] === 'undefined') {
-        methodsFromParent[name] = parentMethods[name];
-      }
-    }
-
-    const dataKeys = Object.keys(dataFromParent);
-    const propsKeys = Object.keys(parentOptions.props ?? {});
-    const methodKeys = Object.keys(methodsFromParent);
-    const templatePropsKeys = Object.keys(this.templateProps);
-
-    const propsTypes = [...dataKeys, ...propsKeys, ...methodKeys, ...templatePropsKeys];
-
-    const methodsFromProps = buildFromProps(parent, methodKeys);
-
-    const finalProps = merge([
-      dataFromParent,
-      propsFromParent,
-      methodsFromProps,
-      this.templateProps,
-    ]);
-
-    // eslint-disable-next-line no-underscore-dangle
-    const provide = this.$parent._provided;
-
-    const dynamic = {
-      template: this.template || '<div></div>',
-      props: propsTypes,
-      computed: parentOptions.computed,
-      components: parentOptions.components,
-      provide,
-    };
-
     // eslint-disable-next-line consistent-return
-    return h(dynamic, {
-      props: finalProps,
+    return h(this.component, {
+      props: this.props,
       on: this.$listeners,
     });
   },
