@@ -38,8 +38,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [SNMP trap](Supervision/SNMPtrap.md) | Tout trap SNMP respectant la [RFC1157](https://www.rfc-editor.org/rfc/pdfrfc/rfc1157.txt.pdf) ou nécéssitant un traitement spécifique | Pro | Oui | Toutes versions |
 | [Nagios](Supervision/Nagios-et-Icinga.md) | [Icinga](https://icinga.com/) 1, [Nagios](https://www.nagios.org/)  ≤ 3.x (Nagios 4.x en beta) | Community | Oui | Toutes versions |
-| [Centreon Legacy](Supervision/Centreon.md) | [Centreon](https://www.centreon.com/) 2.11.5 à 2.11.7, 3.0.3 à 3.0.11, 3.0.13, 3.0.14, 3.0.16, 18.10 et 19.04 | Community | Oui | Toutes versions |
-| [Centreon Stream Connector](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/) | [Centreon Stream Connector](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/) | Community | Oui (par Centreon) | [22.10 >= 24.04](https://docs.centreon.com/fr/docs/23.10/integrations/data-analytics/sc-canopsis-events/#compatibilit%C3%A9)|
+| [Centreon Stream Connector](https://docs.centreon.com/fr/docs/integrations/data-analytics/sc-canopsis-events/) | [Centreon Stream Connector](https://github.com/centreon/centreon-stream-connector-scripts/tree/develop/centreon-certified/canopsis) | Community | Oui (par Centreon) | [22.10 >= 24.04](https://docs.centreon.com/fr/docs/23.10/integrations/data-analytics/sc-canopsis-events/#compatibilit%C3%A9)|
 | [Icinga](Supervision/Icinga2.md) | [Icinga 2](https://icinga.com/) | Community | Oui | Toutes versions |
 | [Zabbix](Supervision/Zabbix.md) | [Zabbix](https://www.zabbix.com/) | Community | Oui | Toutes versions |
 | [LibreNMS](Supervision/LibreNMS.md) | [LibreNMS](https://www.librenms.org/) | Community | Oui | Toutes versions |
@@ -74,7 +73,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Destination** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
-| [Webhooks](../guide-utilisation/menu-exploitation/scenarios/) | Tout outil / API HTTP qui peut réceptionner des appels webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
+| [Webhooks](../guide-utilisation/menu-exploitation/scenarios.md) | Tout outil / API HTTP qui peut réceptionner des appels webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 
