@@ -39,6 +39,7 @@ func NewMetaAlarmAttachProcessor(
 	return &metaAlarmAttachProcessor{
 		dbClient:           dbClient,
 		alarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:   dbClient.Collection(mongo.EntityMongoCollection),
 		ruleAdapter:        ruleAdapter,
 		adapter:            adapter,
 		alarmStatusService: alarmStatusService,
@@ -52,8 +53,9 @@ func NewMetaAlarmAttachProcessor(
 }
 
 type metaAlarmAttachProcessor struct {
-	dbClient        mongo.DbClient
-	alarmCollection mongo.DbCollection
+	dbClient         mongo.DbClient
+	alarmCollection  mongo.DbCollection
+	entityCollection mongo.DbCollection
 
 	ruleAdapter        correlation.RulesAdapter
 	adapter            libalarm.Adapter
@@ -254,6 +256,7 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			setUpdate = bson.M{}
 		}
 
+		setEntityUpdate := bson.M{}
 		metaAlarm.Value.Output = output
 		setUpdate["v.output"] = output
 		if metaAlarm.Value.Meta == "" {
@@ -261,11 +264,30 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			setUpdate["v.meta"] = event.Parameters.MetaAlarmRuleID
 			metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 			setUpdate["v.meta_value_path"] = event.Parameters.MetaAlarmValuePath
-			if !rule.IsManual() && rule.Tags.CopyFromChildren {
-				metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
-				setUpdate["copy_ctags"] = metaAlarm.CopyTagsFromChildren
-				metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
-				setUpdate["filter_ctags"] = metaAlarm.FilterChildrenTagsByLabel
+			if !rule.IsManual() {
+				if rule.Tags.CopyFromChildren {
+					metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
+					setUpdate["copy_ctags"] = metaAlarm.CopyTagsFromChildren
+					metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
+					setUpdate["filter_ctags"] = metaAlarm.FilterChildrenTagsByLabel
+				}
+
+				copyInfoNames := make([]string, 0)
+				for _, info := range rule.Infos {
+					if info.CopyFromChildren {
+						copyInfoNames = append(copyInfoNames, info.Name)
+						continue
+					}
+
+					setEntityUpdate["infos."+info.Name] = types.Info{
+						Name:        info.Name,
+						Description: info.Description,
+						Value:       info.Value,
+					}
+				}
+
+				metaAlarm.EntityInfosFromChildren = copyInfoNames
+				setUpdate["cinfos"] = metaAlarm.EntityInfosFromChildren
 			}
 		}
 
@@ -275,13 +297,20 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 		}
 
 		addToSet := bson.M{"v.children": bson.M{"$each": childrenIds}}
-		if !rule.IsManual() && metaAlarm.CopyTagsFromChildren {
-			newExternalTags := getMetaAlarmExternalTags(metaAlarm.FilterChildrenTagsByLabel, alarms, metaAlarm.ExternalTags)
-			if len(newExternalTags) > 0 {
-				metaAlarm.Tags = append(metaAlarm.Tags, newExternalTags...)
-				metaAlarm.ExternalTags = append(metaAlarm.ExternalTags, newExternalTags...)
-				addToSet["tags"] = bson.M{"$each": newExternalTags}
-				addToSet["etags"] = bson.M{"$each": newExternalTags}
+		if !rule.IsManual() {
+			if metaAlarm.CopyTagsFromChildren {
+				newExternalTags := getMetaAlarmExternalTags(metaAlarm.FilterChildrenTagsByLabel, alarms, metaAlarm.ExternalTags)
+				if len(newExternalTags) > 0 {
+					metaAlarm.Tags = append(metaAlarm.Tags, newExternalTags...)
+					metaAlarm.ExternalTags = append(metaAlarm.ExternalTags, newExternalTags...)
+					addToSet["tags"] = bson.M{"$each": newExternalTags}
+					addToSet["etags"] = bson.M{"$each": newExternalTags}
+				}
+			}
+
+			newEntityInfos := getMetaAlarmEntityInfos(metaAlarm.EntityInfosFromChildren, alarms, event.Entity.Infos)
+			for k, v := range newEntityInfos {
+				setEntityUpdate["infos."+k] = v
 			}
 		}
 
@@ -298,8 +327,19 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			SetFilter(bson.M{"_id": metaAlarm.ID}).
 			SetUpdate(update))
 		_, err = p.alarmCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
 
-		return err
+		if len(setEntityUpdate) > 0 {
+			_, err = p.entityCollection.UpdateOne(ctx, bson.M{"_id": metaAlarm.EntityID},
+				bson.M{"$set": setEntityUpdate})
+			if err != nil {
+				return fmt.Errorf("cannot update meta alarm entity: %w", err)
+			}
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, nil, err

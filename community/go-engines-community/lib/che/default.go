@@ -185,8 +185,8 @@ func NewEngine(
 	})
 
 	eventProcessor := event.NewProcessorContainer()
-	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(mongoClient, contextGraphManager, eventFilterService))
-	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(mongoClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(mongoClient, contextGraphManager, eventFilterService, logger))
+	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(mongoClient, contextGraphManager, eventFilterService, logger))
 	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(mongoClient, contextGraphManager, eventFilterService))
 	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(mongoClient, contextGraphManager, eventFilterService))
 	eventProcessor.Set(types.SourceTypeMetaAlarm, event.NewMetaAlarmProcessor())
