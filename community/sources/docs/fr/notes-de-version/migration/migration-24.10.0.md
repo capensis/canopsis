@@ -29,12 +29,12 @@ La restructuration apportée dans les bases de données pour cette version de Ca
 
 !!! warning "Vérification"
 
-    Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **5.0**  
+    Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **7.0**  
 
     === "Docker Compose"
         ```sh
         CPS_EDITION=pro docker compose exec mongodb bash
-        mongo -u root -p root
+        mongosh -u root -p root
         > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
         > exit
         ```
@@ -42,7 +42,7 @@ La restructuration apportée dans les bases de données pour cette version de Ca
     === "Paquets RHEL 8"
 
         ```sh
-        mongo -u root -p root
+        mongosh -u root -p root
         > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
         > exit
         ```
@@ -54,7 +54,7 @@ La restructuration apportée dans les bases de données pour cette version de Ca
         kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
         ```
 
-    Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "5.0" }, "ok" : 1 }`
+    Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
 
 
@@ -122,251 +122,77 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Non concerné car ces configurations sont livrées directement dans les charts helm
 
-### Mise à jour de MongoDB
-
-Dans cette version de Canopsis, la base de données MongoDB passe de la version 5.0 à 7.0.  
-2 étapes sont nécessaires pour cette migration : 
-
-1. De 5.0 à 6.0
-2. De 6.0 à 7.0
-
-=== "Docker Compose"
-
-    Modifiez la variable `MONGO_TAG` du fichier `.env` de cette façon :
-
-    ```diff
-    -MONGO_TAG=7.0.8-jammy
-    +MONGO_TAG=6.0.15-jammy
-    ```
-
-    Démarrez le conteneur `mongodb` :
-
-    ```sh
-    CPS_EDITION=pro docker compose up -d mongodb
-    ```
-
-    Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 6.0 :
-
-    ```sh
-    CPS_EDITION=pro docker compose exec mongodb bash
-    mongosh -u root -p root
-    > db.adminCommand( { setFeatureCompatibilityVersion: "6.0" } )
-    exit
-    ```
-
-    Modifiez la variable `MONGO_TAG` du fichier `.env` de cette façon :
-
-    ```diff
-    -MONGO_TAG=6.0.15-jammy
-    +MONGO_TAG=7.0.8-jammy
-    ```
-
-    Démarrez le conteneur `mongodb` :
-
-    ```sh
-    CPS_EDITION=pro docker compose up -d mongodb
-    ```
-
-    Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 7.0 :
-
-    ```sh
-    CPS_EDITION=pro docker compose exec mongodb bash
-    mongosh -u root -p root
-    > db.adminCommand( { setFeatureCompatibilityVersion: "7.0", "confirm" : true } )
-    ```
-
-    Après avoir mis à jour mongodb, l'option de telemetry sera activée. Pour la désactiver, exécutez la commande suivante :
-    
-    ```sh
-    CPS_EDITION=pro docker compose exec mongodb bash
-    mongosh -u root -p root
-    > disableTelemetry()
-    exit
-    ```
-
-
-=== "Paquets RHEL 8"
-
-    !!! note
-        Si vous avez mis en place des exclusions dans le fichier `/etc/yum.conf`, veillez à la désactiver le temps de cette procédure.
-
-    Mise à jour des paquets `mongodb` :
-
-    ```sh
-    echo '[mongodb-org-6.0]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/6.0/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc' | tee /etc/yum.repos.d/mongodb-org-6.0.repo
-    dnf makecache
-    dnf install mongodb-org-6.0.15 mongodb-org-database-6.0.15 mongodb-org-server-6.0.15 mongodb-org-mongos-6.0.15 mongodb-org-tools-6.0.15
-    ```
-
-    Redémarrage de `mongodb` :
-
-    ```sh
-    systemctl start mongod
-    ```
-
-    Ensuite, complétez la mise à jour vers MongoDB 6.0 :
-
-    ```sh
-    mongosh -u root -p root
-    > db.adminCommand( { setFeatureCompatibilityVersion: "6.0" } )
-    exit
-    ```
-
-    Mise à jour des paquets `mongodb` :
-
-    !!! warning "Avertissement"
-
-        Lors du passage de la version 6 à la version 7 l'option `storage.journal.enabled` est supprimée de mongodb.
-        
-        Si vous l'utilisiez, vous devez modifier le fichier `/etc/mongod.conf` et retirer les lignes suivantes:
-        ```
-        journal:
-            enabled: true
-        ```
-    
-    ```sh
-    echo '[mongodb-org-7.0]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc' | tee /etc/yum.repos.d/mongodb-org-7.0.repo
-    dnf makecache
-    dnf install mongodb-org-7.0.8 mongodb-org-database-7.0.8 mongodb-org-server-7.0.8 mongodb-org-mongos-7.0.8 mongodb-org-tools-7.0.8
-    ```
-
-
-    Redémarrage de `mongodb` :
-
-    ```sh
-    systemctl start mongod
-    ```
-
-    Ensuite, complétez la mise à jour vers MongoDB 7.0 :
-
-    ```sh
-    mongosh -u root -p root
-    > db.adminCommand( { setFeatureCompatibilityVersion: "7.0", confirm: true } )
-    exit
-    ```
- 
-    Après avoir mis à jour mongodb, l'option de telemetry sera activée. Pour la désactiver, exécutez la commande suivante :
-    
-    ```sh
-    mongosh -u root -p root
-    > disableTelemetry()
-    ```
-
-=== "Helm"
-
-    !!! warning Attention
-        Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
-        
-        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_4_2)
-
-    Dump de la base de données Canopsis :
-    ```sh
-    kubectl exec -n canopsis canopsis-mongodb-0 -- mongodump --uri="mongodb://cpsmongo:canopsis@localhost:27017/canopsis" --gzip --out /tmp/dump_canopsis.gz
-    ```
-
-    Récupération en local du dump :
-    ```sh
-    kubectl cp canopsis/canopsis-mongodb-0:/tmp/dump_canopsis.gz .
-    ```
-
-    Arrêt des pods MongoDB :
-    ```sh
-    kubectl scale statefulset canopsis-mongodb --replicas=0
-    ```
-
-    Suppresion des PVCs MongoDB :
-    ```sh
-    kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
-    ```
-
-    Mise à jour de MongoDB :
-    ```sh
-    helm repo update
-
-    helm upgrade canopsis bitnami/mongodb --set auth.enabled=true --set architecture=replicaset --set replicaCount=3 --set auth.enabled=true --set auth.usernames={'cpsmongo'} --set auth.passwords={'canopsis'} --set auth.databases={'canopsis'} --set externalAccess.enable=true --set replicaSetName=rs0 --set persistence.resourcePolicy=keep --set externalAccess.service.type=ClusterIP --set arbiter.enabled=false --version 15.6.2
-    ```
-
-    Lorsque les trois replicas sont UP, copie du dump de la DB sur l'instance 0 de MongoDB : 
-    ```sh
-    kubectl cp ./canopsis canopsis-mongodb-0:/tmp/
-    ```
-
-    Restauration du dump :
-    ```sh
-    kubectl exec -n canopsis canopsis-mongodb-0 -- mongorestore -u cpsmongo --password canopsis --gzip --db canopsis /tmp/canopsis
-    ``` 
-
 ### Mise à jour de TimescaleDB
 
-Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.14.2 à 2.15.1.
+Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.14.2 à 2.15.1.  
+En plus de la mise à jour de TimescaleDB lui-même, le système de gestion de base de données PostreSQL doit être mis à jour de la version 13 à la version 15.
 
+Deux étapes sont à suivre :
 
-Upgrading TimescaleDB from **`2.14.2-pg13`** to **`2.15.1-pg15`**
-
-The upgrade process is performed in two steps: first upgrading `postgres` from version **`13`** to **`15`**, and then upgrading TimescaleDB version from **`2.14.2`** to **`2.15.1`**.
-
-Below is instruction how to upgrade TimescaleDB if it deployed via docker compose.
-
-Step 1: Upgrade to `pg15`
-
-1. Backup your Database
-
-Before proceeding with any upgrade, use the `pg_dump` command to create a full dump of your database, for example:
-
-```bash
-pg_dump ${POSTGRES_URL} -Ft -f ${POSTGRES_DUMP_ARCHIVE}
-```
-
-2. Stop TimescaleDB container and clean volumes.
-3. Update Docker image tag to `2.14.2-pg15`.
-4. Start TimescaleDB container and use the `pg_restore` command to restore the db, for example:
-
-```bash
-pg_restore --dbname=${POSTGRES_URL} --no-owner -Ft -v ${POSTGRES_DUMP_ARCHIVE}
-```
-
-5. Verify PostgreSQL version with `SELECT version();` and check that all your data has been restored correctly.
-
-
-Step 2: Upgrade to TimescaleDB `2.15.1`
-
-1. Stop TimescaleDB container, **do not clean volumes**.
-2. Update Docker image tag to `2.15.1-pg15`.
-3. Start TimescaleDB container and execute `ALTER EXTENSION timescaledb UPDATE;` for every database via `psql` command.
-
-**Additional note:**
-
-If you plan to create new databases after TimescaleDB upgrade. You need too update the default database template too.
-
-You can do it with psql commands:
-
-```
-\c template1
-ALTER EXTENSION timescaledb UPDATE;
-```
+1. Mise à jour de PostgreSQL de 13 vers 15
+2. Mise à jour de TimescaleDB 14.2 à 2.15.1
 
 
 === "Docker Compose"
 
-    Relancez le conteneur `timescaledb` :
+    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -TIMESCALEDB_TAG=2.15.1-pg15
+    +TIMESCALEDB_TAG=2.14.2-pg13
+    ```
+
+    Sauvegarde de la base de données
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d timescaledb
+    CPS_EDITION=pro docker compose exec timescaledb pg_dump postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis -Ft -f /tmp/postgres_dump_archive.tar
+    CPS_EDITION=pro docker compose cp timescaledb:/tmp/postgres_dump_archive.tar /tmp
+    ```
+
+    Arrêtez le conteneur et supprimez les volume associé
+
+    ```sh
+    CPS_EDITION=pro docker compose down -v timescaledb
+    ```
+
+    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -TIMESCALEDB_TAG=2.14.2-pg13
+    +TIMESCALEDB_TAG=2.14.2-pg15
+    ```
+
+    Démarrer le conteneur timescaledb
 
     ```sh
     CPS_EDITION=pro docker compose up -d timescaledb
     ```
 
-    Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
+    Restaurez le dump précédemment effectué
 
     ```sh
+    CPS_EDITION=pro docker compose cp /tmp/postgres_dump_archive.tar timescaledb:/tmp/postgres_dump_archive.tar
+    CPS_EDITION=pro docker compose exec timescaledb pg_restore --dbname=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis --no-owner -Ft -v /tmp/postgres_dump_archive.tar
+    ```
+
+    Arrêtez le conteneur
+
+    ```sh
+    CPS_EDITION=pro docker compose stop timescaledb
+    ```
+
+    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -TIMESCALEDB_TAG=2.14.2-pg15
+    +TIMESCALEDB_TAG=2.15.1-pg15
+    ```
+
+    Démarrer le conteneur timescaledb et mettez à jour l'extension
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d timescaledb
     CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
     canopsis=# ALTER EXTENSION timescaledb UPDATE;
     ```
@@ -376,116 +202,16 @@ ALTER EXTENSION timescaledb UPDATE;
     ```sh
     \dx
     ...
-    timescaledb | 2.14.2   | public     | Enables scalable inserts and complex queries for time-series data (Community Edition)
+    timescaledb | 2.15.1   | public     | Enables scalable inserts and complex queries for time-series data (Community Edition)
     ...
     exit
     ```
 
 === "Paquets RHEL 8"
 
-    Mise à jour des paquets `timescaledb` :
-
-    ```sh
-    dnf install timescaledb-2-postgresql-13-2.14.2 timescaledb-2-loader-postgresql-13-2.14.2
-    ```
-
-    Relancez le service `timescaledb` (géré par PostgreSQL) :
-
-    ```sh
-    systemctl start postgresql-13
-    ```
-
-    Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
-
-    ```sh
-    sudo -u postgres psql postgresql://cpspostgres:canopsis@localhost:5432/canopsis
-    canopsis=# ALTER EXTENSION timescaledb UPDATE;
-    ```
-
-    !!! warning "Avertissement"
-        Si l'opération `ALTER EXTENSION` échoue avec le message
-        `ERROR:  must be owner of extension timescaledb`
-        veuillez suivre les opérations suivantes :
-        ```sh
-        su - postgres
-        psql -X
-        \c canopsis
-        canopsis=# ALTER EXTENSION timescaledb UPDATE;
-        ```
-
-    Ensuite, vérifiez que l'extension en elle-même est à présent bien à jour
-
-    ```sh
-    \dx
-    ...
-    timescaledb | 2.14.2   | public     | Enables scalable inserts and complex queries for time-series data (Community Edition)
-    ...
-    exit
-    ```
 
 === "Helm"
 
-    !!! warning Attention
-        Ce bloc est réservé uniquement aux environnements impliquant TimescaleDB exécuté dans un environnement Kubernetes.
-        
-        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_5_2)
-
-    Non concerné, la mise à jour est faite automatiquement lors de l'upgrade.
-    
-
-### Mise à jour de RabbitMQ
-
-Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.13.  
-
-=== "Docker Compose"
-
-    Il suffit de démarrer le conteneur
-
-    ```sh
-    CPS_EDITION=pro docker compose up -d rabbitmq
-    ```
-
-=== "Paquets RHEL 8"
-
-    Passage en version 3.12 puis lancement du service `rabbitmq-server` :
-
-    ```sh
-    dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.12.13
-    systemctl restart rabbitmq-server
-    ```
-
-=== "Helm"
-
-    !!! warning Attention
-        Ce bloc est réservé uniquement aux environnements impliquant RabbitMQ exécuté dans un environnement Kubernetes.
-        
-        Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_6_2)
-
-
-    Non concerné, automatiquement géré par l'upgrade. 
-
-### Remise à 0 du cache Redis
-
-Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
-
-=== "Docker Compose"
-
-    ```sh
-    CPS_EDITION=pro docker compose up -d redis
-    CPS_EDITION=pro docker compose exec redis /usr/local/bin/redis-cli -a canopsis flushall
-    OK
-    ```
-
-=== "Paquets RHEL 8"
-
-    ```sh
-    systemctl start redis
-    /bin/redis-cli -a canopsis flushall
-    ```
-
-=== "Helm"
-
-    Non concerné, le flush est fait automatiquement lors de l'upgrade.
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
@@ -493,8 +219,8 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
 Si vous avez modifié le fichier `canopsis.toml` (vous le voyez via une définition de volume dans votre fichier docker-compose.yml), vous devez vérifier qu'il soit bien à jour par rapport au fichier de référence.  
 
-* [`canopsis.toml` pour Canopsis Community 24.04.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/24.04.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
-* [`canopsis.toml` pour Canopsis Pro 24.04.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/24.04.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
+* [`canopsis.toml` pour Canopsis Community 24.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/24.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
+* [`canopsis.toml` pour Canopsis Pro 24.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/24.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
 
 !!! information "Information"
 
@@ -574,7 +300,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Mise à jour de Canopsis
 
     ```sh
-    dnf install canopsis-pro-24.04.0 canopsis-webui-24.04.0
+    dnf install canopsis-pro-24.10.0 canopsis-webui-24.10.0
     ```
 
     Reconfiguration de Canopsis
@@ -588,7 +314,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
 
     ```sh
-    systemctl start postgresql-13
+    systemctl start postgresql-15
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition pro
     ```
@@ -620,5 +346,5 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
-![Healthcheck](./img/24.04.0-healthcheck.png)
+![Healthcheck](./img/24.10.0-healthcheck.png)
 
