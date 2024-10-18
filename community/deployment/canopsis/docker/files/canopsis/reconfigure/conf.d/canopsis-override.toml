@@ -1,2 +1,17 @@
-[Canopsis.alarm]
-CancelAutosolveDelay="1m"
+# Here is an example canopsis-override.toml file
+# with a few common overridable parameters.
+#
+# Complete documentation about this file and various parameters
+# can be found here (FR):
+# https://doc.canopsis.net/guide-administration/administration-avancee/modification-canopsis-toml/
+#
+
+#[Canopsis.alarm]
+#CancelAutosolveDelay = "1m"
+#DisplayNameScheme = "{{ rand_string 4 }}-{{ rand_string 4 }}-{{ rand_string 4 }}"
+#LongOutputLength = 1024
+
+#[Canopsis.template.vars]
+#system_env_var_prefixes = ["ENV_"]
+#var1 = "val1"
+#var2 = "val2"
