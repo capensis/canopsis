@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -950,4 +951,40 @@ func getMetaAlarmExternalTags(
 	}
 
 	return tags
+}
+
+func getMetaAlarmEntityInfos(
+	infoNames []string,
+	children []types.AlarmWithEntity,
+	existedInfos map[string]types.Info,
+) map[string]types.Info {
+	if len(infoNames) == 0 {
+		return nil
+	}
+
+	infoNameMap := make(map[string]struct{}, len(infoNames))
+	for _, infoName := range infoNames {
+		infoNameMap[infoName] = struct{}{}
+	}
+
+	infos := make(map[string]types.Info)
+	for _, child := range children {
+		for infoName := range infoNameMap {
+			if info, ok := child.Entity.Infos[infoName]; ok {
+				if existedInfo, ok := existedInfos[infoName]; ok {
+					if reflect.DeepEqual(existedInfo.Value, info.Value) {
+						continue
+					}
+				}
+
+				infos[infoName] = types.Info{
+					Name:        infoName,
+					Value:       info.Value,
+					Description: info.Description,
+				}
+			}
+		}
+	}
+
+	return infos
 }
