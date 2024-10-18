@@ -4,10 +4,10 @@
     :items="preparedLinks"
     :small="small"
     :inline-count="inlineCount"
+    :item-class="chipsItemClass"
     class="c-links-chips"
     item-text="text"
     item-value="url"
-    item-class="c-links-chips__chip"
     text-color=""
     return-object
     outlined
@@ -21,6 +21,7 @@
       >
         <template #activator="{ on }">
           <v-icon
+            class="c-links-chips__icon--only-icon"
             small
             v-on="on"
           >
@@ -89,6 +90,13 @@ export default {
         color: `blue-grey${this.$system.dark ? ' lighten-1' : ''}`,
       }));
     },
+
+    chipsItemClass() {
+      return {
+        'c-links-chips__chip': true,
+        'c-links-chips__chip--only-icon': this.onlyIcon,
+      };
+    },
   },
   methods: {
     async select(link) {
@@ -117,7 +125,13 @@ export default {
 </script>
 
 <style lang="scss">
-.c-links-chips__chip .v-chip__content {
-  padding: 0 4px;
+.c-links-chips__chip {
+  .v-chip__content {
+    padding: 0 4px;
+  }
+
+  &--only-icon {
+    width: 26px;
+  }
 }
 </style>
