@@ -21,7 +21,6 @@
       >
         <template #activator="{ on }">
           <v-icon
-            class="c-links-chips__icon--only-icon"
             small
             v-on="on"
           >
