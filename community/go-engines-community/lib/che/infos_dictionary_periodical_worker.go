@@ -139,7 +139,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 
 	for {
 		pipeline := []bson.M{
-			{"$match": bson.M{"_id": bson.M{"$gt": lastEntityID}}},
+			{"$match": bson.M{"enabled": true, "_id": bson.M{"$gt": lastEntityID}}},
 			{"$limit": entitiesLimit},
 			{"$addFields": bson.M{"Infos": bson.M{"$objectToArray": "$infos"}}},
 			{"$project": bson.M{"_id": 1, "Infos": 1}},
