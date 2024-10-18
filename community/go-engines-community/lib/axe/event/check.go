@@ -628,7 +628,7 @@ func (p *checkProcessor) postProcess(
 			p.logger.Err(err).Msg("cannot update pbehavior")
 		}
 
-		if event.Entity.PbehaviorInfo.IsDefaultActive() {
+		if !result.Alarm.Value.PbehaviorInfo.IsDefaultActive() {
 			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
 			if err != nil {
 				p.logger.Err(err).Msg("cannot update pbehavior")
