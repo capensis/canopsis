@@ -45,7 +45,6 @@
       />
     </div>
     <c-table-pagination
-      v-if="totalItems > options.itemsPerPage"
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
