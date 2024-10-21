@@ -35,6 +35,7 @@ type recomputeMessageProcessor struct {
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Publisher                libamqp.Publisher
+	InheritedServiceResolver libpbehavior.InheritedServicePbhResolver
 	Exchange, Queue          string
 	Logger                   zerolog.Logger
 }
@@ -64,15 +65,17 @@ func (p *recomputeMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, event rpc.PbehaviorRecomputeEvent) error {
 	ids := event.Ids
+
 	var resolver libpbehavior.ComputedEntityTypeResolver
 	var err error
+
 	if len(ids) == 0 {
 		resolver, err = p.PbhService.Recompute(ctx)
 	} else {
 		resolver, err = p.PbhService.RecomputeByIds(ctx, ids)
 	}
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to recompute pbehaviors: %w", err)
 	}
 
 	if len(ids) == 0 {
@@ -86,12 +89,79 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, event
 			Msg("pbehaviors recomputed")
 	}
 
-	excludeIds := make([]string, 0)
-	for _, id := range ids {
-		excludeIds, err = p.updateAlarms(ctx, id, excludeIds, resolver, ids, event.Author, event.UserID, event.Initiator)
-		if err != nil {
-			return err
+	if len(ids) != 0 {
+		var serviceEvents []types.Event
+		var inheritedServicePbhResult libpbehavior.InheritedServicesPbhResolveResult
+		var excludeIDs []string
+		var servicesMap map[string]types.Entity
+
+		if event.RecomputeInherited {
+			serviceEvents, inheritedServicePbhResult, servicesMap, err = p.InheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
+			if err != nil {
+				return fmt.Errorf("failed to resolve inherited service pbehaviors: %w", err)
+			}
+
+			err = p.sendServiceEvents(ctx, serviceEvents, event, ids, servicesMap)
+			if err != nil {
+				return fmt.Errorf("failed to send service events: %w", err)
+			}
+
+			excludeIDs = make([]string, len(inheritedServicePbhResult.IDs))
+			copy(excludeIDs, inheritedServicePbhResult.IDs)
+		} else {
+			inheritedServicePbhResult, err = p.InheritedServiceResolver.GetResolvedInheritedServicePbh(ctx)
+			if err != nil {
+				return fmt.Errorf("failed to get resolved inherited pbh for services: %w", err)
+			}
 		}
+
+		for _, id := range ids {
+			excludeIDs, err = p.updateAlarms(ctx, id, excludeIDs, inheritedServicePbhResult, resolver, ids, event)
+			if err != nil {
+				return fmt.Errorf("failed to update alarms: %w", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+func (p *recomputeMessageProcessor) sendServiceEvents(
+	ctx context.Context,
+	events []types.Event,
+	rpcEvent rpc.PbehaviorRecomputeEvent,
+	updatedPbhIds []string,
+	servicesMap map[string]types.Entity,
+) error {
+	for idx := range events {
+		p.resolveEventAuthor(rpcEvent, updatedPbhIds, servicesMap[events[idx].Component].PbehaviorInfo.ID, &events[idx])
+
+		body, err := p.Encoder.Encode(events[idx])
+		if err != nil {
+			return fmt.Errorf("cannot encode event: %w", err)
+		}
+
+		err = p.Publisher.PublishWithContext(
+			ctx,
+			p.Exchange,
+			p.Queue,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  canopsis.JsonContentType,
+				Body:         body,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+
+		if err != nil {
+			return fmt.Errorf("cannot send event: %w", err)
+		}
+
+		p.Logger.Debug().
+			Str("pbehavior", events[idx].PbehaviorInfo.ID).
+			Str("entity", events[idx].Component).
+			Msgf("send %s event", events[idx].EventType)
 	}
 
 	return nil
@@ -101,21 +171,29 @@ func (p *recomputeMessageProcessor) updateAlarms(
 	ctx context.Context,
 	pbhId string,
 	excludeIds []string,
+	inheritedServicePbhResult libpbehavior.InheritedServicesPbhResolveResult,
 	resolver libpbehavior.ComputedEntityTypeResolver,
 	updatedPbhIds []string,
-	author, userID, initiator string,
+	event rpc.PbehaviorRecomputeEvent,
 ) ([]string, error) {
-	matchByPbehaviorId := bson.M{"pbehavior_info.id": pbhId}
+	matchByPbehaviorId := make(bson.M)
 	if len(excludeIds) > 0 {
 		matchByPbehaviorId["_id"] = bson.M{"$nin": excludeIds}
 	}
+
+	orStmt := []bson.M{{"pbehavior_info.id": pbhId}}
+	if len(inheritedServicePbhResult.IDs) > 0 {
+		orStmt = append(orStmt, bson.M{"services": bson.M{"$in": inheritedServicePbhResult.IDs}})
+	}
+
+	matchByPbehaviorId["$or"] = orStmt
 
 	cursor, err := p.EntityCollection.Find(ctx, matchByPbehaviorId)
 	if err != nil {
 		return excludeIds, err
 	}
 
-	idsByPbhInfo, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userID, initiator)
+	idsByPbhInfo, err := p.sendAlarmEvents(ctx, cursor, pbhId, inheritedServicePbhResult, resolver, updatedPbhIds, event)
 	if err != nil {
 		return excludeIds, err
 	}
@@ -151,23 +229,22 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		return excludeIds, err
 	}
 
-	idsByPattern, err := p.sendAlarmEvents(ctx, cursor, pbhId, resolver, updatedPbhIds, author, userID, initiator)
+	idsByPattern, err := p.sendAlarmEvents(ctx, cursor, pbhId, inheritedServicePbhResult, resolver, updatedPbhIds, event)
 	if err != nil {
 		return excludeIds, err
 	}
 
-	excludeIds = append(excludeIds, idsByPattern...)
-
-	return excludeIds, nil
+	return append(excludeIds, idsByPattern...), nil
 }
 
 func (p *recomputeMessageProcessor) sendAlarmEvents(
 	ctx context.Context,
 	cursor mongo.Cursor,
 	pbhId string,
+	inheritedServicePbhResult libpbehavior.InheritedServicesPbhResolveResult,
 	resolver libpbehavior.ComputedEntityTypeResolver,
 	updatedPbhIds []string,
-	author, userID, initiator string,
+	rpcEvent rpc.PbehaviorRecomputeEvent,
 ) ([]string, error) {
 	if cursor == nil {
 		return nil, nil
@@ -191,6 +268,8 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 			return nil, fmt.Errorf("cannot resolve pbehavior for entity: %w", err)
 		}
 
+		resolveResult = inheritedServicePbhResult.ResolveForEntity(resolveResult, entity.Services)
+
 		event, err := p.EventManager.GetEvent(resolveResult, entity, datetime.CpsTime{Time: now})
 		if err != nil {
 			p.Logger.Err(err).Str("entity", entity.ID).Msg("cannot generate event")
@@ -201,25 +280,7 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 			continue
 		}
 
-		if author != "" {
-			newPbhId := event.PbehaviorInfo.ID
-			prevPbhId := entity.PbehaviorInfo.ID
-			if newPbhId != "" && slices.Contains(updatedPbhIds, newPbhId) ||
-				prevPbhId != "" && slices.Contains(updatedPbhIds, prevPbhId) {
-				event.Author = author
-				if !event.PbehaviorInfo.IsDefaultActive() {
-					event.PbehaviorInfo.Author = author
-				}
-
-				if userID != "" {
-					event.UserID = userID
-				}
-
-				if initiator != "" {
-					event.Initiator = initiator
-				}
-			}
-		}
+		p.resolveEventAuthor(rpcEvent, updatedPbhIds, entity.PbehaviorInfo.ID, &event)
 
 		body, err := p.Encoder.Encode(event)
 		if err != nil {
@@ -254,5 +315,32 @@ func (p *recomputeMessageProcessor) logError(err error, errMsg string, msg []byt
 		p.Logger.Err(err).Str("event", string(msg)).Msg(errMsg)
 	} else {
 		p.Logger.Err(err).Msg(errMsg)
+	}
+}
+
+func (p *recomputeMessageProcessor) resolveEventAuthor(
+	rpcEvent rpc.PbehaviorRecomputeEvent,
+	updatedPbhIds []string,
+	prevPbhId string,
+	event *types.Event,
+) {
+	if rpcEvent.Author != "" {
+		newPbhId := event.PbehaviorInfo.ID
+
+		if newPbhId != "" && slices.Contains(updatedPbhIds, newPbhId) ||
+			prevPbhId != "" && slices.Contains(updatedPbhIds, prevPbhId) {
+			event.Author = rpcEvent.Author
+			if !event.PbehaviorInfo.IsDefaultActive() {
+				event.PbehaviorInfo.Author = rpcEvent.Author
+			}
+
+			if rpcEvent.UserID != "" {
+				event.UserID = rpcEvent.UserID
+			}
+
+			if rpcEvent.Initiator != "" {
+				event.Initiator = rpcEvent.Initiator
+			}
+		}
 	}
 }

@@ -10,6 +10,7 @@ const (
 	PbehaviorPeriodicalLockKey      = "pbehavior-periodical-lock-key"
 	PbehaviorCleanPeriodicalLockKey = "pbehavior-clean-periodical-lock-key"
 	RecomputeLockKey                = "pbehavior-recompute-lock-key"
+	RecomputeInheritedLockKey       = "pbehavior-recompute-inherited-lock-key"
 	RecomputeLockDuration           = 10 * time.Second
 
 	ActionPeriodicalLockKey    = "action-periodical-lock-key"
@@ -39,10 +40,11 @@ const (
 	RemediationStatsPeriodicalLockKey   = "remediation-stats-periodical-lock-key"
 	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
 
-	PbehaviorSpanKey              = "pbehavior-span"
-	PbehaviorTypesKey             = "pbehavior-types"
-	PbehaviorDefaultActiveTypeKey = "pbehavior-default-active-type"
-	PbehaviorComputedKey          = "pbehavior-computed-"
+	PbehaviorSpanKey                   = "pbehavior-span"
+	PbehaviorTypesKey                  = "pbehavior-types"
+	PbehaviorDefaultActiveTypeKey      = "pbehavior-default-active-type"
+	PbehaviorComputedKey               = "pbehavior-computed-"
+	PbehaviorComputedInheritedServices = "pbehavior-computed-inherited-services"
 
 	DynamicInfosDictionaryPeriodicalLockKey = "dynamic-infos-dictionary-periodical-lock-key"
 

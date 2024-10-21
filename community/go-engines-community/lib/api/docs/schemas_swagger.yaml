@@ -3787,6 +3787,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3847,6 +3849,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3889,6 +3893,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         type: string
       reason:
@@ -3961,6 +3967,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.Exdate'
         type: array
+      inherited:
+        type: boolean
       is_active_status:
         description: IsActiveStatus represents if pbehavior is in action for current
           time.
@@ -4034,6 +4042,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string

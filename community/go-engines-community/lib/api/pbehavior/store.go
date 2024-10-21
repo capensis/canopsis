@@ -42,10 +42,10 @@ type Store interface {
 	CalendarByEntityID(ctx context.Context, entity libtypes.Entity, r CalendarByEntityIDRequest) ([]CalendarResponse, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
-	Update(ctx context.Context, r UpdateRequest) (*Response, error)
-	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
-	Delete(ctx context.Context, id, userID string) (bool, error)
-	DeleteByName(ctx context.Context, name, userID string) (string, error)
+	Update(ctx context.Context, r UpdateRequest) (*Response, bool, error)
+	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, bool, error)
+	Delete(ctx context.Context, id, userID string) (bool, bool, error)
+	DeleteByName(ctx context.Context, name, userID string) (string, bool, error)
 	FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error)
 	EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error)
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
@@ -310,7 +310,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, error) {
 	now := datetime.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.Updated = &now
@@ -325,7 +325,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	if rruleEnd == nil {
 		unset["rrule_end"] = ""
@@ -339,14 +339,19 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	}
 
 	var pbh *Response
+	var recomputeInherited bool
+
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+		recomputeInherited = false
 
 		prevPbh := pbehavior.PBehavior{}
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
+
+		recomputeInherited = prevPbh.Inherited
 
 		if prevPbh.Origin != "" {
 			if len(prevPbh.Entities) > 0 {
@@ -377,10 +382,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		return err
 	})
 
-	return pbh, err
+	if pbh != nil {
+		recomputeInherited = recomputeInherited || pbh.Inherited
+	}
+
+	return pbh, recomputeInherited, err
 }
 
-func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error) {
+func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, bool, error) {
 	set := bson.M{
 		"author":  r.Author,
 		"updated": datetime.NewCpsTime(),
@@ -439,6 +448,9 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		unset["corporate_entity_pattern"] = ""
 		unset["corporate_entity_pattern_title"] = ""
 	}
+	if r.Inherited != nil {
+		set["inherited"] = *r.Inherited
+	}
 
 	if rruleUpdated {
 		unset["rrule_cstart"] = ""
@@ -450,14 +462,19 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	}
 
 	var pbh *Response
+	var recomputeInherited bool
+
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+		recomputeInherited = false
 
 		prevPbh := pbehavior.PBehavior{}
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
+
+		recomputeInherited = prevPbh.Inherited
 
 		if prevPbh.Origin != "" {
 			if len(prevPbh.Entities) > 0 {
@@ -514,39 +531,61 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		return nil
 	})
 
-	return pbh, err
+	if pbh != nil {
+		recomputeInherited = recomputeInherited || pbh.Inherited
+	}
+
+	return pbh, recomputeInherited, err
 }
 
-func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, bool, error) {
 	var deleted int64
+	var recomputeInherited bool
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+		recomputeInherited = false
+
+		var prevPbh pbehavior.PBehavior
 
 		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
-		if err != nil || res.MatchedCount == 0 {
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": id},
+			bson.M{"$set": bson.M{"author": userID}},
+			options.FindOneAndUpdate().SetReturnDocument(options.Before).SetProjection(bson.M{"inherited": 1}),
+		).Decode(&prevPbh)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
 			return err
 		}
+
+		recomputeInherited = prevPbh.Inherited
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 		return err
 	})
 
-	return deleted > 0, err
+	return deleted > 0, recomputeInherited, err
 }
 
-func (s *store) DeleteByName(ctx context.Context, name, userID string) (string, error) {
+func (s *store) DeleteByName(ctx context.Context, name, userID string) (string, bool, error) {
 	pbh := pbehavior.PBehavior{}
+	var recomputeInherited bool
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = pbehavior.PBehavior{}
+		recomputeInherited = false
 
 		// required to get the author in action log listener.
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"name": name},
 			bson.M{"$set": bson.M{"author": userID}},
+			options.FindOneAndUpdate().SetReturnDocument(options.Before).SetProjection(bson.M{"_id": 1, "inherited": 1}),
 		).Decode(&pbh)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -556,15 +595,17 @@ func (s *store) DeleteByName(ctx context.Context, name, userID string) (string, 
 			return err
 		}
 
+		recomputeInherited = pbh.Inherited
+
 		_, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
 
 		return err
 	})
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
-	return pbh.ID, nil
+	return pbh.ID, recomputeInherited, nil
 }
 
 func (s *store) FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error) {
@@ -910,6 +951,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Exdates:    exdates,
 		Exceptions: r.Exceptions,
 		Color:      r.Color,
+		Inherited:  r.Inherited,
 
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}

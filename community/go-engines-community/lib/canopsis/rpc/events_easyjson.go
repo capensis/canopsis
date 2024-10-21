@@ -3251,6 +3251,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.UserID = string(in.String())
 		case "initiator":
 			out.Initiator = string(in.String())
+		case "inherited":
+			out.RecomputeInherited = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -3295,6 +3297,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"initiator\":"
 		out.RawString(prefix)
 		out.String(string(in.Initiator))
+	}
+	{
+		const prefix string = ",\"inherited\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.RecomputeInherited))
 	}
 	out.RawByte('}')
 }

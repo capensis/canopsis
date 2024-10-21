@@ -21,17 +21,18 @@ import (
 )
 
 type periodicalWorker struct {
-	TechMetricsSender      techmetrics.Sender
-	ChannelPub             libamqp.Channel
-	PeriodicalInterval     time.Duration
-	PbhService             pbehavior.Service
-	AlarmAdapter           libalarm.Adapter
-	EntityAdapter          libentity.Adapter
-	EventManager           pbehavior.EventManager
-	FrameDuration          time.Duration
-	TimezoneConfigProvider config.TimezoneConfigProvider
-	Encoder                encoding.Encoder
-	Logger                 zerolog.Logger
+	TechMetricsSender        techmetrics.Sender
+	ChannelPub               libamqp.Channel
+	PeriodicalInterval       time.Duration
+	PbhService               pbehavior.Service
+	AlarmAdapter             libalarm.Adapter
+	EntityAdapter            libentity.Adapter
+	EventManager             pbehavior.EventManager
+	InheritedServiceResolver pbehavior.InheritedServicePbhResolver
+	FrameDuration            time.Duration
+	TimezoneConfigProvider   config.TimezoneConfigProvider
+	Encoder                  encoding.Encoder
+	Logger                   zerolog.Logger
 }
 
 func (w *periodicalWorker) GetInterval() time.Duration {
@@ -76,9 +77,20 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	var processedEntityIds []string
-	processedEntityIds, eventsCount = w.processAlarms(ctx, now, computedEntityIDs, resolver)
-	eventsCount += w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver)
+	servicePbhEvents, inheritedServicePbhResult, _, err := w.InheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
+	if err != nil {
+		w.Logger.Err(err).Msg("failed to resolve inherited pbh")
+		return
+	}
+
+	w.sendServiceEvents(ctx, servicePbhEvents, inheritedServicePbhResult.PersonalPbh)
+	eventsCount += len(servicePbhEvents)
+
+	processedEntityIds := make([]string, len(inheritedServicePbhResult.IDs))
+	copy(processedEntityIds, inheritedServicePbhResult.IDs)
+
+	processedEntityIds, eventsCount = w.processAlarms(ctx, now, computedEntityIDs, resolver, inheritedServicePbhResult)
+	eventsCount += w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver, inheritedServicePbhResult)
 
 	pbehaviorsCount, err = resolver.GetPbehaviorsCount(ctx, now)
 	if err != nil {
@@ -90,9 +102,11 @@ func (w *periodicalWorker) processAlarms(
 	ctx context.Context, computedAt time.Time,
 	computedEntityIDs []string,
 	resolver pbehavior.ComputedEntityTypeResolver,
+	inheritedServicePbhResult pbehavior.InheritedServicesPbhResolveResult,
 ) ([]string, int) {
 	eventsCount := 0
-	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, datetime.CpsTime{Time: computedAt}, computedEntityIDs)
+
+	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, datetime.CpsTime{Time: computedAt}, computedEntityIDs, inheritedServicePbhResult.IDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
 		return nil, eventsCount
@@ -102,7 +116,7 @@ func (w *periodicalWorker) processAlarms(
 
 	ech := make(chan PublishEventMsg, 1)
 	defer close(ech)
-	go w.publishToFifoChan("alarm", ech)
+	go w.publishToFifoChan(ctx, "alarm", ech)
 
 	processedEntityIds := make([]string, 0)
 	for cursor.Next(ctx) {
@@ -133,6 +147,8 @@ func (w *periodicalWorker) processAlarms(
 			return processedEntityIds, eventsCount
 		}
 
+		resolveResult = inheritedServicePbhResult.ResolveForEntity(resolveResult, entity.Services)
+
 		event, err := w.EventManager.GetEvent(resolveResult, entity, datetime.CpsTime{Time: now})
 		if err != nil {
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("cannot generate event")
@@ -158,11 +174,13 @@ func (w *periodicalWorker) processEntities(
 	ctx context.Context,
 	computedAt time.Time,
 	computedEntityIDs,
-	processedEntityIds []string,
+	processedEntityIDs []string,
 	resolver pbehavior.ComputedEntityTypeResolver,
+	serviceResults pbehavior.InheritedServicesPbhResolveResult,
 ) int {
 	eventsCount := 0
-	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIds)
+
+	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIDs, serviceResults.IDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
 		return eventsCount
@@ -173,7 +191,7 @@ func (w *periodicalWorker) processEntities(
 	ech := make(chan PublishEventMsg, 1)
 	defer close(ech)
 
-	go w.publishToFifoChan("entity", ech)
+	go w.publishToFifoChan(ctx, "entity", ech)
 
 	for cursor.Next(ctx) {
 		var entity types.Entity
@@ -194,6 +212,8 @@ func (w *periodicalWorker) processEntities(
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
 			return eventsCount
 		}
+
+		resolveResult = serviceResults.ResolveForEntity(resolveResult, entity.Services)
 
 		event, err := w.EventManager.GetEvent(resolveResult, entity, datetime.CpsTime{Time: now})
 		if err != nil {
@@ -221,9 +241,9 @@ type PublishEventMsg struct {
 	id, pbhID string
 }
 
-func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan PublishEventMsg) {
+func (w *periodicalWorker) publishToFifoChan(ctx context.Context, idTitle string, msgs <-chan PublishEventMsg) {
 	for ms := range msgs {
-		err := w.publishToEngineFIFO(context.Background(), ms.event)
+		err := w.publishToEngineFIFO(context.WithoutCancel(ctx), ms.event)
 		if err != nil {
 			w.Logger.Err(err).Str(idTitle, ms.id).Msgf("failed to send %s event", ms.event.EventType)
 		} else {
@@ -258,4 +278,22 @@ func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, que
 			DeliveryMode: amqp.Persistent,
 		},
 	)
+}
+
+func (w *periodicalWorker) sendServiceEvents(ctx context.Context, serviceEvents []types.Event, resolveResults map[string]pbehavior.ResolveResult) {
+	ech := make(chan PublishEventMsg, 1)
+	defer close(ech)
+
+	go w.publishToFifoChan(ctx, "service", ech)
+
+	for idx := range serviceEvents {
+		serviceID := serviceEvents[idx].Component
+
+		ech <- PublishEventMsg{
+			event:   serviceEvents[idx],
+			id:      serviceID,
+			pbhID:   resolveResults[serviceID].ID,
+			pbhType: resolveResults[serviceID].Type,
+		}
+	}
 }

@@ -48,6 +48,7 @@ type ComputedPbehavior struct {
 	Color      string         `json:"clr"`
 
 	EntityPattern pattern.Entity `json:"p,omitempty"`
+	Inherited     bool           `json:"i,omitempty"`
 }
 
 //easyjson:json
@@ -56,6 +57,8 @@ type Types struct {
 }
 
 // ComputeResult represents computed data.
+//
+//easyjson:json
 type ComputeResult struct {
 	ComputedPbehaviors map[string]ComputedPbehavior
 	TypesByID          map[string]Type
@@ -326,6 +329,7 @@ func (c *typeComputer) computePbehavior(
 			Created:       pbehavior.Created.Unix(),
 			Color:         pbehavior.Color,
 			EntityPattern: pbehavior.EntityPattern,
+			Inherited:     pbehavior.Inherited,
 		}, nil
 	}
 

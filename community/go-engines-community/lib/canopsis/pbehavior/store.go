@@ -24,6 +24,8 @@ type Store interface {
 	SetComputedPbehavior(ctx context.Context, pbhID string, computed ComputedPbehavior) error
 	DelComputedPbehavior(ctx context.Context, pbhID string) error
 	GetComputedByIDs(ctx context.Context, pbehaviorIDs []string) (ComputeResult, error)
+	SetInheritedServicesPbhResolveResult(ctx context.Context, inheritedServicePbhResult InheritedServicesPbhResolveResult) error
+	GetInheritedServicesPbhResolveResult(ctx context.Context) (InheritedServicesPbhResolveResult, error)
 }
 
 func NewStore(
@@ -32,13 +34,9 @@ func NewStore(
 	decoder encoding.Decoder,
 ) Store {
 	return &store{
-		client:               client,
-		encoder:              encoder,
-		decoder:              decoder,
-		spanKey:              libredis.PbehaviorSpanKey,
-		typesKey:             libredis.PbehaviorTypesKey,
-		defaultActiveTypeKey: libredis.PbehaviorDefaultActiveTypeKey,
-		computedKey:          libredis.PbehaviorComputedKey,
+		client:  client,
+		encoder: encoder,
+		decoder: decoder,
 	}
 }
 
@@ -46,8 +44,6 @@ type store struct {
 	client  redis.Cmdable
 	encoder encoding.Encoder
 	decoder encoding.Decoder
-
-	spanKey, typesKey, defaultActiveTypeKey, computedKey string
 }
 
 func (s *store) SetSpan(ctx context.Context, span timespan.Span) error {
@@ -56,7 +52,7 @@ func (s *store) SetSpan(ctx context.Context, span timespan.Span) error {
 		return fmt.Errorf("cannot encode span: %w", err)
 	}
 
-	err = s.client.Set(ctx, s.spanKey, b, 0).Err()
+	err = s.client.Set(ctx, libredis.PbehaviorSpanKey, b, 0).Err()
 	if err != nil {
 		return fmt.Errorf("cannot set span: %w", err)
 	}
@@ -65,7 +61,7 @@ func (s *store) SetSpan(ctx context.Context, span timespan.Span) error {
 }
 
 func (s *store) GetSpan(ctx context.Context) (timespan.Span, error) {
-	res := s.client.Get(ctx, s.spanKey)
+	res := s.client.Get(ctx, libredis.PbehaviorSpanKey)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, redis.Nil) {
 			return timespan.Span{}, ErrNoComputed
@@ -87,14 +83,14 @@ func (s *store) SetComputed(ctx context.Context, computed ComputeResult) error {
 	data := make(map[string]interface{}, len(computed.ComputedPbehaviors)+2)
 	var err error
 	types := Types{T: computed.TypesByID}
-	data[s.typesKey], err = s.encoder.Encode(types)
+	data[libredis.PbehaviorTypesKey], err = s.encoder.Encode(types)
 	if err != nil {
 		return fmt.Errorf("cannot encode computed types: %w", err)
 	}
-	data[s.defaultActiveTypeKey] = computed.DefaultActiveType
+	data[libredis.PbehaviorDefaultActiveTypeKey] = computed.DefaultActiveType
 
 	for k, v := range computed.ComputedPbehaviors {
-		data[s.computedKey+k], err = s.encoder.Encode(v)
+		data[libredis.PbehaviorComputedKey+k], err = s.encoder.Encode(v)
 		if err != nil {
 			return fmt.Errorf("cannot encode computed pbehavior: %w", err)
 		}
@@ -109,7 +105,7 @@ func (s *store) SetComputed(ctx context.Context, computed ComputeResult) error {
 
 	var cursor uint64
 	for {
-		res := s.client.Scan(ctx, cursor, s.computedKey+"*", redisStep)
+		res := s.client.Scan(ctx, cursor, libredis.PbehaviorComputedKey+"*", redisStep)
 		if err := res.Err(); err != nil {
 			return fmt.Errorf("cannot scan computed: %w", err)
 		}
@@ -149,7 +145,7 @@ func (s *store) GetComputed(ctx context.Context) (ComputeResult, error) {
 	pbhs := make(map[string]ComputedPbehavior)
 
 	for {
-		res := s.client.Scan(ctx, cursor, s.computedKey+"*", redisStep)
+		res := s.client.Scan(ctx, cursor, libredis.PbehaviorComputedKey+"*", redisStep)
 		if err := res.Err(); err != nil {
 			return computed, fmt.Errorf("cannot scan computed: %w", err)
 		}
@@ -179,7 +175,7 @@ func (s *store) GetComputed(ctx context.Context) (ComputeResult, error) {
 						return computed, fmt.Errorf("cannot decode computed: %w", err)
 					}
 
-					pbhs[unprocessedKeys[i][len(s.computedKey):]] = pbh
+					pbhs[unprocessedKeys[i][len(libredis.PbehaviorComputedKey):]] = pbh
 				case nil:
 					/*do nothing*/
 				default:
@@ -204,7 +200,7 @@ func (s *store) SetComputedPbehavior(ctx context.Context, pbhID string, computed
 		return fmt.Errorf("cannot encode computed pbehavior: %w", err)
 	}
 
-	err = s.client.Set(ctx, s.computedKey+pbhID, b, 0).Err()
+	err = s.client.Set(ctx, libredis.PbehaviorComputedKey+pbhID, b, 0).Err()
 	if err != nil {
 		return fmt.Errorf("cannot set computed pbehavior: %w", err)
 	}
@@ -213,7 +209,7 @@ func (s *store) SetComputedPbehavior(ctx context.Context, pbhID string, computed
 }
 
 func (s *store) DelComputedPbehavior(ctx context.Context, pbhID string) error {
-	err := s.client.Del(ctx, s.computedKey+pbhID).Err()
+	err := s.client.Del(ctx, libredis.PbehaviorComputedKey+pbhID).Err()
 	if err != nil {
 		return fmt.Errorf("cannot gel computed pbehavior: %w", err)
 	}
@@ -233,7 +229,7 @@ func (s *store) GetComputedByIDs(ctx context.Context, pbhIDs []string) (ComputeR
 
 	keys := make([]string, len(pbhIDs))
 	for i, id := range pbhIDs {
-		keys[i] = s.computedKey + id
+		keys[i] = libredis.PbehaviorComputedKey + id
 	}
 
 	res := s.client.MGet(ctx, keys...)
@@ -251,7 +247,7 @@ func (s *store) GetComputedByIDs(ctx context.Context, pbhIDs []string) (ComputeR
 			if err != nil {
 				return computed, fmt.Errorf("cannot decode computed: %w", err)
 			}
-			pbhs[keys[i][len(s.computedKey):]] = pbh
+			pbhs[keys[i][len(libredis.PbehaviorComputedKey):]] = pbh
 		case nil:
 			/*do nothing*/
 		default:
@@ -264,9 +260,55 @@ func (s *store) GetComputedByIDs(ctx context.Context, pbhIDs []string) (ComputeR
 	return computed, nil
 }
 
+func (s *store) SetInheritedServicesPbhResolveResult(ctx context.Context, inheritedServicePbhResult InheritedServicesPbhResolveResult) error {
+	b, err := s.encoder.Encode(inheritedServicePbhResult)
+	if err != nil {
+		return fmt.Errorf("cannot encode computed pbehavior: %w", err)
+	}
+
+	err = s.client.Set(ctx, libredis.PbehaviorComputedInheritedServices, b, 0).Err()
+	if err != nil {
+		return fmt.Errorf("cannot set computed pbehavior: %w", err)
+	}
+
+	return nil
+}
+
+func (s *store) GetInheritedServicesPbhResolveResult(ctx context.Context) (InheritedServicesPbhResolveResult, error) {
+	res := s.client.Get(ctx, libredis.PbehaviorComputedInheritedServices)
+	if err := res.Err(); err != nil {
+		if errors.Is(err, redis.Nil) {
+			return InheritedServicesPbhResolveResult{}, ErrNoComputed
+		}
+
+		return InheritedServicesPbhResolveResult{}, fmt.Errorf("cannot get inherited pbehaviors: %w", err)
+	}
+
+	inheritedResult := InheritedServicesPbhResolveResult{}
+	err := s.decoder.Decode([]byte(res.Val()), &inheritedResult)
+	if err != nil {
+		return InheritedServicesPbhResolveResult{}, fmt.Errorf("cannot decode inherited pbehaviors: %w", err)
+	}
+
+	// just in case
+	if inheritedResult.IDs == nil {
+		inheritedResult.IDs = make([]string, 0)
+	}
+
+	if inheritedResult.InheritedPbh == nil {
+		inheritedResult.InheritedPbh = make(map[string]ResolveResult)
+	}
+
+	if inheritedResult.PersonalPbh == nil {
+		inheritedResult.PersonalPbh = make(map[string]ResolveResult)
+	}
+
+	return inheritedResult, nil
+}
+
 func (s *store) getTypes(ctx context.Context) (ComputeResult, error) {
 	computed := ComputeResult{}
-	keys := []string{s.typesKey, s.defaultActiveTypeKey}
+	keys := []string{libredis.PbehaviorTypesKey, libredis.PbehaviorDefaultActiveTypeKey}
 	res := s.client.MGet(ctx, keys...)
 	if err := res.Err(); err != nil {
 		return computed, fmt.Errorf("cannot get types: %w", err)

@@ -128,18 +128,18 @@ func (mr *MockAdapterMockRecorder) FindConnector(arg0, arg1 interface{}) *gomock
 }
 
 // FindToCheckPbehaviorInfo mocks base method.
-func (m *MockAdapter) FindToCheckPbehaviorInfo(arg0 context.Context, arg1, arg2 []string) (mongo.Cursor, error) {
+func (m *MockAdapter) FindToCheckPbehaviorInfo(arg0 context.Context, arg1, arg2, arg3 []string) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(mongo.Cursor)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindToCheckPbehaviorInfo indicates an expected call of FindToCheckPbehaviorInfo.
-func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), arg0, arg1, arg2, arg3)
 }
 
 // Get mocks base method.

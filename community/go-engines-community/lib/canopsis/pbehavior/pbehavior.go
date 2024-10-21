@@ -71,5 +71,7 @@ type PBehavior struct {
 	// Entities is used if a pbehavior is created for multiple certain entities.
 	Entities []string `bson:"entities,omitempty"`
 
+	Inherited bool `bson:"inherited"`
+
 	savedpattern.EntityPatternFields `bson:",inline"`
 }

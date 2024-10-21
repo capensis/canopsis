@@ -53,7 +53,7 @@ type Adapter interface {
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
 
-	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors, serviceIDs []string) (mongo.Cursor, error)
 
 	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 

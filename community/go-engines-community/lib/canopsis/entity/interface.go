@@ -42,7 +42,7 @@ type Adapter interface {
 
 	Bulk(ctx context.Context, models []mongodriver.WriteModel) error
 
-	FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds, serviceIDs []string) (mongo.Cursor, error)
 
 	UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error
 
