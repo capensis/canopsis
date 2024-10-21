@@ -61,9 +61,20 @@ Ce fichier contiendra seulement les paramètres qui diffèrent de la configurati
     Un exemple de fichier avec des paramètres commentés est présent dans la
     configuration Docker Compose livrée.
 
+=== "K8S avec le chart Helm (Pro)"
 
+    Vous référer au chart Helm et sa documentation.
 
+    Méthode 1 (applicable dans tous les cas) :
 
+    - mettez votre fichier `canopsis-override.toml` dans un `ConfigMap`
+    - indiquez le nom du `ConfigMap` via la *value* `reconfigure.tomlConfigMap`
+
+    Méthode 2 (applicable si vous avez fait un `helm pull` et maintenez votre
+    propre copie locale du chart) :
+
+    - placez votre fichier dans le répertoire local `files/reconfigure/` prévu
+    à cet effet
 
 ## Prise en compte des modifications
 
@@ -88,6 +99,23 @@ moteurs Canopsis doivent être redémarrés.
     ```sh
     docker compose restart reconfigure
     docker compose restart
+    ```
+
+=== "K8S avec le chart Helm (Pro)"
+
+    Après modification du contenu du fichier local ou du `ConfigMap` de votre
+    cru, il faut redéployer le chart avec la commande `helm upgrade`.
+
+    Le job `reconfigure` sera alors recréé et lancé (nom de la forme
+    `release-name-reconfigure-x-y-z` basé sur votre nom de release et la
+    version de Canopsis en cours).
+
+    Attendez la bonne fin d'exécution du job `reconfigure`, puis redémarrez
+    tous les `Deployments` correspondant aux moteurs et services Canopsis, par
+    exemple avec ce type de commande :
+
+    ```bash
+    kubectl rollout restart deploy -l app.kubernetes.io/instance=$RELEASE_NAME
     ```
 
 ## Description des options
