@@ -16,7 +16,7 @@ Par exemple, si vous effectuez une mise à jour de Canopsis 22.10 à 24.04, vou
 *  consulter et appliquer toute procédure donnée dans les notes de version de Canopsis 23.04,
 *  puis celles de Canopsis 23.10,
 *  puis celles de Canopsis 24.04,
-*  puis suivre le reste de cette procédure, selon votre méthode d'installation (paquets ou Docker Compose).
+*  puis suivre le reste de cette procédure, selon votre méthode d'installation (paquets RPM, Docker Compose, charts Helm pour Kubernetes).
 
 Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
 
@@ -79,6 +79,30 @@ docker compose up -d
 ```
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne, y commpris toute éventuelle remarque des notes de version au sujet du fichier `canopsis.toml`.
+
+### Mise à jour en environnement K8S avec Helm
+
+Après avoir suivi les notes de version, récupérez l'éventuelle nouvelle version
+du chart depuis les dépôts, en ciblant la dernière version de la branche
+majeure correspondant à la version majeure Canopsis souhaitée.
+
+Si le chart n'a pas été mis à jour mais que vous souhaitez juste utiliser des
+images de conteneurs Canopsis plus récentes (nouvelle version mineure),
+surchargez simplement la valeur `image.tag` dans votre propre fichier de
+*values*.
+
+Dans tous les cas, vous terminerez en invoquant la commande `helm upgrade` pour
+propager la mise à jour des configurations dans votre cluster Kubernetes.
+Puis, après avoir attendu la bonne fin d'exécution du job `reconfigure`, vous
+déclencherez le redémarrage de tous les éléments applicatifs (moteurs et
+services Canopsis) via leurs `Deployments`.
+
+Exemples :
+
+```console
+$ helm upgrade my-release charts/canopsis-pro -f my-values.yaml
+$ kubectl rollout restart deploy -l app.kubernetes.io/instance=my-release
+```
 
 ## Après la mise à jour
 
