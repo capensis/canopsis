@@ -395,25 +395,32 @@ func (a *mongoAdapter) GetWithIdleSince(ctx context.Context) (mongo.Cursor, erro
 	)
 }
 
-func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds []string) (mongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIDs []string, serviceIDs []string) (mongo.Cursor, error) {
 	filter := bson.M{
 		"enabled": true,
 	}
-	if len(exceptIds) > 0 {
-		filter["_id"] = bson.M{"$nin": exceptIds}
+	if len(exceptIDs) > 0 {
+		filter["_id"] = bson.M{"$nin": exceptIDs}
 	}
+
+	var orStmt []bson.M
+
 	if len(idsWithPbehaviors) > 0 {
-		filter["$or"] = []bson.M{
-			{"_id": bson.M{"$in": idsWithPbehaviors}},
-			{"pbehavior_info": bson.M{"$ne": nil}},
-		}
+		orStmt = append(orStmt, bson.M{"_id": bson.M{"$in": idsWithPbehaviors}})
+	}
+
+	if len(serviceIDs) > 0 {
+		orStmt = append(orStmt, bson.M{"services": bson.M{"$in": serviceIDs}})
+	}
+
+	if len(orStmt) > 0 {
+		orStmt = append(orStmt, bson.M{"pbehavior_info": bson.M{"$ne": nil}})
+		filter["$or"] = orStmt
 	} else {
 		filter["pbehavior_info"] = bson.M{"$ne": nil}
 	}
 
-	opts := &options.FindOptions{}
-	return a.dbCollection.Find(ctx, filter,
-		opts.SetProjection(bson.M{"services": 0}))
+	return a.dbCollection.Find(ctx, filter)
 }
 
 func (a *mongoAdapter) UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error {

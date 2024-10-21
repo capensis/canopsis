@@ -209,7 +209,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}, RecomputeInherited: pbh.Inherited})
 
 	c.JSON(http.StatusCreated, pbh)
 }
@@ -238,7 +238,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	pbh, err := a.store.Update(c, request)
+	pbh, recomputeInherited, err := a.store.Update(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
 		if errors.As(err, &validationErr) {
@@ -253,7 +253,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}, RecomputeInherited: recomputeInherited})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -287,7 +287,7 @@ func (a *api) Patch(c *gin.Context) {
 		}
 	}
 
-	pbh, err := a.store.UpdateByPatch(c, request)
+	pbh, recomputeInherited, err := a.store.UpdateByPatch(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -301,14 +301,14 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}, RecomputeInherited: recomputeInherited})
 
 	c.JSON(http.StatusOK, pbh)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
+	ok, recomputeInherited, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -318,7 +318,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}, RecomputeInherited: recomputeInherited})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -331,7 +331,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		return
 	}
 
-	id, err := a.store.DeleteByName(c, request.Name, c.MustGet(auth.UserKey).(string))
+	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -341,7 +341,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		return
 	}
 
-	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}})
+	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{id}, RecomputeInherited: recomputeInherited})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -349,6 +349,8 @@ func (a *api) DeleteByName(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	ids := make([]string, 0)
+	recomputeInherited := false
+
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
@@ -362,11 +364,13 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		ids = append(ids, pbh.ID)
 
+		recomputeInherited = recomputeInherited || pbh.Inherited
+
 		return pbh.ID, nil
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids})
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
 	}
 }
 
@@ -375,13 +379,15 @@ func (a *api) BulkCreate(c *gin.Context) {
 func (a *api) BulkUpdate(c *gin.Context) {
 	ids := make([]string, 0)
 	exists := make(map[string]struct{})
+	recomputeInherited := false
+
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			return "", err
 		}
 
-		pbh, err := a.store.Update(c, UpdateRequest(request))
+		pbh, curRecomputeInherited, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || pbh == nil {
 			return "", err
 		}
@@ -391,11 +397,13 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			exists[pbh.ID] = struct{}{}
 		}
 
+		recomputeInherited = recomputeInherited || curRecomputeInherited
+
 		return pbh.ID, nil
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids})
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
 	}
 }
 
@@ -403,21 +411,24 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
+	recomputeInherited := false
 
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userID)
+		ok, curRecomputeInherited, err := a.store.Delete(c, request.ID, userID)
 		if err != nil || !ok {
 			return "", err
 		}
 
 		ids = append(ids, request.ID)
 
+		recomputeInherited = recomputeInherited || curRecomputeInherited
+
 		return request.ID, nil
 	}, a.logger)
 
 	if len(ids) > 0 {
-		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids})
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
 	}
 }
 

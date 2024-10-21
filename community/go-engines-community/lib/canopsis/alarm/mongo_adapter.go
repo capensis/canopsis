@@ -368,17 +368,25 @@ func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm 
 	return err
 }
 
-func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors, serviceIDs []string) (libmongo.Cursor, error) {
 	filter := bson.M{
 		"v.resolved": nil,
 		"t":          bson.M{"$lt": createdBefore},
 	}
 
+	var orStmt []bson.M
+
 	if len(idsWithPbehaviors) > 0 {
-		filter["$or"] = []bson.M{
-			{"d": bson.M{"$in": idsWithPbehaviors}},
-			{"v.pbehavior_info": bson.M{"$ne": nil}},
-		}
+		orStmt = append(orStmt, bson.M{"d": bson.M{"$in": idsWithPbehaviors}})
+	}
+
+	if len(serviceIDs) > 0 {
+		orStmt = append(orStmt, bson.M{"e.services": bson.M{"$in": serviceIDs}})
+	}
+
+	if len(orStmt) > 0 {
+		orStmt = append(orStmt, bson.M{"v.pbehavior_info": bson.M{"$ne": nil}})
+		filter["$or"] = orStmt
 	} else {
 		filter["v.pbehavior_info"] = bson.M{"$ne": nil}
 	}

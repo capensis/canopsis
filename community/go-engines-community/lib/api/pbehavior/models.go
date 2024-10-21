@@ -39,6 +39,7 @@ type EditRequest struct {
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
 	Color      string                             `json:"color" binding:"iscolororempty"`
+	Inherited  bool                               `json:"inherited"`
 
 	common.EntityPatternFieldsRequest
 }
@@ -75,6 +76,7 @@ type PatchRequest struct {
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
 	Color      *string                            `json:"color"`
+	Inherited  *bool                              `json:"inherited"`
 
 	EntityPattern          pattern.Entity             `json:"entity_pattern"`
 	CorporateEntityPattern *string                    `json:"corporate_entity_pattern"`
@@ -114,6 +116,8 @@ type Response struct {
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	RRuleComputedStart *datetime.CpsTime `bson:"rrule_cstart" json:"-"`
+
+	Inherited bool `bson:"inherited" json:"inherited"`
 }
 
 type NullableTime struct {
