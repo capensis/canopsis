@@ -5,7 +5,7 @@
     class="alarm-list-row"
     v-on="listeners"
   >
-    <td v-if="!preparedVisible" :colspan="availableHeaders.length + Number(hasRowActions)" />
+    <td v-if="!preparedVisible" :style="emptyTdStyle" :colspan="availableHeaders.length + Number(hasRowActions)" />
     <template v-if="localBooted">
       <td
         v-if="hasRowActions"
@@ -211,10 +211,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    visible: {
-      type: Boolean,
-      default: false,
-    },
     virtualScroll: {
       type: Boolean,
       default: false,
@@ -225,14 +221,28 @@ export default {
     },
   },
   data() {
+    const visible = this.booted || this.eager;
+
     return {
       active: false,
-      localBooted: this.eager,
+      localBooted: visible,
+      visible,
+      height: null,
     };
   },
   computed: {
+    emptyTdStyle() {
+      if (!this.height) {
+        return {};
+      }
+
+      return {
+        height: `${this.height}px`,
+      };
+    },
+
     preparedVisible() {
-      return this.visible || !this.virtualScroll;
+      return (this.virtualScroll && this.visible) || (!this.virtualScroll && this.localBooted);
     },
 
     hasBookmark() {
@@ -292,29 +302,26 @@ export default {
       return this.headers.filter(({ value }) => value);
     },
   },
-  watch: {
-    virtualScroll(virtualScroll) {
-      if (virtualScroll) {
-        this.$intersectionObserver?.observe(this.$el);
-
-        return;
-      }
-
-      this.$intersectionObserver?.unobserve(this.$el);
-    },
-  },
   created() {
     this.watchOnceBooted();
   },
   mounted() {
-    if (this.virtualScroll) {
-      this.$intersectionObserver?.observe(this.$el);
-    }
+    this.$intersectionObserver?.observe(this.alarm._id, this.$el, this.intersectionHandler);
   },
   beforeDestroy() {
-    this.$intersectionObserver?.unobserve(this.$el);
+    this.$intersectionObserver?.unobserve(this.alarm._id);
   },
   methods: {
+    intersectionHandler(entry) {
+      if (entry.isIntersecting !== this.visible) {
+        this.visible = entry.isIntersecting;
+
+        if (!this.visible) {
+          this.height = this.$el.offsetHeight;
+        }
+      }
+    },
+
     watchOnceBooted() {
       const unwatch = this.$watch(() => this.booted, (booted) => {
         if (booted) {
