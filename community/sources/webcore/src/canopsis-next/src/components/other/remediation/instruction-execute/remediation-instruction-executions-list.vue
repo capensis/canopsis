@@ -69,7 +69,7 @@ export default {
       return [
         { text: this.$t('remediation.instruction.name'), value: 'name' },
         { text: this.$t('common.type'), value: 'type' },
-        { text: this.$t('remediation.instructionExecute.jobs.launchedAt'), value: 'launched_at' },
+        { text: this.$t('remediation.instructionExecute.jobs.launchedAt'), value: 'started_at' },
         { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at' },
         { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'author.display_name' },
         { text: this.$t('common.status'), value: 'status' },
