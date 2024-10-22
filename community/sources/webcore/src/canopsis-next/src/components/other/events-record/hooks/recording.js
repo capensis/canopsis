@@ -33,11 +33,8 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
         { value: EVENT_FILTER_PATTERN_FIELDS.author },
         { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
       ],
-      action: async (eventPattern) => {
-        await startEventsRecordCurrent({ data: { event_pattern: eventPattern } });
-
-        return fetchListHandler();
-      },
+      action: eventPattern => startEventsRecordCurrent({ data: { event_pattern: eventPattern } }),
+      afterSubmit: fetchListHandler,
     },
   });
 
