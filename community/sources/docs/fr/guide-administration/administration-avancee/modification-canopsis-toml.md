@@ -7,74 +7,115 @@ Le fichier `canopsis.toml` regroupe la plupart des réglages fondamentaux des di
 !!! note
     Les réglages d'exploitation « du quotidien » se situent plutôt dans l'interface web de Canopsis.
 
-    D'autres réglages propres à certains moteurs se font au travers de leurs options de lancement (voir la documentation de chaque moteur à ce sujet) et de [variables d'environnement](variables-environnement.md).
+    D'autres réglages propres à certains moteurs se font au travers de :
+
+    - leurs [variables d'environnement](variables-environnement.md) ;
+    - leurs options de lancement, que l'on retrouve dans l'aide intégrée au binaire de chaque moteur (`-help`) ;
+    - valeurs définies par défaut dans un fichier de configuration `canopsis.toml`, surchargeables (objet de cette page).
 
 ## Emplacement
 
 L'emplacement du fichier de configuration diffère entre les différents types d'environnement d'installation proposés par Canopsis.
 
-| Type d'environnement                       | Emplacement du fichier                                   |
-|--------------------------------------------|----------------------------------------------------------|
-| Paquets RPM                                | `/opt/canopsis/etc/canopsis.toml`                        |
-| Docker Compose ( Canopsis Pro )            | `/canopsis-pro.toml` dans le service `reconfigure`       |
-| Docker Compose ( Canopsis Community )      | `/canopsis-community.toml` dans le service `reconfigure` |
+| Type d'environnement                    | Emplacement du fichier                                     |
+|-----------------------------------------|------------------------------------------------------------|
+| Paquets RPM                             | `/opt/canopsis/etc/canopsis.toml`                          |
+| Docker Compose/K8S (Canopsis Pro)       | `/canopsis-pro.toml` dans le conteneur `reconfigure`       |
+| Docker Compose/K8S (Canopsis Community) | `/canopsis-community.toml` dans le conteneur `reconfigure` |
 
-!!! tip "Astuce"
-    Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`.
+!!! attention
+    La modification de valeurs ne doit pas se faire dans le fichier d'origine.
 
-### Variables d'environnement associées
-
-La [variable d'environnement `CPS_DEFAULT_CFG`](variables-environnement.md) permet de définir un autre emplacement à utiliser pour charger ce fichier de configuration.
-
-Il est recommandé de ne pas modifier cette valeur.
+    On utilise plutôt un fichier de surcharge (`canopsis-override.toml`), comme
+    indiqué dans la suite de cette documentation.
 
 ## Modification et maintenance du fichier
 
 Le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
-Ce fichier ne contiens donc que les configuration qui diffèrent avec la configuration par défaut.
+Ce fichier contiendra seulement les paramètres qui diffèrent de la configuration par défaut.
 
-=== "En environnement paquets RPM"
+=== "Paquets RPM"
 
     Le fichier est situé au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
 
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées par le gestionnaire de paquets `yum`.
+    Lors de la mise à jour de Canopsis, vos modifications dans ce fichier seront préservées par le gestionnaire de paquets `dnf`.
 
-=== "En environnement Docker Compose"
+=== "Docker Compose"
 
     Le fichier est situé dans le conteneur `reconfigure` au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
-    Montez y votre fichier personnalisé a l'aide d'un volume.
 
-    Par exemple en mettant ce morceau de configuration à la fin du fichier `docker-compose.override.yml`
+    Montez-y votre fichier personnalisé à l'aide d'un volume.
+
+    Ceci est déjà en place dans les environnements de référence Docker Compose :
+
     ```yaml
-    reconfigure:
-      command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
-    volumes:
-      - ./files-pro/reconfigure/reconfigure.override.toml:/opt/canopsis/etc/conf.d/canopsis-override.toml
+    services:
+      # ...
+
+      reconfigure:
+        # ...
+        volumes:
+          - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
     ```
 
-    Lors de la mise à jour de Canopsis, vos modifications seront préservées.
+    Un exemple de fichier avec des paramètres commentés est présent dans la
+    configuration Docker Compose livrée.
 
+=== "K8S avec le chart Helm (Pro)"
 
-## Étape obligatoire pour la prise en compte des modifications
+    Vous référer au chart Helm et sa documentation.
 
-Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis-reconfigure` doit être relancé et les services et moteurs de Canopsis doivent être redémarrés.
+    Méthode 1 (applicable dans tous les cas) :
 
-=== "En environnement paquets RPM"
+    - mettez votre fichier `canopsis-override.toml` dans un `ConfigMap`
+    - indiquez le nom du `ConfigMap` via la *value* `reconfigure.tomlConfigMap`
+
+    Méthode 2 (applicable si vous avez fait un `helm pull` et maintenez votre
+    propre copie locale du chart) :
+
+    - placez votre fichier dans le répertoire local `files/reconfigure/` prévu
+    à cet effet
+
+## Prise en compte des modifications
+
+Après toute modification de valeur dans les fichiers `.toml` de Canopsis,
+la commande `canopsis-reconfigure` doit être relancée, puis les services et
+moteurs Canopsis doivent être redémarrés.
+
+=== "Paquets RPM"
 
     Exécuter les commandes suivantes :
 
     ```bash
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -edition "pro|community" -conf /opt/canopsis/etc/canopsis-pro.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    /opt/canopsis/bin/canopsis-reconfigure
+    systemctl restart canopsis.service
     ```
 
-=== "En environnement Docker Compose"
+=== "Docker Compose"
 
     Exécuter les commandes suivantes :
 
     ```sh
     docker compose restart reconfigure
     docker compose restart
+    ```
+
+=== "K8S avec le chart Helm (Pro)"
+
+    Après modification du contenu du fichier local ou du `ConfigMap` de votre
+    cru, il faut redéployer le chart avec la commande `helm upgrade`.
+
+    Le job `reconfigure` sera alors recréé et lancé (nom de la forme
+    `release-name-reconfigure-x-y-z` basé sur votre nom de release et la
+    version de Canopsis en cours).
+
+    Attendez la bonne fin d'exécution du job `reconfigure`, puis redémarrez
+    tous les `Deployments` correspondant aux moteurs et services Canopsis, par
+    exemple avec ce type de commande :
+
+    ```bash
+    kubectl rollout restart deploy -l app.kubernetes.io/instance=$RELEASE_NAME
     ```
 
 ## Description des options
@@ -170,7 +211,7 @@ Toute modification dans cette section nécessite un redémarrage de Canopsis
 | Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
 | NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
 | TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../guide-utilisation/templates-go/index.md) |
-| PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
+| PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
 ### Section [Canopsis.metrics]
 
@@ -197,7 +238,7 @@ Toute modification dans cette section nécessite un redémarrage de Canopsis
 | :---------------------- | :------------------| :------------------------------------ |
 | system_env_var_prefixes | ["ENV_"]           | Les variables d'environnement peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.System.ENV_var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.System.ENV_var }}`.<br />Seules les variables dont le prefixe est mentionné dans ce paramètre seront lues. |
 | var1                    | "valeur1"          | Ces variables peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.var1 }}` |
- 
+
 
 ### Section [Remediation]
 
@@ -223,3 +264,18 @@ Toute modification dans cette section nécessite un redémarrage de Canopsis
 | :------------------ | :------------------| :------------------------------------ |
 | update_interval     | "10s"              | Intervalle de mise à jour des informations de HealthCheck | 
 
+## Références
+
+Pour référence, vous pouvez aussi consulter les fichiers d'origine complets,
+avec les valeurs par défaut et des exemples commentés (en anglais) dans les
+sources de Canopsis :
+
+- [`canopsis-community.toml`][canopsis-community-toml]
+- [`canopsis-pro.toml`][canopsis-pro-toml]
+
+Prenez soin de sélectionner la branche `release-YY.MM` en fonction de la
+version majeure de Canopsis qui vous concerne, la branche `develop`
+représentant la prochaine version de Canopsis.
+
+[canopsis-community-toml]: https://git.canopsis.net/canopsis/canopsis-community/-/blob/develop/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml
+[canopsis-pro-toml]: https://git.canopsis.net/canopsis/canopsis-community/-/blob/develop/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml
