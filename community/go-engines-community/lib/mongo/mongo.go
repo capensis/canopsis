@@ -418,12 +418,13 @@ func NewClientWithOptions(
 	if serverSelectionTimeout > 0 {
 		clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
 	}
-	if clientTimeout > 0 {
-		clientOptions.SetTimeout(clientTimeout)
+
+	if clientTimeout < 0 {
+		clientTimeout = defaultClientTimeout
 	}
-	if clientOptions.Timeout == nil {
-		clientOptions.SetTimeout(defaultClientTimeout)
-	}
+
+	clientOptions.SetTimeout(clientTimeout)
+
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
