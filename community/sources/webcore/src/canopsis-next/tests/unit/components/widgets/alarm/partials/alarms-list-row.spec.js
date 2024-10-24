@@ -86,7 +86,6 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
         expanded: false,
         widget: {},
         headers: [],
@@ -115,7 +114,6 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
         expanded: false,
         widget: {},
         headers: [],
@@ -154,7 +152,6 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        visible: true,
         expanded: false,
         widget: {},
         headers: [{}, {}],
@@ -185,7 +182,6 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        visible: true,
         expand: true,
         widget: {},
         headers: [{}, {}],
@@ -218,7 +214,6 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        visible: true,
         expand: true,
         widget: {},
         headers: [{ value: 'first' }, { value: 'second' }],
@@ -243,7 +238,6 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
         expanded: false,
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
@@ -262,7 +256,6 @@ describe('alarms-list-row', () => {
           },
         },
         booted: false,
-        visible: false,
         expanded: false,
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
@@ -281,7 +274,6 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: false,
         expanded: false,
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
@@ -302,7 +294,7 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
+
         expanded: false,
         widget: {},
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
@@ -327,7 +319,7 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
+
         expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -348,7 +340,7 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
+
         expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -368,7 +360,7 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
+
         expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -393,7 +385,7 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        visible: true,
+
         expanded: false,
         showInstructionIcon: true,
         widget: {},
@@ -420,7 +412,6 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        visible: true,
         widget: {},
         headers: [{ value: 'actions' }],
       },
@@ -445,7 +436,6 @@ describe('alarms-list-row', () => {
           },
         },
         booted: true,
-        visible: true,
         expanded: false,
         widget: {},
         showInstructionIcon: true,

@@ -4,7 +4,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
 <tr
   class="alarm-list-row"
   data-id="alarm-id"
-  visible="visible"
 >
   <!---->
   <td
@@ -48,7 +47,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
 exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
 <tr
   class="alarm-list-row"
-  visible="visible"
 >
   <!---->
   <td
@@ -188,7 +186,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
 exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props 1`] = `
 <tr
   class="alarm-list-row"
-  visible="visible"
 >
   <!---->
   <!---->
@@ -235,7 +232,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
 exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 <tr
   class="alarm-list-row"
-  visible="visible"
 >
   <!---->
   <td
@@ -280,7 +276,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
 <tr
   class="alarm-list-row class-2"
   data-id="alarm-id"
-  visible="visible"
 >
   <!---->
   <td
@@ -321,7 +316,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
 <tr
   class="alarm-list-row"
   data-id="alarm-id"
-  visible="visible"
 >
   <!---->
   <td
@@ -368,7 +362,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
 exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 <tr
   class="alarm-list-row"
-  visible="visible"
 >
   <!---->
   <!---->
@@ -394,7 +387,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
 <tr
   class="alarm-list-row"
-  visible="visible"
 >
   <!---->
   <td
