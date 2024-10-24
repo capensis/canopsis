@@ -273,6 +273,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		axeParams.TicketInfo = types.TicketInfo{
 			Ticket:           params.Ticket,
 			TicketURL:        params.TicketURL,
+			TicketURLTitle:   params.TicketURLTitle,
 			TicketSystemName: params.TicketSystemName,
 			TicketRuleName:   axeParams.RuleName,
 			TicketRuleID:     task.ScenarioID,
