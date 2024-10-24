@@ -125,6 +125,10 @@ definitions:
         description: TicketURL is used in assocticket action.
         maxLength: 255
         type: string
+      ticket_url_title:
+        description: TicketURLTitle is used in assocticket action.
+        maxLength: 255
+        type: string
       tstart:
         description: Tstart is used in pbehavior action.
         type: integer
@@ -499,6 +503,10 @@ definitions:
         type: string
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
+      resolve_deleted_event_processed:
+        $ref: '#/definitions/types.CpsTime'
+        description: ResolveDeletedEventProcessed is set after processing service
+          counters recalculation event on soft delete.
       services:
         items:
           type: string
@@ -515,6 +523,8 @@ definitions:
         type: integer
       soft_deleted:
         $ref: '#/definitions/types.CpsTime'
+        description: SoftDeleted is used to recompute service counters after dependency
+          delete.
       type:
         type: string
     type: object
@@ -680,6 +690,9 @@ definitions:
       url:
         maxLength: 255
         type: string
+      url_title:
+        maxLength: 255
+        type: string
     required:
     - ticket
     type: object
@@ -714,6 +727,9 @@ definitions:
       ticket_resources:
         type: boolean
       url:
+        maxLength: 255
+        type: string
+      url_title:
         maxLength: 255
         type: string
     required:
@@ -1249,6 +1265,8 @@ definitions:
       ticket_system_name:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       user_id:
         type: string
@@ -4115,6 +4133,8 @@ definitions:
       ticket_id:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       ticket_url_tpl:
         type: string
