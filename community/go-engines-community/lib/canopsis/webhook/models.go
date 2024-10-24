@@ -38,7 +38,7 @@ type History struct {
 	ResponseHeader  map[string]string             `bson:"response_header,omitempty" json:"response_header,omitempty"`
 	ResponseBody    map[string]any                `bson:"response_body,omitempty" json:"response_body,omitempty"`
 	TicketID        string                        `bson:"ticket_id,omitempty" json:"ticket_id,omitempty"`
-	TicketUrl       string                        `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketURL       string                        `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
 	TicketData      map[string]string             `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	UserID          string                        `bson:"user,omitempty" json:"user,omitempty"`
 	Username        string                        `bson:"username,omitempty" json:"username,omitempty"`
