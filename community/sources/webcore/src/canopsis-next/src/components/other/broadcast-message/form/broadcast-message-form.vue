@@ -8,6 +8,7 @@
           :label="$t('common.message')"
           :error-messages="errors.collect('message')"
           name="message"
+          autofocus
           public
         />
       </v-flex>

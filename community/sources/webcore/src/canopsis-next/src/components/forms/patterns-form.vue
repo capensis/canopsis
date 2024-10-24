@@ -6,6 +6,7 @@
       v-validate="titleRules"
       :label="$t('common.title')"
       :error-messages="errors.collect('title')"
+      :autofocus="autofocus"
       name="title"
     />
     <c-patterns-field
@@ -74,6 +75,10 @@ export default {
       required: false,
     },
     entityCountersType: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
       type: Boolean,
       default: false,
     },

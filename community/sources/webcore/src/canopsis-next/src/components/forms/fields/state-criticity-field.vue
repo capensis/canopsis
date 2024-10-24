@@ -4,6 +4,7 @@
       :value="value"
       :mandatory="mandatory"
       dense
+      autofocus
       @change="$emit('input', $event)"
     >
       <v-btn
