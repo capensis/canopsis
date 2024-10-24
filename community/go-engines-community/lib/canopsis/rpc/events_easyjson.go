@@ -2833,6 +2833,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Ticket = string(in.String())
 		case "ticket_url":
 			out.TicketURL = string(in.String())
+		case "ticket_url_title":
+			out.TicketURLTitle = string(in.String())
 		case "ticket_comment":
 			out.TicketComment = string(in.String())
 		case "ticket_system_name":
@@ -2961,6 +2963,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"ticket_url\":"
 		out.RawString(prefix)
 		out.String(string(in.TicketURL))
+	}
+	if in.TicketURLTitle != "" {
+		const prefix string = ",\"ticket_url_title\":"
+		out.RawString(prefix)
+		out.String(string(in.TicketURLTitle))
 	}
 	if in.TicketComment != "" {
 		const prefix string = ",\"ticket_comment\":"
@@ -4249,6 +4256,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Ticket = string(in.String())
 		case "ticket_url":
 			out.TicketURL = string(in.String())
+		case "ticket_url_title":
+			out.TicketURLTitle = string(in.String())
 		case "ticket_comment":
 			out.TicketComment = string(in.String())
 		case "ticket_system_name":
@@ -4586,6 +4595,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"ticket_url\":"
 		out.RawString(prefix)
 		out.String(string(in.TicketURL))
+	}
+	if in.TicketURLTitle != "" {
+		const prefix string = ",\"ticket_url_title\":"
+		out.RawString(prefix)
+		out.String(string(in.TicketURLTitle))
 	}
 	if in.TicketComment != "" {
 		const prefix string = ",\"ticket_comment\":"
