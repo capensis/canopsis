@@ -4,9 +4,11 @@
       v-field="form._id"
       :disabled="disabledIdField"
       :help-text="$t('metaAlarmRule.idHelp')"
+      autofocus
     />
     <c-name-field
       v-field="form.name"
+      :autofocus="disabledIdField"
       required
     />
     <c-description-field

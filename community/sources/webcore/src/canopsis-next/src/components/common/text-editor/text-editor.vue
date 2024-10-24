@@ -129,6 +129,10 @@ export default {
       type: Object,
       required: false,
     },
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -205,6 +209,11 @@ export default {
 
       if (this.extraButtons.length) {
         config.extraButtons.push(...this.extraButtons);
+      }
+
+      if (this.autofocus) {
+        config.autofocus = this.autofocus;
+        config.cursorAfterAutofocus = 'start';
       }
 
       return config;

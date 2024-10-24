@@ -5,6 +5,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   class="layout column"
 >
   <field-title-stub
+    autofocus="true"
     name="title"
     value="Map widget"
   />
@@ -54,6 +55,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   class="layout column"
 >
   <field-title-stub
+    autofocus="true"
     name="title"
     value=""
   />

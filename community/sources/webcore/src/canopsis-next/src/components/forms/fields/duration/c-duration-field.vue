@@ -13,6 +13,7 @@
         :min="min"
         :max="max"
         :hide-details="hideDetails"
+        :autofocus="autofocus"
       />
     </v-flex>
     <v-flex xs5>
@@ -95,6 +96,10 @@ export default {
       default: false,
     },
     hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
       type: Boolean,
       default: false,
     },
