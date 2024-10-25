@@ -53,7 +53,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 		return 0, err
 	}
 
-	counters.Reset()
+	counters.Reset(component.ID)
 
 	match := []bson.M{
 		{"$match": bson.M{"component": component.ID, "type": types.EntityTypeResource}},
