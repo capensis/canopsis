@@ -9,20 +9,33 @@
       v-field="form.name"
       required
     />
-    <c-description-field
+    <c-payload-textarea-field
       v-field="form.output_template"
       :label="$t('metaAlarmRule.outputTemplate')"
       :help-text="$t('metaAlarmRule.outputTemplateHelp')"
+      :variables="variables"
     />
-    <c-enabled-field
-      v-field="form.auto_resolve"
-      :label="$t('metaAlarmRule.autoResolve')"
+    <meta-alarm-rule-tags-form
+      v-field="form.tags"
+      :variables="variables"
     />
+    <meta-alarm-rule-infos-form v-field="form.infos" />
+    <v-layout>
+      <c-enabled-field
+        v-field="form.auto_resolve"
+        :label="$t('metaAlarmRule.autoResolve')"
+      />
+    </v-layout>
   </v-layout>
 </template>
 
 <script>
+import MetaAlarmRuleTagsForm from './meta-alarm-rule-tags-form.vue';
+import MetaAlarmRuleInfosForm from './meta-alarm-rule-infos-form.vue';
+
 export default {
+  inject: ['$validator'],
+  components: { MetaAlarmRuleTagsForm, MetaAlarmRuleInfosForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -35,6 +48,10 @@ export default {
     disabledIdField: {
       type: Boolean,
       default: false,
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
 };

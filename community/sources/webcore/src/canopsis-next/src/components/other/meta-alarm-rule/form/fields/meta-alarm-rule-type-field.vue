@@ -1,30 +1,46 @@
 <template>
-  <v-radio-group
-    v-field="value"
-    :label="$t('metaAlarmRule.selectType')"
-    class="my-0"
-    hide-details
-  >
-    <v-radio
-      v-for="ruleTypeOption in ruleTypesOptions"
-      :key="ruleTypeOption.value"
-      :value="ruleTypeOption.value"
-      :label="ruleTypeOption.label"
-      color="primary"
+  <v-layout class="gap-4" column>
+    <v-radio-group
+      v-field="form.type"
+      :label="$t('metaAlarmRule.selectType')"
+      class="my-0"
+      hide-details
     >
-      <template #label>
-        {{ ruleTypeOption.label }}
-        <c-help-icon
-          v-if="ruleTypeOption.helpText"
-          :text="ruleTypeOption.helpText"
-          icon="help"
-          icon-class="ml-2"
-          max-width="300"
-          top
+      <v-radio
+        v-for="ruleTypeOption in ruleTypesOptions"
+        :key="ruleTypeOption.value"
+        :value="ruleTypeOption.value"
+        :label="ruleTypeOption.label"
+        color="primary"
+      >
+        <template #label>
+          {{ ruleTypeOption.label }}
+          <c-help-icon
+            v-if="ruleTypeOption.helpText"
+            :text="ruleTypeOption.helpText"
+            icon="help"
+            icon-class="ml-2"
+            max-width="300"
+            top
+          />
+        </template>
+      </v-radio>
+    </v-radio-group>
+    <v-expand-transition>
+      <v-layout v-if="hasTemplateFields" column>
+        <c-payload-text-field
+          v-field="form.component_template"
+          :label="$t('metaAlarmRule.componentTemplate')"
+          :variables="variables"
         />
-      </template>
-    </v-radio>
-  </v-radio-group>
+        <c-payload-text-field
+          v-field="form.resource_template"
+          :label="$t('metaAlarmRule.resourceTemplate')"
+          :variables="variables"
+        />
+      </v-layout>
+    </v-expand-transition>
+  </v-layout>
 </template>
 
 <script>
@@ -37,13 +53,21 @@ import { isManualGroupMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/ru
 import { useI18n } from '@/hooks/i18n';
 
 export default {
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
-    value: {
-      type: String,
-      required: false,
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
-  setup() {
+  setup(props) {
     const { t, te } = useI18n();
 
     const ruleTypesOptions = computed(() => Object.values(META_ALARMS_RULE_TYPES).reduce((acc, type) => {
@@ -65,8 +89,16 @@ export default {
       return acc;
     }, []));
 
+    const hasTemplateFields = computed(() => [
+      META_ALARMS_RULE_TYPES.timebased,
+      META_ALARMS_RULE_TYPES.attribute,
+      META_ALARMS_RULE_TYPES.complex,
+      META_ALARMS_RULE_TYPES.valuegroup,
+    ].includes(props.form.type));
+
     return {
       ruleTypesOptions,
+      hasTemplateFields,
     };
   },
 };
