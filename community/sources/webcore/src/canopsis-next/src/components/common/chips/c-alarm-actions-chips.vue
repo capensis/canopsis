@@ -123,7 +123,7 @@ export default {
       default: 'text',
     },
     itemClass: {
-      type: String,
+      type: [String, Object],
       required: false,
     },
     returnObject: {
