@@ -96,7 +96,7 @@ function errorResponseHandler(responseWithError) {
       const params = queryParams.toString();
       const href = `${origin}${pathname}${params ? `?${params}` : ''}`;
 
-      if (hasAccessToken && window.location.href === href) {
+      if (hasAccessToken && window.location.href !== href) {
         window.location.replace(href);
       }
     }
