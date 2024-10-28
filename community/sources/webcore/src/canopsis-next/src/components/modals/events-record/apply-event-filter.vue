@@ -71,7 +71,7 @@ export default {
       method: async () => {
         await config.value.action?.(formGroupsToPatternRules(form.value?.groups));
         /**
-         * We've added that to avoiding problem with async backend.
+         * We've added that to avoiding problem with async on the backend side.
          * There is 3000ms timeout on the backend side for sync
          */
         await promisedWait(3000);
