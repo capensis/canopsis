@@ -20,8 +20,10 @@ import (
 )
 
 const (
-	defaultClientTimeout            = 15 * time.Second
-	disableRetries       contextKey = "disable_retries"
+	DefaultClientTimeout          = 15 * time.Second
+	DefaultServerSelectionTimeout = 30 * time.Second
+
+	disableRetries contextKey = "disable_retries"
 
 	topologyCheckTimeout = 1 * time.Second
 
@@ -371,7 +373,7 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	if clientOptions.Timeout == nil {
-		clientOptions.SetTimeout(defaultClientTimeout)
+		clientOptions.SetTimeout(DefaultClientTimeout)
 	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -415,14 +417,14 @@ func NewClientWithOptions(
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-	if serverSelectionTimeout > 0 {
-		clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
+	if serverSelectionTimeout < 0 {
+		serverSelectionTimeout = DefaultServerSelectionTimeout
 	}
-
 	if clientTimeout < 0 {
-		clientTimeout = defaultClientTimeout
+		clientTimeout = DefaultClientTimeout
 	}
 
+	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
 	clientOptions.SetTimeout(clientTimeout)
 
 	client, err := mongo.Connect(ctx, clientOptions)
