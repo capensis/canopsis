@@ -44,7 +44,7 @@ func (w *cleanExternalTagPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0, dataStorageConf.MongoClientTimeout, w.Logger)
+	mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, dataStorageConf.MongoClientTimeout, w.Logger)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot connect to mongo")
 
