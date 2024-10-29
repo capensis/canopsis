@@ -3189,6 +3189,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -4952,6 +4954,8 @@ definitions:
         description: AssocTicket and Webhook
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       tstart:
         type: integer
