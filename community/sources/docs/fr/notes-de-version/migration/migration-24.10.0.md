@@ -54,7 +54,7 @@ La restructuration apportée dans les bases de données pour cette version de Ca
         kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
         ```
 
-    Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
+    Le retour doit au moins contenir `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
 
 
@@ -150,7 +150,7 @@ Deux étapes sont à suivre :
     CPS_EDITION=pro docker compose cp timescaledb:/tmp/postgres_dump_archive.tar /tmp
     ```
 
-    Arrêtez le conteneur et supprimez les volume associé
+    Arrêtez le conteneur et supprimez les volumes associés
 
     ```sh
     CPS_EDITION=pro docker compose down -v timescaledb
@@ -275,24 +275,25 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
     ```sh
     CPS_EDITION=pro docker compose ps
-    NAME                             IMAGE                                                                     COMMAND                                                                                        SERVICE           CREATED       STATUS                       PORTS
-    canopsis-pro-action-1            docker.canopsis.net/docker/develop-pro/engine-action:24.04-rc3            "/engine-action"                                                                               action            3 hours ago   Up 51 minutes                
-    canopsis-pro-api-1               docker.canopsis.net/docker/develop-pro/canopsis-api-pro:24.04-rc3         "/bin/sh -c /${CMD}"                                                                           api               3 hours ago   Up 51 minutes (healthy)      0.0.0.0:8082->8082/tcp, :::8082->8082/tcp
-    canopsis-pro-axe-1               docker.canopsis.net/docker/develop-pro/engine-axe:24.04-rc3               "/engine-axe -publishQueue Engine_correlation"                                                 axe               3 hours ago   Up 51 minutes                
-    canopsis-pro-che-1               docker.canopsis.net/docker/develop-pro/engine-che:24.04-rc3               "/engine-che"                                                                                  che               3 hours ago   Up 51 minutes                
-    canopsis-pro-connector-junit-1   docker.canopsis.net/docker/develop-pro/connector-junit:24.04-rc3          "/bin/sh -c /${CMD}"                                                                           connector-junit   3 hours ago   Up 51 minutes                
-    canopsis-pro-correlation-1       docker.canopsis.net/docker/develop-pro/engine-correlation:24.04-rc3       "/bin/sh -c /${CMD}"                                                                           correlation       3 hours ago   Up 51 minutes                
-    canopsis-pro-dynamic-infos-1     docker.canopsis.net/docker/develop-pro/engine-dynamic-infos:24.04-rc3     "/bin/sh -c /${CMD}"                                                                           dynamic-infos     3 hours ago   Up 51 minutes                
-    canopsis-pro-fifo-1              docker.canopsis.net/docker/develop-pro/engine-fifo:24.04-rc3              "/bin/sh -c /${CMD}"                                                                           fifo              3 hours ago   Up 51 minutes                
-    canopsis-pro-mongodb-1           mongo:7.0.8-jammy                                                         "docker-entrypoint.sh --wiredTigerCacheSizeGB 2.5 --replSet rs0 --keyFile /data/db/.keyFile"   mongodb           4 hours ago   Up 2 hours (healthy)         0.0.0.0:27017->27017/tcp, :::27017->27017/tcp
-    canopsis-pro-nginx-1             docker.canopsis.net/docker/develop-community/nginx:24.04-rc3              "/bin/sh -c /entrypoint.sh"                                                                    nginx             3 hours ago   Up 51 minutes                80/tcp, 0.0.0.0:80->8080/tcp, :::80->8080/tcp, 0.0.0.0:443->8443/tcp, :::443->8443/tcp
-    canopsis-pro-pbehavior-1         docker.canopsis.net/docker/develop-community/engine-pbehavior:24.04-rc3   "/bin/sh -c /${CMD}"                                                                           pbehavior         3 hours ago   Up 51 minutes                
-    canopsis-pro-rabbitmq-1          rabbitmq:3.12.13-management                                               "docker-entrypoint.sh rabbitmq-server"                                                         rabbitmq          4 hours ago   Up 52 minutes (healthy)      4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp, :::5672->5672/tcp, 15671/tcp, 15691-15692/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp, :::15672->15672/tcp
-    canopsis-pro-redis-1             redis:6.2.14-bookworm                                                     "docker-entrypoint.sh /bin/sh -c 'redis-server --requirepass $REDIS_PASSWORD'"                 redis             4 hours ago   Up 52 minutes (healthy)      0.0.0.0:6379->6379/tcp, :::6379->6379/tcp
-    canopsis-pro-remediation-1       docker.canopsis.net/docker/develop-pro/engine-remediation:24.04-rc3       "/bin/sh -c /${CMD}"                                                                           remediation       3 hours ago   Up 51 minutes                
-    canopsis-pro-snmp-1              docker.canopsis.net/docker/develop-pro/engines-python:24.04-rc3           "/bin/sh -c /entrypoint.sh"                                                                    snmp              3 hours ago   Up 51 minutes                
-    canopsis-pro-timescaledb-1       timescale/timescaledb:2.14.2-pg13                                         "docker-entrypoint.sh postgres"                                                                timescaledb       3 hours ago   Up About an hour (healthy)   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
-    canopsis-pro-webhook-1           docker.canopsis.net/docker/develop-pro/engine-webhook:24.04-rc3           "/bin/sh -c /${CMD}"                                                                           webhook           3 hours ago   Up 51 minutes         
+    NAME                             IMAGE                                                                       COMMAND                  SERVICE           CREATED          STATUS                    PORTS
+    canopsis-pro-action-1            docker.canopsis.net/docker/develop-pro/engine-action:24.10.0-rc1            "/engine-action"         action            41 seconds ago   Up 28 seconds             
+    canopsis-pro-api-1               docker.canopsis.net/docker/develop-pro/canopsis-api-pro:24.10.0-rc1         "/bin/sh -c /${CMD}"     api               41 seconds ago   Up 28 seconds (healthy)   0.0.0.0:8082->8082/tcp, :::8082->8082/tcp
+    canopsis-pro-axe-1               docker.canopsis.net/docker/develop-pro/engine-axe:24.10.0-rc1               "/engine-axe -publis…"   axe               41 seconds ago   Up 28 seconds             
+    canopsis-pro-che-1               docker.canopsis.net/docker/develop-pro/engine-che:24.10.0-rc1               "/engine-che"            che               41 seconds ago   Up 28 seconds             
+    canopsis-pro-connector-junit-1   docker.canopsis.net/docker/develop-pro/connector-junit:24.10.0-rc1          "/bin/sh -c /${CMD}"     connector-junit   41 seconds ago   Up 28 seconds             
+    canopsis-pro-correlation-1       docker.canopsis.net/docker/develop-pro/engine-correlation:24.10.0-rc1       "/bin/sh -c /${CMD}"     correlation       41 seconds ago   Up 28 seconds             
+    canopsis-pro-dynamic-infos-1     docker.canopsis.net/docker/develop-pro/engine-dynamic-infos:24.10.0-rc1     "/bin/sh -c /${CMD}"     dynamic-infos     41 seconds ago   Up 28 seconds             
+    canopsis-pro-fifo-1              docker.canopsis.net/docker/develop-pro/engine-fifo:24.10.0-rc1              "/bin/sh -c /${CMD}"     fifo              41 seconds ago   Up 28 seconds             
+    canopsis-pro-mongodb-1           mongo:7.0.14-jammy                                                          "docker-entrypoint.s…"   mongodb           2 minutes ago    Up 2 minutes (healthy)    0.0.0.0:27017->27017/tcp, :::27017->27017/tcp
+    canopsis-pro-nginx-1             docker.canopsis.net/docker/develop-community/nginx:24.10.0-rc1              "/bin/sh -c /entrypo…"   nginx             41 seconds ago   Up 28 seconds             80/tcp, 0.0.0.0:80->8080/tcp, [::]:80->8080/tcp, 0.0.0.0:443->8443/tcp, [::]:443->8443/tcp
+    canopsis-pro-pbehavior-1         docker.canopsis.net/docker/develop-community/engine-pbehavior:24.10.0-rc1   "/bin/sh -c /${CMD}"     pbehavior         41 seconds ago   Up 28 seconds             
+    canopsis-pro-rabbitmq-1          rabbitmq:3.12.13-management                                                 "docker-entrypoint.s…"   rabbitmq          2 minutes ago    Up 2 minutes (healthy)    4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp, :::5672->5672/tcp, 15671/tcp, 15691-15692/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp, :::15672->15672/tcp
+    canopsis-pro-recorder-1          docker.canopsis.net/docker/develop-pro/events-recorder:24.10.0-rc1          "/bin/sh -c /${CMD}"     recorder          41 seconds ago   Up 28 seconds             
+    canopsis-pro-redis-1             redis:6.2.14-bookworm                                                       "docker-entrypoint.s…"   redis             2 minutes ago    Up 2 minutes (healthy)    0.0.0.0:6379->6379/tcp, :::6379->6379/tcp
+    canopsis-pro-remediation-1       docker.canopsis.net/docker/develop-pro/engine-remediation:24.10.0-rc1       "/bin/sh -c /${CMD}"     remediation       41 seconds ago   Up 28 seconds             
+    canopsis-pro-snmp-1              docker.canopsis.net/docker/develop-pro/engines-python:24.10.0-rc1           "/bin/sh -c /entrypo…"   snmp              41 seconds ago   Up 28 seconds             
+    canopsis-pro-timescaledb-1       timescale/timescaledb:2.15.1-pg15                                           "docker-entrypoint.s…"   timescaledb       2 minutes ago    Up 2 minutes (healthy)    0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
+    canopsis-pro-webhook-1           docker.canopsis.net/docker/develop-pro/engine-webhook:24.10.0-rc1           "/bin/sh -c /${CMD}"     webhook           41 seconds ago   Up 28 seconds
     ```
 
 === "Paquets RHEL 8"
