@@ -27,6 +27,7 @@
       hide-empty-response
       ticket-id-required
       only-one-ticket-id
+      with-ticket-system-name
     />
     <c-workflow-field
       v-field="value.stop_on_fail"
