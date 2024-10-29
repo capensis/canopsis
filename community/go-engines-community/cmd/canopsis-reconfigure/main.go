@@ -58,7 +58,8 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
 	}
 
-	client, err := mongo.NewClientWithOptions(ctx, 0, 0, 0, 0, logger)
+	// remove timeout to not limit long migrations
+	client, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, 0, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to connect to mongo")
 	}
