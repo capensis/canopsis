@@ -48,6 +48,14 @@
           :name="ticketUrlFieldName"
           :variables="payloadVariablesFromPreviousStep"
         />
+        <v-flex offset-xs6>
+          <declare-ticket-rule-ticket-url-title-field v-field="value.ticket_url_title" />
+          <v-text-field
+            v-if="withTicketSystemName"
+            v-field="value.ticket_system_name"
+            :label="$t('declareTicket.ticketSystemName')"
+          />
+        </v-flex>
         <declare-ticket-rule-ticket-custom-fields-field
           v-field="value.mapping"
           :name="name"
@@ -65,6 +73,7 @@ import { payloadVariablesMixin } from '@/mixins/payload/variables';
 import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './declare-ticket-rule-ticket-custom-fields-field.vue';
 import DeclareTicketRuleTicketUrlField from './declare-ticket-rule-ticket-url-field.vue';
+import DeclareTicketRuleTicketUrlTitleField from './declare-ticket-rule-ticket-url-title-field.vue';
 
 export default {
   inject: ['$validator'],
@@ -72,6 +81,7 @@ export default {
     DeclareTicketRuleTicketUrlField,
     DeclareTicketRuleTicketCustomFieldsField,
     DeclareTicketRuleTicketIdField,
+    DeclareTicketRuleTicketUrlTitleField,
   },
   mixins: [formMixin, payloadVariablesMixin],
   model: {
@@ -104,6 +114,10 @@ export default {
       default: false,
     },
     onlyOneTicketId: {
+      type: Boolean,
+      default: false,
+    },
+    withTicketSystemName: {
       type: Boolean,
       default: false,
     },
