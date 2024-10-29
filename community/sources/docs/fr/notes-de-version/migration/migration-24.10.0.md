@@ -209,6 +209,125 @@ Deux étapes sont à suivre :
 
 === "Paquets RHEL 8"
 
+    Arrêter Canopsis
+
+    ```sh
+    systemctl stop canopsis-engine-go@engine-action.service \
+                       canopsis-engine-go@engine-axe.service \
+                       canopsis-engine-go@engine-che.service \
+                       canopsis-engine-go@engine-fifo.service \
+                       canopsis-engine-go@engine-pbehavior.service \
+                       canopsis-service@canopsis-api.service \
+                       canopsis.service
+    ```
+
+    Sauvegarder les bases de données
+
+    ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    sudo -iu postgres pg_dump $(eval echo "$CPS_POSTGRES_URL") --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d")-canopsis-dump.sql.gz
+    sudo -iu postgres pg_dump $(eval echo "$CPS_POSTGRES_TECH_URL") --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d")-canopsis_tech_metrics-dump.sql.gz
+    ```
+
+    Stopper l'instance postgresql
+
+    ```sh
+    systemctl stop postgresql-13.service
+    systemctl disable postgresql-13.service
+    ```
+
+    Autoriser dnf à réaliser la montée de version
+
+    ```sh
+    dnf versionlock delete timescaledb-2-loader-postgresql-13 timescaledb-2-postgresql-13
+    ```
+
+    Installer la version 15 de postgreSQL et la version 2.14 de TimescaleDB
+
+    ```sh
+    dnf install timescaledb-2-postgresql-15-2.14.2 timescaledb-2-loader-postgresql-15-2.14.2
+    ```
+
+    Initialiser la nouvelle base
+
+    ```sh
+    postgresql-15-setup initdb
+    timescaledb-tune -yes --pg-config=/usr/pgsql-15/bin/pg_config
+    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/15/data/postgresql.conf
+    systemctl enable --now  postgresql-15.service
+    ```
+
+    Créer la base de donnée `cpspostgres` avec les mêmes informations d'identification.
+
+    ```sh
+    sudo -iu postgres psql
+    postgres=# CREATE database canopsis;
+    postgres=# \c canopsis
+    canopsis=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+    canopsis=# SET password_encryption = 'scram-sha-256';
+    canopsis=# CREATE USER cpspostgres WITH PASSWORD 'canopsis';
+    canopsis=# exit
+    ```
+
+    Créer la base de donnée `canopsis_tech_metrics` avec les mêmes informations d'identification.
+
+    ```sh
+    sudo -iu postgres psql
+    postgres=# CREATE database canopsis_tech_metrics;
+    postgres=# \c canopsis_tech_metrics
+    canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+    canopsis_tech_metrics=# SET password_encryption = 'scram-sha-256';
+    canopsis_tech_metrics=# exit
+    ```
+
+    Modifier les droits de l'utilisateur cpspostgres pour réaliser les imports
+
+    ```
+    sudo -iu postgres psql
+    postgres=# ALTER ROLE cpspostgres WITH LOGIN SUPERUSER CREATEDB CREATEROLE REPLICATION BYPASSRLS;
+    ```
+
+    Importer les dumps
+
+    ```sh
+    sudo -iu postgres pg_restore --no-owner -Fc -v -d $(eval echo "$CPS_POSTGRES_URL") /tmp/canopsis-YYYY-MM-DD-canopsis-dump.sql.gz
+    sudo -iu postgres pg_restore --no-owner -Fc -v -d $(eval echo "$CPS_POSTGRES_TECH_URL") /tmp/canopsis-YYYY-MM-DD-canopsis_tech_metrics-dump.sql.gz
+    ```
+
+    Réinitialiser les droits des utilisateurs
+
+    ```
+    sudo -iu postgres psql
+    postgres=# ALTER ROLE cpspostgres WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+    ```
+
+    Installer la version `2.15.1` de TimescaleDB
+
+    ```sh
+    dnf install timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1
+    ```
+
+    Se connecter sur l'instance pgsql pour mettre à jour l'extention TimescaleDB:
+
+    ```sh
+    sudo -iu postgres psql -X
+    postgres=# \c canopsis
+    postgres=# ALTER EXTENSION timescaledb UPDATE;
+    postgres=# \c canopsis_tech_metrics
+    postgres=# ALTER EXTENSION timescaledb UPDATE
+    ```
+
+    vérouiller la version pour éviter des mises à jour non souhaitées
+
+    ```sh
+    dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
+    ```
+
+    Supprimer la version 13 de TimescaleDB
+
+    ```sh
+    dnf remove timescaledb-2-loader-postgresql-13-2.14.2 timescaledb-2-postgresql-13-2.14.2
+    ```
 
 === "Helm"
 
