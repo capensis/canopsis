@@ -165,9 +165,10 @@ type Parameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty" bson:"state"`
 	// AssocTicket
-	Ticket     string            `json:"ticket,omitempty" bson:"ticket"`
-	TicketURL  string            `json:"ticket_url,omitempty" bson:"ticket_url"`
-	TicketData map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
+	Ticket         string            `json:"ticket,omitempty" bson:"ticket"`
+	TicketURL      string            `json:"ticket_url,omitempty" bson:"ticket_url"`
+	TicketURLTitle string            `json:"ticket_url_title,omitempty" bson:"ticket_url_title"`
+	TicketData     map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
 	// AssocTicket and Webhook
 	TicketSystemName string `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
 	// Snooze and Pbehavior
