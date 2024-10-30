@@ -44,7 +44,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 
 	d := conf.Config.HealthCheck.DeleteAfter
 	if datetime.IsDurationEnabledAndValid(d) {
-		mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+		mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
 			w.DataStorageConfigProvider.Get().MongoClientTimeout, w.Logger)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot connect to mongo")
