@@ -16,6 +16,7 @@ import (
 type API interface {
 	common.CrudAPI
 	BulkDelete(c *gin.Context)
+	ListLabels(c *gin.Context)
 }
 
 type api struct {
@@ -48,6 +49,30 @@ func (a *api) List(c *gin.Context) {
 	}
 
 	tags, err := a.store.Find(c, r)
+	if err != nil {
+		panic(err)
+	}
+
+	response, err := common.NewPaginatedResponse(r.Query, tags)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// ListLabels
+// @Success 200 {object} common.PaginatedListResponse{data=[]LabelResponse}
+func (a *api) ListLabels(c *gin.Context) {
+	var r ListLabelsRequest
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	tags, err := a.store.FindLabels(c, r)
 	if err != nil {
 		panic(err)
 	}
