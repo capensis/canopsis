@@ -154,7 +154,7 @@ func Default(
 		logger.Info().Msg("Non-unique names for services ENABLED")
 	}
 
-	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
 		p.ApiConfigProvider.Get().ExportMongoClientTimeout, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
