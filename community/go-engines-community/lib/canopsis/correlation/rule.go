@@ -85,7 +85,7 @@ func GetMetaAlarmComponentAndResource(
 			logger.Warn().Err(err).Str("rule", extraInfosMeta.Rule.ID).Msg("invalid resource template")
 		}
 
-		resource += utils.NewID()
+		resource += "-" + utils.NewID()
 	}
 
 	if component == "" {
