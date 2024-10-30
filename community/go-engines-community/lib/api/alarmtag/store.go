@@ -18,6 +18,7 @@ import (
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
+	FindLabels(ctx context.Context, r ListLabelsRequest) (*AggregationLabelResult, error)
 	GetByID(ctx context.Context, id string) (*Response, error)
 	Create(ctx context.Context, r CreateRequest) (*Response, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
@@ -26,9 +27,10 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		client:         dbClient,
-		collection:     dbClient.Collection(mongo.AlarmTagCollection),
-		authorProvider: authorProvider,
+		client:          dbClient,
+		collection:      dbClient.Collection(mongo.AlarmTagCollection),
+		labelCollection: dbClient.Collection(mongo.AlarmTagColorCollection),
+		authorProvider:  authorProvider,
 
 		defaultSearchByFields: []string{"value"},
 		defaultSortBy:         "value",
@@ -36,9 +38,10 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 }
 
 type store struct {
-	client         mongo.DbClient
-	collection     mongo.DbCollection
-	authorProvider author.Provider
+	client          mongo.DbClient
+	collection      mongo.DbCollection
+	labelCollection mongo.DbCollection
+	authorProvider  author.Provider
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -83,6 +86,43 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 	res := AggregationResult{}
 
+	if cursor.Next(ctx) {
+		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &res, nil
+}
+
+func (s *store) FindLabels(ctx context.Context, r ListLabelsRequest) (*AggregationLabelResult, error) {
+	var pipeline []bson.M
+	var match []bson.M
+	if len(r.IDs) > 0 {
+		match = append(match, bson.M{"_id": bson.M{"$in": r.IDs}})
+	}
+
+	filter := common.GetSearchQuery(r.Search, []string{"_id"})
+	if len(filter) > 0 {
+		match = append(match, filter)
+	}
+
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
+	}
+
+	cursor, err := s.labelCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		common.GetSortQuery("_id", common.SortAsc),
+	))
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	res := AggregationLabelResult{}
 	if cursor.Next(ctx) {
 		err := cursor.Decode(&res)
 		if err != nil {
