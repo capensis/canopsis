@@ -919,14 +919,14 @@ func getMetaAlarmExternalTags(
 	existedTags []string,
 ) []string {
 	tagsMap := make(map[string]struct{})
-	existedTagsMap := make(map[string]struct{})
+	existedTagsMap := make(map[string]bool)
 	for _, tag := range existedTags {
-		existedTagsMap[tag] = struct{}{}
+		existedTagsMap[tag] = true
 	}
 
 	for _, child := range children {
 		for _, tag := range child.Alarm.ExternalTags {
-			if _, ok := existedTagsMap[tag]; ok {
+			if existedTagsMap[tag] {
 				continue
 			}
 
