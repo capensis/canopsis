@@ -328,7 +328,7 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			SetUpdate(update))
 		_, err = p.alarmCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot update meta alarm and its children: %w", err)
 		}
 
 		if len(setEntityUpdate) > 0 {
