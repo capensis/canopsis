@@ -189,7 +189,6 @@ func NewEngine(
 	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(mongoClient, contextGraphManager, eventFilterService, logger))
 	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(mongoClient, contextGraphManager, eventFilterService))
 	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(mongoClient, contextGraphManager, eventFilterService))
-	eventProcessor.Set(types.SourceTypeMetaAlarm, event.NewMetaAlarmProcessor())
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,

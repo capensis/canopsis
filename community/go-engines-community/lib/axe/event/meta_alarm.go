@@ -191,10 +191,6 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 				return fmt.Errorf("cannot fetch children alarms: %w", err)
 			}
 
-			if len(childAlarms) > 0 {
-				lastChild = childAlarms[len(childAlarms)-1]
-			}
-
 			writeModels = make([]mongodriver.WriteModel, 0, len(childAlarms))
 			for _, childAlarm := range childAlarms {
 				if childAlarm.Alarm.Value.State != nil {
@@ -237,6 +233,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 
 					updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
 					eventsCount += childAlarm.Alarm.Value.EventsCount
+					lastChild = childAlarm
 					if metaAlarm.Value.LastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
 						metaAlarm.Value.LastEventDate = childAlarm.Alarm.Value.LastEventDate
 					}
@@ -246,8 +243,14 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 
 		output := ""
 		entityUpdate := bson.M{}
+		var ruleInfos []types.CorrelationRuleInfo
 		if rule.IsManual() {
 			output = event.Parameters.Output
+			ruleInfos = event.Parameters.MetaAlarmInfos
+			if event.Parameters.MetaAlarmTags != nil {
+				metaAlarm.CopyTagsFromChildren = event.Parameters.MetaAlarmTags.CopyFromChildren
+				metaAlarm.FilterChildrenTagsByLabel = event.Parameters.MetaAlarmTags.FilterByLabel
+			}
 		} else {
 			output, err = executeMetaAlarmOutputTpl(p.templateExecutor, correlation.EventExtraInfosMeta{
 				Rule:      rule,
@@ -259,33 +262,35 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 				return err
 			}
 
-			if rule.Tags.CopyFromChildren {
-				metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
-				metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
-				metaAlarm.ExternalTags = getMetaAlarmExternalTags(rule.Tags.FilterByLabel, childAlarms, nil)
-				metaAlarm.Tags = metaAlarm.ExternalTags
+			ruleInfos = rule.Infos
+			metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
+			metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
+		}
+
+		if metaAlarm.CopyTagsFromChildren {
+			metaAlarm.ExternalTags = getMetaAlarmExternalTags(metaAlarm.FilterChildrenTagsByLabel, childAlarms, nil)
+			metaAlarm.Tags = metaAlarm.ExternalTags
+		}
+
+		copyInfoNames := make([]string, 0)
+		for _, info := range ruleInfos {
+			if info.CopyFromChildren {
+				copyInfoNames = append(copyInfoNames, info.Name)
+				continue
 			}
 
-			copyInfoNames := make([]string, 0)
-			for _, info := range rule.Infos {
-				if info.CopyFromChildren {
-					copyInfoNames = append(copyInfoNames, info.Name)
-					continue
-				}
-
-				entityUpdate["infos."+info.Name] = types.Info{
-					Name:        info.Name,
-					Description: info.Description,
-					Value:       info.Value,
-				}
+			entityUpdate["infos."+info.Name] = types.Info{
+				Name:        info.Name,
+				Description: info.Description,
+				Value:       info.Value,
 			}
+		}
 
-			if len(copyInfoNames) > 0 {
-				metaAlarm.EntityInfosFromChildren = copyInfoNames
-				copiedEntityInfos := getMetaAlarmEntityInfos(copyInfoNames, childAlarms, nil)
-				for k, v := range copiedEntityInfos {
-					entityUpdate["infos."+k] = v
-				}
+		if len(copyInfoNames) > 0 {
+			metaAlarm.EntityInfosFromChildren = copyInfoNames
+			copiedEntityInfos := getMetaAlarmEntityInfos(copyInfoNames, childAlarms, nil)
+			for k, v := range copiedEntityInfos {
+				entityUpdate["infos."+k] = v
 			}
 		}
 
