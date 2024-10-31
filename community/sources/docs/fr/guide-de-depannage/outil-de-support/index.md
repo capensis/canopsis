@@ -144,6 +144,37 @@ La section du service "rabbitmq" doit également être modifiée pour prendre en
 
 Grâce à ces configurations, vous serez en mesure d'activer l'export des métriques RabbitMQ.
 
+### Dumps de bases de données
+
+Dans l'archive générée par l'outil de support, vous trouvez également un dump des bases de données MongoDB et TimescaleDB.  
+Ces dumps contiennent par défaut l'ensemble des données contenues dans vos bases. [Certaines options](#description-des-options-dexport) vous permettent d'exclure des collections ou tables des dumps.  
+
+Dans tous les cas, vous devez avoir en tête certaines informations importantes :
+
+* Les données des dumps ne sont pas anonymisées.
+
+Les données du référentiel interne de Canopsis et des alarmes sont présentes telles quelles dans le dump.
+
+* Lorsque vous restaurez un dump sur un environnement, posez vous la question des règles de scénarios et de remédiations.
+
+Les scénarios avec des étapes de type **webhook** peuvent en effet appeler des services tiers (création de ticket, main courante, etc.).  
+Lors de l'exécution d'un [trigger](../../guide-administration/architecture-interne/triggers/), un appel vers ces services tiers pourrait être effectué.  
+Nous recommandons dans ce cas de désactiver les scénarios juste après avoir restauré un dump.
+
+Exemple : 
+
+```sh
+rs0:PRIMARY> db.action_scenario.updateMany({},{$set : { "enabled" : false}})
+```
+
+Pour les jobs de remédiation, le principe est le même. Un job d'un de vos ordonnanceurs pourrait être exécuté. Nous vous recommandons alors de désactiver les consignes. 
+
+Exemple : 
+
+```sh
+rs0:PRIMARY> db.instructions.updateMany({},{$set : { "enabled" : false}})
+```
+
 ## Export de données
 
 ### Description des options d'export
