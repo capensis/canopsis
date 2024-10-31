@@ -48,15 +48,8 @@ La restructuration apportée dans les bases de données pour cette version de Ca
         ```
 
     === "Helm"
-        ```sh
-        export MONGODB_ROOT_PASSWORD=$(kubectl get secret canopsis-mongodb -o jsonpath='{.data.mongodb-root-password}' | base64 --decode)
-        
-        kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
-        ```
 
-    Le retour doit au moins contenir `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
-    Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
-
+        A venir
 
 ### Arrêt de l'environnement en cours de lancement
 
@@ -79,9 +72,8 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     ```
 
 === "Helm"
-    ```sh
-    kubectl delete --all deployments
-    ```
+
+    A venir
 
 ## Mise à jour Canopsis
 
@@ -120,7 +112,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 === "Helm"
 
-    Non concerné car ces configurations sont livrées directement dans les charts helm
+    A venir
 
 ### Mise à jour de TimescaleDB
 
@@ -349,6 +341,7 @@ Deux étapes sont à suivre :
 
 === "Helm"
 
+    A venir
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
@@ -396,7 +389,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
 === "Helm"
 
-    Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade
+    A venir
 
 ### Mise à jour et démarrage final de Canopsis
 
@@ -477,12 +470,9 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
 === "Helm"
 
-    Mise à jour de Canopsis
-    ```sh
-    helm upgrade --install canopsis canopsis/canopsis-pro -f customer-values.yaml
-    ```
+    A venir
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
-![Healthcheck](./img/24.10.0-healthcheck.png)
+![Healthcheck](./img/24.10-healthcheck.png)
 
