@@ -21,6 +21,11 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
+=== "24.10"
+
+    | Version      | Notes de version                                         | Date       | Remarques |
+    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+    | **24.10.0**  | [:material-file-document:](notes-de-version/24.10.0.md)  | 31/10/2024 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.10.0.md) |
 
 === "24.04"
 
@@ -45,7 +50,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
     | 23.10.1      | [:material-file-document:](notes-de-version/23.10.1.md)  | 06/11/2023 ||
     | 23.10.0      | [:material-file-document:](notes-de-version/23.10.0.md)  | 31/10/2023 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.10.0.md) |
     
-=== "23.04"
+=== "23.04 - Maintenance réduite"
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
@@ -64,28 +69,28 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
     | 23.04.1      | [:material-file-document:](notes-de-version/23.04.1.md)  | 23/05/2023 ||
     | 23.04.0      | [:material-file-document:](notes-de-version/23.04.0.md)  | 27/04/2023 |Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.04.0.md)
 
-=== "22.10 - Maintenance réduite"
-
-    | Version      | Notes de version                                         | Date       | Remarques |
-    | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **22.10.13** | [:material-file-document:](notes-de-version/22.10.13.md) | 25/03/2024 ||
-    | 22.10.10     | [:material-file-document:](notes-de-version/22.10.10.md) | 11/09/2023 ||
-    | 22.10.9      | [:material-file-document:](notes-de-version/22.10.9.md)  | 02/05/2023 ||
-    | 22.10.8      | [:material-file-document:](notes-de-version/22.10.8.md)  | 31/03/2023 ||
-    | 22.10.7      | [:material-file-document:](notes-de-version/22.10.7.md)  | 01/03/2023 ||
-    | 22.10.6      | [:material-file-document:](notes-de-version/22.10.6.md)  | 26/01/2023 ||
-    | 22.10.5      | [:material-file-document:](notes-de-version/22.10.5.md)  | 24/01/2023 ||
-    | 22.10.4      | [:material-file-document:](notes-de-version/22.10.4.md)  | 13/01/2023 ||
-    | 22.10.3      | [:material-file-document:](notes-de-version/22.10.3.md)  | 16/12/2023 ||
-    | 22.10.2      | [:material-file-document:](notes-de-version/22.10.2.md)  | 08/12/2023 ||
-    | 22.10.1      | [:material-file-document:](notes-de-version/22.10.1.md)  | 29/11/2023 ||
-    | 22.10.0      | [:material-file-document:](notes-de-version/22.10.0.md)  | 17/11/2023 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-22.10.0.md) |
-
 
 ??? note "Anciennes versions"
 
     La documentation des anciennes versions est disponible sur [https://old-doc.canopsis.net/](https://old-doc.canopsis.net/)    
 
+    === "22.10"
+    
+        | Version      | Notes de version                                         | Date       | Remarques |
+        | ------------ |:--------------------------------------------------------:| ---------- | --------- |
+        | **22.10.13** | [:material-file-document:](notes-de-version/22.10.13.md) | 25/03/2024 ||
+        | 22.10.10     | [:material-file-document:](notes-de-version/22.10.10.md) | 11/09/2023 ||
+        | 22.10.9      | [:material-file-document:](notes-de-version/22.10.9.md)  | 02/05/2023 ||
+        | 22.10.8      | [:material-file-document:](notes-de-version/22.10.8.md)  | 31/03/2023 ||
+        | 22.10.7      | [:material-file-document:](notes-de-version/22.10.7.md)  | 01/03/2023 ||
+        | 22.10.6      | [:material-file-document:](notes-de-version/22.10.6.md)  | 26/01/2023 ||
+        | 22.10.5      | [:material-file-document:](notes-de-version/22.10.5.md)  | 24/01/2023 ||
+        | 22.10.4      | [:material-file-document:](notes-de-version/22.10.4.md)  | 13/01/2023 ||
+        | 22.10.3      | [:material-file-document:](notes-de-version/22.10.3.md)  | 16/12/2023 ||
+        | 22.10.2      | [:material-file-document:](notes-de-version/22.10.2.md)  | 08/12/2023 ||
+        | 22.10.1      | [:material-file-document:](notes-de-version/22.10.1.md)  | 29/11/2023 ||
+        | 22.10.0      | [:material-file-document:](notes-de-version/22.10.0.md)  | 17/11/2023 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-22.10.0.md) |
+    
 	=== "4.6"
 
 	    | Version      | Notes de version                                         | Date       | Remarques |
