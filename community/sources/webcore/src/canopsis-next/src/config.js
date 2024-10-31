@@ -187,6 +187,7 @@ export const API_ROUTES = {
   alarmTag: {
     list: '/api/v4/alarm-tags',
     bulkList: '/api/v4/bulk/alarm-tags',
+    label: '/api/v4/alarm-tag-labels',
   },
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',
