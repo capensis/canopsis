@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <span class="text-subtitle-1 font-weight-bold">{{ $t('common.infos') }}</span>
+    <span class="text-subtitle-1 font-weight-bold mb-2">{{ $t('common.infos') }}</span>
     <meta-alarm-rule-infos-item-form
       v-for="(item, index) in infos"
       v-field="infos[index]"

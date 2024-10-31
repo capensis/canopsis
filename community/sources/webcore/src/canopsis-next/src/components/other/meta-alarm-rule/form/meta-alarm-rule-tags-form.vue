@@ -23,17 +23,23 @@
         </template>
       </c-enabled-field>
       <v-fade-transition>
-        <v-combobox
+        <c-alarm-tag-label-field
           v-if="filterByLabelEnabled"
           v-field="form.filter_by_label"
-          v-validate="'required'"
           :label="$t('common.label')"
-          :error-messages="errors.collect('filter_by_label')"
-          class="mt-0"
           name="filter_by_label"
-          chips
-          multiple
-        />
+          combobox
+          required
+          hide-selected
+        >
+          <template #no-data="">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title v-html="$t('common.pressEnterToApply')" />
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </c-alarm-tag-label-field>
       </v-fade-transition>
     </v-layout>
   </v-layout>

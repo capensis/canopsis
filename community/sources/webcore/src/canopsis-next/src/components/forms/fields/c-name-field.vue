@@ -14,7 +14,7 @@
         left
       />
     </template>
-    <template v-if="$slots.appendOuter" #append-outer>
+    <template #append-outer>
       <slot name="append-outer" />
     </template>
   </v-text-field>
