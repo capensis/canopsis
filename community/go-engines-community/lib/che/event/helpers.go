@@ -55,7 +55,7 @@ func updateMetaAlarmInfos(
 			ID                      string   `bson:"_id"`
 			EntityInfosFromChildren []string `bson:"cinfos"`
 		}{}
-		err := cursor.Decode(&parent)
+		err = cursor.Decode(&parent)
 		if err != nil {
 			return fmt.Errorf("cannot decode parent: %w", err)
 		}
