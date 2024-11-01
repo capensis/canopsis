@@ -167,9 +167,7 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 		eventsCount := types.CpsNumber(0)
 		writeModels := make([]mongodriver.WriteModel, 0, len(alarms))
 		childrenIds := make([]string, 0, len(alarms))
-
 		var lastChild types.AlarmWithEntity
-
 		for _, childAlarm := range alarms {
 			if !childAlarm.Alarm.AddParent(metaAlarm.EntityID) {
 				continue
