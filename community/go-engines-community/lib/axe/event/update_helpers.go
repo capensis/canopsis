@@ -962,14 +962,9 @@ func getMetaAlarmEntityInfos(
 		return nil
 	}
 
-	infoNameMap := make(map[string]struct{}, len(infoNames))
-	for _, infoName := range infoNames {
-		infoNameMap[infoName] = struct{}{}
-	}
-
 	infos := make(map[string]types.Info)
 	for _, child := range children {
-		for infoName := range infoNameMap {
+		for _, infoName := range infoNames {
 			if info, ok := child.Entity.Infos[infoName]; ok {
 				if existedInfo, ok := existedInfos[infoName]; ok {
 					if reflect.DeepEqual(existedInfo.Value, info.Value) {
