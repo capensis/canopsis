@@ -1,6 +1,8 @@
 package correlation
 
 import (
+	"cmp"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
@@ -22,15 +24,15 @@ const (
 )
 
 type Rule struct {
-	ID             string     `bson:"_id,omitempty" json:"_id,omitempty"`
-	Type           string     `bson:"type" json:"type"`
-	Name           string     `bson:"name" json:"name"`
-	Author         string     `bson:"author" json:"author"`
-	OutputTemplate string     `bson:"output_template" json:"output_template"`
-	Config         RuleConfig `bson:"config" json:"config"`
-	Tags           RuleTags   `bson:"tags" json:"tags"`
-	Infos          []RuleInfo `bson:"infos" json:"infos"`
-	AutoResolve    bool       `bson:"auto_resolve" json:"auto_resolve"`
+	ID             string                      `bson:"_id,omitempty" json:"_id,omitempty"`
+	Type           string                      `bson:"type" json:"type"`
+	Name           string                      `bson:"name" json:"name"`
+	Author         string                      `bson:"author" json:"author"`
+	OutputTemplate string                      `bson:"output_template" json:"output_template"`
+	Config         RuleConfig                  `bson:"config" json:"config"`
+	Tags           types.CorrelationRuleTags   `bson:"tags" json:"tags"`
+	Infos          []types.CorrelationRuleInfo `bson:"infos" json:"infos"`
+	AutoResolve    bool                        `bson:"auto_resolve" json:"auto_resolve"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
@@ -38,18 +40,6 @@ type Rule struct {
 
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-}
-
-type RuleTags struct {
-	CopyFromChildren bool     `bson:"copy_from_children,omitempty" json:"copy_from_children,omitempty"`
-	FilterByLabel    []string `bson:"filter_by_label,omitempty" json:"filter_by_label,omitempty"`
-}
-
-type RuleInfo struct {
-	Name             string `bson:"name" json:"name"`
-	Description      string `bson:"description,omitempty" json:"description,omitempty"`
-	Value            any    `bson:"value,omitempty" json:"value,omitempty"`
-	CopyFromChildren bool   `bson:"copy_from_children,omitempty" json:"copy_from_children,omitempty"`
 }
 
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
@@ -102,15 +92,13 @@ func GetMetaAlarmComponentAndResource(
 		resource += utils.NewID()
 	}
 
-	if component == "" {
-		component = DefaultMetaAlarmComponent
-	}
+	defaultComponent, defaultResource := GetMetaAlarmDefaultComponentAndResource()
 
-	if resource == "" {
-		resource = DefaultMetaAlarmEntityPrefix + utils.NewID()
-	}
+	return cmp.Or(component, defaultComponent), cmp.Or(resource, defaultResource)
+}
 
-	return component, resource
+func GetMetaAlarmDefaultComponentAndResource() (string, string) {
+	return DefaultMetaAlarmComponent, DefaultMetaAlarmEntityPrefix + utils.NewID()
 }
 
 type TotalEntityPatternFields struct {
