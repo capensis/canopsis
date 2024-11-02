@@ -25,6 +25,16 @@
       v-field="form.comment"
       :label="$t('common.note')"
     />
+    <v-text-field
+      v-field="form.component"
+      :label="$t('common.component')"
+    />
+    <v-text-field
+      v-field="form.resource"
+      :label="$t('common.resource')"
+    />
+    <meta-alarm-rule-tags-form v-field="form.tags" />
+    <meta-alarm-rule-infos-form v-field="form.infos" />
     <c-enabled-field
       v-field="form.auto_resolve"
       :label="$t('metaAlarmRule.autoResolve')"
@@ -35,10 +45,14 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import MetaAlarmRuleTagsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-tags-form.vue';
+import MetaAlarmRuleInfosForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-infos-form.vue';
+
 const { mapActions } = createNamespacedHelpers('metaAlarm');
 
 export default {
   inject: ['$validator'],
+  components: { MetaAlarmRuleTagsForm, MetaAlarmRuleInfosForm },
   model: {
     prop: 'form',
     event: 'input',

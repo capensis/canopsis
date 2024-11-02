@@ -78,9 +78,12 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
       },
     });
 
-    const dataById = keyBy(data, unref(idKey));
+    const unwrappedIdKey = unref(idKey);
+    const dataById = keyBy(data, unwrappedIdKey);
 
-    selectedItems.value = arrayValue.value.map(item => (dataById[item[idKey]] ?? ({ [idKey]: item })));
+    selectedItems.value = arrayValue.value.map(item => (
+      dataById[item[unwrappedIdKey] || item] ?? ({ [unwrappedIdKey]: item })
+    ));
   }, true);
 
   /**

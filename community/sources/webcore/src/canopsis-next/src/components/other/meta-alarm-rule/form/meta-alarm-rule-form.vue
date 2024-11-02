@@ -54,7 +54,7 @@
         class="pa-0"
       >
         <div class="pa-4">
-          <meta-alarm-rule-type-field
+          <meta-alarm-rule-type-form
             v-field="form"
             :variables="templateVariables"
           />
@@ -96,13 +96,13 @@ import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-
 import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
-import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
+import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 
 export default {
   components: {
     MetaAlarmRuleParametersForm,
-    MetaAlarmRuleTypeField,
+    MetaAlarmRuleTypeForm,
     MetaAlarmRuleGeneralForm,
   },
   model: {

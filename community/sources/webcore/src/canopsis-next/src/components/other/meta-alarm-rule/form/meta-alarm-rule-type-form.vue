@@ -29,12 +29,12 @@
     <v-expand-transition>
       <v-layout v-if="hasTemplateFields" column>
         <c-payload-text-field
-          v-field="form.component_template"
+          v-field="form.config.component_template"
           :label="$t('metaAlarmRule.componentTemplate')"
           :variables="variables"
         />
         <c-payload-text-field
-          v-field="form.resource_template"
+          v-field="form.config.resource_template"
           :label="$t('metaAlarmRule.resourceTemplate')"
           :variables="variables"
         />
