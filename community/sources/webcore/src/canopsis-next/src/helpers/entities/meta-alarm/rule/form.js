@@ -271,8 +271,8 @@ export const metaAlarmRuleToForm = (rule = {}) => {
     auto_resolve: !!rule.auto_resolve,
     output_template: rule.output_template ?? '{{ .LastChild.Alarm.Value.State.Message }}',
     patterns: metaAlarmFilterPatternsToForm(rule),
-    tags: metaAlarmRuleTagsToForm(rule.tags),
-    infos: (rule.infos ?? []).map(metaAlarmRuleInfosItemToForm),
+    tags: metaAlarmRuleTagsToForm(rule.tags || {}),
+    infos: (rule.infos || []).map(metaAlarmRuleInfosItemToForm),
     config: {
       value_paths: config.value_paths ? primitiveArrayToForm(config.value_paths) : [],
       threshold_rate: config.threshold_rate ? config.threshold_rate * 100 : 100,
@@ -286,9 +286,24 @@ export const metaAlarmRuleToForm = (rule = {}) => {
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
       time_interval: durationToForm(config.time_interval ?? DEFAULT_TIME_INTERVAL),
       child_inactive_delay: config.child_inactive_delay ? durationToForm(config.child_inactive_delay) : undefined,
+      component_template: config.component_template ?? '',
+      resource_template: config.resource_template ?? '',
     },
   };
 };
+
+/**
+ * Checks if the given alarm rule type has template configuration fields.
+ *
+ * @param {string} type - The type of the alarm rule to check.
+ * @returns {boolean} Returns `true` if the `type` has template configuration fields, otherwise `false`.
+ */
+export const hasTemplateConfigFields = type => [
+  META_ALARMS_RULE_TYPES.timebased,
+  META_ALARMS_RULE_TYPES.attribute,
+  META_ALARMS_RULE_TYPES.complex,
+  META_ALARMS_RULE_TYPES.valuegroup,
+].includes(type);
 
 /**
  * Convert form to meta alarm rule
@@ -314,9 +329,9 @@ export const formToMetaAlarmRule = (form = {}) => {
   };
 
   switch (form.type) {
-    case META_ALARMS_RULE_TYPES.corel:
     case META_ALARMS_RULE_TYPES.complex:
-    case META_ALARMS_RULE_TYPES.valuegroup: {
+    case META_ALARMS_RULE_TYPES.valuegroup:
+    case META_ALARMS_RULE_TYPES.corel: {
       const isComplex = isComplexMetaAlarmRuleType(form.type);
       const isValueGroup = isValueGroupMetaAlarmRuleType(form.type);
       const isCorel = isCorelMetaAlarmRuleType(form.type);
@@ -325,7 +340,7 @@ export const formToMetaAlarmRule = (form = {}) => {
         ? 'threshold_rate'
         : 'threshold_count';
 
-      const fields = ['threshold_type', thresholdField];
+      const fields = ['threshold_type', 'component_template', 'resource_template', thresholdField];
 
       if (isComplex || isCorel) {
         fields.push('value_paths');
@@ -341,15 +356,19 @@ export const formToMetaAlarmRule = (form = {}) => {
         config.threshold_rate /= 100;
       }
 
-      return {
-        config,
-
-        ...metaAlarmRule,
-      };
+      metaAlarmRule.config = config;
+      break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
       metaAlarmRule.config = pick(form.config, ['time_interval']);
       break;
+  }
+
+  if (hasTemplateConfigFields(metaAlarmRule.type)) {
+    metaAlarmRule.config = {
+      ...metaAlarmRule.config,
+      ...pick(form.config, ['component_template', 'resource_template']),
+    };
   }
 
   return metaAlarmRule;
