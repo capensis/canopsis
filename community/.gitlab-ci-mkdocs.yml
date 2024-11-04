@@ -14,10 +14,11 @@ build_doc:
     - git config user.email ${ACCESS_TOKEN_NAME}@${CI_SERVER_HOST}
   script:
    - export LAST_VERSION=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | head -1)
+   - export LATEST_TAG=$(git describe --tags --abbrev=0)
    - cd community
    - |
-     if [ $CI_COMMIT_TAG = $LAST_VERSION ]; then
-       mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG latest;
+     if [ $LATEST_TAG = $LAST_VERSION ]; then
+       mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $LATEST_TAG latest;
      else
        mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG;
      fi
