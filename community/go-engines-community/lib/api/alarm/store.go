@@ -49,7 +49,7 @@ type Store interface {
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest, userID string) (*Count, error)
-	GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error)
+	GetByID(ctx context.Context, id, userId string) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, userId string) (*Alarm, bool, error)
 	FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error)
 	FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error)
@@ -178,10 +178,10 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents, userId)
 }
 
-func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
+func (s *store) GetByID(ctx context.Context, id, userId string) (*Alarm, error) {
 	now := types.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
-		OpenedAndRecentResolved, onlyParents)
+		OpenedAndRecentResolved)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +236,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 
 	now := types.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userId,
-		OnlyOpened, false)
+		OnlyOpened)
 	if err != nil {
 		return nil, false, err
 	}
