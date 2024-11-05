@@ -270,18 +270,16 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	now datetime.CpsTime,
 	userID string,
 	opened int,
-	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
 	q.handleOpened(opened)
 	q.handleDependencies(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	if onlyParents {
-		q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
-		q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
-		q.excludedFields = append(q.excludedFields, "resolved_children")
-	}
+
+	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
+	q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
+	q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
+	q.excludedFields = append(q.excludedFields, "resolved_children")
 
 	query := pagination.Query{
 		Page:  1,
