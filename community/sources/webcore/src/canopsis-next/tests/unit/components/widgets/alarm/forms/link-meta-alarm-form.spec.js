@@ -10,10 +10,12 @@ const stubs = {
   'v-combobox': createInputStub('v-combobox'),
   'v-text-field': createInputStub('v-text-field'),
   'c-enabled-field': true,
+  'c-help-icon': true,
 };
 
 const snapshotStubs = {
   'c-enabled-field': true,
+  'c-help-icon': true,
 };
 
 const selectTextField = wrapper => wrapper.find('.v-text-field');
