@@ -30,7 +30,7 @@ export default {
       default: EXPAND_DEFAULT_MAX_LETTERS,
     },
     text: {
-      type: [String, Number],
+      type: [String, Number, Array],
       default: '',
     },
   },
