@@ -13,6 +13,7 @@
           :read-only="readOnly"
           :entity-pattern="entityPattern"
           :default-name="defaultName"
+          :timezone.sync="calendarTimezone"
         />
       </template>
       <template #actions="">
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-import { keyBy, omit } from 'lodash';
+import { keyBy, map, omit, uniq } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -46,6 +47,7 @@ import {
   pbehaviorToDuplicateForm,
   pbehaviorToRequest,
 } from '@/helpers/entities/pbehavior/form';
+import { getLocaleTimezone } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -57,9 +59,15 @@ import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbe
 
 import ModalWrapper from '../modal-wrapper.vue';
 
+// TODO: move to another place
+export const getPbehaviorsInitialTimezone = (pbehaviors = []) => {
+  const timezones = uniq(map(pbehaviors, 'timezone'));
+
+  return timezones.length === 1 ? timezones[0] : getLocaleTimezone();
+};
+
 export default {
   name: MODALS.pbehaviorPlanning,
-  inject: ['$system'],
   components: { PbehaviorPlanningCalendar, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -72,6 +80,7 @@ export default {
     const { pbehaviors = [], pbehaviorsToAdd = [] } = this.modal.config;
 
     return {
+      calendarTimezone: getPbehaviorsInitialTimezone(pbehaviors),
       form: {
         pbehaviorsById: keyBy(pbehaviors, '_id'),
         addedPbehaviorsById: keyBy(pbehaviorsToAdd.map(pbehaviorToDuplicateForm), '_id'),
@@ -83,7 +92,7 @@ export default {
   computed: {
     defaultName() {
       return this.autoSuggestPbehaviorName
-        ? getPbehaviorNameByEntities(this.config.entities, this.$system.timezone)
+        ? getPbehaviorNameByEntities(this.config.entities, this.calendarTimezone)
         : '';
     },
 

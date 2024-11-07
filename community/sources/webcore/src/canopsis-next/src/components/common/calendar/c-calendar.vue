@@ -8,23 +8,37 @@
       class="c-calendar__toolbar py-3"
       justify-space-around
     >
-      <calendar-today-btn
-        class="c-calendar__today-btn"
-        @click="setToday"
-      />
-      <v-layout justify-center>
-        <calendar-pagination
-          :focus.sync="focus"
-          :type="internalType"
-          class="c-calendar__pagination"
-          @prev="prev"
-          @next="next"
-        />
-      </v-layout>
-      <div class="c-calendar__menu-right">
-        <calendar-view-mode v-model="internalType" />
-        <slot name="menu-right" />
-      </div>
+      <v-flex xs4>
+        <v-layout class="gap-2" align-center>
+          <calendar-today-btn
+            class="c-calendar__today-btn"
+            @click="setToday"
+          />
+          <c-timezone-field
+            v-model="localTimezone"
+            server
+            hide-details
+            @input="updateTimezone"
+          />
+        </v-layout>
+      </v-flex>
+      <v-flex xs4>
+        <v-layout justify-center>
+          <calendar-pagination
+            :focus.sync="focus"
+            :type="internalType"
+            class="c-calendar__pagination"
+            @prev="prev"
+            @next="next"
+          />
+        </v-layout>
+      </v-flex>
+      <v-flex class="c-calendar__menu-right" xs4>
+        <v-layout justify-end>
+          <calendar-view-mode v-model="internalType" />
+          <slot name="menu-right" />
+        </v-layout>
+      </v-flex>
     </v-layout>
 
     <div class="fill-height position-relative">
@@ -137,6 +151,7 @@
           <slot
             :close="clearPlaceholder"
             :event="newEvent || editEvent || popoverEvent"
+            :timezone="localTimezone"
             name="form-event"
           />
         </v-card-text>
@@ -156,6 +171,7 @@ import {
   convertDateToStartOfDayDateObject,
   getWeekdayNumber,
   isDateBefore,
+  getLocaleTimezone,
 } from '@/helpers/date/date';
 import { colorToRgba } from '@/helpers/color';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
@@ -188,11 +204,16 @@ export default {
       type: String,
       default: CALENDAR_TYPES.month,
     },
+    timezone: {
+      type: String,
+      default: getLocaleTimezone(),
+    },
   },
   data() {
     return {
       internalType: this.type,
       focus: new Date(),
+      localTimezone: this.timezone,
       filled: {
         start: null,
         stop: null,
@@ -673,6 +694,10 @@ export default {
       if (this.resizing) {
         this.finishResizeEvent(event, nativeEvent);
       }
+    },
+
+    updateTimezone(newTimezone) {
+      this.$emit('update:timezone', newTimezone);
     },
   },
 };
