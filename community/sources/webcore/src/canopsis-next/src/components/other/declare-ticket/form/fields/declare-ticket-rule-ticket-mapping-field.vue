@@ -15,49 +15,49 @@
       <v-layout>
         <v-flex xs6>
           <c-enabled-field
-            v-field="value.enabled"
+            v-field="form.declare_ticket.enabled"
             :disabled="isDeclareTicketExist"
           />
         </v-flex>
         <v-flex
-          v-if="value.enabled"
+          v-if="form.declare_ticket.enabled"
           xs6
         >
           <c-enabled-field
-            v-field="value.is_regexp"
+            v-field="form.declare_ticket.is_regexp"
             :label="$t('declareTicket.isRegexp')"
           />
         </v-flex>
       </v-layout>
-      <template v-if="value.enabled">
+      <template v-if="form.declare_ticket.enabled">
         <c-enabled-field
           v-if="!hideEmptyResponse"
-          v-field="value.empty_response"
+          v-field="form.declare_ticket.empty_response"
           :label="$t('declareTicket.emptyResponse')"
         />
         <declare-ticket-rule-ticket-id-field
-          v-field="value.ticket_id"
+          v-field="form.declare_ticket.ticket_id"
           :disabled="disabled"
           :name="ticketIdFieldName"
           :required="ticketIdRequired"
           :variables="payloadVariablesFromPreviousStep"
         />
         <declare-ticket-rule-ticket-url-field
-          v-field="value.ticket_url"
+          v-field="form.declare_ticket.ticket_url"
           :disabled="disabled"
           :name="ticketUrlFieldName"
           :variables="payloadVariablesFromPreviousStep"
         />
         <v-flex offset-xs6>
-          <declare-ticket-rule-ticket-url-title-field v-field="value.ticket_url_title" />
+          <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
           <v-text-field
             v-if="withTicketSystemName"
-            v-field="value.ticket_system_name"
+            v-field="form.ticket_system_name"
             :label="$t('declareTicket.ticketSystemName')"
           />
         </v-flex>
         <declare-ticket-rule-ticket-custom-fields-field
-          v-field="value.mapping"
+          v-field="form.declare_ticket.mapping"
           :name="name"
           :disabled="disabled"
         />
@@ -85,11 +85,11 @@ export default {
   },
   mixins: [formMixin, payloadVariablesMixin],
   model: {
-    prop: 'value',
+    prop: 'form',
     event: 'input',
   },
   props: {
-    value: {
+    form: {
       type: Object,
       required: true,
     },
