@@ -73,9 +73,11 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @property {Request} request
  * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
+ * @property {boolean} [empty_response]
  * @property {boolean} skip_for_child
  * @property {boolean} skip_for_instruction
  * @property {string} [author]
+ * @property {string} [ticket_system_name]
  */
 
 /**
@@ -179,6 +181,7 @@ const webhookActionParametersToForm = (parameters = {}) => ({
   request: requestToForm(parameters.request),
   skip_for_child: parameters.skip_for_child ?? false,
   skip_for_instruction: parameters.skip_for_instruction ?? false,
+  ticket_system_name: parameters.ticket_system_name ?? '',
 });
 
 /**
@@ -311,8 +314,10 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
 export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
   request: formToRequest(parameters.request),
+  empty_response: parameters.empty_response,
   skip_for_child: parameters.skip_for_child,
   skip_for_instruction: parameters.skip_for_instruction,
+  ticket_system_name: parameters.ticket_system_name,
 });
 
 /**
