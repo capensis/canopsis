@@ -29,8 +29,8 @@
         required
       />
       <template v-else>
-        <v-layout align-center>
-          <v-flex xs3>
+        <v-layout class="gap-2" align-center>
+          <v-flex xs2>
             <v-checkbox
               v-model="fullDay"
               :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
@@ -39,11 +39,9 @@
               hide-details
             />
           </v-flex>
-          <v-flex
-            v-if="hasPauseType"
-            xs3
-          >
+          <v-flex xs2>
             <v-checkbox
+              v-if="hasPauseType"
               v-model="noEnding"
               :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
               class="mt-0"
@@ -51,7 +49,7 @@
               hide-details
             />
           </v-flex>
-          <v-flex xs6>
+          <v-flex xs5>
             <date-time-splitted-range-picker-field
               :start="form.tstart"
               :end="form.tstop"
@@ -65,6 +63,12 @@
               :full-day="fullDay"
               @update:start="updateField('tstart', $event)"
               @update:end="updateField('tstop', $event)"
+            />
+          </v-flex>
+          <v-flex xs3>
+            <c-timezone-field
+              v-field="form.timezone"
+              server
             />
           </v-flex>
         </v-layout>

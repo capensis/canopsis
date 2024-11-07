@@ -81,6 +81,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @property {number} tstart
  * @property {number} tstop
  * @property {string} color
+ * @property {string} timezone
  * @property {PbehaviorType} type
  * @property {PbehaviorReason} reason
  * @property {PbehaviorComment[]} comments
@@ -230,6 +231,8 @@ export const pbehaviorToForm = (
     [PATTERNS_FIELDS.entity],
   );
 
+  const pbehaviorTimezone = pbehavior.timezone || timezone;
+
   return {
     rrule,
     patterns,
@@ -239,9 +242,10 @@ export const pbehaviorToForm = (
     name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
-    tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
+    tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, pbehaviorTimezone) : null,
+    tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, pbehaviorTimezone) : null,
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
+    timezone: pbehaviorTimezone,
     exceptions: exceptionsToForm(pbehavior.exceptions),
     exdates: exdatesToForm(pbehavior.exdates, timezone),
   };
@@ -279,20 +283,19 @@ export const formExdatesToExdates = (exdates = [], timezone) => exdates.map(
  * Convert form to pbehavior entity.
  *
  * @param {PbehaviorForm} form
- * @param {string} timezone
  * @return {Pbehavior}
  */
-export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
+export const formToPbehavior = form => ({
   ...omit(form, ['patterns']),
 
   enabled: form.enabled ?? true,
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntities(form.comments),
-  exdates: formExdatesToExdates(form.exdates, timezone),
+  exdates: formExdatesToExdates(form.exdates, form.timezone),
   exceptions: formExceptionsToExceptions(form.exceptions),
-  tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
-  tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
+  tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, form.timezone) : null,
+  tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, form.timezone) : null,
   ...formFilterToPatterns(form.patterns),
 });
 
@@ -327,6 +330,10 @@ export const calendarEventToPbehaviorForm = (
     ...pbehaviorForm,
     ...cachedForm,
   };
+
+  if (!form.timezone) {
+    form.timezone = timezone;
+  }
 
   form.tstart = start;
 
@@ -363,10 +370,9 @@ export const isFullDayEvent = (start, stop) => {
  *
  * @param {PbehaviorForm} form
  * @param {Object} event
- * @param {string} timezone
  * @return {Object}
  */
-export const formToCalendarEvent = (form, event, timezone) => {
+export const formToCalendarEvent = (form, event) => {
   const timed = !isFullDayEvent(form.tstart, form.tstop);
 
   return {
@@ -374,7 +380,7 @@ export const formToCalendarEvent = (form, event, timezone) => {
     timed,
     color: form.color,
 
-    pbehavior: formToPbehavior(form, timezone),
+    pbehavior: formToPbehavior(form),
   };
 };
 

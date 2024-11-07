@@ -144,7 +144,7 @@ export const convertDateToDateObject = (date, format) => convertDateToMoment(dat
  * Convert date from source timezone to local timezone with time keeping
  *
  * @param {LocalDate} timestamp
- * @param {string} sourceTimezone
+ * @param {string} [sourceTimezone = getLocaleTimezone()]
  * @param {string} [targetTimezone = getLocaleTimezone()]
  * @param {string} [defaultValue]
  * @returns {Object}
@@ -165,7 +165,9 @@ export const convertDateToMomentByTimezone = (
     return dateObject;
   }
 
-  return dateObject.tz(sourceTimezone).tz(targetTimezone, true);
+  const localTimezone = getLocaleTimezone();
+
+  return dateObject.tz(sourceTimezone || localTimezone).tz(targetTimezone || localTimezone, true);
 };
 
 /**

@@ -1,6 +1,7 @@
 <template>
   <v-autocomplete
     v-field="value"
+    v-bind="$attrs"
     :items="timezones"
     :label="fieldLabel"
     :disabled="disabled"
@@ -13,6 +14,7 @@ import { getTimezones } from '@/helpers/date/date';
 
 export default {
   inject: ['$validator'],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
@@ -33,6 +35,10 @@ export default {
     name: {
       type: String,
       default: 'timezone',
+    },
+    server: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

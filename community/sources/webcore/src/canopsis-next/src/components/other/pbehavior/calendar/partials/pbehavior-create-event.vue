@@ -48,6 +48,7 @@ import { MODALS, VALIDATION_DELAY } from '@/constants';
 import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
 import { isOmitEqual } from '@/helpers/collection';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
+import { getLocaleTimezone } from '@/helpers/date/date';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
@@ -72,11 +73,15 @@ export default {
       type: String,
       required: false,
     },
+    timezone: {
+      type: String,
+      default: getLocaleTimezone(),
+    },
   },
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.defaultName, this.$system.timezone),
+      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.defaultName, this.timezone),
     };
   },
   computed: {
@@ -124,7 +129,7 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const calendarEvent = formToCalendarEvent(this.form, this.event, this.$system.timezone);
+        const calendarEvent = formToCalendarEvent(this.form, this.event);
 
         this.manualClose = true;
 

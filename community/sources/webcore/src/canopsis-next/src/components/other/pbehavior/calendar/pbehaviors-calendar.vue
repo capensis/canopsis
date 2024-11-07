@@ -3,6 +3,7 @@
     ref="calendar"
     :events="events"
     :loading="pending"
+    :timez0ne.sync="timezone"
     readonly
     hide-details-menu
     @change:pagination="fetchEvents"
@@ -18,13 +19,13 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToString,
   convertDateToTimestampByTimezone,
+  getLocaleTimezone,
 } from '@/helpers/date/date';
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
 export default {
-  inject: ['$system'],
   mixins: [
     entitiesPbehaviorMixin,
     entitiesPbehaviorTimespansMixin,
@@ -39,6 +40,7 @@ export default {
     return {
       pending: false,
       events: [],
+      timezone: getLocaleTimezone(),
     };
   },
   mounted() {
@@ -47,8 +49,8 @@ export default {
   methods: {
     convertPbehaviorsCalendarToEvents(pbehaviors) {
       return pbehaviors.map((pbehavior, index) => {
-        const start = convertDateToDateObjectByTimezone(pbehavior.from, this.$system.timezone);
-        const end = pbehavior.to && convertDateToDateObjectByTimezone(pbehavior.to, this.$system.timezone);
+        const start = convertDateToDateObjectByTimezone(pbehavior.from, pbehavior.timezone);
+        const end = pbehavior.to && convertDateToDateObjectByTimezone(pbehavior.to, pbehavior.timezone);
 
         const isTimed = !isFullDayEvent(start, end);
 
@@ -72,8 +74,8 @@ export default {
 
     fetchPbehaviorsCalendar() {
       const params = {
-        from: convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.$system.timezone),
-        to: convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.$system.timezone),
+        from: convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.timezone),
+        to: convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.timezone),
       };
 
       if (this.entityId) {
