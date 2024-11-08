@@ -587,14 +587,13 @@ func (m *MockInheritedServicePbhResolver) EXPECT() *MockInheritedServicePbhResol
 }
 
 // ComputeAndResolveInheritedServicePbh mocks base method.
-func (m *MockInheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(arg0 context.Context, arg1 pbehavior.ComputedEntityTypeResolver) ([]types.Event, pbehavior.InheritedServicesPbhResolveResult, map[string]types.Entity, error) {
+func (m *MockInheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(arg0 context.Context, arg1 pbehavior.ComputedEntityTypeResolver) (pbehavior.InheritedServicesPbhResolveResult, pbehavior.ServiceEventsData, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ComputeAndResolveInheritedServicePbh", arg0, arg1)
-	ret0, _ := ret[0].([]types.Event)
-	ret1, _ := ret[1].(pbehavior.InheritedServicesPbhResolveResult)
-	ret2, _ := ret[2].(map[string]types.Entity)
-	ret3, _ := ret[3].(error)
-	return ret0, ret1, ret2, ret3
+	ret0, _ := ret[0].(pbehavior.InheritedServicesPbhResolveResult)
+	ret1, _ := ret[1].(pbehavior.ServiceEventsData)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ComputeAndResolveInheritedServicePbh indicates an expected call of ComputeAndResolveInheritedServicePbh.

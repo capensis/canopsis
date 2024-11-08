@@ -77,20 +77,20 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	servicePbhEvents, inheritedServicePbhResult, _, err := w.InheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
+	inheritedServicePbhResult, servicePbhEventsData, err := w.InheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
 	if err != nil {
 		w.Logger.Err(err).Msg("failed to resolve inherited pbh")
 		return
 	}
 
-	w.sendServiceEvents(ctx, servicePbhEvents, inheritedServicePbhResult.PersonalPbh)
-	eventsCount += len(servicePbhEvents)
+	w.sendServiceEvents(ctx, servicePbhEventsData.ServiceEvents, inheritedServicePbhResult.PersonalPbh)
 
 	processedEntityIds := make([]string, len(inheritedServicePbhResult.IDs))
 	copy(processedEntityIds, inheritedServicePbhResult.IDs)
 
 	processedEntityIds, eventsCount = w.processAlarms(ctx, now, computedEntityIDs, resolver, inheritedServicePbhResult)
 	eventsCount += w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver, inheritedServicePbhResult)
+	eventsCount += len(servicePbhEventsData.ServiceEvents)
 
 	pbehaviorsCount, err = resolver.GetPbehaviorsCount(ctx, now)
 	if err != nil {

@@ -90,18 +90,18 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, event
 	}
 
 	if len(ids) != 0 {
-		var serviceEvents []types.Event
 		var inheritedServicePbhResult libpbehavior.InheritedServicesPbhResolveResult
 		var excludeIDs []string
-		var servicesMap map[string]types.Entity
+
+		var servicePbhEventsData libpbehavior.ServiceEventsData
 
 		if event.RecomputeInherited {
-			serviceEvents, inheritedServicePbhResult, servicesMap, err = p.InheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
+			inheritedServicePbhResult, servicePbhEventsData, err = p.InheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
 			if err != nil {
 				return fmt.Errorf("failed to resolve inherited service pbehaviors: %w", err)
 			}
 
-			err = p.sendServiceEvents(ctx, serviceEvents, event, ids, servicesMap)
+			err = p.sendServiceEvents(ctx, servicePbhEventsData, event, ids)
 			if err != nil {
 				return fmt.Errorf("failed to send service events: %w", err)
 			}
@@ -128,15 +128,17 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, event
 
 func (p *recomputeMessageProcessor) sendServiceEvents(
 	ctx context.Context,
-	events []types.Event,
+	servicePbhEventsData libpbehavior.ServiceEventsData,
 	rpcEvent rpc.PbehaviorRecomputeEvent,
 	updatedPbhIds []string,
-	servicesMap map[string]types.Entity,
 ) error {
-	for idx := range events {
-		p.resolveEventAuthor(rpcEvent, updatedPbhIds, servicesMap[events[idx].Component].PbehaviorInfo.ID, &events[idx])
+	serviceEvents := servicePbhEventsData.ServiceEvents
+	serviceMap := servicePbhEventsData.ServicesMap
 
-		body, err := p.Encoder.Encode(events[idx])
+	for idx := range serviceEvents {
+		p.resolveEventAuthor(rpcEvent, updatedPbhIds, serviceMap[serviceEvents[idx].Component].PbehaviorInfo.ID, &serviceEvents[idx])
+
+		body, err := p.Encoder.Encode(serviceEvents[idx])
 		if err != nil {
 			return fmt.Errorf("cannot encode event: %w", err)
 		}
@@ -159,9 +161,9 @@ func (p *recomputeMessageProcessor) sendServiceEvents(
 		}
 
 		p.Logger.Debug().
-			Str("pbehavior", events[idx].PbehaviorInfo.ID).
-			Str("entity", events[idx].Component).
-			Msgf("send %s event", events[idx].EventType)
+			Str("pbehavior", serviceEvents[idx].PbehaviorInfo.ID).
+			Str("entity", serviceEvents[idx].Component).
+			Msgf("send %s event", serviceEvents[idx].EventType)
 	}
 
 	return nil
@@ -181,12 +183,14 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		matchByPbehaviorId["_id"] = bson.M{"$nin": excludeIds}
 	}
 
-	orStmt := []bson.M{{"pbehavior_info.id": pbhId}}
 	if len(inheritedServicePbhResult.IDs) > 0 {
-		orStmt = append(orStmt, bson.M{"services": bson.M{"$in": inheritedServicePbhResult.IDs}})
+		matchByPbehaviorId["$or"] = []bson.M{
+			{"pbehavior_info.id": pbhId},
+			{"services": bson.M{"$in": inheritedServicePbhResult.IDs}},
+		}
+	} else {
+		matchByPbehaviorId["pbehavior_info.id"] = pbhId
 	}
-
-	matchByPbehaviorId["$or"] = orStmt
 
 	cursor, err := p.EntityCollection.Find(ctx, matchByPbehaviorId)
 	if err != nil {

@@ -16,11 +16,16 @@ import (
 
 const maxRedisLockRetries = 10
 
+type ServiceEventsData struct {
+	ServiceEvents []types.Event
+	ServicesMap   map[string]types.Entity
+}
+
 type InheritedServicePbhResolver interface {
 	ComputeAndResolveInheritedServicePbh(
 		ctx context.Context,
 		resolver ComputedEntityTypeResolver,
-	) ([]types.Event, InheritedServicesPbhResolveResult, map[string]types.Entity, error)
+	) (InheritedServicesPbhResolveResult, ServiceEventsData, error)
 	GetResolvedInheritedServicePbh(ctx context.Context) (InheritedServicesPbhResolveResult, error)
 }
 
@@ -44,11 +49,7 @@ func (r *InheritedServicesPbhResolveResult) ResolveForEntity(
 ) ResolveResult {
 	for _, serviceID := range entityServices {
 		serviceResult, ok := r.InheritedPbh[serviceID]
-		if !ok {
-			continue
-		}
-
-		if serviceResult.Type.Priority >= entityResult.Type.Priority {
+		if ok && serviceResult.Type.Priority >= entityResult.Type.Priority {
 			entityResult = serviceResult
 		}
 	}
@@ -152,12 +153,12 @@ func NewInheritedServicePbhResolver(
 func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 	ctx context.Context,
 	resolver ComputedEntityTypeResolver,
-) (_ []types.Event, _ InheritedServicesPbhResolveResult, _ map[string]types.Entity, resErr error) {
+) (_ InheritedServicesPbhResolveResult, _ ServiceEventsData, resErr error) {
 	lock, err := s.lockClient.Obtain(ctx, redis.RecomputeInheritedLockKey, redis.RecomputeLockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(time.Second), maxRedisLockRetries),
 	})
 	if err != nil {
-		return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to obtain lock: %w", err)
+		return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to obtain lock: %w", err)
 	}
 
 	defer func() {
@@ -169,7 +170,7 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 
 	parentServiceIDs, err := resolver.GetComputedServicesWithInheritedPbhIDs()
 	if err != nil {
-		return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to get service ids which have inherited pbehavior: %w", err)
+		return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to get service ids which have inherited pbehavior: %w", err)
 	}
 
 	if len(parentServiceIDs) == 0 {
@@ -177,11 +178,11 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 		if errors.Is(err, ErrNoComputed) {
 			err = s.store.SetInheritedServicesPbhResolveResult(ctx, InheritedServicesPbhResolveResult{})
 			if err != nil {
-				return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to save default inherited service pbehavior resolve result: %w", err)
+				return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to save default inherited service pbehavior resolve result: %w", err)
 			}
 		}
 
-		return nil, InheritedServicesPbhResolveResult{}, nil, nil
+		return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, nil
 	}
 
 	services := make(map[string]types.Entity)
@@ -226,7 +227,7 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 		},
 	})
 	if err != nil {
-		return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to query parent services: %w", err)
+		return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to query parent services: %w", err)
 	}
 
 	defer parentCursor.Close(ctx)
@@ -239,7 +240,7 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 
 		err = parentCursor.Decode(&parent)
 		if err != nil {
-			return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to save inherited service pbehavior resolve result: %w", err)
+			return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to save inherited service pbehavior resolve result: %w", err)
 		}
 
 		if _, ok := services[parent.ID]; !ok {
@@ -249,7 +250,7 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 		// check if a parent inherited pbh was already resolved, if it was a child for some other parent.
 		parentServicePbh, err := resolveResult.ResolveParentServicePbh(ctx, resolver, parent.Entity)
 		if err != nil {
-			return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to resolve pbehavior for a parent service %q: %w", parent.ID, err)
+			return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to resolve pbehavior for a parent service %q: %w", parent.ID, err)
 		}
 
 		if !parentServicePbh.Inherited {
@@ -258,13 +259,13 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 
 		err = s.processChildren(ctx, resolver, parent.ChildrenServices, services, &resolveResult, parentServicePbh)
 		if err != nil {
-			return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to process dependent services for a parent service %q: %w", parent.ID, err)
+			return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to process dependent services for a parent service %q: %w", parent.ID, err)
 		}
 	}
 
 	err = s.store.SetInheritedServicesPbhResolveResult(ctx, resolveResult)
 	if err != nil {
-		return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to save inherited service pbehavior resolve result: %w", err)
+		return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to save inherited service pbehavior resolve result: %w", err)
 	}
 
 	serviceEvents := make([]types.Event, 0, len(services))
@@ -274,7 +275,7 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 
 		event, err := s.eventManager.GetEvent(v, services[k], datetime.CpsTime{Time: time.Now()})
 		if err != nil {
-			return nil, InheritedServicesPbhResolveResult{}, nil, fmt.Errorf("failed to get event for service %q: %w", services[k].ID, err)
+			return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to get event for service %q: %w", services[k].ID, err)
 		}
 
 		if event.EventType != "" {
@@ -282,7 +283,7 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 		}
 	}
 
-	return serviceEvents, resolveResult, services, nil
+	return resolveResult, ServiceEventsData{ServiceEvents: serviceEvents, ServicesMap: services}, nil
 }
 
 func (s *inheritedServicePbhResolver) processChildren(
