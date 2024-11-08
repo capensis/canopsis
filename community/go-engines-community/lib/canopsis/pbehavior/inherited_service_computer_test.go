@@ -405,7 +405,7 @@ func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _, err = inhResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
+		_, _, err = inhResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
