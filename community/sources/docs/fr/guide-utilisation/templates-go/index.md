@@ -51,7 +51,7 @@ Voici une liste des principales variables mises à disposition. De façon géné
     | Création de l'alarme                        | `{{ .Alarm.Value.CreationDate }}`   |
     | Activation de l'alarme                      | `{{ .Alarm.Value.ActivationDate }}` |
     | Dernier changement de sévérité de l'alarme  | `{{ .Alarm.Value.LastUpdateDate }}` |
-    | Dernier événement reçu (Voir Option [EnableLastEventDate](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm)                                     | `{{ .Alarm.Value.LastEventDate }}`  |
+    | Dernier événement reçu (Voir Option [EnableLastEventDate](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm)                                     | `{{ .Alarm.Value.LastEventDate }}`  |
     | Résolution                                  | `{{ .Alarm.Value.Resolved }}`       |
  
 
@@ -98,14 +98,14 @@ Voici une liste des principales variables mises à disposition. De façon géné
 
 === "Environnement"
 
-    Vous pouvez déclarer des variables d'environnement dans le fichier [Canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml#section-canopsistemplatevars). Ces variables sont accessibles dans les templates Go de la manière suivante.
+    Vous pouvez déclarer des variables d'environnement dans le fichier [Canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsistemplatevars). Ces variables sont accessibles dans les templates Go de la manière suivante.
 
     | Champ                    | Résultat            |
     |:------------------------ |:------------------- |
     | Variable `projet`        | `{{ .Env.projet }}` |
  
 
-Dans les fonctionnalités [Scénario](../menu-exploitation/scenarios/) et [Déclaration de tickets](../menu-exploitation/regles-declaration-tickets/), vous pouvez accéder à certaines variables supplémentaires.
+Dans les fonctionnalités [Scénario](../menu-exploitation/scenarios.md) et [Déclaration de tickets](../menu-exploitation/regles-declaration-tickets.md), vous pouvez accéder à certaines variables supplémentaires.
 
 === "Additional Data"
 
@@ -122,7 +122,7 @@ Dans les fonctionnalités [Scénario](../menu-exploitation/scenarios/) et [Décl
 
 === "Children"
 
-    Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../menu-exploitation/regles-metaalarme/), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
+    Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../menu-exploitation/regles-metaalarme.md, il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
     Pour cela, un opérateur `range` permet d'itérer sur la variable `.Children` qui contient l'ensemble des alarmes conséquences de la méta alarme.
     
     La syntaxe à utiliser est la suivante :
@@ -175,7 +175,6 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 | **substr**        | Format: `{{ substr .Var M N }}` <br> Renvoie N caractères depuis la position M.                                          | Si `.Alarm.Value.Output = "test-string"` <br><ul><li>`{{ substr .Alarm.Value.Output 2 5 }}` -> `st-st`</li><li>`{{ substr .Alarm.Value.Output 2 100 }}` -> `"st-string"`</li><li>`{{ substrRight .Alarm.Value.Output 2 -1 }}` -> `""`</li></ul>                                                                                                                                                                                                                                                                                                                                                                 |
 | **strlen**        | Format: `{{ strlen .Var }}` <br> Renvoie la longueur de la chaine.                                                       | Si `.Alarm.Value.Output = "test-string"` <br><ul><li>`{{ strlen .Alarm.Value.Output }}` -> `11`</li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | **strpos**        | Format: `{{ strpos .Str .Substr }}` <br> Renvoie l'index de la première occurrence de Substr dans Str. Renvoie -1 sinon. | Si `.Alarm.Value.Output = "test-string"` <br><ul><li>`{{ strpos .Alarm.Value.Output "-" }}` -> `4`</li><li>`{{ strpos .Alarm.Value.Output "+" }}` -> `-1`</li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **strjoin**       | Format: `{{ strjoin .StrArray .Sep }}` <br> Renvoie une chaine concaténée des éléments du tableau .StrArray avec comme séparateur .Sep. | Si `.Event.ExtraInfos.strArr = ["a", "b", "c"]` <br><ul><li>`{{ strjoin .Event.ExtraInfos.strArr "," }}` -> `"a,b,c"`</li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | **add**           | Format: `{{ add .X .Y }}` <br> Renvoie la somme de X et Y.                                                               | <ul><li>`{{ add 2 2 }}` -> `4`</li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | **sub**           | Format: `{{ sub .X .Y }}` <br> Renvoie la différence entre X et Y.                                                       | <ul><li>`{{ sub 4 2 }}` -> `2`</li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | **mult**          | Format: `{{ mult .X .Y }}` <br> Renvoie le produit de X et Y.                                                            | <ul><li>`{{ mult 2 2 }}` -> `4`</li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |

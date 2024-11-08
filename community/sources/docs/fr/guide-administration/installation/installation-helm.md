@@ -2,6 +2,10 @@
 
 Cette procédure décrit l'installation de Canopsis avec Helm.
 
+!!! Info "Information"
+
+    Le chart HELM en version 3.0 permettant de déployer la version Canopsis 24.10 est en cours de finalisation. Il sera mis à disposition au plus vite.
+
 ## Prérequis
 
 ### Cluster Kubernetes
