@@ -10,8 +10,8 @@ Voir [le Guide de premier accès](../../guide-utilisation/premier-acces/index.md
 
 De manière générale, les URI de connexion aux différents composants de Canopsis se trouve dans le fichier :
 
-* `/opt/canopsis/etc/go-engines-vars.conf` pour une [installation paquets](../installation-paquets-rhel8/)
-* `compose.env` pour une [installation avec Docker Compose](../installation-conteneurs/)
+* `/opt/canopsis/etc/go-engines-vars.conf` pour une [installation paquets](installation-paquets.md)
+* `compose.env` pour une [installation avec Docker Compose](installation-conteneurs.md)
 
 ### Interface web RabbitMQ
 

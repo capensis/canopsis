@@ -153,7 +153,7 @@ type UserInterfaceConf struct {
 }
 
 type VersionConf struct {
-	Edition string `bson:"edition"`
+	Edition string `bson:"edition,omitempty"`
 	Stack   string `bson:"stack"`
 
 	Version        string            `bson:"version"`
