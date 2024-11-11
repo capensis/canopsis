@@ -1,21 +1,29 @@
 <template>
   <v-layout column>
-    <v-layout class="gap-2" justify-end>
-      <c-action-fab-btn
-        v-if="addable"
-        :tooltip="$t('modals.createPbehavior.create.title')"
-        icon="add"
-        color="primary"
-        left
-        @click="showCreatePbehaviorModal"
-      />
-      <c-action-fab-btn
-        :tooltip="$t('modals.pbehaviorsCalendar.title')"
-        icon="calendar_today"
-        color="secondary"
-        left
-        @click="showPbehaviorsCalendarModal"
-      />
+    <v-layout justify-space-between align-center>
+      <v-flex xs5>
+        <c-timezone-field
+          v-model="timezone"
+          server
+        />
+      </v-flex>
+      <v-layout class="gap-2" justify-end>
+        <c-action-fab-btn
+          v-if="addable"
+          :tooltip="$t('modals.createPbehavior.create.title')"
+          icon="add"
+          color="primary"
+          left
+          @click="showCreatePbehaviorModal"
+        />
+        <c-action-fab-btn
+          :tooltip="$t('modals.pbehaviorsCalendar.title')"
+          icon="calendar_today"
+          color="secondary"
+          left
+          @click="showPbehaviorsCalendarModal"
+        />
+      </v-layout>
     </v-layout>
     <c-advanced-data-table
       :items="pbehaviors"

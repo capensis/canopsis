@@ -11,6 +11,16 @@
     expand
     @update:options="$emit('update:options', $event)"
   >
+    <template #toolbar="">
+      <v-layout justify-end>
+        <v-flex xs3>
+          <c-timezone-field
+            v-model="timezone"
+            server
+          />
+        </v-flex>
+      </v-layout>
+    </template>
     <template #mass-actions="{ selected, clearSelected }">
       <pbehaviors-mass-actions-panel
         :items="selected"
@@ -36,13 +46,13 @@
       {{ formatRruleEndDate(item) }}
     </template>
     <template #last_alarm_date="{ item }">
-      {{ item.last_alarm_date | timezone($system.timezone) }}
+      {{ item.last_alarm_date | timezone(timezone) }}
     </template>
     <template #created="{ item }">
-      {{ item.created | date }}
+      {{ item.created | timezone(timezone) }}
     </template>
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ item.updated | timezone(timezone) }}
     </template>
     <template #rrule="{ item }">
       <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
@@ -73,6 +83,8 @@
 </template>
 
 <script>
+import { getLocalTimezone } from '@/helpers/date/date';
+
 import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
@@ -124,6 +136,11 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      timezone: getLocalTimezone(),
+    };
   },
   computed: {
     headers() {

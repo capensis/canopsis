@@ -1,14 +1,19 @@
 import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDateToTimezoneDateString } from '@/helpers/date/date';
+import { convertDateToTimezoneDateString, getLocalTimezone } from '@/helpers/date/date';
 
 export const pbehaviorsDateFormatMixin = {
+  data() {
+    return {
+      timezone: getLocalTimezone(),
+    };
+  },
   methods: {
     formatIntervalDate(item, field) {
       const date = item[field];
       const format = item.rrule ? DATETIME_FORMATS.medium : DATETIME_FORMATS.long;
 
-      return convertDateToTimezoneDateString(date, this.$system.timezone, format);
+      return convertDateToTimezoneDateString(date, this.timezone, format);
     },
 
     formatRruleEndDate(item) {
@@ -17,7 +22,7 @@ export const pbehaviorsDateFormatMixin = {
       }
 
       return item.rrule_end
-        ? convertDateToTimezoneDateString(item.rrule_end, this.$system.timezone, DATETIME_FORMATS.long)
+        ? convertDateToTimezoneDateString(item.rrule_end, this.timezone, DATETIME_FORMATS.long)
         : this.$t('common.undefined');
     },
   },

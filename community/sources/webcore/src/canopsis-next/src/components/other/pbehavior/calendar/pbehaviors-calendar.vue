@@ -19,7 +19,7 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToString,
   convertDateToTimestampByTimezone,
-  getLocaleTimezone,
+  getLocalTimezone,
 } from '@/helpers/date/date';
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
@@ -40,7 +40,7 @@ export default {
     return {
       pending: false,
       events: [],
-      timezone: getLocaleTimezone(),
+      timezone: getLocalTimezone(),
     };
   },
   mounted() {

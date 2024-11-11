@@ -51,6 +51,7 @@ export default {
     disabledTransitions: state => state.appInfo?.disabled_transitions,
     serialName: state => state.appInfo?.serial_name,
     autoSuggestPbehaviorName: state => state.appInfo?.auto_suggest_pbehavior_name,
+    userTimezones: state => state.appInfo?.user_timezones ?? [],
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {
