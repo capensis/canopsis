@@ -656,7 +656,10 @@ func getPbhOriginLookup(origin string, now types.CpsTime) []bson.M {
 					{"$expr": bson.M{"$eq": bson.A{"$$id", "$entity"}}},
 					{"origin": origin},
 					{"tstart": bson.M{"$lte": now}},
-					{"tstop": bson.M{"$gte": now}},
+					{"$or": bson.A{
+						bson.M{"tstop": nil},
+						bson.M{"tstop": bson.M{"$gte": now}},
+					}},
 				}}},
 			},
 			"as": "pbh_origin",
