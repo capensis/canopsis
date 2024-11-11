@@ -171,7 +171,7 @@ import {
   convertDateToStartOfDayDateObject,
   getWeekdayNumber,
   isDateBefore,
-  getLocaleTimezone,
+  getLocalTimezone,
 } from '@/helpers/date/date';
 import { colorToRgba } from '@/helpers/color';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
@@ -206,7 +206,7 @@ export default {
     },
     timezone: {
       type: String,
-      default: getLocaleTimezone(),
+      default: getLocalTimezone(),
     },
   },
   data() {

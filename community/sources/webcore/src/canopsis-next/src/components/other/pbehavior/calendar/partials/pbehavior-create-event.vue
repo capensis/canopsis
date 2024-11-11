@@ -48,7 +48,7 @@ import { MODALS, VALIDATION_DELAY } from '@/constants';
 import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
 import { isOmitEqual } from '@/helpers/collection';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
-import { getLocaleTimezone } from '@/helpers/date/date';
+import { getLocalTimezone } from '@/helpers/date/date';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
@@ -75,7 +75,7 @@ export default {
     },
     timezone: {
       type: String,
-      default: getLocaleTimezone(),
+      default: getLocalTimezone(),
     },
   },
   data() {

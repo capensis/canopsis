@@ -46,7 +46,7 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToDateObject,
   getDiffBetweenDates,
-  getLocaleTimezone,
+  getLocalTimezone,
 } from '@/helpers/date/date';
 import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 
@@ -96,7 +96,7 @@ export default {
     },
     timezone: {
       type: String,
-      default: getLocaleTimezone(),
+      default: getLocalTimezone(),
     },
   },
   data() {
@@ -128,6 +128,7 @@ export default {
         this.$nextTick(this.setCalendarView);
       },
     },
+    timezone: 'fetchEvents',
   },
   created() {
     this.debouncedFetchEvents = debounce(this.fetchEvents, 300);
@@ -205,10 +206,9 @@ export default {
       pbehavior,
       timespans,
     }) {
-      const timezone = pbehavior.timezone || this.timezone;
       const isTimed = !isFullDayEvent(
-        convertDateToDateObjectByTimezone(pbehavior.tstart, timezone),
-        pbehavior.tstop && convertDateToDateObjectByTimezone(pbehavior.tstop, timezone),
+        convertDateToDateObjectByTimezone(pbehavior.tstart, this.timezone),
+        pbehavior.tstop && convertDateToDateObjectByTimezone(pbehavior.tstop, this.timezone),
       );
 
       return timespans.map((timespan, index) => {
@@ -220,8 +220,8 @@ export default {
         const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
         const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
-        const start = convertDateToDateObjectByTimezone(timespan.from, timezone);
-        const end = convertDateToDateObjectByTimezone(timespan.to, timezone);
+        const start = convertDateToDateObjectByTimezone(timespan.from, this.timezone);
+        const end = convertDateToDateObjectByTimezone(timespan.to, this.timezone);
 
         return {
           id: `${pbehavior._id}-${index}`,

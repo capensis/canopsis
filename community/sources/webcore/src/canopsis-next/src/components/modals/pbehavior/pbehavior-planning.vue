@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { keyBy, map, omit, uniq } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -46,8 +46,8 @@ import {
   getPbehaviorNameByEntities,
   pbehaviorToDuplicateForm,
   pbehaviorToRequest,
+  getPbehaviorsInitialTimezone,
 } from '@/helpers/entities/pbehavior/form';
-import { getLocaleTimezone } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -58,13 +58,6 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
-
-// TODO: move to another place
-export const getPbehaviorsInitialTimezone = (pbehaviors = []) => {
-  const timezones = uniq(map(pbehaviors, 'timezone'));
-
-  return timezones.length === 1 ? timezones[0] : getLocaleTimezone();
-};
 
 export default {
   name: MODALS.pbehaviorPlanning,
