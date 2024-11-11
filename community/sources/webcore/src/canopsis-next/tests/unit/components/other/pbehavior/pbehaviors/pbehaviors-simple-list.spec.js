@@ -20,6 +20,7 @@ const stubs = {
   'c-action-fab-btn': true,
   'c-enabled': true,
   'c-table-pagination': true,
+  'c-timezone-field': true,
   'pbehavior-actions': true,
 };
 

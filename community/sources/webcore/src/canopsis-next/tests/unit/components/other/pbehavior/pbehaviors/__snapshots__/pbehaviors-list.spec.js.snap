@@ -15,6 +15,18 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
       />
     </div>
     <div
+      class="layout justify-end"
+    >
+      <div
+        class="flex xs3"
+      >
+        <c-timezone-field-stub
+          server=""
+          value="Europe/Paris"
+        />
+      </div>
+    </div>
+    <div
       class="flex xs12"
     >
       <transition-stub
@@ -2502,6 +2514,18 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
       />
     </div>
     <div
+      class="layout justify-end"
+    >
+      <div
+        class="flex xs3"
+      >
+        <c-timezone-field-stub
+          server=""
+          value="Europe/Paris"
+        />
+      </div>
+    </div>
+    <div
       class="flex xs12"
     >
       <transition-stub
@@ -3000,6 +3024,18 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
       <c-advanced-search-stub
         fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
+    </div>
+    <div
+      class="layout justify-end"
+    >
+      <div
+        class="flex xs3"
+      >
+        <c-timezone-field-stub
+          server=""
+          value="Europe/Paris"
+        />
+      </div>
     </div>
     <div
       class="flex xs12"

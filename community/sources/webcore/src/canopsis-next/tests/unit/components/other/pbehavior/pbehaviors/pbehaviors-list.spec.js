@@ -14,6 +14,7 @@ const stubs = {
   'c-table-pagination': true,
   'c-ellipsis': true,
   'c-enabled': true,
+  'c-timezone-field': true,
   'pbehaviors-mass-actions-panel': true,
   'pbehavior-actions': true,
   'pbehaviors-list-expand-item': true,
