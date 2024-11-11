@@ -8,10 +8,12 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     class="c-calendar"
     color="primary"
     events=""
+    timezone="Europe/Paris"
   >
     <pbehavior-create-event-stub
       defaultname=""
       event="[object Object]"
+      timezone="Europe/Paris"
     />
     <pbehavior-planning-calendar-legend-stub
       exceptiontypes=""

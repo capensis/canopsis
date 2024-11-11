@@ -5,20 +5,32 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
   class="layout column"
 >
   <div
-    class="layout gap-2 justify-end"
+    class="layout justify-space-between align-center"
   >
-    <c-action-fab-btn-stub
-      color="primary"
-      icon="add"
-      left=""
-      tooltip="Create periodical behavior"
-    />
-    <c-action-fab-btn-stub
-      color="secondary"
-      icon="calendar_today"
-      left=""
-      tooltip="Periodic behaviors"
-    />
+    <div
+      class="flex xs5"
+    >
+      <c-timezone-field-stub
+        server=""
+        value="Europe/Paris"
+      />
+    </div>
+    <div
+      class="layout gap-2 justify-end"
+    >
+      <c-action-fab-btn-stub
+        color="primary"
+        icon="add"
+        left=""
+        tooltip="Create periodical behavior"
+      />
+      <c-action-fab-btn-stub
+        color="secondary"
+        icon="calendar_today"
+        left=""
+        tooltip="Periodic behaviors"
+      />
+    </div>
   </div>
   <div
     class="c-advanced-data-table"
@@ -1424,15 +1436,27 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
   class="layout column"
 >
   <div
-    class="layout gap-2 justify-end"
+    class="layout justify-space-between align-center"
   >
-    <!---->
-    <c-action-fab-btn-stub
-      color="secondary"
-      icon="calendar_today"
-      left=""
-      tooltip="Periodic behaviors"
-    />
+    <div
+      class="flex xs5"
+    >
+      <c-timezone-field-stub
+        server=""
+        value="Europe/Paris"
+      />
+    </div>
+    <div
+      class="layout gap-2 justify-end"
+    >
+      <!---->
+      <c-action-fab-btn-stub
+        color="secondary"
+        icon="calendar_today"
+        left=""
+        tooltip="Periodic behaviors"
+      />
+    </div>
   </div>
   <div
     class="c-advanced-data-table"
