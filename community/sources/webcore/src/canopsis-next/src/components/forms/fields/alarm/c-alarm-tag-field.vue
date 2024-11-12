@@ -27,6 +27,7 @@
   >
     <template #selection="{ item, index }">
       <c-alarm-action-chip
+        v-if="!showCount || index < showCount"
         :color="item.color"
         :title="item.value"
         class="c-alarm-tag-field__tag px-2"
@@ -36,6 +37,8 @@
       >
         {{ item.value }}
       </c-alarm-action-chip>
+      <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
+      <span v-else />
     </template>
     <template #item="{ item, attrs, on, parent }">
       <v-list-item
@@ -99,6 +102,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
+    showCount: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
@@ -115,6 +126,7 @@ export default {
       updateSearch,
     } = useLazySearch({
       value: toRef(props, 'value'),
+      addable: toRef(props, 'addable'),
       idKey: 'value',
       idParamsKey: 'values',
       fetchHandler: fetchAlarmTagsListWithoutStore,
