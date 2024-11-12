@@ -11,6 +11,9 @@ Il comporte les sections suivantes :
 - [amqp2tty : Analyse temps réel des flux AMQP](amqp2tty/index.md)  
 - [Vérification d'envoi d'un événement](troubleshooting-evenement/index.md)
 
+## Aide au support
+
+- [Outil de support](outil-de-support/index.md)
 
 ## Métriques techniques
 

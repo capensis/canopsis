@@ -13,8 +13,8 @@
     <template #type="{ item }">
       {{ $t(`remediation.instruction.types.${item.type}`) }}
     </template>
-    <template #launched_at="{ item }">
-      {{ item.launched_at | date('long', '-') }}
+    <template #started_at="{ item }">
+      {{ item.started_at | date('long', '-') }}
     </template>
     <template #completed_at="{ item }">
       {{ item.completed_at | date('long', '-') }}
@@ -69,9 +69,9 @@ export default {
       return [
         { text: this.$t('remediation.instruction.name'), value: 'name' },
         { text: this.$t('common.type'), value: 'type' },
-        { text: this.$t('remediation.instructionExecute.jobs.launchedAt'), value: 'launched_at' },
+        { text: this.$t('remediation.instructionExecute.jobs.launchedAt'), value: 'started_at' },
         { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at' },
-        { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'author.display_name' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
         { text: this.$t('common.status'), value: 'status' },
       ];
     },

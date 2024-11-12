@@ -2,12 +2,14 @@ import { getZIndex } from 'vuetify/lib/util/helpers';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
+import { promisedWait } from '@/helpers/async';
+
 /**
  * Wait a vuetify animation
  *
  * @return {Promise}
  */
-export const waitVuetifyAnimation = () => new Promise(resolve => setTimeout(resolve, VUETIFY_ANIMATION_DELAY));
+export const waitVuetifyAnimation = () => promisedWait(VUETIFY_ANIMATION_DELAY);
 
 /**
  * Get the maximum z-index among the specified elements.
