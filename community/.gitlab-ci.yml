@@ -24,6 +24,8 @@ include:
   - project: 'templates/gitlab-ci'
     ref: main
     file: 'mkdocs-build/gitlab-ci-mkdocs.yml'
+    rules:
+      - if: $CI_PROJECT_NAME == "canopsis-pro"
 
 create_release:
   extends: .create_release
