@@ -1,10 +1,21 @@
 <template>
   <v-layout column>
-    <c-enabled-field
-      v-if="!noEnabled"
-      v-field="form.enabled"
-      hide-details
-    />
+    <v-layout>
+      <v-flex xs6>
+        <c-enabled-field
+          v-if="!noEnabled"
+          v-field="form.enabled"
+          hide-details
+        />
+      </v-flex>
+      <v-flex v-if="withInherited" xs6>
+        <c-enabled-field
+          v-field="form.inherited"
+          :label="$t('modals.createPbehavior.steps.general.fields.inherited')"
+          hide-details
+        />
+      </v-flex>
+    </v-layout>
     <c-name-field
       v-field="form.name"
       :label="nameLabel"
@@ -180,6 +191,10 @@ export default {
       default: false,
     },
     withStartOnTrigger: {
+      type: Boolean,
+      default: false,
+    },
+    withInherited: {
       type: Boolean,
       default: false,
     },

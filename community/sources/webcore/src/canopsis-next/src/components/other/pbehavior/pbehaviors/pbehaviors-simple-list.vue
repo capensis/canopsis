@@ -53,6 +53,7 @@
           :pbehavior="item"
           :removable="removable"
           :updatable="updatable"
+          :with-inherited="withInherited"
           @refresh="fetchList"
         />
       </template>
@@ -111,6 +112,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withInherited: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -163,6 +168,7 @@ export default {
         config: {
           title: this.$t('modals.pbehaviorsCalendar.entity.title', { name: this.entity.name }),
           entityId: this.entity._id,
+          withInherited: this.withInherited,
         },
       });
     },
@@ -173,6 +179,7 @@ export default {
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity._id),
           entities: [this.entity],
+          withInherited: this.withInherited,
           afterSubmit: this.fetchList,
         },
       });

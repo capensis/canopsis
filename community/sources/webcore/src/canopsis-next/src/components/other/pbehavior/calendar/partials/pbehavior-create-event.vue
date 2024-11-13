@@ -7,6 +7,7 @@
     <pbehavior-form
       v-model="form"
       :no-pattern="!!entityPattern"
+      :with-inherited="withInherited"
       class="py-3"
     />
     <v-layout
@@ -71,6 +72,10 @@ export default {
     defaultName: {
       type: String,
       required: false,
+    },
+    withInherited: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

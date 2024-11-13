@@ -10,6 +10,7 @@
           :added-pbehaviors-by-id.sync="form.addedPbehaviorsById"
           :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById"
           :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById"
+          :with-inherited="config.withInherited"
           :read-only="readOnly"
           :entity-pattern="entityPattern"
           :default-name="defaultName"

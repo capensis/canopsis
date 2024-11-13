@@ -86,6 +86,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @property {PbehaviorComment[]} comments
  * @property {PbehaviorException[]} exceptions
  * @property {PbehaviorExdate[]} exdates
+ * @property {boolean} [inherited]
  */
 
 /**
@@ -236,6 +237,7 @@ export const pbehaviorToForm = (
     _id: pbehavior._id ?? uid('pbehavior'),
     color: pbehavior.color ?? '',
     enabled: pbehavior.enabled ?? true,
+    inherited: pbehavior.inherited ?? false,
     name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
