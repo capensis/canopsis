@@ -4,7 +4,23 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
 <div
   class="layout column"
 >
-  <!---->
+  <div
+    class="layout"
+  >
+    <div
+      class="flex xs6"
+    >
+      <!---->
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-enabled-field-stub
+        hide-details=""
+        label="Apply for all dependant entities"
+      />
+    </div>
+  </div>
   <c-name-field-stub
     required=""
     value="pbehavior"
@@ -81,9 +97,18 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
 <div
   class="layout column"
 >
-  <c-enabled-field-stub
-    hide-details=""
-  />
+  <div
+    class="layout"
+  >
+    <div
+      class="flex xs6"
+    >
+      <c-enabled-field-stub
+        hide-details=""
+      />
+    </div>
+    <!---->
+  </div>
   <c-name-field-stub
     required=""
     value="pbehavior"

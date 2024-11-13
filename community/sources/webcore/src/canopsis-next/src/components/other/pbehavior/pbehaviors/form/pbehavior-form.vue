@@ -5,6 +5,7 @@
     :no-enabled="noEnabled"
     :no-comments="noComments"
     :with-start-on-trigger="withStartOnTrigger"
+    :with-inherited="withInherited"
     :name-label="nameLabel"
     :name-tooltip="nameTooltip"
   />
@@ -28,6 +29,7 @@
         :no-enabled="noEnabled"
         :no-comments="noComments"
         :with-start-on-trigger="withStartOnTrigger"
+        :with-inherited="withInherited"
         :name-label="nameLabel"
         :name-tooltip="nameTooltip"
       />
@@ -73,6 +75,10 @@ export default {
       default: false,
     },
     withStartOnTrigger: {
+      type: Boolean,
+      default: false,
+    },
+    withInherited: {
       type: Boolean,
       default: false,
     },

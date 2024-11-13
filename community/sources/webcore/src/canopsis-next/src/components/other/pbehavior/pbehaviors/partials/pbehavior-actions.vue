@@ -47,6 +47,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withInherited: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -74,6 +78,7 @@ export default {
           name: MODALS.pbehaviorPlanning,
           config: {
             pbehaviors: [pbehaviorObject],
+            withInherited: this.withInherited,
             afterSubmit: this.refresh,
           },
         });
@@ -94,6 +99,7 @@ export default {
           name: MODALS.pbehaviorPlanning,
           config: {
             pbehaviorsToAdd: [pbehaviorObject],
+            withInherited: this.withInherited,
             afterSubmit: this.refresh,
           },
         });

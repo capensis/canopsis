@@ -15,6 +15,7 @@
           :event="event"
           :entity-pattern="entityPattern"
           :default-name="defaultName"
+          :with-inherited="withInherited"
           @close="close"
           @submit="addEventWithClose($event, close)"
           @remove="removePbehavior"
@@ -96,6 +97,10 @@ export default {
     defaultName: {
       type: String,
       default: '',
+    },
+    withInherited: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

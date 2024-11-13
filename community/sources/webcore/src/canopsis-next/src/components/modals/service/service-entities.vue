@@ -33,6 +33,7 @@
           <pbehaviors-simple-list
             :entity="service"
             with-active-status
+            with-inherited
             addable
             updatable
             removable
