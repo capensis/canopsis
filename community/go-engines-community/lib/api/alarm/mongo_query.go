@@ -610,7 +610,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
-	q.addTagFilter(r, &alarmMatch)
+	q.addTagsFilter(r, &alarmMatch)
 	q.addBookmarkFilter(r, userID, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
@@ -911,12 +911,12 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 	*match = append(*match, bson.M{entityDbPrefix + ".category": bson.M{"$eq": r.Category}})
 }
 
-func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
-	if r.Tag == "" {
+func (q *MongoQueryBuilder) addTagsFilter(r FilterRequest, match *[]bson.M) {
+	if len(r.Tags) == 0 {
 		return
 	}
 
-	*match = append(*match, bson.M{"tags": r.Tag})
+	*match = append(*match, bson.M{"tags": bson.M{"$in": r.Tags}})
 }
 
 func (q *MongoQueryBuilder) addBookmarkFilter(r FilterRequest, userID string, match *[]bson.M) {
