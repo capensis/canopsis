@@ -492,8 +492,10 @@ definitions:
         type: string
       separator:
         type: string
-      tag:
-        type: string
+      tags:
+        items:
+          type: string
+        type: array
       time_field:
         type: string
       time_format:
