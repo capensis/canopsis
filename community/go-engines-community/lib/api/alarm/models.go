@@ -93,7 +93,7 @@ type BaseFilterRequest struct {
 	Opened      *bool             `form:"opened" json:"opened"`
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
-	Tag         string            `form:"tag" json:"tag"`
+	Tags        []string          `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
