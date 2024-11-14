@@ -189,7 +189,6 @@ import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
-import CAlarmTagField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
@@ -205,7 +204,6 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  */
 export default {
   components: {
-    CAlarmTagField,
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
