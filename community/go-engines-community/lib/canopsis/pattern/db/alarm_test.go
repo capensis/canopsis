@@ -437,6 +437,31 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				}},
 			}},
 		},
+		"given last_comment conditions": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.last_comment.a",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test author"),
+					},
+					{
+						Field:     "v.last_comment.m",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test message"),
+					},
+					{
+						Field:     "v.last_comment.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test initiator"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.last_comment.a": bson.M{"$eq": "test author"}},
+					{"alarm.v.last_comment.m": bson.M{"$eq": "test message"}},
+					{"alarm.v.last_comment.initiator": bson.M{"$ne": "test initiator"}},
+				}},
+			}},
+		},
 	}
 }
 
