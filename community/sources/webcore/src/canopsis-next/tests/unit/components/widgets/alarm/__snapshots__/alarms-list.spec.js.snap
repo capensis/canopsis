@@ -38,6 +38,18 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     </div>
     <!---->
     <div
+      class="flex xs3"
+    >
+      <c-alarm-tag-field-stub
+        combobox="true"
+        label="Tags"
+        limit="10"
+        name="tag"
+        showcount="2"
+        value=""
+      />
+    </div>
+    <div
       class="flex"
     >
       <alarms-list-remediation-instructions-filters-stub
@@ -121,6 +133,18 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
       <!---->
     </div>
     <!---->
+    <div
+      class="flex xs3"
+    >
+      <c-alarm-tag-field-stub
+        combobox="true"
+        label="Tags"
+        limit="10"
+        name="tag"
+        showcount="2"
+        value=""
+      />
+    </div>
     <div
       class="flex"
     >
@@ -251,6 +275,18 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         rules=""
         successmessages=""
         valuecomparator="[Function]"
+      />
+    </div>
+    <div
+      class="flex xs3"
+    >
+      <c-alarm-tag-field-stub
+        combobox="true"
+        label="Tags"
+        limit="10"
+        name="tag"
+        showcount="2"
+        value=""
       />
     </div>
     <div

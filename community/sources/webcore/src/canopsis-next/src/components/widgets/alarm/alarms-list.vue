@@ -80,6 +80,7 @@
           :label="$tc('common.tag', 2)"
           :show-count="2"
           combobox
+          @input="updateTags"
         />
       </v-flex>
       <v-flex>
@@ -339,6 +340,17 @@ export default {
 
         page: 1,
         correlation,
+      };
+    },
+
+    updateTags(tags) {
+      this.updateContentInUserPreference({ tags });
+
+      this.query = {
+        ...this.query,
+
+        page: 1,
+        tags,
       };
     },
 
