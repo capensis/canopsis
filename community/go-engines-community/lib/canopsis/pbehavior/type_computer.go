@@ -5,6 +5,7 @@ package pbehavior
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -18,8 +19,8 @@ const DefaultPoolSize = 100
 // TypeComputer is used to compute all periodical behaviors' timespans for provided interval.
 type TypeComputer interface {
 	// Compute calculates types for provided timespan.
-	Compute(ctx context.Context, span timespan.Span) (ComputeResult, error)
-	ComputeByIds(ctx context.Context, span timespan.Span, pbehaviorIds []string) (ComputeResult, error)
+	Compute(ctx context.Context, span timespan.Span, location *time.Location) (ComputeResult, error)
+	ComputeByIds(ctx context.Context, span timespan.Span, pbehaviorIds []string, location *time.Location) (ComputeResult, error)
 }
 
 type typeComputer struct {
@@ -95,6 +96,7 @@ type pbhComputeResult struct {
 func (c *typeComputer) Compute(
 	ctx context.Context,
 	span timespan.Span,
+	location *time.Location,
 ) (ComputeResult, error) {
 	res := ComputeResult{}
 	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviors(ctx, span)
@@ -123,7 +125,7 @@ func (c *typeComputer) Compute(
 		return res, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
 	}
 
-	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models)
+	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models, location)
 	if err != nil {
 		return res, err
 	}
@@ -141,6 +143,7 @@ func (c *typeComputer) ComputeByIds(
 	ctx context.Context,
 	span timespan.Span,
 	pbehaviorIds []string,
+	location *time.Location,
 ) (ComputeResult, error) {
 	res := ComputeResult{}
 	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds, span)
@@ -172,7 +175,7 @@ func (c *typeComputer) ComputeByIds(
 		return res, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
 	}
 
-	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models)
+	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models, location)
 	if err != nil {
 		return res, err
 	}
@@ -221,6 +224,7 @@ func (c *typeComputer) runWorkers(
 	span timespan.Span,
 	pbehaviorsByID map[string]PBehavior,
 	models models,
+	location *time.Location,
 ) (map[string]ComputedPbehavior, error) {
 	eventComputer := NewEventComputer(models.typesByID, models.defaultTypes)
 	resCh := make(chan pbhComputeResult)
@@ -244,7 +248,7 @@ func (c *typeComputer) runWorkers(
 	for worker := 0; worker < c.workerPoolSize; worker++ {
 		g.Go(func() error {
 			for p := range workerCh {
-				res, err := c.computePbehavior(p, span, eventComputer, models)
+				res, err := c.computePbehavior(p, span, eventComputer, models, location)
 				if err != nil {
 					return fmt.Errorf("cannot compute pbehavior id=%q: %w", p.ID, err)
 				}
@@ -284,6 +288,7 @@ func (c *typeComputer) computePbehavior(
 	span timespan.Span,
 	eventComputer EventComputer,
 	models models,
+	defaultLocation *time.Location,
 ) (ComputedPbehavior, error) {
 	var start, end datetime.CpsTime
 	if pbehavior.RRuleComputedStart != nil && pbehavior.RRuleComputedStart.Time.Before(span.From()) {
@@ -302,12 +307,22 @@ func (c *typeComputer) computePbehavior(
 	if err != nil {
 		return ComputedPbehavior{}, err
 	}
+
+	location := defaultLocation
+	if pbehavior.Timezone != "" {
+		location, err = time.LoadLocation(pbehavior.Timezone)
+		if err != nil {
+			return ComputedPbehavior{}, fmt.Errorf("invalid timezone %q: %w", pbehavior.Timezone, err)
+		}
+	}
+
 	params := PbhEventParams{
-		Start:   start,
-		End:     end,
-		RRule:   pbehavior.RRule,
-		Type:    pbehavior.Type,
-		Exdates: exdates,
+		Start:    start,
+		End:      end,
+		RRule:    pbehavior.RRule,
+		Type:     pbehavior.Type,
+		Exdates:  exdates,
+		Location: location,
 	}
 	computedTypes, err := eventComputer.Compute(params, span)
 	if err != nil {

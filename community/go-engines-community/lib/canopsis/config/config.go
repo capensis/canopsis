@@ -57,7 +57,8 @@ func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
 }
 
 type SectionTimezone struct {
-	Timezone string `toml:"Timezone"`
+	Timezone      string   `toml:"Timezone"`
+	UserTimezones []string `toml:"UserTimezones"`
 }
 
 type SectionImportCtx struct {

@@ -390,7 +390,7 @@ func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
 		zerolog.Nop(),
 	)
 
-	resolver, _, err := pbhService.Compute(ctx, newSpan)
+	resolver, _, err := pbhService.Compute(ctx, newSpan, time.UTC)
 	if err != nil {
 		b.Errorf("unexpected error %v", err)
 	}
