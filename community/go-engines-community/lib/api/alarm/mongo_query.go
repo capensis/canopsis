@@ -199,6 +199,12 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	q.handleOpened(opened)
 	q.handleDependencies(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+
+	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
+	q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
+	q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
+	q.excludedFields = append(q.excludedFields, "resolved_children")
+
 	query := pagination.Query{
 		Page:  1,
 		Limit: 1,
