@@ -16,6 +16,7 @@ const View = () => import(/* webpackChunkName: "View" */ '@/views/view.vue');
 const ViewKiosk = () => import(/* webpackChunkName: "View" */ '@/views/view-kiosk.vue');
 const Alarm = () => import(/* webpackChunkName: "Alarm" */ '@/views/alarm.vue');
 const AdminPermissions = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions.vue');
+const AdminPermissions2 = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions2.vue');
 const AdminUsers = () => import(/* webpackChunkName: "User" */ '@/views/admin/users.vue');
 const AdminRoles = () => import(/* webpackChunkName: "Role" */ '@/views/admin/roles.vue');
 const AdminParameters = () => import(/* webpackChunkName: "Parameters" */ '@/views/admin/parameters.vue');
@@ -104,6 +105,17 @@ const routes = [
     path: ROUTES.adminRights,
     name: ROUTES_NAMES.adminRights,
     component: AdminPermissions,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.permission,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminRights2,
+    name: ROUTES_NAMES.adminRights2,
+    component: AdminPermissions2,
     meta: {
       requiresLogin: true,
       requiresPermission: {
