@@ -177,6 +177,7 @@ export default {
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastCommentInitiator: 'Last comment initiator',
+    lastCommentAuthor: 'Last comment author',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
     ackInitiator: 'Acked initiator',

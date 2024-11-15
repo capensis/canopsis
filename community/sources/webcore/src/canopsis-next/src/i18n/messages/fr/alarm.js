@@ -177,6 +177,7 @@ export default {
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastCommentInitiator: 'Initiateur du dernier commentaire',
+    lastCommentAuthor: 'Auteur du dernier commentaire',
     ackBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',
     ackInitiator: 'Origine de l\'acquittement',
