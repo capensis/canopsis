@@ -12,21 +12,15 @@
 import { ALARM_FIELDS } from '@/constants';
 
 import AlarmHeaderPriority from './alarm-header-priority.vue';
-import AlarmHeaderTag from './alarm-header-tag.vue';
 
 export default {
   components: {
     AlarmHeaderPriority,
-    AlarmHeaderTag,
   },
   props: {
     header: {
       type: Object,
       required: true,
-    },
-    selectedTag: {
-      type: String,
-      default: '',
     },
     resizing: {
       type: Boolean,
@@ -43,21 +37,6 @@ export default {
   },
   computed: {
     component() {
-      if (this.header.value === ALARM_FIELDS.tags) {
-        return {
-          is: 'alarm-header-tag',
-          text: this.header.text,
-          bind: {
-            class: 'v-data-table-header__span--ellipsis',
-            selectedTag: this.selectedTag,
-            title: this.header.text,
-          },
-          on: {
-            clear: () => this.$emit('clear:tag'),
-          },
-        };
-      }
-
       const PROPERTIES_COMPONENTS_MAP = {
         [ALARM_FIELDS.impactState]: 'alarm-header-priority',
       };
