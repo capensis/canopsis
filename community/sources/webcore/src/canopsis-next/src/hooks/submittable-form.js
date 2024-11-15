@@ -1,5 +1,7 @@
 import { computed } from 'vue';
 
+import { promisedTimeout } from '@/helpers/async';
+
 import { usePendingHandler } from './query/pending';
 import { useValidationFormErrors } from './validator/validation-form-errors';
 import { useI18n } from './i18n';
@@ -66,15 +68,15 @@ export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
      * to avoid combobox lag. Otherwise, `submitHandler` is called directly.
      */
     withTimeout
-      ? (...args) => setTimeout(() => submitHandler(...args), 0)
+      ? (...args) => promisedTimeout(() => submitHandler(...args), 0)
       : submitHandler,
   );
 
   const isDisabled = computed(() => submitting.value || validator.errors?.any?.());
 
   return {
-    submit,
     submitting,
     isDisabled,
+    submit,
   };
 };
