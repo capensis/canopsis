@@ -1,4 +1,10 @@
-import { computed, ref, unref, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  unref,
+  watch,
+  onMounted,
+} from 'vue';
 import { keyBy, pick, isArray, isString } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
@@ -66,8 +72,16 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
    */
   const {
     pending: valuesPending,
-    handler: fetchValues,
+    handler: initializeSelectedItems,
   } = usePendingHandler(async () => {
+    const selectedItemsFromItemsByValue = arrayValue.value.map(item => itemsByValue.value[item]).filter(Boolean);
+
+    if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
+      selectedItems.value = selectedItemsFromItemsByValue;
+
+      return;
+    }
+
     if (!arrayValue.value.length) {
       return;
     }
@@ -164,9 +178,11 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
     changeSelectedItems(selectedItems.value.filter((item, itemIndex) => itemIndex !== index))
   );
 
+  watch(value, () => initializeSelectedItems());
+
   onMounted(() => {
     if (idParamsKey) {
-      fetchValues();
+      initializeSelectedItems();
     }
 
     fetchTags();

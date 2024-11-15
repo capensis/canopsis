@@ -41,12 +41,9 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
       class="flex xs3"
     >
       <c-alarm-tag-field-stub
-        combobox="true"
+        combobox=""
         label="Tags"
-        limit="10"
-        name="tag"
-        showcount="2"
-        value=""
+        show-count="2"
       />
     </div>
     <div
@@ -102,7 +99,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     resizingcolumnthrottledelay="10"
     search="search"
     selectable="true"
-    selectedtag=""
+    selectedtags=""
     totalitems="10"
     widget="[object Object]"
   />
@@ -137,12 +134,9 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
       class="flex xs3"
     >
       <c-alarm-tag-field-stub
-        combobox="true"
+        combobox=""
         label="Tags"
-        limit="10"
-        name="tag"
-        showcount="2"
-        value=""
+        show-count="2"
       />
     </div>
     <div
@@ -198,7 +192,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     resizingcolumnthrottledelay="10"
     search="search"
     selectable="true"
-    selectedtag=""
+    selectedtags=""
     totalitems="10"
     widget="[object Object]"
   />
@@ -281,12 +275,9 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
       class="flex xs3"
     >
       <c-alarm-tag-field-stub
-        combobox="true"
+        combobox=""
         label="Tags"
-        limit="10"
-        name="tag"
-        showcount="2"
-        value=""
+        show-count="2"
       />
     </div>
     <div
@@ -342,7 +333,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     resizingcolumnthrottledelay="10"
     search="search"
     selectable="true"
-    selectedtag=""
+    selectedtags=""
     totalitems="10"
     widget="[object Object]"
   />

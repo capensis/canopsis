@@ -13,7 +13,7 @@ describe('c-alarm-tags-chips', () => {
     { value: 'tag2', color: 'color2' },
     { value: 'tag3', color: 'color3' },
   ];
-  const selectedTag = tags[2].value;
+  const selectedTags = [tags[2].value];
   const alarm = {
     tags: [tags[0].value],
   };
@@ -28,11 +28,11 @@ describe('c-alarm-tags-chips', () => {
 
   const snapshotFactory = generateRenderer(CAlarmTagsChips, { stubs });
 
-  it('Renders `c-alarm-tags-chips` with selectedTag and without dropdown', () => {
+  it('Renders `c-alarm-tags-chips` with selectedTags and without dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm,
-        selectedTag,
+        selectedTags,
       },
       store,
     });
