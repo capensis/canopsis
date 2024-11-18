@@ -8,14 +8,14 @@
   >
     <template #item="{ item, index, isExpanded, expand }">
       <tr>
-        <td :class="{ [`pl-${indent * 2}`]: true, 'cursor-pointer': item.children?.length }">
+        <td :class="{ [`pl-${indent * 3 + 2}`]: true, 'cursor-pointer': item.children?.length }">
           <c-expand-btn
             v-if="item.children?.length"
             :expanded="isExpanded"
             class="mr-2"
             @expand="expand"
           />
-          <span>{{ item.text }}</span>
+          <span :class="{ 'font-weight-medium': item.children?.length }">{{ item.text }}</span>
         </td>
         <td v-for="role in roles" :key="role.value">
           {{ items[index].value[role.value] }}
