@@ -35,8 +35,8 @@ import { useModelField } from '@/hooks/form';
  * - `items`: {ComputedRef<Array>} A computed reference to the list of items fetched and managed by the hook.
  * - `wholePending`: {ComputedRef<boolean>} A computed reference indicating if any fetch operation is pending.
  * - `hasMoreItems`: {ComputedRef<boolean>} A computed reference indicating if there are more items to fetch.
- * - `fetchTags`: {Function} A function to fetch items based on the current query state.
- * - `fetchMoreTags`: {Function} A function to fetch the next page of items.
+ * - `fetchItems`: {Function} A function to fetch items based on the current query state.
+ * - `fetchMoreItems`: {Function} A function to fetch the next page of items.
  * - `changeSelectedItems`: {Function} A function to update the selected items and emit changes.
  * - `updateSearch`: {Function} A function to update the search query and trigger a fetch.
  */
@@ -107,7 +107,7 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   const {
     pending,
     query,
-    fetchHandlerWithQuery: fetchTags,
+    fetchHandlerWithQuery: fetchItems,
     updateQueryPage,
     updateQuerySearch,
   } = usePendingWithLocalQuery({
@@ -146,7 +146,7 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   /**
    * Function to fetch the next page of items.
    */
-  const fetchMoreTags = () => updateQueryPage(query.value.page + 1);
+  const fetchMoreItems = () => updateQueryPage(query.value.page + 1);
 
   /**
    * Function to update the selected items and emit changes.
@@ -185,7 +185,7 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
       initializeSelectedItems();
     }
 
-    fetchTags();
+    fetchItems();
   });
 
   return {
@@ -193,8 +193,8 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
     items,
     wholePending,
     hasMoreItems,
-    fetchTags,
-    fetchMoreTags,
+    fetchItems,
+    fetchMoreItems,
     changeSelectedItems,
     removeItemFromSelectedItemsByIndex,
     updateSearch: updateQuerySearch,
