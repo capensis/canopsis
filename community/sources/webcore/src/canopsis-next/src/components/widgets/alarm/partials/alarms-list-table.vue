@@ -175,6 +175,7 @@
           />
         </template>
       </v-data-table>
+      <c-horizontal-scrollbar v-if="stickyHorizontalScroll" ref="horizontalScrollbar" />
     </div>
     <c-table-pagination
       v-if="!hidePagination"
@@ -225,7 +226,7 @@ import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-selecting';
 import { widgetColumnResizingAlarmMixin } from '@/mixins/widget/columns/alarm-resizing';
 import { widgetColumnDraggingAlarmMixin } from '@/mixins/widget/columns/alarm-dragging';
-import { widgetHeaderStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky-header';
+import { widgetStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky';
 import { alarmHandlebarsTagsHelper } from '@/mixins/widget/handlebars/alarm-tags-helper';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
@@ -255,7 +256,7 @@ export default {
   mixins: [
     entitiesInfoMixin,
     widgetColumnsAlarmMixin,
-    widgetHeaderStickyAlarmMixin,
+    widgetStickyAlarmMixin,
     widgetRowsSelectingAlarmMixin,
     widgetColumnResizingAlarmMixin,
     widgetColumnDraggingAlarmMixin,
@@ -345,6 +346,10 @@ export default {
       default: '',
     },
     eager: {
+      type: Boolean,
+      default: false,
+    },
+    stickyHorizontalScroll: {
       type: Boolean,
       default: false,
     },
@@ -491,6 +496,7 @@ export default {
         'alarms-list-table--wrapped': this.isCellContentWrapped,
         'alarms-list-table--truncated': this.isCellContentTruncated,
         'alarms-list-table--fixed': this.resizableColumn || this.draggableColumn,
+        'alarms-list-table--sticky-horizontal-scroll': this.stickyHorizontalScroll,
       };
     },
 
@@ -648,13 +654,29 @@ export default {
       const chunks = splitIdsToChunk(farthest, itemsPerRender);
 
       if (!chunks.length) {
-        window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
+        window.requestAnimationFrame(() => {
+          if (this.stickyHorizontalScroll) {
+            this.setHorizontalScrollbarWidth();
+            this.calculateScrollPosition();
+            this.setHorizontalScrollPosition();
+          }
+
+          this.$asyncBootingActionsPanel.run();
+        });
         return;
       }
 
       chunks.forEach((chunk, index) => {
         recursiveRaf(() => {
           chunk.forEach(id => this.$set(this.bootedRows, id, true));
+
+          if (!index && this.stickyHorizontalScroll) {
+            window.requestAnimationFrame(() => {
+              this.setHorizontalScrollbarWidth();
+              this.calculateScrollPosition();
+              this.setHorizontalScrollPosition();
+            });
+          }
 
           if (index === chunks.length - 1) {
             /**
@@ -728,8 +750,8 @@ export default {
     },
 
     resizeHandler() {
-      if (this.stickyHeader) {
-        this.changeHeaderPosition();
+      if (this.stickyHeader || this.stickyHorizontalScroll) {
+        this.stickyScrollHandler();
       }
 
       if (this.selecting) {
@@ -742,6 +764,18 @@ export default {
 
 <style lang="scss">
 .alarms-list-table {
+  &--sticky-horizontal-scroll {
+    > .v-data-table__wrapper {
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+  }
+
   .theme--light & {
     --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
   }

@@ -119,6 +119,7 @@
       :hide-children="!query.correlation"
       :columns="widget.parameters.widgetColumns"
       :sticky-header="widget.parameters.sticky_header"
+      :sticky-horizontal-scroll="widget.parameters.sticky_horizontal_scroll"
       :dense="dense"
       :refresh-alarms-list="fetchList"
       :selected-tag="query.tag"
