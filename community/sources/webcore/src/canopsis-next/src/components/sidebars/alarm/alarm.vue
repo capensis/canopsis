@@ -163,6 +163,10 @@
         v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
       />
+      <field-switcher
+        v-model="form.parameters.sticky_horizontal_scroll"
+        :title="$t('settings.stickyHorizontalScroll')"
+      />
       <widget-settings-group :title="$t('settings.kioskMode')">
         <field-switcher
           v-model="form.parameters.kiosk.hideActions"

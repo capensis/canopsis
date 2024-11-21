@@ -178,6 +178,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} fastPbehaviorType
  * @property {string} fastPbehaviorReason
  * @property {boolean} sticky_header
+ * @property {boolean} sticky_horizontal_scroll
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
@@ -364,6 +365,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   fastPbehaviorType: parameters.fastPbehaviorType,
   fastPbehaviorReason: parameters.fastPbehaviorReason,
   sticky_header: !!parameters.sticky_header,
+  sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
