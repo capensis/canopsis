@@ -143,6 +143,7 @@ type Alarm struct {
 	InternalTagsUpdated       datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
 	CopyTagsFromChildren      bool               `bson:"copy_ctags,omitempty" json:"copy_ctags,omitempty"`
 	FilterChildrenTagsByLabel []string           `bson:"filter_ctags,omitempty" json:"filter_ctags,omitempty"`
+	EntityInfosFromChildren   []string           `bson:"cinfos,omitempty" json:"cinfos,omitempty"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 
