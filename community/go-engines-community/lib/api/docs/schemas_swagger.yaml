@@ -870,6 +870,13 @@ definitions:
     - color
     - value
     type: object
+  alarmtag.LabelResponse:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+    type: object
   alarmtag.Response:
     properties:
       _id:
