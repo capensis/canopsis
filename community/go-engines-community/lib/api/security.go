@@ -179,6 +179,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 					s.maintenanceAdapter,
 					s.enforcer,
 					s.GetTokenService(),
+					s.logger,
 					s.globalConfig.Global.MaxExternalResponseSize,
 				)
 				if err != nil {
