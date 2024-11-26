@@ -492,6 +492,9 @@ definitions:
         type: string
       separator:
         type: string
+      tag:
+        description: Tag is deprecated, please use tags[] parameter
+        type: string
       tags:
         items:
           type: string

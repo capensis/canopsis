@@ -910,11 +910,12 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 }
 
 func (q *MongoQueryBuilder) addTagsFilter(r FilterRequest, match *[]bson.M) {
-	if len(r.Tags) == 0 {
-		return
+	if len(r.Tags) != 0 {
+		*match = append(*match, bson.M{"tags": bson.M{"$in": r.Tags}})
+	} else if r.Tag != "" {
+		// @todo: backward compatibility, tag parameter is deprecated, should be removed in 25.04.
+		*match = append(*match, bson.M{"tags": r.Tag})
 	}
-
-	*match = append(*match, bson.M{"tags": bson.M{"$in": r.Tags}})
 }
 
 func (q *MongoQueryBuilder) addBookmarkFilter(r FilterRequest, userID string, match *[]bson.M) {
