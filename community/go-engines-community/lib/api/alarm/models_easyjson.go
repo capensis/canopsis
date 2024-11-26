@@ -104,6 +104,8 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.OnlyParents = bool(in.Bool())
 		case "category":
 			out.Category = string(in.String())
+		case "tag":
+			out.Tag = string(in.String())
 		case "tags":
 			if in.IsNull() {
 				in.Skip()
@@ -239,6 +241,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"category\":"
 		out.RawString(prefix)
 		out.String(string(in.Category))
+	}
+	{
+		const prefix string = ",\"tag\":"
+		out.RawString(prefix)
+		out.String(string(in.Tag))
 	}
 	{
 		const prefix string = ",\"tags\":"
