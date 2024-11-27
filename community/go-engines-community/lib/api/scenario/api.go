@@ -9,26 +9,36 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
 
+type API interface {
+	DBExport(c *gin.Context)
+	common.BulkCrudAPI
+}
+
 type api struct {
-	store       Store
-	transformer common.PatternFieldsTransformer
-	logger      zerolog.Logger
+	store         Store
+	mongoExporter dbexport.Exporter
+	transformer   common.PatternFieldsTransformer
+	logger        zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	mongoExporter dbexport.Exporter,
 	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
-) common.BulkCrudAPI {
+) API {
 	return &api{
-		store:       store,
-		logger:      logger,
-		transformer: transformer,
+		store:         store,
+		mongoExporter: mongoExporter,
+		logger:        logger,
+		transformer:   transformer,
 	}
 }
 
@@ -237,6 +247,27 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		return scenario.ID, nil
 	}, a.logger)
+}
+
+// DBExport
+// @Param body body dbexport.Request true "body"
+func (a *api) DBExport(c *gin.Context) {
+	request := dbexport.Request{}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	b, err := a.mongoExporter.Export(c, mongo.ScenarioMongoCollection, request)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dbexport.AttachFile(c, mongo.ScenarioMongoCollection, b)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

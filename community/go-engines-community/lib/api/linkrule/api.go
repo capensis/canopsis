@@ -8,7 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -17,23 +19,26 @@ type API interface {
 	common.CrudAPI
 	GetCategories(*gin.Context)
 	BulkDelete(c *gin.Context)
+	DBExport(c *gin.Context)
 }
 
 type api struct {
-	store       Store
-	transformer common.PatternFieldsTransformer
-	logger      zerolog.Logger
+	store         Store
+	mongoExporter dbexport.Exporter
+	transformer   common.PatternFieldsTransformer
+	logger        zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	mongoExporter dbexport.Exporter,
 	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:       store,
-		transformer: transformer,
-		logger:      logger,
+		store:         store,
+		mongoExporter: mongoExporter, transformer: transformer,
+		logger: logger,
 	}
 }
 
@@ -190,6 +195,27 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		return request.ID, nil
 	}, a.logger)
+}
+
+// DBExport
+// @Param body body dbexport.Request true "body"
+func (a *api) DBExport(c *gin.Context) {
+	request := dbexport.Request{}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	b, err := a.mongoExporter.Export(c, mongo.LinkRuleMongoCollection, request)
+	if err != nil {
+		panic(err)
+	}
+
+	err = dbexport.AttachFile(c, mongo.LinkRuleMongoCollection, b)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
