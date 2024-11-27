@@ -13,7 +13,7 @@
     <v-btn
       :loading="submitting"
       :disabled="submitting || errors.any()"
-      class="mx-2 my-1"
+      class="widget-settings__submit-btn mx-2 my-1"
       type="submit"
       color="primary"
     >
@@ -52,6 +52,11 @@ export default {
 
   &--divider &__list {
     border-bottom: var(--item-divider-border);
+  }
+
+  &__submit-btn {
+    position: sticky;
+    bottom: 4px;
   }
 }
 </style>

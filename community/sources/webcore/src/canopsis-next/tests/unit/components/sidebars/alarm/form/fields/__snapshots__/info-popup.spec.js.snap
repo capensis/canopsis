@@ -11,7 +11,7 @@ exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
     <div
       class="v-list-item__title"
     >
-      Info popup
+      Info popup for column
     </div>
   </div>
   <div
@@ -42,7 +42,7 @@ exports[`info-popup Renders \`info-popup\` with default props 1`] = `
     <div
       class="v-list-item__title"
     >
-      Info popup
+      Info popup for column
     </div>
   </div>
   <div

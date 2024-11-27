@@ -303,6 +303,7 @@ export default {
   loadingItems: 'Loading items...',
   lastComment: 'Last comment',
   serialName: 'Serial name',
+  width: 'Width',
   variableTypes: {
     string: 'String',
     number: 'Number',
