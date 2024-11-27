@@ -1562,6 +1562,15 @@ definitions:
     - unit
     - value
     type: object
+  dbexport.Request:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
+    type: object
   entity.ArchiveDisabledRequest:
     properties:
       with_dependencies:
