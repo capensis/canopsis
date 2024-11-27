@@ -9,7 +9,10 @@
       v-model="form.parameters"
       with-live-watching
     />
-    <widget-settings-group :title="$t('settings.advancedSettings')">
+    <widget-settings-group :title="$t('settings.liveReporting.title')">
+      <field-live-reporting v-model="form.parameters.liveReporting" />
+    </widget-settings-group>
+    <widget-settings-group :title="$tc('common.column', 2)">
       <field-default-sort-column
         v-model="form.parameters.sort"
         :columns="sortablePreparedWidgetColumns"
@@ -27,7 +30,6 @@
         with-color-indicator
         @update:template="updateWidgetColumnsTemplate"
       />
-      <field-resize-column-behavior v-model="form.parameters.columns" />
       <field-columns
         v-model="form.parameters.widgetGroupColumns"
         :template="form.parameters.widgetGroupColumnsTemplate"
@@ -50,9 +52,15 @@
         with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
-      <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
-      <field-density v-model="form.parameters.dense" />
-      <field-opened-resolved-filter v-model="form.parameters.opened" />
+      <field-resize-column-behavior v-model="form.parameters.columns" />
+      <field-root-cause-settings v-model="form.parameters" />
+      <field-info-popup
+        v-model="form.parameters.infoPopups"
+        :columns="preparedWidgetColumns"
+      />
+    </widget-settings-group>
+
+    <widget-settings-group :title="$tc('common.filter', 2)">
       <field-filters
         v-if="hasAccessToListFilters"
         v-model="form.parameters.mainFilter"
@@ -64,6 +72,7 @@
         with-entity
         with-pbehavior
       />
+      <field-opened-resolved-filter v-model="form.parameters.opened" />
       <field-remediation-instructions-filters
         v-if="hasAccessToListRemediationInstructionsFilters"
         v-model="form.parameters.remediationInstructionsFilters"
@@ -71,98 +80,18 @@
         :editable="hasAccessToEditRemediationInstructionsFilter"
       />
       <field-switcher
+        v-model="form.parameters.isCorrelationEnabled"
+        :title="$t('common.correlation')"
+      />
+      <field-switcher
         v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
       />
-      <field-availability-graph-settings v-model="form.parameters.availability" />
-      <field-root-cause-settings v-model="form.parameters" />
-      <field-live-reporting v-model="form.parameters.liveReporting" />
-      <field-info-popup
-        v-model="form.parameters.infoPopups"
-        :columns="preparedWidgetColumns"
-      />
-      <field-text-editor-with-template
-        :value="form.parameters.moreInfoTemplate"
-        :template="form.parameters.moreInfoTemplateTemplate"
-        :title="$t('settings.moreInfosModal')"
-        :variables="alarmVariables"
-        :templates="alarmMoreInfosWidgetTemplates"
-        addable
-        removable
-        @input="updateMoreInfo"
-      />
-      <field-text-editor-with-template
-        :value="form.parameters.exportPdfTemplate"
-        :template="form.parameters.exportPdfTemplateTemplate"
-        :title="$t('settings.exportPdfTemplate')"
-        :variables="exportPdfAlarmVariables"
-        :default-value="defaultExportPdfTemplateValue"
-        :dialog-props="{ maxWidth: 1070 }"
-        :templates="alarmExportToPdfWidgetTemplates"
-        addable
-        removable
-        @input="updateExportPdf"
-      />
-      <field-grid-range-size
-        v-model="form.parameters.expandGridRangeSize"
-        :title="$t('settings.expandGridRangeSize')"
-      />
-      <field-switcher
-        v-model="form.parameters.isHtmlEnabledOnTimeLine"
-        :title="$t('settings.isHtmlEnabledOnTimeLine')"
-      />
-      <widget-settings-group :title="$t('common.ack')">
-        <field-switcher
-          v-model="form.parameters.isAckNoteRequired"
-          :title="$t('settings.isAckNoteRequired')"
-        />
-        <field-switcher
-          v-model="form.parameters.isMultiAckEnabled"
-          :title="$t('settings.isMultiAckEnabled')"
-        />
-        <field-fast-action-output
-          v-model="form.parameters.fastAckOutput"
-          :label="$t('settings.fastAckOutput')"
-        />
-      </widget-settings-group>
-      <widget-settings-group :title="$t('common.cancel')">
-        <field-fast-action-output
-          v-model="form.parameters.fastCancelOutput"
-          :label="$t('settings.fastCancelOutput')"
-        />
-      </widget-settings-group>
-      <fast-pbehavior-form v-model="form.parameters" />
-      <field-switcher
-        v-model="form.parameters.isSnoozeNoteRequired"
-        :title="$t('settings.isSnoozeNoteRequired')"
-      />
-      <field-switcher
-        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired"
-        :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
-      />
-      <field-switcher
-        v-model="form.parameters.isUncancelAlarmsCommentRequired"
-        :title="$t('settings.isUncancelAlarmsCommentRequired')"
-      />
-      <field-switcher
-        v-model="form.parameters.isMultiDeclareTicketEnabled"
-        :title="$t('settings.isMultiDeclareTicketEnabled')"
-      />
-      <export-csv-form
-        v-model="form.parameters"
-        :type="$constants.ENTITIES_TYPES.alarm"
-        :templates="alarmColumnsWidgetTemplates"
-        :templates-pending="widgetTemplatesPending"
-        :variables="columnsVariables"
-        datetime-format
-        with-instructions
-        with-simple-template
-        optional-infos-attributes
-      />
-      <field-switcher
-        v-model="form.parameters.sticky_header"
-        :title="$t('settings.stickyHeader')"
-      />
+    </widget-settings-group>
+
+    <widget-settings-group :title="$tc('common.view', 1)">
+      <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
+      <field-density v-model="form.parameters.dense" />
       <widget-settings-group :title="$t('settings.kioskMode')">
         <field-switcher
           v-model="form.parameters.kiosk.hideActions"
@@ -178,18 +107,109 @@
         />
       </widget-settings-group>
       <field-switcher
-        v-model="form.parameters.isActionsAllowWithOkState"
-        :title="$t('settings.isActionsAllowWithOkState')"
+        v-model="form.parameters.sticky_header"
+        :title="$t('settings.stickyHeader')"
       />
       <field-switcher
         v-model="form.parameters.isVirtualScrollEnabled"
         :title="$t('settings.isVirtualScrollEnabled')"
       />
+    </widget-settings-group>
+
+    <widget-settings-group :title="$t('common.actionsLabel')">
+      <widget-settings-group :title="$t('common.ack')">
+        <field-switcher
+          v-model="form.parameters.isAckNoteRequired"
+          :title="$t('settings.isAckNoteRequired')"
+        />
+        <field-switcher
+          v-model="form.parameters.isMultiAckEnabled"
+          :title="$t('settings.isMultiAckEnabled')"
+        />
+        <field-fast-action-output
+          v-model="form.parameters.fastAckOutput"
+          :label="$t('settings.fastAckOutput')"
+        />
+      </widget-settings-group>
+
+      <widget-settings-group :title="$t('common.cancel')">
+        <field-fast-action-output
+          v-model="form.parameters.fastCancelOutput"
+          :label="$t('settings.fastCancelOutput')"
+        />
+      </widget-settings-group>
+
+      <fast-pbehavior-form v-model="form.parameters" />
+
       <field-switcher
-        v-model="form.parameters.isCorrelationEnabled"
-        :title="$t('settings.isCorrelationEnabledDefault')"
+        v-model="form.parameters.isUncancelAlarmsCommentRequired"
+        :title="$t('settings.isUncancelAlarmsCommentRequired')"
+      />
+      <field-switcher
+        v-model="form.parameters.isSnoozeNoteRequired"
+        :title="$t('settings.isSnoozeNoteRequired')"
+      />
+      <field-switcher
+        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired"
+        :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
+      />
+      <field-switcher
+        v-model="form.parameters.isMultiDeclareTicketEnabled"
+        :title="$t('settings.isMultiDeclareTicketEnabled')"
+      />
+      <field-switcher
+        v-model="form.parameters.isActionsAllowWithOkState"
+        :title="$t('settings.isActionsAllowWithOkState')"
+      />
+      <field-text-editor-with-template
+        :value="form.parameters.exportPdfTemplate"
+        :template="form.parameters.exportPdfTemplateTemplate"
+        :title="$t('settings.exportPdfTemplate')"
+        :variables="exportPdfAlarmVariables"
+        :default-value="defaultExportPdfTemplateValue"
+        :dialog-props="{ maxWidth: 1070 }"
+        :templates="alarmExportToPdfWidgetTemplates"
+        addable
+        removable
+        @input="updateExportPdf"
       />
     </widget-settings-group>
+
+    <widget-settings-group :title="$t('settings.expandPanel.title')">
+      <widget-settings-group :title="$t('alarm.tabs.moreInfos')">
+        <field-text-editor-with-template
+          :value="form.parameters.moreInfoTemplate"
+          :template="form.parameters.moreInfoTemplateTemplate"
+          :title="$t('common.infos')"
+          :variables="alarmVariables"
+          :templates="alarmMoreInfosWidgetTemplates"
+          addable
+          removable
+          @input="updateMoreInfo"
+        />
+        <field-grid-range-size
+          v-model="form.parameters.expandGridRangeSize"
+          :title="$t('common.width')"
+          inline
+        />
+      </widget-settings-group>
+      <field-availability-graph-settings v-model="form.parameters.availability" />
+      <field-switcher
+        v-model="form.parameters.isHtmlEnabledOnTimeLine"
+        :title="$t('settings.isHtmlEnabledOnTimeLine')"
+      />
+    </widget-settings-group>
+    <export-csv-form
+      v-model="form.parameters"
+      :type="$constants.ENTITIES_TYPES.alarm"
+      :templates="alarmColumnsWidgetTemplates"
+      :templates-pending="widgetTemplatesPending"
+      :variables="columnsVariables"
+      datetime-format
+      with-instructions
+      with-simple-template
+      optional-infos-attributes
+    />
     <charts-form v-model="form.parameters.charts" />
   </widget-settings>
 </template>
