@@ -10,13 +10,14 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys }">
       <c-action-btn
         v-if="removable"
         class="ml-3"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
+      <c-db-export-btn :ids="selectedKeys" declare-ticket />
     </template>
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
@@ -44,6 +45,7 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
+        <c-db-export-btn :id="item._id" declare-ticket />
       </v-layout>
     </template>
   </c-advanced-data-table>
