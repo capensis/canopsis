@@ -1,20 +1,41 @@
 <template>
-  <shared-mass-actions-panel :actions="actions" />
+  <v-layout>
+    <c-action-btn
+      v-if="removable"
+      :tooltip="$t('pbehavior.massRemove')"
+      type="delete"
+      @click="showRemovePbehaviorsModal"
+    />
+    <c-action-btn
+      v-if="enablable && someOneDisable"
+      :tooltip="$t('pbehavior.massEnable')"
+      icon="check_circle"
+      color="primary"
+      @click="showEnablePbehaviorsModal"
+    />
+    <c-action-btn
+      v-if="disablable && someOneEnable"
+      :tooltip="$t('pbehavior.massDisable')"
+      icon="cancel"
+      color="error"
+      @click="showDisablePbehaviorsModal"
+    />
+    <c-db-export-btn :ids="itemsIds" pbehavior />
+  </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { MODALS } from '@/constants';
 
-import { pickIds } from '@/helpers/array';
+import { mapIds } from '@/helpers/array';
 import { pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
 
-import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
-
-import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
+import { useModals } from '@/hooks/modals';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 
 export default {
-  components: { SharedMassActionsPanel },
-  mixins: [entitiesPbehaviorMixin],
   props: {
     items: {
       type: Array,
@@ -33,99 +54,112 @@ export default {
       default: false,
     },
   },
-  computed: {
-    editableItems() {
-      return this.items.filter(({ editable }) => editable);
-    },
+  setup(props, { emit }) {
+    const modals = useModals();
+    const {
+      fetchPbehaviorsListWithPreviousParams,
+      bulkUpdatePbehaviors,
+      bulkRemovePbehaviors,
+    } = usePbehavior();
 
-    actions() {
-      const actions = [];
-      const someOneEnable = this.editableItems.some(({ enabled }) => enabled);
-      const someOneDisable = this.editableItems.some(({ enabled }) => !enabled);
+    const itemsIds = computed(() => mapIds(props.items));
+    const editableItems = computed(() => props.items.filter(({ editable }) => editable));
+    const someOneEnable = computed(() => editableItems.value.filter(({ enabled }) => enabled));
+    const someOneDisable = computed(() => editableItems.value.filter(({ enabled }) => !enabled));
 
-      if (this.removable) {
-        actions.push({
-          icon: 'delete',
-          iconColor: 'error',
-          title: this.$t('pbehavior.massRemove'),
-          method: this.showRemovePbehaviorsModal,
-        });
-      }
+    /**
+     * Clears selected items by emitting clear event
+     *
+     * @emits clear:items
+     */
+    const clearItems = () => emit('clear:items');
 
-      if (this.enablable && someOneDisable) {
-        actions.push({
-          icon: 'check_circle',
-          iconColor: 'primary',
-          title: this.$t('pbehavior.massEnable'),
-          method: this.showEnablePbehaviorsModal,
-        });
-      }
+    /**
+     * Clears items and refreshes pbehaviors list
+     *
+     * @returns {Promise} Result of fetching updated pbehaviors list
+     */
+    const afterSubmit = async () => {
+      clearItems();
 
-      if (this.disablable && someOneEnable) {
-        actions.push({
-          icon: 'cancel',
-          iconColor: 'error',
-          title: this.$t('pbehavior.massDisable'),
-          method: this.showDisablePbehaviorsModal,
-        });
-      }
+      return fetchPbehaviorsListWithPreviousParams();
+    };
 
-      return actions;
-    },
-  },
-  methods: {
-    clearItems() {
-      this.$emit('clear:items');
-    },
+    /**
+     * Shows confirmation modal for enabling selected pbehaviors
+     *
+     * @returns {Promise} Modal instance
+     * @description Opens confirmation modal that:
+     * 1. Maps editable items to request format
+     * 2. Sets enabled=true for all items
+     * 3. Calls bulk update API
+     * 4. Clears selection and refreshes list
+     */
+    const showEnablePbehaviorsModal = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await bulkUpdatePbehaviors({
+            data: editableItems.value.map(item => ({ ...pbehaviorToRequest(item), enabled: true })),
+          });
 
-    afterSubmit() {
-      this.clearItems();
-
-      return this.fetchPbehaviorsListWithPreviousParams();
-    },
-
-    showEnablePbehaviorsModal() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.bulkUpdatePbehaviors({
-              data: this.editableItems.map(item => ({ ...pbehaviorToRequest(item), enabled: true })),
-            });
-
-            return this.afterSubmit();
-          },
+          return afterSubmit();
         },
-      });
-    },
+      },
+    });
 
-    showDisablePbehaviorsModal() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.bulkUpdatePbehaviors({
-              data: this.editableItems.map(item => ({ ...pbehaviorToRequest(item), enabled: false })),
-            });
+    /**
+     * Shows confirmation modal for disabling selected pbehaviors
+     *
+     * @returns {Promise} Modal instance
+     * @description Opens confirmation modal that:
+     * 1. Maps editable items to request format
+     * 2. Sets enabled=false for all items
+     * 3. Calls bulk update API
+     * 4. Clears selection and refreshes list
+     */
+    const showDisablePbehaviorsModal = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await bulkUpdatePbehaviors({
+            data: editableItems.value.map(item => ({ ...pbehaviorToRequest(item), enabled: false })),
+          });
 
-            return this.afterSubmit();
-          },
+          return afterSubmit();
         },
-      });
-    },
+      },
+    });
 
-    showRemovePbehaviorsModal() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removePbehaviors(pickIds(this.items));
+    /**
+     * Shows confirmation modal for removing selected pbehaviors
+     *
+     * @returns {Promise} Modal instance
+     * @description Opens confirmation modal that:
+     * 1. Maps selected items to IDs
+     * 2. Calls bulk remove API
+     * 3. Clears selection and refreshes list
+     */
+    const showRemovePbehaviorsModal = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await bulkRemovePbehaviors({ data: mapIds(props.items) });
 
-            return this.afterSubmit();
-          },
+          return afterSubmit();
         },
-      });
-    },
+      },
+    });
+
+    return {
+      itemsIds,
+      someOneEnable,
+      someOneDisable,
+
+      showEnablePbehaviorsModal,
+      showDisablePbehaviorsModal,
+      showRemovePbehaviorsModal,
+    };
   },
 };
 </script>
