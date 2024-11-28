@@ -301,6 +301,24 @@ export const API_ROUTES = {
     enginesOrder: '/api/v4/healthcheck/engines-order',
     parameters: '/api/v4/healthcheck/parameters',
   },
+  dbExport: {
+    pbehaviors: '/api/v4/pbehaviors-db-export',
+    eventFilters: '/api/v4/eventfilter-db-export',
+    linkRules: '/api/v4/link-rules-db-export',
+    idleRules: '/api/v4/idle-rules-db-export',
+    flappingRules: '/api/v4/flapping-rules-db-export',
+    scenarios: '/api/v4/scenarios-db-export',
+
+    /**
+     * Cat routes for export
+     */
+    dynamicInfos: '/api/v4/cat/dynamic-infos-db-export',
+    declareTickets: '/api/v4/cat/declare-ticket-rules-db-export',
+    metaAlarmRules: '/api/v4/cat/metaalarmrules-db-export',
+    instructions: '/api/v4/cat/instructions-db-export',
+    jobs: '/api/v4/cat/jobs-db-export',
+    jobConfigs: '/api/v4/cat/job-configs-db-export',
+  },
 
   /**
    * Cat routes
