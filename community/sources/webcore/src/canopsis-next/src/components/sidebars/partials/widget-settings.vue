@@ -5,26 +5,27 @@
     @submit.prevent="$emit('submit')"
   >
     <v-list
-      class="widget-settings__list py-0 mb-2"
+      class="widget-settings__list py-0"
       expand
     >
       <slot />
     </v-list>
-    <v-btn
-      :loading="submitting"
-      :disabled="submitting || errors.any()"
-      class="widget-settings__submit-btn mx-2 my-1"
-      type="submit"
-      color="primary"
-    >
-      {{ $t('common.save') }}
-    </v-btn>
+    <v-layout class="widget-settings__submit-btn-wrapper pa-4">
+      <v-btn
+        :loading="submitting"
+        :disabled="submitting || !validatorDirty"
+        type="submit"
+        color="primary"
+      >
+        {{ $t('common.save') }}
+      </v-btn>
+    </v-layout>
   </v-form>
 </template>
 
 <script>
 export default {
-  inject: ['$validator'],
+  inject: ['$validator', '$sidebar'],
   props: {
     submitting: {
       type: Boolean,
@@ -33,6 +34,11 @@ export default {
     divider: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    validatorDirty() {
+      return !this.$sidebar?.config?.widget?._id || Object.values(this.fields).some(field => field.dirty);
     },
   },
 };
@@ -54,9 +60,14 @@ export default {
     border-bottom: var(--item-divider-border);
   }
 
-  &__submit-btn {
+  &__submit-btn-wrapper {
+    background-color: var(--v-application-background-base);
     position: sticky;
-    bottom: 4px;
+    bottom: 0;
+
+    .theme--light & {
+      background-color: #fff;
+    }
   }
 }
 </style>
