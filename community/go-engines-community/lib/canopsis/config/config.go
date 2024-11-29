@@ -103,6 +103,7 @@ type SectionMetrics struct {
 	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
 	EnabledInstructions    bool   `toml:"EnabledInstructions"`
 	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
+	EnabledSliMetrics      bool   `toml:"EnabledSliMetrics"`
 }
 
 type SectionTechMetrics struct {
