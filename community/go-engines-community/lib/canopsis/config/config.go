@@ -112,6 +112,7 @@ type SectionMetrics struct {
 	AllowedPerfDataUnits   []string `toml:"AllowedPerfDataUnits"`
 	EnabledInstructions    bool     `toml:"EnabledInstructions"`
 	EnabledNotAckedMetrics bool     `toml:"EnabledNotAckedMetrics"`
+	EnabledSliMetrics      bool     `toml:"EnabledSliMetrics"`
 }
 
 type SectionTechMetrics struct {
