@@ -223,6 +223,8 @@ func updateMongoConfig(ctx context.Context, conf Conf, dbClient mongo.DbClient) 
 	//todo: fix it with config refactoring
 	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
+	conf.Canopsis.Metrics.EnabledSliMetrics = prevGlobalConf.Metrics.EnabledSliMetrics
+
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
 	if err != nil {
 		return fmt.Errorf("failed to update global config: %w", err)
