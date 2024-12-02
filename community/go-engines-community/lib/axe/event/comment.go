@@ -43,6 +43,7 @@ func (p *commentProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Res
 		{"$set": bson.M{
 			"v.last_comment": newStepQuery,
 			"v.steps":        addStepUpdateQuery(newStepQuery),
+			"v.comments":     addCommentsUpdateQuery(newStepQuery),
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
