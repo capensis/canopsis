@@ -36,6 +36,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
+	pipeline = append(pipeline, bson.M{"$match": bson.M{"hidden": bson.M{"$in": bson.A{false, nil}}}})
 	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
 		sortBy = r.SortBy

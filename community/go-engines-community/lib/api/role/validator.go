@@ -48,15 +48,26 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 		return
 	}
 
-	types, err := getTypes(ctx, v.dbPermissionCollection, r.Permissions)
+	perms, _, err := getPermissions(ctx, v.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		panic(err)
 	}
 
 	for id, actions := range r.Permissions {
-		if t, ok := types[id]; ok {
+		switch r.Type {
+		case TypeUI:
+			if strings.HasPrefix(id, PermissionAPIPrefix) {
+				sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "not_ui_perm", "")
+			}
+		case TypeAPI:
+			if !strings.HasPrefix(id, PermissionAPIPrefix) {
+				sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "not_api_perm", "")
+			}
+		}
+
+		if perm, ok := perms[id]; ok {
 			var validActions []string
-			switch t {
+			switch perm.Type {
 			case "":
 				if len(actions) > 0 {
 					sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "must_be_empty", "")

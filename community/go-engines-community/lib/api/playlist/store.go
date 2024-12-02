@@ -3,7 +3,6 @@ package playlist
 import (
 	"cmp"
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -15,8 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-const permissionPrefix = "Rights on playlist :"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -224,7 +221,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 	_, err := s.permissionCollection.InsertOne(ctx, bson.M{
 		"_id":         playlistID,
 		"name":        playlistID,
-		"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+		"description": playlistName,
 		"type":        securitymodel.ObjectTypeRW,
 	})
 	if err != nil {
@@ -268,7 +265,7 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 		bson.M{"_id": playlistID},
 		bson.M{
 			"$set": bson.M{
-				"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+				"description": playlistName,
 			},
 		},
 	)

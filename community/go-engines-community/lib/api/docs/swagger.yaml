@@ -9696,7 +9696,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/role.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/role.EditRequest'
         required: true
       responses:
         201:

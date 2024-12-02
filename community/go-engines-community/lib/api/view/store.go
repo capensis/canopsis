@@ -20,10 +20,7 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
-const (
-	permissionPrefix = "Rights on view :"
-	defaultTabTitle  = "Default"
-)
+const defaultTabTitle = "Default"
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
@@ -844,7 +841,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 		newPermissions = append(newPermissions, bson.M{
 			"_id":         viewId,
 			"name":        viewId,
-			"description": fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
+			"description": viewTitle,
 			"type":        securitymodel.ObjectTypeRW,
 		})
 		setRole["permissions."+viewId] = securitymodel.PermissionBitmaskRead |
@@ -889,7 +886,7 @@ func (s *store) updatePermissions(ctx context.Context, view Response) error {
 	_, err := s.permissionCollection.UpdateOne(ctx,
 		bson.M{"_id": view.ID},
 		bson.M{"$set": bson.M{
-			"description": fmt.Sprintf("%s %s", permissionPrefix, view.Title),
+			"description": view.Title,
 		}},
 	)
 

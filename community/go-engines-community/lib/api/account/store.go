@@ -33,7 +33,10 @@ func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvide
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	pipeline := []bson.M{
-		{"$match": bson.M{"_id": id}},
+		{"$match": bson.M{
+			"_id":    id,
+			"hidden": bson.M{"$in": bson.A{false, nil}},
+		}},
 		// Find permissions
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
