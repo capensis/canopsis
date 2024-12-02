@@ -68,10 +68,10 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Create
-// @Param body body CreateRequest true "body"
+// @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	var request CreateRequest
+	var request EditRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -110,6 +110,13 @@ func (a *api) Update(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, ErrUpdateAdminRole) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
+			return
+		}
+
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
 			return
 		}

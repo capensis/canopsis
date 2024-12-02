@@ -1226,16 +1226,6 @@ func RegisterRoutes(
 			viewGroupRouter.GET(
 				"",
 				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, apisecurity.NewViewOwnedObjectsProvider(dbClient)),
-				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
-					{
-						Obj: apisecurity.ObjViewGroup,
-						Act: model.PermissionRead,
-					},
-					{
-						Obj: apisecurity.PermPrivateViewGroups,
-						Act: model.PermissionCan,
-					},
-				}, enforcer),
 				viewGroupAPI.List,
 			)
 			viewGroupRouter.GET(
@@ -1532,7 +1522,6 @@ func RegisterRoutes(
 			)
 			playlistRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionRead, enforcer),
 				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, nil),
 				playlistApi.List,
 			)

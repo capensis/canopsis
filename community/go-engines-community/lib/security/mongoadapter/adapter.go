@@ -184,7 +184,7 @@ type roleDocument struct {
 func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
 	// Read all permissionDocs into memory
 	var permissionDocs []permissionDocument
-	cursor, err := a.permissionCollection.Find(ctx, bson.M{})
+	cursor, err := a.permissionCollection.Find(ctx, bson.M{"hidden": bson.M{"$in": bson.A{false, nil}}})
 	if err != nil {
 		return nil, err
 	}

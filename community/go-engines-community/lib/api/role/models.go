@@ -7,18 +7,22 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
+const (
+	TypeUI  = "ui"
+	TypeAPI = "api"
+
+	PermissionAPIPrefix = "api_"
+)
+
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy     string `form:"sort_by" binding:"oneoforempty=name"`
 	Permission string `form:"permission"`
 }
 
-type CreateRequest struct {
-	EditRequest
-	Name string `json:"name" binding:"required,max=255"`
-}
-
 type EditRequest struct {
+	Name        string              `json:"name" binding:"required,max=255"`
+	Type        string              `json:"type" binding:"required,oneof=ui api"`
 	Description string              `json:"description" binding:"max=255"`
 	DefaultView string              `json:"defaultview"`
 	Permissions map[string][]string `json:"permissions"`
@@ -30,6 +34,7 @@ type EditRequest struct {
 type Response struct {
 	ID          string       `bson:"_id" json:"_id"`
 	Name        string       `bson:"name" json:"name"`
+	Type        string       `bson:"type" json:"type"`
 	Description string       `bson:"description" json:"description"`
 	DefaultView *View        `bson:"defaultview" json:"defaultview"`
 	Permissions []Permission `bson:"permissions" json:"permissions"`
@@ -48,8 +53,11 @@ type Permission struct {
 	Name        string   `bson:"name" json:"name"`
 	Description string   `bson:"description" json:"description"`
 	Type        string   `bson:"type" json:"type"`
-	Bitmask     int64    `bson:"bitmask" json:"-"`
 	Actions     []string `bson:"actions" json:"actions"`
+
+	Bitmask               int64                      `bson:"bitmask" json:"-"`
+	ApiPermissions        map[string]int64           `bson:"api_permissions" json:"-"`
+	ApiPermissionsBitmask map[int64]map[string]int64 `bson:"api_permissions_bitmask" json:"-"`
 }
 
 type View struct {
@@ -73,6 +81,7 @@ func (r *AggregationResult) GetTotal() int64 {
 type Template struct {
 	ID          string       `bson:"_id" json:"_id"`
 	Name        string       `bson:"name" json:"name"`
+	Type        string       `bson:"type" json:"type"`
 	Description string       `bson:"description" json:"description"`
 	Permissions []Permission `bson:"permissions" json:"permissions"`
 }

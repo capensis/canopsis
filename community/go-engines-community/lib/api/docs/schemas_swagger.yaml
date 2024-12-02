@@ -4610,7 +4610,7 @@ definitions:
     - name
     - priority
     type: object
-  role.CreateRequest:
+  role.EditRequest:
     properties:
       auth_config:
         $ref: '#/definitions/security.AuthMethodConf'
@@ -4628,24 +4628,14 @@ definitions:
             type: string
           type: array
         type: object
+      type:
+        enum:
+        - ui
+        - api
+        type: string
     required:
     - name
-    type: object
-  role.EditRequest:
-    properties:
-      auth_config:
-        $ref: '#/definitions/security.AuthMethodConf'
-      defaultview:
-        type: string
-      description:
-        maxLength: 255
-        type: string
-      permissions:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
+    - type
     type: object
   role.Permission:
     properties:
@@ -4686,6 +4676,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      type:
+        type: string
       updated:
         type: integer
     type: object
@@ -4701,6 +4693,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      type:
+        type: string
     type: object
   role.TemplateResponse:
     properties:
