@@ -21,7 +21,11 @@ include:
   - community/.gitlab-ci-common.yml
   - community/.gitlab-ci-template.yml
   - community/.gitlab-ci-builder.yml
-  - community/.gitlab-ci-mkdocs.yml
+  - project: 'templates/gitlab-ci'
+    ref: main
+    file: 'mkdocs-build/gitlab-ci-mkdocs.yml'
+    rules:
+      - if: $CI_PROJECT_NAME == "canopsis-pro"
 
 create_release:
   extends: .create_release

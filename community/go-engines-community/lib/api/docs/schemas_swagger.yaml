@@ -245,6 +245,10 @@ definitions:
         items:
           type: string
         type: array
+      comments:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
       component:
         type: string
       connector:
