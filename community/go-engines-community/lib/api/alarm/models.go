@@ -320,6 +320,7 @@ type AlarmValue struct {
 	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Comments    []common.AlarmStep `bson:"comments,omitempty" json:"comments,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 
