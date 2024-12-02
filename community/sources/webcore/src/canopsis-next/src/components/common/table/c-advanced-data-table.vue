@@ -52,7 +52,7 @@
       :show-expand="expand"
       :item-selectable="isItemSelectable"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
-      :table-class="tableClass"
+      :class="tableClass"
       :dense="dense"
       :loader-height="loaderHeight"
       :ellipsis-headers="ellipsisHeaders"
