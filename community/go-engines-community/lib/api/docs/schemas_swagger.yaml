@@ -497,7 +497,12 @@ definitions:
       separator:
         type: string
       tag:
+        description: Tag is deprecated, please use tags[] parameter
         type: string
+      tags:
+        items:
+          type: string
+        type: array
       time_field:
         type: string
       time_format:
