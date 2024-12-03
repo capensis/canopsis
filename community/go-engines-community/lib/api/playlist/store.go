@@ -8,12 +8,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+const PermissionGroupPlaylist = "commonviews_playlist"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -223,6 +226,10 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		"name":        playlistID,
 		"description": playlistName,
 		"type":        securitymodel.ObjectTypeRW,
+		"groups": []string{
+			view.PermissionGroupCommonViews,
+			PermissionGroupPlaylist,
+		},
 	})
 	if err != nil {
 		return err
