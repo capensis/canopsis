@@ -1,11 +1,14 @@
 package colortheme
 
 import (
+	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -29,26 +32,29 @@ type Store interface {
 }
 
 type store struct {
-	dbClient          libmongo.DbClient
-	dbColorCollection libmongo.DbCollection
-	dbUserCollection  libmongo.DbCollection
-	authorProvider    author.Provider
+	dbClient             libmongo.DbClient
+	dbColorCollection    libmongo.DbCollection
+	dbUserCollection     libmongo.DbCollection
+	authorProvider       author.Provider
+	userInterfaceAdapter config.UserInterfaceAdapter
 
-	defaultSearchByFields []string
-	defaultThemeIDs       map[string]struct{}
+	defaultSearchByFields   []string
+	defaultCanopsisThemeIDs map[string]struct{}
 }
 
 func NewStore(
 	dbClient libmongo.DbClient,
 	authorProvider author.Provider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 ) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbColorCollection:     dbClient.Collection(libmongo.ColorThemeCollection),
 		dbUserCollection:      dbClient.Collection(libmongo.UserCollection),
 		authorProvider:        authorProvider,
+		userInterfaceAdapter:  userInterfaceAdapter,
 		defaultSearchByFields: []string{"_id", "name"},
-		defaultThemeIDs: map[string]struct{}{
+		defaultCanopsisThemeIDs: map[string]struct{}{
 			Canopsis:       {},
 			CanopsisDark:   {},
 			ColorBlind:     {},
@@ -147,8 +153,8 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	if s.isDefaultTheme(r.ID) {
-		return nil, ErrDefaultTheme
+	if s.isDefaultCanopsisTheme(r.ID) {
+		return nil, ErrCanopsisDefaultTheme
 	}
 
 	r.Updated = datetime.NewCpsTime()
@@ -182,14 +188,23 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	if s.isDefaultTheme(id) {
-		return false, ErrDefaultTheme
+	if s.isDefaultCanopsisTheme(id) {
+		return false, ErrCanopsisDefaultTheme
 	}
 
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to get user interface config: %w", err)
+		}
+
+		if cfg.DefaultColorTheme == id {
+			return ErrDefaultTheme
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
@@ -202,8 +217,17 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return err
 		}
 
-		_, err = s.dbUserCollection.UpdateMany(ctx, bson.M{"ui_theme": id},
-			bson.M{"$set": bson.M{"ui_theme": Canopsis, "author": userID, "updated": datetime.NewCpsTime()}})
+		_, err = s.dbUserCollection.UpdateMany(
+			ctx,
+			bson.M{"ui_theme": id},
+			bson.M{
+				"$set": bson.M{
+					"ui_theme": cmp.Or(cfg.DefaultColorTheme, Canopsis),
+					"author":   userID,
+					"updated":  datetime.NewCpsTime(),
+				},
+			},
+		)
 		return err
 	})
 	if err != nil {
@@ -213,7 +237,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s *store) isDefaultTheme(id string) bool {
-	_, ok := s.defaultThemeIDs[id]
+func (s *store) isDefaultCanopsisTheme(id string) bool {
+	_, ok := s.defaultCanopsisThemeIDs[id]
 	return ok
 }

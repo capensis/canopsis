@@ -1053,6 +1053,8 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        type: string
       disabled_transitions:
         type: boolean
       footer:

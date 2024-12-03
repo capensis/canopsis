@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
@@ -308,4 +309,7 @@ func RegisterValidators(client mongo.DbClient) {
 
 	v.RegisterStructValidation(healthcheck.ValidateEngineParameters, config.EngineParameters{})
 	v.RegisterStructValidation(healthcheck.ValidateLimitParameters, config.LimitParameters{})
+
+	appInfoValidator := appinfo.NewValidator(client)
+	v.RegisterStructValidationCtx(appInfoValidator.ValidateRequest, appinfo.UserInterfaceConf{})
 }
