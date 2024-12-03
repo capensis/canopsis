@@ -158,18 +158,18 @@ func (mr *MockStoreMockRecorder) GetAssignedInstructionsMap(arg0, arg1 interface
 }
 
 // GetByID mocks base method.
-func (m *MockStore) GetByID(arg0 context.Context, arg1, arg2 string, arg3 bool) (*alarm.Alarm, error) {
+func (m *MockStore) GetByID(arg0 context.Context, arg1, arg2 string) (*alarm.Alarm, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByID", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "GetByID", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*alarm.Alarm)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByID indicates an expected call of GetByID.
-func (mr *MockStoreMockRecorder) GetByID(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetByID(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockStore)(nil).GetByID), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockStore)(nil).GetByID), arg0, arg1, arg2)
 }
 
 // GetDetails mocks base method.

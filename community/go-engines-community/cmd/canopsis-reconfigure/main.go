@@ -58,7 +58,8 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
 	}
 
-	client, err := mongo.NewClient(ctx, 0, 0, logger)
+	// remove timeout to not limit long migrations
+	client, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, 0, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to connect to mongo")
 	}
@@ -254,8 +255,10 @@ func updateVersionConfig(ctx context.Context, f flags, dbClient mongo.DbClient) 
 	buildInfo := canopsis.GetBuildInfo()
 	conf := config.VersionConf{
 		Version: buildInfo.Version,
-		Edition: f.edition,
 		Stack:   "go",
+	}
+	if f.edition != "" {
+		conf.Edition = f.edition
 	}
 
 	if prevConf.Version != conf.Version {

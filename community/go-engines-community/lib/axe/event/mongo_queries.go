@@ -92,3 +92,10 @@ func addTicketUpdateQuery(newStepQuery bson.M) bson.M {
 		bson.A{newStepQuery},
 	}}
 }
+
+func addCommentsUpdateQuery(newStepQuery bson.M) bson.M {
+	return bson.M{"$concatArrays": bson.A{
+		bson.M{"$ifNull": bson.A{"$v.comments", bson.A{}}},
+		bson.A{newStepQuery},
+	}}
+}

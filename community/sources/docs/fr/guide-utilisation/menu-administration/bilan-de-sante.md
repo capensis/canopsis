@@ -35,7 +35,7 @@ En parallèle de l'état de santé des composants, vous avez accès à des graph
 ### API Canopsis
 
 Lorsque l'API de Canopsis est indisponible, vous ne pouvez plus accéder à l'interface graphique.  
-La réponse technique lors de [l'appel à l'API](../../../guide-developpement/swagger/?urls.primaryName=Canopsis%20Pro#/healthcheck/healthcheck-get) sera de la forme :
+La réponse technique lors de [l'appel à l'API](../../guide-developpement/swagger-community/index.md) pour la route `healthcheck`sera de la forme :
 
     <html>
     <head><title>502 Bad Gateway</title></head>
@@ -74,7 +74,7 @@ Si cela ne permet pas de rétablir le service, une analyse de logs est nécessai
 Lorsque le système de cache `redis` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
 
-[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger/#/healthcheck/healthcheck-get) vous précisera alors le dysfonctionnement de Redis
+[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger-community/index.md) sur la route `healthcheck` vous précisera alors le dysfonctionnement de Redis
 
 **Remédiation associée**
 
@@ -103,7 +103,7 @@ Si cela ne permet pas de rétablir le service, une analyse de logs est nécessai
 Lorsque la base de données `mongoDB` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
 
-[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger/#/healthcheck/healthcheck-get) vous précisera alors le dysfonctionnement de MongoDB.
+[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger-community/index.md) sur la route `healthcheck` vous précisera alors le dysfonctionnement de MongoDB.
 
 **Remédiation associée**
 
@@ -132,7 +132,7 @@ Si cela ne permet pas de rétablir le service, une analyse de logs est nécessai
 Lorsque la base de données `rabbitmq` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
 
-[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger/#/healthcheck/healthcheck-get) vous précisera alors le dysfonctionnement de RabbitMQ.
+[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger-community/index.md) sur la route `healthcheck` vous précisera alors le dysfonctionnement de RabbitMQ.
 
 **Remédiation associée**
 
@@ -162,7 +162,7 @@ Le contrôle de bon fonctionnement des moteurs comporte plusieurs volets.
 
 #### L'enchainement des moteurs
 
-La transmission d'événements d'un moteur à un moteur respecte un [ordre précis](../../guide-administration/moteurs/schema-enchainement-moteurs). 
+La transmission d'événements d'un moteur à un moteur respecte un [ordre précis](../../guide-developpement/schemas/all-engines.md). 
 Lorsque l'ordre est respecté, le schéma d'enchainement reste au vert.
 
 ![module-healthcheck-engines1](img/sante_engines1.png)
