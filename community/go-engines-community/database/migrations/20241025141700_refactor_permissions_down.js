@@ -1341,13 +1341,19 @@ db.permission.aggregate([
     {$unwind: {path: "$playlist", preserveNullAndEmptyArrays: true}},
 ]).forEach(function (doc) {
     if (doc.view) {
-        db.permission.updateOne({_id: doc._id}, {$set: {description: "Rights on view : " + doc.view.description}});
+        db.permission.updateOne({_id: doc._id}, {
+            $set: {description: "Rights on view : " + doc.view.title},
+            $unset: {groups: ""},
+        });
 
         return;
     }
 
     if (doc.playlist) {
-        db.permission.updateOne({_id: doc._id}, {$set: {description: "Rights on playlist : " + doc.playlist.name}});
+        db.permission.updateOne({_id: doc._id}, {
+            $set: {description: "Rights on playlist : " + doc.playlist.name},
+            $unset: {groups: ""},
+        });
 
         return;
     }
