@@ -137,6 +137,8 @@ func RegisterRoutes(
 	security.RegisterCallbackRoutes(ctx, router, dbClient, sessionStore)
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
+	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
+
 	authApi := auth.NewApi(
 		security.GetTokenService(),
 		security.GetTokenProviders(),
@@ -178,7 +180,7 @@ func RegisterRoutes(
 		accountRouter := protected.Group("/account/me")
 		{
 			accountRouter.Use(middleware.OnlyAuth())
-			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider))
+			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider, userInterfaceAdapter))
 			accountRouter.GET("", accountAPI.Me)
 			accountRouter.PUT("", accountAPI.Update)
 		}
@@ -193,7 +195,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider),
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, userInterfaceAdapter),
 			logger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
@@ -870,11 +872,6 @@ func RegisterRoutes(
 				"user_interface",
 				middleware.Authorize(apisecurity.PermUserInterfaceUpdate, model.PermissionCan, enforcer),
 				appInfoApi.UpdateUserInterface,
-			)
-			appInfoRouter.DELETE(
-				"user_interface",
-				middleware.Authorize(apisecurity.PermUserInterfaceDelete, model.PermissionCan, enforcer),
-				appInfoApi.DeleteUserInterface,
 			)
 		}
 
@@ -1709,7 +1706,7 @@ func RegisterRoutes(
 			)
 		}
 
-		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient, authorProvider), logger)
+		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient, authorProvider, userInterfaceAdapter), logger)
 		colorThemeRouter := protected.Group("/color-themes")
 		{
 			colorThemeRouter.POST(
