@@ -13,7 +13,7 @@ repo_name: 'git.canopsis.net'
 
 docs_dir:
    sources/docs/fr
-copyright: Documentation © Capensis 2018–2024 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
+copyright: Documentation © Capensis 2018–2025 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
   name: material
