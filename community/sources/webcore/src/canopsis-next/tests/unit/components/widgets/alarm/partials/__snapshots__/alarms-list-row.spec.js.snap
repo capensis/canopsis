@@ -92,7 +92,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      selectedtag="tag"
+      selectedtags="tag"
       widget="[object Object]"
     />
     <!---->
@@ -103,7 +103,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      selectedtag="tag"
+      selectedtags="tag"
       widget="[object Object]"
     />
     <!---->
@@ -147,7 +147,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      selectedtag=""
+      selectedtags=""
       widget="[object Object]"
     />
     <!---->
@@ -158,7 +158,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      selectedtag=""
+      selectedtags=""
       widget="[object Object]"
     />
     <!---->
@@ -193,7 +193,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      selectedtag=""
+      selectedtags=""
       widget="[object Object]"
     />
     <!---->
@@ -204,7 +204,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      selectedtag=""
+      selectedtags=""
       widget="[object Object]"
     />
     <!---->

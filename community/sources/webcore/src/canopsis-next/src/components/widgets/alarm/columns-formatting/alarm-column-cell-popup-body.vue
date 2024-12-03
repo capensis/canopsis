@@ -27,9 +27,9 @@
         :template-id="templateId"
         :template="template"
         :context="templateContext"
-        :template-props="{ alarm, selectedTag }"
+        :template-props="templateProps"
         @select:tag="$emit('select:tag', $event)"
-        @clear:tag="$emit('clear:tag')"
+        @remove:tag="$emit('remove:tag', $event)"
       />
     </v-card-text>
   </v-card>
@@ -50,12 +50,19 @@ export default {
       type: String,
       default: '',
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
+    templateProps() {
+      return {
+        alarm: this.alarm,
+        selectedTags: this.selectedTags,
+      };
+    },
+
     templateContext() {
       return {
         alarm: this.alarm,
