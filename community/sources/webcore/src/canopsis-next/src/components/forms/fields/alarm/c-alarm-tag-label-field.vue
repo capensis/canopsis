@@ -21,8 +21,8 @@
     clearable
     return-object
     @input="changeSelectedItems"
-    @fetch="fetchTags"
-    @fetch:more="fetchMoreTags"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   >
     <template #selection="{ item, index }">
@@ -112,8 +112,8 @@ export default {
       items,
       wholePending,
       hasMoreItems,
-      fetchTags,
-      fetchMoreTags,
+      fetchItems,
+      fetchMoreItems,
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
@@ -122,6 +122,7 @@ export default {
       idKey: '_id',
       idParamsKey: 'ids',
       fetchHandler: fetchAlarmTagsLabelsListWithoutStore,
+      addable: true,
     }, emit);
 
     return {
@@ -129,8 +130,8 @@ export default {
       items,
       wholePending,
       hasMoreItems,
-      fetchTags,
-      fetchMoreTags,
+      fetchItems,
+      fetchMoreItems,
       changeSelectedItems,
       updateSearch,
       removeItemFromSelectedItemsByIndex,

@@ -1,5 +1,11 @@
-import { computed, ref, unref, onMounted } from 'vue';
-import { keyBy, pick, isArray } from 'lodash';
+import {
+  computed,
+  ref,
+  unref,
+  watch,
+  onMounted,
+} from 'vue';
+import { keyBy, pick, isArray, isString } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -22,18 +28,19 @@ import { useModelField } from '@/hooks/form';
  * @param {number} [options.limit = PAGINATION_LIMIT] - The limit for pagination, determining how many items to
  * fetch per page.
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
+ * @param {boolean} options.addable - The flag for indicating possibility to add new item.
  * @param {Function} emit - The emit function for Vue events, used to update the model.
  * @returns {Object} An object containing methods and properties for managing search and selection:
  * - `selectedItems`: {Ref<Array>} A reactive reference to the currently selected items.
  * - `items`: {ComputedRef<Array>} A computed reference to the list of items fetched and managed by the hook.
  * - `wholePending`: {ComputedRef<boolean>} A computed reference indicating if any fetch operation is pending.
  * - `hasMoreItems`: {ComputedRef<boolean>} A computed reference indicating if there are more items to fetch.
- * - `fetchTags`: {Function} A function to fetch items based on the current query state.
- * - `fetchMoreTags`: {Function} A function to fetch the next page of items.
+ * - `fetchItems`: {Function} A function to fetch items based on the current query state.
+ * - `fetchMoreItems`: {Function} A function to fetch the next page of items.
  * - `changeSelectedItems`: {Function} A function to update the selected items and emit changes.
  * - `updateSearch`: {Function} A function to update the search query and trigger a fetch.
  */
-export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LIMIT, fetchHandler }, emit) => {
+export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LIMIT, fetchHandler, addable }, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
   const selectedItems = ref([]);
@@ -65,8 +72,16 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
    */
   const {
     pending: valuesPending,
-    handler: fetchValues,
+    handler: initializeSelectedItems,
   } = usePendingHandler(async () => {
+    const selectedItemsFromItemsByValue = arrayValue.value.map(item => itemsByValue.value[item]).filter(Boolean);
+
+    if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
+      selectedItems.value = selectedItemsFromItemsByValue;
+
+      return;
+    }
+
     if (!arrayValue.value.length) {
       return;
     }
@@ -92,7 +107,7 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   const {
     pending,
     query,
-    fetchHandlerWithQuery: fetchTags,
+    fetchHandlerWithQuery: fetchItems,
     updateQueryPage,
     updateQuerySearch,
   } = usePendingWithLocalQuery({
@@ -131,7 +146,7 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   /**
    * Function to fetch the next page of items.
    */
-  const fetchMoreTags = () => updateQueryPage(query.value.page + 1);
+  const fetchMoreItems = () => updateQueryPage(query.value.page + 1);
 
   /**
    * Function to update the selected items and emit changes.
@@ -139,8 +154,13 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
    */
   const changeSelectedItems = (newSelectedTags) => {
     const unwrappedIdKey = unref(idKey);
+    const unwrappedAddable = unref(addable);
 
-    selectedItems.value = newSelectedTags.map(tag => (tag[unwrappedIdKey] ? tag : { [unwrappedIdKey]: tag }));
+    selectedItems.value = (
+      unwrappedAddable
+        ? newSelectedTags
+        : newSelectedTags.filter(tag => !isString(tag))
+    ).map(tag => (tag[unwrappedIdKey] ? tag : { [unwrappedIdKey]: tag }));
 
     updateModel(mapIds(selectedItems.value, unwrappedIdKey));
   };
@@ -158,12 +178,14 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
     changeSelectedItems(selectedItems.value.filter((item, itemIndex) => itemIndex !== index))
   );
 
+  watch(value, () => initializeSelectedItems());
+
   onMounted(() => {
     if (idParamsKey) {
-      fetchValues();
+      initializeSelectedItems();
     }
 
-    fetchTags();
+    fetchItems();
   });
 
   return {
@@ -171,8 +193,8 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
     items,
     wholePending,
     hasMoreItems,
-    fetchTags,
-    fetchMoreTags,
+    fetchItems,
+    fetchMoreItems,
     changeSelectedItems,
     removeItemFromSelectedItemsByIndex,
     updateSearch: updateQuerySearch,
