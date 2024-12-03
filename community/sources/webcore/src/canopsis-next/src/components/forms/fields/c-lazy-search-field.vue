@@ -78,6 +78,9 @@
         <span class="text-truncate">{{ getItemText(item) }}</span>
       </v-chip>
     </template>
+    <template v-if="$slots['no-data']" #no-data="">
+      <slot name="no-data" />
+    </template>
   </c-select-field>
 </template>
 
@@ -274,7 +277,10 @@ export default {
     watch(isMultiple, () => updateSearch(null, true));
 
     onMounted(() => observer.observe(appendElement.value));
-    onBeforeUnmount(() => observer.unobserve(appendElement.value));
+    onBeforeUnmount(() => {
+      observer.unobserve(appendElement.value);
+      observer.disconnect();
+    });
 
     return {
       appendElement,
