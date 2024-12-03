@@ -24,6 +24,8 @@ import iPlasticTheme from 'monaco-themes/themes/iPlastic.json';
 
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
 
+import { promisedWait } from '@/helpers/async';
+
 export default {
   props: {
     value: {
@@ -123,7 +125,7 @@ export default {
           return;
         } catch {
           // eslint-disable-next-line no-await-in-loop
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await promisedWait(500);
         }
       }
     },

@@ -175,6 +175,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.item._id),
+          entities: [this.item],
         },
       });
     },

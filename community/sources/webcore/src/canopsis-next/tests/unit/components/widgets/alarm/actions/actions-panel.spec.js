@@ -382,7 +382,6 @@ describe('actions-panel', () => {
       {
         name: MODALS.pbehaviorPlanning,
         config: {
-          afterSubmit: expect.any(Function),
           entityPattern: [[{
             field: ENTITY_PATTERN_FIELDS.id,
             cond: {
@@ -390,6 +389,8 @@ describe('actions-panel', () => {
               value: entity._id,
             },
           }]],
+          entities: [entity],
+          afterSubmit: expect.any(Function),
         },
       },
     );

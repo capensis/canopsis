@@ -51,7 +51,7 @@ type Store interface {
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest, userID string) (*Count, error)
-	GetByID(ctx context.Context, id, userID string, onlyParents bool) (*Alarm, error)
+	GetByID(ctx context.Context, id, userID string) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, userID string) (*Alarm, bool, error)
 	FindByService(ctx context.Context, id string, r ListByServiceRequest, userID string) (*AggregationResult, error)
 	FindByComponent(ctx context.Context, r ListByComponentRequest, userID string) (*AggregationResult, error)
@@ -189,10 +189,10 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userID st
 	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents, userID)
 }
 
-func (s *store) GetByID(ctx context.Context, id, userID string, onlyParents bool) (*Alarm, error) {
+func (s *store) GetByID(ctx context.Context, id, userID string) (*Alarm, error) {
 	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"_id": id}, now, userID,
-		OpenedAndRecentResolved, onlyParents)
+		OpenedAndRecentResolved)
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +213,7 @@ func (s *store) GetByID(ctx context.Context, id, userID string, onlyParents bool
 
 	if len(result.Data) == 0 {
 		resolvedPipeline, err := s.getQueryBuilder(s.resolvedDbCollection.Name()).CreateGetAggregationPipeline(
-			bson.M{"_id": id}, now, userID, OpenedAndRecentResolved, onlyParents)
+			bson.M{"_id": id}, now, userID, OpenedAndRecentResolved)
 		if err != nil {
 			return nil, err
 		}
@@ -253,7 +253,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userID string) 
 
 	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userID,
-		OnlyOpened, false)
+		OnlyOpened)
 	if err != nil {
 		return nil, false, err
 	}

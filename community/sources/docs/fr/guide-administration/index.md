@@ -22,8 +22,8 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 ### Administration quotidienne
 
-*  [Stockage des données](../guide-utilisation/menu-administration/parametres#parametres-de-stockage)
+*  [Stockage des données](../guide-utilisation/menu-administration/parametres-de-stockage.md)
 *  [Gestion des composants](gestion-composants/index.md)
 *  [Administration avancée de Canopsis](administration-avancee/index.md)
 *  [Guide de dépannage (Troubleshooting)](../guide-de-depannage/index.md)
-*  [Générateur d'événements - Smart-feeder](./smart-feeder/)
+*  [Générateur d'événements - Smart-feeder](./smart-feeder/index.md)

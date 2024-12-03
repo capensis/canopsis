@@ -20,7 +20,7 @@ Ce document aborde la première étape de cette mise en œuvre.
 Pour comprendre le principe complet de traitement des traps, et 
 notamment savoir ce qu'il adviendra des événements de type `trap` 
 générés par le connecteur, consultez également la documentation des
-[règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/).
+[règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md).
 
 ## Émission des traps SNMP
 
@@ -234,5 +234,5 @@ traitement grâce à des MIB ;
 possédez pas les MIB peuvent être traités avec du code personnalisé.
 
 Se référer à la documentation sur les
-[règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/)
+[règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md
 qui détaille ces parties de la mise en œuvre.

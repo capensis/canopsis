@@ -31,7 +31,7 @@ x-service_base: &service_base
     - canopsis.env
     - ${CPS_EDITION:?CPS_EDITION not set}.env
 
-x-inital_config_base: &inital_config_base
+x-initial_config_base: &initial_config_base
   <<: *service_base
   restart: "no"
   depends_on:
@@ -157,11 +157,12 @@ services:
   #
 
   reconfigure:
-    <<: *inital_config_base
+    <<: *initial_config_base
     image: ${DOCKER_REPOSITORY}community/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
-    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml
     volumes:
       - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
+
   #
   # Canopsis Community components
   #
