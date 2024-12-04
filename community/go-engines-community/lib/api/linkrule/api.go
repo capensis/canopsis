@@ -212,10 +212,7 @@ func (a *api) DBExport(c *gin.Context) {
 		panic(err)
 	}
 
-	err = dbexport.AttachFile(c, mongo.LinkRuleMongoCollection, b)
-	if err != nil {
-		panic(err)
-	}
+	dbexport.AttachFile(c, mongo.LinkRuleMongoCollection, b)
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
