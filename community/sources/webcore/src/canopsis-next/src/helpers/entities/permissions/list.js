@@ -1,13 +1,4 @@
-import { get, isUndefined } from 'lodash';
-import flatten from 'flat';
-
-import {
-  NOT_COMPLETED_USER_PERMISSIONS,
-  USERS_PERMISSIONS,
-  PERMISSIONS_TYPES_TO_ACTIONS,
-  USER_PERMISSIONS_PREFIXES,
-  CRUD_ACTIONS,
-} from '@/constants';
+import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS } from '@/constants';
 
 /**
  * Check user access for a permission
@@ -29,6 +20,18 @@ export const checkUserAccess = (permission, action) => {
 };
 
 /**
+ * Check user access for a permission
+ *
+ * @param {Object} currentUserPermissionsById
+ * @param {Object} permissions
+ * @param {string} action
+ * @returns {boolean}
+ */
+export const checkUserAnyAccess = (permissions, action) => (
+  Object.values(permissions).some(permission => checkUserAccess(permission, action))
+);
+
+/**
  * Get actions for permission by type
  *
  * @param {Object} permission
@@ -38,113 +41,28 @@ export const getPermissionActions = permission => (PERMISSIONS_TYPES_TO_ACTIONS[
   ? PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
   : [CRUD_ACTIONS.can]);
 
-/**
- * Get right checkbox value for the form
- *
- * @param {string} permissionId
- * @param {PermissionForm} permissions
- * @param {PermissionForm} changedPermissions
- * @param {string} [action=CRUD_ACTIONS.can]
- * @returns {boolean}
- */
-export const getCheckboxValue = (
-  permissionId,
-  permissions,
-  changedPermissions,
-  action = CRUD_ACTIONS.can,
-) => {
-  const actions = permissions[permissionId] || [];
+export const permissionsToTreeview = (permissions = []) => permissions.reduce((acc, permission) => {
+  let activeGroup = acc;
 
-  const changedActions = get(changedPermissions, [permissionId]);
-  const currentActions = isUndefined(changedActions) ? actions : changedActions;
+  permission.groups.forEach((group) => {
+    if (!activeGroup[group._id]) {
+      activeGroup[group._id] = {
+        ...group,
 
-  return currentActions.includes(action);
-};
-
-/**
- * Get prepared grouped permissions for the permissions page
- *
- * @param {Array<Object>} permissions
- * @returns {*}
- */
-export const getGroupedPermissions = (permissions) => {
-  const allBusinessPermissionsIds = Object.values(flatten(USERS_PERMISSIONS.business));
-  const generalApiPermissions = Object.values(USERS_PERMISSIONS.api.general);
-  const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
-  const remediationApiPermissions = Object.values(USERS_PERMISSIONS.api.remediation);
-  const pbehaviorApiPermissions = Object.values(USERS_PERMISSIONS.api.pbehavior);
-  const eventsRecordApiPermissions = Object.values(USERS_PERMISSIONS.api.eventsRecord);
-
-  const {
-    exploitation: exploitationTechnicalPermissions,
-    notification: notificationTechnicalPermissions,
-    profile: profileTechnicalPermissions,
-    ...adminTechnicalPermissions
-  } = USERS_PERMISSIONS.technical;
-  const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
-  const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
-  const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
-  const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
-
-  return permissions.reduce((acc, permission) => {
-    const permissionId = String(permission._id);
-
-    if (permission.view && permission.view_group) {
-      acc.view.push(permission);
-    } else if (permission.playlist) {
-      acc.playlist.push(permission);
-    } else if (adminTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.admin.push(permission);
-    } else if (exploitationTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.exploitation.push(permission);
-    } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.notification.push(permission);
-    } else if (profileTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.profile.push(permission);
-    } else if (
-      allBusinessPermissionsIds.includes(permissionId)
-      || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
-    ) {
-      const [parentKey] = permission._id.split('_');
-
-      if (acc.business[parentKey]) {
-        acc.business[parentKey].push(permission);
-      }
-    } else if (generalApiPermissions.includes(permissionId)) {
-      acc.api.general.push(permission);
-    } else if (rulesApiPermissions.includes(permissionId)) {
-      acc.api.rules.push(permission);
-    } else if (remediationApiPermissions.includes(permissionId)) {
-      acc.api.remediation.push(permission);
-    } else if (pbehaviorApiPermissions.includes(permissionId)) {
-      acc.api.pbehavior.push(permission);
-    } else if (eventsRecordApiPermissions.includes(permissionId)) {
-      acc.api.eventsRecord.push(permission);
+        children: {},
+        allChildren: [],
+        actions: [CRUD_ACTIONS.can],
+      };
     }
-
-    return acc;
-  }, {
-    business: {
-      ...Object.values(USER_PERMISSIONS_PREFIXES.business).reduce((acc, key) => {
-        acc[key] = [];
-
-        return acc;
-      }, {}),
-    },
-    view: [],
-    playlist: [],
-    technical: {
-      admin: [],
-      exploitation: [],
-      notification: [],
-      profile: [],
-    },
-    api: {
-      general: [],
-      rules: [],
-      remediation: [],
-      pbehavior: [],
-      eventsRecord: [],
-    },
+    activeGroup[group._id].allChildren.push({ _id: permission._id, actions: getPermissionActions(permission) });
+    activeGroup = activeGroup[group._id].children;
   });
-};
+
+  activeGroup[permission._id] = {
+    ...permission,
+
+    actions: getPermissionActions(permission),
+  };
+
+  return acc;
+}, {});

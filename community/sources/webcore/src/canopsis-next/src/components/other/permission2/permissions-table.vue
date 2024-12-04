@@ -3,36 +3,41 @@
     :items="items"
     :headers="headers"
     :hide-default-header="indent !== 0"
+    :items-per-page="items.length"
     class="permissions-table"
+    item-key="_id"
     hide-default-footer
   >
-    <template #item="{ item, index, isExpanded, expand }">
+    <template #item="{ item, isExpanded, expand }">
       <tr>
-        <td :class="{ [`pl-${indent * 3 + 2}`]: true, 'cursor-pointer': item.children?.length }">
+        <td :class="{ [`pl-${indent * 3 + 2}`]: true, 'cursor-pointer': item.children }">
           <c-expand-btn
-            v-if="item.children?.length"
+            v-if="item.children"
             :expanded="isExpanded"
             class="mr-2"
             @expand="expand"
           />
-          <span :class="{ 'font-weight-medium': item.children?.length }">{{ item.text }}</span>
+          <span :class="{ 'font-weight-medium': item.children }">
+            {{ item.title ? item.title : item._id }}
+          </span>
         </td>
         <td v-for="role in roles" :key="role.value">
-          {{ items[index].value[role.value] }}
-          <v-simple-checkbox
-            v-field="items[index].value[role.value]"
-            color="primary"
+          <permissions-table-cell
+            :role="role"
+            :permission="item"
+            :disabled="disabled"
+            @input="$listeners.input"
           />
         </td>
       </tr>
     </template>
-    <template #expanded-item="{ item, index }">
+    <template #expanded-item="{ item }">
       <permissions-table
-        v-if="item.children?.length"
-        v-field="items[index].children"
-        :items="item.children"
-        :headers="headers"
+        v-if="item.children"
+        :treeview-permissions="item.children"
+        :roles="roles"
         :indent="indent + 1"
+        @input="$listeners.input"
       />
     </template>
   </v-data-table>
@@ -41,18 +46,21 @@
 <script>
 import { computed } from 'vue';
 
+import PermissionsTableCell from './permissions-table-cell.vue';
+
 export default {
   name: 'permissions-table',
+  components: { PermissionsTableCell },
   model: {
     prop: 'items',
     event: 'input',
   },
   props: {
-    items: {
-      type: Array,
-      default: () => [],
+    treeviewPermissions: {
+      type: Object,
+      default: () => ({}),
     },
-    headers: {
+    roles: {
       type: Array,
       default: () => [],
     },
@@ -60,12 +68,22 @@ export default {
       type: Number,
       default: 0,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
-    const roles = computed(() => props.headers.slice(1));
+    const items = computed(() => Object.values(props.treeviewPermissions));
+    const headers = computed(() => [
+      { text: '', sortable: false },
+
+      ...props.roles.map(role => ({ text: role.name, value: role._id, sortable: false })),
+    ]);
 
     return {
-      roles,
+      items,
+      headers,
     };
   },
 };

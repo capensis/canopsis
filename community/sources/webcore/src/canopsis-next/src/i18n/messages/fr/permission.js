@@ -582,10 +582,6 @@ export default {
       name: 'Listes de lecture',
       description: 'Cette autorisation définit l\'accès aux paramètres des Playlists',
     },
-    [USERS_PERMISSIONS.technical.planning]: {
-      name: 'Planification',
-      description: 'Cette autorisation définit l\'accès aux paramètres Planning et PBehavior',
-    },
     [USERS_PERMISSIONS.technical.planningType]: {
       name: 'Planification : Types de comportements périodiques',
       description: 'Cette permission définit l\'accès aux types PBehavior',
@@ -597,10 +593,6 @@ export default {
     [USERS_PERMISSIONS.technical.planningExceptions]: {
       name: 'Planification : dates d\'exceptions',
       description: 'Cette autorisation définit l\'accès aux dates d\'exception pour PBehaviors',
-    },
-    [USERS_PERMISSIONS.technical.remediation]: {
-      name: 'Remédiation',
-      description: 'Cette autorisation définit l\'accès au panneau d\'administration de la remédiation',
     },
     [USERS_PERMISSIONS.technical.remediationInstruction]: {
       name: 'Remédiation : consignes',

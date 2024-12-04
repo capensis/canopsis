@@ -2,7 +2,13 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
-import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
+import {
+  CRUD_ACTIONS,
+  ROUTES_NAMES,
+  ROUTES,
+  USERS_PERMISSIONS,
+  GROUPED_USER_PERMISSIONS,
+} from '@/constants';
 
 import store from '@/store';
 
@@ -185,7 +191,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.planning,
+        id: GROUPED_USER_PERMISSIONS.planning,
       },
     },
   },
@@ -196,7 +202,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.remediation,
+        id: GROUPED_USER_PERMISSIONS.remediation,
       },
     },
   },

@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USERS_PERMISSIONS, GROUPED_USER_PERMISSIONS_KEYS } from '@/constants';
 
 export default {
   hideMessage: 'Got it! Hide',
@@ -96,14 +96,6 @@ export default {
   [USERS_PERMISSIONS.technical.parameters]: {
     title: 'Parameters',
   },
-  [USERS_PERMISSIONS.technical.planning]: {
-    title: 'Planning',
-    message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
-  },
-  [USERS_PERMISSIONS.technical.remediation]: {
-    title: 'Instructions',
-    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
-  },
   [USERS_PERMISSIONS.technical.healthcheck]: {
     title: 'Healthcheck',
     message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
@@ -139,6 +131,18 @@ export default {
   [USERS_PERMISSIONS.technical.eventsRecord]: {
     title: 'Events records',
     // message: '', // TODO: add correct message
+  },
+
+  /**
+   * Grouped admin
+   */
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
+    title: 'Planning',
+    message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+  },
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Instructions',
+    message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
   },
 
   /**
