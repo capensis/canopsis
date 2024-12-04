@@ -552,10 +552,7 @@ func (a *api) DBExport(c *gin.Context) {
 		panic(err)
 	}
 
-	err = dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
-	if err != nil {
-		panic(err)
-	}
+	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
 }
 
 func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {
