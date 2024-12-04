@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { GROUPED_USER_PERMISSIONS_KEYS, USERS_PERMISSIONS } from '@/constants';
 
 export default {
   hideMessage: 'J\'ai compris! Cacher',
@@ -93,14 +93,6 @@ export default {
   [USERS_PERMISSIONS.technical.parameters]: {
     title: 'Paramètres',
   },
-  [USERS_PERMISSIONS.technical.planning]: {
-    title: 'Planification',
-    message: 'La fonctionnalité d\'administration de la planification de Canopsis peut être utilisée pour la personnalisation des types de comportements périodiques.',
-  },
-  [USERS_PERMISSIONS.technical.remediation]: {
-    title: 'Consignes',
-    message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des consignes visant à corriger des situations.',
-  },
   [USERS_PERMISSIONS.technical.healthcheck]: {
     title: 'Bilan de santé',
     message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
@@ -136,6 +128,18 @@ export default {
   [USERS_PERMISSIONS.technical.eventsRecord]: {
     title: 'Enregistrements d\'événements',
     // message: '', // TODO: add correct message
+  },
+
+  /**
+   * Grouped admin
+   */
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
+    title: 'Planification',
+    message: 'La fonctionnalité d\'administration de la planification de Canopsis peut être utilisée pour la personnalisation des types de comportements périodiques.',
+  },
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
+    title: 'Consignes',
+    message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des consignes visant à corriger des situations.',
   },
 
   /**

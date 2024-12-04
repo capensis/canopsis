@@ -2,58 +2,78 @@
   <v-container class="admin-rights">
     <c-page-header />
     <v-card class="position-relative">
+      <c-progress-overlay :pending="pending" />
       <v-tabs fixed-tabs>
-        <v-tab>BUSINESS</v-tab>
-        <v-tab-item>
-          <permissions-table
-            v-model="items"
-            :headers="headers"
-          />
-        </v-tab-item>
+        <template v-for="tab in treeviewPermissions">
+          <v-tab :key="tab._id">
+            {{ tab._id }}
+          </v-tab>
+          <v-tab-item :key="`${tab._id}-item`">
+            <permissions-table
+              :treeview-permissions="treeviewPermissions"
+              :roles="roles"
+              @input="changeRole"
+            />
+          </v-tab-item>
+        </template>
       </v-tabs>
     </v-card>
   </v-container>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { keyBy } from 'lodash';
+import { computed, ref, onMounted } from 'vue';
+
+import { MAX_LIMIT } from '@/constants';
+
+import { permissionsToTreeview } from '@/helpers/entities/permissions/list';
+import { roleToForm } from '@/helpers/entities/role/form';
+
+import { useRole } from '@/hooks/store/modules/role';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { usePermissions } from '@/hooks/store/modules/permissions';
 
 import PermissionsTable from '@/components/other/permission2/permissions-table.vue';
 
 export default {
   components: { PermissionsTable },
   setup() {
-    const items = ref([
-      {
-        text: 'Common',
-        value: { manager: true, pilot: true, admin: true },
-      },
-      {
-        text: 'Alarms list',
-        value: { manager: true, pilot: true, admin: true },
-        children: [
-          {
-            text: 'Alarms list widget settings',
-            value: { manager: true, pilot: true, admin: true },
-            children: [
-              { text: 'Set alarm filters', value: { manager: true, pilot: true, admin: true } },
-              { text: 'Set filters by remediation instructions', value: { manager: true, pilot: true, admin: true } },
-            ],
-          },
-        ],
-      },
-    ]);
+    const originalRoles = ref([]);
+    const rolesById = ref({});
+    const permissions = ref([]);
 
-    const headers = computed(() => [
-      { text: '', sortable: false },
-      { text: 'Manager', sortable: false, value: 'manager' },
-      { text: 'Pilot', sortable: false, value: 'pilot' },
-      { text: 'Admin', sortable: false, value: 'admin' },
-    ]);
+    const { fetchPermissionsListWithoutStore } = usePermissions();
+    const { fetchRolesListWithoutStore } = useRole();
+
+    const resetRolesById = () => {
+      rolesById.value = keyBy(originalRoles.value.map(roleToForm), '_id');
+    };
+
+    const { pending, handler: fetchList } = usePendingHandler(async () => {
+      const [rolesResponse, permissionsResponse] = await Promise.all([
+        fetchRolesListWithoutStore({ params: { limit: MAX_LIMIT, with_flags: true } }),
+        fetchPermissionsListWithoutStore({ params: { limit: MAX_LIMIT } }),
+      ]);
+
+      originalRoles.value = rolesResponse.data;
+      permissions.value = permissionsResponse.data;
+      resetRolesById();
+    });
+
+    const treeviewPermissions = computed(() => permissionsToTreeview(permissions.value));
+    const roles = computed(() => Object.values(rolesById.value));
+
+    const changeRole = () => {
+    };
+
+    onMounted(fetchList);
 
     return {
-      headers,
-      items,
+      pending,
+      roles,
+      treeviewPermissions,
+      changeRole,
     };
   },
 };

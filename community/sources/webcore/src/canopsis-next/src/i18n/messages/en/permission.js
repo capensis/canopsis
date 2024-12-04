@@ -582,10 +582,6 @@ export default {
       name: 'Playlists',
       description: 'This permission defines the access to the Playlists settings',
     },
-    [USERS_PERMISSIONS.technical.planning]: {
-      name: 'Planning',
-      description: 'This permission defines the access to the Planning and PBehavior settings',
-    },
     [USERS_PERMISSIONS.technical.planningType]: {
       name: 'Planning type',
       description: 'This permission defines the access to the PBehavior types',
@@ -597,10 +593,6 @@ export default {
     [USERS_PERMISSIONS.technical.planningExceptions]: {
       name: 'Planning dates of exceptions',
       description: 'This permission defines the access to exception dates for PBehaviors',
-    },
-    [USERS_PERMISSIONS.technical.remediation]: {
-      name: 'Remediation',
-      description: 'This permission defines the access to the Remediation admin panel',
     },
     [USERS_PERMISSIONS.technical.remediationInstruction]: {
       name: 'Remediation instruction',

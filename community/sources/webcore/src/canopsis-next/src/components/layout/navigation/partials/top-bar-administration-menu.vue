@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { USERS_PERMISSIONS, ROUTES_NAMES } from '@/constants';
+import { USERS_PERMISSIONS, ROUTES_NAMES, GROUPED_USER_PERMISSIONS } from '@/constants';
 
 import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
 import { maintenanceActionsMixin } from '@/mixins/maintenance/maintenance-actions';
@@ -127,12 +127,12 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminPlanning },
           icon: 'event_note',
-          permission: USERS_PERMISSIONS.technical.planning,
+          permission: GROUPED_USER_PERMISSIONS.planning,
         },
         {
           route: { name: ROUTES_NAMES.adminRemediation },
           icon: 'assignment',
-          permission: USERS_PERMISSIONS.technical.remediation,
+          permission: GROUPED_USER_PERMISSIONS.remediation,
         },
         {
           route: { name: ROUTES_NAMES.adminKPI },

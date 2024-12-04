@@ -1,5 +1,7 @@
 import featuresService from '@/services/features';
 
+import { groupedPermissionToPermission } from '@/helpers/permission';
+
 import { ALARM_LIST_ACTIONS_TYPES } from './alarm';
 import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './entity';
 
@@ -97,11 +99,9 @@ export const USERS_PERMISSIONS = {
     parameters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_parameters`,
     broadcastMessage: `${USER_PERMISSIONS_PREFIXES.technical.admin}_broadcastMessage`,
     playlist: `${USER_PERMISSIONS_PREFIXES.technical.admin}_playlist`,
-    planning: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planning`,
     planningType: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningReason`,
     planningExceptions: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningExceptions`,
-    remediation: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediation`,
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
@@ -450,6 +450,25 @@ export const USERS_PERMISSIONS = {
   },
 };
 
+export const GROUPED_USER_PERMISSIONS = {
+  planning: [
+    USERS_PERMISSIONS.technical.planningType,
+    USERS_PERMISSIONS.technical.planningReason,
+    USERS_PERMISSIONS.technical.planningExceptions,
+  ],
+  remediation: [
+    USERS_PERMISSIONS.technical.remediationInstruction,
+    USERS_PERMISSIONS.technical.remediationJob,
+    USERS_PERMISSIONS.technical.remediationConfiguration,
+    USERS_PERMISSIONS.technical.remediationStatistic,
+  ],
+};
+
+export const GROUPED_USER_PERMISSIONS_KEYS = {
+  planning: groupedPermissionToPermission(GROUPED_USER_PERMISSIONS.planning),
+  remediation: groupedPermissionToPermission(GROUPED_USER_PERMISSIONS.remediation),
+};
+
 export const NOT_COMPLETED_USER_PERMISSIONS = [
   USERS_PERMISSIONS.business.alarmsList.actions.links,
   USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks,
@@ -548,11 +567,15 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   /**
    * Admin pages
    */
-  [USERS_PERMISSIONS.technical.remediation]: ADMIN_PAGES_RULES.remediation,
   [USERS_PERMISSIONS.technical.healthcheck]: ADMIN_PAGES_RULES.healthcheck,
   [USERS_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
   [USERS_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USERS_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
+
+  /**
+   * Grouped
+   */
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: ADMIN_PAGES_RULES.remediation,
 
   /**
    * Exploitation pages
@@ -589,8 +612,12 @@ export const DOCUMENTATION_LINKS = {
    */
   [USERS_PERMISSIONS.technical.broadcastMessage]: 'guide-utilisation/interface/broadcast-messages/',
   [USERS_PERMISSIONS.technical.playlist]: 'guide-utilisation/interface/playlists/',
-  [USERS_PERMISSIONS.technical.planning]: 'guide-administration/moteurs/moteur-pbehavior/#administration-de-la-planification',
-  [USERS_PERMISSIONS.technical.remediation]: 'guide-utilisation/remediation/',
+
+  /**
+   * Grouped
+   */
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'guide-administration/moteurs/moteur-pbehavior/#adminitration-de-la-planification',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'guide-utilisation/remediation/',
 
   /**
    * Notifications
