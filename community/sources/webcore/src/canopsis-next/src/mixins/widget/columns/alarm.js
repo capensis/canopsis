@@ -35,7 +35,7 @@ export const widgetColumnsAlarmMixin = {
     preparedColumns() {
       const {
         showRootCauseByStateClick = true,
-        columns: columnsSettings,
+        columns: columnsSettings = {},
       } = this.widget.parameters ?? {};
 
       return (this.columns ?? []).map(column => ({
