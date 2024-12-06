@@ -10,6 +10,7 @@
       item-value="_id"
       item-text="name"
       name="manualMetaAlarm"
+      autofocus
       return-object
       blur-on-create
     >

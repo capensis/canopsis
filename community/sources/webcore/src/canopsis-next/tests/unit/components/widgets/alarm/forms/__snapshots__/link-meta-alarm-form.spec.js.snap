@@ -27,6 +27,7 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 1`] =
           </label>
           <input
             autocomplete="off"
+            autofocus="autofocus"
             type="text"
           />
           <div
@@ -170,6 +171,7 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default prop
           </label>
           <input
             autocomplete="off"
+            autofocus="autofocus"
             type="text"
           />
           <div

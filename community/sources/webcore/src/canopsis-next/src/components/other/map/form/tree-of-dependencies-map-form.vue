@@ -2,6 +2,7 @@
   <v-layout column>
     <c-name-field
       v-field="form.name"
+      autofocus
       required
     />
     <v-sheet>

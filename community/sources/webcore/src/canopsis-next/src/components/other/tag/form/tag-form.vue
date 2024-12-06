@@ -5,6 +5,7 @@
       :disabled="isImported"
       :max-length="maxTagNameLength"
       name="value"
+      autofocus
       required
     />
     <c-color-picker-field v-field="form.color" />
