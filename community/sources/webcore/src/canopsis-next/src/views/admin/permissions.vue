@@ -13,7 +13,7 @@
           </v-tab>
           <v-tab-item :key="`${tab._id}-item`">
             <permissions-table
-              :treeview-permissions="treeviewPermissions"
+              :treeview-permissions="tab.children"
               :roles="roles"
               @input="changeRole"
             />

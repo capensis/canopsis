@@ -742,10 +742,6 @@ export default {
       name: 'Roles, permissions, users',
       description: 'Access to API route to CRUD roles, permissions and users',
     },
-    [USERS_PERMISSIONS.api.general.appInfoRead]: {
-      name: 'Read app information',
-      description: 'Access to API route to read app information',
-    },
     [USERS_PERMISSIONS.api.general.alarmRead]: {
       name: 'Read alarms',
       description: 'Access to API route to read alarms',
