@@ -90,32 +90,40 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$checkboxCellWidth: 112px; // TODO: move to css vars
-$cellPadding: 8px 8px; // TODO: move to css vars
-
 .permissions-table ::v-deep {
+  --topBarHeight: 48px;
+  --checkboxCellWidth: 112px;
+  --cellPadding: 8px 8px;
+
   .v-data-table__wrapper {
     overflow: unset !important;
     padding-top: 0;
 
     td, th {
-      padding: $cellPadding;
+      padding: var(--cellPadding);
 
       &:not(:first-child) {
-        width: $checkboxCellWidth;
+        width: var(--checkboxCellWidth);
       }
     }
 
     th {
       transition: none;
-      position: sticky;
-      top: 48px;
       z-index: 1;
 
       background: var(--v-table-background-base);
 
       .theme--dark & {
         background: var(--v-table-background-base);
+      }
+
+      .v-window__container:not(.v-window__container--is-active) & {
+        position: sticky;
+        top: calc((var(--topBarHeight) * 2) - 1px);
+
+        .v-app--side-bar-groups & {
+          top: calc(var(--topBarHeight) - 1px);
+        }
       }
     }
   }

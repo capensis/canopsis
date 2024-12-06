@@ -67,6 +67,7 @@ export default {
    */
   [USERS_PERMISSIONS.technical.permission]: {
     title: 'Rights',
+    message: 'Business, View, Technical rights are applied only for UI users. API rights are applied only for API users.',
   },
   [USERS_PERMISSIONS.technical.role]: {
     title: 'Roles',
