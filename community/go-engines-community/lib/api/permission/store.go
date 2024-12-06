@@ -37,7 +37,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline)
 	pipeline = append(pipeline, []bson.M{
 		{"$unwind": bson.M{
 			"path":                       "$groups",
