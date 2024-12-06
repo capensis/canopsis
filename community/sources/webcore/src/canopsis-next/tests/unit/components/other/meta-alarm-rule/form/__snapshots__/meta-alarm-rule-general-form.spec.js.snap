@@ -5,6 +5,7 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
   class="layout column"
 >
   <c-id-field-stub
+    autofocus=""
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value=""
   />
@@ -28,6 +29,7 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
   class="layout column"
 >
   <c-id-field-stub
+    autofocus=""
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
   />
   <c-name-field-stub

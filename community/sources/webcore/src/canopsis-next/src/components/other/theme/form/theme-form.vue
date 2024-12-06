@@ -3,7 +3,7 @@
     class="theme-form"
     column
   >
-    <c-name-field v-field="form.name" />
+    <c-name-field v-field="form.name" autofocus />
     <c-information-block :title="$t('theme.main.title')">
       <v-layout
         class="theme-form__colors"
