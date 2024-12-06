@@ -38,23 +38,6 @@
         {{ item._id ?? item }}
       </c-alarm-action-chip>
     </template>
-    <template #item="{ item, attrs, on, parent }">
-      <v-list-item
-        class="c-alarm-tag-field__list-item"
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-action>
-          <v-checkbox
-            :input-value="attrs.inputValue"
-            :color="parent.color"
-          />
-        </v-list-item-action>
-        <v-list-item-content class="c-word-break-all">
-          {{ item._id }}
-        </v-list-item-content>
-      </v-list-item>
-    </template>
     <template v-if="$slots['no-data']" #no-data="">
       <slot name="no-data" />
     </template>
