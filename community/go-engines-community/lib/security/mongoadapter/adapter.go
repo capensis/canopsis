@@ -216,7 +216,7 @@ func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
 		permissions := make(map[string]permission)
 		for permissionID, mask := range roleItem.Permissions {
 			permissionItem := permissionByIDs[permissionID]
-			permissions[permissionItem.Name] = permission{
+			permissions[permissionItem.ID] = permission{
 				Bitmask: mask,
 				Type:    permissionItem.Type,
 			}

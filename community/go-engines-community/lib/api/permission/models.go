@@ -9,6 +9,7 @@ type ListRequest struct {
 type Permission struct {
 	ID          string  `bson:"_id" json:"_id"`
 	Name        string  `bson:"name" json:"name"`
+	Title       string  `bson:"title" json:"title"`
 	Description string  `bson:"description" json:"description"`
 	Type        string  `bson:"type" json:"type"`
 	Groups      []Group `bson:"groups" json:"groups"`
@@ -16,7 +17,8 @@ type Permission struct {
 
 type Group struct {
 	ID       string `bson:"_id" json:"_id"`
-	Title    string `bson:"title" json:"title,omitempty"`
+	Name     string `bson:"name" json:"name"`
+	Title    string `bson:"title" json:"title"`
 	Position int64  `bson:"position" json:"position"`
 }
 

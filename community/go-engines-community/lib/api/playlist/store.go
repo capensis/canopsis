@@ -223,7 +223,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 func (s *store) createPermission(ctx context.Context, userID, playlistID, playlistName string) error {
 	_, err := s.permissionCollection.InsertOne(ctx, bson.M{
 		"_id":         playlistID,
-		"name":        playlistID,
+		"title":       playlistName,
 		"description": playlistName,
 		"type":        securitymodel.ObjectTypeRW,
 		"groups": []string{
@@ -272,6 +272,7 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 		bson.M{"_id": playlistID},
 		bson.M{
 			"$set": bson.M{
+				"title":       playlistName,
 				"description": playlistName,
 			},
 		},

@@ -340,149 +340,193 @@ widget_filters:
 permission_group:
   group_widgets:
     _id: widgets
+    name: <Current()._id>
     position: <Index()>
   group_widgets_common:
     _id: widgets_common
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_alarmslist:
     _id: widgets_alarmslist
+    name: <Current()._id>
     position: <Index()>
   group_widgets_alarmslist_widgetsettings:
     _id: widgets_alarmslist_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_alarmslist_viewsettings:
     _id: widgets_alarmslist_viewsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_alarmslist_alarmactions:
     _id: widgets_alarmslist_alarmactions
+    name: <Current()._id>
     position: <Index()>
   group_widgets_alarmslist_actions:
     _id: widgets_alarmslist_actions
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_context:
     _id: widgets_context
+    name: <Current()._id>
     position: <Index()>
   group_widgets_context_widgetsettings:
     _id: widgets_context_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_context_viewsettings:
     _id: widgets_context_viewsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_context_entityactions:
     _id: widgets_context_entityactions
+    name: <Current()._id>
     position: <Index()>
   group_widgets_context_actions:
     _id: widgets_context_actions
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_serviceweather:
     _id: widgets_serviceweather
+    name: <Current()._id>
     position: <Index()>
   group_widgets_serviceweather_widgetsettings:
     _id: widgets_serviceweather_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_serviceweather_viewsettings:
     _id: widgets_serviceweather_viewsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_serviceweather_alarmactions:
     _id: widgets_serviceweather_alarmactions
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_counter:
     _id: widgets_counter
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_testingweather:
     _id: widgets_testingweather
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_map:
     _id: widgets_map
+    name: <Current()._id>
     position: <Index()>
   group_widgets_map_widgetsettings:
     _id: widgets_map_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_map_viewsettings:
     _id: widgets_map_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_barchart:
     _id: widgets_barchart
+    name: <Current()._id>
     position: <Index()>
   group_widgets_barchart_widgetsettings:
     _id: widgets_barchart_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_barchart_viewsettings:
     _id: widgets_barchart_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_linechart:
     _id: widgets_linechart
+    name: <Current()._id>
     position: <Index()>
   group_widgets_linechart_widgetsettings:
     _id: widgets_linechart_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_linechart_viewsettings:
     _id: widgets_linechart_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_piechart:
     _id: widgets_piechart
+    name: <Current()._id>
     position: <Index()>
   group_widgets_piechart_widgetsettings:
     _id: widgets_piechart_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_piechart_viewsettings:
     _id: widgets_piechart_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_numbers:
     _id: widgets_numbers
+    name: <Current()._id>
     position: <Index()>
   group_widgets_numbers_widgetsettings:
     _id: widgets_numbers_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_numbers_viewsettings:
     _id: widgets_numbers_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_userstatistics:
     _id: widgets_userstatistics
+    name: <Current()._id>
     position: <Index()>
   group_widgets_userstatistics_widgetsettings:
     _id: widgets_userstatistics_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_userstatistics_viewsettings:
     _id: widgets_userstatistics_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_alarmstatistics:
     _id: widgets_alarmstatistics
+    name: <Current()._id>
     position: <Index()>
   group_widgets_alarmstatistics_widgetsettings:
     _id: widgets_alarmstatistics_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_alarmstatistics_viewsettings:
     _id: widgets_alarmstatistics_viewsettings
+    name: <Current()._id>
     position: <Index()>
 
   group_widgets_availability:
     _id: widgets_availability
+    name: <Current()._id>
     position: <Index()>
   group_widgets_availability_widgetsettings:
     _id: widgets_availability_widgetsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_availability_viewsettings:
     _id: widgets_availability_viewsettings
+    name: <Current()._id>
     position: <Index()>
   group_widgets_availability_actions:
     _id: widgets_availability_actions
+    name: <Current()._id>
     position: <Index()>
 
   group_commonviews:
     _id: commonviews
+    name: <Current()._id>
     position: <Index()>
 
   group_commonviews_playlist:
@@ -491,49 +535,64 @@ permission_group:
 
   group_technical:
     _id: technical
+    name: <Current()._id>
     position: <Index()>
   group_technical_admin:
     _id: technical_admin
+    name: <Current()._id>
     position: <Index()>
   group_technical_admin_access:
     _id: technical_admin_access
+    name: <Current()._id>
     position: <Index()>
   group_technical_admin_communication:
     _id: technical_admin_communication
+    name: <Current()._id>
     position: <Index()>
   group_technical_admin_general:
     _id: technical_admin_general
+    name: <Current()._id>
     position: <Index()>
   group_technical_viewsandwidgets:
     _id: technical_viewsandwidgets
+    name: <Current()._id>
     position: <Index()>
   group_technical_token:
     _id: technical_token
+    name: <Current()._id>
     position: <Index()>
   group_technical_exploitation:
     _id: technical_exploitation
+    name: <Current()._id>
     position: <Index()>
   group_technical_notification:
     _id: technical_notification
+    name: <Current()._id>
     position: <Index()>
   group_technical_profile:
     _id: technical_profile
+    name: <Current()._id>
     position: <Index()>
 
   group_api:
     _id: api
+    name: <Current()._id>
     position: <Index()>
   group_api_general:
     _id: api_general
+    name: <Current()._id>
     position: <Index()>
   group_api_rules:
     _id: api_rules
+    name: <Current()._id>
     position: <Index()>
   group_api_remediation:
     _id: api_remediation
+    name: <Current()._id>
     position: <Index()>
-  group_api_pbehavior:
-    _id: api_pbehavior
+  group_api_planning:
+    _id: api_planning
+    name: <Current()._id>
     position: <Index()>
 
 permission:
@@ -1025,7 +1084,7 @@ permission:
     description: PBehaviors
     groups:
       - "@group_api"
-      - "@group_api_pbehavior"
+      - "@group_api_planning"
   permission_api_pbehaviortype:
     <<: *permission_crud
     _id: api_pbehaviortype
@@ -1033,7 +1092,7 @@ permission:
     description: PBehavior types
     groups:
       - "@group_api"
-      - "@group_api_pbehavior"
+      - "@group_api_planning"
   permission_api_pbehaviorreason:
     <<: *permission_crud
     _id: api_pbehaviorreason
@@ -1041,7 +1100,7 @@ permission:
     description: PBehavior reasons
     groups:
       - "@group_api"
-      - "@group_api_pbehavior"
+      - "@group_api_planning"
   permission_api_pbehaviorexception:
     <<: *permission_crud
     _id: api_pbehaviorexception
@@ -1049,7 +1108,7 @@ permission:
     description: PBehavior exceptions
     groups:
       - "@group_api"
-      - "@group_api_pbehavior"
+      - "@group_api_planning"
 
   # UI permissions
   .api_permissions_entity_pattern: &api_permissions_entity_pattern {
@@ -2871,30 +2930,60 @@ permission:
       - "@group_widgets_availability_actions"
 
   # Views permissions
-  permission_view_open_alarms:
+  permission_view_open_alarms_general:
     <<: *permission_rw
-    _id: "@view_open_alarms"
-    name: <Current()._id>
+    view: "@view_open_alarms"
+    name: view_general
     description: "En cours"
     groups:
       - "@group_commonviews"
       - "@view_group_alarms"
-  permission_view_resolved_alarms:
+      - "@view_open_alarms"
+  permission_view_open_alarms_actions:
+    <<: *permission
+    view: "@view_open_alarms"
+    name: view_actions
+    description: "En cours"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_alarms"
+      - "@view_open_alarms"
+  permission_view_resolved_alarms_general:
     <<: *permission_rw
-    _id: "@view_resolved_alarms"
-    name: <Current()._id>
+    view: "@view_resolved_alarms"
+    name: view_general
     description: "Résolues"
     groups:
       - "@group_commonviews"
       - "@view_group_alarms"
-  permission_view_context_explorer:
+      - "@view_resolved_alarms"
+  permission_view_resolved_alarms_actions:
+    <<: *permission
+    view: "@view_resolved_alarms"
+    name: view_actions
+    description: "Résolues"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_alarms"
+      - "@view_resolved_alarms"
+  permission_view_context_explorer_general:
     <<: *permission_rw
-    _id: "@view_context_explorer"
-    name: <Current()._id>
+    view: "@view_context_explorer"
+    name: view_general
     description: "Explorateur de Contexte"
     groups:
       - "@group_commonviews"
       - "@view_group_admin"
+      - "@view_context_explorer"
+  permission_view_context_explorer_actions:
+    <<: *permission
+    view: "@view_context_explorer"
+    name: view_actions
+    description: "Explorateur de Contexte"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_admin"
+      - "@view_context_explorer"
 
   # Hidden widget permissions for api permissions mapping
   permission_widget_AlarmsList:
@@ -3337,9 +3426,12 @@ role:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
       # Views permissions
-      "@permission_view_open_alarms": 15
-      "@permission_view_resolved_alarms": 15
-      "@permission_view_context_explorer": 15
+      "@permission_view_open_alarms_general": 7
+      "@permission_view_open_alarms_actions": 1
+      "@permission_view_resolved_alarms_general": 7
+      "@permission_view_resolved_alarms_actions": 1
+      "@permission_view_context_explorer_general": 7
+      "@permission_view_context_explorer_actions": 1
 
 role_template:
   tpl_pilot:
