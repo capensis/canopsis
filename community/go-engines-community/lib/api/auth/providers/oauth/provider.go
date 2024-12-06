@@ -312,6 +312,8 @@ func (p *provider) Callback(c *gin.Context) {
 		if !ok {
 			return
 		}
+	} else {
+		p.updateUser(c, redirectUrl, user, userInfo)
 	}
 
 	err = p.enforcer.LoadPolicy()
@@ -383,6 +385,34 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string,
 	if err != nil {
 		p.logger.Err(err).Msg("user registration failed")
 		panic(fmt.Errorf("cannot save user: %w", err))
+	}
+
+	return user, true
+}
+
+func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *security.User, userInfo map[string]any) (*security.User, bool) {
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", user.Roles), p.config.DefaultRole)
+	if err != nil {
+		roleNotFoundError := roleprovider.ProviderError{}
+		if errors.As(err, &roleNotFoundError) {
+			p.logger.Err(roleNotFoundError).Msg("failed to get user roles from openid/oauth2 user info")
+			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
+
+			return nil, false
+		}
+
+		panic(err)
+	}
+
+	user.Name = p.getAssocAttribute(userInfo, "name", user.Name)
+	user.Firstname = p.getAssocAttribute(userInfo, "firstname", user.Firstname)
+	user.Lastname = p.getAssocAttribute(userInfo, "lastname", user.Lastname)
+	user.Email = p.getAssocAttribute(userInfo, "email", user.Email)
+	user.Roles = roles
+
+	err = p.userProvider.Save(c, user)
+	if err != nil {
+		panic(fmt.Errorf("failed to update openid/oauth2 user: %w", err))
 	}
 
 	return user, true
