@@ -11,6 +11,11 @@
         v-checkbox(v-field="value.enabled_not_acked_metrics", color="primary")
           template(#label="")
             span.kpi-collection-settings-metrics-form__label.ml-4 {{ $t('kpi.collectionSetting.notAckedMetrics') }}
+    v-list-tile
+      v-list-tile-action
+        v-checkbox(v-field="value.enabled_sli_metrics", color="primary")
+          template(#label="")
+            span.kpi-collection-settings-metrics-form__label.ml-4 {{ $t('kpi.collectionSetting.sliDuration') }}
 </template>
 
 <script>
