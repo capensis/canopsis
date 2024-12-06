@@ -183,65 +183,13 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 1`] =
       </div>
     </div>
   </div>
-  <div
-    class="layout gap-3 column"
-  >
-    <span
-      class="text-subtitle-1 font-weight-bold"
-    >
-      common.tag
-    </span>
-    <div
-      class="layout"
-    >
-      <c-enabled-field-stub
-        hide-details=""
-        label="metaAlarmRule.copyTagsFromChildren"
-      />
-    </div>
-    <div
-      class="layout"
-    >
-      <c-enabled-field-stub
-        class="mr-4 pt-4"
-        label="metaAlarmRule.filterByLabelEnabled"
-      >
-        <c-help-icon
-          icon="help"
-          text="metaAlarmRule.filterByLabelEnabledTooltip"
-          top=""
-        />
-      </c-enabled-field-stub>
-      <transition-stub
-        name="fade-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
-  </div>
-  <div
-    class="layout column"
-  >
-    <span
-      class="text-subtitle-1 font-weight-bold mb-2"
-    >
-      common.infos
-    </span>
-    <div
-      class="layout my-4"
-    >
-      <button
-        class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-        type="button"
-      >
-        <span
-          class="v-btn__content"
-        >
-      common.add
-        </span>
-      </button>
-    </div>
-  </div>
+  <meta-alarm-rule-tags-form-stub
+    form="[object Object]"
+    variables=""
+  />
+  <meta-alarm-rule-infos-form-stub
+    infos=""
+  />
   <c-enabled-field-stub
     label="Auto resolve"
   />
@@ -462,65 +410,13 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default prop
       </div>
     </div>
   </div>
-  <div
-    class="layout gap-3 column"
-  >
-    <span
-      class="text-subtitle-1 font-weight-bold"
-    >
-      common.tag
-    </span>
-    <div
-      class="layout"
-    >
-      <c-enabled-field-stub
-        hide-details=""
-        label="metaAlarmRule.copyTagsFromChildren"
-      />
-    </div>
-    <div
-      class="layout"
-    >
-      <c-enabled-field-stub
-        class="mr-4 pt-4"
-        label="metaAlarmRule.filterByLabelEnabled"
-      >
-        <c-help-icon
-          icon="help"
-          text="metaAlarmRule.filterByLabelEnabledTooltip"
-          top=""
-        />
-      </c-enabled-field-stub>
-      <transition-stub
-        name="fade-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
-  </div>
-  <div
-    class="layout column"
-  >
-    <span
-      class="text-subtitle-1 font-weight-bold mb-2"
-    >
-      common.infos
-    </span>
-    <div
-      class="layout my-4"
-    >
-      <button
-        class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-        type="button"
-      >
-        <span
-          class="v-btn__content"
-        >
-      common.add
-        </span>
-      </button>
-    </div>
-  </div>
+  <meta-alarm-rule-tags-form-stub
+    form="[object Object]"
+    variables=""
+  />
+  <meta-alarm-rule-infos-form-stub
+    infos=""
+  />
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"

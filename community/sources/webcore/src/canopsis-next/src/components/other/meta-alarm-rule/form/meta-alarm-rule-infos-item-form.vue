@@ -13,6 +13,11 @@
           />
         </template>
       </c-name-field>
+      <v-text-field
+        v-if="!form.copy_from_children"
+        v-field="form.description"
+        :label="$t('common.description')"
+      />
       <v-layout class="gap-4">
         <c-enabled-field
           v-field="form.copy_from_children"
@@ -29,15 +34,12 @@
         </c-enabled-field>
         <v-flex>
           <c-mixed-field
+            v-if="!form.copy_from_children"
             v-field="form.value"
             :label="$t('common.value')"
           />
         </v-flex>
       </v-layout>
-      <v-text-field
-        v-field="form.description"
-        :label="$t('common.description')"
-      />
     </v-card-text>
   </v-card>
 </template>

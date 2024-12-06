@@ -306,6 +306,22 @@ export const hasTemplateConfigFields = type => [
 ].includes(type);
 
 /**
+ * Convert form to meta alarm rule tags
+ *
+ * @param {MetaAlarmRuleTagsForm} form
+ * @returns {MetaAlarmRuleTags}
+ */
+export const formToMetaAlarmRuleTags = (form = {}) => {
+  const result = pick(form, ['copy_from_children']);
+
+  if (form.filter_by_label?.length) {
+    result.filter_by_label = form.filter_by_label;
+  }
+
+  return result;
+};
+
+/**
  * Convert form to meta alarm rule
  *
  * @param {MetaAlarmRuleForm} [form={}]
@@ -322,10 +338,11 @@ export const formToMetaAlarmRule = (form = {}) => {
   }
 
   const metaAlarmRule = {
-    ...omit(form, ['config', 'patterns', 'infos']),
+    ...omit(form, ['config', 'patterns', 'infos', 'tags']),
     ...formFilterToPatterns(form.patterns, patternsFields),
 
     infos: removeKeyFromEntities(form.infos),
+    tags: formToMetaAlarmRuleTags(form.tags),
   };
 
   switch (form.type) {
