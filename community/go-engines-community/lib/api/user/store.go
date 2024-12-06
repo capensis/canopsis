@@ -100,11 +100,12 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 
 	project = append(project, getViewPipeline()...)
 	project = append(project, getUiThemePipeline(s.authorProvider)...)
-
+	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	project = append(project, sort)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		sort,
 		project,
 	))
 
