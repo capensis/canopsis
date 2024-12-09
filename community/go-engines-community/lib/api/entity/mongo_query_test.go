@@ -429,7 +429,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"alarm.v.resource": bson.M{"$eq": "test-resource"}},
-			{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
+			{"alarm.v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
 		}}}}},
 		{"$project": bson.M{"alarm": 0}},
 		{"$facet": bson.M{
