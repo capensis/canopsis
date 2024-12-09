@@ -314,7 +314,7 @@ export const hasTemplateConfigFields = type => [
 export const formToMetaAlarmRuleTags = (form = {}) => {
   const result = pick(form, ['copy_from_children']);
 
-  if (form.filter_by_label?.length) {
+  if (result.copy_from_children && form.filter_by_label?.length) {
     result.filter_by_label = form.filter_by_label;
   }
 

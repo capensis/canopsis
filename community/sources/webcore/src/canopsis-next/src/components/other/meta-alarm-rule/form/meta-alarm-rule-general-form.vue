@@ -18,6 +18,7 @@
     <meta-alarm-rule-tags-form
       v-field="form.tags"
       :variables="variables"
+      class="mb-4"
     />
     <meta-alarm-rule-infos-form v-field="form.infos" />
     <v-layout>

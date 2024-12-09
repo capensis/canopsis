@@ -8,7 +8,7 @@
         hide-details
       />
     </v-layout>
-    <v-layout>
+    <v-layout v-if="form.copy_from_children">
       <c-enabled-field
         v-model="filterByLabelEnabled"
         :label="$t('metaAlarmRule.filterByLabelEnabled')"
