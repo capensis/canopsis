@@ -19,6 +19,7 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
     variables=""
   />
   <meta-alarm-rule-tags-form-stub
+    class="mb-4"
     form="[object Object]"
     variables=""
   />
@@ -51,6 +52,7 @@ exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` w
     variables=""
   />
   <meta-alarm-rule-tags-form-stub
+    class="mb-4"
     form="[object Object]"
     variables=""
   />
