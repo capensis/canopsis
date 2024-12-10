@@ -13,26 +13,23 @@ import (
 )
 
 func TestAlarmPatternToMongoQuery(t *testing.T) {
-	dataSets := getAlarmMongoQueryDataSets()
+	f := func(p pattern.Alarm, expectedRes, expectedFields bson.M, expectedErr error) {
+		t.Helper()
+		query, err := db.AlarmPatternToMongoQuery(p, "alarm")
+		if !errors.Is(err, expectedErr) {
+			t.Fatalf("expected error %v but got %v", expectedErr, err)
+		}
 
-	for name, data := range dataSets {
-		t.Run(name, func(t *testing.T) {
-			query, err := db.AlarmPatternToMongoQuery(data.pattern, "alarm")
-			if !errors.Is(err, data.mongoQueryErr) {
-				t.Errorf("expected error %v but got %v", data.mongoQueryErr, err)
-			}
-			if diff := pretty.Compare(query, data.mongoQueryResult); diff != "" {
-				t.Errorf("unexpected result %s", diff)
-			}
-			fields := data.pattern.GetMongoFields("alarm")
-			if diff := pretty.Compare(fields, data.mongoQueryFields); diff != "" {
-				t.Errorf("unexpected result %s", diff)
-			}
-		})
+		if diff := pretty.Compare(query, expectedRes); diff != "" {
+			t.Fatalf("unexpected result %s", diff)
+		}
+
+		fields := p.GetMongoFields("alarm")
+		if diff := pretty.Compare(fields, expectedFields); diff != "" {
+			t.Fatalf("unexpected result %s", diff)
+		}
 	}
-}
 
-func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, datetime.DurationWithUnit{
 		Value: 3,
 		Unit:  "s",
@@ -43,555 +40,588 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 	from := time.Now().Add(-time.Hour).Unix()
 	to := time.Now().Add(time.Hour).Unix()
 
-	return map[string]alarmDataSet{
-		"given one condition": {
-			pattern: pattern.Alarm{
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.display_name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
-					},
+					Field:     "v.display_name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.display_name": bson.M{"$eq": "test name"}},
-				}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.display_name": bson.M{"$eq": "test name"}},
 			}},
-		},
-		"given one ne condition": {
-			pattern: pattern.Alarm{
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.display_name",
-						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test name"),
-					},
+					Field:     "v.display_name",
+					Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test name"),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.display_name": bson.M{"$ne": "test name"}},
-				}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.display_name": bson.M{"$ne": "test name"}},
 			}},
-		},
-		"given multiple conditions": {
-			pattern: pattern.Alarm{
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.display_name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
-					},
-					{
-						Field:     "v.output",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test output"),
-					},
+					Field:     "v.display_name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+				},
+				{
+					Field:     "v.output",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test output"),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.display_name": bson.M{"$eq": "test name"}},
-					{"alarm.v.output": bson.M{"$eq": "test output"}},
-				}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.display_name": bson.M{"$eq": "test name"}},
+				{"alarm.v.output": bson.M{"$eq": "test output"}},
 			}},
-		},
-		"given multiple groups": {
-			pattern: pattern.Alarm{
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.display_name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
-					},
-				},
-				{
-					{
-						Field:     "v.output",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test output"),
-					},
+					Field:     "v.display_name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.display_name": bson.M{"$eq": "test name"}},
-				}},
-				{"$and": []bson.M{
-					{"alarm.v.output": bson.M{"$eq": "test output"}},
-				}},
+			{
+				{
+					Field:     "v.output",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test output"),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.display_name": bson.M{"$eq": "test name"}},
 			}},
-		},
-		"given invalid condition type": {
-			pattern: pattern.Alarm{
+			{"$and": []bson.M{
+				{"alarm.v.output": bson.M{"$eq": "test output"}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.state.val",
-						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
-					},
+					Field:     "v.state.val",
+					Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
 				},
 			},
-			mongoQueryErr: pattern.ErrUnsupportedConditionType,
 		},
-		"given invalid condition value": {
-			pattern: pattern.Alarm{
+		nil,
+		nil,
+		pattern.ErrUnsupportedConditionType,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.state.val",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
-					},
+					Field:     "v.state.val",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 				},
 			},
-			mongoQueryErr: pattern.ErrWrongConditionValue,
 		},
-		"given duration condition": {
-			pattern: pattern.Alarm{
+		nil,
+		nil,
+		pattern.ErrWrongConditionValue,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.duration",
-						Condition: durationCond,
-					},
+					Field:     "v.duration",
+					Condition: durationCond,
 				},
 			},
-			mongoQueryFields: bson.M{
-				"alarm.v.duration": bson.M{"$ifNull": bson.A{
-					"$alarm.v.duration",
-					bson.M{"$subtract": bson.A{
-						bson.M{"$cond": bson.M{
-							"if":   "$alarm.v.resolved",
-							"then": "$alarm.v.resolved",
-							"else": time.Now().Unix(),
-						}},
-						"$alarm.v.creation_date",
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.duration": bson.M{"$gt": 3}},
+			}},
+		}},
+		bson.M{
+			"alarm.v.duration": bson.M{"$ifNull": bson.A{
+				"$alarm.v.duration",
+				bson.M{"$subtract": bson.A{
+					bson.M{"$cond": bson.M{
+						"if":   "$alarm.v.resolved",
+						"then": "$alarm.v.resolved",
+						"else": time.Now().Unix(),
 					}},
-				}},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.duration": bson.M{"$gt": 3}},
+					"$alarm.v.creation_date",
 				}},
 			}},
 		},
-		"given infos condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeInt,
-						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeInt,
+					Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 				},
 			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{
-						"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}},
-					}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{
+					"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given infos string neq condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeString,
-						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeString,
+					Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
 				},
 			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{
-						"$elemMatch": bson.M{"v.info_name": bson.M{"$nin": bson.A{"test", nil}}},
-					}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{
+					"$elemMatch": bson.M{"v.info_name": bson.M{"$nin": bson.A{"test", nil}}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given infos string nin condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeString,
-						Condition: pattern.NewStringArrayCondition(pattern.ConditionIsNotOneOf, []string{"test"}),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeString,
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionIsNotOneOf, []string{"test"}),
 				},
 			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{
-						"$elemMatch": bson.M{"v.info_name": bson.M{
-							"$nin": []string{"test"},
-							"$ne":  nil,
-						}},
-					}},
-				}},
-			}},
 		},
-		"given infos string exists condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeString,
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{
-						"$elemMatch": bson.M{"v.info_name": bson.M{
-							"$exists": true,
-							"$nin":    bson.A{nil, ""},
-						}},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{
+					"$elemMatch": bson.M{"v.info_name": bson.M{
+						"$nin": []string{"test"},
+						"$ne":  nil,
 					}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given infos string nots exists condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeString,
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeString,
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 				},
 			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.infos_array": bson.M{"$in": bson.A{nil, bson.A{}}}},
-						{"alarm.v.infos_array": bson.M{"$not": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
-							"$exists": true,
-							"$nin":    bson.A{nil, ""},
-						}}}}},
-					}},
-				}},
-			}},
 		},
-		"given infos int neq condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeInt,
-						Condition: pattern.NewIntCondition(pattern.ConditionNotEqual, 3),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{
-						"$elemMatch": bson.M{"v.info_name": bson.M{"$nin": bson.A{3, nil}}},
-					}},
-				}},
-			}},
-		},
-		"given infos string array nin condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeStringArray,
-						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test"}),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{
-						"$elemMatch": bson.M{"v.info_name": bson.M{
-							"$nin": []string{"test"},
-							"$ne":  nil,
-						}},
-					}},
-				}},
-			}},
-		},
-		"given infos string array is empty condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeStringArray,
-						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.infos_array": bson.M{"$in": bson.A{nil, bson.A{}}}},
-						{"alarm.v.infos_array": bson.M{"$not": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
-							"$exists": true,
-							"$type":   "array",
-							"$ne":     bson.A{},
-						}}}}},
-					}},
-				}},
-			}},
-		},
-		"given infos string array is not empty condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeStringArray,
-						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
-						"$exists": true,
-						"$type":   "array",
-						"$ne":     bson.A{},
-					}}}},
-				}},
-			}},
-		},
-		"given infos exists condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
-						"$exists": true,
-						"$ne":     nil,
-					}}}},
-				}},
-			}},
-		},
-		"given infos not exists condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.infos.info_name",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
-					},
-				},
-			},
-			mongoQueryFields: bson.M{
-				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.infos_array": bson.M{"$in": bson.A{nil, bson.A{}}}},
-						{"alarm.v.infos_array": bson.M{"$not": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
-							"$exists": true,
-							"$ne":     nil,
-						}}}}},
-					}},
-				}},
-			}},
-		},
-		"given exist ref condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.ack",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
-					},
-				},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.ack": bson.M{"$exists": true, "$ne": nil}},
-				}},
-			}},
-		},
-		"given not exist ref condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.ack",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
-					},
-				},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.ack": bson.M{"$exists": false}},
-						{"alarm.v.ack": bson.M{"$eq": nil}},
-					}},
-				}},
-			}},
-		},
-		"given exist v.output condition": {
-			pattern: pattern.Alarm{
-				{
-					{
-						Field:     "v.output",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
-					},
-				},
-			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.output": bson.M{
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{
+					"$elemMatch": bson.M{"v.info_name": bson.M{
 						"$exists": true,
 						"$nin":    bson.A{nil, ""},
 					}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given not exist v.output condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.output",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeString,
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.output": bson.M{"$exists": false}},
-						{"alarm.v.output": bson.M{"$eq": nil}},
-						{"alarm.v.output": bson.M{"$eq": ""}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.infos_array": bson.M{"$in": bson.A{nil, bson.A{}}}},
+					{"alarm.v.infos_array": bson.M{"$not": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
+						"$exists": true,
+						"$nin":    bson.A{nil, ""},
+					}}}}},
+				}},
+			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+		},
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeInt,
+					Condition: pattern.NewIntCondition(pattern.ConditionNotEqual, 3),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{
+					"$elemMatch": bson.M{"v.info_name": bson.M{"$nin": bson.A{3, nil}}},
+				}},
+			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+		},
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeStringArray,
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test"}),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{
+					"$elemMatch": bson.M{"v.info_name": bson.M{
+						"$nin": []string{"test"},
+						"$ne":  nil,
 					}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given not exist v.activation_date condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.activation_date",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeStringArray,
+					Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.activation_date": bson.M{"$exists": false}},
-						{"alarm.v.activation_date": bson.M{"$eq": nil}},
-					}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.infos_array": bson.M{"$in": bson.A{nil, bson.A{}}}},
+					{"alarm.v.infos_array": bson.M{"$not": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
+						"$exists": true,
+						"$type":   "array",
+						"$ne":     bson.A{},
+					}}}}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given time v.activation_date condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.activation_date",
-						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, from, to),
-					},
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeStringArray,
+					Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.activation_date": bson.M{
-						"$gt": datetime.NewCpsTime(from),
-						"$lt": datetime.NewCpsTime(to),
-					}},
-				}},
-			}},
 		},
-		"given ticket conditions": {
-			pattern: pattern.Alarm{
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
+					"$exists": true,
+					"$type":   "array",
+					"$ne":     bson.A{},
+				}}}},
+			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+		},
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.ticket.ticket",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test ticket"),
-					},
-					{
-						Field:     "v.ticket.m",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test message"),
-					},
-					{
-						Field:     "v.ticket.ticket_data.data_1",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test_1"),
-					},
+					Field:     "v.infos.info_name",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.ticket.ticket": bson.M{"$eq": "test ticket"}},
-					{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
-					{"alarm.v.ticket.ticket_data.data_1": bson.M{"$eq": "test_1"}},
-				}},
-			}},
 		},
-		"given exist change_state condition": {
-			pattern: pattern.Alarm{
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
+					"$exists": true,
+					"$ne":     nil,
+				}}}},
+			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+		},
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.change_state",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
-					},
+					Field:     "v.infos.info_name",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"alarm.v.change_state": bson.M{"$exists": true, "$ne": nil}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.infos_array": bson.M{"$in": bson.A{nil, bson.A{}}}},
+					{"alarm.v.infos_array": bson.M{"$not": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{
+						"$exists": true,
+						"$ne":     nil,
+					}}}}},
 				}},
 			}},
+		}},
+		bson.M{
+			"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 		},
-		"given not exist change_state condition": {
-			pattern: pattern.Alarm{
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.change_state",
-						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
-					},
+					Field:     "v.ack",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 				},
 			},
-			mongoQueryResult: bson.M{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{
-						{"alarm.v.change_state": bson.M{"$exists": false}},
-						{"alarm.v.change_state": bson.M{"$eq": nil}},
-					}},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.ack": bson.M{"$exists": true, "$ne": nil}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.ack",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.ack": bson.M{"$exists": false}},
+					{"alarm.v.ack": bson.M{"$eq": nil}},
 				}},
 			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.output",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+				},
+			},
 		},
-	}
-}
-
-type alarmDataSet struct {
-	pattern          pattern.Alarm
-	mongoQueryErr    error
-	mongoQueryResult bson.M
-	mongoQueryFields bson.M
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.output": bson.M{
+					"$exists": true,
+					"$nin":    bson.A{nil, ""},
+				}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.output",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.output": bson.M{"$exists": false}},
+					{"alarm.v.output": bson.M{"$eq": nil}},
+					{"alarm.v.output": bson.M{"$eq": ""}},
+				}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.activation_date",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.activation_date": bson.M{"$exists": false}},
+					{"alarm.v.activation_date": bson.M{"$eq": nil}},
+				}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.activation_date",
+					Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, from, to),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.activation_date": bson.M{
+					"$gt": datetime.NewCpsTime(from),
+					"$lt": datetime.NewCpsTime(to),
+				}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.ticket.ticket",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test ticket"),
+				},
+				{
+					Field:     "v.ticket.m",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test message"),
+				},
+				{
+					Field:     "v.ticket.ticket_data.data_1",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test_1"),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.ticket.ticket": bson.M{"$eq": "test ticket"}},
+				{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
+				{"alarm.v.ticket.ticket_data.data_1": bson.M{"$eq": "test_1"}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.change_state",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm.v.change_state": bson.M{"$exists": true, "$ne": nil}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "v.change_state",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"$or": []bson.M{
+					{"alarm.v.change_state": bson.M{"$exists": false}},
+					{"alarm.v.change_state": bson.M{"$eq": nil}},
+				}},
+			}},
+		}},
+		nil,
+		nil,
+	)
 }
