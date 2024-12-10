@@ -17,9 +17,7 @@
             class="mr-2"
             @expand="expand"
           />
-          <span :class="{ 'font-weight-medium': item.children }">
-            {{ item.title ? item.title : item._id }}
-          </span>
+          <span :class="{ 'font-weight-medium': item.children }">{{ item.title }}</span>
         </td>
         <td v-for="role in roles" :key="role.value">
           <permissions-table-cell
@@ -44,7 +42,10 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash';
 import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 import PermissionsTableCell from './permissions-table-cell.vue';
 
@@ -74,7 +75,22 @@ export default {
     },
   },
   setup(props) {
-    const items = computed(() => Object.values(props.treeviewPermissions));
+    const { t } = useI18n();
+
+    const items = computed(() => sortBy(Object.values(props.treeviewPermissions), 'position').map((item) => {
+      let { title } = item;
+
+      if (!title) {
+        title = item.name ? t(`permission.title.${item.name}`) : item._id;
+      }
+
+      return {
+        ...item,
+
+        title,
+      };
+    }));
+
     const headers = computed(() => [
       { text: '', sortable: false },
 

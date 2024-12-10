@@ -1,6 +1,6 @@
 <template>
   <td>
-    <v-simple-checkbox
+    <v-checkbox
       v-for="(checkbox, index) in checkboxes"
       v-bind="checkbox.bind"
       :key="index"
@@ -14,27 +14,11 @@
 </template>
 
 <script>
-import { difference } from 'lodash';
 import { computed } from 'vue';
 
 import { CRUD_ACTIONS } from '@/constants';
 
-const getPermissionCheckboxProps = (role, permission, action) => {
-  if (permission.allChildren) {
-    const childrenPermissionsDiffs = permission.allChildren
-      .map(({ _id: id, actions }) => difference(actions ?? [], role.permissions[id] ?? []).length);
-    const value = childrenPermissionsDiffs.every(v => !v);
-
-    return {
-      value,
-      indeterminate: !value && childrenPermissionsDiffs.some(v => !v),
-    };
-  }
-
-  return {
-    value: role.permissions[permission._id]?.includes(action) ?? false,
-  };
-};
+import { getPermissionCheckboxProps } from '@/helpers/entities/permissions/list';
 
 export default {
   props: {
@@ -59,7 +43,7 @@ export default {
         ...getPermissionCheckboxProps(props.role, props.permission, action),
       },
       on: {
-        input: value => emit('input', value, props.role, props.permission, action),
+        change: value => emit('input', value, props.role, props.permission, action),
       },
     })));
 

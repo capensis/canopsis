@@ -1,3 +1,5 @@
+import { difference } from 'lodash';
+
 import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS } from '@/constants';
 
 /**
@@ -66,3 +68,32 @@ export const permissionsToTreeview = (permissions = []) => permissions.reduce((a
 
   return acc;
 }, {});
+
+/**
+ * Get properties for a permission checkbox based on role and permission details.
+ *
+ * @param {Object} role - The role object containing permissions.
+ * @param {Object} permission - The permission object which may contain child permissions.
+ * @param {string} action - The specific action to check within the permission.
+ * @returns {Object} An object containing properties for the checkbox:
+ * - `inputValue`: {boolean} Indicates if the checkbox should be checked.
+ * - `indeterminate`: {boolean} Indicates if the checkbox should be in an indeterminate state
+ * (only present if `permission.allChildren` exists).
+ */
+export const getPermissionCheckboxProps = (role, permission, action) => {
+  if (permission.allChildren) {
+    const childrenPermissionsDiffs = permission.allChildren
+      .map(({ _id: id, actions }) => difference(actions ?? [], role.permissions[id] ?? []).length);
+    const inputValue = childrenPermissionsDiffs.every(v => !v);
+    const hasCheckedChildren = permission.allChildren.some(({ _id: id }) => !!role.permissions[id]?.length);
+
+    return {
+      inputValue,
+      indeterminate: !inputValue && hasCheckedChildren,
+    };
+  }
+
+  return {
+    inputValue: role.permissions[permission._id]?.includes(action) ?? false,
+  };
+};

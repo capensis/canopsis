@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { getEntityColor } from '@/helpers/entities/entity/color';
@@ -185,15 +185,15 @@ export default {
     },
 
     hasMoreInfosAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.moreInfos);
     },
 
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.alarmsList);
     },
 
     hasVariablesHelpAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
     },
 
     actionRequiredSettings() {

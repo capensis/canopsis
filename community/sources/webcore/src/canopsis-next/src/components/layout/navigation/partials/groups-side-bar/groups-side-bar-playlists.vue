@@ -8,7 +8,7 @@
     <v-expansion-panel class="secondary lighten-1">
       <v-expansion-panel-header>
         <div class="panel-header">
-          <span>{{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}</span>
+          <span>{{ $t(`pageHeaders.${$constants.USER_PERMISSIONS.technical.playlist}.title`) }}</span>
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content>

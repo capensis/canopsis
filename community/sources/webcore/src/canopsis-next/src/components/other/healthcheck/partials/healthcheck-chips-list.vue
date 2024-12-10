@@ -30,7 +30,7 @@ import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS, SOCKET_ROOMS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
+import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
 
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     chipListeners() {
-      if (this.checkAccess(USERS_PERMISSIONS.technical.healthcheck)) {
+      if (this.checkAccess(USER_PERMISSIONS.technical.healthcheck)) {
         return {
           click: this.redirectToHealthcheck,
         };

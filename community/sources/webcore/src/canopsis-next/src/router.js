@@ -6,7 +6,7 @@ import {
   CRUD_ACTIONS,
   ROUTES_NAMES,
   ROUTES,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   GROUPED_USER_PERMISSIONS,
 } from '@/constants';
 
@@ -101,7 +101,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.view,
+        id: USER_PERMISSIONS.technical.view,
       },
     },
     props: route => ({ id: route.params.id }),
@@ -113,7 +113,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.permission,
+        id: USER_PERMISSIONS.technical.permission,
       },
     },
   },
@@ -124,7 +124,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.user,
+        id: USER_PERMISSIONS.technical.user,
       },
     },
   },
@@ -135,7 +135,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.role,
+        id: USER_PERMISSIONS.technical.role,
       },
     },
   },
@@ -146,7 +146,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.parameters,
+        id: USER_PERMISSIONS.technical.parameters,
       },
     },
   },
@@ -157,7 +157,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.broadcastMessage,
+        id: USER_PERMISSIONS.technical.broadcastMessage,
       },
     },
   },
@@ -168,7 +168,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.playlist,
+        id: USER_PERMISSIONS.technical.playlist,
       },
     },
   },
@@ -202,7 +202,7 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         action: CRUD_ACTIONS.can,
-        id: USERS_PERMISSIONS.technical.healthcheck,
+        id: USER_PERMISSIONS.technical.healthcheck,
       },
     },
   },
@@ -214,7 +214,7 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         action: CRUD_ACTIONS.can,
-        id: USERS_PERMISSIONS.technical.kpi,
+        id: USER_PERMISSIONS.technical.kpi,
       },
     },
   },
@@ -225,7 +225,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.map,
+        id: USER_PERMISSIONS.technical.map,
       },
     },
   },
@@ -236,7 +236,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.tag,
+        id: USER_PERMISSIONS.technical.tag,
       },
     },
   },
@@ -247,7 +247,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.storageSettings,
+        id: USER_PERMISSIONS.technical.storageSettings,
       },
     },
   },
@@ -258,7 +258,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.stateSetting,
+        id: USER_PERMISSIONS.technical.stateSetting,
       },
     },
   },
@@ -270,7 +270,7 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         action: CRUD_ACTIONS.can,
-        id: USERS_PERMISSIONS.technical.eventsRecord,
+        id: USER_PERMISSIONS.technical.eventsRecord,
       },
     },
   },
@@ -281,7 +281,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.pbehavior,
+        id: USER_PERMISSIONS.technical.exploitation.pbehavior,
       },
     },
   },
@@ -292,7 +292,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.eventFilter,
+        id: USER_PERMISSIONS.technical.exploitation.eventFilter,
       },
     },
   },
@@ -303,7 +303,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.snmpRule,
+        id: USER_PERMISSIONS.technical.exploitation.snmpRule,
       },
     },
   },
@@ -314,7 +314,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.dynamicInfo,
+        id: USER_PERMISSIONS.technical.exploitation.dynamicInfo,
       },
     },
   },
@@ -338,7 +338,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.metaAlarmRule,
+        id: USER_PERMISSIONS.technical.exploitation.metaAlarmRule,
       },
     },
   },
@@ -349,7 +349,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.scenario,
+        id: USER_PERMISSIONS.technical.exploitation.scenario,
       },
     },
   },
@@ -360,7 +360,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.idleRules,
+        id: USER_PERMISSIONS.technical.exploitation.idleRules,
       },
     },
   },
@@ -371,7 +371,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.flappingRules,
+        id: USER_PERMISSIONS.technical.exploitation.flappingRules,
       },
     },
   },
@@ -382,7 +382,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.resolveRules,
+        id: USER_PERMISSIONS.technical.exploitation.resolveRules,
       },
     },
   },
@@ -393,7 +393,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.declareTicketRule,
+        id: USER_PERMISSIONS.technical.exploitation.declareTicketRule,
       },
     },
   },
@@ -404,7 +404,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.exploitation.linkRule,
+        id: USER_PERMISSIONS.technical.exploitation.linkRule,
       },
     },
   },
@@ -423,7 +423,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.profile.theme,
+        id: USER_PERMISSIONS.technical.profile.theme,
       },
     },
   },
@@ -434,7 +434,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.notification.instructionStats,
+        id: USER_PERMISSIONS.technical.notification.instructionStats,
       },
     },
   },

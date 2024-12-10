@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,19 +6,19 @@ export const permissionsTechnicalPbehaviorTypesMixin = {
   mixins: [authMixin],
   computed: {
     hasCreateAnyPbehaviorTypeAccess() {
-      return this.checkCreateAccess(USERS_PERMISSIONS.technical.planningType);
+      return this.checkCreateAccess(USER_PERMISSIONS.technical.planningType);
     },
 
     hasReadAnyPbehaviorTypeAccess() {
-      return this.checkReadAccess(USERS_PERMISSIONS.technical.planningType);
+      return this.checkReadAccess(USER_PERMISSIONS.technical.planningType);
     },
 
     hasUpdateAnyPbehaviorTypeAccess() {
-      return this.checkUpdateAccess(USERS_PERMISSIONS.technical.planningType);
+      return this.checkUpdateAccess(USER_PERMISSIONS.technical.planningType);
     },
 
     hasDeleteAnyPbehaviorTypeAccess() {
-      return this.checkDeleteAccess(USERS_PERMISSIONS.technical.planningType);
+      return this.checkDeleteAccess(USER_PERMISSIONS.technical.planningType);
     },
   },
 };

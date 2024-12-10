@@ -99,8 +99,20 @@ export const roleToForm = (role = {}) => ({
   description: role.description ?? '',
   defaultview: role.defaultview?._id,
   editable: role.editable ?? true,
-  permissions: rolePermissionsToForm(role.permissions),
+  permissions: role.permissions ?? {},
   auth_config: roleAuthConfigToForm(role.auth_config),
+});
+
+/**
+ * Convert role to permission form object
+ *
+ * @param {Role} [role = {}]
+ * @returns {RoleForm}
+ */
+export const roleToPermissionForm = (role = {}) => ({
+  ...roleToForm(role),
+
+  permissions: rolePermissionsToForm(role.permissions),
 });
 
 /**
