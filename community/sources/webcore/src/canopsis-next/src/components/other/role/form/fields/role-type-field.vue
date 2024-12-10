@@ -24,7 +24,7 @@ export default {
   },
   props: {
     value: {
-      type: Object,
+      type: String,
       default: ROLE_TYPES.ui,
     },
   },

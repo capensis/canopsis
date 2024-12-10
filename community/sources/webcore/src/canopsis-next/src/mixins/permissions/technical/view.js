@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,23 +6,23 @@ export const permissionsTechnicalViewMixin = {
   mixins: [authMixin],
   computed: {
     hasAccessToPrivateView() {
-      return this.checkAccess(USERS_PERMISSIONS.technical.privateView);
+      return this.checkAccess(USER_PERMISSIONS.technical.privateView);
     },
 
     hasCreateAnyViewAccess() {
-      return this.checkCreateAccess(USERS_PERMISSIONS.technical.view);
+      return this.checkCreateAccess(USER_PERMISSIONS.technical.view);
     },
 
     hasReadAnyViewAccess() {
-      return this.checkReadAccess(USERS_PERMISSIONS.technical.view);
+      return this.checkReadAccess(USER_PERMISSIONS.technical.view);
     },
 
     hasUpdateAnyViewAccess() {
-      return this.checkUpdateAccess(USERS_PERMISSIONS.technical.view);
+      return this.checkUpdateAccess(USER_PERMISSIONS.technical.view);
     },
 
     hasDeleteAnyViewAccess() {
-      return this.checkDeleteAccess(USERS_PERMISSIONS.technical.view);
+      return this.checkDeleteAccess(USER_PERMISSIONS.technical.view);
     },
   },
 };

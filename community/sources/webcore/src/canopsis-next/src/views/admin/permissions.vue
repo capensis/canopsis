@@ -2,16 +2,13 @@
   <v-container class="admin-rights">
     <c-page-header />
     <v-card class="position-relative">
-      <h1 v-if="hasChanges">
-        HAS CHANGES
-      </h1>
       <c-progress-overlay :pending="pending" />
-      <v-tabs fixed-tabs>
+      <v-tabs v-model="activeTab" fixed-tabs>
         <template v-for="tab in treeviewPermissions">
-          <v-tab :key="tab._id">
-            {{ tab._id }}
+          <v-tab :key="tab._id" :href="`#${tab._id}`">
+            {{ $t(`permission.title.${tab.name}`) }}
           </v-tab>
-          <v-tab-item :key="`${tab._id}-item`">
+          <v-tab-item :key="`${tab._id}-item`" :value="tab._id">
             <permissions-table
               :treeview-permissions="tab.children"
               :roles="roles"
@@ -21,38 +18,60 @@
         </template>
       </v-tabs>
     </v-card>
+    <v-layout
+      v-show="hasChanges"
+      class="submit-button mt-3 gap-2"
+    >
+      <v-btn
+        class="ml-3"
+        color="primary"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+      <v-btn @click="cancel">
+        {{ $t('common.cancel') }}
+      </v-btn>
+    </v-layout>
+
+    <permissions-fab-btn @refresh="fetchList" />
   </v-container>
 </template>
 
 <script>
-import { keyBy, omit, isEqual } from 'lodash';
+import { keyBy, omit, isEqual, filter } from 'lodash';
 import { computed, ref, set, onMounted } from 'vue';
 
-import { MAX_LIMIT } from '@/constants';
+import { API_USER_PERMISSIONS_ROOT_GROUPS, MAX_LIMIT, MODALS, ROLE_TYPES } from '@/constants';
 
 import { permissionsToTreeview } from '@/helpers/entities/permissions/list';
-import { roleToForm } from '@/helpers/entities/role/form';
+import { formToRole, roleToPermissionForm } from '@/helpers/entities/role/form';
 import { mapIds } from '@/helpers/array';
 
+import { useModals } from '@/hooks/modals';
 import { useRole } from '@/hooks/store/modules/role';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { usePermissions } from '@/hooks/store/modules/permissions';
 
 import PermissionsTable from '@/components/other/permission/permissions-table.vue';
+import PermissionsFabBtn from '@/components/other/permission/permissions-fab-btn.vue';
 
 export default {
-  components: { PermissionsTable },
+  components: { PermissionsTable, PermissionsFabBtn },
   setup() {
+    const activeTab = ref();
     const originalRolesById = ref([]);
     const rolesById = ref({});
     const changedRoles = ref({});
     const permissions = ref([]);
 
+    const modals = useModals();
+
     const { fetchPermissionsListWithoutStore } = usePermissions();
-    const { fetchRolesListWithoutStore } = useRole();
+    const { fetchRolesListWithoutStore, updateRole } = useRole();
 
     const resetRolesById = () => {
-      rolesById.value = keyBy(Object.values(originalRolesById.value).map(roleToForm), '_id');
+      rolesById.value = keyBy(Object.values(originalRolesById.value).map(roleToPermissionForm), '_id');
       changedRoles.value = {};
     };
 
@@ -68,7 +87,10 @@ export default {
     });
 
     const treeviewPermissions = computed(() => permissionsToTreeview(permissions.value));
-    const roles = computed(() => Object.values(rolesById.value));
+    const isApiPermissionsTab = computed(() => API_USER_PERMISSIONS_ROOT_GROUPS.includes(activeTab.value));
+    const uiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.ui]));
+    const apiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.api]));
+    const roles = computed(() => (isApiPermissionsTab.value ? apiRoles.value : uiRoles.value));
     const hasChanges = computed(() => (
       Object.entries(changedRoles.value).some(([roleId, rolePermissions]) => (
         Object.keys(rolePermissions).some(permissionId => (
@@ -140,15 +162,55 @@ export default {
       set(rolesById.value[role._id].permissions, permission._id, newActions);
     };
 
+    const updateRoles = async () => {
+      const rolesForUpdate = Object.keys(changedRoles.value)
+        .map(roleId => rolesById.value[roleId] ?? formToRole(rolesById.value[roleId]))
+        .filter(Boolean);
+
+      await Promise.all(rolesForUpdate.map(data => updateRole({ id: data._id, data })));
+
+      return fetchList();
+    };
+
+    const submit = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: updateRoles,
+      },
+    });
+
+    const cancel = () => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        action: resetRolesById,
+      },
+    });
+
     onMounted(fetchList);
 
     return {
+      activeTab,
       pending,
       roles,
       treeviewPermissions,
       hasChanges,
       changeRole,
+      fetchList,
+      submit,
+      cancel,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.submit-button {
+  position: sticky;
+  bottom: 10px;
+  pointer-events: none;
+
+  button {
+    pointer-events: all;
+  }
+}
+</style>

@@ -146,7 +146,7 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { LIVE_REPORTING_QUICK_RANGES, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -263,7 +263,7 @@ export default {
     },
 
     hasAccessToExportAsCsv() {
-      return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
 
     dense() {

@@ -84,7 +84,7 @@
 <script>
 import { isObject } from 'lodash';
 
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
@@ -140,11 +140,11 @@ export default {
   },
   computed: {
     hasAccessToCreateEntity() {
-      return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
+      return this.checkAccess(USER_PERMISSIONS.business.context.actions.createEntity);
     },
 
     hasAccessToExportAsCsv() {
-      return this.checkAccess(USERS_PERMISSIONS.business.context.actions.exportAsCsv);
+      return this.checkAccess(USER_PERMISSIONS.business.context.actions.exportAsCsv);
     },
   },
   methods: {

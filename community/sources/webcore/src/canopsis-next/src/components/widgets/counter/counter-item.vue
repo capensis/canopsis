@@ -40,7 +40,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   ALARM_STATES,
   COUNTER_STATES_ICONS,
   COUNTER_EXPORT_FILE_NAME_PREFIX,
@@ -98,11 +98,11 @@ export default {
     },
 
     hasVariablesHelpAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.counter.actions.variablesHelp);
+      return this.checkAccess(USER_PERMISSIONS.business.counter.actions.variablesHelp);
     },
 
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.counter.actions.alarmsList);
+      return this.checkAccess(USER_PERMISSIONS.business.counter.actions.alarmsList);
     },
 
     color() {

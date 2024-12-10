@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,19 +6,19 @@ export const permissionsWidgetsAvailabilityFilters = {
   mixins: [authMixin],
   computed: {
     hasAccessToListFilters() {
-      return this.checkAccess(USERS_PERMISSIONS.business.availability.actions.listFilters);
+      return this.checkAccess(USER_PERMISSIONS.business.availability.actions.listFilters);
     },
 
     hasAccessToEditFilter() {
-      return this.checkAccess(USERS_PERMISSIONS.business.availability.actions.editFilter);
+      return this.checkAccess(USER_PERMISSIONS.business.availability.actions.editFilter);
     },
 
     hasAccessToAddFilter() {
-      return this.checkAccess(USERS_PERMISSIONS.business.availability.actions.addFilter);
+      return this.checkAccess(USER_PERMISSIONS.business.availability.actions.addFilter);
     },
 
     hasAccessToUserFilter() {
-      return this.checkAccess(USERS_PERMISSIONS.business.availability.actions.userFilter);
+      return this.checkAccess(USER_PERMISSIONS.business.availability.actions.userFilter);
     },
   },
 };

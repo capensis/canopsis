@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { USERS_PERMISSIONS, ROUTES_NAMES, GROUPED_USER_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS, ROUTES_NAMES, GROUPED_USER_PERMISSIONS } from '@/constants';
 
 import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
 import { maintenanceActionsMixin } from '@/mixins/maintenance/maintenance-actions';
@@ -82,17 +82,17 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminRights },
           icon: 'verified_user',
-          permission: USERS_PERMISSIONS.technical.permission,
+          permission: USER_PERMISSIONS.technical.permission,
         },
         {
           route: { name: ROUTES_NAMES.adminRoles },
           icon: 'supervised_user_circle',
-          permission: USERS_PERMISSIONS.technical.role,
+          permission: USER_PERMISSIONS.technical.role,
         },
         {
           route: { name: ROUTES_NAMES.adminUsers },
           icon: 'people',
-          permission: USERS_PERMISSIONS.technical.user,
+          permission: USER_PERMISSIONS.technical.user,
         },
       ];
     },
@@ -102,12 +102,12 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminBroadcastMessages },
           icon: '$vuetify.icons.bullhorn',
-          permission: USERS_PERMISSIONS.technical.broadcastMessage,
+          permission: USER_PERMISSIONS.technical.broadcastMessage,
         },
         {
           route: { name: ROUTES_NAMES.adminPlaylists },
           icon: 'playlist_play',
-          permission: USERS_PERMISSIONS.technical.playlist,
+          permission: USER_PERMISSIONS.technical.playlist,
         },
       ];
     },
@@ -117,12 +117,12 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminEventsRecords },
           icon: '$vuetify.icons.mark_unread_chat_alt',
-          permission: USERS_PERMISSIONS.technical.eventsRecord,
+          permission: USER_PERMISSIONS.technical.eventsRecord,
         },
         {
           route: { name: ROUTES_NAMES.adminParameters },
           icon: 'settings',
-          permission: USERS_PERMISSIONS.technical.parameters,
+          permission: USER_PERMISSIONS.technical.parameters,
         },
         {
           route: { name: ROUTES_NAMES.adminPlanning },
@@ -137,48 +137,48 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminKPI },
           icon: 'stacked_bar_chart',
-          permission: USERS_PERMISSIONS.technical.kpi,
+          permission: USER_PERMISSIONS.technical.kpi,
         },
         {
           route: { name: ROUTES_NAMES.adminMaps },
           icon: 'edit_location',
-          permission: USERS_PERMISSIONS.technical.map,
+          permission: USER_PERMISSIONS.technical.map,
         },
         {
           icon: '$vuetify.icons.build_circle',
-          permission: USERS_PERMISSIONS.technical.maintenance,
+          permission: USER_PERMISSIONS.technical.maintenance,
           handler: this.showToggleMaintenanceModeModal,
         },
         {
           route: { name: ROUTES_NAMES.adminTags },
           icon: 'local_offer',
-          permission: USERS_PERMISSIONS.technical.tag,
+          permission: USER_PERMISSIONS.technical.tag,
         },
         {
           route: { name: ROUTES_NAMES.adminHealthcheck },
           icon: '$vuetify.icons.alt_route',
-          permission: USERS_PERMISSIONS.technical.healthcheck,
+          permission: USER_PERMISSIONS.technical.healthcheck,
         },
         {
           route: { name: ROUTES_NAMES.adminStorageSettings },
           icon: '$vuetify.icons.storage',
-          permission: USERS_PERMISSIONS.technical.storageSettings,
+          permission: USER_PERMISSIONS.technical.storageSettings,
         },
         {
           route: { name: ROUTES_NAMES.adminStateSettings },
           icon: 'add_alert',
-          permission: USERS_PERMISSIONS.technical.stateSetting,
+          permission: USER_PERMISSIONS.technical.stateSetting,
         },
       ];
     },
 
     permissionsWithDefaultType() {
       return [
-        USERS_PERMISSIONS.technical.engine,
-        USERS_PERMISSIONS.technical.healthcheck,
-        USERS_PERMISSIONS.technical.kpi,
-        USERS_PERMISSIONS.technical.maintenance,
-        USERS_PERMISSIONS.technical.eventsRecord,
+        USER_PERMISSIONS.technical.engine,
+        USER_PERMISSIONS.technical.healthcheck,
+        USER_PERMISSIONS.technical.kpi,
+        USER_PERMISSIONS.technical.maintenance,
+        USER_PERMISSIONS.technical.eventsRecord,
       ];
     },
   },
