@@ -104,10 +104,12 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 		sortBy = r.SortBy
 	}
 
+	sort := common.GetSortQuery(sortBy, r.Sort)
+	project = append(project, sort)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		sort,
 		project,
 	))
 
