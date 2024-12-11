@@ -52,7 +52,7 @@ func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
 }
 
 type Parameters struct {
-	Output string `json:"output,omitempty" bson:"output,omitempty" binding:"max=255"`
+	Output string `json:"output,omitempty" bson:"output,omitempty" binding:"max=1000"`
 
 	ForwardAuthor *bool  `json:"forward_author,omitempty" bson:"forward_author,omitempty"`
 	Author        string `json:"author,omitempty" bson:"author,omitempty"`
