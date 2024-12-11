@@ -147,13 +147,13 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         label="Fast-cancel output"
         value="[object Object]"
       />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
       form="[object Object]"
-    />
-    <field-switcher-stub
-      title="Uncancel - comment field required"
-      value="true"
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -772,13 +772,13 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         label="Fast-cancel output"
         value="[object Object]"
       />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
       form="[object Object]"
-    />
-    <field-switcher-stub
-      title="Uncancel - comment field required"
-      value="true"
     />
     <field-switcher-stub
       title="Snooze - note field required"
@@ -1395,13 +1395,13 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         label="Fast-cancel output"
         value="[object Object]"
       />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
     </widget-settings-group-stub>
     <fast-pbehavior-form-stub
       form="[object Object]"
-    />
-    <field-switcher-stub
-      title="Uncancel - comment field required"
-      value="true"
     />
     <field-switcher-stub
       title="Snooze - note field required"
