@@ -1881,18 +1881,21 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, true),
 					userApi.BulkCreate,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer),
 				)
 				userRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, true),
 					userApi.BulkUpdate,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer),
 				)
 				userRouter.PATCH(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, true),
 					userApi.BulkPatch,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer),
 				)
 				userRouter.DELETE(
 					"",
