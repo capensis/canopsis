@@ -137,14 +137,14 @@
           v-model="form.parameters.fastCancelOutput"
           :label="$t('settings.fastCancelOutput')"
         />
+        <field-switcher
+          v-model="form.parameters.isUncancelAlarmsCommentRequired"
+          :title="$t('settings.isUncancelAlarmsCommentRequired')"
+        />
       </widget-settings-group>
 
       <fast-pbehavior-form v-model="form.parameters" />
 
-      <field-switcher
-        v-model="form.parameters.isUncancelAlarmsCommentRequired"
-        :title="$t('settings.isUncancelAlarmsCommentRequired')"
-      />
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
         :title="$t('settings.isSnoozeNoteRequired')"
