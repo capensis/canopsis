@@ -89,7 +89,7 @@ definitions:
         maxLength: 255
         type: string
       output:
-        maxLength: 255
+        maxLength: 1000
         type: string
       reason:
         description: Reason is used in pbehavior action.
