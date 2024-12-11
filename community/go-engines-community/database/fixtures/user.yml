@@ -1211,9 +1211,11 @@ permission:
 
   .api_permissions_widget_StatsCalendar_update: &api_permissions_widget_StatsCalendar_update
     "@permission_api_dynamicinfos": 4
-    <<: *api_permissions_alarm_pattern
-    <<: *api_permissions_entity_pattern
-    <<: *api_permissions_pbehavior_pattern
+    <<: [
+      *api_permissions_alarm_pattern,
+      *api_permissions_entity_pattern,
+      *api_permissions_pbehavior_pattern
+    ]
 
   .api_permissions_widget_Counter_read: &api_permissions_widget_Counter_read {
     "@permission_api_alarm_read": 1
@@ -1222,9 +1224,11 @@ permission:
   .api_permissions_widget_Counter_update: &api_permissions_widget_Counter_update
     "@permission_api_entity": 4
     "@permission_api_dynamicinfos": 4
-    <<: *api_permissions_alarm_pattern
-    <<: *api_permissions_entity_pattern
-    <<: *api_permissions_pbehavior_pattern
+    <<: [
+      *api_permissions_alarm_pattern,
+      *api_permissions_entity_pattern,
+      *api_permissions_pbehavior_pattern
+    ]
 
   .api_permissions_widget_Junit_read: &api_permissions_widget_Junit_read {
     "@permission_api_junit": 4
@@ -1376,8 +1380,10 @@ permission:
       - "@group_technical_admin_general"
     api_permissions:
       "@permission_api_instruction": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_remediationJob:
     <<: *permission_crud
     _id: models_remediationJob
@@ -1619,8 +1625,10 @@ permission:
       - "@group_technical_admin_general"
     api_permissions:
       "@permission_api_alarm_tag": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_eventsRecord:
     <<: *permission
     _id: models_eventsRecord
@@ -1645,26 +1653,28 @@ permission:
       - "@group_technical_viewsandwidgets"
     api_permissions:
       "@permission_api_private_view_groups": 1
-      <<: *api_permissions_widget_AlarmsList_read
-      <<: *api_permissions_widget_AlarmsList_update
-      <<: *api_permissions_widget_Context_read
-      <<: *api_permissions_widget_Context_update
-      <<: *api_permissions_widget_ServiceWeather_read
-      <<: *api_permissions_widget_ServiceWeather_update
-      <<: *api_permissions_widget_StatsCalendar_read
-      <<: *api_permissions_widget_StatsCalendar_update
-      <<: *api_permissions_widget_Counter_read
-      <<: *api_permissions_widget_Counter_update
-      <<: *api_permissions_widget_Junit_read
-      <<: *api_permissions_widget_Map_read
-      <<: *api_permissions_widget_Map_update
-      <<: *api_permissions_widget_BarChart_read
-      <<: *api_permissions_widget_LineChart_read
-      <<: *api_permissions_widget_PieChart_read
-      <<: *api_permissions_widget_Numbers_read
-      <<: *api_permissions_widget_UserStatistics_read
-      <<: *api_permissions_widget_AlarmStatistics_read
-      <<: *api_permissions_widget_Availability_read
+      <<: [
+        *api_permissions_widget_AlarmsList_read,
+        *api_permissions_widget_AlarmsList_update,
+        *api_permissions_widget_Context_read,
+        *api_permissions_widget_Context_update,
+        *api_permissions_widget_ServiceWeather_read,
+        *api_permissions_widget_ServiceWeather_update,
+        *api_permissions_widget_StatsCalendar_read,
+        *api_permissions_widget_StatsCalendar_update,
+        *api_permissions_widget_Counter_read,
+        *api_permissions_widget_Counter_update,
+        *api_permissions_widget_Junit_read,
+        *api_permissions_widget_Map_read,
+        *api_permissions_widget_Map_update,
+        *api_permissions_widget_BarChart_read,
+        *api_permissions_widget_LineChart_read,
+        *api_permissions_widget_PieChart_read,
+        *api_permissions_widget_Numbers_read,
+        *api_permissions_widget_UserStatistics_read,
+        *api_permissions_widget_AlarmStatistics_read,
+        *api_permissions_widget_Availability_read
+      ]
   permission_models_userview:
     <<: *permission_crud
     _id: models_userview
@@ -1701,8 +1711,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_eventfilter": 0
-      <<: *api_permissions_event_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_event_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_pbehavior:
     <<: *permission_crud
     _id: models_exploitation_pbehavior
@@ -1734,8 +1746,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_dynamicinfos": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_metaAlarmRule:
     <<: *permission_crud
     _id: models_exploitation_metaAlarmRule
@@ -1746,8 +1760,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_metaalarmrule": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_scenario:
     <<: *permission_crud
     _id: models_exploitation_scenario
@@ -1758,8 +1774,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_action": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_idleRules:
     <<: *permission_crud
     _id: models_exploitation_idleRules
@@ -1770,8 +1788,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_idlerule": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
@@ -1782,8 +1802,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_flapping_rule": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_resolveRules:
     <<: *permission_crud
     _id: models_exploitation_resolveRules
@@ -1794,8 +1816,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_resolve_rule": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
   permission_models_exploitation_declareTicketRule:
     <<: *permission_crud
     _id: models_exploitation_declareTicketRule
@@ -1806,9 +1830,11 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_declare_ticket_rule": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
   permission_models_exploitation_linkRule:
     <<: *permission_crud
     _id: models_exploitation_linkRule
@@ -1819,8 +1845,10 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_link_rule": 0
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
 
   # technical -> notification
   permission_models_notification_instructionStats:
@@ -1845,10 +1873,12 @@ permission:
       - "@group_technical"
       - "@group_technical_profile"
     api_permissions:
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
-      <<: *api_permissions_service_weather_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern,
+        *api_permissions_service_weather_pattern
+      ]
   permission_models_profile_color_theme:
     <<: *permission_crud
     _id: models_profile_color_theme
@@ -1892,9 +1922,11 @@ permission:
       - "@group_widgets_alarmslist"
       - "@group_widgets_alarmslist_widgetsettings"
     api_permissions:
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
   permission_listalarm_remediationInstructionsFilter:
     <<: *permission
     _id: listalarm_remediationInstructionsFilter
@@ -1919,9 +1951,11 @@ permission:
       - "@group_widgets_alarmslist_viewsettings"
     api_permissions:
       "@permission_api_view": 4
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
   permission_listalarm_userRemediationInstructionsFilter:
     <<: *permission
     _id: listalarm_userRemediationInstructionsFilter
@@ -2215,9 +2249,11 @@ permission:
       - "@group_widgets_context"
       - "@group_widgets_context_widgetsettings"
     api_permissions:
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
 
   # widgets -> context -> viewsettings
   permission_crudcontext_userFilter:
@@ -2231,9 +2267,11 @@ permission:
       - "@group_widgets_context_viewsettings"
     api_permissions:
       "@permission_api_view": 4
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
   permission_crudcontext_category:
     <<: *permission
     _id: crudcontext_category
@@ -2360,8 +2398,10 @@ permission:
       - "@group_widgets_serviceweather"
       - "@group_widgets_serviceweather_widgetsettings"
     api_permissions:
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_service_weather_pattern
+      <<: [
+        *api_permissions_entity_pattern,
+        *api_permissions_service_weather_pattern
+      ]
 
   # widgets -> serviceweather -> viewsettings
   permission_serviceweather_userFilter:
@@ -2375,8 +2415,10 @@ permission:
       - "@group_widgets_serviceweather_viewsettings"
     api_permissions:
       "@permission_api_view": 4
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_service_weather_pattern
+      <<: [
+        *api_permissions_entity_pattern,
+        *api_permissions_service_weather_pattern
+      ]
   permission_serviceweather_category:
     <<: *permission
     _id: serviceweather_category
@@ -2597,9 +2639,11 @@ permission:
       - "@group_widgets_map"
       - "@group_widgets_map_widgetsettings"
     api_permissions:
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
   # widgets -> map -> viewsettings
   permission_map_alarmsList:
     <<: *permission
@@ -2623,9 +2667,11 @@ permission:
       - "@group_widgets_map_viewsettings"
     api_permissions:
       "@permission_api_view": 4
-      <<: *api_permissions_alarm_pattern
-      <<: *api_permissions_entity_pattern
-      <<: *api_permissions_pbehavior_pattern
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
   permission_map_category:
     <<: *permission
     _id: map_category
@@ -2994,11 +3040,15 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_AlarmsList_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_AlarmsList_read
+        ]
       2:
-        <<: *api_permissions_view_update
-        <<: *api_permissions_widget_AlarmsList_update
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_AlarmsList_update
+        ]
       1:
         <<: *api_permissions_view_delete
 
@@ -3010,11 +3060,15 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_Context_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Context_read
+        ]
       2:
-        <<: *api_permissions_view_update
-        <<: *api_permissions_widget_Context_update
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_Context_update
+        ]
       1:
         <<: *api_permissions_view_delete
 
@@ -3026,11 +3080,15 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_ServiceWeather_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_ServiceWeather_read
+        ]
       2:
-        <<: *api_permissions_view_update
-        <<: *api_permissions_widget_ServiceWeather_update
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_ServiceWeather_update
+        ]
       1:
         <<: *api_permissions_view_delete
 
@@ -3042,11 +3100,15 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_StatsCalendar_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_StatsCalendar_read
+        ]
       2:
-        <<: *api_permissions_view_update
-        <<: *api_permissions_widget_StatsCalendar_update
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_StatsCalendar_update
+        ]
       1:
         <<: *api_permissions_view_delete
 
@@ -3072,11 +3134,15 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_Counter_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Counter_read
+        ]
       2:
-        <<: *api_permissions_view_update
-        <<: *api_permissions_widget_Counter_update
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_Counter_update
+        ]
       1:
         <<: *api_permissions_view_delete
 
@@ -3088,8 +3154,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_Junit_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Junit_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3103,11 +3171,15 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_Map_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Map_read
+        ]
       2:
-        <<: *api_permissions_view_update
-        <<: *api_permissions_widget_Map_update
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_Map_update
+        ]
       1:
         <<: *api_permissions_view_delete
 
@@ -3119,8 +3191,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_BarChart_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_BarChart_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3134,8 +3208,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_LineChart_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_LineChart_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3149,8 +3225,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_PieChart_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_PieChart_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3164,8 +3242,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_Numbers_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Numbers_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3179,8 +3259,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_UserStatistics_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_UserStatistics_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3194,8 +3276,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_AlarmStatistics_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_AlarmStatistics_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
@@ -3209,8 +3293,10 @@ permission:
     hidden: true
     api_permissions_bitmask:
       4:
-        <<: *api_permissions_view_read
-        <<: *api_permissions_widget_Availability_read
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Availability_read
+        ]
       2:
         <<: *api_permissions_view_update
       1:
