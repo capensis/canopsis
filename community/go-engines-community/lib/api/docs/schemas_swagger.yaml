@@ -4593,6 +4593,19 @@ definitions:
     - name
     - priority
     type: object
+  role.BulkUpdatePermissionsRequestItem:
+    properties:
+      _id:
+        type: string
+      permissions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+    required:
+    - _id
+    type: object
   role.EditRequest:
     properties:
       auth_config:
