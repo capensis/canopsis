@@ -13,8 +13,8 @@
     :hide-details="!required"
     :hide-selected="hideSelected"
     class="c-alarm-tag-field"
-    item-text="value"
-    item-value="value"
+    item-text="_id"
+    item-value="_id"
     multiple
     chips
     dense
@@ -27,35 +27,19 @@
   >
     <template #selection="{ item, index }">
       <c-alarm-action-chip
-        v-if="!showCount || index < showCount"
         :color="item.color"
-        :title="item.value"
+        :title="item._id"
+        :text-color="item.color ? 'white' : 'black'"
         class="c-alarm-tag-field__tag px-2"
         closable
         ellipsis
         @close="removeItemFromSelectedItemsByIndex(index)"
       >
-        {{ item.value }}
+        {{ item._id ?? item }}
       </c-alarm-action-chip>
-      <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
-      <span v-else />
     </template>
-    <template #item="{ item, attrs, on, parent }">
-      <v-list-item
-        class="c-alarm-tag-field__list-item"
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-action>
-          <v-checkbox
-            :input-value="attrs.inputValue"
-            :color="parent.color"
-          />
-        </v-list-item-action>
-        <v-list-item-content class="c-word-break-all">
-          {{ item.value }}
-        </v-list-item-content>
-      </v-list-item>
+    <template v-if="$slots['no-data']" #no-data="">
+      <slot name="no-data" />
     </template>
   </c-lazy-search-field>
 </template>
@@ -65,7 +49,7 @@ import { toRef } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
+import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 import { useLazySearch } from '@/hooks/form/lazy-search';
 
 export default {
@@ -102,17 +86,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    addable: {
-      type: Boolean,
-      default: false,
-    },
-    showCount: {
-      type: Number,
-      required: false,
-    },
   },
   setup(props, { emit }) {
-    const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
+    const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel();
 
     const {
       selectedItems,
@@ -126,10 +102,10 @@ export default {
       updateSearch,
     } = useLazySearch({
       value: toRef(props, 'value'),
-      addable: toRef(props, 'addable'),
-      idKey: 'value',
-      idParamsKey: 'values',
-      fetchHandler: fetchAlarmTagsListWithoutStore,
+      idKey: '_id',
+      idParamsKey: 'ids',
+      fetchHandler: fetchAlarmTagsLabelsListWithoutStore,
+      addable: true,
     }, emit);
 
     return {
@@ -146,25 +122,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-$selectIconsWidth: 56px;
-
-.c-alarm-tag-field {
-  .v-select__selections {
-    width: calc(100% - 56px);
-  }
-
-  &__tag {
-    max-width: 100%;
-  }
-
-  &__list {
-    max-width: 400px;
-  }
-
-  &__list-item .v-list-item {
-    height: unset !important;
-  }
-}
-</style>

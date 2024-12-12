@@ -303,6 +303,7 @@ export default {
   loadingItems: 'Chargement d\'éléments...',
   lastComment: 'Dernier commentaire',
   serialName: 'Nom de série',
+  pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
