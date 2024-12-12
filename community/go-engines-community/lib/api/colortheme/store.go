@@ -192,15 +192,15 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		return false, ErrCanopsisDefaultTheme
 	}
 
+	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
+	if err != nil {
+		return false, fmt.Errorf("failed to get user interface config: %w", err)
+	}
+
 	var deleted int64
 
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
-
-		cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
-		if err != nil {
-			return fmt.Errorf("failed to get user interface config: %w", err)
-		}
 
 		if cfg.DefaultColorTheme == id {
 			return ErrDefaultTheme
