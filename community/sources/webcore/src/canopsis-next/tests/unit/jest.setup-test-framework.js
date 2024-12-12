@@ -11,6 +11,7 @@ global.ResizeObserver = ResizeObserver;
 global.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
+  disconnect: jest.fn(),
 }));
 
 Object.defineProperty(HTMLElement.prototype, 'innerText', {

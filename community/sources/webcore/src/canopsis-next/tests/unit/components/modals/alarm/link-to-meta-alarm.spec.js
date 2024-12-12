@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
@@ -100,7 +101,14 @@ describe('link-to-meta-alarm', () => {
     expect(manualMetaAlarmForm.vm.form).toEqual({
       metaAlarm: null,
       comment: '',
+      component: '',
+      resource: '',
       auto_resolve: false,
+      tags: {
+        copy_from_children: false,
+        filter_by_label: [],
+      },
+      infos: [],
     });
   });
 
@@ -125,9 +133,16 @@ describe('link-to-meta-alarm', () => {
     const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
 
     const newData = {
+      resource: Faker.datatype.string(),
+      component: Faker.datatype.string(),
       comment: Faker.datatype.string(),
       metaAlarm: Faker.datatype.string(),
       auto_resolve: true,
+      tags: {
+        copy_from_children: Faker.datatype.boolean(),
+        filter_by_label: [],
+      },
+      infos: [],
     };
 
     manualMetaAlarmForm.triggerCustomEvent('input', newData);
@@ -139,8 +154,8 @@ describe('link-to-meta-alarm', () => {
     expect(action).toBeCalledWith({
       name: newData.metaAlarm,
       alarms: [alarm._id],
-      comment: newData.comment,
-      auto_resolve: newData.auto_resolve,
+
+      ...omit(newData, ['metaAlarm']),
     });
     expect($modals.hide).toBeCalledWith();
   });

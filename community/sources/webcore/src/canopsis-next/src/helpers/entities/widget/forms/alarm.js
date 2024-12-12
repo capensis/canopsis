@@ -655,7 +655,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         bind: {
           is: 'c-alarm-tags-chips',
           alarm: context.alarm,
-          selectedTag: context.selectedTag,
+          selectedTags: context.selectedTags,
           small: context.small,
         },
         on: {
