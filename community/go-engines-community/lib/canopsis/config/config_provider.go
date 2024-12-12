@@ -161,6 +161,7 @@ type MetricsConfig struct {
 	UserSessionGapInterval time.Duration
 	EnabledInstructions    bool
 	EnabledNotAckedMetrics bool
+	EnabledSliMetrics      bool
 }
 
 type ScheduledTime struct {
@@ -1378,6 +1379,7 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 		conf: MetricsConfig{
 			EnabledNotAckedMetrics: parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
 			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
+			EnabledSliMetrics:      parseBool(cfg.Metrics.EnabledSliMetrics, "EnabledSliMetrics", sectionName, logger),
 			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
 			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
 			UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
@@ -1400,6 +1402,11 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 	b, ok = parseUpdatedBool(cfg.Metrics.EnabledInstructions, p.conf.EnabledInstructions, "EnabledInstructions", sectionName, p.logger)
 	if ok {
 		p.conf.EnabledInstructions = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledSliMetrics, p.conf.EnabledSliMetrics, "EnabledSliMetrics", sectionName, p.logger)
+	if ok {
+		p.conf.EnabledSliMetrics = b
 	}
 
 	d, ok := parseUpdatedTimeDurationByStr(cfg.Metrics.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)
