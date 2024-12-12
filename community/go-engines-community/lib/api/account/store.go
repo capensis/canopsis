@@ -27,18 +27,13 @@ type store struct {
 	userInterfaceAdapter config.UserInterfaceAdapter
 }
 
-func NewStore(
-	db mongo.DbClient,
-	passwordEncoder password.Encoder,
-	authorProvider author.Provider,
-	userInterfaceAdapter config.UserInterfaceAdapter,
-) Store {
+func NewStore(db mongo.DbClient, pe password.Encoder, ap author.Provider, uia config.UserInterfaceAdapter) Store {
 	return &store{
 		client:               db,
 		userCollection:       db.Collection(mongo.UserCollection),
-		passwordEncoder:      passwordEncoder,
-		authorProvider:       authorProvider,
-		userInterfaceAdapter: userInterfaceAdapter,
+		passwordEncoder:      pe,
+		authorProvider:       ap,
+		userInterfaceAdapter: uia,
 	}
 }
 
