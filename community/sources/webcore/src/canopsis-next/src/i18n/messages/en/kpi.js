@@ -86,6 +86,7 @@ export default {
     optionalMetrics: 'Optional metrics',
     manualInstructions: 'Number of alarms with manual instructions',
     notAckedMetrics: 'Number of active not acked alarms of different durations',
+    sliDuration: 'SLI duration',
   },
 
   statisticsWidgets: {
