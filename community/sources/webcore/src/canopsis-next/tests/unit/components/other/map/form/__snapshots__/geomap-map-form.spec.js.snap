@@ -5,6 +5,7 @@ exports[`geomap-map-form Renders \`geomap-map-form\` with form 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     required=""
     value="Geomap"
   />

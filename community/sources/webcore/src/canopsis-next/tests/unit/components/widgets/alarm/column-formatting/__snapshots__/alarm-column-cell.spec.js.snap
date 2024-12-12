@@ -77,7 +77,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 2`] = `
 >
   <alarm-column-cell-popup-body-stub
     alarm="[object Object]"
-    selectedtag=""
+    selectedtags=""
     template="template"
     templateid="-widgetColumns-v.display_name-popupTemplate"
   />
@@ -102,7 +102,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 
 >
   <alarm-column-cell-popup-body-stub
     alarm="[object Object]"
-    selectedtag=""
+    selectedtags=""
     template="template"
     templateid="-widgetColumns-v.display_name-popupTemplate"
   />
@@ -127,7 +127,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups and html 2`
 >
   <alarm-column-cell-popup-body-stub
     alarm="[object Object]"
-    selectedtag=""
+    selectedtags=""
     template="template"
     templateid="-widgetColumns-entity.name-popupTemplate"
   />

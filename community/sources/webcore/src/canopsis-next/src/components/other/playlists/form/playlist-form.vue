@@ -2,6 +2,7 @@
   <div>
     <c-name-field
       v-field="form.name"
+      autofocus
       required
     />
     <c-duration-field v-field="form.interval" />
