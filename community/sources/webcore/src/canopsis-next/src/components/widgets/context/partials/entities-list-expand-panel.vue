@@ -161,8 +161,8 @@
               <v-card-text>
                 <entity-comments
                   :entity="item"
-                  :addable="hasAccessToCreateComment"
-                  :editable="hasAccessToEditComment"
+                  addable
+                  editable
                 />
               </v-card-text>
             </v-card>
@@ -262,7 +262,7 @@ export default {
     },
 
     commentsShown() {
-      return this.hasAccessToCommentsList && [ENTITY_TYPES.service, ENTITY_TYPES.resource].includes(this.item.type);
+      return this.hasAccessToComment && [ENTITY_TYPES.service, ENTITY_TYPES.resource].includes(this.item.type);
     },
   },
 };

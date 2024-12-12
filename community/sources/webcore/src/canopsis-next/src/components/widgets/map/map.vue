@@ -25,14 +25,12 @@
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
             :locked-filters="widget.filters"
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter"
             @input="updateSelectedFilter"
           />
           <filters-list-btn
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
             :widget-id="widget._id"
-            :addable="hasAccessToAddFilter"
-            :editable="hasAccessToEditFilter"
+            addable
+            editable
             with-entity
             with-service-weather
             private

@@ -1,6 +1,6 @@
 import { difference } from 'lodash';
 
-import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS } from '@/constants';
+import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS, USER_PERMISSIONS_GROUPS } from '@/constants';
 
 /**
  * Check user access for a permission
@@ -97,3 +97,6 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
     inputValue: role.permissions[permission._id]?.includes(action) ?? false,
   };
 };
+
+// TODO: add jsdoc
+export const isApiPermission = (permissionId = '') => permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);

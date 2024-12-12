@@ -147,5 +147,9 @@ export default {
   .v-expansion-panel__body {
     overflow: auto;
   }
+
+  .v-input--selection-controls__input {
+    margin: 0;
+  }
 }
 </style>

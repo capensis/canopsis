@@ -47,16 +47,14 @@
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
             :locked-filters="widget.filters"
-            :disabled="!hasAccessToListFilters"
             :clearable="!widget.parameters.clearFilterDisabled"
             hide-details
             @input="updateSelectedFilter"
           />
           <filters-list-btn
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
             :widget-id="widget._id"
-            :addable="hasAccessToAddFilter"
-            :editable="hasAccessToEditFilter"
+            addable
+            editable
             private
             with-alarm
             with-entity

@@ -5,16 +5,20 @@ import { authMixin } from '@/mixins/auth';
 export const permissionsWidgetsAlarmsListRemediationInstructionsFilters = {
   mixins: [authMixin],
   computed: {
+    hasAccessToRemediationInstructionsFilter() {
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilters);
+    },
+
     hasAccessToListRemediationInstructionsFilters() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters); // TODO: remove
     },
 
     hasAccessToAddRemediationInstructionsFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter); // TODO: remove
     },
 
     hasAccessToEditRemediationInstructionsFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter); // TODO: remove
     },
 
     hasAccessToUserRemediationInstructionsFilter() {

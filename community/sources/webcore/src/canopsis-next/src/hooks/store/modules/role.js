@@ -48,6 +48,8 @@ export const useRole = () => {
     removeRole: 'remove',
     createRole: 'create',
     updateRole: 'update',
+    fetchRoleTemplatesListWithoutStore: 'fetchTemplatesListWithoutStore',
+    bulkUpdateRolePermissions: 'bulkUpdatePermissions',
   });
 
   /**
