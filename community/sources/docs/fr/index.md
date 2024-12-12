@@ -17,6 +17,10 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 *  [Guide d'utilisation](guide-utilisation/index.md) : comment utiliser l'interface de Canopsis au quotidien.
 *  [Guide des interconnexions](interconnexions/index.md) : comment brancher des sources de supervision et des données externes à Canopsis.
 
+## Cycle de vie des versions
+
+Le cycle de vie des versions Canopsis est détaillé sur le [site commercial de Canopsis](https://www.canopsis.fr/cycle-de-vie-des-versions-canopsis/)
+
 ## Notes de version
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
