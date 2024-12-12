@@ -8,6 +8,7 @@
       v-field="form.title"
       :label="$t('common.title')"
       name="title"
+      autofocus
       required
     />
     <v-text-field

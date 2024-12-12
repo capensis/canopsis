@@ -12,6 +12,7 @@
           :label="config.label"
           :error-messages="errors.collect('text')"
           name="text"
+          autofocus
         />
         <text-editor-field
           v-else
@@ -23,6 +24,7 @@
           :variables="variables"
           :dark="$system.dark"
           name="text"
+          autofocus
         />
       </template>
       <template #actions="">

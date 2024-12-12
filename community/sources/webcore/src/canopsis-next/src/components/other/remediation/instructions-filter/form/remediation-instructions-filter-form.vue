@@ -56,6 +56,7 @@
       item-text="name"
       item-value="_id"
       name="instructions"
+      autofocus
       multiple
       clearable
       return-object

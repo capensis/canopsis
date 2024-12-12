@@ -6,6 +6,7 @@
     :error-messages="errors.collect(name)"
     :label="label || $t('common.method')"
     :name="name"
+    autofocus
   />
 </template>
 

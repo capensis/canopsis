@@ -303,6 +303,7 @@ export default {
   loadingItems: 'Loading items...',
   lastComment: 'Last comment',
   serialName: 'Serial name',
+  pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
   variableTypes: {
     string: 'String',
     number: 'Number',

@@ -86,6 +86,7 @@ export default {
     optionalMetrics: 'Métriques facultatives',
     manualInstructions: 'Nombre d\'alarmes avec instructions manuelles',
     notAckedMetrics: 'Nombre d\'alarmes actives non acquittées de différentes durées',
+    sliDuration: 'Durée SLI',
   },
 
   statisticsWidgets: {

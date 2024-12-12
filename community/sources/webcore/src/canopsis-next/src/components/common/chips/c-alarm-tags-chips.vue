@@ -1,7 +1,7 @@
 <template>
   <c-alarm-actions-chips
     :items="preparedTags"
-    :active-item="selectedTag"
+    :active-items="selectedTags"
     :small="small"
     :inline-count="inlineCount"
     :closable-active="closableActive"
@@ -23,9 +23,9 @@ export default {
       type: Object,
       required: true,
     },
-    selectedTag: {
-      type: String,
-      required: false,
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     inlineCount: {
       type: [Number, String],
