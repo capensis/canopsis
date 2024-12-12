@@ -126,15 +126,15 @@ export default {
       name: 'Droits sur le bac à alarmes : afficher les filtres d\'alarme',
       description: 'Le filtre d\'alarme est affiché pour les utilisateurs disposant de cette autorisation',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: { // TODO: change to _remediationInstructionsFilter
       name: 'Droits sur le bac à alarmes : accès aux filtres de remédiation',
       description: 'Les utilisateurs disposant de cette autorisation peuvent lister les filtres de remédiation',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: { // TODO: change to _remediationInstructionsFilter
       name: 'Droits sur le bac à alarmes : accès à l\'édition des filtres de remédiation',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres de remédiation',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: { // TODO: change to _remediationInstructionsFilter
       name: 'Droits sur le bac à alarmes : accès à l\'ajout de filtres de remédiation',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres de remédiation',
     },

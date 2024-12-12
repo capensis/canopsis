@@ -54,21 +54,21 @@
       <field-density v-model="form.parameters.dense" />
       <field-opened-resolved-filter v-model="form.parameters.opened" />
       <field-filters
-        v-if="hasAccessToListFilters"
+        v-if="hasAccessToFilter"
         v-model="form.parameters.mainFilter"
         :filters.sync="form.filters"
         :widget-id="widget._id"
-        :addable="hasAccessToAddFilter"
-        :editable="hasAccessToEditFilter"
+        addable
+        editable
         with-alarm
         with-entity
         with-pbehavior
       />
       <field-remediation-instructions-filters
-        v-if="hasAccessToListRemediationInstructionsFilters"
+        v-if="hasAccessToRemediationInstructionsFilter"
         v-model="form.parameters.remediationInstructionsFilters"
-        :addable="hasAccessToAddRemediationInstructionsFilter"
-        :editable="hasAccessToEditRemediationInstructionsFilter"
+        addable
+        editable
       />
       <field-switcher
         v-model="form.parameters.clearFilterDisabled"

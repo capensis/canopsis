@@ -187,15 +187,15 @@ export default {
       name: 'Rights on alarm list: Access to \'Comment\' action',
       description: 'Users with this permission can comment alarms',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.listFilters]: { // TODO: change to '_filter'
       name: 'Rights on alarm list: view alarm filters',
       description: 'Users with this permission can view the list of available filters in the alarm list',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.editFilter]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.editFilter]: { // TODO: change to '_filter'
       name: 'Rights on alarm list: edit alarm filters',
       description: 'Users with this permission can edit filters for alarms',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.addFilter]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.addFilter]: { // TODO: change to '_filter'
       name: 'Rights on alarm list: add alarm filters',
       description: 'Users with this permission can add filters for alarms',
     },
@@ -203,15 +203,15 @@ export default {
       name: 'Rights on alarm list: show alarm filters',
       description: 'The alarm filter is shown for users with this permission',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: { // TODO: change to _remediationInstructionsFilter
       name: 'Rights on alarm list: Access to view filters by remediation instructions',
       description: 'Users with this permission can see and apply the list of created filters by instructions',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: { // TODO: change to _remediationInstructionsFilter
       name: 'Rights on alarm list: Access to editing filters by remediation instructions',
       description: 'Users with this permission can edit filters by instructions',
     },
-    [USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: {
+    [USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: { // TODO: change to _remediationInstructionsFilter
       name: 'Rights on alarm list: Access to adding filters by remediation instructions',
       description: 'Users with this permission can add filters by instructions',
     },

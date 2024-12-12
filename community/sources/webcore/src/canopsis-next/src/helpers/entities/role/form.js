@@ -1,8 +1,15 @@
 import { omit } from 'lodash';
 
-import { CRUD_ACTIONS, ROLE_TYPES, TIME_UNITS } from '@/constants';
+import {
+  API_USER_PERMISSIONS_ROOT_GROUPS,
+  CRUD_ACTIONS,
+  ROLE_TYPES,
+  TIME_UNITS,
+  USER_PERMISSIONS_GROUPS
+} from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
+import { isApiPermission } from '@/helpers/entities/permissions/list';
 
 /**
  * @typedef {'create' | 'update' | 'reed' | 'delete'} Action
@@ -57,6 +64,8 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {Role} RoleRequest
  * @property {string} defaultview
  */
+
+export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api;
 
 /**
  * Convert role permissions to form permissions object
@@ -116,13 +125,17 @@ export const roleToPermissionForm = (role = {}) => ({
 });
 
 /**
- * Convert form role permissions to role permissions object
+ * Convert role form role permissions to role permissions object
  *
- * @param {PermissionsForm} [permissionsForm={}]
+ * @param {RoleForm} [form = {}]
  * @return {PermissionsForm}
  */
-const permissionsFormToRolePermissions = (permissionsForm = {}) => Object.entries(permissionsForm)
+const permissionsFormToRolePermissions = (form = {}) => Object.entries(form.permissions ?? {})
   .reduce((acc, [id, actions]) => {
+    if (isApiPermission(id) !== isApiRole(form)) {
+      return acc;
+    }
+
     const [firstAction] = actions;
 
     if (firstAction === CRUD_ACTIONS.can) {
@@ -159,4 +172,9 @@ export const formToRole = (form = {}) => ({
   defaultview: form.defaultview,
   permissions: permissionsFormToRolePermissions(form.permissions),
   auth_config: authConfigFormToRolePermissions(form.auth_config),
+});
+
+export const formToRolePermissions = (form = {}) => ({ // TODO: add jsdoc
+  _id: form._id,
+  permissions: permissionsFormToRolePermissions(form),
 });

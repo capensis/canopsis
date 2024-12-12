@@ -254,17 +254,21 @@ export const USER_PERMISSIONS = {
         comment: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_comment`,
         exportPdf: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportPdf`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_userFilter`,
 
+        remediationInstructionsFilter:
+          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_remediationInstructionsFilter`,
+
         listRemediationInstructionsFilters:
-          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listRemediationInstructionsFilters`,
+          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listRemediationInstructionsFilters`, // TODO: remove
         editRemediationInstructionsFilter:
-          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_editRemediationInstructionsFilter`,
+          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_editRemediationInstructionsFilter`, // TODO: remove
         addRemediationInstructionsFilter:
-          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addRemediationInstructionsFilter`,
+          `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addRemediationInstructionsFilter`, // TODO: remove
         userRemediationInstructionsFilter:
           `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_userRemediationInstructionsFilter`,
 
@@ -301,10 +305,12 @@ export const USER_PERMISSIONS = {
         pbehaviorDelete: `${USER_PERMISSIONS_PREFIXES.business.context}_deletePbehavior`,
         massEnable: `${USER_PERMISSIONS_PREFIXES.business.context}_massEnable`,
         massDisable: `${USER_PERMISSIONS_PREFIXES.business.context}_massDisable`,
+        listPbehavior: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.context}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.context}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.context}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.context}_category`,
@@ -314,9 +320,10 @@ export const USER_PERMISSIONS = {
         /**
          * COMMON
          */
-        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`,
-        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`,
-        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`,
+        entityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_entityComment`,
+        entityCommentsList: `${USER_PERMISSIONS_PREFIXES.business.common}_entityCommentsList`, // TODO: remove
+        createEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_createEntityComment`, // TODO: remove
+        editEntityComment: `${USER_PERMISSIONS_PREFIXES.business.common}_editEntityComment`, // TODO: remove
       },
     },
     serviceWeather: {
@@ -339,10 +346,11 @@ export const USER_PERMISSIONS = {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_alarmsList`,
         pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_pbehaviorList`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_addFilter`,
-        userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_addFilter`, // TODO: remove
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`, // TODO: remove
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
 
@@ -372,9 +380,10 @@ export const USER_PERMISSIONS = {
       actions: {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.map}_alarmsList`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.map}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.map}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.map}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.map}_category`,
@@ -386,9 +395,10 @@ export const USER_PERMISSIONS = {
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.barChart}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.barChart}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_userFilter`,
       },
     },
@@ -398,9 +408,10 @@ export const USER_PERMISSIONS = {
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_userFilter`,
       },
     },
@@ -410,9 +421,10 @@ export const USER_PERMISSIONS = {
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_userFilter`,
       },
     },
@@ -422,9 +434,10 @@ export const USER_PERMISSIONS = {
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.numbers}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.numbers}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
       },
     },
@@ -432,9 +445,10 @@ export const USER_PERMISSIONS = {
       actions: {
         interval: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_interval`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_userFilter`,
       },
     },
@@ -442,9 +456,10 @@ export const USER_PERMISSIONS = {
       actions: {
         interval: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_interval`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_userFilter`,
       },
     },
@@ -452,9 +467,10 @@ export const USER_PERMISSIONS = {
       actions: {
         interval: `${USER_PERMISSIONS_PREFIXES.business.availability}_interval`,
 
-        listFilters: `${USER_PERMISSIONS_PREFIXES.business.availability}_listFilters`,
-        editFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_editFilter`,
-        addFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_addFilter`,
+        filter: `${USER_PERMISSIONS_PREFIXES.business.availability}_filter`,
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.availability}_listFilters`, // TODO: remove
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_editFilter`, // TODO: remove
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_addFilter`, // TODO: remove
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.availability}_userFilter`,
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.availability}_exportAsCsv`,
@@ -593,17 +609,17 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.links]: USER_PERMISSIONS.business.alarmsList.actions.links,
     [ALARM_LIST_ACTIONS_TYPES.correlation]: USER_PERMISSIONS.business.alarmsList.actions.correlation,
 
-    [ALARM_LIST_ACTIONS_TYPES.listFilters]: USER_PERMISSIONS.business.alarmsList.actions.listFilters,
-    [ALARM_LIST_ACTIONS_TYPES.editFilter]: USER_PERMISSIONS.business.alarmsList.actions.editFilter,
-    [ALARM_LIST_ACTIONS_TYPES.addFilter]: USER_PERMISSIONS.business.alarmsList.actions.addFilter,
+    [ALARM_LIST_ACTIONS_TYPES.listFilters]: USER_PERMISSIONS.business.alarmsList.actions.listFilters, // TODO: change to '_filter'
+    [ALARM_LIST_ACTIONS_TYPES.editFilter]: USER_PERMISSIONS.business.alarmsList.actions.editFilter, // TODO: change to '_filter'
+    [ALARM_LIST_ACTIONS_TYPES.addFilter]: USER_PERMISSIONS.business.alarmsList.actions.addFilter, // TODO: change to '_filter'
     [ALARM_LIST_ACTIONS_TYPES.userFilter]: USER_PERMISSIONS.business.alarmsList.actions.userFilter,
 
     [ALARM_LIST_ACTIONS_TYPES.listRemediationInstructionsFilters]:
-    USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters,
+    USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters, // TODO: change to _remediationInstructionsFilter
     [ALARM_LIST_ACTIONS_TYPES.editRemediationInstructionsFilter]:
-    USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter,
+    USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter, // TODO: change to _remediationInstructionsFilter
     [ALARM_LIST_ACTIONS_TYPES.addRemediationInstructionsFilter]:
-    USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter,
+    USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter, // TODO: change to _remediationInstructionsFilter
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,

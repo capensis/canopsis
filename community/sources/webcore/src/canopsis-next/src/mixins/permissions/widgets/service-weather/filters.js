@@ -5,16 +5,8 @@ import { authMixin } from '@/mixins/auth';
 export const permissionsWidgetsServiceWeatherFilters = {
   mixins: [authMixin],
   computed: {
-    hasAccessToListFilters() {
-      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.listFilters);
-    },
-
-    hasAccessToEditFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.editFilter);
-    },
-
-    hasAccessToAddFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.addFilter);
+    hasAccessToFilter() {
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.filter);
     },
 
     hasAccessToUserFilter() {

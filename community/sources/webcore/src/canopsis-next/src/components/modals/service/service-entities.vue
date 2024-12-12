@@ -39,13 +39,13 @@
             dense
           />
         </v-tab-item>
-        <template v-if="hasAccessToCommentsList">
+        <template v-if="hasAccessToComment">
           <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
           <v-tab-item>
             <entity-comments
               :entity="service"
-              :addable="hasAccessToCreateComment"
-              :editable="hasAccessToEditComment"
+              addable
+              editable
             />
           </v-tab-item>
         </template>

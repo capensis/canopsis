@@ -39,13 +39,13 @@
 </template>
 
 <script>
-import { keyBy, omit, isEqual, filter } from 'lodash';
+import { keyBy, omit, isEqual, filter, cloneDeep } from 'lodash';
 import { computed, ref, set, onMounted } from 'vue';
 
 import { API_USER_PERMISSIONS_ROOT_GROUPS, MAX_LIMIT, MODALS, ROLE_TYPES } from '@/constants';
 
 import { permissionsToTreeview } from '@/helpers/entities/permissions/list';
-import { formToRole, roleToPermissionForm } from '@/helpers/entities/role/form';
+import { formToRolePermissions, roleToPermissionForm } from '@/helpers/entities/role/form';
 import { mapIds } from '@/helpers/array';
 
 import { useModals } from '@/hooks/modals';
@@ -60,7 +60,7 @@ export default {
   components: { PermissionsTable, PermissionsFabBtn },
   setup() {
     const activeTab = ref();
-    const originalRolesById = ref([]);
+    const originalRolesById = ref({});
     const rolesById = ref({});
     const changedRoles = ref({});
     const permissions = ref([]);
@@ -68,10 +68,10 @@ export default {
     const modals = useModals();
 
     const { fetchPermissionsListWithoutStore } = usePermissions();
-    const { fetchRolesListWithoutStore, updateRole } = useRole();
+    const { fetchRolesListWithoutStore, bulkUpdateRolePermissions } = useRole();
 
     const resetRolesById = () => {
-      rolesById.value = keyBy(Object.values(originalRolesById.value).map(roleToPermissionForm), '_id');
+      rolesById.value = cloneDeep(originalRolesById.value);
       changedRoles.value = {};
     };
 
@@ -81,7 +81,7 @@ export default {
         fetchPermissionsListWithoutStore({ params: { limit: MAX_LIMIT } }),
       ]);
 
-      originalRolesById.value = keyBy(rolesResponse.data, '_id');
+      originalRolesById.value = keyBy(Object.values(rolesResponse.data).map(roleToPermissionForm), '_id');
       permissions.value = permissionsResponse.data;
       resetRolesById();
     });
@@ -164,10 +164,10 @@ export default {
 
     const updateRoles = async () => {
       const rolesForUpdate = Object.keys(changedRoles.value)
-        .map(roleId => rolesById.value[roleId] ?? formToRole(rolesById.value[roleId]))
+        .map(roleId => rolesById.value[roleId] && formToRolePermissions(rolesById.value[roleId]))
         .filter(Boolean);
 
-      await Promise.all(rolesForUpdate.map(data => updateRole({ id: data._id, data })));
+      await bulkUpdateRolePermissions({ data: rolesForUpdate });
 
       return fetchList();
     };
