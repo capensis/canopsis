@@ -3,6 +3,7 @@
     v-field="value"
     :label="$t('recurrenceRule.freq')"
     :items="frequencies"
+    :autofocus="autofocus"
   />
 </template>
 
@@ -18,6 +19,10 @@ export default {
     value: {
       type: Number,
       required: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

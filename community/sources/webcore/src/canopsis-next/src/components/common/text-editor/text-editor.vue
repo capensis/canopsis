@@ -10,7 +10,7 @@
     >
       <div ref="textEditor" />
       <variables-menu
-        v-if="preparedVariables"
+        v-if="hasVariables"
         :items="preparedVariables"
         :visible="variablesShown"
         :value="variablesMenuValue"
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { isString, get } from 'lodash';
+import { isString, isEmpty, get } from 'lodash';
 import { Jodit } from 'jodit';
 
 import 'jodit/build/jodit.min.css';
@@ -42,6 +42,9 @@ import localStorageService from '@/services/local-storage';
 
 import { sanitizeHtml } from '@/helpers/html';
 import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
+import { objectToVariables } from '@/helpers/variables';
+
+import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
 
 import VariablesMenu from './variables-menu.vue';
 
@@ -78,6 +81,7 @@ Ajax.prototype.send = function send(...args) {
 
 export default {
   components: { VariablesMenu },
+  mixins: [entitiesTemplateVarsMixin],
   props: {
     value: {
       type: String,
@@ -129,6 +133,14 @@ export default {
       type: Object,
       required: false,
     },
+    withDefaultVariables: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -150,8 +162,24 @@ export default {
       return this.errorMessages.length;
     },
 
+    defaultVariables() {
+      if (!this.withDefaultVariables) {
+        return [];
+      }
+
+      return objectToVariables({ env: this.templateVars });
+    },
+
     preparedVariables() {
-      return this.variables && this.prepareVariables(this.variables);
+      return this.prepareVariables(
+        this.variables
+          ? [...this.variables, ...this.defaultVariables]
+          : this.defaultVariables,
+      );
+    },
+
+    hasVariables() {
+      return this.variables || (this.withDefaultVariables && !isEmpty(this.templateVars));
     },
 
     variablesButton() {
@@ -199,12 +227,17 @@ export default {
 
       config.extraButtons = [];
 
-      if (this.variables) {
+      if (this.hasVariables) {
         config.extraButtons.push(this.variablesButton);
       }
 
       if (this.extraButtons.length) {
         config.extraButtons.push(...this.extraButtons);
+      }
+
+      if (this.autofocus) {
+        config.autofocus = this.autofocus;
+        config.cursorAfterAutofocus = 'start';
       }
 
       return config;

@@ -305,6 +305,7 @@ export default {
   serialName: 'Serial name',
   local: 'Local',
   server: 'Server',
+  pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
   variableTypes: {
     string: 'String',
     number: 'Number',

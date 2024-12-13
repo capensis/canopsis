@@ -40,12 +40,12 @@
     </template>
     <alarm-column-cell-popup-body
       :alarm="alarm"
-      :selected-tag="selectedTag"
+      :selected-tags="selectedTags"
       :template="column.popupTemplate"
       :template-id="popupTemplateId"
       @close="hideInfoPopup"
       @select:tag="$emit('select:tag', $event)"
-      @clear:tag="$emit('clear:tag')"
+      @remove:tag="$emit('remove:tag', $event)"
     />
   </v-menu>
   <div
@@ -67,6 +67,7 @@ import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { getAlarmWidgetColumnPopupTemplateId } from '@/helpers/entities/alarm/list';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
+import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueStatus from './alarm-column-value-status.vue';
@@ -83,6 +84,7 @@ import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue
  */
 export default {
   components: {
+    AlarmsExpandPanel,
     AlarmColumnCellPopupBody,
     AlarmColumnValueStatus,
     AlarmColumnValueExtraDetails,
@@ -101,9 +103,9 @@ export default {
       type: Object,
       required: true,
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     small: {
       type: Boolean,

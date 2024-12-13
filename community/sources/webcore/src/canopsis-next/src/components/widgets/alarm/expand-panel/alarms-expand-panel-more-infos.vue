@@ -6,7 +6,7 @@
       :template="template"
       :context="templateContext"
       @select:tag="$emit('select:tag', $event)"
-      @clear:tag="$emit('clear:tag')"
+      @remove:tag="$emit('remove:tag', $event)"
     />
     <v-layout
       v-else
@@ -47,9 +47,9 @@ export default {
       type: String,
       required: false,
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {

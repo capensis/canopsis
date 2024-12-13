@@ -18,14 +18,14 @@ export const alarmHandlebarsTagsHelper = {
       return new Handlebars.SafeString(
         `<c-alarm-tags-chips
         :alarm="alarm"
-        :selected-tag="selectedTag"
+        :selected-tags="selectedTags"
         name-filter="${nameFilter}"
         regex-filter="${regex}"
         regex-filter-flags="${flags}"
         inline-count="${MAX_LIMIT}"
         closable-active
         @select="$emit('select:tag', $event)"
-        @close="$emit('clear:tag', $event)"
+        @close="$emit('remove:tag', $event)"
       ></c-alarm-tags-chips>`,
       );
     });
