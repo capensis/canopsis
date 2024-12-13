@@ -65,8 +65,6 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <pbehaviors-create-action-btn :entity="item" />
-        <pbehaviors-list-action-btn :entity="item" />
         <c-db-export-btn :id="item._id" event-filter />
       </v-layout>
     </template>
@@ -80,16 +78,11 @@
 </template>
 
 <script>
-import PbehaviorsCreateActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-create-action-btn.vue';
-import PbehaviorsListActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-action-btn.vue';
-
 import EventFiltersListExpandPanel from './partials/event-filters-list-expand-panel.vue';
 
 export default {
   components: {
     EventFiltersListExpandPanel,
-    PbehaviorsCreateActionBtn,
-    PbehaviorsListActionBtn,
   },
   props: {
     eventFilters: {
