@@ -3,11 +3,13 @@
     <c-id-field
       v-field="form._id"
       :disabled="onlyUserPrefs || !isNew"
+      autofocus
     />
     <c-name-field
       v-field="form.name"
       :label="$t('common.username')"
       :disabled="onlyUserPrefs"
+      :autofocus="!isNew"
       autocomplete="new-password"
       required
     />
@@ -34,6 +36,7 @@
       v-if="hasPassword"
       v-field="form.password"
       :required="isNew"
+      :autofocus="onlyUserPrefs"
       autocomplete="new-password"
     />
     <c-role-field

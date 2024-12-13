@@ -318,6 +318,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.tags,
   ALARM_PATTERN_FIELDS.lastComment,
   ALARM_PATTERN_FIELDS.lastCommentInitiator,
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
   ALARM_PATTERN_FIELDS.ticketMessage,
   ALARM_PATTERN_FIELDS.ticketValue,
   ALARM_PATTERN_FIELDS.ticketInitiator,

@@ -11,6 +11,7 @@
           :label="$tc('common.comment')"
           :required="isCommentRequired"
           name="comment"
+          autofocus
         />
       </template>
       <template #actions="">

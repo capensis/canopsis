@@ -6,6 +6,7 @@
     />
     <c-name-field
       v-field="form.name"
+      autofocus
       required
     />
     <remediation-job-configuration-field v-field="form.config" />

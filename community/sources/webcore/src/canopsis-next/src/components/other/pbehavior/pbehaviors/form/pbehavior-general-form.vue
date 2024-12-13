@@ -9,6 +9,7 @@
       v-field="form.name"
       :label="nameLabel"
       :tooltip="nameTooltip"
+      autofocus
       required
     />
     <v-flex

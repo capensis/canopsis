@@ -27,6 +27,7 @@
     <c-name-field
       v-field="form.name"
       class="mb-3"
+      autofocus
       required
     />
     <c-patterns-field
