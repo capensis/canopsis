@@ -111,146 +111,40 @@ export default {
     /**
      * Business Common Permissions
      */
-    [USER_PERMISSIONS.business.alarmsList.actions.variablesHelp]: {
-      name: 'Access to available variables list',
-      description: 'Users with this permission can see the list of variables in the alarm list and service weather',
-    },
-    [USER_PERMISSIONS.business.context.actions.entityCommentsList]: {
-      name: 'Access to entity comments list',
-      description: 'Users with this permission can see entity comments list',
-    },
-    [USER_PERMISSIONS.business.context.actions.createEntityComment]: {
-      name: 'Access to creating entity comments',
-      description: 'Users with this permission can create entity comments',
-    },
-    [USER_PERMISSIONS.business.context.actions.editEntityComment]: {
-      name: 'Access to editing entity comments',
-      description: 'Users with this permission can edit entity comments',
-    },
+    [USER_PERMISSIONS.business.alarmsList.actions.variablesHelp]: 'See the list of variables (in all widgets)',
+    [USER_PERMISSIONS.business.context.actions.entityComment]: 'Manage entity comments (view, create, edit, delete)',
 
     /**
      * Business Alarms List Permissions
      */
-    [USER_PERMISSIONS.business.alarmsList.actions.ack]: {
-      name: 'Rights on alarm list: ack',
-      description: 'Users with this permission can acknowledge alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.fastAck]: {
-      name: 'Rights on alarm list: fast ack',
-      description: 'Users with this permission can do fast acknowledge of alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.ackRemove]: {
-      name: 'Rights on alarm list: cancel ack',
-      description: 'Users with this permission can cancel ack',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: {
-      name: 'Rights on alarm list: pbehavior action',
-      description: 'Users with this permission can access to the action "Periodical behavior" and edit PBehaviors for alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: {
-      name: 'Rights on alarm list: fast pbehavior action',
-      description: 'Users with this permission can access to the action "Fast periodical behavior"',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.snooze]: {
-      name: 'Rights on alarm list: snooze alarm',
-      description: 'Users with this permission can snooze alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: {
-      name: 'Rights on alarm list: declare ticket',
-      description: 'Users with this permission can do the tickets declaration',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: {
-      name: 'Rights on alarm list: associate ticket',
-      description: 'Users with this permission can associate a ticket',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.cancel]: {
-      name: 'Rights on alarm list: cancel alarm',
-      description: 'Users with this permission can cancel alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: {
-      name: 'Rights on alarm list: fast alarm cancelation',
-      description: 'Users with this permission can do fast alarms cancelation',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.changeState]: {
-      name: 'Rights on alarm list: change state',
-      description: 'Users with this permission can change states of alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.history]: {
-      name: 'Rights on alarm list: history',
-      description: 'Users with this permission can view alarms history',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup]: {
-      name: 'Rights on alarm list: Manual meta alarm actions',
-      description: 'Users with this permission can apply manual meta alarm rules and group alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.comment]: {
-      name: 'Rights on alarm list: Access to \'Comment\' action',
-      description: 'Users with this permission can comment alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.listFilters]: { // TODO: change to '_filter'
-      name: 'Rights on alarm list: view alarm filters',
-      description: 'Users with this permission can view the list of available filters in the alarm list',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.editFilter]: { // TODO: change to '_filter'
-      name: 'Rights on alarm list: edit alarm filters',
-      description: 'Users with this permission can edit filters for alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.addFilter]: { // TODO: change to '_filter'
-      name: 'Rights on alarm list: add alarm filters',
-      description: 'Users with this permission can add filters for alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: {
-      name: 'Rights on alarm list: show alarm filters',
-      description: 'The alarm filter is shown for users with this permission',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: { // TODO: change to _remediationInstructionsFilter
-      name: 'Rights on alarm list: Access to view filters by remediation instructions',
-      description: 'Users with this permission can see and apply the list of created filters by instructions',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: { // TODO: change to _remediationInstructionsFilter
-      name: 'Rights on alarm list: Access to editing filters by remediation instructions',
-      description: 'Users with this permission can edit filters by instructions',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: { // TODO: change to _remediationInstructionsFilter
-      name: 'Rights on alarm list: Access to adding filters by remediation instructions',
-      description: 'Users with this permission can add filters by instructions',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
-      name: 'Rights on alarm list: Access to filters by remediation instructions',
-      description: 'The filter by instructions is shown for users with this permission',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.links]: {
-      name: 'Rights on alarm list: Access to Links',
-      description: 'Users with this permission can access and follow the links in the alarm list',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.correlation]: {
-      name: 'Rights on alarm list: Access to grouping correlated alarms',
-      description: 'Users with this permission can enable grouping correlated alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: {
-      name: 'Rights on alarm list: Access to instructions executions',
-      description: 'Users with this permission can execute instructions to remediate alarms',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.category]: {
-      name: 'Rights on alarm list: Filter by category',
-      description: 'Users with this permission can filter alarm list by category',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: {
-      name: 'Rights on alarm list: Access to exporting alarms as CSV',
-      description: 'Users with this permission can export alarms to CSV',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.addBookmark]: {
-      name: 'Rights on alarm list: Access to adding bookmark to alarms',
-      description: 'Users with this permission can add bookmark to alarm',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.removeBookmark]: {
-      name: 'Rights on alarm list: Access to removing bookmark from alarm',
-      description: 'Users with this permission can remove bookmark from alarm',
-    },
-    [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: {
-      name: 'Rights on alarm list: Access to filter alarms by only bookmarks',
-      description: 'Users with this permission can filter alarms by only bookmarks',
-    },
+    [USER_PERMISSIONS.business.alarmsList.actions.ack]: 'Ack',
+    [USER_PERMISSIONS.business.alarmsList.actions.fastAck]: 'Fast ack',
+    [USER_PERMISSIONS.business.alarmsList.actions.ackRemove]: 'Cancel ack',
+    [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: 'Edit PBhaviours for alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: 'Fast pbehavior',
+    [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Snooze alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Declare ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associate ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Remove alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Uncalcel alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Fast remove alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.changeState]: 'Check and lock severity',
+    [USER_PERMISSIONS.business.alarmsList.actions.history]: 'View alarm history',
+    [USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup]: 'Link to manual meta alarm rule / Unlink',
+    [USER_PERMISSIONS.business.alarmsList.actions.comment]: 'Comment alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.filter]: 'Set alarm filters ',
+    [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: 'Filter alarms',
+    [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: 'Set filters by remediation instructions',
+    [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: 'Filter alarms by remediation instructions',
+    [USER_PERMISSIONS.business.alarmsList.actions.links]: 'Follow link in alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.correlation]: 'Group correlated alarms (meta alarms)',
+    [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: 'Execute manual instructions ',
+    [USER_PERMISSIONS.business.alarmsList.actions.category]: 'Filter alarms by category',
+    [USER_PERMISSIONS.business.alarmsList.actions.exportPdf]: 'Export in PDF',
+    [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: 'Export alarm list as CSV',
+    [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]: 'Unlink alarm from auto meta alarm',
+    [USER_PERMISSIONS.business.alarmsList.actions.bookmark]: 'Add / remove bookmark',
+    [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: 'Filter bookmarked alarms ',
 
     /**
      * Business Context Explorer Permissions
@@ -271,10 +165,6 @@ export default {
       name: 'Rights on context explorer: delete entity',
       description: 'Users with this permission can delete entities',
     },
-    [USER_PERMISSIONS.business.context.actions.pbehaviorAdd]: {
-      name: 'Rights on context explorer: PBehavior action',
-      description: 'Users with this permission can access to the action "Periodical behavior" and edit PBehaviors for entities',
-    },
     [USER_PERMISSIONS.business.context.actions.massEnable]: {
       name: 'Rights on context explorer: Mass enable action',
       description: 'Users with this permission can perform mass action to enable selected entities',
@@ -283,17 +173,13 @@ export default {
       name: 'Rights on context explorer: Mass disable action',
       description: 'Users with this permission can perform mass action to disable selected entities',
     },
-    [USER_PERMISSIONS.business.context.actions.listFilters]: {
+    [USER_PERMISSIONS.business.context.actions.pbehavior]: {
+      name: 'Rights on context explorer: Mass disable action',
+      description: 'Users with this permission can perform mass action to disable selected entities',
+    },
+    [USER_PERMISSIONS.business.context.actions.filter]: {
       name: 'Rights on context explorer: view filters',
       description: 'Users with this permission can see the list of filters available in the Context explorer',
-    },
-    [USER_PERMISSIONS.business.context.actions.editFilter]: {
-      name: 'Rights on context explorer: edit filters',
-      description: 'Users with this permission can edit entity filters',
-    },
-    [USER_PERMISSIONS.business.context.actions.addFilter]: {
-      name: 'Rights on context explorer: add filters',
-      description: 'Users with this permission can add filters on entities shown in Context explorer',
     },
     [USER_PERMISSIONS.business.context.actions.userFilter]: {
       name: 'Rights on context explorer: show filters',
@@ -371,17 +257,9 @@ export default {
       name: 'Service weather: Access to service pbehavior list',
       description: 'Users with this permission can access the list of all PBehaviors of services (in the subtab in the service entities modal windows)',
     },
-    [USER_PERMISSIONS.business.serviceWeather.actions.listFilters]: {
+    [USER_PERMISSIONS.business.serviceWeather.actions.filter]: {
       name: 'Rights on service weather: View filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.editFilter]: {
-      name: 'Rights on service weather: Edit filter',
-      description: 'Users with this permission can edit applied filters',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.addFilter]: {
-      name: 'Rights on service weather: Add filter',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: {
       name: 'Rights on service weather: Show filter',
@@ -415,17 +293,9 @@ export default {
       name: 'Rights on maps: Access to \'Alarms list\' modal',
       description: 'Users with this permission can see the alarm list associated with points on maps',
     },
-    [USER_PERMISSIONS.business.map.actions.listFilters]: {
+    [USER_PERMISSIONS.business.map.actions.filter]: {
       name: 'Rights on maps: View filter',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.map.actions.editFilter]: {
-      name: 'Rights on maps: Edit filter',
-      description: 'Users with this permission can edit filters for maps',
-    },
-    [USER_PERMISSIONS.business.map.actions.addFilter]: {
-      name: 'Rights on maps: Add filter',
-      description: 'Users with this permission can add filters for maps',
     },
     [USER_PERMISSIONS.business.map.actions.userFilter]: {
       name: 'Rights on maps: Show filter',
@@ -447,17 +317,9 @@ export default {
       name: 'Barchart: sampling',
       description: 'Users with this permission can change sampling for the data displayed',
     },
-    [USER_PERMISSIONS.business.barChart.actions.listFilters]: {
+    [USER_PERMISSIONS.business.barChart.actions.filter]: {
       name: 'Barchart: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.barChart.actions.editFilter]: {
-      name: 'Barchart: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.barChart.actions.addFilter]: {
-      name: 'Barchart: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.barChart.actions.userFilter]: {
       name: 'Barchart: show filters',
@@ -475,17 +337,9 @@ export default {
       name: 'Linechart: sampling',
       description: 'Users with this permission can change sampling for the data displayed',
     },
-    [USER_PERMISSIONS.business.lineChart.actions.listFilters]: {
+    [USER_PERMISSIONS.business.lineChart.actions.filter]: {
       name: 'Linechart: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.lineChart.actions.editFilter]: {
-      name: 'Linechart: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.lineChart.actions.addFilter]: {
-      name: 'Linechart: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.lineChart.actions.userFilter]: {
       name: 'Linechart: show filters',
@@ -503,17 +357,9 @@ export default {
       name: 'Piechart: sampling',
       description: 'Users with this permission can change sampling for the data displayed',
     },
-    [USER_PERMISSIONS.business.pieChart.actions.listFilters]: {
+    [USER_PERMISSIONS.business.pieChart.actions.filter]: {
       name: 'Piechart: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.pieChart.actions.editFilter]: {
-      name: 'Piechart: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.pieChart.actions.addFilter]: {
-      name: 'Piechart: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.pieChart.actions.userFilter]: {
       name: 'Piechart: show filters',
@@ -531,17 +377,9 @@ export default {
       name: 'Numbers: sampling',
       description: 'Users with this permission can change sampling for the data displayed',
     },
-    [USER_PERMISSIONS.business.numbers.actions.listFilters]: {
+    [USER_PERMISSIONS.business.numbers.actions.filter]: {
       name: 'Numbers: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.numbers.actions.editFilter]: {
-      name: 'Numbers: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.numbers.actions.addFilter]: {
-      name: 'Numbers: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.numbers.actions.userFilter]: {
       name: 'Numbers: show filters',
@@ -555,17 +393,9 @@ export default {
       name: 'User Statistics: interval',
       description: 'Users with this permission can change time interval for the data displayed',
     },
-    [USER_PERMISSIONS.business.userStatistics.actions.listFilters]: {
+    [USER_PERMISSIONS.business.userStatistics.actions.filter]: {
       name: 'User Statistics: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.userStatistics.actions.editFilter]: {
-      name: 'User Statistics: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.userStatistics.actions.addFilter]: {
-      name: 'User Statistics: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.userStatistics.actions.userFilter]: {
       name: 'User Statistics: show filters',
@@ -579,17 +409,9 @@ export default {
       name: 'Alarm Statistics: interval',
       description: 'Users with this permission can change time interval for the data displayed',
     },
-    [USER_PERMISSIONS.business.alarmStatistics.actions.listFilters]: {
+    [USER_PERMISSIONS.business.alarmStatistics.actions.filter]: {
       name: 'Alarm Statistics: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.alarmStatistics.actions.editFilter]: {
-      name: 'Alarm Statistics: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.alarmStatistics.actions.addFilter]: {
-      name: 'Alarm Statistics: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
       name: 'Alarm Statistics: show filters',
@@ -603,17 +425,9 @@ export default {
       name: 'Availability: interval',
       description: 'Users with this permission can change time interval for the data displayed',
     },
-    [USER_PERMISSIONS.business.availability.actions.listFilters]: {
+    [USER_PERMISSIONS.business.availability.actions.filter]: {
       name: 'Availability: view filters',
       description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.availability.actions.editFilter]: {
-      name: 'Availability: edit filters',
-      description: 'Users with this permission can edit filters',
-    },
-    [USER_PERMISSIONS.business.availability.actions.addFilter]: {
-      name: 'Availability: add filters',
-      description: 'Users with this permission can add filters',
     },
     [USER_PERMISSIONS.business.availability.actions.userFilter]: {
       name: 'Availability: show filters',
