@@ -282,8 +282,7 @@ export const USER_PERMISSIONS = {
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
-        addBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addBookmark`,
-        removeBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeBookmark`,
+        bookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_bookmark`,
         filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
 
         /**
@@ -300,9 +299,10 @@ export const USER_PERMISSIONS = {
         editEntity: `${USER_PERMISSIONS_PREFIXES.business.context}_edit`,
         duplicateEntity: `${USER_PERMISSIONS_PREFIXES.business.context}_duplicate`,
         deleteEntity: `${USER_PERMISSIONS_PREFIXES.business.context}_delete`,
-        pbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.context}_pbehavior`,
-        pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`,
-        pbehaviorDelete: `${USER_PERMISSIONS_PREFIXES.business.context}_deletePbehavior`,
+        pbehavior: `${USER_PERMISSIONS_PREFIXES.business.context}_pbehavior`,
+        pbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.context}_pbehavior`, // TODO: remove
+        pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`, // TODO: remove
+        pbehaviorDelete: `${USER_PERMISSIONS_PREFIXES.business.context}_deletePbehavior`, // TODO: remove
         massEnable: `${USER_PERMISSIONS_PREFIXES.business.context}_massEnable`,
         massDisable: `${USER_PERMISSIONS_PREFIXES.business.context}_massDisable`,
         listPbehavior: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`,
@@ -624,8 +624,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,
 
-    [ALARM_LIST_ACTIONS_TYPES.addBookmark]: USER_PERMISSIONS.business.alarmsList.actions.addBookmark,
-    [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: USER_PERMISSIONS.business.alarmsList.actions.removeBookmark,
+    [ALARM_LIST_ACTIONS_TYPES.addBookmark]: USER_PERMISSIONS.business.alarmsList.actions.bookmark,
+    [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: USER_PERMISSIONS.business.alarmsList.actions.bookmark,
   },
 
   context: {
@@ -633,7 +633,7 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.editEntity]: USER_PERMISSIONS.business.context.actions.editEntity,
     [CONTEXT_ACTIONS_TYPES.duplicateEntity]: USER_PERMISSIONS.business.context.actions.duplicateEntity,
     [CONTEXT_ACTIONS_TYPES.deleteEntity]: USER_PERMISSIONS.business.context.actions.deleteEntity,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USER_PERMISSIONS.business.context.actions.pbehaviorAdd,
+    [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USER_PERMISSIONS.business.context.actions.pbehavior,
     [CONTEXT_ACTIONS_TYPES.massEnable]: USER_PERMISSIONS.business.context.actions.massEnable,
     [CONTEXT_ACTIONS_TYPES.massDisable]: USER_PERMISSIONS.business.context.actions.massDisable,
 

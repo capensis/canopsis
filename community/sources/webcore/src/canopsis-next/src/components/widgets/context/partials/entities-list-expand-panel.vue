@@ -23,23 +23,24 @@
         </v-layout>
       </v-tab-item>
     </template>
-
-    <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
-    <v-tab-item>
-      <v-layout class="pa-3">
-        <v-flex :class="cardFlexClass">
-          <v-card>
-            <v-card-text>
-              <pbehaviors-simple-list
-                :entity="item"
-                :removable="hasDeleteAnyPbehaviorAccess"
-                :updatable="hasUpdateAnyPbehaviorAccess"
-              />
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-tab-item>
+    <template v-if="hasAccessToPbehavior">
+      <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
+      <v-tab-item>
+        <v-layout class="pa-3">
+          <v-flex :class="cardFlexClass">
+            <v-card>
+              <v-card-text>
+                <pbehaviors-simple-list
+                  :entity="item"
+                  :removable="hasDeleteAnyPbehaviorAccess"
+                  :updatable="hasUpdateAnyPbehaviorAccess"
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </template>
 
     <template v-if="item.type !== $constants.ENTITY_TYPES.service">
       <v-tab>{{ $t('context.impactDepends') }}</v-tab>
@@ -180,6 +181,7 @@ import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { authMixin } from '@/mixins/auth';
 import { permissionsWidgetsEventComment } from '@/mixins/permissions/widgets/entity-comment';
+import { permissionsWidgetsContextPbehavior } from '@/mixins/permissions/widgets/context/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -208,6 +210,7 @@ export default {
   mixins: [
     authMixin,
     permissionsWidgetsEventComment,
+    permissionsWidgetsContextPbehavior,
     permissionsTechnicalExploitationPbehaviorMixin,
   ],
   props: {
