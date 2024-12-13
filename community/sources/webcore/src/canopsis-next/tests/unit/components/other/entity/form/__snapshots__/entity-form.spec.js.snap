@@ -76,6 +76,7 @@ exports[`entity-form Renders \`entity-form\` with custom props 1`] = `
               value="entity-form"
             />
             <c-description-field-stub
+              autofocus=""
               value="entity-form-description"
             />
             <div
@@ -222,6 +223,7 @@ exports[`entity-form Renders \`entity-form\` with default form 1`] = `
               value=""
             />
             <c-description-field-stub
+              autofocus=""
               value=""
             />
             <div

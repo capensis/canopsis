@@ -56,6 +56,7 @@ exports[`ack-event-form Renders \`ack-event-form\` with custom props 1`] = `
     </div>
   </span>
   <c-description-field-stub
+    autofocus=""
     label="Note"
     name="comment"
     required="true"
@@ -120,6 +121,7 @@ exports[`ack-event-form Renders \`ack-event-form\` with default props 1`] = `
     </div>
   </span>
   <c-description-field-stub
+    autofocus=""
     label="Note"
     name="comment"
   />

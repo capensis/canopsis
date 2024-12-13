@@ -39,6 +39,9 @@
     >
       <slot name="append-item" />
     </template>
+    <template v-if="$slots['no-data']" #no-data="">
+      <slot name="no-data" />
+    </template>
   </component>
 </template>
 
