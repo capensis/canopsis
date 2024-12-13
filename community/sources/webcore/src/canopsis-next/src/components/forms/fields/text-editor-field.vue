@@ -11,6 +11,7 @@
     :variables="variables"
     :dark="$system.dark"
     :with-default-variables="withDefaultVariables"
+    :autofocus="autofocus"
   />
 </template>
 
@@ -82,6 +83,10 @@ export default {
       required: false,
     },
     withDefaultVariables: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
       type: Boolean,
       default: false,
     },

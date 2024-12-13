@@ -9,6 +9,7 @@
           v-model="form"
           :label="label"
           :units="units"
+          autofocus
           required
         />
       </template>

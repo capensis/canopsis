@@ -89,7 +89,7 @@ definitions:
         maxLength: 255
         type: string
       output:
-        maxLength: 255
+        maxLength: 1000
         type: string
       reason:
         description: Reason is used in pbehavior action.
@@ -1058,6 +1058,8 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        type: string
       disabled_transitions:
         type: boolean
       footer:

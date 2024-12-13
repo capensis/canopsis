@@ -5,6 +5,7 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     required=""
     value="name"
   />
@@ -38,6 +39,7 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     required=""
   />
   <c-duration-field-stub

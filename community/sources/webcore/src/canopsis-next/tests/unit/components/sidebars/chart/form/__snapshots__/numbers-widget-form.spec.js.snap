@@ -5,6 +5,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
   class="layout column"
 >
   <field-title-stub
+    autofocus="true"
     name="title"
     value="Map widget"
   />
@@ -64,6 +65,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
   class="layout column"
 >
   <field-title-stub
+    autofocus="true"
     name="title"
     value=""
   />

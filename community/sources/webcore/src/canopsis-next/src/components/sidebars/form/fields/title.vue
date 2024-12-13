@@ -9,6 +9,7 @@
       :placeholder="placeholder || $t('settings.widgetTitle')"
       :name="name"
       :error-messages="errors.collect(name)"
+      :autofocus="autofocus"
     />
   </widget-settings-item>
 </template>
@@ -44,6 +45,10 @@ export default {
     placeholder: {
       type: String,
       required: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
