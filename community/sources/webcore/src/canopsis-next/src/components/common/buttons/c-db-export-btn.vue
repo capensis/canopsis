@@ -114,7 +114,7 @@ export default {
         ids: props.id ? [props.id] : props.ids,
       }) ?? {};
 
-      const filename = String(headers['content-disposition']).replace(/^.*filename="|"$/g, '');
+      const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');
 
       return saveFile(data, filename);
     });
