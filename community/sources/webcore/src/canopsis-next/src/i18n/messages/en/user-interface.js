@@ -15,6 +15,7 @@ export default {
   disabledTransitions: 'Disable some animations',
   disabledTransitionsTooltip: 'It will help to improve application performance',
   autoSuggestPbehaviorName: 'Automatically suggest a pbehavior name',
+  defaultTheme: 'Default theme',
   tooltips: {
     maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
     checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',

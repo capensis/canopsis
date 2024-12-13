@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { mockXMLHttpRequest } from '@unit/utils/mock-hooks';
+import { createMockedStoreModules } from '@unit/utils/store';
 
 import { API_HOST, API_ROUTES } from '@/config';
 
@@ -57,6 +58,13 @@ describe('text-editor', () => {
     attachTo: document.body,
     stubs,
   }, { noDestroy: true });
+
+  const store = createMockedStoreModules([{
+    name: 'templateVars',
+    getters: {
+      items: { test: 'test', testObj: { testObjField: 'value' } },
+    },
+  }]);
 
   test('Value changed after change props', async () => {
     const wrapper = snapshotFactory();
@@ -391,7 +399,9 @@ describe('text-editor', () => {
         config: {},
         errorMessages: ['Error'],
         maxFileSize: 1,
+        withDefaultVariables: true,
       },
+      store,
     });
 
     await flushPromises();
