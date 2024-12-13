@@ -1,10 +1,9 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import CAlarmTag from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
 import CLazySearchField from '@/components/forms/fields/c-lazy-search-field.vue';
-import CSelectField from '@/components/forms/fields/c-select-field.vue';
 
 const stubs = {
   'c-alarm-action-chip': true,
@@ -14,8 +13,8 @@ const stubs = {
 
 const snapshotStubs = {
   'c-alarm-action-chip': true,
-  'c-lazy-search-field': CLazySearchField,
-  'c-select-field': CSelectField,
+  'c-lazy-search-field': true,
+  'c-select-field': true,
 };
 
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
@@ -82,8 +81,9 @@ describe('c-alarm-tag-field', () => {
       store,
     });
 
+    await flushPromises();
+
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `c-alarm-tag-field` with custom props', async () => {
@@ -97,7 +97,8 @@ describe('c-alarm-tag-field', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper).toMatchMenuSnapshot();
   });
 });

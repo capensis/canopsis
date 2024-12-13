@@ -2,6 +2,7 @@
   <v-textarea
     v-field="value"
     v-validate="rules"
+    v-bind="$attrs"
     :label="label || $t('common.description')"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
@@ -23,6 +24,7 @@
 <script>
 export default {
   inject: ['$validator'],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',

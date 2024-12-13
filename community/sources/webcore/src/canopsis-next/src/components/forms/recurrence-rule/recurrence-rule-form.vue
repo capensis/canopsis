@@ -8,6 +8,7 @@
         >
           <recurrence-rule-frequency-field
             :value="form.freq"
+            :autofocus="autofocus"
             @input="updateFrequency"
           />
           <recurrence-rule-interval-field
@@ -135,6 +136,10 @@ export default {
     start: {
       type: Date,
       required: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

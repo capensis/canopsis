@@ -443,6 +443,12 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 			return "", true
 		}
 		return a.Value.LastComment.Message, true
+	case "v.last_comment.a":
+		if a.Value.LastComment == nil {
+			return "", true
+		}
+
+		return a.Value.LastComment.Author, true
 	case "v.last_comment.initiator":
 		return a.Value.LastComment.GetInitiator(), true
 	case "v.ticket.m":

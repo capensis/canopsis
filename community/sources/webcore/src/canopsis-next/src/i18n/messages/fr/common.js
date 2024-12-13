@@ -305,6 +305,7 @@ export default {
   serialName: 'Nom de série',
   local: 'Local',
   server: 'Serveur',
+  pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
